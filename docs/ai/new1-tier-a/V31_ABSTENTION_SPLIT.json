@@ -1,0 +1,3301 @@
+{
+  "kind": "new1_v31_abstention_split",
+  "builtAt": "2026-08-25T03:58:52.599Z",
+  "manifestContentSha256": null,
+  "seed": "lawmind-new1-v3.1-2026-08-25",
+  "devRatio": 0.5,
+  "unitOfSplit": "TARGET CLUSTER — never the task, because tasks sharing an authority are not independent.",
+  "stratification": "Clusters bucketed by (POSED:<queryClass> | LIFTED), then an exact seeded prefix per bucket. An unstratified split was measured first and gave DEVELOPMENT only 7 POSED tasks with three classes at zero; 250 LIFTED singleton clusters drown the 45 POSED ones.",
+  "development": {
+    "tasks": 153,
+    "clusters": 108,
+    "distinctTargets": 109,
+    "posed": 29,
+    "lifted": 124,
+    "byQueryClass": {
+      "doctrine": 7,
+      "fact_pattern": 6,
+      "long_narrative": 2,
+      "pasted_passage": 3,
+      "supporting_authority": 4,
+      "adverse_authority": 2,
+      "current_law": 2,
+      "statute": 3,
+      "lifted": 34,
+      "legal_issue": 45,
+      "proposition": 45
+    }
+  },
+  "heldOut": {
+    "tasks": 142,
+    "clusters": 103,
+    "distinctTargets": 104,
+    "posed": 16,
+    "lifted": 126,
+    "byQueryClass": {
+      "doctrine": 5,
+      "fact_pattern": 4,
+      "long_narrative": 1,
+      "supporting_authority": 2,
+      "adverse_authority": 2,
+      "current_law": 2,
+      "lifted": 43,
+      "legal_issue": 42,
+      "proposition": 41
+    }
+  },
+  "leakCheck": {
+    "targetsOnBothSides": 0,
+    "ids": [],
+    "verdict": "CLEAN — no target appears on both sides"
+  },
+  "tasks": [
+    {
+      "taskId": "A100-031",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 0,
+      "split": "HELD_OUT",
+      "targets": [
+        "091590b9-5556-4404-be37-6e8a4e93744d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-032",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 0,
+      "split": "HELD_OUT",
+      "targets": [
+        "091590b9-5556-4404-be37-6e8a4e93744d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-033",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0766f0c5-c009-4e5d-859f-8a5ebfdb2758"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-034",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 2,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "510aa698-b81d-4e51-a1fa-565379496a93"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-035",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 2,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "510aa698-b81d-4e51-a1fa-565379496a93"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-036",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 3,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "fc0e9876-6c60-42e1-9396-a2e5105ee471"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-037",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 3,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "fc0e9876-6c60-42e1-9396-a2e5105ee471"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-038",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 4,
+      "split": "HELD_OUT",
+      "targets": [
+        "5b7aaf2f-4f48-452e-857c-33649df67268"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-039",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 5,
+      "split": "HELD_OUT",
+      "targets": [
+        "2b79bae6-2bab-4460-ad5b-ada491cac5cc"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-040",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 6,
+      "split": "HELD_OUT",
+      "targets": [
+        "343940ea-9d38-43c3-b765-175e80964d22"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-041",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 7,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "c5714da7-393d-4736-9a6e-5c80bf9441ae"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-042",
+      "provenance": "POSED",
+      "queryClass": "doctrine",
+      "clusterId": 8,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2bcf559d-b56c-49ca-901e-470487e7e232"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-043",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "b59e6700-4721-46bc-8427-f580a15e5550"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-044",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 4,
+      "split": "HELD_OUT",
+      "targets": [
+        "5b7aaf2f-4f48-452e-857c-33649df67268"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-045",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 9,
+      "split": "HELD_OUT",
+      "targets": [
+        "5a52e215-47e7-455e-91c6-bfe933c4e161"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-046",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 10,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2188d129-43c5-4dad-9ef9-c728b671607c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-047",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 11,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "009522ce-e358-41f2-978f-593ed8bb4bde"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-048",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 12,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "985fade2-03f2-47e6-ba5d-00629af76469"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-049",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 13,
+      "split": "HELD_OUT",
+      "targets": [
+        "1f74f6c2-1a8d-49cf-ba61-6c1b9ee9f772"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-050",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 2,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "510aa698-b81d-4e51-a1fa-565379496a93"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-051",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 7,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "c5714da7-393d-4736-9a6e-5c80bf9441ae"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-052",
+      "provenance": "POSED",
+      "queryClass": "fact_pattern",
+      "clusterId": 6,
+      "split": "HELD_OUT",
+      "targets": [
+        "343940ea-9d38-43c3-b765-175e80964d22"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-053",
+      "provenance": "POSED",
+      "queryClass": "long_narrative",
+      "clusterId": 11,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "009522ce-e358-41f2-978f-593ed8bb4bde"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-054",
+      "provenance": "POSED",
+      "queryClass": "long_narrative",
+      "clusterId": 10,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2188d129-43c5-4dad-9ef9-c728b671607c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-055",
+      "provenance": "POSED",
+      "queryClass": "long_narrative",
+      "clusterId": 5,
+      "split": "HELD_OUT",
+      "targets": [
+        "1e3a4a63-e237-423e-b05b-9d7ee70a9c77",
+        "2b79bae6-2bab-4460-ad5b-ada491cac5cc"
+      ],
+      "targetsInIndexAtFreeze": 2
+    },
+    {
+      "taskId": "A100-056",
+      "provenance": "POSED",
+      "queryClass": "pasted_passage",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0766f0c5-c009-4e5d-859f-8a5ebfdb2758"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-057",
+      "provenance": "POSED",
+      "queryClass": "pasted_passage",
+      "clusterId": 10,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2188d129-43c5-4dad-9ef9-c728b671607c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-058",
+      "provenance": "POSED",
+      "queryClass": "pasted_passage",
+      "clusterId": 3,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "fc0e9876-6c60-42e1-9396-a2e5105ee471"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-059",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 4,
+      "split": "HELD_OUT",
+      "targets": [
+        "5b7aaf2f-4f48-452e-857c-33649df67268"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-060",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 2,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "510aa698-b81d-4e51-a1fa-565379496a93"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-061",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 11,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "009522ce-e358-41f2-978f-593ed8bb4bde"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-062",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 6,
+      "split": "HELD_OUT",
+      "targets": [
+        "343940ea-9d38-43c3-b765-175e80964d22"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-063",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0766f0c5-c009-4e5d-859f-8a5ebfdb2758"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-064",
+      "provenance": "POSED",
+      "queryClass": "supporting_authority",
+      "clusterId": 7,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "c5714da7-393d-4736-9a6e-5c80bf9441ae"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-065",
+      "provenance": "POSED",
+      "queryClass": "adverse_authority",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0766f0c5-c009-4e5d-859f-8a5ebfdb2758"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-066",
+      "provenance": "POSED",
+      "queryClass": "adverse_authority",
+      "clusterId": 2,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "510aa698-b81d-4e51-a1fa-565379496a93"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-067",
+      "provenance": "POSED",
+      "queryClass": "adverse_authority",
+      "clusterId": 4,
+      "split": "HELD_OUT",
+      "targets": [
+        "5b7aaf2f-4f48-452e-857c-33649df67268"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-068",
+      "provenance": "POSED",
+      "queryClass": "adverse_authority",
+      "clusterId": 5,
+      "split": "HELD_OUT",
+      "targets": [
+        "2b79bae6-2bab-4460-ad5b-ada491cac5cc"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-069",
+      "provenance": "POSED",
+      "queryClass": "current_law",
+      "clusterId": 0,
+      "split": "HELD_OUT",
+      "targets": [
+        "091590b9-5556-4404-be37-6e8a4e93744d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-070",
+      "provenance": "POSED",
+      "queryClass": "current_law",
+      "clusterId": 14,
+      "split": "HELD_OUT",
+      "targets": [
+        "2e3d517c-7762-4b4e-9072-9bda3dc05c5a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-071",
+      "provenance": "POSED",
+      "queryClass": "current_law",
+      "clusterId": 15,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "755dda37-e50a-452b-94c1-a08e4fdfaa9c"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-072",
+      "provenance": "POSED",
+      "queryClass": "current_law",
+      "clusterId": 16,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "4c8118dd-c6fc-4cb6-ad1d-5a3296f9dc17"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "A100-078",
+      "provenance": "POSED",
+      "queryClass": "statute",
+      "clusterId": 10,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2188d129-43c5-4dad-9ef9-c728b671607c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-079",
+      "provenance": "POSED",
+      "queryClass": "statute",
+      "clusterId": 1,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "b59e6700-4721-46bc-8427-f580a15e5550",
+        "0766f0c5-c009-4e5d-859f-8a5ebfdb2758"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "A100-080",
+      "provenance": "POSED",
+      "queryClass": "statute",
+      "clusterId": 17,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "2fc3cb94-b398-4451-aa0a-550472c07dec"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-001",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 171,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001f458-4c89-41e7-a15b-e3676ae72127"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-003",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 172,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00152c93-05f8-4209-b79a-220f83feeea3"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "UAG2-005",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 173,
+      "split": "HELD_OUT",
+      "targets": [
+        "0009b334-ecb0-48ff-9230-2adc95fe8b36"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-007",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 174,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0011c589-f65b-440c-b62e-de091b31aa62"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-010",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 175,
+      "split": "HELD_OUT",
+      "targets": [
+        "000a572d-c6a5-4b32-94c7-bac07d77d6d7"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-012",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 176,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "001236ef-94b0-480f-b8bb-49327fd6821f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-014",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 177,
+      "split": "HELD_OUT",
+      "targets": [
+        "00135d84-6c2e-490b-a03d-5000ad1224c7"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-017",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 178,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "7b51c478-1add-4141-be83-ff5acb8aa785"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-019",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 179,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00168236-8b6c-48c8-912b-708dff341cd5"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-021",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 180,
+      "split": "HELD_OUT",
+      "targets": [
+        "00130523-fe13-4316-a242-77044c0d638a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-024",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 181,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00079848-b5ce-4b96-97f9-8112cdeb26d4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-026",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 182,
+      "split": "HELD_OUT",
+      "targets": [
+        "00025d56-73f1-45a8-8058-249539ad082d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-028",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 183,
+      "split": "HELD_OUT",
+      "targets": [
+        "000008a0-88e8-4b33-913f-4562c919c12b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-030",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 184,
+      "split": "HELD_OUT",
+      "targets": [
+        "000010c1-3093-4f08-86a2-f212002faed9"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "UAG2-033",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 19,
+      "split": "HELD_OUT",
+      "targets": [
+        "00002bb6-4731-43e1-ace8-f796ef07c503"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-035",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 106,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00002c83-1562-4a42-bee8-1e48effa37e4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-037",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 107,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000035c6-734a-4e84-84d4-346a14909f5f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-040",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 108,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00003b7a-cee7-4aa3-8ca1-6dbe64e17044"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-042",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 21,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000453b-46b1-407c-9e2c-f96d3c260432"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-044",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 22,
+      "split": "HELD_OUT",
+      "targets": [
+        "000051bd-7448-4ecb-a027-16f332f1597a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-047",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 24,
+      "split": "HELD_OUT",
+      "targets": [
+        "00006d47-9d58-49cc-8bd7-45be6f819708"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-049",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 185,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00007345-6f19-47f1-b7e2-e57d72d4bd15"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-051",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 25,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000763f-36fb-473e-8a43-d89bdec55a21"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-053",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 112,
+      "split": "HELD_OUT",
+      "targets": [
+        "00007d1b-d2ee-4f62-929b-3244348c9e72"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-056",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 114,
+      "split": "HELD_OUT",
+      "targets": [
+        "000081da-e5a7-4713-ac45-2d58dd864686"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-058",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 186,
+      "split": "HELD_OUT",
+      "targets": [
+        "000088df-88db-4d48-aa86-035948bc9bec"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-060",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 115,
+      "split": "HELD_OUT",
+      "targets": [
+        "00009093-00e1-4df8-b58d-2cd39c1c5d99"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-063",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 187,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000af55-4283-4920-a11f-7cb3eac9ca65"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-065",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 188,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000b213-9bad-4628-a64f-d4fcb556f156"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-067",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 189,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000c7cf-a605-4049-b244-d1429ba03891"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-070",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 190,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000dd42-68cd-4038-8e01-846d246a4a54"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-072",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 191,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000f157-57d6-4202-93b0-4d2d04a72acc"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-074",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 192,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000f7af-ac14-401a-9344-6e764cce91fa"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-076",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 31,
+      "split": "HELD_OUT",
+      "targets": [
+        "00011234-7f50-416b-8d7e-e65bc2fdb4e2"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-079",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 193,
+      "split": "HELD_OUT",
+      "targets": [
+        "000123a6-20cc-4e84-8931-9e1ac4c853b7"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-081",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 194,
+      "split": "HELD_OUT",
+      "targets": [
+        "000133d2-8006-4a72-ad36-9a39f5633f5f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-083",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 195,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00014adf-07ee-4018-9c1a-9d6942947637"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-086",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 196,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00016a44-51ef-419b-82bd-7050491013af"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-088",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 197,
+      "split": "HELD_OUT",
+      "targets": [
+        "00018264-8c87-4cd9-911c-341f3a9dc6aa"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-090",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 198,
+      "split": "HELD_OUT",
+      "targets": [
+        "00018c8c-8ad0-4786-811b-a8918f7ae477"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-093",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 129,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001b145-3dc5-4734-a2a4-b329a27bab9b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-095",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 42,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001b34a-78a0-4b8e-90d2-92fd51e16962"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-097",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 130,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001c2b2-7b3f-4b45-9d3c-0b9b184db436"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-099",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 199,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001e2d9-7239-4dd0-9ad5-9715c43fb0e5"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-102",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 200,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001f434-719b-47c9-9c6d-4d81c8e2ec24"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-104",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 46,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001f752-bcfc-4017-ae1f-82bd85cbd837"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-106",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 134,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002066c-8c76-4d5d-a040-6924425a3178"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-109",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 47,
+      "split": "HELD_OUT",
+      "targets": [
+        "000223a4-fb27-4cc9-9a6f-5c2df0759a88"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-111",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 201,
+      "split": "HELD_OUT",
+      "targets": [
+        "00022937-722d-4155-aa3a-2dd761c36678"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-113",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 49,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00025362-4ea7-4ecc-aef5-272d805fd5aa"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-115",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 51,
+      "split": "HELD_OUT",
+      "targets": [
+        "00026cd6-7218-47bd-969b-2830198f80dc"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-118",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 202,
+      "split": "HELD_OUT",
+      "targets": [
+        "00027c4c-5b7e-45c3-8aa4-468837f21e76"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "UAG2-120",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 203,
+      "split": "HELD_OUT",
+      "targets": [
+        "00028b96-970a-4ed8-b8e6-508333b55582"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-122",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 204,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002a098-397d-4f57-badd-ac22bf0c4914"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-125",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 142,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002a953-5b7b-43f7-a5cf-54463f122ff6"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-127",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 55,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002e61d-c0df-46b0-9305-2c1b42634a83"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-129",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 146,
+      "split": "HELD_OUT",
+      "targets": [
+        "00030c26-0a20-4f06-94b7-636a13c0c7e3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-132",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 205,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000333eb-f0a2-4347-b954-f57b4a1adf78"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-134",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 58,
+      "split": "HELD_OUT",
+      "targets": [
+        "00033e72-60aa-43f1-a1ec-3e4fa5c61484"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-136",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 150,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003491e-cb45-48a7-950f-c098ed846bbb"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-139",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 153,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003728c-58cb-4618-a3c8-aef3cb5ed425"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-141",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 154,
+      "split": "HELD_OUT",
+      "targets": [
+        "00038900-8bd7-4bb3-8b97-edfa0bb5d757"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-143",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 155,
+      "split": "HELD_OUT",
+      "targets": [
+        "00039526-b383-49ed-8f33-bc8247906d82"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-145",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 156,
+      "split": "HELD_OUT",
+      "targets": [
+        "00039c22-4a36-41b7-aff5-0c1259aeab92"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-148",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 206,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003de47-e38f-4f95-893d-f502097533ad"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-150",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 207,
+      "split": "HELD_OUT",
+      "targets": [
+        "0003e995-be1d-4a6f-adf0-ab42830d76b3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-152",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 64,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00040621-6a66-42a1-924f-d7da189ef617"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-155",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 160,
+      "split": "HELD_OUT",
+      "targets": [
+        "000419ac-f6d1-4070-9232-ffca4eff0725"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-157",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 65,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00043343-41d1-48f5-b6fa-d4ba8abdf688"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-159",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 66,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00044f18-8b0f-4842-83b7-e84e4fc33530"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-162",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 163,
+      "split": "HELD_OUT",
+      "targets": [
+        "00046869-629d-4247-aa45-4e5cf07eb250"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-164",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 208,
+      "split": "HELD_OUT",
+      "targets": [
+        "00048ee5-0e92-4ec3-aa94-cd85447e9533"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-166",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 209,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000491ff-a4cf-4af3-895a-02936e2c1f80"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-168",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 210,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004a511-9e68-4a26-929d-021106523d0d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-171",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 167,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004eac6-5a46-4c45-a29b-1354d3cba42f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-173",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 168,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004f4e5-8c8a-438e-b4c1-0edc4234f9f3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "UAG2-175",
+      "provenance": "LIFTED",
+      "queryClass": "lifted",
+      "clusterId": 74,
+      "split": "HELD_OUT",
+      "targets": [
+        "000542b1-3c8f-4e2b-83b3-7664be1e782a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-003",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 18,
+      "split": "HELD_OUT",
+      "targets": [
+        "00001274-0aca-4e15-a820-7dc194f3ebe8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-005",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 19,
+      "split": "HELD_OUT",
+      "targets": [
+        "00002bb6-4731-43e1-ace8-f796ef07c503"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-007",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 20,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000036b8-8f18-4500-9522-06c2b97108ce"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-010",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 21,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000453b-46b1-407c-9e2c-f96d3c260432"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-012",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 22,
+      "split": "HELD_OUT",
+      "targets": [
+        "000051bd-7448-4ecb-a027-16f332f1597a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-014",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 23,
+      "split": "HELD_OUT",
+      "targets": [
+        "00006352-e9e0-46b8-82b8-99508f33d8a1"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-016",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 24,
+      "split": "HELD_OUT",
+      "targets": [
+        "00006d47-9d58-49cc-8bd7-45be6f819708"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-019",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 25,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000763f-36fb-473e-8a43-d89bdec55a21"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-021",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 26,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000819d-e8cb-49ff-91a3-790e4e5513cf"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-023",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 27,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000098b2-0595-4788-b236-6d8b8f80551e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-026",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 28,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000b7cc-2c5b-45e2-8673-2cee21ce4a91"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-028",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 29,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000cc43-9f16-44c5-8316-a317e6851022"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-030",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 30,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000dda9-3a8e-4499-b10c-f44bbe123c62"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-032",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 31,
+      "split": "HELD_OUT",
+      "targets": [
+        "00011234-7f50-416b-8d7e-e65bc2fdb4e2"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-035",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 32,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001241a-167c-4f5b-b925-a27e43708739"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-037",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 33,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000135d7-d2c3-4b73-b501-f1d9bc52662b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-039",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 34,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001497d-2890-47df-bfc8-c011da77a71b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-042",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 35,
+      "split": "HELD_OUT",
+      "targets": [
+        "000160fe-383f-4029-8dcf-1d331f645c87"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-044",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 36,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001743b-8859-4968-90e7-2eae7539d9cb"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-046",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 37,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00018004-33b7-44e0-9b28-b7cb0e6a4e1f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-049",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 38,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00019896-14b7-4227-8f81-a843669f7412"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-051",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 39,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001a29c-69d9-4379-9ca0-df1a2d8334ba"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-053",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 40,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001ac1d-e68b-4cfb-97c8-06a5ae1f4d44"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-055",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 41,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001b12c-125e-473f-91da-9d38421437f4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-058",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 42,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001b34a-78a0-4b8e-90d2-92fd51e16962"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-060",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 43,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001c779-6f56-44d8-bf3e-671feefe68f6"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-062",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 44,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001d9aa-1fab-4b5c-a4dd-4593f1dc30b8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-065",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 45,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001eeb1-3098-4b86-b6e4-5fefa64cee90"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-067",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 46,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001f752-bcfc-4017-ae1f-82bd85cbd837"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-069",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 47,
+      "split": "HELD_OUT",
+      "targets": [
+        "000223a4-fb27-4cc9-9a6f-5c2df0759a88"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-072",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 48,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002342f-daf3-4706-94eb-60b1f82cbda8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-074",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 49,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00025362-4ea7-4ecc-aef5-272d805fd5aa"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-076",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 50,
+      "split": "HELD_OUT",
+      "targets": [
+        "000258af-1f23-4824-ad42-a6f471d99afd"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-078",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 51,
+      "split": "HELD_OUT",
+      "targets": [
+        "00026cd6-7218-47bd-969b-2830198f80dc"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-081",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 52,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00028da2-b51f-4eb9-9c46-193ef1b9a49a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-083",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 53,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002a446-968a-45ae-9da1-1ba169b8914d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-085",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 54,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002b18d-34bd-4136-8a13-bad0e7712709"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-088",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 55,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002e61d-c0df-46b0-9305-2c1b42634a83"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-090",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 56,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002f4f0-0cca-4ac0-a305-a4e038ff15cd"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-092",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 57,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003198c-f659-4923-8b50-f2dda4ca8b6c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-095",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 58,
+      "split": "HELD_OUT",
+      "targets": [
+        "00033e72-60aa-43f1-a1ec-3e4fa5c61484"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-097",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 59,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00035d2f-13ed-4cf1-aeff-f13b36d36193"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-099",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 60,
+      "split": "HELD_OUT",
+      "targets": [
+        "00038640-662b-4412-b71a-6aa38761fb3b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-102",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 61,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00039928-39c6-4d53-b276-9963c33c59e8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-104",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 62,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003d2d2-396b-40d5-a0e0-19b008e92104"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-106",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 63,
+      "split": "HELD_OUT",
+      "targets": [
+        "0003e49d-5928-45d8-a918-82e95637d72e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-108",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 64,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00040621-6a66-42a1-924f-d7da189ef617"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-111",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 65,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00043343-41d1-48f5-b6fa-d4ba8abdf688"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-113",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 66,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00044f18-8b0f-4842-83b7-e84e4fc33530"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-115",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 67,
+      "split": "HELD_OUT",
+      "targets": [
+        "00045855-ce0b-4750-b317-dc6853f2b685"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-118",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 68,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004902e-501f-4aaa-8e6c-4eda951a1bba"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-120",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 69,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004a6e4-9e13-49db-b7eb-ed92c754723d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-122",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 70,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004d50a-8a32-443b-9316-7bd96ab28f84"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-125",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 71,
+      "split": "HELD_OUT",
+      "targets": [
+        "0004f424-9a8f-4391-91f1-f9a87616d117"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-127",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 72,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004f84f-9af2-4751-b5da-5ca767911bd4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-129",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 73,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00051cb6-ab77-46f8-aff8-648d7b0aa01f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-131",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 74,
+      "split": "HELD_OUT",
+      "targets": [
+        "000542b1-3c8f-4e2b-83b3-7664be1e782a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-134",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 75,
+      "split": "HELD_OUT",
+      "targets": [
+        "00054bc0-d408-44d4-a032-7440b1bee42e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-136",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 76,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000564d7-10b9-4671-9b84-cccd3a9b36c3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-138",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 77,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00059d1b-69d5-493f-ba08-98aaf410dfa8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-141",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 78,
+      "split": "HELD_OUT",
+      "targets": [
+        "0005c188-85aa-4e07-8329-4b6fcfb60eb1"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-143",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 79,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0005d9e0-152b-4700-b695-a6c04beb0dff"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-145",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 80,
+      "split": "HELD_OUT",
+      "targets": [
+        "0005e3b4-20be-4e22-87b5-5b3b47e2c702"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-148",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 81,
+      "split": "HELD_OUT",
+      "targets": [
+        "00061c04-4200-4d49-9138-6992d58a4231"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-150",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 82,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00064d73-a943-4eba-b83d-49f899faea52"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-152",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 83,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0006675f-97b0-4920-95b7-f50bedef021c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-154",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 84,
+      "split": "HELD_OUT",
+      "targets": [
+        "00067b7a-f1e3-440b-9e7a-3277adac1e57"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-157",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 85,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0006af29-52b7-47e7-9ee3-ca1503e1b35b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-159",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 86,
+      "split": "HELD_OUT",
+      "targets": [
+        "0006db42-d443-45ae-a7e3-95b2a0226f67"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-161",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 87,
+      "split": "HELD_OUT",
+      "targets": [
+        "0006e4f8-d923-450b-ac0b-cfe05f0c469e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-164",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 88,
+      "split": "HELD_OUT",
+      "targets": [
+        "0006f6af-4c77-43a1-932b-0f73d188af66"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-166",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 89,
+      "split": "HELD_OUT",
+      "targets": [
+        "000718bb-9eab-4293-bf45-cc8db79f5916"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-168",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 90,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00072743-bf4e-4a78-b21d-7d497718cc2e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-171",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 91,
+      "split": "HELD_OUT",
+      "targets": [
+        "00076658-d78b-47d8-97db-0a7656a2c4ff"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-173",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 92,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0007b44a-81a5-4155-914c-7934a5e85973"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-175",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 93,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0007d264-f422-46c9-8450-7de8dda14d26"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-177",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 94,
+      "split": "HELD_OUT",
+      "targets": [
+        "0007f49b-c366-443f-b505-ee1b46cd5565"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-180",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 95,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00081b97-056f-48c4-b26d-b19ae3cd01cf"
+      ],
+      "targetsInIndexAtFreeze": 0
+    },
+    {
+      "taskId": "ISSUE-182",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 96,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000852aa-80f2-4bb0-92ad-ccdcf9f9d855"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-184",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 97,
+      "split": "HELD_OUT",
+      "targets": [
+        "000874dc-11c4-4fce-a4d0-d1314e23c25d"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-187",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 98,
+      "split": "HELD_OUT",
+      "targets": [
+        "0008a5ef-1eaa-4658-9760-55c66de55fb8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-189",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 99,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0008b92c-fd1f-41bc-9941-da97616fc58f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-191",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 100,
+      "split": "HELD_OUT",
+      "targets": [
+        "0008e204-f42a-40e9-9d8b-1aca66b9ba03"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-194",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 101,
+      "split": "HELD_OUT",
+      "targets": [
+        "000905b0-b3bf-43d4-99e3-ff23de7fd977"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-196",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 102,
+      "split": "HELD_OUT",
+      "targets": [
+        "00091f00-b9d1-4432-a48a-faaa53b6f86f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-198",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 103,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00094570-2a1c-4e38-a7ac-16e4a9994a92"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "ISSUE-200",
+      "provenance": "LIFTED",
+      "queryClass": "legal_issue",
+      "clusterId": 104,
+      "split": "HELD_OUT",
+      "targets": [
+        "000984bc-5fc6-4cbe-8df5-558141f287bd"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-003",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 105,
+      "split": "HELD_OUT",
+      "targets": [
+        "00001e29-ed1b-41b9-86b4-06a40c6828b6"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-005",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 19,
+      "split": "HELD_OUT",
+      "targets": [
+        "00002bb6-4731-43e1-ace8-f796ef07c503"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-007",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 106,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00002c83-1562-4a42-bee8-1e48effa37e4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-010",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 107,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000035c6-734a-4e84-84d4-346a14909f5f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-012",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 108,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00003b7a-cee7-4aa3-8ca1-6dbe64e17044"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-014",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 21,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000453b-46b1-407c-9e2c-f96d3c260432"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-016",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 23,
+      "split": "HELD_OUT",
+      "targets": [
+        "00006352-e9e0-46b8-82b8-99508f33d8a1"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-019",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 109,
+      "split": "HELD_OUT",
+      "targets": [
+        "00006f2f-d36e-410c-804a-3ff8694c2fa9"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-021",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 110,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000075e8-d435-494e-bc87-0406503b904b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-023",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 111,
+      "split": "HELD_OUT",
+      "targets": [
+        "00007a2d-64bc-4e35-96ef-ed874528c8de"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-026",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 112,
+      "split": "HELD_OUT",
+      "targets": [
+        "00007d1b-d2ee-4f62-929b-3244348c9e72"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-028",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 113,
+      "split": "HELD_OUT",
+      "targets": [
+        "00008031-0fb3-47a2-8b0a-5996e58b6168"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-030",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 114,
+      "split": "HELD_OUT",
+      "targets": [
+        "000081da-e5a7-4713-ac45-2d58dd864686"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-033",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 115,
+      "split": "HELD_OUT",
+      "targets": [
+        "00009093-00e1-4df8-b58d-2cd39c1c5d99"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-035",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 27,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000098b2-0595-4788-b236-6d8b8f80551e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-037",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 116,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000aff1-9f62-4657-b583-c544b1e27d3c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-039",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 28,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000b7cc-2c5b-45e2-8673-2cee21ce4a91"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-042",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 117,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000cc7e-f88e-4f49-bee4-eeee8cf243e9"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-044",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 30,
+      "split": "HELD_OUT",
+      "targets": [
+        "0000dda9-3a8e-4499-b10c-f44bbe123c62"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-046",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 118,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0000f583-0eb9-4e2c-8b9c-f5b32583bae4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-049",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 119,
+      "split": "HELD_OUT",
+      "targets": [
+        "00010a81-a745-44cc-aba1-7cb936ff15ef"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-051",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 120,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00011969-a0a4-47e8-a621-c5468469775e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-053",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 121,
+      "split": "HELD_OUT",
+      "targets": [
+        "00011ca8-cbaa-4428-9be9-b2756dbd22fe"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-056",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 122,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00012507-d553-4eea-a37d-1760b5fc3b61"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-058",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 123,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00012c4d-c341-4022-87cd-b5d8735745e1"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-060",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 33,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000135d7-d2c3-4b73-b501-f1d9bc52662b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-062",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 34,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001497d-2890-47df-bfc8-c011da77a71b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-065",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 124,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00015a51-026a-4d57-bc3d-a8233d67b0bb"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-067",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 125,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00015c37-fbd3-47a1-8e96-1bd7197c1ee2"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-069",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 126,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00016404-77fa-4431-a600-16c6b25620a1"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-072",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 127,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00017eb4-6209-49a3-b0ef-99b63813da5a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-074",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 128,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001828f-0c01-49b3-91b3-04b826ffa32c"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-076",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 38,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00019896-14b7-4227-8f81-a843669f7412"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-079",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 129,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001b145-3dc5-4734-a2a4-b329a27bab9b"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-081",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 42,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001b34a-78a0-4b8e-90d2-92fd51e16962"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-083",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 130,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001c2b2-7b3f-4b45-9d3c-0b9b184db436"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-085",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 131,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001d129-4f87-42d3-9e98-494ab8d488e9"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-088",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 132,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001e196-c8c8-4ba0-be83-8fc8bdff5b84"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-090",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 133,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0001e471-b86d-4bdd-9fe0-7a7dcd158aad"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-092",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 45,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001eeb1-3098-4b86-b6e4-5fefa64cee90"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-095",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 46,
+      "split": "HELD_OUT",
+      "targets": [
+        "0001f752-bcfc-4017-ae1f-82bd85cbd837"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-097",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 134,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002066c-8c76-4d5d-a040-6924425a3178"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-099",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 135,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00021155-fa4c-4984-bb08-ef190314508a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-102",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 136,
+      "split": "HELD_OUT",
+      "targets": [
+        "000225c8-84d6-4b1f-b4b1-e147435e1e77"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-104",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 48,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002342f-daf3-4706-94eb-60b1f82cbda8"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-106",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 49,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00025362-4ea7-4ecc-aef5-272d805fd5aa"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-108",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 50,
+      "split": "HELD_OUT",
+      "targets": [
+        "000258af-1f23-4824-ad42-a6f471d99afd"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-111",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 137,
+      "split": "HELD_OUT",
+      "targets": [
+        "000265f2-3b5e-4892-86d3-c7bb6e6b557e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-113",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 138,
+      "split": "HELD_OUT",
+      "targets": [
+        "00026e2c-047c-479d-b51b-4a7fbb277ab0"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-115",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 139,
+      "split": "HELD_OUT",
+      "targets": [
+        "00027d19-90f5-4eb3-8b66-295693ec516f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-118",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 140,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002960c-a0d9-4e32-8067-a9ea68ad9e19"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-120",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 141,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002a350-9ecd-461d-85d5-af2e66ea2314"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-122",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 142,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002a953-5b7b-43f7-a5cf-54463f122ff6"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-125",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 143,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0002c65f-8f3d-46f2-98ee-2e27c27c55a0"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-127",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 144,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002d500-5ce7-4c47-944e-9c7e74877d39"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-129",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 145,
+      "split": "HELD_OUT",
+      "targets": [
+        "0002ef57-e535-4ec2-83cb-4dcc94a0785a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-131",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 146,
+      "split": "HELD_OUT",
+      "targets": [
+        "00030c26-0a20-4f06-94b7-636a13c0c7e3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-134",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 147,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000327b8-5029-4a8c-ae12-e9d6919560a0"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-136",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 148,
+      "split": "HELD_OUT",
+      "targets": [
+        "00033b2a-40ba-49fc-86cf-26ec8413d837"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-138",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 149,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00033f74-5e5c-4c06-9e96-28288e80c564"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-141",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 150,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003491e-cb45-48a7-950f-c098ed846bbb"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-143",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 151,
+      "split": "HELD_OUT",
+      "targets": [
+        "000356b5-bc69-46db-9433-a9a9ab99e3e4"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-145",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 152,
+      "split": "HELD_OUT",
+      "targets": [
+        "00036415-c990-40b4-84c0-3b8674c71c03"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-148",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 153,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003728c-58cb-4618-a3c8-aef3cb5ed425"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-150",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 154,
+      "split": "HELD_OUT",
+      "targets": [
+        "00038900-8bd7-4bb3-8b97-edfa0bb5d757"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-152",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 155,
+      "split": "HELD_OUT",
+      "targets": [
+        "00039526-b383-49ed-8f33-bc8247906d82"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-155",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 156,
+      "split": "HELD_OUT",
+      "targets": [
+        "00039c22-4a36-41b7-aff5-0c1259aeab92"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-157",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 157,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003aeed-ab90-4a0c-a791-8e85b9e30eb6"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-159",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 62,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0003d2d2-396b-40d5-a0e0-19b008e92104"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-161",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 63,
+      "split": "HELD_OUT",
+      "targets": [
+        "0003e49d-5928-45d8-a918-82e95637d72e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-164",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 158,
+      "split": "HELD_OUT",
+      "targets": [
+        "0003fff6-c8c0-4a88-aade-95a58f1bc191"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-166",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 159,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00040f1e-2052-4ef6-8d66-df78f4328554"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-168",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 160,
+      "split": "HELD_OUT",
+      "targets": [
+        "000419ac-f6d1-4070-9232-ffca4eff0725"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-171",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 161,
+      "split": "HELD_OUT",
+      "targets": [
+        "00044e48-4431-42f6-bc47-f9906a5e8c74"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-173",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 162,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00045454-dff9-4258-8615-c178ba4cd621"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-175",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 163,
+      "split": "HELD_OUT",
+      "targets": [
+        "00046869-629d-4247-aa45-4e5cf07eb250"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-178",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 164,
+      "split": "HELD_OUT",
+      "targets": [
+        "00048e44-ac34-43dd-82ac-97f64adfd7ce"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-180",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 68,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004902e-501f-4aaa-8e6c-4eda951a1bba"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-182",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 165,
+      "split": "HELD_OUT",
+      "targets": [
+        "00049f86-0a2b-4aca-9560-381c8c48e0bf"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-184",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 166,
+      "split": "HELD_OUT",
+      "targets": [
+        "0004b8d1-e235-4e95-aa70-62616bdf2e18"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-187",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 167,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004eac6-5a46-4c45-a29b-1354d3cba42f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-189",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 168,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "0004f4e5-8c8a-438e-b4c1-0edc4234f9f3"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-191",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 74,
+      "split": "HELD_OUT",
+      "targets": [
+        "000542b1-3c8f-4e2b-83b3-7664be1e782a"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-194",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 75,
+      "split": "HELD_OUT",
+      "targets": [
+        "00054bc0-d408-44d4-a032-7440b1bee42e"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-196",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 169,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "000562dc-efb6-4a9d-bcda-b35766c3269f"
+      ],
+      "targetsInIndexAtFreeze": 1
+    },
+    {
+      "taskId": "PROP-198",
+      "provenance": "LIFTED",
+      "queryClass": "proposition",
+      "clusterId": 170,
+      "split": "DEVELOPMENT",
+      "targets": [
+        "00057269-3869-4cc3-b181-5a1e193893a5"
+      ],
+      "targetsInIndexAtFreeze": 1
+    }
+  ]
+}

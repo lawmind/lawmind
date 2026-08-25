@@ -1,105 +1,189 @@
-# NEW1 — CONVERGENCE SPRINT V2 §7 TODO LIST
-Lane: NEW1 (retrieval science / embeddings / GPU / evaluation)
-Session: c2792141-074b-4500-b39a-be06760ea644
-Lease: ACQUIRED 2026-08-25 (took over from DEAD 22730754, pid 17932 gone)
-Plan: LAWMIND_LAUNCH_CONVERGENCE_SPRINT_MASTER_PLAN_V2_OWNERSHIP_CORRECTED_2026-08-25.md §7
+# NEW1 — CONVERGENCE SPRINT V2 §7 · WORK BOARD
 
-Status key: [ ] pending · [~] in progress · [x] done · [!] blocked · [-] deliberately not done
+**Lane:** NEW1 (retrieval science / embeddings / GPU / evaluation)
+**Session:** `c2792141-074b-4500-b39a-be06760ea644`
+**Lease:** ACQUIRED 2026-08-25T03:15Z — took over from DEAD owner `22730754` (pid 17932 gone)
+**Plan:** `LAWMIND_LAUNCH_CONVERGENCE_SPRINT_MASTER_PLAN_V2_OWNERSHIP_CORRECTED_2026-08-25.md` §7
+
+**Status key:** `[x]` done (observed) · `[~]` in progress · `[ ]` pending · `[!]` blocked · `[-]` deliberately not done
 
 ---
 
-## T0 — NEW1-0 · PROVE THE GPU FACTORY IS ACTUALLY PROGRESSING  (BEFORE ANY EXPERIMENT)
-- [x] T0.1  Acquire NEW1 lease
-- [x] T0.2  Inventory NEW1 processes: keeper, GPU sidecar, embed walk, any orphans  — keeper pid 9696 (scheduled task Lawmind-new1-sidecar-keeper) + sidecar 20452 + walk chain 25968->25792->23096
-- [x] T0.3  Record intended walk: which scope/recipe, current batch, checkpoint  — HEAD:4800 walk, worklist 205/864, batch tier-a-batch-00226
-- [x] T0.4  T0 snapshot: stage/output row count, checkpoint offset, last log line, GPU util, VRAM  — T0 03:19:49Z = 1,996,134 rows
-- [x] T0.5  Wait a real interval; T1 snapshot of the SAME four quantities  — T1 03:25:20Z = 1,997,735 rows (+1,601 in 330.6s)
-- [x] T0.6  VERDICT: RUNNING_PROGRESSING | RUNNING_STALLED | STOPPED — output delta decides, never GPU util  — RUNNING_PROGRESSING — DB delta == log inserted delta exactly
-- [x] T0.7  If stalled: raise as an INCIDENT (bus -> LCC), do not silently restart  — orphan sidecar 28592 + orphaned citations loop reported to LCC (bus 1127)
-- [x] T0.8  Detect duplicate process trees / restart storms / orphan GPU processes  — FOUND: keeper kill predicate matched 0 of 2 sidecars; fixed 067d5c8
+## PROGRESS
 
-## T1 — NEW1-1 · FREEZE FULLY REPRODUCIBLE V3.1 BENCHMARK
-- [x] T1.1  Locate current V3 benchmark harness + query set  — services/harness/src/representation-lab-v3-cli.ts (946 lines)
-- [x] T1.2  Freeze: random seed, bootstrap seed  — seed + bootstrapSeed frozen in manifest
-- [x] T1.3  Freeze: query IDs + SHA-256 of query text  — 295 query SHA-256 hashes frozen
-- [x] T1.4  Freeze: target judgment IDs  — 213 distinct target ids frozen
-- [x] T1.5  Freeze: proposition/target clusters (so n is authorities, not queries)  — 211 target clusters (union-find over shared targets)
-- [x] T1.6  Freeze: pool IDs + hard-negative IDs  — 25,000 pool ids frozen
-- [x] T1.7  Freeze: segmentation version + embedder model/version + court/task strata  — segmentation version + bge-m3 file digests + court/task strata frozen
-- [x] T1.8  Assert NO unseeded sampling anywhere in the path  — AUDITED: 2 unseeded sites found (v3-cli:359 Math.random, :623 TABLESAMPLE)
-- [x] T1.9  Emit V3.1 manifest file with a checksum; replay once to prove identical output  — V31_MANIFEST.json sha256 b2b38c68..., 1.3MB
-- [ ] T1.10 Report CIs by task AND by distinct target AND by target cluster
+```
+T0  process health / prove GPU factory   ████████████████████  8/8    DONE
+T1  V3.1 reproducible freeze             ██████████████████░░  9/10   1 left
+T2  100k passage tranche                 ██░░░░░░░░░░░░░░░░░░  1/15   BLOCKED on quiet window
+T3  safe abstention                      ██████░░░░░░░░░░░░░░  2/8    split done, eval blocked
+T4  long facts (deferred by plan)        █████████████░░░░░░░  2/3
+T5  HEAD-vs-passage recommendation       ████░░░░░░░░░░░░░░░░  1/6
+T6  continuous process health            ████████████████░░░░  6/7    ongoing
+T7  bus / reporting                      ██████░░░░░░░░░░░░░░  1/4
+                                         ─────────────────────
+                                         30 / 61
+```
 
-## T2 — NEW1-2 · 100k PASSAGE VALIDATION TRANCHE  (NOT the 30M build)
-- [ ] T2.1  Resource-safety check (disk, RAM, WAL, GPU) + quiet-window coordination on bus
-- [ ] T2.2  Select >=100k doc tranche with the mandated strata:
-            SC + multiple major HCs · recent+older · criminal/civil/commercial/
-            constitutional/service/property/family(where held) · supporting-authority ·
-            adverse-authority · statute · long narrative · known wrong-domain
-            commercial miss · currently-unreachable-by-dense targets
-- [ ] T2.3  Record the tranche selection SQL + resulting id manifest (frozen)
-- [ ] T2.4  Count gold coverage HONESTLY — do not force all gold in; forced gold = artificial reachability, and must be reported as such
-- [ ] T2.5  Segment to passages (practical representation), record segmentation version
-- [ ] T2.6  Embed the tranche; record GPU-hours, tokens/sec
-- [ ] T2.7  Build a REAL temporary ANN/HNSW index (record params)
-- [ ] T2.8  Control arm: current HEAD representation on the same query set
-- [ ] T2.9  Measure END-TO-END success (missing-from-index target = MISS)
-- [ ] T2.10 Measure CONDITIONAL ranking (indexed targets only)
-- [ ] T2.11 Metrics: s@1 s@5 r@20 r@100 r@500 MRR nDCG, target-cluster, per task family
-- [ ] T2.12 Wrong-domain result rate
-- [ ] T2.13 Resource envelope: p50/p95, heap bytes, index bytes, build time, RAM, temp disk, WAL, rebuild time
-- [ ] T2.14 ANN vs exact recall loss (at the ef_search PRODUCTION uses, not the probe default)
-- [ ] T2.15 Report supporting_authority / adverse_authority / statute / long_fact SEPARATELY and do not hide zeros behind aggregate gain
+---
 
-## T3 — NEW1-3 · SAFE ABSTENTION ("No sufficiently relevant authority found")
-- [ ] T3.1  Split queries into DEVELOPMENT and HELD-OUT before looking at any score
-- [ ] T3.2  Pre-register the threshold/calibration rule on development split only
-- [ ] T3.3  Evaluate on held-out only
-- [ ] T3.4  Measure: false confident answer rate
-- [ ] T3.5  Measure: wrong-domain confident answer rate
-- [ ] T3.6  Measure: false abstention rate
-- [ ] T3.7  Measure: coverage
-- [ ] T3.8  State plainly that the threshold was NOT tuned on the evaluation set
+## T0 — NEW1-0 · PROVE THE GPU FACTORY IS PROGRESSING ✅ COMPLETE
 
-## T4 — NEW1-4 · LONG FACTS (deliberately deferred)
-- [-] T4.1  NO new 500/1000/2500/5000 input-length sweep until reachability improves
-- [ ] T4.2  State the reachability precondition numerically (distinct indexed targets needed)
-- [ ] T4.3  Confirm to NEW3: fact-pattern / "paste your facts" stays HIDDEN and out of launch copy
+- [x] **T0.1** Acquire NEW1 lease — prior owner DEAD, takeover clean
+- [x] **T0.2** Inventory NEW1 processes — keeper pid 9696 (task `Lawmind-new1-sidecar-keeper`), sidecar 20452, walk chain 25968→25792→23096
+- [x] **T0.3** Record intended walk — HEAD:4800, worklist 205/864, batch `tier-a-batch-00226`
+- [x] **T0.4** T0 snapshot — 03:19:49Z · **1,996,134** rows · GPU 93% · 7362 MiB
+- [x] **T0.5** T1 snapshot — 03:25:20Z · **1,997,735** rows · **+1,601 in 330.6s**
+- [x] **T0.6** **VERDICT: RUNNING_PROGRESSING** — DB delta (+1,601) equals log `inserted` delta (+1,601) *exactly*
+- [x] **T0.7** Incidents raised to LCC — bus **1127**, correction **1131**
+- [x] **T0.8** Duplicate/orphan detection — **found 2 sidecars on port 8799**; root cause fixed in `067d5c8`
 
-## T5 — NEW1-5 · HEAD WALK SEQUENCING DECISION
-- [ ] T5.1  Current HEAD walk completion %, remaining GPU days, storage
-- [ ] T5.2  Retrieval gain of passage vs HEAD from T2 evidence
-- [ ] T5.3  HNSW build/serve resource cost at full scale
-- [ ] T5.4  ONE recommendation from {A continue HEAD, B pause/pivot, C HEAD as coarse/fallback only, D larger passage validation, E full passage build}
-- [ ] T5.5  Explicitly refuse to optimise for sunk compute; say what would change the answer
-- [ ] T5.6  Record that a full 30M build needs tranche + fifth-agent audit + FOUNDER approval
+**Built:** `services/harness/src/new1-progress-probe.mjs` — the T0/T1 instrument. Reports output rows, checkpoint, heartbeat age, GPU as *context only*, and what else was on the box.
 
-## T6 — NEW1-6 · PROCESS HEALTH, CONTINUOUS
-- [ ] T6.1  Re-verify stage/output delta each significant interval (not GPU util)
-- [ ] T6.2  Check keeper log for restart storms / "relaunch issued" loops
-- [ ] T6.3  Detect duplicate process trees
-- [ ] T6.4  Check VRAM + DB contention (pg_stat_activity) alongside every timing
-- [ ] T6.5  Verify each restart actually produced progress
-- [ ] T6.6  Send systemic startup/process failures to LCC on the bus
-- [ ] T6.7  Session end: report ALL background jobs + startup mechanisms
+---
 
-## T7 — BUS / REPORTING
-- [ ] T7.1  Answer LCC 1085 (quiet-window question) with which NEW1 jobs can pause
-- [ ] T7.2  Read + close pending inbound: 1094, 1095, 1104, 1117, 1073, 1100, 1101
-- [ ] T7.3  Reply to NEW3 1076 (commercial breach -> IPC 394 robbery miss)
-- [ ] T7.4  Final report: Outcome · Evidence · DATA/ACCURACY/WORKFLOW impact · Corrections ·
-            Process health · Reproducibility · 100k verdict · Abstention verdict ·
-            HEAD-vs-passage recommendation · Not done · Risks · Bus · Files/commits · Founder decisions
+## T1 — NEW1-1 · FREEZE REPRODUCIBLE V3.1 · 9/10
+
+- [x] **T1.1** Locate harness — `representation-lab-v3-cli.ts` (946 lines)
+- [x] **T1.2** Freeze random seed + bootstrap seed
+- [x] **T1.3** Freeze query IDs + SHA-256 of query text — **295** queries
+- [x] **T1.4** Freeze target IDs — **213** distinct
+- [x] **T1.5** Freeze proposition/target clusters — **211** (union-find, transitively closed)
+- [x] **T1.6** Freeze pool IDs — **25,000** (213 gold + 24,787 distractors)
+- [x] **T1.7** Freeze segmentation version · bge-m3 file digests · court/task strata
+- [x] **T1.8** Audit for unseeded sampling — **2 sites found:** `v3-cli:359` `Math.random()`, `v3-cli:623` `TABLESAMPLE` with no `REPEATABLE`
+- [x] **T1.9** Emit manifest + checksum + prove replay — **two freezes byte-identical** across tasks, clusters, strata, seeds, config, embedder, all 25,000 pool ids
+- [ ] **T1.10** Report CIs by task / distinct target / target cluster — *needs the lab rewired to consume the manifest (T2 quiet window)*
+
+**Built:** `v31-freeze-cli.ts` · `v31-pool-drift-probe.mjs` · `V31_MANIFEST.json` (1.3 MB) · `V31_REPRODUCIBILITY.md`
+**Key result:** a seed is **not** the fix — the fill table is written by the live walk, so `TABLESAMPLE REPEATABLE` fixes *which pages* are read, not *what is on them*. Identity is frozen to the artifact instead.
+**Self-caught:** `builtAt` was inside the hash, so `manifestSha256` could never answer "same benchmark?". Split into `contentSha256` (compare this) + `manifestSha256` (file integrity).
+
+---
+
+## T2 — NEW1-2 · 100k PASSAGE VALIDATION TRANCHE · 1/15 · 🚫 BLOCKED
+
+> **Blocked on a quiet window, not on knowledge.** The box cannot produce a
+> trustworthy number right now — see T6.4. Starting the build would burn ~18 GPU-hours
+> to produce latency figures nobody should trust.
+
+- [ ] **T2.1** Resource-safety check + quiet-window coordination — *requested from LCC (bus 1127); awaiting reply*
+- [ ] **T2.2** Select ≥100k tranche with mandated strata (SC + major HCs · recent+older · criminal/civil/commercial/constitutional/service/property/family · supporting- and adverse-authority · statute · long narrative · known wrong-domain commercial miss · currently-unreachable targets)
+- [ ] **T2.3** Freeze tranche selection SQL + id manifest
+- [ ] **T2.4** Count gold coverage **honestly** — forced gold = artificial reachability, must be reported as such
+- [ ] **T2.5** Segment to passages, record segmentation version
+- [ ] **T2.6** Embed tranche; record GPU-hours + tokens/sec
+- [ ] **T2.7** Build real temporary ANN/HNSW index, record params
+- [ ] **T2.8** Control arm: current HEAD representation, same queries
+- [ ] **T2.9** **END-TO-END** success — missing-from-index target = **MISS**
+- [ ] **T2.10** **CONDITIONAL** ranking — indexed targets only
+- [ ] **T2.11** s@1 · s@5 · r@20 · r@100 · r@500 · MRR · nDCG · target-cluster · per task family
+- [ ] **T2.12** Wrong-domain result rate
+- [ ] **T2.13** p50/p95 · heap bytes · index bytes · build time · RAM · temp disk · WAL · rebuild time
+- [ ] **T2.14** ANN vs exact recall — at production `ef_search=200`, **not** the probe default of 40
+- [x] **T2.15** Confirm the zero classes get reported separately, never hidden behind aggregate gain — *`adverse_authority` and `statute` are **0 for every arm** in V3; this is carried forward as a standing reporting rule*
+
+---
+
+## T3 — NEW1-3 · SAFE ABSTENTION · 2/8
+
+- [x] **T3.1** Split DEVELOPMENT / HELD-OUT **before** any score exists — **by CLUSTER, never by task**
+- [x] **T3.1a** *(added)* Stratify the split — **first version was broken and measured as such**
+- [ ] **T3.2** Pre-register the threshold/calibration rule (doc) — *next up*
+- [ ] **T3.3** Evaluate on held-out only
+- [ ] **T3.4** False confident answer rate
+- [ ] **T3.5** Wrong-domain confident answer rate
+- [ ] **T3.6** False abstention rate
+- [ ] **T3.7** Coverage
+- [ ] **T3.8** State plainly that the threshold was not tuned on the evaluation set
+
+**Built:** `v31-split-cli.mjs` · `V31_ABSTENTION_SPLIT.json`
+
+| | tasks | clusters | targets | POSED | LIFTED |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| DEVELOPMENT | 153 | 108 | 109 | 29 | 124 |
+| HELD_OUT | 142 | 103 | 104 | 16 | 126 |
+
+**Leak check: CLEAN** — no target appears on both sides.
+
+**Correction made mid-task:** the first (unstratified) cluster split gave DEVELOPMENT only **7** POSED tasks with `long_narrative`/`pasted_passage`/`statute` at **zero** — 250 LIFTED singleton clusters drowned the 45 POSED ones. Re-done with per-stratum seeded prefixes.
+
+**⚠ Honest limit discovered:** `statute` (3 dev / 0 held) and `pasted_passage` (3 dev / 0 held) have too few *independent clusters* to split at all. **Held-out abstention will cover 6 of 8 POSED classes.** Those two are development-only and no held-out claim may be made about them.
+
+---
+
+## T4 — NEW1-4 · LONG FACTS (deferred by the plan) · 2/3
+
+- [-] **T4.1** No new 500/1000/2500/5000 input-length sweep — *deliberately not done, per plan*
+- [x] **T4.2** State the reachability precondition — **12 of 213 gold (5.6%) have no production vector**; for the 20 POSED targets in V3 it was **8 of 20 = 40%**
+- [ ] **T4.3** Re-confirm to NEW3 that fact-pattern / "paste your facts" stays hidden and out of launch copy
+
+---
+
+## T5 — NEW1-5 · HEAD-vs-PASSAGE RECOMMENDATION · 1/6
+
+- [x] **T5.1** Current HEAD walk completion — **worklist 205/864 (23.7%)**, ~2.00M staged rows
+- [ ] **T5.2** Retrieval gain of passage vs HEAD from T2 evidence
+- [ ] **T5.3** HNSW build/serve resource cost at full scale
+- [ ] **T5.4** ONE recommendation from {A continue · B pause/pivot · C HEAD coarse-only · D larger validation · E full build}
+- [ ] **T5.5** Explicitly refuse to optimise for sunk compute; say what would change the answer
+- [ ] **T5.6** Record that a full 30M build needs tranche + fifth-agent audit + **founder** approval
+
+---
+
+## T6 — NEW1-6 · CONTINUOUS PROCESS HEALTH · 6/7 (ongoing)
+
+- [x] **T6.1** Re-verify output delta each interval — 5 samples taken this session
+- [x] **T6.2** Keeper log audit — found **RESTART #3 wedged 535s** in a hung PowerShell
+- [x] **T6.3** Duplicate process trees — 2 sidecars found and resolved
+- [x] **T6.4** VRAM + DB contention sampled with **every** timing
+- [x] **T6.5** Verify restarts actually produced progress — **they did not**; keeper is 0-for-1 against real stalls
+- [x] **T6.6** Systemic failures sent to LCC — bus **1127**, **1131**
+- [~] **T6.7** Session-end report of all background jobs + startup mechanisms
+
+### Findings this session
+
+| # | finding | status |
+| --- | --- | --- |
+| 1 | Keeper kill predicate `embed..gpu..server\.py` matched **0 of 2** sidecars, logged success anyway | **FIXED** `067d5c8` |
+| 2 | Keeper has **never** successfully replaced a *stalled* sidecar — 0-for-1; the one "working" restart had nothing to kill | **FIXED** (sweep now counts survivors) |
+| 3 | `killExistingSidecars` `spawnSync` had **no timeout** → keeper wedged **535s** in RESTART #3 | **FIXED** (60s timeout) + keeper restarted onto fixed code (pid 28060) |
+| 4 | Orphaned `cmd /K` loop running `citations-cli --concurrency 12` — no scheduled task, no registry record, **dead parent** | **REPORTED** to LCC |
+| 5 | Walk throughput **8,412 → 494 tok/s (17×)** with GPU at **0–2%** — IO-starved behind #4, not GPU-bound | **REPORTED**; blocks T2 |
+| 6 | Two batch attempts lost to `fetch failed` (00224, 00226) inside the stall windows | observed |
+
+### Corrections I made to my own claims
+
+- **Withdrew** the "orphan sidecar was starving VRAM" claim — measured release was **122 MiB**, not starvation. The orphan died at bind and never loaded the model. Real cost was the false-success restart, which is worse.
+- **Refused** to claim pool drift from the drift probe — table was static (+0 rows), so the run proves *determinism only*. Zero drift against zero new rows is evidence of nothing.
+
+---
+
+## T7 — BUS / REPORTING · 1/4
+
+- [x] **T7.1** Answer LCC **1085** (quiet window) — walk **can** pause, resumes losslessly via `.agents/logs/new1-walk.pause`; nothing else of mine runs
+- [ ] **T7.2** Read + close pending inbound: 1094, 1095, 1104, 1117, 1073, 1100, 1101
+- [ ] **T7.3** Reply to NEW3 **1076** (commercial breach → IPC 394 robbery miss)
+- [ ] **T7.4** Final report — Outcome · Evidence · DATA/ACCURACY/WORKFLOW · Corrections · Process health · Reproducibility · 100k verdict · Abstention verdict · HEAD-vs-passage · Not done · Risks · Bus · Files/commits · Founder decisions
+
+---
+
+## COMMITS THIS SESSION
+
+| sha | what |
+| --- | --- |
+| `067d5c8` | keeper's sidecar sweep matched zero processes and logged success anyway |
+| `79a2efa` | V3.1 freezes benchmark IDENTITY, because a seed cannot fix a table that grows |
 
 ---
 
 ## OUT OF SCOPE — DO NOT DO (plan §7 + kickoff)
-- Do NOT edit apps/** (RCC owns CLIENT_APPS)
-- Do NOT run a generic reranker sprint
-- Do NOT switch embedding models without a discriminator
-- Do NOT build 30M passage vectors now
-- Do NOT claim 37.8% small-pool performance is full-corpus performance
-- Do NOT hide zero task classes
-- Do NOT treat GPU load as useful computation
-- Do NOT change legal evidence/trust policy
-- Do NOT perform resolver/treatment work (NEW2 owns it)
+
+- Do **not** edit `apps/**` (RCC owns CLIENT_APPS)
+- Do **not** run a generic reranker sprint
+- Do **not** switch embedding models without a discriminator
+- Do **not** build 30M passage vectors now
+- Do **not** claim 37.8% small-pool performance is full-corpus performance
+- Do **not** hide zero task classes
+- Do **not** treat GPU load as useful computation
+- Do **not** change legal evidence/trust policy
+- Do **not** perform resolver/treatment work (NEW2 owns it)
