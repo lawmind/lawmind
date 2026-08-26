@@ -1,0 +1,1354 @@
+{
+ "artifact": "NEW2_SOURCE_FRESHNESS_DECOMPOSITION",
+ "lane": "NEW2",
+ "protocol": "LAWMIND_FINAL_R8_3_LIMITED_FREEZE_ORCHESTRATION_2026-08-26.md §11 N2-2",
+ "generated_at": "2026-08-26T14:49:51.281Z",
+ "supersedes": "docs/ai/new2-r8/SOURCE_FRESHNESS_R8.md — which measured only the local side",
+ "year_under_test": 2026,
+ "adapters": {
+  "aws_open_data_hc": {
+   "upstream": {
+    "parquet_objects_for_year": 56,
+    "newest_object_written": "2026-08-26T12:30:27.000Z",
+    "newest_object_key": "metadata/parquet/year=2026/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+    "upstream_write_lag_days": 0,
+    "newest_upstream_decision": "2026-08-25",
+    "decision_gap_days_upstream_minus_local": 7,
+    "latest_month": "2026-08",
+    "upstream_latest_month_ratio_to_own_baseline": 0.6398,
+    "local_latest_month_ratio_to_own_baseline": 0.0043,
+    "local_months": {
+     "2026-01": 124354,
+     "2026-02": 142492,
+     "2026-03": 123236,
+     "2026-04": 142891,
+     "2026-05": 100153,
+     "2026-06": 70675,
+     "2026-07": 93332,
+     "2026-08": 480
+    },
+    "objects_written_last_7d": 42,
+    "decision_date_probes": [
+     {
+      "key": "metadata/parquet/year=2026/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+      "rows": 10494,
+      "newest_decision": "2026-08-25",
+      "by_month": {
+       "2026-03": 1128,
+       "2026-01": 955,
+       "2026-04": 1558,
+       "2026-02": 1210,
+       "2026-05": 1405,
+       "2026-06": 1286,
+       "2026-07": 1738,
+       "2026-08": 1214
+      }
+     },
+     {
+      "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+      "rows": 759,
+      "newest_decision": "2026-08-25",
+      "by_month": {
+       "2026-03": 119,
+       "2026-04": 104,
+       "2026-01": 63,
+       "2026-02": 229,
+       "2026-05": 5,
+       "2026-06": 65,
+       "2026-07": 126,
+       "2026-08": 48
+      }
+     },
+     {
+      "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_original_side/metadata.parquet",
+      "rows": 3561,
+      "newest_decision": "2026-08-25",
+      "by_month": {
+       "2026-03": 319,
+       "2026-04": 384,
+       "2026-01": 426,
+       "2026-02": 514,
+       "2026-05": 889,
+       "2026-06": 303,
+       "2026-07": 441,
+       "2026-08": 285
+      }
+     }
+    ]
+   },
+   "local": {
+    "held": 18660626,
+    "newest_ingest": "2026-08-19 23:05:38.04583+00",
+    "local_ingest_lag_days": 7,
+    "newest_decision": "2026-08-18"
+   },
+   "verdict": "LOCAL_INGEST_BEHIND — upstream is publishing current law, we are not reading it"
+  },
+  "aws_open_data_sc": {
+   "upstream": {
+    "parquet_objects_for_year": 1,
+    "newest_object_written": "2026-08-15T16:48:53.000Z",
+    "newest_object_key": "metadata/parquet/year=2026/metadata.parquet",
+    "upstream_write_lag_days": 11,
+    "newest_upstream_decision": "2026-08-04",
+    "decision_gap_days_upstream_minus_local": 26,
+    "latest_month": "2026-08",
+    "upstream_latest_month_ratio_to_own_baseline": 0.0736,
+    "local_latest_month_ratio_to_own_baseline": 0,
+    "local_months": {
+     "2026-01": 43,
+     "2026-02": 38,
+     "2026-03": 27,
+     "2026-04": 35,
+     "2026-05": 29,
+     "2026-06": 19,
+     "2026-07": 8
+    },
+    "objects_written_last_7d": 0,
+    "decision_date_probes": [
+     {
+      "key": "metadata/parquet/year=2026/metadata.parquet",
+      "rows": 208,
+      "newest_decision": "2026-08-04",
+      "by_month": {
+       "2026-01": 43,
+       "2026-02": 38,
+       "2026-03": 27,
+       "2026-04": 35,
+       "2026-05": 29,
+       "2026-06": 19,
+       "2026-07": 15,
+       "2026-08": 2
+      }
+     }
+    ]
+   },
+   "local": {
+    "held": 38342,
+    "newest_ingest": "2026-08-11 09:52:23.341728+00",
+    "local_ingest_lag_days": 15,
+    "newest_decision": "2026-07-09"
+   },
+   "verdict": "BOTH — upstream has not written recently AND we are behind what it does hold"
+  }
+ },
+ "court_month_completeness": {
+  "months": [
+   "2026-01",
+   "2026-02",
+   "2026-03",
+   "2026-04",
+   "2026-05",
+   "2026-06",
+   "2026-07",
+   "2026-08"
+  ],
+  "latest_month": "2026-08",
+  "courts": 26,
+  "courts_effectively_absent_in_latest": 25,
+  "method": "each court's baseline is the mean of ITS OWN settled months; a corpus-wide baseline would call every small High Court incomplete for being small",
+  "rows": [
+   {
+    "court": "Allahabad High Court",
+    "baseline_per_month": 24283,
+    "months": {
+     "2026-01": {
+      "n": 20962,
+      "ratio": 0.8632,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 27919,
+      "ratio": 1.1497,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 24328,
+      "ratio": 1.0019,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 34637,
+      "ratio": 1.4264,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 32362,
+      "ratio": 1.3327,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 5489,
+      "ratio": 0.226,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 54,
+      "ratio": 0.0022,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-08": {
+      "n": 22,
+      "ratio": 0.0009,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Madras High Court",
+    "baseline_per_month": 15112,
+    "months": {
+     "2026-01": {
+      "n": 15959,
+      "ratio": 1.0561,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 20258,
+      "ratio": 1.3405,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 15490,
+      "ratio": 1.025,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 14797,
+      "ratio": 0.9792,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 3673,
+      "ratio": 0.2431,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 20494,
+      "ratio": 1.3562,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 18043,
+      "ratio": 1.194,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 62,
+      "ratio": 0.0041,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Bombay High Court",
+    "baseline_per_month": 14530,
+    "months": {
+     "2026-01": {
+      "n": 21845,
+      "ratio": 1.5034,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 20467,
+      "ratio": 1.4086,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 17299,
+      "ratio": 1.1905,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 20268,
+      "ratio": 1.3949,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 4561,
+      "ratio": 0.3139,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 2742,
+      "ratio": 0.1887,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 56,
+      "ratio": 0.0039,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-08": {
+      "n": 1,
+      "ratio": 0.0001,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Punjab and Haryana",
+    "baseline_per_month": 10847,
+    "months": {
+     "2026-01": {
+      "n": 8347,
+      "ratio": 0.7695,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 10764,
+      "ratio": 0.9924,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 14303,
+      "ratio": 1.3186,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 14933,
+      "ratio": 1.3767,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 15271,
+      "ratio": 1.4079,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 1463,
+      "ratio": 0.1349,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 13153,
+      "ratio": 1.2126,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 48,
+      "ratio": 0.0044,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Patna High Court",
+    "baseline_per_month": 8186,
+    "months": {
+     "2026-01": {
+      "n": 10699,
+      "ratio": 1.3069,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 10852,
+      "ratio": 1.3256,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 6343,
+      "ratio": 0.7748,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 8917,
+      "ratio": 1.0893,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 7082,
+      "ratio": 0.8651,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 5225,
+      "ratio": 0.6383,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 9061,
+      "ratio": 1.1068,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 6,
+      "ratio": 0.0007,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Karnataka",
+    "baseline_per_month": 6167,
+    "months": {
+     "2026-01": {
+      "n": 8051,
+      "ratio": 1.3056,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 8724,
+      "ratio": 1.4147,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 5621,
+      "ratio": 0.9115,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 5988,
+      "ratio": 0.971,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 768,
+      "ratio": 0.1245,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 7848,
+      "ratio": 1.2726,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 6374,
+      "ratio": 1.0336,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 6,
+      "ratio": 0.001,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Orissa High Court",
+    "baseline_per_month": 5663,
+    "months": {
+     "2026-01": {
+      "n": 3971,
+      "ratio": 0.7012,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 5855,
+      "ratio": 1.0339,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 6148,
+      "ratio": 1.0856,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 6664,
+      "ratio": 1.1768,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 7826,
+      "ratio": 1.382,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 3514,
+      "ratio": 0.6205,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 7779,
+      "ratio": 1.3737,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 92,
+      "ratio": 0.0162,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Calcutta High Court",
+    "baseline_per_month": 4964,
+    "months": {
+     "2026-01": {
+      "n": 5113,
+      "ratio": 1.0301,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 6475,
+      "ratio": 1.3044,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 5095,
+      "ratio": 1.0264,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 4918,
+      "ratio": 0.9908,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 3906,
+      "ratio": 0.7869,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 4276,
+      "ratio": 0.8614,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 6611,
+      "ratio": 1.3318,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 36,
+      "ratio": 0.0073,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court Of Chhattisgarh",
+    "baseline_per_month": 4305,
+    "months": {
+     "2026-01": {
+      "n": 5549,
+      "ratio": 1.2891,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 4713,
+      "ratio": 1.0949,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 3927,
+      "ratio": 0.9123,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 5303,
+      "ratio": 1.232,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 2885,
+      "ratio": 0.6702,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 3450,
+      "ratio": 0.8015,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 6166,
+      "ratio": 1.4325,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 60,
+      "ratio": 0.0139,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Delhi",
+    "baseline_per_month": 3778,
+    "months": {
+     "2026-01": {
+      "n": 3738,
+      "ratio": 0.9895,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 4740,
+      "ratio": 1.2547,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 3885,
+      "ratio": 1.0284,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 5224,
+      "ratio": 1.3828,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 4641,
+      "ratio": 1.2285,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 439,
+      "ratio": 0.1162,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 4609,
+      "ratio": 1.22,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Andhra Pradesh",
+    "baseline_per_month": 3771,
+    "months": {
+     "2026-01": {
+      "n": 4658,
+      "ratio": 1.2354,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 5745,
+      "ratio": 1.5237,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 4604,
+      "ratio": 1.2211,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 3654,
+      "ratio": 0.9691,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 1650,
+      "ratio": 0.4376,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 2312,
+      "ratio": 0.6132,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 3305,
+      "ratio": 0.8765,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 3,
+      "ratio": 0.0008,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Jharkhand",
+    "baseline_per_month": 3121,
+    "months": {
+     "2026-01": {
+      "n": 2671,
+      "ratio": 0.8558,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 3112,
+      "ratio": 0.9971,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 2920,
+      "ratio": 0.9356,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 3933,
+      "ratio": 1.2602,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 2877,
+      "ratio": 0.9218,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 3213,
+      "ratio": 1.0295,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 3635,
+      "ratio": 1.1647,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 3,
+      "ratio": 0.001,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Himachal Pradesh",
+    "baseline_per_month": 2895,
+    "months": {
+     "2026-01": {
+      "n": 2034,
+      "ratio": 0.7025,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 1045,
+      "ratio": 0.3609,
+      "state": "PARTIAL"
+     },
+     "2026-03": {
+      "n": 3179,
+      "ratio": 1.098,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 3472,
+      "ratio": 1.1992,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 4285,
+      "ratio": 1.48,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 3357,
+      "ratio": 1.1595,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 4723,
+      "ratio": 1.6312,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court Of Rajasthan",
+    "baseline_per_month": 2713,
+    "months": {
+     "2026-01": {
+      "n": 4573,
+      "ratio": 1.6858,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 3315,
+      "ratio": 1.222,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 3095,
+      "ratio": 1.1409,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 2899,
+      "ratio": 1.0687,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 1791,
+      "ratio": 0.6602,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 603,
+      "ratio": 0.2223,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 2181,
+      "ratio": 0.804,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Gauhati High Court",
+    "baseline_per_month": 2115,
+    "months": {
+     "2026-01": {
+      "n": 1492,
+      "ratio": 0.7055,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 2516,
+      "ratio": 1.1898,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 2457,
+      "ratio": 1.1619,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 1476,
+      "ratio": 0.698,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 2272,
+      "ratio": 1.0744,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 2475,
+      "ratio": 1.1704,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 1794,
+      "ratio": 0.8484,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 51,
+      "ratio": 0.0241,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court  for State of Telangana",
+    "baseline_per_month": 1580,
+    "months": {
+     "2026-01": {
+      "n": 2161,
+      "ratio": 1.3674,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 2376,
+      "ratio": 1.5035,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 1490,
+      "ratio": 0.9428,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 1735,
+      "ratio": 1.0979,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 894,
+      "ratio": 0.5657,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 826,
+      "ratio": 0.5227,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 1084,
+      "ratio": 0.6859,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Uttarakhand",
+    "baseline_per_month": 1257,
+    "months": {
+     "2026-01": {
+      "n": 955,
+      "ratio": 0.7597,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 1210,
+      "ratio": 0.9626,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 1128,
+      "ratio": 0.8974,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 1558,
+      "ratio": 1.2395,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 1405,
+      "ratio": 1.1177,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 1286,
+      "ratio": 1.0231,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 1737,
+      "ratio": 1.3819,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 33,
+      "ratio": 0.0263,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Jammu and Kashmir",
+    "baseline_per_month": 783,
+    "months": {
+     "2026-01": {
+      "n": 275,
+      "ratio": 0.3511,
+      "state": "PARTIAL"
+     },
+     "2026-02": {
+      "n": 1078,
+      "ratio": 1.3765,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 625,
+      "ratio": 0.798,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 1210,
+      "ratio": 1.545,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 985,
+      "ratio": 1.2577,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 526,
+      "ratio": 0.6716,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 1474,
+      "ratio": 1.8821,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 4,
+      "ratio": 0.0051,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Gujarat",
+    "baseline_per_month": 715,
+    "months": {
+     "2026-01": {
+      "n": 879,
+      "ratio": 1.2291,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 805,
+      "ratio": 1.1256,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 714,
+      "ratio": 0.9984,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 834,
+      "ratio": 1.1662,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 422,
+      "ratio": 0.5901,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 637,
+      "ratio": 0.8907,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 1140,
+      "ratio": 1.594,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 42,
+      "ratio": 0.0587,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Manipur",
+    "baseline_per_month": 199,
+    "months": {
+     "2026-01": {
+      "n": 132,
+      "ratio": 0.6639,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 192,
+      "ratio": 0.9656,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 176,
+      "ratio": 0.8852,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 130,
+      "ratio": 0.6538,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 310,
+      "ratio": 1.5591,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 253,
+      "ratio": 1.2724,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 112,
+      "ratio": 0.5633,
+      "state": "PARTIAL"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Tripura",
+    "baseline_per_month": 155,
+    "months": {
+     "2026-01": {
+      "n": 218,
+      "ratio": 1.4065,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 170,
+      "ratio": 1.0968,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 175,
+      "ratio": 1.129,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 151,
+      "ratio": 0.9742,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 163,
+      "ratio": 1.0516,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 53,
+      "ratio": 0.3419,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 1,
+      "ratio": 0.0065,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Meghalaya",
+    "baseline_per_month": 130,
+    "months": {
+     "2026-01": {
+      "n": 48,
+      "ratio": 0.3707,
+      "state": "PARTIAL"
+     },
+     "2026-02": {
+      "n": 117,
+      "ratio": 0.9035,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 179,
+      "ratio": 1.3822,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 164,
+      "ratio": 1.2664,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 104,
+      "ratio": 0.8031,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 165,
+      "ratio": 1.2741,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 200,
+      "ratio": 1.5444,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 7,
+      "ratio": 0.0541,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Supreme Court of India",
+    "baseline_per_month": 32,
+    "months": {
+     "2026-01": {
+      "n": 43,
+      "ratio": 1.3508,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 38,
+      "ratio": 1.1937,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 27,
+      "ratio": 0.8482,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 35,
+      "ratio": 1.0995,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 29,
+      "ratio": 0.911,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 19,
+      "ratio": 0.5969,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 8,
+      "ratio": 0.2513,
+      "state": "PARTIAL"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Sikkim",
+    "baseline_per_month": 12,
+    "months": {
+     "2026-01": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-02": {
+      "n": 8,
+      "ratio": 0.6957,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 15,
+      "ratio": 1.3043,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 19,
+      "ratio": 1.6522,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 12,
+      "ratio": 1.0435,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 15,
+      "ratio": 1.3043,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 10,
+      "ratio": 0.8696,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 3,
+      "ratio": 0.2609,
+      "state": "PARTIAL"
+     }
+    }
+   },
+   {
+    "court": "High Court of Madhya Pradesh",
+    "baseline_per_month": 12,
+    "months": {
+     "2026-01": {
+      "n": 18,
+      "ratio": 1.5211,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 22,
+      "ratio": 1.8592,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 27,
+      "ratio": 2.2817,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 4,
+      "ratio": 0.338,
+      "state": "PARTIAL"
+     },
+     "2026-05": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-06": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-07": {
+      "n": 21,
+      "ratio": 1.7746,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 1,
+      "ratio": 0.0845,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "High Court of Kerala",
+    "baseline_per_month": 10,
+    "months": {
+     "2026-01": {
+      "n": 6,
+      "ratio": 0.6207,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 14,
+      "ratio": 1.4483,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 13,
+      "ratio": 1.3448,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 3,
+      "ratio": 0.3103,
+      "state": "PARTIAL"
+     },
+     "2026-05": {
+      "n": 8,
+      "ratio": 0.8276,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-06": {
+      "n": 14,
+      "ratio": 1.4483,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-07": {
+      "n": 9,
+      "ratio": 0.931,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-08": {
+      "n": 0,
+      "ratio": 0,
+      "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   }
+  ]
+ },
+ "not_measured": [
+  "court publication calendars — a PARTIAL month may be a real vacation",
+  "upstream row counts for every bench; only the most recently written parquet files were opened",
+  "eCourts, which has never run and therefore has no lag to measure"
+ ]
+}

@@ -26,6 +26,16 @@
  *   tsx scripts/n2-statute-link-apply.mts --limit 25            # bounded dry run
  *   tsx scripts/n2-statute-link-apply.mts --sample 12           # truth sample only
  *   tsx scripts/n2-statute-link-apply.mts --apply --i-hold-heavy-box
+ *
+ * ## MANDATORY POST-APPLY STEP, added R8.3
+ *
+ *   tsx scripts/n2-statute-link-precision.mts --apply
+ *
+ * The plan refuses whole `REFUSE_PAIR_UNIDENTIFIED` pairs, so an apply can no
+ * longer recreate FIFTH's Companies-Act-1956-to-2013 defect. But this script
+ * links a whole pair at once, so it DOES restore the ~800 individual
+ * `REFUSE_SECTION_ABSENT` refs that live inside otherwise-identified pairs.
+ * Run the precision pass afterwards or those come back silently.
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';

@@ -2,12 +2,12 @@
   "artifact": "NEW2_STATUTE_LINK_PLAN_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.2",
-  "generated_at": "2026-08-25T17:09:18.570Z",
+  "generated_at": "2026-08-26T14:37:33.438Z",
   "mode": "DRY_RUN — writes nothing",
   "canonical_act_key_implementation": "@lawmind/ingest/sections :: canonicalAct",
   "unit_of_classification": "(act_key, act_named) pair — the key alone cannot see the year the court printed",
-  "held_acts": 846,
-  "held_act_keys_after_normalisation": 833,
+  "held_acts": 847,
+  "held_act_keys_after_normalisation": 834,
   "held_acts_colliding_under_normalisation": [
     {
       "act_key": "BANKING COMPANIES (ACQUISITION AND TRANSFER OF UNDERTAKINGS) ACT",
@@ -81,50 +81,54 @@
   "distinct_pairs": 16582,
   "tally": {
     "LINK_YEAR_CONFIRMED": {
-      "pairs": 721,
-      "refs": 246131
+      "pairs": 733,
+      "refs": 484243
     },
     "LINK_NAME_ONLY": {
-      "pairs": 340,
-      "refs": 74449
+      "pairs": 345,
+      "refs": 111329
     },
     "LINK_YEAR_RESOLVED": {
       "pairs": 4,
       "refs": 149
     },
     "REFUSE_YEAR_CONFLICT": {
-      "pairs": 470,
-      "refs": 2445
+      "pairs": 507,
+      "refs": 2916
     },
     "REFUSE_AMBIGUOUS": {
       "pairs": 2,
       "refs": 244
     },
     "REFUSE_UNHELD": {
-      "pairs": 15045,
-      "refs": 539176
+      "pairs": 14987,
+      "refs": 259149
+    },
+    "REFUSE_PAIR_UNIDENTIFIED": {
+      "pairs": 4,
+      "refs": 4564
     },
     "REFUSE_NULL_KEY": {
       "pairs": 0,
       "refs": 0
     }
   },
-  "linkable_refs": 320729,
-  "linkable_pct": 37.18,
+  "linkable_refs": 595721,
+  "linkable_pct": 69.06,
   "section_text_coverage": {
-    "distinct_acts_linked": 265,
+    "distinct_acts_linked": 266,
     "acts_with_no_held_section": 4,
-    "refs_whose_act_has_held_sections": 320532
+    "refs_whose_act_has_held_sections": 595524
   },
   "year_conflict_shape": {
     "DIGIT_EDIT_1": {
-      "pairs": 247,
-      "refs": 873,
+      "pairs": 262,
+      "refs": 927,
       "note": "candidate for adjudication, NEVER linked by this plan"
     },
     "PREDECESSOR_CANDIDATE": {
-      "pairs": 223,
-      "refs": 1572,
+      "pairs": 245,
+      "refs": 1989,
       "note": "the corpus cites a statute we do not hold; holding its successor is not holding it"
     }
   },
@@ -150,6 +154,16 @@
       "shape": "PREDECESSOR_CANDIDATE"
     },
     {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1898",
+      "refs": 237,
+      "printed": 1898,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "LIMITATION ACT",
       "act_named": "Limitation Act, 1908",
       "refs": 149,
@@ -168,6 +182,16 @@
         "1897"
       ],
       "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1898",
+      "refs": 88,
+      "printed": 1898,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
     },
     {
       "act_key": "HINDU MARRIAGE ACT",
@@ -281,12 +305,32 @@
       "shape": "PREDECESSOR_CANDIDATE"
     },
     {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1908",
+      "refs": 27,
+      "printed": 1908,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "INDIAN FOREST ACT",
       "act_named": "Indian Forest Act, 1878",
       "refs": 26,
       "printed": 1878,
       "held": [
         "1927"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1989",
+      "refs": 24,
+      "printed": 1989,
+      "held": [
+        "1973/1974"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
     },
@@ -329,6 +373,16 @@
         "1999"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1972",
+      "refs": 18,
+      "printed": 1972,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
     },
     {
       "act_key": "ARMS ACT",
@@ -441,6 +495,16 @@
       "shape": "DIGIT_EDIT_1"
     },
     {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code 1898",
+      "refs": 12,
+      "printed": 1898,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "CENTRAL EXCISE ACT",
       "act_named": "Central Excise Act, 1994",
       "refs": 11,
@@ -489,6 +553,16 @@
         "1908"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1978",
+      "refs": 9,
+      "printed": 1978,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
     },
     {
       "act_key": "NEGOTIABLE INSTRUMENTS ACT",
@@ -650,6 +724,26 @@
         "1963"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1873",
+      "refs": 6,
+      "printed": 1873,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1976",
+      "refs": 6,
+      "printed": 1976,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
     },
     {
       "act_key": "ELECTRICITY ACT",
@@ -835,6 +929,36 @@
       "shape": "PREDECESSOR_CANDIDATE"
     },
     {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1861",
+      "refs": 4,
+      "printed": 1861,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1882",
+      "refs": 4,
+      "printed": 1882,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1908",
+      "refs": 4,
+      "printed": 1908,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "CONSUMER PROTECTION ACT",
       "act_named": "The Consumer Protection Act, 1986",
       "refs": 4,
@@ -1003,6 +1127,16 @@
         "2023"
       ],
       "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 2026",
+      "refs": 3,
+      "printed": 2026,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
     },
     {
       "act_key": "CONSUMER PROTECTION ACT",
@@ -1374,6 +1508,56 @@
         "1908"
       ],
       "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1970",
+      "refs": 2,
+      "printed": 1970,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1979",
+      "refs": 2,
+      "printed": 1979,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1983",
+      "refs": 2,
+      "printed": 1983,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1993",
+      "refs": 2,
+      "printed": 1993,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 2023",
+      "refs": 2,
+      "printed": 2023,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
     },
     {
       "act_key": "CONSUMER PROTECTION ACT",
@@ -2696,6 +2880,196 @@
         "1908"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure ,1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure Code, 1913",
+      "refs": 1,
+      "printed": 1913,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1860",
+      "refs": 1,
+      "printed": 1860,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1872",
+      "refs": 1,
+      "printed": 1872,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1889",
+      "refs": 1,
+      "printed": 1889,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1892",
+      "refs": 1,
+      "printed": 1892,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1913",
+      "refs": 1,
+      "printed": 1913,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1961",
+      "refs": 1,
+      "printed": 1961,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1963",
+      "refs": 1,
+      "printed": 1963,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Code of Criminal Procedure, 1997",
+      "refs": 1,
+      "printed": 1997,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code 1872",
+      "refs": 1,
+      "printed": 1872,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal PrOcedure Code 1898",
+      "refs": 1,
+      "printed": 1898,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code 1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code 1989",
+      "refs": 1,
+      "printed": 1989,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1961",
+      "refs": 1,
+      "printed": 1961,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1970",
+      "refs": 1,
+      "printed": 1970,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1977",
+      "refs": 1,
+      "printed": 1977,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1978",
+      "refs": 1,
+      "printed": 1978,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "CODE OF CRIMINAL PROCEDURE",
+      "act_named": "Criminal Procedure Code, 1983",
+      "refs": 1,
+      "printed": 1983,
+      "held": [
+        "1973/1974"
+      ],
+      "shape": "DIGIT_EDIT_1"
     },
     {
       "act_key": "COMMERCIAL COURTS ACT",
@@ -4861,11 +5235,51 @@
       ]
     }
   ],
-  "unheld_keys_top": [
+  "name_only_miss_floor": 0.2,
+  "name_only_min_refs": 20,
+  "pair_unidentified": [
     {
-      "act_key": "CODE OF CRIMINAL PROCEDURE",
-      "refs": 280027
+      "act_key": "COMPANIES ACT",
+      "act_named": "Companies Act",
+      "refs": 4213,
+      "statute_id": "209b7bb2-f263-4e5a-81f6-92d0c78eaf6a",
+      "outcome": "REFUSE_PAIR_UNIDENTIFIED",
+      "missing": 946,
+      "miss_rate": 0.2245,
+      "short_title": "The Companies Act, 2013"
     },
+    {
+      "act_key": "CO-OPERATIVE SOCIETIES ACT",
+      "act_named": "Co-operative Societies Act",
+      "refs": 156,
+      "statute_id": "a874710b-4b9c-42c5-a2ce-75953b367f53",
+      "outcome": "REFUSE_PAIR_UNIDENTIFIED",
+      "missing": 138,
+      "miss_rate": 0.8846,
+      "short_title": "The Co-operative Societies Act, 1912"
+    },
+    {
+      "act_key": "REVENUE RECOVERY ACT",
+      "act_named": "Revenue Recovery Act",
+      "refs": 125,
+      "statute_id": "0f350f93-18c9-469c-9462-a19c130a0db0",
+      "outcome": "REFUSE_PAIR_UNIDENTIFIED",
+      "missing": 105,
+      "miss_rate": 0.84,
+      "short_title": "The Revenue Recovery Act, 1890"
+    },
+    {
+      "act_key": "SOCIETIES REGISTRATION ACT",
+      "act_named": "Societies Registration Act",
+      "refs": 70,
+      "statute_id": "27b0cc3d-0742-4905-a3d4-78c8328f6ef3",
+      "outcome": "REFUSE_PAIR_UNIDENTIFIED",
+      "missing": 25,
+      "miss_rate": 0.3571,
+      "short_title": "The Societies Registration Act, 1860"
+    }
+  ],
+  "unheld_keys_top": [
     {
       "act_key": "INDIAN PENAL CODE",
       "refs": 93881
@@ -5021,7 +5435,11 @@
     {
       "act_key": "DOMESTIC VIOLENCE ACT",
       "refs": 498
+    },
+    {
+      "act_key": "RTI ACT",
+      "refs": 496
     }
   ],
-  "link_plan_size": 1065
+  "link_plan_size": 1082
 }

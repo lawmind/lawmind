@@ -132,7 +132,26 @@ type Outcome =
   | 'REFUSE_YEAR_CONFLICT'   // held Act(s) exist, printed year matches NONE of them
   | 'REFUSE_AMBIGUOUS'       // several held Acts, no year printed
   | 'REFUSE_UNHELD'          // no held Act carries this key at all
+  | 'REFUSE_PAIR_UNIDENTIFIED' // name-only, and the held Act cannot supply the sections cited under that name
   | 'REFUSE_NULL_KEY';       // extractor produced no key
+
+/**
+ * A name-only pair whose held Act cannot supply this share of its cited
+ * sections is treated as unidentified. See §3b.
+ *
+ * 0.20 is this lane's choice, recorded as such. The distribution makes it a gap
+ * rather than a knife-edge: 257 of 340 name-only pairs missed NOTHING, 51 more
+ * missed under 5%, and then empty space until Companies Act at 22%, Societies
+ * Registration at 36%, Revenue Recovery at 84%, Co-operative Societies at 88%.
+ */
+const NAME_ONLY_MISS_FLOOR = 0.2;
+
+/**
+ * A pair-level verdict needs enough refs to be a rate rather than an anecdote.
+ * At 3 or 4 refs a single absent section reads as 25–33% and would condemn a
+ * correct pair — the same over-refusal in the other direction.
+ */
+const NAME_ONLY_MIN_REFS = 20;
 
 async function main() {
   // ---- 1. Held Acts, keyed by the SAME function the extractor used --------
@@ -163,6 +182,7 @@ async function main() {
     REFUSE_YEAR_CONFLICT: { pairs: 0, refs: 0 },
     REFUSE_AMBIGUOUS: { pairs: 0, refs: 0 },
     REFUSE_UNHELD: { pairs: 0, refs: 0 },
+    REFUSE_PAIR_UNIDENTIFIED: { pairs: 0, refs: 0 },
     REFUSE_NULL_KEY: { pairs: 0, refs: 0 },
   };
 
@@ -228,6 +248,80 @@ async function main() {
     }
   }
 
+  // ---- 3b. THE NAME-ONLY PREDECESSOR PREMISE — added R8.3 on FIFTH 1319 ---
+  //
+  // A name-only match identifies the Act only if the corpus holds the Act the
+  // court meant. It is silently wrong when the court meant the REPEALED
+  // PREDECESSOR: "Companies Act" with no year keys to the held 2013 Act, and
+  // FIFTH found a judgment discussing s.542 — fraudulent conduct of business, a
+  // 1956 section — pinned to an Act that ends at s.470.
+  //
+  // The mechanical proof available without deciding which Act the court meant:
+  // if the held Act cannot supply {@link NAME_ONLY_MISS_FLOOR} of the sections
+  // courts cite under that name, the name has not identified it.
+  //
+  // This must live HERE and not in a post-hoc cleanup, because the plan file is
+  // what `n2-statute-link-apply.mts` reads. A repair applied afterwards is undone
+  // by the next apply, silently, and nothing would report it.
+  const nameOnly = linkPlan.filter((l) => l.outcome === 'LINK_NAME_ONLY');
+  const unidentified: { act_key: string; act_named: string; refs: number; statute_id: string; missing: number; miss_rate: number; short_title: string }[] = [];
+  if (nameOnly.length > 0) {
+    // The test is against the PLANNED target and never against `r.statute_id`.
+    //
+    // A first version joined on the current link, and reported zero — because
+    // the R8.3 precision pass had already unlinked exactly the rows it needed
+    // to see. A rule that reads the state its own repair just changed measures
+    // the repair, not the corpus.
+    const keys = [...new Set(nameOnly.map((l) => l.act_key))];
+    const cited = await sql<{ act_key: string; act_named: string; sec: string; n: number }[]>`
+      select act_key, act_named,
+             upper(regexp_replace(section_number, '[^A-Za-z0-9]', '', 'g')) as sec,
+             count(*)::int as n
+        from judgment_statute_refs
+       where act_key = any(${keys})
+       group by 1, 2, 3`;
+    const targets = [...new Set(nameOnly.map((l) => l.statute_id))];
+    const heldSecs = await sql<{ statute_id: string; sec: string }[]>`
+      select statute_id::text as statute_id,
+             upper(regexp_replace(section_number, '[^A-Za-z0-9]', '', 'g')) as sec
+        from statute_sections
+       where statute_id = any(${targets}::uuid[])`;
+    const heldBy = new Map<string, Set<string>>();
+    for (const h of heldSecs) {
+      if (!heldBy.has(h.statute_id)) heldBy.set(h.statute_id, new Set());
+      heldBy.get(h.statute_id)!.add(h.sec);
+    }
+    const citedBy = new Map<string, { sec: string; n: number }[]>();
+    for (const c of cited) {
+      const k = `${c.act_key}|${c.act_named}`;
+      if (!citedBy.has(k)) citedBy.set(k, []);
+      citedBy.get(k)!.push({ sec: c.sec, n: c.n });
+    }
+    const titleOf = new Map(held.map((h) => [h.id, h.short_title]));
+
+    for (const l of nameOnly) {
+      const heldSet = heldBy.get(l.statute_id);
+      if (!heldSet || heldSet.size === 0) continue; // absent says nothing about an Act with no sections held
+      const rows = citedBy.get(`${l.act_key}|${l.act_named}`) ?? [];
+      const n = rows.reduce((a, r) => a + r.n, 0);
+      if (n < NAME_ONLY_MIN_REFS) continue;
+      const missing = rows.filter((r) => !heldSet.has(r.sec)).reduce((a, r) => a + r.n, 0);
+      const rate = missing / n;
+      if (rate < NAME_ONLY_MISS_FLOOR) continue;
+      l.outcome = 'REFUSE_PAIR_UNIDENTIFIED';
+      tally.LINK_NAME_ONLY.pairs -= 1;
+      tally.LINK_NAME_ONLY.refs -= l.refs;
+      tally.REFUSE_PAIR_UNIDENTIFIED.pairs += 1;
+      tally.REFUSE_PAIR_UNIDENTIFIED.refs += l.refs;
+      unidentified.push({ ...l, missing, miss_rate: Number(rate.toFixed(4)), short_title: titleOf.get(l.statute_id) ?? '?' });
+    }
+    // Removed from the writable set, not merely relabelled: the apply script
+    // trusts every row in this file to be linkable.
+    for (let i = linkPlan.length - 1; i >= 0; i--) {
+      if (linkPlan[i]!.outcome === 'REFUSE_PAIR_UNIDENTIFIED') linkPlan.splice(i, 1);
+    }
+  }
+
   // ---- 4. Section-text coverage for what we would link -------------------
   // Linking the Act is what §7.2 asks. Whether the advocate can then READ the
   // section is a different fact and is reported separately — a link to an Act
@@ -285,6 +379,9 @@ async function main() {
     },
     year_conflicts: yearConflicts.sort((a, b) => b.refs - a.refs),
     truly_ambiguous: trulyAmbiguous.sort((a, b) => b.refs - a.refs),
+    name_only_miss_floor: NAME_ONLY_MISS_FLOOR,
+    name_only_min_refs: NAME_ONLY_MIN_REFS,
+    pair_unidentified: unidentified.sort((a, b) => b.refs - a.refs),
     unheld_keys_top: topUnheld,
     link_plan_size: linkPlan.length,
   };

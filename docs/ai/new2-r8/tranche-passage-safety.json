@@ -2,40 +2,42 @@
   "artifact": "NEW2_TRANCHE_PASSAGE_SAFETY_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.7",
-  "generated_at": "2026-08-26T04:33:12.147Z",
-  "mode": "POOL_AND_TOPK",
+  "generated_at": "2026-08-26T14:28:07.675Z",
+  "mode": "POOL_ONLY",
   "tranche": {
     "passages": 418116,
     "documents": 81720,
     "complete": null
   },
-  "sampled": 800,
+  "sampled": 59760,
   "role_counts": {
-    "OTHER_UNKNOWN": 360,
-    "PARTY_SUBMISSION": 165,
-    "HOLDING_OPERATIVE": 45,
-    "FACTS": 4,
-    "PROCEDURAL_HISTORY": 13,
-    "CASE_HEADER": 162,
-    "COURT_REASONING": 14,
-    "SPAN_UNVERIFIABLE": 26,
-    "REPORTER_EDITORIAL": 5,
-    "DAMAGED_OR_OCR_SUSPECT": 6
+    "PARTY_SUBMISSION": 8998,
+    "OTHER_UNKNOWN": 36072,
+    "CASE_HEADER": 6000,
+    "REPORTER_EDITORIAL": 2651,
+    "SPAN_UNVERIFIABLE": 1123,
+    "HOLDING_OPERATIVE": 2311,
+    "PROCEDURAL_HISTORY": 897,
+    "FACTS": 630,
+    "COURT_REASONING": 715,
+    "DAMAGED_OR_OCR_SUSPECT": 295,
+    "QUOTED_PRECEDENT": 68
   },
   "role_share_pct": {
-    "OTHER_UNKNOWN": 45,
-    "PARTY_SUBMISSION": 20.63,
-    "HOLDING_OPERATIVE": 5.63,
-    "FACTS": 0.5,
-    "PROCEDURAL_HISTORY": 1.63,
-    "CASE_HEADER": 20.25,
-    "COURT_REASONING": 1.75,
-    "SPAN_UNVERIFIABLE": 3.25,
-    "REPORTER_EDITORIAL": 0.63,
-    "DAMAGED_OR_OCR_SUSPECT": 0.75
+    "PARTY_SUBMISSION": 15.06,
+    "OTHER_UNKNOWN": 60.36,
+    "CASE_HEADER": 10.04,
+    "REPORTER_EDITORIAL": 4.44,
+    "SPAN_UNVERIFIABLE": 1.88,
+    "HOLDING_OPERATIVE": 3.87,
+    "PROCEDURAL_HISTORY": 1.5,
+    "FACTS": 1.05,
+    "COURT_REASONING": 1.2,
+    "DAMAGED_OR_OCR_SUSPECT": 0.49,
+    "QUOTED_PRECEDENT": 0.11
   },
-  "span_unverifiable": 26,
-  "unsafe_as_court_reasoning": 202,
+  "span_unverifiable": 1123,
+  "unsafe_as_court_reasoning": 13135,
   "unsafe_roles": [
     "SPAN_UNVERIFIABLE",
     "DAMAGED_OR_OCR_SUSPECT",
@@ -45,246 +47,15 @@
   ],
   "sc_vs_hc": {
     "supreme_court": {
-      "n": 30,
-      "unsafe": 3
+      "n": 26800,
+      "unsafe": 4968
     },
     "high_courts": {
-      "n": 770,
-      "unsafe": 199
+      "n": 32960,
+      "unsafe": 8167
     }
   },
-  "topk": {
-    "k": 10,
-    "ef_search": 200,
-    "ef_search_source": "services/api/src/search/retrieve.ts:688 — production value, NOT pgvector default 40",
-    "queries": 20,
-    "passages": 200,
-    "role_counts": {
-      "HOLDING_OPERATIVE": 22,
-      "OTHER_UNKNOWN": 128,
-      "PARTY_SUBMISSION": 19,
-      "DAMAGED_OR_OCR_SUSPECT": 1,
-      "CASE_HEADER": 1,
-      "COURT_REASONING": 7,
-      "SPAN_UNVERIFIABLE": 2,
-      "REPORTER_EDITORIAL": 20
-    },
-    "role_share_pct": {
-      "HOLDING_OPERATIVE": 11,
-      "OTHER_UNKNOWN": 64,
-      "PARTY_SUBMISSION": 9.5,
-      "DAMAGED_OR_OCR_SUSPECT": 0.5,
-      "CASE_HEADER": 0.5,
-      "COURT_REASONING": 3.5,
-      "SPAN_UNVERIFIABLE": 1,
-      "REPORTER_EDITORIAL": 10
-    },
-    "unsafe": 42,
-    "unsafe_pct": 21,
-    "pool_unsafe_pct": 25.25,
-    "span_unverifiable": 2,
-    "per_query": [
-      {
-        "query": "anticipatory bail",
-        "k": 10,
-        "roles": {
-          "HOLDING_OPERATIVE": 2,
-          "OTHER_UNKNOWN": 7,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "bail application rejected",
-        "k": 10,
-        "roles": {
-          "PARTY_SUBMISSION": 3,
-          "OTHER_UNKNOWN": 6,
-          "HOLDING_OPERATIVE": 1
-        },
-        "unsafe": 3
-      },
-      {
-        "query": "regular bail in NDPS case",
-        "k": 10,
-        "roles": {
-          "HOLDING_OPERATIVE": 3,
-          "OTHER_UNKNOWN": 7
-        },
-        "unsafe": 0
-      },
-      {
-        "query": "quashing of FIR under section 482",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 5,
-          "DAMAGED_OR_OCR_SUSPECT": 1,
-          "HOLDING_OPERATIVE": 4
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "quashing criminal proceedings settlement",
-        "k": 10,
-        "roles": {
-          "HOLDING_OPERATIVE": 5,
-          "OTHER_UNKNOWN": 4,
-          "CASE_HEADER": 1
-        },
-        "unsafe": 0
-      },
-      {
-        "query": "condonation of delay limitation",
-        "k": 10,
-        "roles": {
-          "PARTY_SUBMISSION": 3,
-          "OTHER_UNKNOWN": 4,
-          "HOLDING_OPERATIVE": 2,
-          "COURT_REASONING": 1
-        },
-        "unsafe": 3
-      },
-      {
-        "query": "limitation period for appeal",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 7,
-          "SPAN_UNVERIFIABLE": 1,
-          "COURT_REASONING": 2
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "writ petition maintainability alternative remedy",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 7,
-          "HOLDING_OPERATIVE": 2,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "writ of mandamus against private body",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 8,
-          "HOLDING_OPERATIVE": 2
-        },
-        "unsafe": 0
-      },
-      {
-        "query": "cheque bounce section 138 notice",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 8,
-          "PARTY_SUBMISSION": 1,
-          "COURT_REASONING": 1
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "dishonour of cheque presumption",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 8,
-          "REPORTER_EDITORIAL": 1,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 2
-      },
-      {
-        "query": "specific performance of agreement to sell",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 4,
-          "REPORTER_EDITORIAL": 5,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 6
-      },
-      {
-        "query": "temporary injunction three ingredients",
-        "k": 10,
-        "roles": {
-          "COURT_REASONING": 1,
-          "PARTY_SUBMISSION": 3,
-          "OTHER_UNKNOWN": 6
-        },
-        "unsafe": 3
-      },
-      {
-        "query": "maintenance under section 125",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 8,
-          "REPORTER_EDITORIAL": 1,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 2
-      },
-      {
-        "query": "custody of minor child welfare",
-        "k": 10,
-        "roles": {
-          "REPORTER_EDITORIAL": 4,
-          "OTHER_UNKNOWN": 5,
-          "SPAN_UNVERIFIABLE": 1
-        },
-        "unsafe": 5
-      },
-      {
-        "query": "dying declaration admissibility",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 9,
-          "REPORTER_EDITORIAL": 1
-        },
-        "unsafe": 1
-      },
-      {
-        "query": "circumstantial evidence last seen",
-        "k": 10,
-        "roles": {
-          "REPORTER_EDITORIAL": 4,
-          "OTHER_UNKNOWN": 6
-        },
-        "unsafe": 4
-      },
-      {
-        "query": "compassionate appointment policy",
-        "k": 10,
-        "roles": {
-          "REPORTER_EDITORIAL": 1,
-          "HOLDING_OPERATIVE": 1,
-          "OTHER_UNKNOWN": 7,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 2
-      },
-      {
-        "query": "termination of workman industrial dispute",
-        "k": 10,
-        "roles": {
-          "OTHER_UNKNOWN": 5,
-          "PARTY_SUBMISSION": 2,
-          "REPORTER_EDITORIAL": 3
-        },
-        "unsafe": 5
-      },
-      {
-        "query": "land acquisition compensation enhancement",
-        "k": 10,
-        "roles": {
-          "COURT_REASONING": 2,
-          "OTHER_UNKNOWN": 7,
-          "PARTY_SUBMISSION": 1
-        },
-        "unsafe": 1
-      }
-    ],
-    "prediction_recorded_before_run": "top-k will carry MORE PARTY_SUBMISSION than the 19.38% pool rate"
-  },
+  "topk": null,
   "caveats": [
     "POOL base rate only. §7.7 requires TOP-K, which needs the completed tranche and the rebuilt HNSW.",
     "SPAN_UNVERIFIABLE is not a role. It is a passage whose words cannot be located in the source, and it must never be averaged in as if it had been read.",

@@ -1,0 +1,1990 @@
+{
+ "artifact": "NEW2_ROLE_BLIND_KEY",
+ "lane": "NEW2",
+ "sealed_for": "FIFTH — open only after labelling",
+ "generated_at": "2026-08-26T14:25:44.276Z",
+ "sample_fingerprint": "def525d68fa7f1f60675005d0bd086d771f7912b031585fcac0790e9cdad6235",
+ "scan": {
+  "scanned": 59760,
+  "draw": "md5(judgment_id||':'||chunk_index) % 7 = 0, the widened form of the prevalence draw",
+  "observed_role_counts": {
+   "PARTY_SUBMISSION": 8998,
+   "OTHER_UNKNOWN": 36072,
+   "CASE_HEADER": 6000,
+   "REPORTER_EDITORIAL": 2651,
+   "SPAN_UNVERIFIABLE": 1123,
+   "HOLDING_OPERATIVE": 2311,
+   "PROCEDURAL_HISTORY": 897,
+   "FACTS": 630,
+   "COURT_REASONING": 715,
+   "DAMAGED_OR_OCR_SUSPECT": 295,
+   "QUOTED_PRECEDENT": 68
+  }
+ },
+ "design": {
+  "per_cell": 14,
+  "cells": [
+   {
+    "cell": "CASE_HEADER|HIGH_COURT",
+    "available": 5912,
+    "taken": 14
+   },
+   {
+    "cell": "CASE_HEADER|SUPREME_COURT",
+    "available": 88,
+    "taken": 14
+   },
+   {
+    "cell": "COURT_REASONING|HIGH_COURT",
+    "available": 386,
+    "taken": 14
+   },
+   {
+    "cell": "COURT_REASONING|SUPREME_COURT",
+    "available": 329,
+    "taken": 14
+   },
+   {
+    "cell": "DAMAGED_OR_OCR_SUSPECT|HIGH_COURT",
+    "available": 142,
+    "taken": 14
+   },
+   {
+    "cell": "DAMAGED_OR_OCR_SUSPECT|SUPREME_COURT",
+    "available": 153,
+    "taken": 14
+   },
+   {
+    "cell": "FACTS|HIGH_COURT",
+    "available": 281,
+    "taken": 14
+   },
+   {
+    "cell": "FACTS|SUPREME_COURT",
+    "available": 349,
+    "taken": 14
+   },
+   {
+    "cell": "HOLDING_OPERATIVE|HIGH_COURT",
+    "available": 1947,
+    "taken": 14
+   },
+   {
+    "cell": "HOLDING_OPERATIVE|SUPREME_COURT",
+    "available": 364,
+    "taken": 14
+   },
+   {
+    "cell": "OTHER_UNKNOWN|HIGH_COURT",
+    "available": 15647,
+    "taken": 14
+   },
+   {
+    "cell": "OTHER_UNKNOWN|SUPREME_COURT",
+    "available": 20425,
+    "taken": 14
+   },
+   {
+    "cell": "PARTY_SUBMISSION|HIGH_COURT",
+    "available": 6882,
+    "taken": 14
+   },
+   {
+    "cell": "PARTY_SUBMISSION|SUPREME_COURT",
+    "available": 2116,
+    "taken": 14
+   },
+   {
+    "cell": "PROCEDURAL_HISTORY|HIGH_COURT",
+    "available": 620,
+    "taken": 14
+   },
+   {
+    "cell": "PROCEDURAL_HISTORY|SUPREME_COURT",
+    "available": 277,
+    "taken": 14
+   },
+   {
+    "cell": "QUOTED_PRECEDENT|HIGH_COURT",
+    "available": 22,
+    "taken": 14
+   },
+   {
+    "cell": "QUOTED_PRECEDENT|SUPREME_COURT",
+    "available": 46,
+    "taken": 14
+   },
+   {
+    "cell": "REPORTER_EDITORIAL|HIGH_COURT",
+    "available": 117,
+    "taken": 14
+   },
+   {
+    "cell": "REPORTER_EDITORIAL|SUPREME_COURT",
+    "available": 2534,
+    "taken": 14
+   },
+   {
+    "cell": "SPAN_UNVERIFIABLE|HIGH_COURT",
+    "available": 1004,
+    "taken": 14
+   },
+   {
+    "cell": "SPAN_UNVERIFIABLE|SUPREME_COURT",
+    "available": 119,
+    "taken": 14
+   }
+  ],
+  "warning": "oversampled by design; class proportions here are NOT prevalence"
+ },
+ "predictions": [
+  {
+   "passage_id": "4348687c-a568-4b81-b684-66770e80a8c2:0",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "78bd166c-8e21-4a28-a24e-e215c2e471bf:2",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "88000a80-ecb7-49b8-b175-b8da4dd743a5:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b67896d2-8bc2-4dc9-9e45-a811ef22d99a:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "4dcd3aed-2fd1-49a3-b23b-9069407d0e68:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "892aefc5-7c53-490f-874a-337fdbc5d372:1",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "899ac9ab-22d6-448b-8b87-b9a5000c21a7:36",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "33677975-e006-4364-a8b4-fb6dd68a5b85:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d2046457-e09a-4314-b290-7743681ad2cd:3",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "72915fc7-4cd9-48b3-835a-43a14510ca28:85",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b68abfad-3359-4c08-a830-46a858aac68a:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "e7fc78df-9354-45cb-b6a9-10aeefcca752:4",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "648903e5-2108-44d6-aacd-06c67b11454c:10",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d6951e4c-615d-4989-a38a-42213c324381:151",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "28724270-a73b-476a-aac9-881183ca24c6:7",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ee2c6aeb-c8af-4662-b872-db88cabde0bd:9",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "00873679-39ae-4762-af99-7c318cbe304c:41",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "6dcdb033-ba1a-41ea-bc9c-a59bb6966df8:6",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a36cc326-2159-4db9-b8db-b142a98ab136:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ce261b65-c5d3-4250-af95-afeb64a84aaa:5",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "4bed3505-ce2b-4d9b-a741-26893397a62f:14",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b90040bb-f908-471a-9304-b0ccf208c432:8",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "94f4562c-d3c5-41e6-b718-fcf25eaad6cd:29",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b8998947-d109-4ef6-8547-6f9da609168c:5",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "e38bbdb2-b992-4696-9c94-b8539aa64120:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "89da6f47-2385-4275-b8d4-4c87173dc3f0:1",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c870754f-0ab4-4a2c-9a88-541f97e1d98a:1",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "6fe7a5a5-520e-477a-8255-453fd20ceadb:7",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "bf00831b-1df0-45d9-b44f-1fe710566003:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "66927d39-6557-4943-9876-35b70fe0e4fc:8",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5f485e3b-b4e6-4ed6-abd3-28cfbb02a0a5:18",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "1661c0c8-c691-40f6-8246-7b40fc84112c:11",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "770b5b43-53d6-4c68-896a-36d09bb77b3c:0",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "6e306bc7-108d-4981-97cf-f44bf624268a:3",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "f2e4e2ba-7631-48f5-ac85-1371dc32c12a:25",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0185048e-a218-487b-a2af-c9c8060c6087:0",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "3433e688-ecac-4e74-9068-fb90658b8432:63",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "24a4416d-6b03-4b85-aefd-39b482d04532:7",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "f583eb42-d1cb-488f-a8e6-7a33b075aacc:6",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "20a3ec5b-7daf-4525-97a8-4d5982d91ac5:46",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5dcf1306-297c-4d76-93da-9e7958786009:8",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "82b9b497-171f-4432-ac9a-49999f59a621:8",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "862c0df9-c071-41a8-8775-99353d389b66:30",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a505a4c6-16b3-42c6-8791-561e744db878:11",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "40e7537e-b29b-4395-b071-018f782b8901:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "3fde76b3-6e0b-43d1-8848-3e36cd4b45aa:6",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "8980bdf7-b96d-4e72-a826-16be5b357237:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f422b4ba-237f-4498-a1b9-442b7568f4f2:43",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0ac9ad5a-907e-44a0-af02-b7b5e99b6365:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d878d220-5298-4ab2-9bd0-fcc363f7f638:6",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e54c5e06-2d16-4832-8644-51fb9083a675:22",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "1427101a-c362-46b6-92e3-9c3a3925cceb:4",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "26efaca2-9c10-4bf8-b8e5-730c13c372c2:5",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0a8ec933-d0d1-4c7f-b408-97d5ec707124:5",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b41c329d-2fd0-4298-b967-804f0328c15c:4",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "00ef0f5d-83c8-4b79-ba8d-905dfbd0af70:9",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "878c21dc-ab8d-4d92-9c34-e7e931cff904:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c4913af5-9b8c-490d-9b40-c7ade1990aaa:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "7947a89a-754b-4876-811e-1bbfc1ed0a41:0",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "1d5ef9a8-f4fe-4b70-b096-7988ba3a567c:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "38a8739b-718d-412b-926f-bf77b24f937c:19",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "9fd4f2c1-775f-4172-b5a9-6b99149b947e:85",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "5769388e-71b2-450b-9c0d-1d7d5a688247:8",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a9ff889e-a5db-4dcc-8919-298788249734:12",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "68c29f19-5fc0-461f-8c90-ef32135a3b6b:2",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "36753e22-802c-4812-bd40-c8edba084618:6",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "e69b1377-e5c0-4e0a-b446-349fce5eed4b:22",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "fd3a63e5-f4bc-4fc9-aec8-d43c23d7b572:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "a9adc987-8a7b-4134-8557-62f3a86664d0:4",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "b37bc3b8-cb6a-4ed1-b60c-5a6e84d2959f:19",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0ba9eae5-31cb-4245-b9a8-a3ac125c687a:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f4c38d6d-6259-4432-b1ea-cba8872734c4:14",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "53264935-66f9-474a-8b07-f33dd7865f78:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "9fd4f2c1-775f-4172-b5a9-6b99149b947e:38",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "51389766-fb46-4cf4-adf0-a776fe01858b:2",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "14775c60-a4c9-40e3-a023-f01eaded8128:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f8d24328-4bd6-4a09-8309-0c14094040c3:8",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b0dc5a33-f507-4920-9914-f7e503ba7601:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "bb855c51-4496-46cf-8ccd-dbb464f3cef9:1",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d704371e-451c-419d-9eed-3237fd10d1e0:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "db21c5c3-e2b8-4650-ab9f-8447bd047037:3",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "064a0671-ef53-4642-b77d-b5a1a0bee9bc:5",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d89fb4fe-5e8f-48f0-9764-47d89e3e632a:7",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "b6c83ff9-adad-4513-b210-d9e8faf7afe0:7",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "94f59df2-46e9-42e7-9995-cc3771ab78e3:15",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2a8a7526-58e5-4cf7-a280-2d14055706b0:1",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "668cf98f-d150-4275-abb3-3eec5005910b:18",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0a07e0fe-46e3-4cb7-b162-75f117936147:4",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "384fb0db-f072-4c8e-bcae-1d76ee4f135f:8",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a16c4817-a160-4b2b-b07b-cffc106dba08:48",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "746755a5-6ac7-4a45-b320-9a14b0b4a5fb:14",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "3f4eb11f-fc53-4d8f-9784-1b36de2eb842:6",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "9ac3b486-b13e-4cee-a708-f726ba81e9f3:16",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "baae83e2-260e-4d3f-8e33-86007f722e49:7",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c5e3c4ad-535a-4181-8c01-1de1980dea0c:23",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ebba782a-f518-44c8-95ed-c9adf2ee781e:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "2dbe760c-83c9-4a67-8074-0c0d4983bc75:7",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "050f52e3-3af1-414a-b6e6-580efcdee924:42",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "868ae57b-144f-49d9-8d00-69834e630108:40",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "04c224f5-0403-4157-bce9-803247624df3:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5b7f5386-289f-409f-adf3-d52dc7752cbf:21",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "99b8a10b-9920-447d-a5ee-a012d63cdf5d:16",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "f41bce92-30c5-4a75-9f44-2f02357b2bca:2",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "ad206801-4388-4a9e-b157-e5249527aa26:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "4af0a4cc-8cbf-4324-b342-9193dc4fcf3a:9",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "5db2d877-c544-414e-b90c-eeb178fb57d5:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "7cf8ed5f-bbf4-4965-9e78-8eb00ba7d645:14",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d414228f-558d-4412-8eba-d023eb39e76f:8",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "5503d5f4-c641-4d25-aa71-4d371ad96792:6",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e46af859-2620-4c8d-b680-1892b5799d3c:1",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "3b4b4d00-104f-49fd-82de-a13b0c0d3a6a:0",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5723acd3-79a1-4e34-a1ba-1eed0f4f458f:6",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "13f7cb3c-90ed-45a8-b479-abbd45fabbdb:2",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "94012390-d2f9-4014-a5d7-ec87bfa83842:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "703fba5a-c524-45b6-ab52-62cab03e3ce7:3",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b5b82f23-4688-4a3d-abe4-f7c3df0183d0:20",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "99a07eb5-e79b-4287-97da-18e73c4d0b54:153",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "12cbff69-ba5f-47af-890b-19005230b5f9:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "2ac48af6-c066-4b2b-ad08-b5dd0ff18fc4:2",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "63ec7afd-e88d-4805-9f70-cca62d5d6ddb:28",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e244747d-1ec4-4239-83ff-6edaa9c8cf90:39",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b82f53f7-181c-4711-a699-3382a7454be4:3",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "10f89d19-7c1b-4854-a752-5563d8e150fb:464",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ae251d60-5e03-4d77-b996-28f8399b482c:3",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "661c8053-6600-48dd-bedb-5419140349f8:8",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "6851d7e7-3f4e-4648-b788-36a8940894cb:1",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "fbbfbad7-29f8-4457-ac92-e6513ea28a01:2",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "bad05d78-7876-4954-bacf-49dd97472efe:10",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "52683606-8222-467a-9853-d48293e029c9:86",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c30bb920-f7c6-44f9-b660-32963c0a2876:2",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "cbb107b2-b268-446c-9164-f2603fba517c:4",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c0281a83-23bf-4009-be9a-3fbe60133387:4",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a2633292-123d-4080-9a9b-f60070a609ce:1",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "366c89b4-7678-455d-9f4f-26b3f7978734:51",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0933a78c-aa36-4c0a-b959-06bda9c38e11:15",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "fd4f850e-4468-4057-854e-410dbd8f8809:13",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "740bba32-03d8-4b55-bfc6-cdd6d658e91c:8",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e8bd9381-9ecb-4a87-ad05-155baa58b9e1:4",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "01e90027-ff0b-45cb-96f7-31cf5329c5e5:0",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "2c9f5e94-3301-4e55-a3ec-b74b110ea5b0:9",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a4e337d3-49bb-4ff6-ade7-c5c7c89b1986:50",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0808f2a2-62f3-4a40-b8c0-7b5671da2122:10",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "0cfbc124-2c53-408c-995f-6ab9f9b30d36:223",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "3f8fbc72-09d2-4399-a321-e4aa5c15f11e:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "51d45ca1-3442-4d15-8781-78bed617b710:5",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "99efd096-19da-45ac-87ad-ecf2146fa1e9:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "8e0ed038-e2b0-41a5-a50b-5fd29998f52e:11",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "86dc47ab-d968-4bfd-82a8-30593a07cf27:23",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ce0831ba-c86f-4cb4-a7f6-68ca4a4739f1:25",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d3812b24-c348-47ed-a6c1-576377c5bd3a:3",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "2e9fe738-3860-4395-bd4d-5f65b6532ea0:7",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "113e8758-89bc-483a-92a2-2fe30452e0b0:5",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c195933d-1668-4008-ac36-e122a55df6eb:2",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "2d706bf9-323e-48b3-9954-2477cfe23d99:1",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f4dd3d08-fc22-4f12-a1e1-a0ed57611e0b:16",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "fdea5082-c064-4e6f-a101-67d48fa1119d:0",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d859b5ab-0a8d-4563-b55f-b26e354e2273:9",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "6d1f354b-644c-40a9-96fd-29cc3a0590ff:9",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b82225f7-1f5e-4459-8b07-d9253ebf90d5:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "19dba622-e8c4-44a2-8167-86f872ab3eec:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2e7d61af-c91e-4fce-a2b8-b877f5f13f8a:13",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c3d8b787-55be-48f9-8bd5-078eb313e948:34",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "ab1d5f06-17bd-4c21-8d63-38471d960a42:6",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "0b46f649-1028-4136-8c1f-961353349bde:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "fce38b4b-850c-4571-a128-d49d34c7cafe:3",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "99181407-97b3-4b39-9d8f-8b3b37b71ddb:0",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "802f4567-33d4-47f0-886c-ca00fe7064ff:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "a2872c12-ff8d-4f91-9818-bd44ce8adce3:303",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "30714d72-6f98-45bd-aa37-6351b0b37031:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "17fa694f-652b-49d8-a7dd-c1b9be13af03:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "cf207072-fa3a-45f6-a3ec-172626690be1:1",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "7362b6a2-e915-4e96-bcae-8d65975df6e9:1",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "67b153c1-3bf4-4356-b2ab-024ba189bb7f:8",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "67d1742c-7015-49d1-9723-661886d27974:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5f8a86ec-ccba-49c6-8c14-201671fac831:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "02c13fd9-d6c2-4b13-bc6d-cd962e30c182:5",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b7bea29e-ca0e-4d23-a6f6-d2bce318a977:44",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "14f2e853-6b33-4e8f-93cf-8fe483100b5c:12",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "6cf2de7a-fe54-44ec-a15b-39a33c00ed8a:7",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c2ce22c7-b8cb-430d-848a-7a2a386b0884:10",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "47374805-000d-4c5c-b2a5-56be02083960:1",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "17fa694f-652b-49d8-a7dd-c1b9be13af03:2",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f87397bc-3d5d-498b-af88-c68e77ce30a3:11",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f5098744-3171-4c38-a78f-c446f85f5ffa:1",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "7fbf9bad-393f-4412-bd02-310f9884b872:45",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "92e6a1c8-5448-4c66-b196-c7287130508e:0",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b0e0ddb3-a6a3-4e0b-9acd-a7c58d21512c:42",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e795e993-0bb7-43d9-a9e6-a4bc51c849ba:3",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "625a0858-4dd5-40dd-969b-87a19b2cbdb3:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "31fb1845-09de-4c67-ba77-14a350e0e003:11",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c8f03d7c-01af-4bd2-b4e7-b638ffe3679e:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "0ae4a631-029a-4c9c-85bf-9f5001384194:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "f2426d55-2e02-43a4-921e-ca55aae7bda1:4",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "08c9ec4b-b6c4-48b4-aeb7-cedb21d9d8d5:34",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "1bcd998e-bada-4d81-b23c-784d87888d64:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "903c5efe-be8d-4a42-9c8e-19343f79b61c:8",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "6b7189ca-3bf8-48c3-9355-845b9195801a:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "b65d4260-669a-4027-9ee3-41058acc316d:1",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "57289c82-245d-4bf3-9b0f-95872ee166eb:1",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c3d8b787-55be-48f9-8bd5-078eb313e948:60",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "667e992c-013e-47e7-80b2-78e77838ebc0:1",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "cb620b39-ef2b-4379-9667-9ce9732b50d0:4",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "7737c475-8293-4ace-82cb-732119782570:6",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "939fbdce-98dc-4324-b4ad-d05b2a5cfe31:6",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "40f6ae44-f9f1-4531-b87b-7327be7e38ed:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d3deaa89-48a5-4e4d-84df-337305001726:7",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "17e9fd1d-9232-48a4-92f6-20a061b546e9:12",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "eab9e8ca-39ae-4ace-b713-525af38eff2a:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "4492692f-0fcc-478c-b108-28bb489b571e:6",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "aaa8898e-93da-4ec7-93fb-20dab1f4597a:9",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "38d2e6b1-738b-4589-a0d1-d07932408874:2",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e6645cf9-ff48-4e62-b9b1-cd9086e3a907:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "bd7dd750-5056-4628-84f3-c2e200dac8a2:2",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "aa257e1e-13c1-4edb-8a34-a0fe15d1ceb5:56",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b4b3bc31-058a-414d-b533-63c9690a049c:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "51df9cb5-8c76-472f-8a07-0b976cad672f:46",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "9b7e43e3-5c79-494d-8f43-405d264f66ec:36",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "07e0f18a-55e0-49bc-9bce-fb6321525e53:37",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b663dad2-2ed3-4915-9437-a9f779d697db:5",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "07c83c49-bb90-4906-a0a5-3819893b9933:59",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "8af16835-5e0a-46b3-801c-70be19147cb5:0",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "86a8d5e2-e600-43b4-a3af-baa8218a738e:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "7e1de314-7914-4251-8791-851cab63b536:7",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d35a9199-e308-4716-b9d4-f6948ba89689:1",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "1b60a2ee-eff6-4714-9bb0-936156422be9:18",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "246ae8bf-96cb-49d6-b916-2d40e08c0a34:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "b4ede7a7-b34b-4157-b416-4db5cbf5b337:20",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "72101890-c332-43c3-baa8-4357d5c459d6:22",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c74f846b-7589-4568-939c-cb8887da029a:4",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "5cce055a-4342-4a73-af75-1bced6e3aa31:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "ba0bc4ad-7f29-405c-bc5b-4df7d26ee07d:19",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d525ff2e-58c8-4225-a1a1-cfd614b6c63c:1",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "07c43093-95e7-407f-993a-767257316a19:0",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "9189ef68-4f52-4769-abc6-7d21dee1aebb:3",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "892e6368-cab6-4a21-b7f8-5df1df31d159:3",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "58cf6a8b-16c6-42c6-bda4-5671ea01185d:3",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "9d5c34c5-0beb-4c5a-8f0d-63be9ac3f5ad:20",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "72637c76-018f-4d99-b2e7-a4821f701392:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "00e148dd-0b71-4d9c-b947-66df75ec4260:20",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "90fe4acc-b1ca-497b-b79f-2287a25f7a69:7",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "74075ddf-1ae9-43b5-9d04-f9cc0ce829a4:62",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c544778a-19d9-443e-9203-d778ef3b6eca:1",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c191f367-753c-4de2-bb19-f0e4f0e057a9:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "934d46e1-0f15-4aeb-b851-7e56be34420b:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "068bdfb7-4fe4-40d9-b9db-260cd70561d9:2",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:control-char-density>0.002",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c2939897-cea3-491d-afd0-3bbd6837725b:20",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2b83507a-989a-4643-8643-2c0738e4590f:2",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "add2b38f-383e-4f6b-be95-8223881d67bc:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "44a19370-b9dd-4ded-8128-75c887306f0e:0",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "067d6d5d-88d0-4bbd-b05e-66374d63319a:2",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "4dcf8699-884f-4327-b1ae-148bbc2ea0ed:55",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d620e753-8cb7-49e5-8c15-ced19cc3ee16:0",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "04703d3f-ced0-478a-95a4-3b30d1b8c003:4",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5dfb54d7-b19d-4ea8-8c66-ff51de6ab62e:12",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "370e1f48-d307-4fd5-b5f2-c56018e92def:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "01e62132-097f-4d63-8365-c6684a32e52d:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "94de3e19-954d-45dd-8fcf-7942ee82480e:1",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "0951bf59-845b-448c-b8f8-dd36a7d7c973:1",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "a34a876f-c811-419d-b5ea-274b0fcb7094:9",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "da84fc89-83da-4046-b8c9-b3712d3f25e1:3",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "e7219b8e-3abb-45f7-b46e-fa0557123699:2",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "42f80c97-a5ca-4dd3-a8ee-15447b26b5bc:1",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "46fb846f-365a-45b6-b72e-4568824abfb9:1",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "05f5df18-4486-40aa-b82a-0fd7e935f3ae:6",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "eb44df30-4e54-4021-b082-824356b342b1:12",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "09429d09-e30b-4bb0-9596-45aecac60e3e:5",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "57e38a5f-304d-4738-b46e-1aea41297666:1",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "1c8407b4-676e-4167-b4db-948610842fe2:24",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2302005a-3135-40d7-8791-d691fef6ba9a:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c7eb4672-b8dd-4580-add4-7b4bbca7f78b:6",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2a2763f1-1df3-49dc-be61-434cd198b4db:4",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "8538f934-6c4b-4fab-9635-2ca7c7120d19:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d26240a3-8ac1-4579-8fd1-fd28edd2549b:1",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "8e18820f-8685-436c-a6df-c2e32eee874a:8",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "00d1863f-4258-4ab7-8162-5db3f3c44e04:13",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f1045ed6-438c-47a7-9933-a7cefe1a3987:10",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "475ba872-f386-4279-bc96-4c8fb69a80d9:3",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "af019893-2915-4d05-94c4-1bdf4e087439:23",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2aedf0aa-afd6-4046-a90f-5ac601619f1b:3",
+   "predicted_role": "COURT_REASONING",
+   "rule_fired": "reasoning:first-person-view|opinion",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "c821620b-184a-4ff6-80c5-3cc4521adc05:29",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "e98608d1-08ee-4c12-9747-ae0c4e3115b4:13",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "0ca50935-9f2d-4c89-892f-210b241a6dab:3",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "91b2d012-4756-4351-b660-165344d0f1d4:7",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "6cbe76da-01c8-40b9-8190-aba8e28c3b51:2",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "9e6b1e50-cd4b-4943-b858-b06d43a15361:0",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "d10f0bd7-ee36-4c59-b537-4bcf8172ff2b:50",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "98b282b4-ecdd-4378-88ba-7e12644115c1:25",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "d2603755-e7af-4a19-a0c4-f7a42bc5d5e8:3",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "0cfbc124-2c53-408c-995f-6ab9f9b30d36:244",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2435b1c7-e3d0-457d-81bd-ed1fbfd14374:20",
+   "predicted_role": "QUOTED_PRECEDENT",
+   "rule_fired": "quote:opens-with-quote|apex-court-held-colon-quote",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c85a2af9-e0db-43bc-9f82-3c40c38d30a0:73",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "b1c6a1f8-86eb-4305-8e93-458fba051f29:3",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "084de8a1-d664-4d4d-88cc-3567c5fb8273:29",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "2ec70e1c-15c4-4dc2-a299-4670ef170bad:0",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "8486da35-723a-4a9d-b209-7c97677c7fc0:21",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "f5d24702-64f4-4268-906e-3b9956ffb67c:39",
+   "predicted_role": "CASE_HEADER",
+   "rule_fired": "header:court-line|versus|petitioner-respondent",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "c3dcbdb7-9c65-4e87-914d-adfe80c27825:7",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "1189e450-73cd-4bc9-a052-54a298272824:1",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "5e25897b-6ed0-4b69-8767-30f44831af86:0",
+   "predicted_role": "OTHER_UNKNOWN",
+   "rule_fired": "default:no-rule-fired",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "42c6457e-7333-46d6-9a64-43faebe93092:3",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "4b64fcf3-c94d-40eb-92bb-0bc5c0032fa8:7",
+   "predicted_role": "FACTS",
+   "rule_fired": "facts:prosecution-case|FIR-registered",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "559b4ed7-65f6-4a46-ac9d-f29f00b6a205:1",
+   "predicted_role": "DAMAGED_OR_OCR_SUSPECT",
+   "rule_fired": "damage:collapsed-glyph-run",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "04770c8a-6be7-48f7-ac7a-a2f3e5e2fc18:1",
+   "predicted_role": "SPAN_UNVERIFIABLE",
+   "rule_fired": "span:slice-length-mismatch",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "f5d3989c-0645-42a3-9c61-3d3160dcd025:4",
+   "predicted_role": "REPORTER_EDITORIAL",
+   "rule_fired": "reporter:headnote|HELD:|syllabus",
+   "forum": "HIGH_COURT"
+  },
+  {
+   "passage_id": "634d0479-a60a-413f-8426-464c1bb1df35:28",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "8af1cfdb-3890-45e0-9f1e-100c87a5268b:2",
+   "predicted_role": "PROCEDURAL_HISTORY",
+   "rule_fired": "procedure:listed|registry|notice-issued|adjourn",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "bb9fc7e6-0abe-4df3-a6ec-231243a14f1a:5",
+   "predicted_role": "HOLDING_OPERATIVE",
+   "rule_fired": "holding:allowed-dismissed-disposed|set-aside",
+   "forum": "SUPREME_COURT"
+  },
+  {
+   "passage_id": "07e0f18a-55e0-49bc-9bce-fb6321525e53:25",
+   "predicted_role": "PARTY_SUBMISSION",
+   "rule_fired": "party:learned-counsel|it-is-submitted",
+   "forum": "SUPREME_COURT"
+  }
+ ]
+}
