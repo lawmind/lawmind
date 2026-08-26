@@ -61,6 +61,8 @@ function head(): string {
  * exactly that reason, and it still must never be read as proof.
  */
 const WRITER_PATTERNS = [
+  'enrich-worker',
+  'paragraphs-cli',
   'ingest',
   'harvest',
   'citation-keys',
@@ -81,7 +83,12 @@ function corpusWriters(): { pid: number; cmd: string }[] {
       [
         '-NoProfile',
         '-Command',
-        "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'node|python' } | " +
+        // `cmd` is in the list because of a real miss: the paragraphs enrichment
+        // worker is `cmd.exe /K enrich-worker.cmd ... paragraphs-cli.ts --apply`,
+        // a wrapper that sleeps an hour between runs and spawns node only while
+        // working. Filtering on node|python reported ZERO writers while an
+        // --apply worker sat on the box waiting to wake up.
+        "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'node|python|cmd' } | " +
           'Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress',
       ],
       { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 },
