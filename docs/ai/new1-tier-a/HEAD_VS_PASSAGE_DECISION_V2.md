@@ -131,13 +131,19 @@ Stated so it can be revisited on evidence rather than re-argued:
    survives a larger task set it outranks the HEAD-vs-passage choice entirely, and it
    points at reranking rather than at a different representation — an experiment R8.1 §17
    forbids this round.
-3. **Passage role safety on this exact tranche — now measured at pool level, and worse
-   than I assumed.** NEW2, bus 1282: `REPORTER_EDITORIAL` **1.57%** (not 0.10%),
-   `PARTY_SUBMISSION` **19.38%**, `CASE_HEADER` **15.47%** — **24.40% that must never be
-   shown as the court's reasoning** — against `COURT_REASONING` at **1.15%**. **Top-k
-   remains unmeasured**, and top-k is what decides whether this recommendation survives: a
-   retriever that preferentially surfaces confident-sounding counsel submissions would
-   invert the quality result in §2.
+3. **Passage role safety — MEASURED at both pool and top-k, and top-k is the bad one.**
+   I wrote that top-k was what would decide whether this recommendation survives. NEW2 has
+   now measured it (bus 1303): **`REPORTER_EDITORIAL` is 10.00% of retrieved passages
+   against 1.68% in the pool — a 5.95× enrichment**, while the court's own operative
+   holdings are enriched only 2.20×. The judicial-to-reporter ratio **degrades from 3.65:1
+   in the pool to 1.35:1 in top-k**, and `COURT_REASONING` is **2.50% of top-k**.
+
+   **This does not invert §2 and it does not rescue HEAD** — HEAD retrieves whole
+   documents, so it carries the same SCR reporter furniture without even the option of
+   attributing a span. What it does is make role-on-the-wire a **precondition of shipping
+   either arm**, not a refinement: 10% of what we retrieve is the reporter's copyrighted
+   headnote, which `CLAUDE.md` §6 excludes as a source and *EBC v. D.B. Modak* protects.
+   `PARTIAL` — 20 queries, 200 passages, wide interval, firm direction.
 4. **A corpus-representative chunks/doc rate.** 5.116 is this tranche's, and the tranche is
    deliberately era-skewed. A materially lower corpus rate would shrink the 627 GB.
 5. **Segmentation V2.** 7,535 passages (1.80%) cannot support a pinpoint citation. If the

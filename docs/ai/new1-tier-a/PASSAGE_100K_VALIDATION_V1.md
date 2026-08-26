@@ -262,11 +262,53 @@ Recall@100 also **fell** from 0.889 on the 66k prefix to 0.8631 here. Larger ind
   The substitute frame understated *every* unsafe class, so the 0.10% I was quoting was
   optimistic by more than an order of magnitude.
 
-  **Two things remain open.** The classifier rules are lexical and their precision is
-  `NOT_MEASURED`. And this is the **pool**, not top-k — R8.1 §7.7 asks for top-k because
-  19% party submission only endangers an advocate if that is what *ranks first*, and
-  counsel submissions read like confident legal propositions, which is exactly what an
-  embedding model rewards. NEW2 has recorded the prediction that **top-k will carry more
-  party submission than the pool**, and now holds the box to measure it.
+  The classifier rules are lexical and their precision remains `NOT_MEASURED`.
+
+- **TOP-K IS NOW MEASURED, AND IT IS THE WORST RESULT OF THE ROUND FOR THIS CANDIDATE.**
+NEW2, bus 1303, `TRANCHE_PASSAGE_SAFETY_V1` §5 — 20 common legal queries, k=10, 200
+retrieved passages, against **this rebuilt index**:
+
+| role | pool | **top-k** | enrichment |
+|---|---:|---:|---:|
+| `REPORTER_EDITORIAL` | 1.68% | **10.00%** | **5.95×** |
+| `HOLDING_OPERATIVE` | 5.00% | 11.00% | 2.20× |
+| `COURT_REASONING` | 1.13% | 2.50% | 2.21× |
+| `PARTY_SUBMISSION` | 19.75% | 8.50% | 0.43× |
+| `CASE_HEADER` | 15.53% | 0.50% | 0.03× |
+
+**One passage in ten that this candidate retrieves is a reporter's headnote.**
+
+**The mechanism is sharper than "the model likes confident propositions."** It enriches
+*every* distilled statement of a holding at about 2.2× — court reasoning 2.21×, operative
+holdings 2.20×. It enriches **headnotes at 5.95×, nearly three times harder.** A headnote
+is an editor's distillation of the holding into exactly the sentence a legal query is
+looking for, so it out-competes the court's own words at the court's own job.
+
+Stated as the ratio that matters:
+
+| | judicial : reporter |
+|---|---:|
+| pool | **3.65 : 1** |
+| top-k | **1.35 : 1** |
+
+**Retrieval degrades the ratio of court-authored to reporter-authored evidence by 2.70×.**
+For every four genuinely judicial passages it returns, it returns three headnotes.
+
+**Two reasons this is worse than an attribution problem.** First, `COURT_REASONING` is
+**2.50% of top-k** — any surface saying *"here is what the court said"* is describing one
+passage in forty of what it was handed. Second, a headnote is the reporter's own
+copyrighted work, not the judgment: *Eastern Book Company v. D.B. Modak*, and `CLAUDE.md`
+§6 requires raw court text and **never a law report's edition of it**. Ten percent of this
+candidate's top-k is material the project's own source rule excludes.
+
+**The interval is wide and the direction is not.** 10% of 200 passages is a naive 95% CI of
+[5.8%, 14.2%], but the passages come from only **20 queries** and are not independent
+within a query — at an effective n of 20 the interval is [0%, 23.1%]. NEW2 marks it
+`PARTIAL` for that reason and I am carrying that mark. **The 6× enrichment is a direction
+established by measurement; the 10% is a point estimate on a small query set.**
+
+**And the aggregate hides it**, which is the part that generalises: overall unsafe went
+*down*, 24.85% → 20.00%, while the composition got more dangerous. A single headline
+safety rate reports an improvement here.
 - **2.53%→1.80% of passages carry `char_offset = -1`** (7,535 of 418,116) and cannot
   support a pinpoint citation. The cause is known and deferred: `SEGMENTATION_V2_EXPERIMENT_DESIGN`.

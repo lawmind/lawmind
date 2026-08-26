@@ -66,11 +66,15 @@ Named here so no aggregate can hide them.
    fix the refusal.
 6. **1.80% of passages (7,535 of 418,116) carry `char_offset = -1`** and cannot support a
    pinpoint citation.
-7. **24.40% of tranche passages must never be shown as the court's own reasoning** —
+7. **10.00% of what this candidate RETRIEVES is reporter editorial** — a 5.95×
+   enrichment over the 1.68% pool rate, against only 2.20× for the court's own operative
+   holdings. `COURT_REASONING` is **2.50% of top-k**. Measured on this index by NEW2
+   (bus 1303), 20 queries / 200 passages, `PARTIAL`. See §4.
+8. **24.40% of tranche passages must never be shown as the court's own reasoning** —
    `PARTY_SUBMISSION` 19.38%, `CASE_HEADER` 15.47%, `REPORTER_EDITORIAL` 1.57% — against
    `COURT_REASONING` at **1.15%**. Measured on this exact tranche by NEW2 (bus 1282).
    Classifier precision is `NOT_MEASURED` and top-k is still pending. See §4.
-8. **7 of the 295 benchmark tasks exceed production's 500-character bound** and cannot
+9. **7 of the 295 benchmark tasks exceed production's 500-character bound** and cannot
    enter `/search` at all — including **3 of 3 `long_narrative` and 2 of 3
    `pasted_passage`**, two of the three best-scoring families. They score 0.8571 against
    0.3715 for the rest, so they inflate every aggregate. §3.8.
@@ -109,8 +113,55 @@ route-refused query is a REFUSAL outcome scored separately — never a success, 
   thin slice of what this index contains. The substitute frame understated every unsafe
   class.
 
-  **Still `NOT_MEASURED`: top-k.** The pool rate cannot answer the safety question,
-  because 19% party submission is only dangerous if it is what ranks first — and counsel
-  submissions read like confident legal propositions, which is precisely what an embedding
-  model rewards. Until NEW2's top-k run lands, §2 stays `PASS_AT_MEASURED_SCOPE` with an
-  attribution risk that is now **bounded in the pool but unquantified at the point of use**.
+- **TOP-K IS NOW MEASURED, AND IT IS THE WORST RESULT OF THE ROUND FOR THIS CANDIDATE.**
+NEW2, bus 1303, `TRANCHE_PASSAGE_SAFETY_V1` §5 — 20 common legal queries, k=10, 200
+retrieved passages, against **this rebuilt index**:
+
+| role | pool | **top-k** | enrichment |
+|---|---:|---:|---:|
+| `REPORTER_EDITORIAL` | 1.68% | **10.00%** | **5.95×** |
+| `HOLDING_OPERATIVE` | 5.00% | 11.00% | 2.20× |
+| `COURT_REASONING` | 1.13% | 2.50% | 2.21× |
+| `PARTY_SUBMISSION` | 19.75% | 8.50% | 0.43× |
+| `CASE_HEADER` | 15.53% | 0.50% | 0.03× |
+
+**One passage in ten that this candidate retrieves is a reporter's headnote.**
+
+**The mechanism is sharper than "the model likes confident propositions."** It enriches
+*every* distilled statement of a holding at about 2.2× — court reasoning 2.21×, operative
+holdings 2.20×. It enriches **headnotes at 5.95×, nearly three times harder.** A headnote
+is an editor's distillation of the holding into exactly the sentence a legal query is
+looking for, so it out-competes the court's own words at the court's own job.
+
+Stated as the ratio that matters:
+
+| | judicial : reporter |
+|---|---:|
+| pool | **3.65 : 1** |
+| top-k | **1.35 : 1** |
+
+**Retrieval degrades the ratio of court-authored to reporter-authored evidence by 2.70×.**
+For every four genuinely judicial passages it returns, it returns three headnotes.
+
+**Two reasons this is worse than an attribution problem.** First, `COURT_REASONING` is
+**2.50% of top-k** — any surface saying *"here is what the court said"* is describing one
+passage in forty of what it was handed. Second, a headnote is the reporter's own
+copyrighted work, not the judgment: *Eastern Book Company v. D.B. Modak*, and `CLAUDE.md`
+§6 requires raw court text and **never a law report's edition of it**. Ten percent of this
+candidate's top-k is material the project's own source rule excludes.
+
+**The interval is wide and the direction is not.** 10% of 200 passages is a naive 95% CI of
+[5.8%, 14.2%], but the passages come from only **20 queries** and are not independent
+within a query — at an effective n of 20 the interval is [0%, 23.1%]. NEW2 marks it
+`PARTIAL` for that reason and I am carrying that mark. **The 6× enrichment is a direction
+established by measurement; the 10% is a point estimate on a small query set.**
+
+**And the aggregate hides it**, which is the part that generalises: overall unsafe went
+*down*, 24.85% → 20.00%, while the composition got more dangerous. A single headline
+safety rate reports an improvement here.
+
+- **§2 therefore stays `PASS_AT_MEASURED_SCOPE` with a named defect, not an unknown.**
+  This candidate is not safe to put behind a surface that attributes its results to a
+  court until role reaches the evidence wire (LCC §8.6) and `REPORTER_EDITORIAL` is
+  attributed at render (R8.1 §12.6). That is a release condition on the candidate, and it
+  is now supported by a measurement rather than by a worry.
