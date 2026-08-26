@@ -1,0 +1,759 @@
+{
+ "artifact": "NEW2_ROLE_CENSUS_WIDENED",
+ "lane": "NEW2",
+ "protocol": "LAWMIND_FINAL_R8_3_LIMITED_FREEZE_ORCHESTRATION_2026-08-26.md §8.4",
+ "generated_at": "2026-08-26T15:15:06.931Z",
+ "supersedes": "the 20-query / 200-passage point estimate in docs/ai/new2-r8/TRANCHE_PASSAGE_SAFETY_V1.md §5",
+ "query_source": "docs/ai/new1-tier-a/COMMON_QUERY_BENCHMARK.json",
+ "k": 10,
+ "ef_search": 200,
+ "legal_queries": 48,
+ "concepts": 12,
+ "passages_classified": 480,
+ "topk_role_counts": {
+  "OTHER_UNKNOWN": 282,
+  "PARTY_SUBMISSION": 78,
+  "CASE_HEADER": 10,
+  "HOLDING_OPERATIVE": 62,
+  "SPAN_UNVERIFIABLE": 2,
+  "PROCEDURAL_HISTORY": 6,
+  "DAMAGED_OR_OCR_SUSPECT": 3,
+  "REPORTER_EDITORIAL": 31,
+  "COURT_REASONING": 5,
+  "FACTS": 1
+ },
+ "topk_unsafe": 114,
+ "wrong_domain_control": {
+  "passages": 40,
+  "role_counts": {
+   "OTHER_UNKNOWN": 27,
+   "CASE_HEADER": 2,
+   "REPORTER_EDITORIAL": 4,
+   "PARTY_SUBMISSION": 5,
+   "PROCEDURAL_HISTORY": 1,
+   "HOLDING_OPERATIVE": 1
+  }
+ },
+ "per_concept": [
+  {
+   "concept": "specific performance of a contract",
+   "n": 40,
+   "reporter": 10,
+   "rate": 0.25
+  },
+  {
+   "concept": "murder under the old and new criminal codes",
+   "n": 40,
+   "reporter": 7,
+   "rate": 0.175
+  },
+  {
+   "concept": "termination of service",
+   "n": 40,
+   "reporter": 5,
+   "rate": 0.125
+  },
+  {
+   "concept": "limitation and condonation of delay",
+   "n": 40,
+   "reporter": 4,
+   "rate": 0.1
+  },
+  {
+   "concept": "interim relief in arbitration",
+   "n": 40,
+   "reporter": 2,
+   "rate": 0.05
+  },
+  {
+   "concept": "quashing of FIR",
+   "n": 40,
+   "reporter": 1,
+   "rate": 0.025
+  },
+  {
+   "concept": "temporary injunction",
+   "n": 40,
+   "reporter": 1,
+   "rate": 0.025
+  },
+  {
+   "concept": "dishonour of cheque",
+   "n": 40,
+   "reporter": 1,
+   "rate": 0.025
+  },
+  {
+   "concept": "bail",
+   "n": 40,
+   "reporter": 0,
+   "rate": 0
+  },
+  {
+   "concept": "anticipatory bail",
+   "n": 40,
+   "reporter": 0,
+   "rate": 0
+  },
+  {
+   "concept": "maintainability of a writ petition",
+   "n": 40,
+   "reporter": 0,
+   "rate": 0
+  },
+  {
+   "concept": "maintenance of wife and children",
+   "n": 40,
+   "reporter": 0,
+   "rate": 0
+  }
+ ],
+ "per_query": [
+  {
+   "id": "CQ-01-bail",
+   "concept": "bail",
+   "query": "bail",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1,
+    "CASE_HEADER": 2
+   }
+  },
+  {
+   "id": "CQ-01-bail",
+   "concept": "bail",
+   "query": "bail application",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "HOLDING_OPERATIVE": 2,
+    "PARTY_SUBMISSION": 2
+   }
+  },
+  {
+   "id": "CQ-01-bail",
+   "concept": "bail",
+   "query": "grant of bail in a criminal case",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 4,
+    "PARTY_SUBMISSION": 2,
+    "HOLDING_OPERATIVE": 4
+   }
+  },
+  {
+   "id": "CQ-01-bail",
+   "concept": "bail",
+   "query": "considerations for granting regular bail to an accused in custody",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 7,
+    "OTHER_UNKNOWN": 2,
+    "SPAN_UNVERIFIABLE": 1
+   }
+  },
+  {
+   "id": "CQ-02-anticipatory-bail",
+   "concept": "anticipatory bail",
+   "query": "anticipatory bail",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 2,
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-02-anticipatory-bail",
+   "concept": "anticipatory bail",
+   "query": "anticipatory bail rejected",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 8,
+    "HOLDING_OPERATIVE": 2
+   }
+  },
+  {
+   "id": "CQ-02-anticipatory-bail",
+   "concept": "anticipatory bail",
+   "query": "anticipatory bail in economic offences",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 5,
+    "HOLDING_OPERATIVE": 3,
+    "PARTY_SUBMISSION": 2
+   }
+  },
+  {
+   "id": "CQ-02-anticipatory-bail",
+   "concept": "anticipatory bail",
+   "query": "when may a court grant anticipatory bail to a person apprehending arrest",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "HOLDING_OPERATIVE": 3,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-03-quashing-fir",
+   "concept": "quashing of FIR",
+   "query": "quashing FIR",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PARTY_SUBMISSION": 1,
+    "HOLDING_OPERATIVE": 5,
+    "OTHER_UNKNOWN": 2,
+    "PROCEDURAL_HISTORY": 1,
+    "DAMAGED_OR_OCR_SUSPECT": 1
+   }
+  },
+  {
+   "id": "CQ-03-quashing-fir",
+   "concept": "quashing of FIR",
+   "query": "quash the FIR",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 1,
+    "HOLDING_OPERATIVE": 6,
+    "PROCEDURAL_HISTORY": 1,
+    "PARTY_SUBMISSION": 1,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "CQ-03-quashing-fir",
+   "concept": "quashing of FIR",
+   "query": "petition to quash a first information report",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 2,
+    "PARTY_SUBMISSION": 7,
+    "PROCEDURAL_HISTORY": 1
+   }
+  },
+  {
+   "id": "CQ-03-quashing-fir",
+   "concept": "quashing of FIR",
+   "query": "inherent power of the High Court to quash criminal proceedings on a settlement",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 10
+   }
+  },
+  {
+   "id": "CQ-04-injunction",
+   "concept": "temporary injunction",
+   "query": "injunction",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "PARTY_SUBMISSION": 3,
+    "CASE_HEADER": 1
+   }
+  },
+  {
+   "id": "CQ-04-injunction",
+   "concept": "temporary injunction",
+   "query": "temporary injunction",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 3,
+    "HOLDING_OPERATIVE": 1,
+    "COURT_REASONING": 1,
+    "PARTY_SUBMISSION": 4,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "CQ-04-injunction",
+   "concept": "temporary injunction",
+   "query": "grant of temporary injunction",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 1,
+    "OTHER_UNKNOWN": 8,
+    "COURT_REASONING": 1
+   }
+  },
+  {
+   "id": "CQ-04-injunction",
+   "concept": "temporary injunction",
+   "query": "principles governing the grant of a temporary injunction pending suit",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 8,
+    "CASE_HEADER": 1,
+    "HOLDING_OPERATIVE": 1
+   }
+  },
+  {
+   "id": "CQ-05-limitation",
+   "concept": "limitation and condonation of delay",
+   "query": "limitation",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1,
+    "REPORTER_EDITORIAL": 2
+   }
+  },
+  {
+   "id": "CQ-05-limitation",
+   "concept": "limitation and condonation of delay",
+   "query": "condonation of delay",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 2,
+    "OTHER_UNKNOWN": 5,
+    "PARTY_SUBMISSION": 1,
+    "PROCEDURAL_HISTORY": 1,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "CQ-05-limitation",
+   "concept": "limitation and condonation of delay",
+   "query": "appeal barred by limitation",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "HOLDING_OPERATIVE": 1,
+    "PARTY_SUBMISSION": 3
+   }
+  },
+  {
+   "id": "CQ-05-limitation",
+   "concept": "limitation and condonation of delay",
+   "query": "sufficient cause for condoning delay in filing an appeal",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PROCEDURAL_HISTORY": 1,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 2,
+    "HOLDING_OPERATIVE": 2,
+    "OTHER_UNKNOWN": 4
+   }
+  },
+  {
+   "id": "CQ-06-specific-performance",
+   "concept": "specific performance of a contract",
+   "query": "specific performance",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "REPORTER_EDITORIAL": 6,
+    "OTHER_UNKNOWN": 3,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-06-specific-performance",
+   "concept": "specific performance of a contract",
+   "query": "suit for specific performance",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "COURT_REASONING": 2,
+    "OTHER_UNKNOWN": 4,
+    "PARTY_SUBMISSION": 4
+   }
+  },
+  {
+   "id": "CQ-06-specific-performance",
+   "concept": "specific performance of a contract",
+   "query": "readiness and willingness specific performance",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "REPORTER_EDITORIAL": 3,
+    "DAMAGED_OR_OCR_SUSPECT": 1
+   }
+  },
+  {
+   "id": "CQ-06-specific-performance",
+   "concept": "specific performance of a contract",
+   "query": "when will a court decree specific performance of an agreement to sell immovable property",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 2,
+    "DAMAGED_OR_OCR_SUSPECT": 1
+   }
+  },
+  {
+   "id": "CQ-07-arbitration-interim",
+   "concept": "interim relief in arbitration",
+   "query": "section 9 arbitration",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PARTY_SUBMISSION": 1,
+    "OTHER_UNKNOWN": 7,
+    "HOLDING_OPERATIVE": 1,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "CQ-07-arbitration-interim",
+   "concept": "interim relief in arbitration",
+   "query": "interim relief arbitration",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 5,
+    "PARTY_SUBMISSION": 3,
+    "REPORTER_EDITORIAL": 1,
+    "HOLDING_OPERATIVE": 1
+   }
+  },
+  {
+   "id": "CQ-07-arbitration-interim",
+   "concept": "interim relief in arbitration",
+   "query": "interim measures by court arbitration",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-07-arbitration-interim",
+   "concept": "interim relief in arbitration",
+   "query": "interim protection of assets pending an arbitral award",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 3
+   }
+  },
+  {
+   "id": "CQ-08-cheque-dishonour",
+   "concept": "dishonour of cheque",
+   "query": "cheque bounce",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "CASE_HEADER": 1,
+    "HOLDING_OPERATIVE": 2,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-08-cheque-dishonour",
+   "concept": "dishonour of cheque",
+   "query": "section 138 NI Act",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "CQ-08-cheque-dishonour",
+   "concept": "dishonour of cheque",
+   "query": "dishonour of cheque complaint",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-08-cheque-dishonour",
+   "concept": "dishonour of cheque",
+   "query": "complaint for dishonour of a cheque for insufficiency of funds",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 10
+   }
+  },
+  {
+   "id": "CQ-09-service-termination",
+   "concept": "termination of service",
+   "query": "termination of service",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 5,
+    "HOLDING_OPERATIVE": 2,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 2
+   }
+  },
+  {
+   "id": "CQ-09-service-termination",
+   "concept": "termination of service",
+   "query": "illegal termination",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PARTY_SUBMISSION": 4,
+    "OTHER_UNKNOWN": 6
+   }
+  },
+  {
+   "id": "CQ-09-service-termination",
+   "concept": "termination of service",
+   "query": "wrongful dismissal from service",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "REPORTER_EDITORIAL": 3,
+    "PARTY_SUBMISSION": 1,
+    "CASE_HEADER": 1,
+    "OTHER_UNKNOWN": 5
+   }
+  },
+  {
+   "id": "CQ-09-service-termination",
+   "concept": "termination of service",
+   "query": "termination of a workman without holding a departmental enquiry",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 8,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-10-writ-maintainability",
+   "concept": "maintainability of a writ petition",
+   "query": "writ maintainability",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "HOLDING_OPERATIVE": 1
+   }
+  },
+  {
+   "id": "CQ-10-writ-maintainability",
+   "concept": "maintainability of a writ petition",
+   "query": "writ petition not maintainable",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 2,
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-10-writ-maintainability",
+   "concept": "maintainability of a writ petition",
+   "query": "alternative remedy writ petition",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 5,
+    "HOLDING_OPERATIVE": 2,
+    "PARTY_SUBMISSION": 3
+   }
+  },
+  {
+   "id": "CQ-10-writ-maintainability",
+   "concept": "maintainability of a writ petition",
+   "query": "whether a writ petition is maintainable when an efficacious alternative remedy exists",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "HOLDING_OPERATIVE": 2,
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-11-murder-transition",
+   "concept": "murder under the old and new criminal codes",
+   "query": "murder",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "CASE_HEADER": 1
+   }
+  },
+  {
+   "id": "CQ-11-murder-transition",
+   "concept": "murder under the old and new criminal codes",
+   "query": "section 302 IPC",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PROCEDURAL_HISTORY": 1,
+    "HOLDING_OPERATIVE": 2,
+    "PARTY_SUBMISSION": 5,
+    "REPORTER_EDITORIAL": 1,
+    "OTHER_UNKNOWN": 1
+   }
+  },
+  {
+   "id": "CQ-11-murder-transition",
+   "concept": "murder under the old and new criminal codes",
+   "query": "punishment for murder BNS",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 1,
+    "REPORTER_EDITORIAL": 2
+   }
+  },
+  {
+   "id": "CQ-11-murder-transition",
+   "concept": "murder under the old and new criminal codes",
+   "query": "conviction for murder where the offence was committed before 1 July 2024",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 3,
+    "PARTY_SUBMISSION": 1,
+    "REPORTER_EDITORIAL": 4,
+    "FACTS": 1,
+    "CASE_HEADER": 1
+   }
+  },
+  {
+   "id": "CQ-12-maintenance",
+   "concept": "maintenance of wife and children",
+   "query": "maintenance",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 4,
+    "CASE_HEADER": 1,
+    "HOLDING_OPERATIVE": 1,
+    "SPAN_UNVERIFIABLE": 1,
+    "PARTY_SUBMISSION": 3
+   }
+  },
+  {
+   "id": "CQ-12-maintenance",
+   "concept": "maintenance of wife and children",
+   "query": "interim maintenance wife",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "PARTY_SUBMISSION": 3,
+    "OTHER_UNKNOWN": 4,
+    "COURT_REASONING": 1,
+    "CASE_HEADER": 1,
+    "HOLDING_OPERATIVE": 1
+   }
+  },
+  {
+   "id": "CQ-12-maintenance",
+   "concept": "maintenance of wife and children",
+   "query": "maintenance to wife and minor children",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 8,
+    "HOLDING_OPERATIVE": 1,
+    "PARTY_SUBMISSION": 1
+   }
+  },
+  {
+   "id": "CQ-12-maintenance",
+   "concept": "maintenance of wife and children",
+   "query": "quantum of interim maintenance payable to a wife unable to maintain herself",
+   "kind": "LEGAL",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 8,
+    "PARTY_SUBMISSION": 2
+   }
+  },
+  {
+   "id": "WD",
+   "concept": "wrong-domain",
+   "query": "breach of a commercial supply agreement and recovery of the outstanding invoice amount",
+   "kind": "WRONG_DOMAIN",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 6,
+    "CASE_HEADER": 1,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 1,
+    "PROCEDURAL_HISTORY": 1
+   }
+  },
+  {
+   "id": "WD",
+   "concept": "wrong-domain",
+   "query": "input tax credit denied on the ground that the supplier did not deposit the tax",
+   "kind": "WRONG_DOMAIN",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 7,
+    "PARTY_SUBMISSION": 2,
+    "REPORTER_EDITORIAL": 1
+   }
+  },
+  {
+   "id": "WD",
+   "concept": "wrong-domain",
+   "query": "restitution of conjugal rights and the wife declining to return to the matrimonial home",
+   "kind": "WRONG_DOMAIN",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 5,
+    "REPORTER_EDITORIAL": 1,
+    "PARTY_SUBMISSION": 2,
+    "HOLDING_OPERATIVE": 1,
+    "CASE_HEADER": 1
+   }
+  },
+  {
+   "id": "WD",
+   "concept": "wrong-domain",
+   "query": "compensation for land acquired for a national highway and the market value on the date of notification",
+   "kind": "WRONG_DOMAIN",
+   "hits": 10,
+   "roles": {
+    "OTHER_UNKNOWN": 9,
+    "REPORTER_EDITORIAL": 1
+   }
+  }
+ ],
+ "not_run": [
+  "the stratified 295-task subset §8.4 also names: PASSAGE_100K_METRICS.json carries task ids, classes and arm results but NOT query texts, because that set is in FIFTH hidden-eval custody. §13 F-10 forbids consuming it, and going to find those queries in order to widen a census would consume it."
+ ],
+ "caveats": [
+  "the role rules are LEXICAL and their precision is NOT_MEASURED — FIFTH F-5 blind labelling is what will establish it (docs/ai/new2-r83/role-blind-packet.json)",
+  "this is top-k composition, not corpus prevalence; the pool rate lives in docs/ai/new2-r8/tranche-passage-safety.json",
+  "four phrasings of one concept are not four independent observations, so the effective n is closer to the concept count than the query count"
+ ]
+}
