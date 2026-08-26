@@ -36,8 +36,8 @@ export async function getCitationsMonitor(
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'the citation monitor is a privileged surface', 401);
 
   const range = sql`
-    ${query.from ? sql`AND cc.created_at >= ${query.from}::timestamptz` : sql``}
-    ${query.to ? sql`AND cc.created_at <= ${query.to}::timestamptz` : sql``}
+    ${query.from ? sql`AND cc.created_at >= (${query.from}::text)::timestamptz` : sql``}
+    ${query.to ? sql`AND cc.created_at <= (${query.to}::text)::timestamptz` : sql``}
   `;
 
   const [totals] = await sql<{ n: number; shown: number }[]>`

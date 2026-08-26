@@ -223,6 +223,13 @@ const STEPS = [
   // `llm_calls`, an unreviewed text column on `search_events`, an undeclared
   // table carrying `query_text`, and prose written into an allowed column.
   ['query-log privacy', 'npx', ['tsx', '--test', 'services/api/src/security/query-log-privacy.test.ts']],
+  // postgres.js truncates a timestamptz bind parameter to milliseconds (NEW2 bus
+  // 1231). A `>` comparison then re-reads -- their walk re-walked 266,124,061
+  // judgments before they killed it -- and a `<` comparison SKIPS. Measured
+  // here: three audit entries inside one millisecond, page two returns 0 of the
+  // 2 that should follow the cursor. Ten call sites fixed; this step fails the
+  // moment an eleventh is written, which is how the first ten arrived.
+  ['timestamp precision', 'npx', ['tsx', '--test', 'services/api/src/admin/timestamp-precision.test.ts']],
   // ───────────────────────────────────────────────────────────────────────────
   // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
   // ───────────────────────────────────────────────────────────────────────────

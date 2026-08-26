@@ -99,7 +99,7 @@ export async function recordCopy(
             ${body.surface},
             -- The cast belongs in the SQL, not inside the parameter: interpolating
             -- "value::timestamptz" would send the cast as part of the string.
-            coalesce(${body.copiedAt ?? null}::timestamptz, now()),
+            coalesce((${body.copiedAt ?? null}::text)::timestamptz, now()),
             ${body.clientKey})
     -- A replayed outbox item is a success, not a conflict: the client's job is to
     -- deliver at least once, and telling it "409" would make it retry forever.

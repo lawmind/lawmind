@@ -119,7 +119,7 @@ export async function listAlerts(
     FROM alerts a
     LEFT JOIN judgments j ON j.id = a.judgment_id
     WHERE a.user_id = ${userId}
-      ${query.since ? sql`AND a.created_at > ${query.since}::timestamptz` : sql``}
+      ${query.since ? sql`AND a.created_at > (${query.since}::text)::timestamptz` : sql``}
     ORDER BY a.created_at DESC
   `;
 

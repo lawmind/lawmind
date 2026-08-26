@@ -168,6 +168,27 @@ never truncates), `NEW1_PROCESS_RESOURCE_REPORT_R8_1`, and
 
 Bus 1245–1249, 1259–1263, 1271–1273, 1279–1281, 1283–1285.
 
+
+### 26 August 2026 (R8.1) — LCC QUEUE AGAINST THE TEN-ITEM KICKOFF ORDER
+
+Live status of the R8.1 LCC kickoff order. DONE means observed, not inferred.
+
+| # | Item | State | Evidence |
+|---|---|---|---|
+| 3 | GIT_COMMIT + MIGRATION_SLOT | **DONE** | `8d6d23b`; 8 parallel acquires, 1 winner |
+| 10 | screened != clean guard in CI | **DONE** | `dcf2dba`; 1,123 files, non-vacuous |
+| 4 | Risk-replay fail-closed gate | **DONE** | `1ff5372`; 5 closures, 13/13 |
+| 1 | Security/privacy P0 | **PARTIAL** | `ddd6398`; IDOR/auth/erasure/egress measured; secrets, audit integrity, billing, fail-closed flags NOT measured |
+| 6 | Cross-route uncertainty contract | **PARTIAL** | `d82baab`; /search + counter + saved feed. Briefing, preview, generation NOT wired |
+| 2 | Process registry / startup truth | **PARTIAL** | `0497f32`; sweep readable, registry NOT true; alert poller Interactive principal = live outage |
+| 5 | Timestamp precision audit | **IN PROGRESS** | NEW2 bus 1231: 7 sites; `admin/audit.ts:111` silently SKIPS audit rows |
+| 9 | Synthetic fixture cascade seam | **NOT STARTED** | `fixture-leak.test.ts` FAILS; 16 rows, FIFTH 1242 |
+| 8 | DATE_UNCHECKED / currentness propagation | **NOT STARTED** | — |
+| 7 | Retrieval evidence wire (§8.6) | **NOT STARTED** | — |
+
+Deferred by the lock until NEW1 releases HEAVY_BOX: fresh-install replay,
+targeted ANALYZE, mixed-load isolation, release manifest, Railway packet.
+
 ### 25 August 2026 (R7) — NEW1: THE ELIGIBILITY VIEW FILTERS NOTHING, A 320-CHARACTER WINDOW COSTS 500,000 DOCUMENTS THEIR PINPOINT CITATION, AND 29% OF COMMON LEGAL QUERIES ARE REFUSED
 
 R7 §9. Commits `0cd7a65`, `a3d975b`, `9aa7eab`, `ba67b6e`. Artifacts under

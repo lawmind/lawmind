@@ -181,10 +181,20 @@ function riskReplayReasons(
           `(${frontier.updated_at}) — the replay predates the index it is vouching for`,
       );
     }
-    if (
-      replay.frontier_at === null ||
-      Date.parse(replay.frontier_at) !== Date.parse(frontier.cursor_at)
-    ) {
+    /**
+     * Compared as TEXT, not through `Date.parse`.
+     *
+     * NEW2 bus 1231 found postgres.js truncating timestamptz bind parameters to
+     * millisecond resolution. `Date.parse` does the same thing on the way back
+     * in, and this is an IDENTITY check: two cursors 78 microseconds apart are
+     * different indexes and would compare equal through a JS Date. Both sides
+     * are selected `::text`, so Postgres renders them identically and an exact
+     * string comparison is the strictest available.
+     *
+     * The `predates` check above stays on `Date.parse` deliberately — it asks an
+     * ORDERING question where sub-millisecond difference carries no meaning.
+     */
+    if (replay.frontier_at === null || replay.frontier_at !== frontier.cursor_at) {
       reasons.push(
         `the risk replay was run against cursor ${replay.frontier_at ?? 'unrecorded'} ` +
           `and the live cursor is ${frontier.cursor_at} — it vouches for a different index`,
@@ -252,7 +262,7 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
     SELECT count(*)::text AS n,
            (SELECT max(created_at)::text FROM judgments) AS ingest_at
       FROM judgments
-     WHERE created_at > ${frontier.cursor_at}::timestamptz`;
+     WHERE created_at > (${frontier.cursor_at}::text)::timestamptz`;
 
   const lagRows = Number(lag?.n ?? 0);
   const lagHours = (Date.now() - Date.parse(frontier.updated_at)) / 3_600_000;

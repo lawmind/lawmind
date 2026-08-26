@@ -106,9 +106,9 @@ export async function listAudit(
       ${query.action ? sql`AND action = ${query.action}` : sql``}
       ${query.targetType ? sql`AND target_type = ${query.targetType}` : sql``}
       ${query.targetId ? sql`AND target_id = ${query.targetId}` : sql``}
-      ${query.from ? sql`AND created_at >= ${query.from}::timestamptz` : sql``}
-      ${query.to ? sql`AND created_at <= ${query.to}::timestamptz` : sql``}
-      ${query.cursor ? sql`AND created_at < ${query.cursor}::timestamptz` : sql``}
+      ${query.from ? sql`AND created_at >= (${query.from}::text)::timestamptz` : sql``}
+      ${query.to ? sql`AND created_at <= (${query.to}::text)::timestamptz` : sql``}
+      ${query.cursor ? sql`AND created_at < (${query.cursor}::text)::timestamptz` : sql``}
     ORDER BY created_at DESC
     LIMIT ${PAGE}
   `;

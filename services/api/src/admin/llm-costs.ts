@@ -31,8 +31,8 @@ export async function getLlmCosts(
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'LLM cost data is a privileged surface', 401);
 
   const range = sql`
-    ${query.from ? sql`AND created_at >= ${query.from}::timestamptz` : sql``}
-    ${query.to ? sql`AND created_at <= ${query.to}::timestamptz` : sql``}
+    ${query.from ? sql`AND created_at >= (${query.from}::text)::timestamptz` : sql``}
+    ${query.to ? sql`AND created_at <= (${query.to}::text)::timestamptz` : sql``}
   `;
 
   const byDay = await sql<{ day: string; cost: string; calls: number }[]>`
