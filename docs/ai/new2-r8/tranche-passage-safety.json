@@ -2,42 +2,40 @@
   "artifact": "NEW2_TRANCHE_PASSAGE_SAFETY_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.7",
-  "generated_at": "2026-08-26T04:02:40.232Z",
+  "generated_at": "2026-08-26T04:33:12.147Z",
   "mode": "POOL_AND_TOPK",
   "tranche": {
     "passages": 418116,
     "documents": 81720,
     "complete": null
   },
-  "sampled": 4000,
+  "sampled": 800,
   "role_counts": {
-    "OTHER_UNKNOWN": 2025,
-    "PARTY_SUBMISSION": 790,
-    "HOLDING_OPERATIVE": 200,
-    "FACTS": 33,
-    "PROCEDURAL_HISTORY": 82,
-    "CASE_HEADER": 621,
-    "COURT_REASONING": 45,
-    "SPAN_UNVERIFIABLE": 106,
-    "REPORTER_EDITORIAL": 67,
-    "DAMAGED_OR_OCR_SUSPECT": 26,
-    "QUOTED_PRECEDENT": 5
+    "OTHER_UNKNOWN": 360,
+    "PARTY_SUBMISSION": 165,
+    "HOLDING_OPERATIVE": 45,
+    "FACTS": 4,
+    "PROCEDURAL_HISTORY": 13,
+    "CASE_HEADER": 162,
+    "COURT_REASONING": 14,
+    "SPAN_UNVERIFIABLE": 26,
+    "REPORTER_EDITORIAL": 5,
+    "DAMAGED_OR_OCR_SUSPECT": 6
   },
   "role_share_pct": {
-    "OTHER_UNKNOWN": 50.63,
-    "PARTY_SUBMISSION": 19.75,
-    "HOLDING_OPERATIVE": 5,
-    "FACTS": 0.83,
-    "PROCEDURAL_HISTORY": 2.05,
-    "CASE_HEADER": 15.53,
-    "COURT_REASONING": 1.13,
-    "SPAN_UNVERIFIABLE": 2.65,
-    "REPORTER_EDITORIAL": 1.68,
-    "DAMAGED_OR_OCR_SUSPECT": 0.65,
-    "QUOTED_PRECEDENT": 0.13
+    "OTHER_UNKNOWN": 45,
+    "PARTY_SUBMISSION": 20.63,
+    "HOLDING_OPERATIVE": 5.63,
+    "FACTS": 0.5,
+    "PROCEDURAL_HISTORY": 1.63,
+    "CASE_HEADER": 20.25,
+    "COURT_REASONING": 1.75,
+    "SPAN_UNVERIFIABLE": 3.25,
+    "REPORTER_EDITORIAL": 0.63,
+    "DAMAGED_OR_OCR_SUSPECT": 0.75
   },
-  "span_unverifiable": 106,
-  "unsafe_as_court_reasoning": 994,
+  "span_unverifiable": 26,
+  "unsafe_as_court_reasoning": 202,
   "unsafe_roles": [
     "SPAN_UNVERIFIABLE",
     "DAMAGED_OR_OCR_SUSPECT",
@@ -47,41 +45,43 @@
   ],
   "sc_vs_hc": {
     "supreme_court": {
-      "n": 606,
-      "unsafe": 114
+      "n": 30,
+      "unsafe": 3
     },
     "high_courts": {
-      "n": 3394,
-      "unsafe": 880
+      "n": 770,
+      "unsafe": 199
     }
   },
   "topk": {
     "k": 10,
+    "ef_search": 200,
+    "ef_search_source": "services/api/src/search/retrieve.ts:688 — production value, NOT pgvector default 40",
     "queries": 20,
     "passages": 200,
     "role_counts": {
       "HOLDING_OPERATIVE": 22,
-      "OTHER_UNKNOWN": 132,
-      "PARTY_SUBMISSION": 17,
+      "OTHER_UNKNOWN": 128,
+      "PARTY_SUBMISSION": 19,
       "DAMAGED_OR_OCR_SUSPECT": 1,
       "CASE_HEADER": 1,
-      "COURT_REASONING": 5,
+      "COURT_REASONING": 7,
       "SPAN_UNVERIFIABLE": 2,
       "REPORTER_EDITORIAL": 20
     },
     "role_share_pct": {
       "HOLDING_OPERATIVE": 11,
-      "OTHER_UNKNOWN": 66,
-      "PARTY_SUBMISSION": 8.5,
+      "OTHER_UNKNOWN": 64,
+      "PARTY_SUBMISSION": 9.5,
       "DAMAGED_OR_OCR_SUSPECT": 0.5,
       "CASE_HEADER": 0.5,
-      "COURT_REASONING": 2.5,
+      "COURT_REASONING": 3.5,
       "SPAN_UNVERIFIABLE": 1,
       "REPORTER_EDITORIAL": 10
     },
-    "unsafe": 40,
-    "unsafe_pct": 20,
-    "pool_unsafe_pct": 24.85,
+    "unsafe": 42,
+    "unsafe_pct": 21,
+    "pool_unsafe_pct": 25.25,
     "span_unverifiable": 2,
     "per_query": [
       {
@@ -138,8 +138,8 @@
         "k": 10,
         "roles": {
           "PARTY_SUBMISSION": 3,
-          "OTHER_UNKNOWN": 5,
-          "HOLDING_OPERATIVE": 1,
+          "OTHER_UNKNOWN": 4,
+          "HOLDING_OPERATIVE": 2,
           "COURT_REASONING": 1
         },
         "unsafe": 3
@@ -178,9 +178,10 @@
         "k": 10,
         "roles": {
           "OTHER_UNKNOWN": 8,
-          "PARTY_SUBMISSION": 2
+          "PARTY_SUBMISSION": 1,
+          "COURT_REASONING": 1
         },
-        "unsafe": 2
+        "unsafe": 1
       },
       {
         "query": "dishonour of cheque presumption",
@@ -196,29 +197,31 @@
         "query": "specific performance of agreement to sell",
         "k": 10,
         "roles": {
-          "OTHER_UNKNOWN": 3,
-          "REPORTER_EDITORIAL": 6,
+          "OTHER_UNKNOWN": 4,
+          "REPORTER_EDITORIAL": 5,
           "PARTY_SUBMISSION": 1
         },
-        "unsafe": 7
+        "unsafe": 6
       },
       {
         "query": "temporary injunction three ingredients",
         "k": 10,
         "roles": {
-          "OTHER_UNKNOWN": 8,
-          "HOLDING_OPERATIVE": 1,
-          "PARTY_SUBMISSION": 1
+          "COURT_REASONING": 1,
+          "PARTY_SUBMISSION": 3,
+          "OTHER_UNKNOWN": 6
         },
-        "unsafe": 1
+        "unsafe": 3
       },
       {
         "query": "maintenance under section 125",
         "k": 10,
         "roles": {
-          "OTHER_UNKNOWN": 10
+          "OTHER_UNKNOWN": 8,
+          "REPORTER_EDITORIAL": 1,
+          "PARTY_SUBMISSION": 1
         },
-        "unsafe": 0
+        "unsafe": 2
       },
       {
         "query": "custody of minor child welfare",

@@ -154,6 +154,35 @@ counsel submissions — which are hedged, party-specific and procedural — are
 `CASE_HEADER` collapsing from 15.53% to 0.50% is the same effect from the other
 side: captions match nothing semantic.
 
+### The first run used the wrong `ef_search`, and NEW1 caught it
+
+My first top-k run **did not set `hnsw.ef_search`**, so pgvector's built-in
+default of **40** applied. Production sets **200**
+(`services/api/src/search/retrieve.ts:688`), and NEW1 flagged (bus 1298) that at
+40 roughly two thirds of the exact top-100 is lost — meaning I would have been
+classifying a ranking nobody ships.
+
+`select current_setting('hnsw.ef_search', true)` returned `NULL` on my session,
+confirming it. **Re-run at production 200:**
+
+| role | ef_search **40** | ef_search **200** |
+| --- | ---: | ---: |
+| `REPORTER_EDITORIAL` | 10.00% | **10.00%** |
+| `PARTY_SUBMISSION` | 8.50% | 9.50% |
+| `COURT_REASONING` | 2.50% | 3.50% |
+| `CASE_HEADER` | 0.50% | 0.50% |
+| unsafe total | 20.00% | **21.00%** |
+
+**The finding is invariant to the ANN setting.** `REPORTER_EDITORIAL` in top-k
+is 10.00% at both, on identical queries, so the enrichment is a property of what
+the model matches rather than of how deep the index search goes. The prediction
+stays refuted at both settings.
+
+The enrichment ratio quoted above uses the **4,000-passage** pool figure of
+1.68%; the 200-run's own pool sample was 800 passages and is a noisier
+denominator, which is why its ratio reads higher. The top-k numerator — the one
+that matters — is the same either way.
+
 ### Why this is the round's sharpest result
 
 `REPORTER_APPARATUS_V1` measured reporter furniture in **93.2%** of Supreme
