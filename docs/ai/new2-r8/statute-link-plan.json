@@ -2,12 +2,12 @@
   "artifact": "NEW2_STATUTE_LINK_PLAN_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.2",
-  "generated_at": "2026-08-26T14:37:33.438Z",
+  "generated_at": "2026-08-26T15:07:04.889Z",
   "mode": "DRY_RUN — writes nothing",
   "canonical_act_key_implementation": "@lawmind/ingest/sections :: canonicalAct",
   "unit_of_classification": "(act_key, act_named) pair — the key alone cannot see the year the court printed",
-  "held_acts": 847,
-  "held_act_keys_after_normalisation": 834,
+  "held_acts": 848,
+  "held_act_keys_after_normalisation": 835,
   "held_acts_colliding_under_normalisation": [
     {
       "act_key": "BANKING COMPANIES (ACQUISITION AND TRANSFER OF UNDERTAKINGS) ACT",
@@ -81,28 +81,28 @@
   "distinct_pairs": 16582,
   "tally": {
     "LINK_YEAR_CONFIRMED": {
-      "pairs": 733,
-      "refs": 484243
+      "pairs": 741,
+      "refs": 561114
     },
     "LINK_NAME_ONLY": {
-      "pairs": 345,
-      "refs": 111329
+      "pairs": 348,
+      "refs": 128284
     },
     "LINK_YEAR_RESOLVED": {
       "pairs": 4,
       "refs": 149
     },
     "REFUSE_YEAR_CONFLICT": {
-      "pairs": 507,
-      "refs": 2916
+      "pairs": 526,
+      "refs": 2971
     },
     "REFUSE_AMBIGUOUS": {
       "pairs": 2,
       "refs": 244
     },
     "REFUSE_UNHELD": {
-      "pairs": 14987,
-      "refs": 259149
+      "pairs": 14957,
+      "refs": 165268
     },
     "REFUSE_PAIR_UNIDENTIFIED": {
       "pairs": 4,
@@ -113,22 +113,22 @@
       "refs": 0
     }
   },
-  "linkable_refs": 595721,
-  "linkable_pct": 69.06,
+  "linkable_refs": 689547,
+  "linkable_pct": 79.94,
   "section_text_coverage": {
-    "distinct_acts_linked": 266,
+    "distinct_acts_linked": 267,
     "acts_with_no_held_section": 4,
-    "refs_whose_act_has_held_sections": 595524
+    "refs_whose_act_has_held_sections": 689350
   },
   "year_conflict_shape": {
     "DIGIT_EDIT_1": {
-      "pairs": 262,
-      "refs": 927,
+      "pairs": 273,
+      "refs": 960,
       "note": "candidate for adjudication, NEVER linked by this plan"
     },
     "PREDECESSOR_CANDIDATE": {
-      "pairs": 245,
-      "refs": 1989,
+      "pairs": 253,
+      "refs": 2011,
       "note": "the corpus cites a statute we do not hold; holding its successor is not holding it"
     }
   },
@@ -533,6 +533,36 @@
         "1908"
       ],
       "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1880",
+      "refs": 10,
+      "printed": 1880,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1908",
+      "refs": 10,
+      "printed": 1908,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1960",
+      "refs": 10,
+      "printed": 1960,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
     },
     {
       "act_key": "TRADE MARKS ACT",
@@ -1029,6 +1059,16 @@
       "shape": "DIGIT_EDIT_1"
     },
     {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1872",
+      "refs": 4,
+      "printed": 1872,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "INDIAN TRUST ACT",
       "act_named": "Indian Trust Act, 1982",
       "refs": 4,
@@ -1275,6 +1315,16 @@
       "printed": 1882,
       "held": [
         "1872"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1806",
+      "refs": 3,
+      "printed": 1806,
+      "held": [
+        "1860"
       ],
       "shape": "DIGIT_EDIT_1"
     },
@@ -1848,6 +1898,46 @@
         "1956"
       ],
       "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1861",
+      "refs": 2,
+      "printed": 1861,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1870",
+      "refs": 2,
+      "printed": 1870,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1973",
+      "refs": 2,
+      "printed": 1973,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1980",
+      "refs": 2,
+      "printed": 1980,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
     },
     {
       "act_key": "INDIAN STAMP ACT",
@@ -4002,6 +4092,106 @@
       "shape": "PREDECESSOR_CANDIDATE"
     },
     {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code 1806",
+      "refs": 1,
+      "printed": 1806,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code 2025",
+      "refs": 1,
+      "printed": 2025,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1862",
+      "refs": 1,
+      "printed": 1862,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1869",
+      "refs": 1,
+      "printed": 1869,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 1890",
+      "refs": 1,
+      "printed": 1890,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code, 2023",
+      "refs": 1,
+      "printed": 2023,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Indian Penal Code,1908",
+      "refs": 1,
+      "printed": 1908,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Penal Code, 1800",
+      "refs": 1,
+      "printed": 1800,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Penal Code, 1869",
+      "refs": 1,
+      "printed": 1869,
+      "held": [
+        "1860"
+      ],
+      "shape": "DIGIT_EDIT_1"
+    },
+    {
+      "act_key": "INDIAN PENAL CODE",
+      "act_named": "Penal Code, 1907",
+      "refs": 1,
+      "printed": 1907,
+      "held": [
+        "1860"
+      ],
+      "shape": "PREDECESSOR_CANDIDATE"
+    },
+    {
       "act_key": "INDIAN PORTS ACT",
       "act_named": "Indian Ports Act 1908",
       "refs": 1,
@@ -5281,10 +5471,6 @@
   ],
   "unheld_keys_top": [
     {
-      "act_key": "INDIAN PENAL CODE",
-      "refs": 93881
-    },
-    {
       "act_key": "INDIAN EVIDENCE ACT",
       "refs": 17576
     },
@@ -5439,7 +5625,11 @@
     {
       "act_key": "RTI ACT",
       "refs": 496
+    },
+    {
+      "act_key": "ASSAM PANCHAYAT ACT",
+      "refs": 487
     }
   ],
-  "link_plan_size": 1082
+  "link_plan_size": 1093
 }

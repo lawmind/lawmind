@@ -1,10 +1,12 @@
 # CRPC_1973_SOURCE_CORRECTION_R8_3 — R8.3 §11 N2-5
 
 **Lane:** NEW2 · **26 August 2026**
-**My `CONFIRMED_ABSENT` was wrong. CrPC 1973 is held by two official Government of India platforms, is now ingested at 532 sections, and moves linkable statute references from 37.18% to 69.06%.**
+**My `CONFIRMED_ABSENT` was wrong. CrPC 1973 is held by two official Government of India platforms, is now ingested at 533 sections, and with the IPC moves linkable statute references from 37.18% to 79.94%.**
 
-**Artifacts** — `scripts/n2-crpc-1973-acquire.mts` ·
+**Artifacts** — `scripts/n2-act-acquire.mts --act=crpc` ·
 `docs/ai/new2-r83/crpc-1973-acquisition.json`
+**See also** `ACTS_PARSER_PROOF_R8_3.md` — the same machinery applied to the IPC,
+and why the Indian Evidence Act is still `NOT_ACQUIRED`.
 **Supersedes** `docs/ai/new2-r8/STATUTE_SOURCE_RECONCILIATION_R8.md` §4.
 
 ---
@@ -133,19 +135,22 @@ control.
 
 ```
 principal Act            577,810 chars (cut at THE FIRST SCHEDULE)
-parsed                   532 sections
+parsed                   533 sections
 bare sections            484 of 484   100.0%
-lettered                  48
+lettered                  49
 ```
 
-Four spacing and layout facts each produced a false ABSENT on a file that
+Five spacing and layout facts each produced a false ABSENT on a file that
 contains the section in full, and each is now a named rule rather than a comment:
 
 1. `125.Order for maintenance…` — **no space** after the period;
 2. `96.     Application…` — **five** spaces;
 3. `1*[24. Public Prosecutors…` — a **footnote prefix** on a substituted section (24, 433A, 446A);
 4. `…made over to them—As Additional Sessions` (s.194) — heading ends with an
-   em-dash and **no period at all**.
+   em-dash and **no period at all**;
+5. `[17 "Government".—The word…` in the IPC — the footnote bracket swallowed the
+   period after the number entirely, so the period is optional when a bracket
+   opens the line.
 
 And one that truncated rather than dropped: s.351's heading is *"Appeals from
 convictions under sections 344, 345, 349, and\n350."* — the wrap puts `350.` at
@@ -162,7 +167,7 @@ correct headings.
 
 ```
 statute        0019baad-090a-4777-a62a-f2a12339664e
-sections       532          verified by re-read
+sections       533          verified by re-read
 act_id         MHA_JUD_2022-09_ccp1973
 act_number     2            act_year 1974
 enactment      1974-01-25   enforcement 1974-04-01   (s.1(3), read off the artifact)
@@ -189,6 +194,7 @@ what 186,382 judgments in this corpus are about. It is never current procedure.
 
 ```
 judgment_statute_refs linkable   320,729 (37.18%)  ->  595,721 (69.06%)
+                    and with the IPC too  ->  689,547 (79.94%)
 ```
 
 CrPC alone accounts for **280,027 references across 186,382 judgments** — the
