@@ -2,42 +2,42 @@
   "artifact": "NEW2_TRANCHE_PASSAGE_SAFETY_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.7",
-  "generated_at": "2026-08-26T01:35:19.787Z",
-  "mode": "POOL_ONLY",
+  "generated_at": "2026-08-26T04:02:40.232Z",
+  "mode": "POOL_AND_TOPK",
   "tranche": {
-    "passages": 416600,
-    "documents": 81200,
+    "passages": 418116,
+    "documents": 81720,
     "complete": null
   },
   "sampled": 4000,
   "role_counts": {
-    "OTHER_UNKNOWN": 2053,
-    "PARTY_SUBMISSION": 775,
-    "CASE_HEADER": 619,
-    "HOLDING_OPERATIVE": 192,
-    "FACTS": 37,
-    "PROCEDURAL_HISTORY": 77,
-    "COURT_REASONING": 46,
-    "REPORTER_EDITORIAL": 63,
+    "OTHER_UNKNOWN": 2025,
+    "PARTY_SUBMISSION": 790,
+    "HOLDING_OPERATIVE": 200,
+    "FACTS": 33,
+    "PROCEDURAL_HISTORY": 82,
+    "CASE_HEADER": 621,
+    "COURT_REASONING": 45,
     "SPAN_UNVERIFIABLE": 106,
-    "DAMAGED_OR_OCR_SUSPECT": 28,
-    "QUOTED_PRECEDENT": 4
+    "REPORTER_EDITORIAL": 67,
+    "DAMAGED_OR_OCR_SUSPECT": 26,
+    "QUOTED_PRECEDENT": 5
   },
   "role_share_pct": {
-    "OTHER_UNKNOWN": 51.32,
-    "PARTY_SUBMISSION": 19.38,
-    "CASE_HEADER": 15.47,
-    "HOLDING_OPERATIVE": 4.8,
-    "FACTS": 0.92,
-    "PROCEDURAL_HISTORY": 1.93,
-    "COURT_REASONING": 1.15,
-    "REPORTER_EDITORIAL": 1.57,
+    "OTHER_UNKNOWN": 50.63,
+    "PARTY_SUBMISSION": 19.75,
+    "HOLDING_OPERATIVE": 5,
+    "FACTS": 0.83,
+    "PROCEDURAL_HISTORY": 2.05,
+    "CASE_HEADER": 15.53,
+    "COURT_REASONING": 1.13,
     "SPAN_UNVERIFIABLE": 2.65,
-    "DAMAGED_OR_OCR_SUSPECT": 0.7,
-    "QUOTED_PRECEDENT": 0.1
+    "REPORTER_EDITORIAL": 1.68,
+    "DAMAGED_OR_OCR_SUSPECT": 0.65,
+    "QUOTED_PRECEDENT": 0.13
   },
   "span_unverifiable": 106,
-  "unsafe_as_court_reasoning": 976,
+  "unsafe_as_court_reasoning": 994,
   "unsafe_roles": [
     "SPAN_UNVERIFIABLE",
     "DAMAGED_OR_OCR_SUSPECT",
@@ -47,13 +47,240 @@
   ],
   "sc_vs_hc": {
     "supreme_court": {
-      "n": 635,
-      "unsafe": 105
+      "n": 606,
+      "unsafe": 114
     },
     "high_courts": {
-      "n": 3365,
-      "unsafe": 871
+      "n": 3394,
+      "unsafe": 880
     }
+  },
+  "topk": {
+    "k": 10,
+    "queries": 20,
+    "passages": 200,
+    "role_counts": {
+      "HOLDING_OPERATIVE": 22,
+      "OTHER_UNKNOWN": 132,
+      "PARTY_SUBMISSION": 17,
+      "DAMAGED_OR_OCR_SUSPECT": 1,
+      "CASE_HEADER": 1,
+      "COURT_REASONING": 5,
+      "SPAN_UNVERIFIABLE": 2,
+      "REPORTER_EDITORIAL": 20
+    },
+    "role_share_pct": {
+      "HOLDING_OPERATIVE": 11,
+      "OTHER_UNKNOWN": 66,
+      "PARTY_SUBMISSION": 8.5,
+      "DAMAGED_OR_OCR_SUSPECT": 0.5,
+      "CASE_HEADER": 0.5,
+      "COURT_REASONING": 2.5,
+      "SPAN_UNVERIFIABLE": 1,
+      "REPORTER_EDITORIAL": 10
+    },
+    "unsafe": 40,
+    "unsafe_pct": 20,
+    "pool_unsafe_pct": 24.85,
+    "span_unverifiable": 2,
+    "per_query": [
+      {
+        "query": "anticipatory bail",
+        "k": 10,
+        "roles": {
+          "HOLDING_OPERATIVE": 2,
+          "OTHER_UNKNOWN": 7,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "bail application rejected",
+        "k": 10,
+        "roles": {
+          "PARTY_SUBMISSION": 3,
+          "OTHER_UNKNOWN": 6,
+          "HOLDING_OPERATIVE": 1
+        },
+        "unsafe": 3
+      },
+      {
+        "query": "regular bail in NDPS case",
+        "k": 10,
+        "roles": {
+          "HOLDING_OPERATIVE": 3,
+          "OTHER_UNKNOWN": 7
+        },
+        "unsafe": 0
+      },
+      {
+        "query": "quashing of FIR under section 482",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 5,
+          "DAMAGED_OR_OCR_SUSPECT": 1,
+          "HOLDING_OPERATIVE": 4
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "quashing criminal proceedings settlement",
+        "k": 10,
+        "roles": {
+          "HOLDING_OPERATIVE": 5,
+          "OTHER_UNKNOWN": 4,
+          "CASE_HEADER": 1
+        },
+        "unsafe": 0
+      },
+      {
+        "query": "condonation of delay limitation",
+        "k": 10,
+        "roles": {
+          "PARTY_SUBMISSION": 3,
+          "OTHER_UNKNOWN": 5,
+          "HOLDING_OPERATIVE": 1,
+          "COURT_REASONING": 1
+        },
+        "unsafe": 3
+      },
+      {
+        "query": "limitation period for appeal",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 7,
+          "SPAN_UNVERIFIABLE": 1,
+          "COURT_REASONING": 2
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "writ petition maintainability alternative remedy",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 7,
+          "HOLDING_OPERATIVE": 2,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "writ of mandamus against private body",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 8,
+          "HOLDING_OPERATIVE": 2
+        },
+        "unsafe": 0
+      },
+      {
+        "query": "cheque bounce section 138 notice",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 8,
+          "PARTY_SUBMISSION": 2
+        },
+        "unsafe": 2
+      },
+      {
+        "query": "dishonour of cheque presumption",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 8,
+          "REPORTER_EDITORIAL": 1,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 2
+      },
+      {
+        "query": "specific performance of agreement to sell",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 3,
+          "REPORTER_EDITORIAL": 6,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 7
+      },
+      {
+        "query": "temporary injunction three ingredients",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 8,
+          "HOLDING_OPERATIVE": 1,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "maintenance under section 125",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 10
+        },
+        "unsafe": 0
+      },
+      {
+        "query": "custody of minor child welfare",
+        "k": 10,
+        "roles": {
+          "REPORTER_EDITORIAL": 4,
+          "OTHER_UNKNOWN": 5,
+          "SPAN_UNVERIFIABLE": 1
+        },
+        "unsafe": 5
+      },
+      {
+        "query": "dying declaration admissibility",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 9,
+          "REPORTER_EDITORIAL": 1
+        },
+        "unsafe": 1
+      },
+      {
+        "query": "circumstantial evidence last seen",
+        "k": 10,
+        "roles": {
+          "REPORTER_EDITORIAL": 4,
+          "OTHER_UNKNOWN": 6
+        },
+        "unsafe": 4
+      },
+      {
+        "query": "compassionate appointment policy",
+        "k": 10,
+        "roles": {
+          "REPORTER_EDITORIAL": 1,
+          "HOLDING_OPERATIVE": 1,
+          "OTHER_UNKNOWN": 7,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 2
+      },
+      {
+        "query": "termination of workman industrial dispute",
+        "k": 10,
+        "roles": {
+          "OTHER_UNKNOWN": 5,
+          "PARTY_SUBMISSION": 2,
+          "REPORTER_EDITORIAL": 3
+        },
+        "unsafe": 5
+      },
+      {
+        "query": "land acquisition compensation enhancement",
+        "k": 10,
+        "roles": {
+          "COURT_REASONING": 2,
+          "OTHER_UNKNOWN": 7,
+          "PARTY_SUBMISSION": 1
+        },
+        "unsafe": 1
+      }
+    ],
+    "prediction_recorded_before_run": "top-k will carry MORE PARTY_SUBMISSION than the 19.38% pool rate"
   },
   "caveats": [
     "POOL base rate only. §7.7 requires TOP-K, which needs the completed tranche and the rebuilt HNSW.",

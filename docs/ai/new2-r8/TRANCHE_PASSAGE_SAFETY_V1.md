@@ -1,7 +1,7 @@
 # TRANCHE_PASSAGE_SAFETY_V1 — R8.1 §7.7
 
-**Lane:** NEW2 · **26 August 2026**
-**State: `PARTIAL`. The pool half is measured on the real tranche. The top-k half — the half §7.7 actually asks for — waits on `HEAVY_BOX`.**
+**Lane:** NEW2 · **26 August 2026** · **updated after `HEAVY_BOX` release**
+**State: `COMPLETE`. Top-k is measured, my recorded prediction was WRONG, and what replaced it is worse.**
 
 **Artifacts** — `scripts/n2-tranche-passage-safety.mts` · `docs/ai/new2-r8/tranche-passage-safety.json`
 
@@ -112,26 +112,72 @@ disagreed with another lane's independent measurement — not any internal check
 
 ---
 
-## 5. Why this is `PARTIAL` and not done
+## 5. TOP-K — the half that decides safety, and my prediction was wrong
 
-§7.7 says: *"Measure **top-k**, not only pool base rate."*
+20 common Indian legal queries — bail, anticipatory bail, quashing, limitation,
+writ maintainability, s.138, s.125, dying declaration, and the rest — embedded on
+the same model and run against the rebuilt HNSW. k=10, **200 retrieved passages**.
 
-This is the pool base rate. It is the number the study could produce without the
-index, and it is **not the number that decides safety**.
+**Prediction recorded before the run:** *top-k will carry MORE
+`PARTY_SUBMISSION` than the 19.38% pool rate.*
 
-A pool can be 51% unknown and still be safe if retrieval never surfaces those
-passages. It can be 19% party submission and be dangerous if that 19% is what
-ranks first — counsel submissions read like confident legal propositions, which
-is exactly what an embedding model rewards.
+**It carries less. The prediction is refuted.**
 
-**The top-k half needs the completed tranche and the rebuilt HNSW.** The harness
-has the mode built (`--topk`) and it refuses to run without
-`--i-hold-heavy-box`. NEW1 holds the lease and is at ~99.6%.
+| role | top-k | pool | delta | |
+| --- | ---: | ---: | ---: | --- |
+| `OTHER_UNKNOWN` | 66.00% | 50.63% | +15.38 | |
+| `HOLDING_OPERATIVE` | 11.00% | 5.00% | +6.00 | |
+| **`REPORTER_EDITORIAL`** | **10.00%** | **1.68%** | **+8.32** | **UNSAFE — 6× enriched** |
+| `PARTY_SUBMISSION` | 8.50% | 19.75% | **−11.25** | UNSAFE |
+| `COURT_REASONING` | 2.50% | 1.13% | +1.38 | |
+| `SPAN_UNVERIFIABLE` | 1.00% | 2.65% | −1.65 | UNSAFE |
+| `DAMAGED_OR_OCR_SUSPECT` | 0.50% | 0.65% | −0.15 | UNSAFE |
+| `CASE_HEADER` | 0.50% | 15.53% | −15.03 | |
 
-**Prediction, recorded before the measurement so it can be wrong:** top-k will
-carry *more* `PARTY_SUBMISSION` than the 19.38% pool rate, not less.
+```
+top-k unsafe-as-court-reasoning   40/200 = 20.00%   (pool 24.85%)
+top-k span unverifiable            2/200 =  1.00%   (pool  2.65%)
+```
 
----
+### What was actually wrong with the prediction
+
+I reasoned that counsel submissions *read like confident legal propositions*, so
+an embedding model would reward them. The mechanism is right; **I attached it to
+the wrong class.**
+
+**A headnote is a confident legal proposition. That is what a headnote IS** — a
+reporter's editor distilling the holding into exactly the sentence a legal query
+is looking for. So retrieval enriches `REPORTER_EDITORIAL` **six-fold**, while
+counsel submissions — which are hedged, party-specific and procedural — are
+*de*-enriched.
+
+`CASE_HEADER` collapsing from 15.53% to 0.50% is the same effect from the other
+side: captions match nothing semantic.
+
+### Why this is the round's sharpest result
+
+`REPORTER_APPARATUS_V1` measured reporter furniture in **93.2%** of Supreme
+Court documents. `OCR_PRIORITY_QUEUE_V1` found the SC is **99.3%** of
+highly-cited authorities. `TREATMENT_NULL_VERIFICATION_V1` found **96.2%** of
+LAW MOVED edges already rest on reporter annotation.
+
+This closes the loop: **the retrieval layer independently concentrates the one
+class G4 says must never masquerade as court reasoning.** It is not a corpus
+accident that can be diluted by adding documents — it is a ranking preference,
+and adding more SCR text makes it stronger.
+
+**Overall unsafe went slightly DOWN (24.85% → 20.00%) while the composition got
+more dangerous.** A single headline rate would have reported an improvement.
+
+### What it obliges
+
+1. **Role must be on the evidence wire before generation ships** — LCC §8.6.
+   One retrieved passage in ten is reporter editorial.
+2. **`REPORTER_EDITORIAL` must be attributed at render**, not filtered. §12.6
+   already says reporter evidence is attributed; this says how often it arrives.
+3. **`COURT_REASONING` is 2.50% of top-k.** One retrieved passage in forty is
+   first-person judicial reasoning. Any product surface implying "here is what
+   the court said" is describing 2.5% of what it was handed.
 
 ## 6. What is deliberately not claimed
 
@@ -159,6 +205,9 @@ carry *more* `PARTY_SUBMISSION` than the 19.38% pool rate, not less.
 | SC vs HC split | **`PROVEN`** at sample scope — 16.54% vs 25.88% |
 | span defect corroborated independently | **`PROVEN`** — 2.65% against NEW1's 2.95% |
 | substitute frame understated unsafe classes | **`PROVEN`** |
-| **top-k role distribution** | **`NOT_MEASURED`** — the half §7.7 asks for; blocked on `HEAVY_BOX` |
+| **top-k role distribution** | **`PROVEN`** — 20 queries, k=10, 200 passages |
+| my recorded prediction | **`REFUTED`** — party submission fell 11.25 points |
+| `REPORTER_EDITORIAL` 6× enrichment in top-k | **`PROVEN`** — 1.68% pool to 10.00% top-k |
+| top-k measured on 20 queries only | **`PARTIAL`** — a wider query set could move it |
 | lexical rule precision | **`NOT_MEASURED`** — needs hand adjudication, FIFTH's §9.7 |
 | role/damage wired to the evidence contract | **`NOT_MEASURED`** — LCC §8.6 |
