@@ -1,0 +1,198 @@
+{
+  "artifact": "NEW2_CORAM_RECOVERY_PROBE_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.14",
+  "generated_at": "2026-08-26T03:51:41.745Z",
+  "writes_to_corpus": 0,
+  "current_coverage": {
+    "supreme_court": "38,326 of 38,342 (99.958%)",
+    "high_courts": "0 of 18,660,642 (0.000%)"
+  },
+  "patterns": [
+    {
+      "name": "CORAM_HONOURABLE_JUSTICE",
+      "pattern": "/THE\\s+HON(?:'|’)?BLE\\s+(?:MR|MRS|MS|DR)?\\.?\\s*JUSTICE\\s+([A-Z][A-Z.\\s]{2,60}?)(?=\\s{2,}|\\n|,|and\\b|$)/gi"
+    },
+    {
+      "name": "HONBLE_NAME_J",
+      "pattern": "/HON(?:'|’)?BLE\\s+((?:MR|MRS|MS|DR)?\\.?\\s*(?:JUSTICE\\s+)?[A-Z][A-Za-z.\\s]{2,50}?)\\s*,\\s*J\\b/g"
+    },
+    {
+      "name": "CORAM_LABEL_BLOCK",
+      "pattern": "/\\bCORAM\\s*[:\\-]?\\s*\\n+((?:.{0,90}\\n){1,4})/gi"
+    }
+  ],
+  "per_court": [
+    {
+      "court": "Allahabad High Court",
+      "corpus_documents": 2276082,
+      "sampled": 80,
+      "with_bench_signal": 80,
+      "signal_pct": 100,
+      "with_named_bench": 27,
+      "naive_pattern_recall": 33.8,
+      "by_pattern": {
+        "HONBLE_NAME_J": 27
+      },
+      "bench_size_distribution": {
+        "1": 23,
+        "2": 4
+      },
+      "samples": [
+        "MAHESH CHANDRA TRIPATHI | KUNAL RAVI SINGH",
+        "AVNISH SAXENA",
+        "SHEKHAR B. SARAF | MANJIVE SHUKLA"
+      ]
+    },
+    {
+      "court": "Bombay High Court",
+      "corpus_documents": 1983885,
+      "sampled": 80,
+      "with_bench_signal": 70,
+      "signal_pct": 87.5,
+      "with_named_bench": 0,
+      "naive_pattern_recall": 0,
+      "by_pattern": {},
+      "bench_size_distribution": {},
+      "samples": []
+    },
+    {
+      "court": "High Court of Punjab and Haryana",
+      "corpus_documents": 1848332,
+      "sampled": 80,
+      "with_bench_signal": 43,
+      "signal_pct": 53.8,
+      "with_named_bench": 0,
+      "naive_pattern_recall": 0,
+      "by_pattern": {},
+      "bench_size_distribution": {},
+      "samples": []
+    },
+    {
+      "court": "Patna High Court",
+      "corpus_documents": 1706788,
+      "sampled": 80,
+      "with_bench_signal": 76,
+      "signal_pct": 95,
+      "with_named_bench": 0,
+      "naive_pattern_recall": 0,
+      "by_pattern": {},
+      "bench_size_distribution": {},
+      "samples": []
+    },
+    {
+      "court": "Madras High Court",
+      "corpus_documents": 1696697,
+      "sampled": 80,
+      "with_bench_signal": 55,
+      "signal_pct": 68.8,
+      "with_named_bench": 18,
+      "naive_pattern_recall": 22.5,
+      "by_pattern": {
+        "CORAM_HONOURABLE_JUSTICE": 18
+      },
+      "bench_size_distribution": {
+        "1": 18
+      },
+      "samples": [
+        "D.BHARATHA CHAKRAVARTHY",
+        "P.D.AUDIKESAVALU",
+        "M.DHANDAPANI"
+      ]
+    },
+    {
+      "court": "High Court Of Rajasthan",
+      "corpus_documents": 1095169,
+      "sampled": 80,
+      "with_bench_signal": 64,
+      "signal_pct": 80,
+      "with_named_bench": 1,
+      "naive_pattern_recall": 1.3,
+      "by_pattern": {
+        "HONBLE_NAME_J": 1
+      },
+      "bench_size_distribution": {
+        "1": 1
+      },
+      "samples": [
+        "MR. JUSTICE P.K. LOHRA"
+      ]
+    },
+    {
+      "court": "High Court  for State of Telangana",
+      "corpus_documents": 1042408,
+      "sampled": 80,
+      "with_bench_signal": 79,
+      "signal_pct": 98.8,
+      "with_named_bench": 0,
+      "naive_pattern_recall": 0,
+      "by_pattern": {},
+      "bench_size_distribution": {},
+      "samples": []
+    },
+    {
+      "court": "High Court of Kerala",
+      "corpus_documents": 1036112,
+      "sampled": 80,
+      "with_bench_signal": 80,
+      "signal_pct": 100,
+      "with_named_bench": 0,
+      "naive_pattern_recall": 0,
+      "by_pattern": {},
+      "bench_size_distribution": {},
+      "samples": []
+    },
+    {
+      "court": "High Court of Karnataka",
+      "corpus_documents": 955450,
+      "sampled": 80,
+      "with_bench_signal": 56,
+      "signal_pct": 70,
+      "with_named_bench": 55,
+      "naive_pattern_recall": 68.8,
+      "by_pattern": {
+        "CORAM_HONOURABLE_JUSTICE": 55
+      },
+      "bench_size_distribution": {
+        "1": 54,
+        "2": 1
+      },
+      "samples": [
+        "V KAMESWAR RAO",
+        "C M JOSHI",
+        "SACHIN SHANKAR MAGADUM"
+      ]
+    },
+    {
+      "court": "Orissa High Court",
+      "corpus_documents": 794461,
+      "sampled": 80,
+      "with_bench_signal": 68,
+      "signal_pct": 85,
+      "with_named_bench": 7,
+      "naive_pattern_recall": 8.8,
+      "by_pattern": {
+        "CORAM_HONOURABLE_JUSTICE": 7,
+        "CORAM_LABEL_BLOCK": 44
+      },
+      "bench_size_distribution": {
+        "1": 6,
+        "2": 1
+      },
+      "samples": [
+        "MURAHARI SRI RAMAN",
+        "ADITYA KUMAR",
+        "ANANDA CHANDRA"
+      ]
+    }
+  ],
+  "overall_signal_pct": 83.9,
+  "overall_naive_pattern_recall_pct": 13.5,
+  "headline": "the bench IS in the text; naive patterns miss most of it. The gap is extraction work, not acquisition.",
+  "caveats": [
+    "This is RECALL only. Precision is NOT_MEASURED — nothing here is hand-adjudicated, and a wrong judge name is worse than none.",
+    "no bindingness classifier is proposed or implied; §7.14 forbids one and this measures an input, not a conclusion",
+    "patterns are anchored on an honorific or a CORAM label. A bare capitalised name is never accepted, because counsel and parties are named in the same header.",
+    "a court where CORAM_LABEL_BLOCK fires but no name matches means the patterns are too narrow there, NOT that the bench is absent."
+  ]
+}
