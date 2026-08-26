@@ -221,13 +221,15 @@ Live status of the R8.1 LCC kickoff order. DONE means observed, not inferred.
 | 1 | Security/privacy P0 | **PARTIAL** | `ddd6398`; IDOR/auth/erasure/egress measured; secrets, audit integrity, billing, fail-closed flags NOT measured |
 | 6 | Cross-route uncertainty contract | **PARTIAL** | `d82baab`; /search + counter + saved feed. Briefing, preview, generation NOT wired |
 | 2 | Process registry / startup truth | **PARTIAL** | `0497f32`; sweep readable, registry NOT true; alert poller Interactive principal = live outage |
-| 5 | Timestamp precision audit | **IN PROGRESS** | NEW2 bus 1231: 7 sites; `admin/audit.ts:111` silently SKIPS audit rows |
-| 9 | Synthetic fixture cascade seam | **NOT STARTED** | `fixture-leak.test.ts` FAILS; 16 rows, FIFTH 1242 |
+| 5 | Timestamp precision audit | **DONE** | `73ec577`; 10 sites, audit pagination skipped 2 of 2, scan fails on the 11th |
+| 9 | Synthetic fixture cascade seam | **BLOCKED ON A HUMAN** | `1fc1fb1`; dry-proven, `--apply` refused by permission classifier. `fixture-leak.test.ts` STILL FAILS |
 | 8 | DATE_UNCHECKED / currentness propagation | **NOT STARTED** | — |
 | 7 | Retrieval evidence wire (§8.6) | **NOT STARTED** | — |
 
-Deferred by the lock until NEW1 releases HEAVY_BOX: fresh-install replay,
-targeted ANALYZE, mixed-load isolation, release manifest, Railway packet.
+HEAVY_BOX was RELEASED by NEW1 at 02:13Z (bus 1290), so these are now
+unblocked and are the next queue: fresh-install replay, targeted ANALYZE,
+mixed-load isolation, release manifest, restore/rollback/host-loss, Railway
+decision packet, and the alert-poller principal fix.
 
 ### 25 August 2026 (R7) — NEW1: THE ELIGIBILITY VIEW FILTERS NOTHING, A 320-CHARACTER WINDOW COSTS 500,000 DOCUMENTS THEIR PINPOINT CITATION, AND 29% OF COMMON LEGAL QUERIES ARE REFUSED
 
