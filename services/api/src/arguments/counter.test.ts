@@ -2,8 +2,11 @@ import assert from 'node:assert/strict';
 import { after, describe, it } from 'node:test';
 
 import postgres from 'postgres';
+import { Hono } from 'hono';
 
 import { createApp } from '../app.ts';
+import { counterRequest, handleCounter } from './counter.ts';
+import { capabilityState } from '../release/capabilities.ts';
 
 /**
  * A statement timeout, because production has one and this test did not.
@@ -33,7 +36,43 @@ const app = createApp({
 
 type Body = { ok: boolean; data?: Record<string, unknown>; error?: { code: string } };
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THE GROUNDING TESTS NO LONGER GO THROUGH THE MOUNTED ROUTE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * R8.3 §5.6 turns `generation.counterarguments` OFF for LIMITED V1 and §6
+ * requires the server to ENFORCE that, so `POST /arguments/counter` now returns
+ * 409 before the handler runs. Pointed at the mounted route, four of the seven
+ * tests below would still have PASSED — they iterate `body.data.authorities`,
+ * which a 409 does not have, so the loops execute zero times and assert nothing.
+ * A suite that goes green by never running its assertions is worse than one that
+ * fails, and this file would have become exactly that.
+ *
+ * So the two questions are separated. The grounding rules — every authority
+ * resolves to a corpus judgment, no `set_aside` authority is usable, an
+ * exclusion is NAMED rather than dropped, no fabricated prose — are properties
+ * of the HANDLER and must stay proven while the capability is off, because they
+ * are what has to still be true on the day it is turned on. The REFUSAL is a
+ * property of the mounted route and is tested against the real app.
+ */
+const bare = new Hono();
+bare.post('/counter', async (c) => {
+  const parsed = counterRequest.safeParse(await c.req.json());
+  if (!parsed.success) return c.json({ ok: false, error: { code: 'INVALID_REQUEST' } }, 400);
+  return handleCounter(c, { sql, researchSql: sql, embedQuery: async () => null }, parsed.data);
+});
+
 const post = async (payload: unknown): Promise<{ status: number; body: Body }> => {
+  const res = await bare.request('/counter', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return { status: res.status, body: (await res.json()) as Body };
+};
+
+const postThroughRoute = async (payload: unknown): Promise<{ status: number; body: Body }> => {
   const res = await app.request('/arguments/counter', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -118,5 +157,31 @@ describe('POST /arguments/counter', () => {
     const { status, body } = await post({ position: '', language: 'en' });
     assert.equal(status, 400);
     assert.equal(body.error?.code, 'INVALID_REQUEST');
+  });
+
+  /**
+   * The route half. R8.3 §5.6 / §6: a disabled capability must be genuinely
+   * unreachable, not merely labelled, and FIFTH verifies exactly this.
+   */
+  it('the MOUNTED route refuses while generation.counterarguments is DISABLED', async (t) => {
+    if (capabilityState('generation.counterarguments') !== 'DISABLED') {
+      return t.skip('capability has been enabled — this test is the guard for that decision');
+    }
+    const { status, body } = await postThroughRoute({
+      position: 'the accused is entitled to anticipatory bail on parity with a co-accused',
+      language: 'en',
+    });
+    assert.equal(status, 409, 'a disabled generation route must refuse, not answer');
+    assert.equal(body.error?.code, 'CAPABILITY_DISABLED');
+  });
+
+  it('and the refusal happens BEFORE any retrieval work — no admission slot is taken', async (t) => {
+    if (capabilityState('generation.counterarguments') !== 'DISABLED') return t.skip('enabled');
+    // A refusal that still ran the rankers would be a refusal that still costs
+    // the research pool a slot, which is how a "disabled" capability keeps
+    // contending for the box it is supposed to have stopped using.
+    const started = Date.now();
+    await postThroughRoute({ position: 'anticipatory bail', language: 'en' });
+    assert.ok(Date.now() - started < 1_000, 'the guard must precede the ranker, not follow it');
   });
 });

@@ -105,6 +105,8 @@ import {
 } from './premium/route.ts';
 import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
+import { capabilityRegistry } from './release/capabilities.ts';
+import { refuseIfDisabled } from './release/enforce.ts';
 import {
   annotationBody,
   createAnnotation,
@@ -236,6 +238,23 @@ export function createApp(deps: AppDeps) {
       minSupportedContract: MIN_SUPPORTED_CONTRACT,
     }),
   );
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * WHAT THIS RELEASE CLAIMS — R8.3 §6
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Unauthenticated and beside `/version` on purpose. A client must be able to
+   * discover what the server will refuse BEFORE it renders a screen that offers
+   * it, and a build that cannot reach this endpoint has no business assuming
+   * anything is enabled.
+   *
+   * This is the mechanism that lets a LIMITED V1 unlock client work without
+   * pretending broad semantic passed: RCC branches on the registry rather than
+   * on a feature flag, and NEW3's acceptance runs against it rather than against
+   * a screenshot.
+   */
+  app.get('/release/capabilities', (c) => ok(c, capabilityRegistry()));
 
   const auth = deps.auth;
   if (auth) {
@@ -434,6 +453,12 @@ export function createApp(deps: AppDeps) {
     // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
     // authorities are excluded AND named, never silently dropped.
     app.post('/arguments/counter', validate('json', counterRequest), (c) =>
+      // R8.3 §5.6 / §6. `generation.counterarguments` is DISABLED: the adverse
+      // authority that would change the argument is exactly the one that did not
+      // get ranked, and `adverse_authority` scores 0 for every representation
+      // arm tested. The registry refuses the ROUTE here rather than letting it
+      // produce a confident answer from a set nothing vouches for.
+      refuseIfDisabled(c, 'generation.counterarguments') ??
       handleCounter(
         c,
         {
@@ -729,7 +754,13 @@ export function createApp(deps: AppDeps) {
       getPremiumPreview(c, sql, c.req.param('id'), await userFor(c)),
     );
     app.post('/premium/jobs', validate('json', startJobBody), async (c) =>
-      postPremiumJob(c, sql, await userFor(c), c.req.valid('json')),
+      // R8.3 §5.4/§5.6. Premium generation is not required for LIMITED V1 and
+      // every generation route depends on a semantic evidence set that is off.
+      // Guarded at ADMISSION rather than at read: an already-running job may
+      // still be polled and cancelled, and refusing those would strand a job a
+      // user started before the freeze.
+      refuseIfDisabled(c, 'generation.premium_jobs') ??
+      (await postPremiumJob(c, sql, await userFor(c), c.req.valid('json'))),
     );
     app.get('/premium/jobs/:id', async (c) =>
       getPremiumJob(c, sql, c.req.param('id'), await userFor(c)),

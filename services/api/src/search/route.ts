@@ -41,6 +41,7 @@ import {
   type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
+import { semanticArmPermitted } from '../release/enforce.ts';
 
 /**
  * The derived precedential layers for a page of structured hits, in ONE query.
@@ -647,7 +648,31 @@ async function runSearch(
     });
   }
 
-  const queryVector = await deps.embedQuery(body.query);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE CAPABILITY REGISTRY DECIDES WHETHER THE DENSE ARM RUNS AT ALL
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * R8.3 §5.6 and §6. `search.semantic_broad` is DISABLED for LIMITED V1 on
+   * measured evidence — route-reachable passage `cond_s@5` ~0.3715, three query
+   * families at zero, absolute-similarity abstention a signal failure — and §6
+   * requires a disabled capability to be actually unreachable rather than
+   * labelled. `SEMANTIC_INDEX_SUFFICIENT` already made the OUTCOME conservative;
+   * it did not stop the arm from running and returning candidates, and a
+   * candidate on the page is reachable however the outcome is worded.
+   *
+   * Exact identity, structured filters and the lexical arm are untouched. That
+   * is the whole point of gating the ARM instead of the ROUTE: refusing
+   * `/search` because semantic is off would take the capability a limited V1
+   * actually rests on away with it.
+   *
+   * `semanticAvailable: false` is a shape this contract has always been able to
+   * express — it is what a cold embedder produces — so `retrievalOutcome` says
+   * `coverage_unknown` or `degraded` exactly as it would then. Nothing is
+   * silently truncated, and no lexical result is promoted to a confidence it did
+   * not earn.
+   */
+  const queryVector = semanticArmPermitted() ? await deps.embedQuery(body.query) : null;
   /**
    * Which ranker, if any, ran out of its statement budget on this request.
    *

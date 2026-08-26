@@ -27,6 +27,7 @@ import { z } from 'zod';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { deriveRetrievalOutcome, SEMANTIC_INDEX_SUFFICIENT } from './outcome.ts';
+import { semanticArmPermitted } from '../release/enforce.ts';
 import { type DegradedArm, hybridSearch, type SearchFilters } from './retrieve.ts';
 
 export const savedSearchBody = z.object({
@@ -228,7 +229,11 @@ export async function getSavedSearchFeed(
   const degradedArms: DegradedArm[] = [];
   let semanticAvailable = false;
   try {
-    const vector = await embedQuery(saved.query_text);
+    /* The same registry gate `/search` obeys. The feed re-runs a saved query
+     * through the same rankers, so a capability that is off on one route and on
+     * in the other is not off — this repository has already shipped exactly that
+     * shape once, when the feed reached a sparse path the search route refused. */
+    const vector = semanticArmPermitted() ? await embedQuery(saved.query_text) : null;
     semanticAvailable = vector !== null;
     results = await hybridSearch(
       sql,
