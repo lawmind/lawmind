@@ -14287,3 +14287,78 @@ Founder items: `FQ-N2-1..5`. Bus 1177–1180, 1216, 1217, 1223, 1231, 1233, 1234
 **Cross-lane note for Fifth's §3 audit:** NEW2's 51 files were swept into LCC's
 commit `e6ade19` — staged and committed in one call, with another lane's commit
 landing between. Nothing lost; the attribution in the log is wrong.
+
+---
+
+## NEW2 · 26 Aug 2026 (R8.3) — four of my own R8.1 claims falsified, statutes at 79.77%, and our ingest is the stale side
+
+`LAWMIND_FINAL_R8_3_LIMITED_FREEZE_ORCHESTRATION_2026-08-26.md` §11.
+Artifacts in `docs/ai/new2-r83/`. Commits `b1bd5ff`, `24b8c73`, `65a3f2a`.
+
+### The four corrections, each against something I wrote in R8.1
+
+1. **`CrPC 1973 = CONFIRMED_ABSENT` was proved against a dead host.**
+   `www.indiacode.nic.in` is now a migration stub and every legacy handle 404s —
+   including the BNS handle still in `services/ingest/src/statutes.ts`. Ten items
+   on the live platform carry CrPC bitstreams, all under STATE collections. MHA
+   serves a byte-identical copy (643,659 B, md5 `d6ff18c7…`) and India Code
+   independently records the same checksum.
+2. **The 100,000-character `.pdf.txt` truncation is per-ITEM, not a platform cap.**
+   The identical PDF has one derivative at 876,721 chars (all 484 sections) and
+   another at exactly 100,000 (18.0%, with a complete table of contents).
+3. **"AWS bulk dumps cannot make us current" is false for the High Courts.**
+   That bucket wrote TODAY, 42 of 56 current-year objects within 7 days, newest
+   decision yesterday. **Our walk is the stale side.**
+4. **My pool role rates were drawn by `LIMIT` after a `WHERE`** — a court-clustered
+   slab wearing an md5 hash. Supreme Court share 12.38% vs 44.40% on the full
+   draw; `REPORTER_EDITORIAL` 1.32% vs 4.44%.
+
+### What landed
+
+| item | before | after |
+| --- | ---: | ---: |
+| `judgment_statute_refs` linked | 315,351 (36.56%) | **688,123 (79.77%)** |
+| Acts held | 846 | **848** — CrPC 1973 (533 sections), IPC 1860 (552) |
+| Companies Act 2013 false pins | 4,219 | **6** |
+| fixture judgments | 16 | **0**, re-measured by me |
+
+- **FIFTH's 1319 defect is fixed in the PLAN, not in a cleanup.** A name-only
+  match to an Act that cannot supply ≥20% of the sections cited under that name
+  is now `REFUSE_PAIR_UNIDENTIFIED`, so an apply cannot recreate it. A per-ref
+  section test alone would have kept 3,267 of the Companies Act's 4,219 links.
+- **Freshness is decomposed per adapter**, and the two AWS buckets get opposite
+  verdicts: HC `LOCAL_INGEST_BEHIND`, SC `BOTH` (208 upstream rows for all of
+  2026). `indiacode_statutes` is `ADAPTER_BROKEN` — it targets the dead host.
+- **25 of 26 courts are `EFFECTIVELY_ABSENT` for 2026-08**, with **ragged** stop
+  dates: Allahabad and Bombay fell off in July, Madras and Punjab & Haryana in
+  August. Not one switch — a walk that ran out per scope.
+- **The widened role census retires NEW1's 5.95× enrichment** (48 queries, 480
+  passages, production `ef_search=200`): reporter is 6.46% of top-k against a
+  4.44% pool, so 1.45×. What replaces it is worse — **`COURT_REASONING` is the
+  only substantive class retrieval DEPLETES**, at 0.87×, while
+  `HOLDING_OPERATIVE` is enriched 3.34×. The retriever rewards short declarative
+  outcomes and is hostile to the reasoning that explains why.
+- **FIFTH's F-5 blind packet is published**: 308 passages, predictions withheld,
+  key sealed under a shared fingerprint.
+
+### Next, in order
+
+1. **Why the local walk stopped** — the freshness file measures the gap, not the
+   fleet. Ragged per-court stop dates say this is per-scope, not global.
+2. **Indian Evidence Act 1872** — `NOT_ACQUIRED`. All three official derivatives
+   measured: two are the 100,000-char cap, the third is the damaged 1872 scan at
+   95/167. Needs our own PDF extraction, whose recall is `NOT_MEASURED`.
+   **17,576 references stay unlinked** and 79.77% must not be read as finished.
+3. **The `indiacode.ts` adapter rewrite** against DSpace 7 — post-freeze per §11
+   N2-10, but the freshness record must stop calling it a working adapter.
+4. **N2-9** — 14 OCR docs and 595 bounded date cases, only if FIFTH's
+   limited-freeze verdict still needs them.
+5. **`statute_amendments` for the two new Acts** — footnote markers are in the
+   body text; the notes are `NOT_EXTRACTED`.
+
+### Carried, unchanged
+
+`storage_key` is non-null on 0 of 18.7M — no source document is retained.
+Bench/coram exists only for the 38,326 Supreme Court documents. 92.77% of our
+Supreme Court corpus is the SCR reporter edition (`FQ-N2-2`, counsel). eCourts
+has never run: authorised since 7 Aug, built, **0 observations**.
