@@ -163,6 +163,56 @@ claim at all. What survives the small-n objection is narrower and still serious:
 any G3 verdict rests on them.** That is a Gold-coverage request, and it belongs to
 NEW2/Fifth.
 
+### 4.4 Seven of these queries cannot enter production, and they are the easiest ones
+
+**Found in review, not by design.** Production `POST /search` rejects queries over 500
+characters. Measured across the 295 tasks:
+
+| band | tasks |
+|---|---:|
+| ≤ 500 chars | **288 (97.63%)** |
+| 501–1,000 | 6 |
+| 1,001–2,500 | 1 |
+| > 2,500 | 0 |
+
+min 82 · p05 106 · p50 190 · p95 430 · max 1,033.
+
+**The supported band is thoroughly measured** — 288 of 295 tasks sit inside it, so R8.1
+§6.6's "measure where product intends support" is satisfied. But the 7 that fall outside
+it are not harmless:
+
+| arm | all 295 | **route-reachable (288)** | route-refused (7) |
+|---|---:|---:|---:|
+| `ann_ef200` | 0.3831 | **0.3715** | **0.8571** |
+| `exact` | 0.4034 | **0.3924** | **0.8571** |
+
+**The queries production would refuse score more than twice the rest.** They are long
+verbatim passages that nearly duplicate their target — the easiest retrieval problem
+there is. Including them inflates every aggregate in this document by about 0.012.
+
+**Where it concentrates is worse than the aggregate suggests:**
+
+| family | over 500 chars | c@5 |
+|---|---:|---:|
+| `long_narrative` | **3 of 3 (100%)** | 0.6667 |
+| `pasted_passage` | **2 of 3 (67%)** | 0.6667 |
+| `legal_issue` | 1 of 87 (1.1%) | 0.3563 |
+| `proposition` | 1 of 86 (1.2%) | 0.3837 |
+| all seven others | 0 | — |
+
+**Two of the three best-scoring families are made almost entirely of queries an advocate
+could not submit.** `long_narrative`'s 0.6667 is three tasks, all of them unreachable.
+
+This is FIFTH's bus 1264 — 90 of 480 Gold V2 queries exceed the route's 500-character
+bound — reproducing inside my own benchmark. **I did not catch it when I wrote the family
+table. I found it auditing my own claim that the supported band was covered.** The correct
+treatment is FIFTH's: a route-refused query is a REFUSAL outcome scored separately, never
+a success and never a miss.
+
+**`0.3715` is the production-route number.** `0.3831` is the benchmark number and stays
+in §2 because it is what the frozen artifact contains — but it is not what an advocate
+would experience.
+
 ---
 
 ## 5. ANN vs exact
@@ -197,10 +247,26 @@ Recall@100 also **fell** from 0.889 on the 66k prefix to 0.8631 here. Larger ind
 - **No claim that 0.3831 is good enough.** It is a measurement. Whether it clears G3 is
   Fifth's adjudication against preregistered criteria, and R8.1 §G3 explicitly forbids
   reusing a stale 70% threshold against a benchmark with a different measured ceiling.
-- **Reporter contamination is unmeasured on this tranche.** NEW2's 0.10% figure was
-  measured on the vector stage where the Supreme Court is 0.49% of rows; the SC corpus is
-  92.77% SCR reporter edition. §7.7 of R8.1 requires re-measurement on this exact tranche,
-  top-k rather than pool base rate, SC separately from HC. **Until that runs, these
-  retrieval numbers do not distinguish a court's reasoning from a reporter's headnote.**
+- **Reporter contamination is now MEASURED on this exact tranche at pool level, and it
+  is 15× the figure I was carrying.** NEW2, bus 1282, `TRANCHE_PASSAGE_SAFETY_V1`:
+
+  | class | R7 substitute frame | **this tranche** |
+  |---|---:|---:|
+  | `PARTY_SUBMISSION` | 11.26% | **19.38%** |
+  | `CASE_HEADER` | 6.81% | **15.47%** |
+  | `REPORTER_EDITORIAL` | 0.11% | **1.57%** |
+  | `OTHER_UNKNOWN` | 74.49% | 51.32% |
+
+  **24.40% of tranche passages must never be shown as the court's own reasoning** — SC
+  16.54%, HC 25.88% — while `COURT_REASONING` is **1.15%**, about one passage in ninety.
+  The substitute frame understated *every* unsafe class, so the 0.10% I was quoting was
+  optimistic by more than an order of magnitude.
+
+  **Two things remain open.** The classifier rules are lexical and their precision is
+  `NOT_MEASURED`. And this is the **pool**, not top-k — R8.1 §7.7 asks for top-k because
+  19% party submission only endangers an advocate if that is what *ranks first*, and
+  counsel submissions read like confident legal propositions, which is exactly what an
+  embedding model rewards. NEW2 has recorded the prediction that **top-k will carry more
+  party submission than the pool**, and now holds the box to measure it.
 - **2.53%→1.80% of passages carry `char_offset = -1`** (7,535 of 418,116) and cannot
   support a pinpoint citation. The cause is known and deferred: `SEGMENTATION_V2_EXPERIMENT_DESIGN`.

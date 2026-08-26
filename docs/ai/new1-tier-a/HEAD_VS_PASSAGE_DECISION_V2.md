@@ -131,11 +131,13 @@ Stated so it can be revisited on evidence rather than re-argued:
    survives a larger task set it outranks the HEAD-vs-passage choice entirely, and it
    points at reranking rather than at a different representation — an experiment R8.1 §17
    forbids this round.
-3. **Reporter contamination on this exact tranche.** Unmeasured. NEW2's 0.10% came from a
-   frame where the Supreme Court was 0.49% of rows; the SC corpus is 92.77% SCR reporter
-   edition and holds 43.9% of resolved citations. **If a material share of the passages
-   winning these comparisons are headnotes, the quality result in §2 is measuring the
-   wrong thing** and this recommendation is void until re-measured.
+3. **Passage role safety on this exact tranche — now measured at pool level, and worse
+   than I assumed.** NEW2, bus 1282: `REPORTER_EDITORIAL` **1.57%** (not 0.10%),
+   `PARTY_SUBMISSION` **19.38%**, `CASE_HEADER` **15.47%** — **24.40% that must never be
+   shown as the court's reasoning** — against `COURT_REASONING` at **1.15%**. **Top-k
+   remains unmeasured**, and top-k is what decides whether this recommendation survives: a
+   retriever that preferentially surfaces confident-sounding counsel submissions would
+   invert the quality result in §2.
 4. **A corpus-representative chunks/doc rate.** 5.116 is this tranche's, and the tranche is
    deliberately era-skewed. A materially lower corpus rate would shrink the 627 GB.
 5. **Segmentation V2.** 7,535 passages (1.80%) cannot support a pinpoint citation. If the

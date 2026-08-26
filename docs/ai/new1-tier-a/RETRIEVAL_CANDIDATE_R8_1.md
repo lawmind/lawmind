@@ -32,7 +32,8 @@ Everything below is `ann_ef200` on 418,116 passages over 81,720 documents.
 
 | | value |
 |---|---|
-| cond s@5 | **0.3831** [0.3265, 0.4444] over 211 clusters |
+| cond s@5, benchmark | **0.3831** [0.3265, 0.4444] over 211 clusters |
+| **cond s@5, production-route-reachable** | **0.3715** over the 288 of 295 tasks ≤ 500 chars — §3.8 |
 | cond s@1 / s@20 / s@100 | 0.2678 / 0.4814 / 0.5966 |
 | e2e s@5 | 0.0136 — **floor by construction**, 210 of 213 gold targets forced |
 | zero-result rate | **0 of 295** |
@@ -65,7 +66,30 @@ Named here so no aggregate can hide them.
    fix the refusal.
 6. **1.80% of passages (7,535 of 418,116) carry `char_offset = -1`** and cannot support a
    pinpoint citation.
-7. **Reporter contamination on this exact tranche is `NOT_MEASURED`.** See §4.
+7. **24.40% of tranche passages must never be shown as the court's own reasoning** —
+   `PARTY_SUBMISSION` 19.38%, `CASE_HEADER` 15.47%, `REPORTER_EDITORIAL` 1.57% — against
+   `COURT_REASONING` at **1.15%**. Measured on this exact tranche by NEW2 (bus 1282).
+   Classifier precision is `NOT_MEASURED` and top-k is still pending. See §4.
+8. **7 of the 295 benchmark tasks exceed production's 500-character bound** and cannot
+   enter `/search` at all — including **3 of 3 `long_narrative` and 2 of 3
+   `pasted_passage`**, two of the three best-scoring families. They score 0.8571 against
+   0.3715 for the rest, so they inflate every aggregate. §3.8.
+
+---
+
+### 3.8 The production-route figure
+
+Production rejects queries over 500 characters. 288 of 295 tasks sit inside that bound, so
+the supported band is well covered — but the 7 outside it are the **easiest** queries in
+the set, long verbatim passages that nearly duplicate their target.
+
+    all 295 tasks          cond s@5  0.3831
+    route-reachable (288)  cond s@5  0.3715   <- what an advocate would experience
+    route-refused (7)      cond s@5  0.8571
+
+**`0.3715` is the number that describes the product.** `0.3831` is the benchmark number
+and stays in §2 because it is what the frozen artifact contains. Per FIFTH's bus 1264, a
+route-refused query is a REFUSAL outcome scored separately — never a success, never a miss.
 
 ---
 
@@ -78,10 +102,15 @@ Named here so no aggregate can hide them.
 - **Local timings stay local labels.** Never quoted as mobile latency.
 - **A full-corpus passage build is not recommended and does not fit** —
   `HEAD_VS_PASSAGE_DECISION_V2`.
-- **Blocking, and it can void §2:** if a material share of the passages winning these
-  comparisons are SCR headnotes rather than court reasoning, this candidate is measuring
-  the wrong thing. NEW2's 0.10% reporter figure came from a frame where the Supreme Court
-  was 0.49% of rows; the SC corpus is **92.77% SCR reporter edition** and carries **43.9%
-  of all resolved citations**. R8.1 §7.7 requires re-measurement on this exact tranche,
-  **top-k rather than pool base rate, SC separately from HC.** Until that runs, §2 is
-  `PASS_AT_MEASURED_SCOPE` with an unquantified attribution risk.
+- **Partly answered, and it moved against me.** NEW2 has measured passage roles on **this
+  exact tranche** (bus 1282): `REPORTER_EDITORIAL` **1.57%** against the 0.10% I was
+  quoting, and **24.40% unsafe in total** once party submission and case headers are
+  counted. `COURT_REASONING` is **1.15%** — the thing an advocate actually wants is a very
+  thin slice of what this index contains. The substitute frame understated every unsafe
+  class.
+
+  **Still `NOT_MEASURED`: top-k.** The pool rate cannot answer the safety question,
+  because 19% party submission is only dangerous if it is what ranks first — and counsel
+  submissions read like confident legal propositions, which is precisely what an embedding
+  model rewards. Until NEW2's top-k run lands, §2 stays `PASS_AT_MEASURED_SCOPE` with an
+  attribution risk that is now **bounded in the pool but unquantified at the point of use**.
