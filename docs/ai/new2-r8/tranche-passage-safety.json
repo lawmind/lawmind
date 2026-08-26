@@ -1,0 +1,64 @@
+{
+  "artifact": "NEW2_TRANCHE_PASSAGE_SAFETY_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.7",
+  "generated_at": "2026-08-26T01:35:19.787Z",
+  "mode": "POOL_ONLY",
+  "tranche": {
+    "passages": 416600,
+    "documents": 81200,
+    "complete": null
+  },
+  "sampled": 4000,
+  "role_counts": {
+    "OTHER_UNKNOWN": 2053,
+    "PARTY_SUBMISSION": 775,
+    "CASE_HEADER": 619,
+    "HOLDING_OPERATIVE": 192,
+    "FACTS": 37,
+    "PROCEDURAL_HISTORY": 77,
+    "COURT_REASONING": 46,
+    "REPORTER_EDITORIAL": 63,
+    "SPAN_UNVERIFIABLE": 106,
+    "DAMAGED_OR_OCR_SUSPECT": 28,
+    "QUOTED_PRECEDENT": 4
+  },
+  "role_share_pct": {
+    "OTHER_UNKNOWN": 51.32,
+    "PARTY_SUBMISSION": 19.38,
+    "CASE_HEADER": 15.47,
+    "HOLDING_OPERATIVE": 4.8,
+    "FACTS": 0.92,
+    "PROCEDURAL_HISTORY": 1.93,
+    "COURT_REASONING": 1.15,
+    "REPORTER_EDITORIAL": 1.57,
+    "SPAN_UNVERIFIABLE": 2.65,
+    "DAMAGED_OR_OCR_SUSPECT": 0.7,
+    "QUOTED_PRECEDENT": 0.1
+  },
+  "span_unverifiable": 106,
+  "unsafe_as_court_reasoning": 976,
+  "unsafe_roles": [
+    "SPAN_UNVERIFIABLE",
+    "DAMAGED_OR_OCR_SUSPECT",
+    "REPORTER_EDITORIAL",
+    "PARTY_SUBMISSION",
+    "QUOTED_PRECEDENT"
+  ],
+  "sc_vs_hc": {
+    "supreme_court": {
+      "n": 635,
+      "unsafe": 105
+    },
+    "high_courts": {
+      "n": 3365,
+      "unsafe": 871
+    }
+  },
+  "caveats": [
+    "POOL base rate only. §7.7 requires TOP-K, which needs the completed tranche and the rebuilt HNSW.",
+    "SPAN_UNVERIFIABLE is not a role. It is a passage whose words cannot be located in the source, and it must never be averaged in as if it had been read.",
+    "OTHER_UNKNOWN is UNKNOWN, never SAFE.",
+    "The rules are lexical and were carried unchanged from R7 so the two studies compare. Their precision is NOT_MEASURED against hand adjudication."
+  ]
+}
