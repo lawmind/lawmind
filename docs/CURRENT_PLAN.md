@@ -151,6 +151,50 @@ resolve. The valuable alias signal is HC, not SC.
 
 Bus 1288–1289, 1301–1303.
 
+### 26 August 2026 (R8.3) — NEW1: THE ROLE IS NOT IN THE DATABASE, WHICH IS WHY §9's FILTERED ANN HAD NEVER BEEN RUNNABLE; AND EVERY SEMANTIC CAPABILITY ROW IS OFF
+
+R8.3 §12 N1-4 and N1-7 closed. N1-5 **gated**, deliberately, on two handoffs that
+are not NEW1's to open. Commits `7034ac9`, `8bcc493`. Artifacts under
+`docs/ai/new1-r83/`.
+
+**The blocker nobody had costed.** §9 requires the eligibility predicate inside
+the SQL pgvector plans. NEW2's role is a regex classifier run in script memory
+against top-k that has *already been fetched* — it can census what retrieval
+returned, it cannot filter what retrieval considers. The labels are now
+materialised first (`n1_lab_passage_role`), at 6–20 minutes of real IO, which is
+why that job waits for the box rather than running under LCC's API-suite timings.
+
+**pgvector's post-filter trap is reproduced on this box, not cited.** Through the
+parameterised path: `iterative_scan=off` returned **21 rows for a LIMIT 200** and
+raised no error; `strict_order` returned 200 in 1,877 ms; `relaxed_order` returned
+200 in 24 ms. Iterative scan engages through a nested-loop JOIN, so the labels
+live in a side table and `new1_tranche_passages` stays byte-identical with its
+recorded content hash intact.
+
+**NEW2's `LIMIT` correction reproduces from outside NEW2** — an independent
+no-`LIMIT` draw reads `REPORTER_EDITORIAL` **4.34%** against their corrected
+4.44%, `COURT_REASONING` 1.17% against 1.20%. NEW1's `5.95x` enrichment claim and
+its "judicial:reporter degrades 2.70x" line are **retired in writing**. What
+replaces them is worse and is about form rather than authorship: `COURT_REASONING`
+is the only substantive class retrieval **depletes** (0.87x).
+
+**`supporting_authority` is a RANKING failure at human depth, not proven
+representation absence.** Target in index for all six; `exact` 4/6 at depth 500,
+`ann_ef200` 2/6, both zero at every depth a person reads. **No representation
+rebuild.** A reranker is the shape that fits and is a future hypothesis, forbidden
+this round. `n=6`.
+
+**`SEMANTIC_CAPABILITY_RELEASE_SCOPE_R8_3.md` is published ahead of the
+experiment** because LCC's §6 registry is being built now. Every row is
+`DISABLED`, `EXPERIMENTAL_INTERNAL` or `LIMITED`; none is gated on evidence the
+pending experiment produces, so it can narrow a row but cannot promote one.
+Abstention is a **signal failure** — `topSim` spans 0.63–0.81 and the chosen
+threshold is 0.20, below the whole distribution — not an untuned threshold, and
+the grid was deliberately not widened a third time. **Exact and structured search
+depend on none of it**, which is what makes a limited freeze possible.
+
+Bus 1347–1353.
+
 ### 26 August 2026 (R8.1) — NEW1: PASSAGE BEATS HEAD WITH NON-OVERLAPPING INTERVALS, THREE FAMILIES SCORE ZERO, AND A FULL-CORPUS PASSAGE BUILD MISSES THIS BOX BY 2x
 
 R8.1 §6, closed. Commits `6afdde0`, `f6f51b6`, `5541d0c`, `1c7dace`, `e3af175`,
