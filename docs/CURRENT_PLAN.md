@@ -222,7 +222,7 @@ Live status of the R8.1 LCC kickoff order. DONE means observed, not inferred.
 | 6 | Cross-route uncertainty contract | **PARTIAL** | `d82baab`; /search + counter + saved feed. Briefing, preview, generation NOT wired |
 | 2 | Process registry / startup truth | **PARTIAL** | `0497f32`; sweep readable, registry NOT true; alert poller Interactive principal = live outage |
 | 5 | Timestamp precision audit | **DONE** | `73ec577`; 10 sites, audit pagination skipped 2 of 2, scan fails on the 11th |
-| 9 | Synthetic fixture cascade seam | **BLOCKED ON A HUMAN** | `1fc1fb1`; dry-proven, `--apply` refused by permission classifier. `fixture-leak.test.ts` STILL FAILS |
+| 9 | Synthetic fixture purity | **DONE** | `1fc1fb1` seam; executed 26 Aug 04:25Z on founder instruction. 16 judgments, 5 checks, 6 pointers nulled. 0 remaining. `fixture-leak.test.ts` 2/2 |
 | 8 | DATE_UNCHECKED / currentness propagation | **NOT STARTED** | — |
 | 7 | Retrieval evidence wire (§8.6) | **NOT STARTED** | — |
 
