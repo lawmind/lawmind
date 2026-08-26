@@ -48,8 +48,11 @@ Everything below is `ann_ef200` on 418,116 passages over 81,720 documents.
 
 Named here so no aggregate can hide them.
 
-1. **`supporting_authority`: 0/6 at rank 5, 20 and 100.** Target in the index for all six.
-   HEAD scores zero too — a shared representation failure, not a passage regression.
+1. **`supporting_authority`: 0/6 at rank 5, 20 and 100 on this candidate** — but **0.3333
+   at rank 500**, and `exact` reaches **0.1667 at 100 and 0.6667 at 500**. Target in the
+   index for all six. **The authorities are findable and rank between 100 and 500**, so
+   this is a ranking failure at every depth a human reads, not an absence — and ANN's
+   recall loss falls hardest on the family that was already weakest.
 2. **`adverse_authority`: 0 at rank 5** (0.25 @20, 0.50 @100), n = 4.
 3. **`statute`: 0 at rank 5** (0.3333 @20), n = 3.
 4. **All three n are far too small to state a rate** — 95% upper bounds of roughly 0.50,

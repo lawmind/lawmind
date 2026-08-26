@@ -126,9 +126,11 @@ Stated so it can be revisited on evidence rather than re-argued:
 1. **Storage.** If the box gains ~700 GB, the cost objection disappears and passages
    everywhere becomes the obvious answer. This is a founder call and belongs in
    `FOUNDER_QUEUE.md`, not in an engineering trade-off.
-2. **`supporting_authority` at 0/6 to rank 100.** If that survives a larger task set, it is
-   a *representation* failure both arms share, and neither arm answers a central advocate
-   question. That would outrank the HEAD-vs-passage choice entirely.
+2. **`supporting_authority` at 0/6 to rank 100** — but 0.3333 at 500, and `exact` reaches
+   0.6667 at 500. **The authorities are findable and mis-ranked, not missing.** If that
+   survives a larger task set it outranks the HEAD-vs-passage choice entirely, and it
+   points at reranking rather than at a different representation — an experiment R8.1 §17
+   forbids this round.
 3. **Reporter contamination on this exact tranche.** Unmeasured. NEW2's 0.10% came from a
    frame where the Supreme Court was 0.49% of rows; the SC corpus is 92.77% SCR reporter
    edition and holds 43.9% of resolved citations. **If a material share of the passages

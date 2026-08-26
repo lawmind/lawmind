@@ -94,16 +94,34 @@ R8.1 §G3: **no aggregate may hide a zero family.** Three do not hide.
 | **`adverse_authority`** | 4 | 4 | **0** | 0.25 | 0.50 | 0 | 0 |
 | **`supporting_authority`** | 6 | 6 | **0** | **0** | **0** | 0 | 0 |
 
-### 4.1 `supporting_authority` is the finding
+### 4.1 `supporting_authority` is the finding — and it is a RANKING failure, not a retrieval one
 
-**Zero at rank 5, zero at rank 20, zero at rank 100.** Six tasks, and **the target is in
-the index for all six** — this is not a coverage wall, it is the retriever never surfacing
-a document it holds, in a hundred results. HEAD scores zero too, so it is not a
-passage-specific regression; **it is a representation failure that both representations
-share.**
+**Corrected on review before publication.** My first reading of this row was "zero, full
+stop." Checking every depth rather than the three in the summary table says something
+different and more useful:
 
-"Find me an authority that supports this proposition" is not an exotic query. It is
-close to the centre of what an advocate wants.
+| arm | c@5 | c@20 | c@100 | **c@500** |
+|---|---:|---:|---:|---:|
+| `ann_ef200` | 0 | 0 | **0** | **0.3333** |
+| `exact` | 0 | 0 | **0.1667** | **0.6667** |
+| `head_ef200` (4 of 6 in index) | 0 | — | — | — |
+
+**The authorities are there and they are findable — they rank between 100 and 500.**
+`exact` recovers 4 of 6 by depth 500. So this is not a coverage wall (target in index for
+all six) and it is not the retriever failing to hold the document. **It is a ranking
+failure at every depth a human being would ever read.**
+
+That distinction matters for what fixes it. A representation failure would need a
+different representation; a ranking failure at depth 100–500 is the shape a reranker
+addresses — **and the reranker program is forbidden this round** (R8.1 §17). This is
+recorded as a pointer for the round that is allowed to test it, not as a proposal.
+
+**`ann_ef200` is also strictly worse than `exact` here** — 0 vs 0.1667 at 100, 0.3333 vs
+0.6667 at 500 — so ANN's recall loss falls hardest on exactly the family that was already
+weakest.
+
+"Find me an authority that supports this proposition" is not an exotic query. It is close
+to the centre of what an advocate wants, and at usable depth we return nothing for it.
 
 ### 4.2 The runbook's hoped-for headline is refuted, and Fifth called the mechanism first
 
@@ -135,8 +153,9 @@ With 0 successes the 95% upper bound is roughly `3/n`:
 **These n are far too small to state a rate.** `statute` at n = 3 supports essentially no
 claim at all. What survives the small-n objection is narrower and still serious:
 
-- `supporting_authority` is **0/6 at rank 100**, which is a much stronger observation than
-  0/6 at rank 5 — a retriever with any signal usually gets *something* into a hundred.
+- `supporting_authority` is **0/6 at rank 100 on `ann_ef200`** while `exact` finds 1 and
+  reaches 4 by rank 500 — so the signal exists and is being lost by ranking and by ANN
+  recall, not by absence. That is a sharper observation than a bare zero.
 - All three families were zero **before** this build too. The consistent direction across
   independent attempts is the evidence; the individual rates are not.
 
