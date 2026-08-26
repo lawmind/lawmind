@@ -1,0 +1,87 @@
+{
+  "artifact": "NEW2_REPORTER_APPARATUS_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.9",
+  "generated_at": "2026-08-26T01:51:20.803Z",
+  "detection": "structural / typographic shape, NOT vocabulary",
+  "markers": [
+    {
+      "name": "MARGIN_LETTER_LINE",
+      "why": "a single margin letter alone on a line — SCR/AIR column guides, never court prose",
+      "pattern": "/^[ \\t]*[A-H][ \\t]*$/gm"
+    },
+    {
+      "name": "PAGE_PARA_PINCITE",
+      "why": "reporter pin-cite to page and margin letter, e.g. [801-G-H; 802-A-B]",
+      "pattern": "/\\[\\s*\\d{1,4}\\s*-\\s*[A-H](\\s*,\\s*[A-H])*\\s*(;\\s*\\d{1,4}\\s*-\\s*[A-H](\\s*,\\s*[A-H])*\\s*)*\\]/g"
+    },
+    {
+      "name": "HEADNOTE_BLOCK",
+      "why": "an explicit headnote heading — the reporter editor summarising the case",
+      "pattern": "/^\\s*(HEADNOTES?|HEAD ?NOTE)\\s*[:\\-—]/gim"
+    },
+    {
+      "name": "PARA_CROSSREF",
+      "why": "editorial cross-reference into the judgment body, added by the reporter",
+      "pattern": "/\\[\\s*Paras?\\.?\\s*\\d+(\\s*[,and]+\\s*\\d+)*\\s*\\]/gi"
+    },
+    {
+      "name": "RUNNING_HEAD",
+      "why": "a page running head carrying the reporter name and year",
+      "pattern": "/^\\s*\\d{0,4}\\s*S\\.?C\\.?R\\.?\\s*(\\[|\\()?\\s*\\d{4}/gm"
+    },
+    {
+      "name": "DISPOSAL_APPARATUS",
+      "why": "the reporter's standard jurisdiction banner above the case",
+      "pattern": "/^\\s*(CIVIL|CRIMINAL) APPELLATE JURISDICTION\\s*[:\\-]?\\s*$/gim"
+    }
+  ],
+  "groups": {
+    "SUPREME_COURT": {
+      "documents": 1200,
+      "with_any_marker": 1118,
+      "marker_totals": {
+        "MARGIN_LETTER_LINE": 60313,
+        "PAGE_PARA_PINCITE": 429,
+        "HEADNOTE_BLOCK": 0,
+        "PARA_CROSSREF": 1930,
+        "RUNNING_HEAD": 48,
+        "DISPOSAL_APPARATUS": 2
+      },
+      "docs_with_marker": {
+        "MARGIN_LETTER_LINE": 1067,
+        "PAGE_PARA_PINCITE": 212,
+        "PARA_CROSSREF": 408,
+        "RUNNING_HEAD": 39,
+        "DISPOSAL_APPARATUS": 2
+      },
+      "apparatus_chars": 76569,
+      "total_chars": 46208033
+    },
+    "HIGH_COURTS_CONTROL": {
+      "documents": 1200,
+      "with_any_marker": 53,
+      "marker_totals": {
+        "MARGIN_LETTER_LINE": 16,
+        "PAGE_PARA_PINCITE": 0,
+        "HEADNOTE_BLOCK": 0,
+        "PARA_CROSSREF": 0,
+        "RUNNING_HEAD": 0,
+        "DISPOSAL_APPARATUS": 46
+      },
+      "docs_with_marker": {
+        "DISPOSAL_APPARATUS": 46,
+        "MARGIN_LETTER_LINE": 7
+      },
+      "apparatus_chars": 16,
+      "total_chars": 5537383
+    }
+  },
+  "scope_note": "High Courts are a CONTROL group. If the markers fire at the same rate there, they are not detecting reporter apparatus.",
+  "caveats": [
+    "apparatus_chars is a FLOOR. It counts margin-letter lines and pin-cite lines only; a headnote paragraph reads like prose and only its heading is structural.",
+    "no document is reclassified and nothing is written. This measures; it does not act.",
+    "precision against hand adjudication is NOT_MEASURED.",
+    "OFFICIAL_REPORTER classification of the SC corpus is asserted from R7 (35,570 of 38,342 carry a running head), not re-derived here."
+  ]
+}
