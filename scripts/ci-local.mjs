@@ -212,6 +212,17 @@ const STEPS = [
   // weeks later. The same "a rule implemented at one call site is a rule the
   // second call site does not have" failure as the admission gate and OD-14.
   ['retrieval outcome coverage', 'node', ['scripts/check-retrieval-outcome-coverage.mjs']],
+  // What an advocate types is a fact about their client -- provider-policy.ts
+  // says so in its own header and the storage layer already honours it:
+  // `searches` is deleted on erasure, `llm_calls` holds no prompt column, and
+  // `search_events` keeps a length and a digest rather than the text.
+  //
+  // Every one of those was a convention held in the head of whoever wrote the
+  // insert, and nothing enforced any of it. Proven non-vacuous four ways, each
+  // committed against the live database and reverted: a content column on
+  // `llm_calls`, an unreviewed text column on `search_events`, an undeclared
+  // table carrying `query_text`, and prose written into an allowed column.
+  ['query-log privacy', 'npx', ['tsx', '--test', 'services/api/src/security/query-log-privacy.test.ts']],
   // ───────────────────────────────────────────────────────────────────────────
   // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
   // ───────────────────────────────────────────────────────────────────────────
