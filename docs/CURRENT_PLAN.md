@@ -111,6 +111,63 @@ number someone else had measured.
 Bus 1250–1254 (START_STATE) · 1267 (FIFTH) · 1268, 1270, 1274, 1276, 1287 (LCC)
 · 1269, 1282, 1286 (NEW1).
 
+### 26 August 2026 (R8.1) — NEW1: PASSAGE BEATS HEAD WITH NON-OVERLAPPING INTERVALS, THREE FAMILIES SCORE ZERO, AND A FULL-CORPUS PASSAGE BUILD MISSES THIS BOX BY 2x
+
+R8.1 §6, closed. Commits `6afdde0`, `f6f51b6`, `5541d0c`, `1c7dace`, `e3af175`,
+`752d031`, `4067f15`. Artifacts under `docs/ai/new1-tier-a/`.
+
+**The bounded 100k tranche is COMPLETE: 418,116 passages over 81,720 documents**
+(5.116 chunks/doc), confirmed by row count rather than by the process being gone.
+It survived two deaths — an uncaught `AbortSignal` timeout at 16:44Z and a machine
+reboot at 23:05Z — and lost zero rows to either, because it commits per batch.
+
+**Passage retrieval wins and the intervals do not overlap.** `cond_s@5` 0.3831
+[0.3265, 0.4444] against HEAD 0.2409 [0.1845, 0.2978] — 59% relative, 3x faster —
+and the comparison is unfair to passages: HEAD was scored against its own smaller
+index and faced a quarter of the distractors. `RETRIEVAL_CANDIDATE_R8_1` is frozen.
+
+**Three families score zero and one of them is the finding.**
+`supporting_authority` is 0/6 at rank 5, 20 **and** 100, with the target in the
+index for all six — the retriever never surfaces a document it holds, in a hundred
+results. HEAD scores zero too, so it is a shared representation failure, not a
+passage regression. `adverse_authority` and `statute` are zero at rank 5. The
+runbook hoped the partial index's 0.25/0.33 would hold and called that the
+sprint's headline; **it was an artifact of the forced-first build order Fifth
+identified in bus 1255**, and it did not survive full scale. All three n are tiny
+(6, 4, 3) — the evidence is the direction across independent attempts, not the rate.
+
+**Abstention is frozen as a SIGNAL FAILURE, not a threshold.** Every query scores
+`topSim` between 0.63 and 0.81 and the chosen `answer` threshold is 0.20 — below
+the entire observed distribution, so it separates nothing. Second grid-edge hit, at
+6x the index size, which makes it a property of the signal rather than the sample.
+The grid was **not** widened, per the runbook's own instruction. The one permitted
+composite risk candidate is deliberately unspent: calibrating confidence over a
+retriever that returns nothing for three families would fit a decision rule to a
+distribution already known to be wrong.
+
+**A full-corpus passage build does not fit this box.** 627 GB against 284 GB free
+and a database already at 300 GB; `halfvec` reaches ~535 GB and still misses.
+`HEAD_VS_PASSAGE_DECISION_V2` recommends retiring the either/or framing: HEAD as
+the corpus-wide coarse layer (~123 GB, feasible today, and the only arm that can
+reach 8.85M documents), passages on a bounded high-value subset (~150 GB buys
+~2.1M documents, about 24% of Tier A). **The HEAD walk is RESUME-AS-COARSE-ONLY
+and step 1 is the census rebuild** — resuming without it replays finished batches
+and writes nothing, which is what happened for 65 minutes on 25 Aug.
+
+**Blocking caveat carried by all of the above:** reporter contamination on this
+exact tranche is `NOT_MEASURED`. NEW2's 0.10% came from a frame where the Supreme
+Court was 0.49% of rows; the SC corpus is 92.77% SCR reporter edition and carries
+43.9% of all resolved citations. If a material share of the passages winning these
+comparisons are headnotes rather than court reasoning, the quality result is
+measuring the wrong thing. R8.1 §7.7, NEW2's to run.
+
+Also closed off the critical path: `LONG_INPUT_POLICY_R8_1` (the 500-char cap
+protects the sparse arm, not the model — production already refuses correctly and
+never truncates), `NEW1_PROCESS_RESOURCE_REPORT_R8_1`, and
+`SEGMENTATION_V2_EXPERIMENT_DESIGN` (design only; `chunk.ts` stays frozen).
+
+Bus 1245–1249, 1259–1263, 1271–1273, 1279–1281, 1283–1285.
+
 ### 25 August 2026 (R7) — NEW1: THE ELIGIBILITY VIEW FILTERS NOTHING, A 320-CHARACTER WINDOW COSTS 500,000 DOCUMENTS THEIR PINPOINT CITATION, AND 29% OF COMMON LEGAL QUERIES ARE REFUSED
 
 R7 §9. Commits `0cd7a65`, `a3d975b`, `9aa7eab`, `ba67b6e`. Artifacts under

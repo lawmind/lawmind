@@ -21,7 +21,7 @@
   "contentionClass": "GPU_SIDECAR+DB_WRITE",
   "pauseResume": null,
   "launcher": null,
-  "state": "HELD",
+  "state": "RELEASED",
   "tookOverFrom": {
     "holder": "NEW1",
     "sessionId": "a6437eea-0678-4b1d-95ea-e93bfab9bbde",
@@ -30,5 +30,7 @@
     "reason": "same holder NEW1, same session; prior lease pid 22688 died in the 01:32Z reboot along with the worker, keeper and sidecar"
   },
   "previousOutput": "418116",
-  "zeroDeltaWindows": 1
+  "zeroDeltaWindows": 1,
+  "releasedAt": "2026-08-26T02:13:31.049Z",
+  "releasedBy": "NEW1"
 }
