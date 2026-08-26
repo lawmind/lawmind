@@ -174,7 +174,10 @@ says nothing at all about whether what came back was the court's words.
 - **ARM_A** — strict exclusion. Prohibited passages never enter the candidate
   path; the document is ranked by an eligible passage and the evidence *is* that
   passage.
-- **ARM_B** — locator → court-evidence re-anchor. A non-court passage may
+- **ARM_B** — **BUILT, NOT RUN** (`NOT_RUN_CONTENT_USE_UNRESOLVED`, FIFTH bus
+  1355 — see §5a). Described here because the code exists and a later round may
+  be permitted to run it. Locator → court-evidence re-anchor: a non-court passage
+  may
   **locate** a judgment; the evidence returned is re-anchored to an eligible
   court-authored passage **in that same judgment**. The reporter or party text
   never leaves as evidence. A document with no eligible passage is counted
@@ -204,14 +207,48 @@ unrelated reason.
 
 ---
 
+## 5a. FIFTH ruled on both of my open calls — bus 1355
+
+### ARM_B: `NOT_RUN_CONTENT_USE_UNRESOLVED`. My framing was wrong.
+
+I argued that ARM_B is strictly narrower than what ships today, so running it
+could not make anything more permissive. **FIFTH's answer is that §8.5 does not
+ask whether ARM_B is narrower than today's defect; it asks whether existing
+policy permits internal/index use** — and CLAUDE.md §6 says use raw court text
+and never a law report's edition, the official e-SCR headnote question is OPEN
+for counsel, and OD-13 is OPEN.
+
+> Using excluded reporter/editorial text as a retrieval locator is still
+> functional use of that text, even if it never leaves as evidence. Calling it an
+> experiment does not supply the missing permission.
+
+That is right and I accept it. "Narrower than the current bug" is not the test.
+
+The ruling is enforced **mechanically, not by memory**: `--arm-b` does not run
+ARM_B, it prints the ruling and exits non-zero. No ARM_B row is scored, estimated
+or inferred from ARM_A. Reversing it needs the content-use decision, not a flag.
+This is not a finding that ARM_B is unlawful — it is the refusal to infer a
+permission.
+
+### The 295 task texts: `PUBLIC_DEVELOPMENT_REUSED`, never Gold V3
+
+Consumable — they are committed published artifacts, they were used in R8.1, and
+they are not a hidden holdout. The condition is that every artifact says so, so a
+development score can never later be read as Gold V3 evidence. **Genuine Gold V3
+does not exist and this ruling opened no part of it.** The label and the four
+source paths are written into `EVIDENCE_SAFE_METRICS_R8_3.json` itself, not only
+here.
+
+---
+
 ## 6. What the harness does not decide
 
 §8.5 says the experiment makes **no rights conclusion**, and it does not.
 
-ARM_B is a *narrowing* of what ships today: today a reporter passage can be
-returned AS evidence; under ARM_B it can only locate, and the evidence returned is
-court-authored. The experiment measures what each option **costs**. Whether either
-is permitted is not its question, and two things say it is genuinely open:
+The experiment measures what each option **costs**. Whether either is permitted is
+not its question — and per FIFTH's ruling in §5a, the fact that ARM_B would be a
+*narrowing* of today's behaviour does not supply the permission its own operation
+would require. Two things say the question is genuinely open:
 
 - `docs/FOUNDER_QUEUE.md` — *"May we reproduce the OFFICIAL SCR headnotes from
   e-SCR?"* — **OPEN**;
@@ -222,11 +259,9 @@ is permitted is not its question, and two things say it is genuinely open:
 retrieval-filter policy and the evidence policy as named parameters and asserts
 nothing about storage, indexing, display or training.
 
-**FIFTH:** ARM_B is the one arm whose *deployability* rests on a question neither
-NEW1 nor this orchestration resolves. If you judge that running it at all
-prejudges the content-use decision, say so and I will report ARM_A alone. I do not
-think it does — it cannot make the current state more permissive than it already
-is — but that call is yours, not mine.
+**FIFTH was asked and has answered: ARM_A alone.** See §5a. The paragraph that
+stood here argued the opposite and it was wrong; it is replaced rather than
+quietly deleted, because the argument is the part worth keeping visible.
 
 ---
 
@@ -290,6 +325,10 @@ entirely normal.
   N1-8 and remains a future hypothesis.
 - The 295-task set is the R8.1 set, reconstructed from published gold files with
   every query text re-hashed against the frozen manifest. It is **not** FIFTH's
-  hidden holdout, which has never been run and is not touched here.
+  hidden holdout, which has never been run and is not touched here. Per FIFTH bus
+  1355 it is labelled **`PUBLIC_DEVELOPMENT_REUSED`** in the artifact itself: it
+  is development and current-regression evidence, it may never be described as
+  hidden, and **no score from it may be promoted to Gold V3 evidence. Genuine
+  Gold V3 does not exist.**
 - One lab table is created: `n1_lab_passage_role`. No migration is allocated, no
   product schema is touched, and `new1_tranche_passages` is left byte-identical.

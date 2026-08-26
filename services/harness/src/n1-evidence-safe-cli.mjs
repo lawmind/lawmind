@@ -142,6 +142,45 @@ const SMOKE = has('--smoke') ? Number(val('--smoke', 6)) : null;
 const REPORT_MS = Number(val('--report-ms', 15 * 60 * 1000));
 const RETRIEVAL_FILTER = REPORTER_EXCLUDED_ONLY;
 
+/**
+ * ARM_B IS BUILT AND MUST NOT RUN — FIFTH ruling, bus 1355.
+ *
+ * I argued that locator-only is strictly narrower than what ships today, so
+ * running it could not make anything more permissive. FIFTH's answer is that
+ * §8.5 does not ask whether ARM_B is narrower than today's defect; it asks
+ * whether existing policy permits internal/index use — and:
+ *
+ *   - CLAUDE.md §6 says use raw court text and NEVER a law report's edition;
+ *   - the official e-SCR headnote question is OPEN for counsel in FOUNDER_QUEUE;
+ *   - OD-13 is OPEN and forbids a lane resolving the reporter layer alone.
+ *
+ * **Using excluded reporter/editorial text as a retrieval locator is still
+ * functional use of that text, even when it never leaves as evidence. Calling it
+ * an experiment does not supply the missing permission.** That is right and my
+ * framing was wrong: "narrower than the current bug" is not the test.
+ *
+ * The ruling is enforced here mechanically rather than by anyone remembering it.
+ * `--arm-b` does not run it; it prints the ruling and exits. Reversing this needs
+ * the content-use decision, not a flag.
+ */
+const ARM_B_STATE = 'NOT_RUN_CONTENT_USE_UNRESOLVED';
+const ARM_B_RULING =
+  'ARM_B (locator -> court-evidence re-anchor) is BUILT and NOT RUN per FIFTH bus 1355. ' +
+  'Using excluded reporter/editorial text as a retrieval locator is functional use of that text. ' +
+  'Existing policy does not permit it: CLAUDE.md §6 (raw court text, never a reporter edition), ' +
+  'FOUNDER_QUEUE e-SCR headnote question OPEN, OD-13 OPEN. This is not a finding that ARM_B is ' +
+  'unlawful — it is the required refusal to infer a permission. Resolve the content-use decision, ' +
+  'not this flag.';
+
+/**
+ * FIFTH bus 1355: the 295 query texts ARE consumable — they are committed,
+ * published artifacts, they were used in R8.1, and they are not a hidden
+ * holdout. The condition is that every artifact says what they are, so that a
+ * development score can never be read later as Gold V3 evidence. Gold V3 does
+ * not exist and this ruling opened no part of it.
+ */
+const TASK_SET_LABEL = 'PUBLIC_DEVELOPMENT_REUSED';
+
 const url =
   process.env.DATABASE_URL ??
   readFileSync(P('.env'), 'utf8').match(/^DATABASE_URL=(.*)$/m)[1].trim();
@@ -458,18 +497,8 @@ async function main() {
       };
     }
 
-    // ARM_B re-anchor, over the unfiltered ranking's top 10, for both policies.
-    const locatorTop = row.arms.ann_unfiltered.topDocuments.slice(0, 10);
-    for (const [policyName, eligible] of [
-      ['STRICT', GENERATION_EVIDENCE_STRICT],
-      ['WITH_UNKNOWN', GENERATION_EVIDENCE_WITH_UNKNOWN],
-    ]) {
-      const anchors = await reanchor(locatorTop, vec, eligible);
-      row.arms.ann_unfiltered[`reanchor_${policyName}`] = locatorTop.map((id) => {
-        const a = anchors.get(id);
-        return a ? { id, role: a.role, sim: Number(a.sim.toFixed(6)), chunkIndex: a.chunkIndex } : { id, role: null, evidenceless: true };
-      });
-    }
+    // ARM_B's re-anchor queries are NOT issued. FIFTH bus 1355 — see ARM_B_RULING.
+    row.armB = ARM_B_STATE;
 
     appendFileSync(CKPT, JSON.stringify(row) + '\n');
     sinceReport += 1;
@@ -623,15 +652,7 @@ async function main() {
     report.composition[arm.name] = { at5: composition(arm.name, 5), at10: composition(arm.name, 10) };
     report.latency[arm.name] = latency(arm.name);
   }
-  // ARM_B rides the unfiltered ranking, so it is scored against that arm.
-  for (const [pname, eligible] of [
-    ['STRICT', GENERATION_EVIDENCE_STRICT],
-    ['WITH_UNKNOWN', GENERATION_EVIDENCE_WITH_UNKNOWN],
-  ]) {
-    report.pooled[`ann_unfiltered/ARM_B/${pname}`] = summarise(ALL, 'ann_unfiltered', 'ARM_B', eligible);
-    report.routeReachable[`ann_unfiltered/ARM_B/${pname}`] = summarise(ROUTE, 'ann_unfiltered', 'ARM_B', eligible);
-    report.overRouteLimit[`ann_unfiltered/ARM_B/${pname}`] = summarise(OVER, 'ann_unfiltered', 'ARM_B', eligible);
-  }
+  // No ARM_B rows. Not scored, not estimated, not inferred from ARM_A.
   report.annVsExact.ann_unfiltered = annVsExact('ann_unfiltered', 'exact_unfiltered');
   report.annVsExact.ann_iter_strict = annVsExact('ann_iter_strict', 'exact_filtered');
   report.annVsExact.ann_iter_relaxed = annVsExact('ann_iter_relaxed', 'exact_filtered');
@@ -648,6 +669,23 @@ async function main() {
     generatedAt: new Date().toISOString(),
     smoke: SMOKE !== null,
     index: { passages: passageCount, documents: indexed.size, efSearch: EF_PROD, depth: DEPTH },
+    taskSet: {
+      tasks: tasks.length,
+      label: TASK_SET_LABEL,
+      ruling: 'FIFTH bus 1355',
+      note:
+        'The 295 query texts are reconstructed from four COMMITTED, PUBLISHED artifacts and were ' +
+        'used in R8.1. They are NOT a hidden holdout. Genuine Gold V3 DOES NOT EXIST, and no score ' +
+        'in this artifact may be promoted to Gold V3 evidence or described as hidden. This is ' +
+        'development and current-regression evidence.',
+      sources: [
+        'docs/ai/new2/ADVOCATE100.json',
+        'docs/ai/new3-uncited-authority-gold-v2.json',
+        'docs/ai/new3-noncitation-gold.json',
+        'docs/ai/new3-semantic-expansion-gold-v2.json',
+      ],
+    },
+    armB: { state: ARM_B_STATE, ruling: ARM_B_RULING },
     classifier: { version: CLASSIFIER_VERSION, parity, source: 'scripts/n2-role-census-widened.mts' },
     policies: {
       retrievalFilter: RETRIEVAL_FILTER,
@@ -718,7 +756,10 @@ async function explain() {
 }
 
 try {
-  if (has('--explain')) await explain();
+  if (has('--arm-b')) {
+    console.error(ARM_B_RULING);
+    process.exitCode = 2;
+  } else if (has('--explain')) await explain();
   else await main();
 } catch (e) {
   console.error(`FAILED  ${e.message}`);

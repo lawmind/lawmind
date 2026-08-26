@@ -206,6 +206,13 @@ freeze nothing.
 - Every figure is from `PASSAGE_100K_METRICS.json` (R8.1 baseline, built
   2026-08-26T01:55Z) or from NEW2's `ROLE_CENSUS_WIDENED_R8_3.md`, and is labelled
   where it came from. Nothing here is re-derived from memory.
+- **The 295-task set behind every retrieval figure is
+  `PUBLIC_DEVELOPMENT_REUSED`** (FIFTH bus 1355). It is development and
+  current-regression evidence drawn from four committed, published artifacts. It
+  is **not** a hidden holdout, and **no score here may be promoted to Gold V3
+  evidence — genuine Gold V3 does not exist.** This is precisely why
+  `search.semantic.broad` is `EXPERIMENTAL_INTERNAL` and not something better: the
+  evidence that would be needed to promote it has never been created.
 - The role percentages are **conditional on NEW2's regex classifier being right**,
   and its precision is unmeasured. Every number in §2 and §6 that mentions a role
   inherits that.
