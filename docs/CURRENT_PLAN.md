@@ -111,6 +111,46 @@ number someone else had measured.
 Bus 1250–1254 (START_STATE) · 1267 (FIFTH) · 1268, 1270, 1274, 1276, 1287 (LCC)
 · 1269, 1282, 1286 (NEW1).
 
+**POST-RELEASE, after NEW1 freed `HEAVY_BOX`.** Three jobs executed and proven,
+one handed back.
+
+- **§7.2 — 320,729 statute references linked in 50.7s.** `judgment_statute_refs`
+  went from **0** linked to **320,729 of 862,594 (37.18%)**. Deterministic join,
+  1,065 Act-key pairs, no model, no migration. This was **G1**, the top of the
+  data-gap queue.
+- **§7.3 — 4,688 unsafe pins cleared, ZERO remaining**, proven by re-asking the
+  classification question in the same run rather than trusting the UPDATE.
+  16,964 kept because their peers are the same decision.
+- **§7.7 top-k — my recorded prediction was REFUTED.** I predicted
+  `PARTY_SUBMISSION` would rise above its 19.75% pool rate; it **fell to 8.50%**.
+  What rose is **`REPORTER_EDITORIAL`, 1.68% → 10.00%, a six-fold enrichment**.
+  A headnote IS a confident legal proposition, which is what a legal query
+  matches. **The aggregate hides it**: overall unsafe fell 24.85% → 20.00% while
+  the composition got more dangerous. `COURT_REASONING` is **2.50%** of retrieved
+  passages.
+- **§7.1 fixtures — manifest `PROVEN`, execution handed to LCC per §8.8.** Not
+  executed deliberately: the one open sub-decision is 5 `citation_checks` audit
+  rows on LCC's surface. All 6 `overruled_by_judgment_id` pointers verified
+  fixture→fixture.
+
+**§7.5 — the shared-neutral defect is not ours.** 155,387 citations shared by
+361,044 judgments; 53.4% are legitimate common orders. Of the worst
+distinct-text groups, **8 of 8 across 8 High Courts print the shared citation on
+the face of the PDF** — the Registry assigned it. **A neutral citation is not a
+unique identifier in India**; it identifies a disposal event. Now in
+`DOMAIN_TRUTH.md`. Cross-court collision is 5 groups / 12 judgments.
+
+**§7.14 — the bench is in the text of 83.9% of High Court judgments and stored
+for 0.000%.** Naive patterns recover 13.5%; the gap is extraction work, not
+acquisition. The first run's three 0.0% courts were my patterns missing, not the
+bench being absent — Bombay 89.3% contain CORAM, Kerala 99.8%.
+
+**§7.16 — we hold reporter citations for 3 High Court documents in 18.7M**, and
+100% of Supreme Court ones. Reporter form is ~78% of real citations and 2.38%
+resolve. The valuable alias signal is HC, not SC.
+
+Bus 1288–1289, 1301–1303.
+
 ### 26 August 2026 (R8.1) — NEW1: PASSAGE BEATS HEAD WITH NON-OVERLAPPING INTERVALS, THREE FAMILIES SCORE ZERO, AND A FULL-CORPUS PASSAGE BUILD MISSES THIS BOX BY 2x
 
 R8.1 §6, closed. Commits `6afdde0`, `f6f51b6`, `5541d0c`, `1c7dace`, `e3af175`,

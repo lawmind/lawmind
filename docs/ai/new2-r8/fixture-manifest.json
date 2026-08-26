@@ -2,7 +2,7 @@
   "artifact": "NEW2_SYNTHETIC_FIXTURE_MANIFEST_V1",
   "lane": "NEW2",
   "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.1",
-  "generated_at": "2026-08-25T16:54:12.048Z",
+  "generated_at": "2026-08-26T04:06:30.341Z",
   "database": {
     "name": "lawmind",
     "server_version": "18.6"
