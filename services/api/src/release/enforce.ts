@@ -76,5 +76,5 @@ export function refuseIfDisabled(c: Context, name: CapabilityName): Response | n
  * confidence it did not earn.
  */
 export function semanticArmPermitted(): boolean {
-  return isUserReachable('search.semantic_broad');
+  return isUserReachable('search.semantic.broad');
 }

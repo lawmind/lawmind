@@ -66,23 +66,53 @@ describe('release capability registry — the object', () => {
     }
   });
 
-  it('the LIMITED-V1 refusals R8.3 §5 requires are actually DISABLED', () => {
-    // Not a tautology over the object: this is the plan's §5.6/§5.7/§5.8 list,
-    // written out, so that quietly enabling one to make the freeze look broader
-    // fails a test rather than passing a review.
+  it('nothing R8.3 §5 requires OFF is user-reachable', () => {
+    // Not a tautology over the object: this is the plan's §5.5/§5.6/§5.7/§5.8
+    // list plus NEW1's §1 rows, written out, so that quietly enabling one to make
+    // the freeze look broader fails a test rather than passing a review.
+    //
+    // The assertion is REACHABILITY and not the literal string 'DISABLED',
+    // because `search.semantic.broad` is EXPERIMENTAL_INTERNAL — NEW1's call,
+    // since the tranche and index are real and its harness exercises them. The
+    // two states differ in intent, not in reach, and reach is what a release
+    // gate is about.
     for (const name of [
-      'search.semantic_broad',
-      'search.long_narrative_query',
-      'generation.counterarguments',
-      'generation.supporting_adverse_synthesis',
+      'search.semantic.broad',
+      'search.semantic.supporting_authority',
+      'search.semantic.adverse_authority',
+      'search.semantic.counterarguments',
+      'search.semantic.abstention',
+      'generation.evidence_from_passages',
       'generation.premium_jobs',
       'language.hindi',
       'court.ecourts_live',
       'court.cause_list_harvest',
       'treatment.good_law_claim',
+      'statute.old_new_correspondence',
     ] as const) {
-      assert.equal(capabilityState(name), 'DISABLED', `${name} must be OFF for LIMITED V1`);
+      assert.equal(isUserReachable(name), false, `${name} must be unreachable for LIMITED V1`);
     }
+  });
+
+  it("every semantic row NEW1 published exists here under NEW1's own name", () => {
+    // §6 allows exactly one registry. NEW1 measured the semantic evidence and
+    // published paste-ready rows; retyping them under LCC names would produce two
+    // sets disagreeing about the same numbers — a client branching on one and
+    // FIFTH verifying the other. If a row is renamed on either side, this fails.
+    for (const name of [
+      'search.semantic.broad',
+      'search.semantic.supporting_authority',
+      'search.semantic.adverse_authority',
+      'search.semantic.counterarguments',
+      'search.semantic.long_input',
+      'search.semantic.abstention',
+      'generation.evidence_from_passages',
+    ] as const) {
+      assert.ok(RELEASE_CAPABILITIES[name], `${name} is a NEW1 row and must be in the registry`);
+    }
+    // NEW1 has it LIMITED (a served guided refusal), not DISABLED. The distinction
+    // is the product's: the route answers, and what it answers is a refusal.
+    assert.equal(capabilityState('search.semantic.long_input'), 'LIMITED');
   });
 
   it('the capabilities a limited V1 rests on are NOT disabled', () => {
@@ -113,7 +143,7 @@ describe('release capability registry — the server enforces it', () => {
     assert.equal(body.ok, true);
     assert.equal(body.data.registryVersion, RELEASE_CAPABILITIES_VERSION);
     // A client must be able to discover a refusal BEFORE rendering a screen for it.
-    assert.equal(body.data.capabilities['search.semantic_broad']?.state, 'DISABLED');
+    assert.equal(body.data.capabilities['search.semantic.broad']?.state, 'EXPERIMENTAL_INTERNAL');
   });
 
   it('POST /arguments/counter REFUSES — 409 with the registry reason, not an empty 200', async () => {
@@ -132,7 +162,7 @@ describe('release capability registry — the server enforces it', () => {
     };
     assert.equal(body.ok, false);
     assert.equal(body.error.code, 'CAPABILITY_DISABLED');
-    assert.equal(body.error.details?.capability, 'generation.counterarguments');
+    assert.equal(body.error.details?.capability, 'search.semantic.counterarguments');
     assert.equal(body.error.details?.state, 'DISABLED');
     assert.ok((body.error.details?.reason?.length ?? 0) > 40);
   });

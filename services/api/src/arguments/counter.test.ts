@@ -164,7 +164,7 @@ describe('POST /arguments/counter', () => {
    * unreachable, not merely labelled, and FIFTH verifies exactly this.
    */
   it('the MOUNTED route refuses while generation.counterarguments is DISABLED', async (t) => {
-    if (capabilityState('generation.counterarguments') !== 'DISABLED') {
+    if (capabilityState('search.semantic.counterarguments') !== 'DISABLED') {
       return t.skip('capability has been enabled — this test is the guard for that decision');
     }
     const { status, body } = await postThroughRoute({
@@ -176,7 +176,7 @@ describe('POST /arguments/counter', () => {
   });
 
   it('and the refusal happens BEFORE any retrieval work — no admission slot is taken', async (t) => {
-    if (capabilityState('generation.counterarguments') !== 'DISABLED') return t.skip('enabled');
+    if (capabilityState('search.semantic.counterarguments') !== 'DISABLED') return t.skip('enabled');
     // A refusal that still ran the rankers would be a refusal that still costs
     // the research pool a slot, which is how a "disabled" capability keeps
     // contending for the box it is supposed to have stopped using.

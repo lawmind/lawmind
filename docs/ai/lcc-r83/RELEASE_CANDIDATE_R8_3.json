@@ -1,0 +1,166 @@
+{
+  "releaseCandidateId": "LMRC-20260826-d12f2a9-8bc29635f62fa69b",
+  "sealedAt": "2026-08-26T19:23:25.359Z",
+  "head": "d12f2a9bf8ec801058576081796151f426e6400c",
+  "capabilityRegistryVersion": "RELEASE_CAPABILITIES_R8_3.2",
+  "corpus": {
+    "judgmentsEstimate": 18698984,
+    "judgmentCitationsEstimate": 22322064,
+    "newestJudgmentCreatedAt": "2026-08-19 23:05:38.04583+00",
+    "judgmentCitationKeys": 1412978,
+    "statutes": 848,
+    "statuteSections": 36480,
+    "statuteRefs": 862594,
+    "statuteRefsLinked": 688123,
+    "migrationsApplied": 88,
+    "citationKeyCursorAt": "2026-08-24 18:59:19.088+00",
+    "citationKeyDirtyOpen": 0,
+    "maxJudgmentDate": "2026-08-18"
+  },
+  "corpusDigest": "8bc29635f62fa69b",
+  "capabilities": {
+    "registryVersion": "RELEASE_CAPABILITIES_R8_3.2",
+    "asOf": "2026-08-26",
+    "capabilities": {
+      "search.exact_identity": {
+        "state": "LIMITED",
+        "reason": "Neutral citation, reporter citation, CNR, case number and case title resolve through an identity predicate rather than similarity. LIMITED, not ENABLED, because a UNIQUE claim is gated on three separate freshness checks and a citation implicated by any of them returns UNIQUE_UNCONFIRMED_STALE_INDEX — the candidate, without the word \"only\". Shared-neutral and common-order identity returns every reachable candidate and never a rank-1 pin.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "FIFTH's identity battery after the pin repair and fixture purge (§5.1)."
+      },
+      "search.structured_filters": {
+        "state": "ENABLED",
+        "reason": "Court, date, act and section filters are SQL predicates with a real COUNT(*) behind them. The structured path reports a true total; the hybrid path deliberately reports none.",
+        "asOf": "2026-08-26"
+      },
+      "search.pagination": {
+        "state": "ENABLED",
+        "reason": "Continuation is total-ordered, so paging cannot skip a candidate, and hasMore is OBSERVED by over-fetching rather than inferred from a full page. A page failure is distinguishable from the corpus ending.",
+        "asOf": "2026-08-26"
+      },
+      "judgment.reader": {
+        "state": "LIMITED",
+        "reason": "The reader refuses body-derived evidence for a judgment whose body text is convicted damaged, exactly as retrieval does, and states the refusal as bodyText.evidenceWithheld rather than rendering an empty page. It is LIMITED and not ENABLED for a second, unclosed reason: the corpus holds text for documents whose original source artifact is not retained, so no surface may claim \"verified from the retained official PDF\", and high-confidence reporter/editorial text may not be presented as the court's own reasoning while the content-use question is open.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "The content-use decision on reporter/editorial material, and retained-artifact state per document."
+      },
+      "judgment.exact_span": {
+        "state": "LIMITED",
+        "reason": "A verified character offset is returned only where one exists; it is null rather than clamped or guessed everywhere else. Coverage is partial and is not reported as complete.",
+        "asOf": "2026-08-26"
+      },
+      "statute.lookup": {
+        "state": "ENABLED",
+        "reason": "848 Acts and 36,480 sections are held and looked up deterministically.",
+        "asOf": "2026-08-26"
+      },
+      "statute.linked_judgments": {
+        "state": "LIMITED",
+        "reason": "688,123 of 862,594 statute references are linked to a held Act — 79.77%, NOT complete coverage, and it must never be presented as such. The remaining 20.23% are references to Acts we do not hold or that no deterministic rule could pin safely.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "FIFTH's independent stratified precision attack on the join, including alias/collision and negative controls (§5.3, §7 Correction 7)."
+      },
+      "statute.old_new_correspondence": {
+        "state": "DISABLED",
+        "reason": "BNS/BNSS/BSA-to-IPC/CrPC/Evidence correspondence is asserted only where official evidence is held for the mapping. It is not, corpus-wide, so the capability is off rather than partial: a wrong section correspondence is a wrong charge.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "Official correspondence tables ingested and verified per Act."
+      },
+      "matter.workspace": {
+        "state": "ENABLED",
+        "reason": "Tenant-isolated CRUD, timeline and matter state. No cross-user access path.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "FIFTH's tenant-isolation battery (§5.4)."
+      },
+      "matter.saved_authorities": {
+        "state": "ENABLED",
+        "reason": "Save and remove work against live treatment state, and set_aside refuses add-to-matter — the one case where the product declines to let an authority be used.",
+        "asOf": "2026-08-26"
+      },
+      "matter.briefing": {
+        "state": "LIMITED",
+        "reason": "A briefing assembles held facts and live treatment state. It may NOT fabricate a semantic stance: its authority list and treatment checklist are rewritten from live rows at render, never served from the stored blob, and no part of it argues from a semantic candidate.",
+        "asOf": "2026-08-26"
+      },
+      "treatment.resolved_signals": {
+        "state": "LIMITED",
+        "reason": "Bounded semantics only: \"no adverse signal found in resolved sources as of [date]\". Citation resolution is not legal treatment, a treatment edge is not current legal status, and reporter-derived treatment stays attributed as reporter-derived. 95.62% of the edges behind a LAW MOVED mark are a reporter headnote rather than the later court's own words.",
+        "asOf": "2026-08-26"
+      },
+      "treatment.good_law_claim": {
+        "state": "DISABLED",
+        "reason": "No generic \"good law\" guarantee and no \"live/fresh law\" claim. Source freshness is incomplete by measurement: the ingest fleet stopped 2026-08-19 19:56 and 40 of 53 upstream 2026 partitions have grown since, so max(judgment_date) is our walk's frontier and NOT the frontier of published law. \"Our ingest has not run for a week\" and \"the law is not published yet\" are different sentences and only one of them is true.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "Source freshness decomposed and closed per source/court, and a resumed ingest walk (NEW2 §11)."
+      },
+      "search.semantic.broad": {
+        "state": "EXPERIMENTAL_INTERNAL",
+        "reason": "Route-reachable passage cond_s@5 is 0.3715, 95% CI [0.327, 0.444]; end-to-end s@5 is 0.0136; Gold V3 does not exist, so there is no set against which enabling this could be justified. The index and the 418,116-passage tranche are real and NEW1 may exercise them from its own harness; the dense arm is NOT run on a user request. Exact, structured and lexical retrieval are unaffected.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "Gold V3 existing, AND a measured generation-evidence rate, AND a validated role policy (NEW1 §8)."
+      },
+      "search.semantic.supporting_authority": {
+        "state": "DISABLED",
+        "reason": "c@1, c@5 and c@100 are all 0 over 6 tasks; c@500 is 0.3333. The authorities rank at 100-500, so this is a ranking failure at human-readable depth and not an absent representation. n=6 is small and is enough for DISABLED — a family that scores zero where a person reads is not rescued by a larger sample.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "A larger task set, then a reranker round — in that order."
+      },
+      "search.semantic.adverse_authority": {
+        "state": "DISABLED",
+        "reason": "c@5 is 0 over 4 tasks and reaches 0.50 only at depth 100+. An adverse authority found at depth 100 is an adverse authority the advocate never saw.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "A larger task set, then a reranker round."
+      },
+      "search.semantic.counterarguments": {
+        "state": "DISABLED",
+        "reason": "Derived from supporting_authority and adverse_authority, both of which are zero at served depth. The adverse authority that would change the argument is exactly the one that did not get ranked.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "The two rows it derives from."
+      },
+      "search.semantic.long_input": {
+        "state": "LIMITED",
+        "reason": "Over 500 characters is a guided REFUSAL family, never a silent truncation. A shortened query returns results about a question the advocate did not ask. LIMITED rather than DISABLED because the refusal is the correct behaviour and is served, not a stopgap: the route answers, and what it answers is \"not this shape, and here is why\".",
+        "asOf": "2026-08-26"
+      },
+      "search.semantic.abstention": {
+        "state": "DISABLED",
+        "reason": "NOT_DEPLOYABLE. Absolute-similarity abstention is a measured SIGNAL failure, not an untuned threshold, so no cut-off exists that would make it safe. An abstention failure must never be promoted to a confidence.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "A different feature set. Not a wider grid, and not a re-tuned threshold."
+      },
+      "generation.evidence_from_passages": {
+        "state": "DISABLED",
+        "reason": "Generation-evidence eligibility is NOT_MEASURED: the rhetorical role is not on the wire, so the server cannot yet say what share of served evidence is court-authored text a proposition may rest on. High-confidence reporter/editorial text may not support a generated legal proposition while that is unmeasured and the content-use question is open.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "NEW1's bounded experiment, role on the wire, and FIFTH's precision measurement of the role labels."
+      },
+      "generation.premium_jobs": {
+        "state": "DISABLED",
+        "reason": "Premium generation is not required for LIMITED V1 (§5.4) and every generation route depends on a semantic evidence set that is off. Separately, the countersigned DPA owed before sensitive-class routing is not held.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "The countersigned DPA, and the generation-evidence capabilities above."
+      },
+      "language.hindi": {
+        "state": "DISABLED",
+        "reason": "Corpus language metadata is not trustworthy enough to support a Hindi capability claim. Devanagari retention through extraction is separately unproven — a zero defect count and a zero script count are the same number.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "Language metadata validated per source, and script retention measured."
+      },
+      "court.ecourts_live": {
+        "state": "DISABLED",
+        "reason": "Authorization is settled and unexpired; ACTIVATION is not. Turning this on requires the grant's exact operational conditions transcribed into the repo and real observations against them. The kill switch ecourts_harvest is OFF and its stored reason says the same.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "The registrar's stated conditions in-repo, and a rate/ledger observation run."
+      },
+      "court.cause_list_harvest": {
+        "state": "DISABLED",
+        "reason": "Bulk cause-list harvesting is off for the same activation reason. Tier 3 per-citation confirmation is unchanged and unaffected: it is a human solving the CAPTCHA and vouching, and citations/verify.ts holds no HTTP client.",
+        "asOf": "2026-08-26",
+        "unblockedBy": "court.ecourts_live."
+      }
+    }
+  },
+  "corpusWriteLocksAtSeal": [],
+  "possibleWriterProcessesAtSeal": [],
+  "pauseSemantics": "The seal RECORDS the writers visible at seal time. It cannot stop another lane. Re-run `check` to detect movement; a MUTATED result names the fields that moved."
+}

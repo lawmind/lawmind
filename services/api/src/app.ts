@@ -458,7 +458,7 @@ export function createApp(deps: AppDeps) {
       // get ranked, and `adverse_authority` scores 0 for every representation
       // arm tested. The registry refuses the ROUTE here rather than letting it
       // produce a confident answer from a set nothing vouches for.
-      refuseIfDisabled(c, 'generation.counterarguments') ??
+      refuseIfDisabled(c, 'search.semantic.counterarguments') ??
       handleCounter(
         c,
         {

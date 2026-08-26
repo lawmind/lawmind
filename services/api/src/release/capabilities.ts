@@ -62,7 +62,7 @@
  * capability set was this candidate frozen with" is answerable by query rather
  * than by reading a commit log.
  */
-export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.1';
+export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.2';
 
 export type CapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPERIMENTAL_INTERNAL';
 
@@ -111,11 +111,23 @@ export type CapabilityName =
   // ── §5.5 currentness / treatment ───────────────────────────────────────────
   | 'treatment.resolved_signals'
   | 'treatment.good_law_claim'
-  // ── §5.6 broad semantic ────────────────────────────────────────────────────
-  | 'search.semantic_broad'
-  | 'search.long_narrative_query'
-  | 'generation.counterarguments'
-  | 'generation.supporting_adverse_synthesis'
+  /* ── §5.6 broad semantic ───────────────────────────────────────────────────
+   *
+   * These names and states are NEW1's, taken verbatim from
+   * `docs/ai/new1-r83/SEMANTIC_CAPABILITY_RELEASE_SCOPE_R8_3.md` §1, which it
+   * published as paste-ready rows. Retyping them under my own names would have
+   * produced TWO capability sets disagreeing about the same evidence, which is
+   * the one thing §6 cannot survive — a client would branch on one and FIFTH
+   * would verify the other. The lane that measured the evidence names the
+   * capability; this file is where it becomes enforceable.
+   */
+  | 'search.semantic.broad'
+  | 'search.semantic.supporting_authority'
+  | 'search.semantic.adverse_authority'
+  | 'search.semantic.counterarguments'
+  | 'search.semantic.long_input'
+  | 'search.semantic.abstention'
+  | 'generation.evidence_from_passages'
   | 'generation.premium_jobs'
   // ── §5.7 / §5.8 ────────────────────────────────────────────────────────────
   | 'language.hindi'
@@ -248,52 +260,88 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
       'Source freshness decomposed and closed per source/court, and a resumed ingest walk (NEW2 §11).',
   },
 
-  /* ── §5.6 BROAD SEMANTIC — OFF, and off means unreachable ────────────────── */
-  'search.semantic_broad': {
-    state: 'DISABLED',
+  /* ── §5.6 BROAD SEMANTIC — NEW1's rows, enforced ─────────────────────────
+   *
+   * `EXPERIMENTAL_INTERNAL` rather than `DISABLED` for `broad`, and that is
+   * NEW1's call rather than a softening of mine: the tranche and the bounded
+   * HNSW exist and its own harness will exercise them. The two states differ in
+   * INTENT and not in reach — `isUserReachable` is false for both, so no request
+   * touches the dense arm either way.
+   */
+  'search.semantic.broad': {
+    state: 'EXPERIMENTAL_INTERNAL',
     reason:
-      'Route-reachable passage cond_s@5 is ~0.3715 on the current benchmark; three query families ' +
-      'score zero; absolute-similarity abstention is a measured signal failure and not a deployable ' +
-      'threshold. Gold V3 — 300 human-authored queries, independently adjudicated — does not exist, ' +
-      'so there is no set against which enabling this could be justified. The dense arm is NOT run ' +
-      'on a user request; exact, structured and lexical retrieval are unaffected.',
+      'Route-reachable passage cond_s@5 is 0.3715, 95% CI [0.327, 0.444]; end-to-end s@5 is 0.0136; ' +
+      'Gold V3 does not exist, so there is no set against which enabling this could be justified. ' +
+      'The index and the 418,116-passage tranche are real and NEW1 may exercise them from its own ' +
+      'harness; the dense arm is NOT run on a user request. Exact, structured and lexical retrieval ' +
+      'are unaffected.',
     asOf: AS_OF,
     unblockedBy:
-      "Gold V3, plus NEW1's bounded evidence-safe experiment and FIFTH's independent verification (§14).",
+      'Gold V3 existing, AND a measured generation-evidence rate, AND a validated role policy (NEW1 §8).',
   },
-  'search.long_narrative_query': {
+  'search.semantic.supporting_authority': {
     state: 'DISABLED',
     reason:
-      'A pasted passage or long narrative is answered by an explicit guided refusal, never by silent ' +
-      'truncation and never by a similarity guess. Refusal is the honest answer while the semantic ' +
-      'path is off.',
+      'c@1, c@5 and c@100 are all 0 over 6 tasks; c@500 is 0.3333. The authorities rank at 100-500, ' +
+      'so this is a ranking failure at human-readable depth and not an absent representation. n=6 is ' +
+      'small and is enough for DISABLED — a family that scores zero where a person reads is not ' +
+      'rescued by a larger sample.',
     asOf: AS_OF,
-    unblockedBy: 'search.semantic_broad.',
+    unblockedBy: 'A larger task set, then a reranker round — in that order.',
   },
-  'generation.counterarguments': {
+  'search.semantic.adverse_authority': {
     state: 'DISABLED',
     reason:
-      'Counterarguments are semantic-dependent by construction: the adverse authority that would ' +
-      'change the argument is exactly the one that did not get ranked. adverse_authority scores 0 ' +
-      'for every representation arm tested.',
+      'c@5 is 0 over 4 tasks and reaches 0.50 only at depth 100+. An adverse authority found at ' +
+      'depth 100 is an adverse authority the advocate never saw.',
     asOf: AS_OF,
-    unblockedBy: 'search.semantic_broad and a supporting/adverse family that does not score zero.',
+    unblockedBy: 'A larger task set, then a reranker round.',
   },
-  'generation.supporting_adverse_synthesis': {
+  'search.semantic.counterarguments': {
     state: 'DISABLED',
     reason:
-      'Supporting authority is a ranking-at-human-depth failure: exact retrieval finds 4 of 6 by ' +
-      'depth 500 and ANN 2 of 6, while both are zero at any depth a person would read. Synthesising ' +
-      'from a set that shallow states as settled what was merely first.',
+      'Derived from supporting_authority and adverse_authority, both of which are zero at served ' +
+      'depth. The adverse authority that would change the argument is exactly the one that did not ' +
+      'get ranked.',
     asOf: AS_OF,
-    unblockedBy: 'A ranking result that puts the authorities inside human-readable depth.',
+    unblockedBy: 'The two rows it derives from.',
+  },
+  'search.semantic.long_input': {
+    state: 'LIMITED',
+    reason:
+      'Over 500 characters is a guided REFUSAL family, never a silent truncation. A shortened query ' +
+      'returns results about a question the advocate did not ask. LIMITED rather than DISABLED ' +
+      'because the refusal is the correct behaviour and is served, not a stopgap: the route answers, ' +
+      'and what it answers is "not this shape, and here is why".',
+    asOf: AS_OF,
+  },
+  'search.semantic.abstention': {
+    state: 'DISABLED',
+    reason:
+      'NOT_DEPLOYABLE. Absolute-similarity abstention is a measured SIGNAL failure, not an untuned ' +
+      'threshold, so no cut-off exists that would make it safe. An abstention failure must never be ' +
+      'promoted to a confidence.',
+    asOf: AS_OF,
+    unblockedBy: 'A different feature set. Not a wider grid, and not a re-tuned threshold.',
+  },
+  'generation.evidence_from_passages': {
+    state: 'DISABLED',
+    reason:
+      'Generation-evidence eligibility is NOT_MEASURED: the rhetorical role is not on the wire, so ' +
+      'the server cannot yet say what share of served evidence is court-authored text a proposition ' +
+      'may rest on. High-confidence reporter/editorial text may not support a generated legal ' +
+      'proposition while that is unmeasured and the content-use question is open.',
+    asOf: AS_OF,
+    unblockedBy:
+      "NEW1's bounded experiment, role on the wire, and FIFTH's precision measurement of the role labels.",
   },
   'generation.premium_jobs': {
     state: 'DISABLED',
     reason:
       'Premium generation is not required for LIMITED V1 (§5.4) and every generation route depends on ' +
-      'a semantic evidence set that is off. Separately, the countersigned DPA owed before sensitive- ' +
-      'class routing is not held.',
+      'a semantic evidence set that is off. Separately, the countersigned DPA owed before ' +
+      'sensitive-class routing is not held.',
     asOf: AS_OF,
     unblockedBy: 'The countersigned DPA, and the generation-evidence capabilities above.',
   },
