@@ -16,6 +16,101 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 26 August 2026 (R8.1) — NEW2: THE FRESHNESS GATE PASSED WITH ZERO EVIDENCE, THE CORPUS IS 56 DAYS BEHIND NOT 8, AND ~72,000 DEVANAGARI JUDGMENTS ARE LABELLED ENGLISH
+
+R8.1 §7. Artifacts under `docs/ai/new2-r8/`. Commits `437dc65`, `5a98d5c`,
+`342c314`, `b9d3b3b`, `111860f`, `91d5e74`, `9ce5e6b`.
+
+**The resolver freshness gate returned CURRENT with `resolver_risk_replay`
+EMPTY.** Run against the live gate function, not read and inferred: 0 rows,
+state CURRENT, `because: []`, `mayAssertUnique` TRUE. `readKeyFreshness` READS
+the risk table, reports it null, and never puts it in `because` — it bounds
+index lag in rows and hours and never asks whether adjudicated risk evidence
+exists. **An empty risk table and a clean one are the same reading.** The table
+is now populated by a replay that runs the REAL `resolveBatch` over 406
+adjudicated records — 0 false unique, 0 materially unsafe, the only two
+mismatches in the safe direction. The caveat travels in the row's own `notes`:
+the truth set DROVE the fix it is testing, so it is `IN_SAMPLE` and is not a
+corpus-wide rate. Non-vacuity proven — `--selftest` fires the detector twice and
+correctly keeps it silent once. Gate half is LCC's §8.3 and remains open.
+
+**Only 4,688 of 21,652 ambiguous citation pins are unsafe.** The population is
+21,652 exact (9.36% of 231,351 resolved), replacing R7's ~24,500 sample
+estimate. Classified on `DECISION_IDENTITY_CONTRACT_V1`: 14,525
+`EXACT_DOCUMENT_DUPLICATE` and 2,439 `SAME_DECISION_DIFFERENT_SOURCE` are KEPT
+because the advocate lands on the right authority; 3,646 `DIFFERENT_COURTS`,
+649 `DIFFERENT_DATES` and 393 `UNKNOWN` are cleared. Clearing is not dropping —
+only `cited_judgment_id` goes and the citation renders as ambiguous, which is
+what it is. Rollback manifest written in DRY RUN. **Not executed; waits on
+`HEAVY_BOX`.**
+
+**The corpus is 56 days behind, not 8.** `max(judgment_date)` reads 2026-08-18.
+August holds **480** judgments against July's 93,340 and a baseline of 117,332 —
+0.4%, `EFFECTIVELY_ABSENT`. A month with one row in it has a newest date.
+Currency is now a completeness ratio against a trailing baseline that skips the
+months under test. Confounder stated: courts take a summer vacation mid-May to
+early July, which is why July rises above June; it does not rescue August.
+**Every currency claim must use 56.** eCourts is the only adapter that can ever
+close it and has zero observations.
+
+**~72,000 Devanagari judgments are labelled `en`.** `judgments.language` has
+exactly one value across 18,698,984 rows. Randomised `TABLESAMPLE`: 0.387%
+substantially Devanagari, 95% CI [0.280, 0.535], averaging 31.3% of the
+document, concentrated in Allahabad, Rajasthan, Chhattisgarh, Patna, MP,
+Jharkhand and Uttarakhand — the Hindi belt. And `native_text` is a BOOLEAN, true
+on 99.087%, so the corpus asserts both "this is its native language" and "that
+language is English". **"The corpus is English" is FALSE; every Hindi claim is
+HOLD.**
+
+**The IPC and the Evidence Act are obtainable today; CrPC 1973 is not.** R7's
+`PARTIAL` IPC verdict was measured against a *Chandigarh state adaptation*; the
+central official PDF is 1,104,850 bytes. IEA's central principal Act is a third
+distinct artifact at 639,810 bytes. That unblocks **111,457 of 391,484** blocked
+statute references with no permission and no founder decision. CrPC 1973 is
+`CONFIRMED_ABSENT` by three paths — two catalogue records titled exactly "The
+Code of Criminal Procedure, 1973" both carry **zero bitstreams**, while every
+CrPC from 1861, 1872, 1882 and 1898 is downloadable. **India Code's `.pdf.txt`
+derivative is hard-truncated at exactly 100,000 characters and opens with the
+table of contents**, so a heading count reports 511/511 sections on a file
+holding 92 — 18.0% of the IPC, with ss. 302, 420, 498A and 511 all absent. The
+acquisition target is the PDF, never the text layer.
+
+**Release-critical OCR is 14 documents, about twelve minutes.** `HIGHLY_CITED`
+and `CURRENTNESS_BLOCKER` both came back ZERO and were re-tested by an
+independent query: 7,018 highly-cited, 0 damaged. The mechanism is that **6,970
+of 7,018 (99.3%) are Supreme Court and SC damage is 0.00% of 38,342**, against
+Allahabad 0.35% and Rajasthan 4.87%. Damage and the citation graph live in
+different halves of the corpus. Bounded by screen sensitivity —
+`SCREENED_NO_DAMAGE_FOUND` is not clean and our screen missed 32 of 43 glyph
+dumps. And the SC corpus is clean *because* it is the SCR reporter edition, so
+its readability and its licensing exposure have the same cause.
+
+**24.40% of tranche passages must never be shown as the court's own reasoning.**
+Measured on the REAL tranche (416,600 passages), not R7's substitute frame,
+which understated every unsafe class — `PARTY_SUBMISSION` 11.26% → 19.38%,
+`REPORTER_EDITORIAL` 0.11% → 1.57%. SC 16.54%, HC 25.88%. `SPAN_UNVERIFIABLE`
+2.65% independently corroborates NEW1's 2.95% from a different code path.
+**§7.7 is PARTIAL** — it asks for top-k and this is the pool.
+
+**Gold V2 cannot be the final hidden set.** All three of FIFTH's findings
+reproduced exactly, and both defects reach the SEALED holdout: **21 of its 86
+rows (24.4%) cannot enter `POST /search` at all**, and 2 of its exact_identity
+keys are ambiguous. Zero of 480 rows are a human asking for supporting or
+adverse law. Gold V3 is `HUMAN_ADVOCATE_INPUT_REQUIRED` and is in
+`FOUNDER_QUEUE.md`.
+
+**Four errors of my own, each caught and each the same shape.** Matching raw
+citations against a normalised `citation_key` (0 of 60, read as "the family is
+absent"); a hand-rolled despatch predicate 98 rows short; slicing passages
+against `text_chars` instead of `body_length` (25.22% vs a true 2.65%); and
+repairing three bidirectional arrows in the R8.1 lock into one-way arrows, which
+changed an obligation. **Nothing errored in any of them** — the query succeeded
+and answered a different question. Three were caught by disagreeing with a
+number someone else had measured.
+
+Bus 1250–1254 (START_STATE) · 1267 (FIFTH) · 1268, 1270, 1274, 1276, 1287 (LCC)
+· 1269, 1282, 1286 (NEW1).
+
 ### 25 August 2026 (R7) — NEW1: THE ELIGIBILITY VIEW FILTERS NOTHING, A 320-CHARACTER WINDOW COSTS 500,000 DOCUMENTS THEIR PINPOINT CITATION, AND 29% OF COMMON LEGAL QUERIES ARE REFUSED
 
 R7 §9. Commits `0cd7a65`, `a3d975b`, `9aa7eab`, `ba67b6e`. Artifacts under
