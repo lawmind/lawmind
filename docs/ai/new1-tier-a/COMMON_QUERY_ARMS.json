@@ -1,11 +1,11 @@
 {
   "kind": "new1_common_query_arms",
   "version": 1,
-  "builtAt": "2026-08-25T14:12:44.747Z",
+  "builtAt": "2026-08-26T02:05:32.644Z",
   "benchmarkContentSha256": "1af9ed42fc7d3efacc40ecd68d940bd2dbbc59ed77074e1ac625fb9837758497",
   "indexState": {
-    "passages": 72680,
-    "documents": 24000
+    "passages": 418116,
+    "documents": 81720
   },
   "armsRun": [
     "sparse_guard",
@@ -18,15 +18,15 @@
     "annLexOverlapMean": 0.0313,
     "complementarity": "annLexOverlapAtN mean 0.031 — the arms return almost entirely DIFFERENT documents, which is what makes them complementary and is R7's condition for running a fusion arm at all.",
     "correctionOf": "An earlier draft of this file SKIPPED fusion and cited the same 0.033 overlap as the reason. That reading was inverted: low overlap is high complementarity. A HIGH overlap would have justified skipping.",
-    "meanOnConceptDeltaVsAnn": 0.0188,
-    "shipRecommendation": "SHIP-CANDIDATE: fusion does not lose on-concept precision (mean delta 0.0188) while drawing on a complementary arm."
+    "meanOnConceptDeltaVsAnn": 0.0042,
+    "shipRecommendation": "SHIP-CANDIDATE: fusion does not lose on-concept precision (mean delta 0.0042) while drawing on a complementary arm."
   },
   "summary": {
     "conceptQueries": 48,
     "refusedBySparseGuard": 14,
     "refusedSharePct": 29.2,
     "annAnsweredAll": true,
-    "meanOnConceptAnn": 0.8917,
+    "meanOnConceptAnn": 0.9562,
     "wrongDomainFalseConfident": 0
   },
   "concepts": [
@@ -55,13 +55,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 69,
+              "latencyMs": 215,
               "onConceptAtN": 1,
               "topSim": 0.6172
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1000,
+              "latencyMs": 1271,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -94,13 +94,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 39,
+              "latencyMs": 146,
               "onConceptAtN": 1,
               "topSim": 0.7169
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 88,
+              "latencyMs": 197,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -141,13 +141,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 30,
+              "latencyMs": 73,
               "onConceptAtN": 1,
-              "topSim": 0.7259
+              "topSim": 0.7425
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 111,
+              "latencyMs": 203,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -188,13 +188,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 67,
+              "latencyMs": 86,
               "onConceptAtN": 1,
-              "topSim": 0.6948
+              "topSim": 0.7127
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 160,
+              "latencyMs": 358,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -238,13 +238,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 34,
+              "latencyMs": 62,
               "onConceptAtN": 1,
-              "topSim": 0.7198
+              "topSim": 0.727
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 4040,
+              "latencyMs": 4513,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -285,13 +285,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 66,
+              "latencyMs": 96,
               "onConceptAtN": 1,
               "topSim": 0.7285
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 510,
+              "latencyMs": 1362,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -332,18 +332,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 23,
-              "onConceptAtN": 1,
-              "topSim": 0.6943
+              "latencyMs": 31,
+              "onConceptAtN": 0.9,
+              "topSim": 0.7297
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 497,
+              "latencyMs": 1372,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 1,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -379,13 +379,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 22,
+              "latencyMs": 20,
               "onConceptAtN": 1,
-              "topSim": 0.7465
+              "topSim": 0.76
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 525,
+              "latencyMs": 1350,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -429,13 +429,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 34,
+              "latencyMs": 48,
               "onConceptAtN": 1,
-              "topSim": 0.6919
+              "topSim": 0.7109
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 20754,
+              "latencyMs": 19622,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -472,13 +472,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 31,
+              "latencyMs": 35,
               "onConceptAtN": 1,
-              "topSim": 0.6956
+              "topSim": 0.7008
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 3354,
+              "latencyMs": 6155,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -519,13 +519,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 177,
+              "latencyMs": 113,
               "onConceptAtN": 1,
               "topSim": 0.7525
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1797,
+              "latencyMs": 5342,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -566,13 +566,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 106,
+              "latencyMs": 17,
               "onConceptAtN": 1,
-              "topSim": 0.696
+              "topSim": 0.7244
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 1873,
+              "latencyMs": 5374,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -583,7 +583,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         }
       ]
     },
@@ -612,13 +612,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 235,
+              "latencyMs": 142,
               "onConceptAtN": 1,
-              "topSim": 0.627
+              "topSim": 0.6488
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2094,
+              "latencyMs": 20893,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -629,7 +629,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0
+          "annLexOverlapAtN": 0.1
         },
         {
           "query": "temporary injunction",
@@ -655,13 +655,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 247,
+              "latencyMs": 115,
               "onConceptAtN": 1,
-              "topSim": 0.6649
+              "topSim": 0.6869
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2411,
+              "latencyMs": 12069,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -702,13 +702,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 61,
-              "onConceptAtN": 0.8,
-              "topSim": 0.6463
+              "latencyMs": 69,
+              "onConceptAtN": 1,
+              "topSim": 0.69
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2771,
+              "latencyMs": 12841,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -716,7 +716,7 @@
               "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.2
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.2
@@ -749,13 +749,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 76,
-              "onConceptAtN": 0.9,
-              "topSim": 0.6549
+              "latencyMs": 70,
+              "onConceptAtN": 1,
+              "topSim": 0.7142
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2383,
+              "latencyMs": 12887,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -763,10 +763,10 @@
               "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.1
+              "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0.2
         }
       ]
     },
@@ -795,18 +795,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 52,
-              "onConceptAtN": 0.9,
-              "topSim": 0.6042
+              "latencyMs": 100,
+              "onConceptAtN": 1,
+              "topSim": 0.607
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 2022,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12167,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.9,
+              "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -838,14 +838,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 95,
+              "latencyMs": 41,
               "onConceptAtN": 1,
-              "topSim": 0.7088
+              "topSim": 0.7188
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 2074,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12095,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -885,18 +885,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 50,
-              "onConceptAtN": 0.9,
-              "topSim": 0.6207
+              "latencyMs": 76,
+              "onConceptAtN": 1,
+              "topSim": 0.6652
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 2207,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12234,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.9,
+              "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -934,12 +934,12 @@
               "documents": 10,
               "latencyMs": 27,
               "onConceptAtN": 1,
-              "topSim": 0.7273
+              "topSim": 0.7508
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 2206,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 16538,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -982,24 +982,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 60,
-              "onConceptAtN": 0.8,
-              "topSim": 0.5697
+              "latencyMs": 234,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6234
             },
             "lexical_phrase": {
-              "documents": 1,
-              "latencyMs": 2420,
-              "onConceptAtN": 1
+              "documents": 10,
+              "latencyMs": 15037,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.8,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         },
         {
           "query": "suit for specific performance",
@@ -1029,24 +1029,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 76,
-              "onConceptAtN": 0.7,
-              "topSim": 0.5706
+              "latencyMs": 247,
+              "onConceptAtN": 0,
+              "topSim": 0.51
             },
             "lexical_phrase": {
-              "documents": 1,
-              "latencyMs": 2216,
-              "onConceptAtN": 1
+              "documents": 10,
+              "latencyMs": 12436,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.7,
+              "onConceptAtN": 0.4,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0
+              "deltaVsAnn": 0.4
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         },
         {
           "query": "readiness and willingness specific performance",
@@ -1076,24 +1076,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 80,
-              "onConceptAtN": 0.6,
-              "topSim": 0.6554
+              "latencyMs": 105,
+              "onConceptAtN": 1,
+              "topSim": 0.7494
             },
             "lexical_phrase": {
-              "documents": 1,
-              "latencyMs": 2053,
-              "onConceptAtN": 1
+              "documents": 10,
+              "latencyMs": 12649,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.6,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0
+              "deltaVsAnn": -0.1
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         },
         {
           "query": "when will a court decree specific performance of an agreement to sell immovable property",
@@ -1123,24 +1123,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 66,
-              "onConceptAtN": 0.6,
-              "topSim": 0.6334
+              "latencyMs": 71,
+              "onConceptAtN": 0.8,
+              "topSim": 0.6888
             },
             "lexical_phrase": {
-              "documents": 1,
-              "latencyMs": 2122,
-              "onConceptAtN": 1
+              "documents": 10,
+              "latencyMs": 12834,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.6,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0
+              "deltaVsAnn": 0.1
             }
           },
-          "annLexOverlapAtN": 0
+          "annLexOverlapAtN": 0.1
         }
       ]
     },
@@ -1177,13 +1177,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 42,
+              "latencyMs": 97,
               "onConceptAtN": 1,
-              "topSim": 0.6705
+              "topSim": 0.7094
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2097,
+              "latencyMs": 12730,
               "onConceptAtN": null
             },
             "fusion_rrf": {
@@ -1224,18 +1224,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 46,
-              "onConceptAtN": 0.7,
-              "topSim": 0.6596
+              "latencyMs": 97,
+              "onConceptAtN": 1,
+              "topSim": 0.6857
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2375,
+              "latencyMs": 14808,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.7,
+              "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -1271,18 +1271,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 22,
-              "onConceptAtN": 0.8,
-              "topSim": 0.6392
+              "latencyMs": 49,
+              "onConceptAtN": 1,
+              "topSim": 0.6981
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2116,
+              "latencyMs": 16868,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.8,
+              "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -1318,18 +1318,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 52,
-              "onConceptAtN": 0.6,
-              "topSim": 0.6723
+              "latencyMs": 96,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6909
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2282,
+              "latencyMs": 13451,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.6,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -1368,21 +1368,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 42,
+              "latencyMs": 151,
               "onConceptAtN": 1,
               "topSim": 0.5705
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2093,
-              "onConceptAtN": 1
+              "latencyMs": 12500,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 1,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0
+              "deltaVsAnn": -0.1
             }
           },
           "annLexOverlapAtN": 0
@@ -1415,24 +1415,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 105,
-              "onConceptAtN": 0.9,
-              "topSim": 0.614
+              "latencyMs": 119,
+              "onConceptAtN": 1,
+              "topSim": 0.6388
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2028,
-              "onConceptAtN": 1
+              "latencyMs": 12628,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 1,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.1
+              "deltaVsAnn": -0.1
             }
           },
-          "annLexOverlapAtN": 0.2
+          "annLexOverlapAtN": 0.1
         },
         {
           "query": "dishonour of cheque complaint",
@@ -1462,14 +1462,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 26,
+              "latencyMs": 51,
               "onConceptAtN": 1,
-              "topSim": 0.7183
+              "topSim": 0.7465
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2051,
-              "onConceptAtN": 1
+              "latencyMs": 12369,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
@@ -1479,7 +1479,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         },
         {
           "query": "complaint for dishonour of a cheque for insufficiency of funds",
@@ -1509,14 +1509,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 19,
+              "latencyMs": 30,
               "onConceptAtN": 1,
-              "topSim": 0.7597
+              "topSim": 0.7653
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2004,
-              "onConceptAtN": 1
+              "latencyMs": 12421,
+              "onConceptAtN": 0.9
             },
             "fusion_rrf": {
               "documents": 10,
@@ -1559,24 +1559,24 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 78,
-              "onConceptAtN": 0.8,
-              "topSim": 0.6115
+              "latencyMs": 138,
+              "onConceptAtN": 1,
+              "topSim": 0.647
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2141,
-              "onConceptAtN": 0.8
+              "latencyMs": 12781,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
               "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.2
+              "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0
         },
         {
           "query": "illegal termination",
@@ -1602,21 +1602,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 67,
-              "onConceptAtN": 0.9,
-              "topSim": 0.6045
+              "latencyMs": 101,
+              "onConceptAtN": 1,
+              "topSim": 0.6263
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2113,
-              "onConceptAtN": 0.8
+              "latencyMs": 12765,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
               "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.1
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0.1
@@ -1649,21 +1649,21 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 88,
-              "onConceptAtN": 0.8,
-              "topSim": 0.6436
+              "latencyMs": 79,
+              "onConceptAtN": 1,
+              "topSim": 0.6496
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2076,
-              "onConceptAtN": 0.8
+              "latencyMs": 12802,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
               "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
-              "deltaVsAnn": 0.2
+              "deltaVsAnn": 0
             }
           },
           "annLexOverlapAtN": 0
@@ -1696,14 +1696,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 71,
+              "latencyMs": 60,
               "onConceptAtN": 1,
-              "topSim": 0.6352
+              "topSim": 0.6683
             },
             "lexical_phrase": {
               "documents": 10,
-              "latencyMs": 2203,
-              "onConceptAtN": 0.8
+              "latencyMs": 12928,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -1713,7 +1713,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0
+          "annLexOverlapAtN": 0.1
         }
       ]
     },
@@ -1746,13 +1746,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 48,
+              "latencyMs": 102,
               "onConceptAtN": 1,
-              "topSim": 0.6407
+              "topSim": 0.6543
             },
             "lexical_phrase": {
-              "documents": 3,
-              "latencyMs": 2034,
+              "documents": 10,
+              "latencyMs": 12130,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -1763,7 +1763,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0.1
+          "annLexOverlapAtN": 0.2
         },
         {
           "query": "writ petition not maintainable",
@@ -1789,13 +1789,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 77,
+              "latencyMs": 60,
               "onConceptAtN": 1,
-              "topSim": 0.695
+              "topSim": 0.7442
             },
             "lexical_phrase": {
-              "documents": 3,
-              "latencyMs": 2155,
+              "documents": 10,
+              "latencyMs": 12359,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -1836,13 +1836,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 54,
+              "latencyMs": 102,
               "onConceptAtN": 1,
               "topSim": 0.6285
             },
             "lexical_phrase": {
-              "documents": 3,
-              "latencyMs": 2123,
+              "documents": 10,
+              "latencyMs": 12252,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -1883,13 +1883,13 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 41,
+              "latencyMs": 37,
               "onConceptAtN": 1,
               "topSim": 0.7282
             },
             "lexical_phrase": {
-              "documents": 3,
-              "latencyMs": 2259,
+              "documents": 10,
+              "latencyMs": 12114,
               "onConceptAtN": 1
             },
             "fusion_rrf": {
@@ -1929,18 +1929,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 182,
-              "onConceptAtN": 0.7,
-              "topSim": 0.5825
+              "latencyMs": 251,
+              "onConceptAtN": 1,
+              "topSim": 0.6022
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2153,
+              "latencyMs": 12018,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.7,
+              "onConceptAtN": 1,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -1976,18 +1976,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 116,
-              "onConceptAtN": 0.6,
+              "latencyMs": 180,
+              "onConceptAtN": 0.7,
               "topSim": 0.6438
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2204,
+              "latencyMs": 11975,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.6,
+              "onConceptAtN": 0.7,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -2023,18 +2023,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 91,
-              "onConceptAtN": 0.5,
-              "topSim": 0.5643
+              "latencyMs": 122,
+              "onConceptAtN": 0.9,
+              "topSim": 0.6144
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 2088,
+              "latencyMs": 11892,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.5,
+              "onConceptAtN": 0.9,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -2070,18 +2070,18 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 82,
-              "onConceptAtN": 0.3,
-              "topSim": 0.5502
+              "latencyMs": 232,
+              "onConceptAtN": 0.8,
+              "topSim": 0.5623
             },
             "lexical_phrase": {
               "documents": 0,
-              "latencyMs": 1709,
+              "latencyMs": 11143,
               "onConceptAtN": null
             },
             "fusion_rrf": {
               "documents": 10,
-              "onConceptAtN": 0.3,
+              "onConceptAtN": 0.8,
               "scoreKind": "rrf",
               "k": 60,
               "deltaVsAnn": 0
@@ -2116,14 +2116,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 48,
+              "latencyMs": 103,
               "onConceptAtN": 1,
-              "topSim": 0.6131
+              "topSim": 0.6303
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 1785,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 11947,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -2163,14 +2163,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 44,
+              "latencyMs": 34,
               "onConceptAtN": 1,
               "topSim": 0.6619
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 1726,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12273,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -2210,14 +2210,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 24,
+              "latencyMs": 30,
               "onConceptAtN": 1,
-              "topSim": 0.6648
+              "topSim": 0.6658
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 1739,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12207,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -2227,7 +2227,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0
+          "annLexOverlapAtN": 0.1
         },
         {
           "query": "quantum of interim maintenance payable to a wife unable to maintain herself",
@@ -2257,14 +2257,14 @@
             },
             "passage_ann": {
               "documents": 10,
-              "latencyMs": 30,
+              "latencyMs": 22,
               "onConceptAtN": 1,
               "topSim": 0.6821
             },
             "lexical_phrase": {
-              "documents": 0,
-              "latencyMs": 1778,
-              "onConceptAtN": null
+              "documents": 1,
+              "latencyMs": 12100,
+              "onConceptAtN": 1
             },
             "fusion_rrf": {
               "documents": 10,
@@ -2274,7 +2274,7 @@
               "deltaVsAnn": 0
             }
           },
-          "annLexOverlapAtN": 0
+          "annLexOverlapAtN": 0.1
         }
       ]
     }
@@ -2307,7 +2307,7 @@
       "query": "restitution of conjugal rights and the wife declining to return to the matrimonial home",
       "domain": "matrimonial",
       "documentsReturned": 10,
-      "topSim": 0.6462,
+      "topSim": 0.691,
       "falseConfidentWrongDomain": 0,
       "falseConfidentRateAtN": 0,
       "examples": [],
@@ -2318,7 +2318,7 @@
       "query": "compensation for land acquired for a national highway and the market value on the date of notification",
       "domain": "land acquisition",
       "documentsReturned": 10,
-      "topSim": 0.6809,
+      "topSim": 0.6991,
       "falseConfidentWrongDomain": 0,
       "falseConfidentRateAtN": 0,
       "examples": [],
@@ -2332,5 +2332,5 @@
     "The passage_ann arm searches the TRANCHE, which is 81,720 documents of an 18.7M corpus. Its coverage is not production coverage and must never be quoted as such.",
     "requiredAny terms are English, so a Devanagari judgment about the same concept scores as off-concept. Per-concept relevance is a FLOOR."
   ],
-  "contentSha256": "6acf41ba4916c22c867e3f106e1d3d8435fa227e48ca47232d8e6556a5175410"
+  "contentSha256": "b93861f18b86190371480ba461473403fda8bdf497294e1201eb6a5ea270da76"
 }

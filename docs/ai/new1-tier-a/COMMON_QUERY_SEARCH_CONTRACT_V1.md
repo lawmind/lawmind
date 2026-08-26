@@ -248,7 +248,28 @@ number and the heading it came from, and any of them can be checked against the 
 - **The 12 concepts are 10 named in R7 plus 2 chosen by NEW1** (a bare single word, and an
   IPC/BNS transition probe). They are representative of high-frequency practice, not a
   random sample of query traffic — we have no query traffic.
-- **ANN coverage was measured on a 27% prefix of the passage build** (66,155 passages over
-  21,800 documents). The prefix is a uniform sample of the tranche by construction, because
-  the embed runs in global priority-hash order — but it is still a prefix, and the numbers
-  will be re-run at full scale before this contract is quoted as final.
+- ~~**ANN coverage was measured on a 27% prefix of the passage build** (66,155 passages
+  over 21,800 documents)…~~ **RESOLVED 2026-08-26T02:05Z — re-run at full scale on the
+  complete tranche: 418,116 passages over 81,720 documents.** The caveat is retired, and
+  what it turned into is worth recording rather than deleting:
+
+  | | 27% prefix | complete tranche |
+  |---|---:|---:|
+  | refused by sparse guard | 14 / 48 (29.2%) | **14 / 48 (29.2%)** |
+  | mean on-concept @10, ANN | 0.892 | **0.9562** |
+  | queries ANN could not answer | 0 | **0** |
+  | wrong-domain hits | 0 | **0** |
+
+  Both halves went the way this contract predicted they would, which is the reason to
+  publish the comparison rather than just the new number. **The refusal figure did not
+  move at all** — it is production's own rule against production's own
+  `lexeme_document_frequency`, so index size cannot touch it. **The coverage figure did
+  move**, 0.892 → 0.9562, because that one depends on what is in the index.
+
+  **The prefix claim in the retired caveat was also wrong, and Fifth caught it** (bus
+  1255). It said the prefix "is a uniform sample of the tranche by construction, because
+  the embed runs in global priority-hash order." It is not: the CLI embeds
+  `ids = [...forced, ...natural]`, so any prefix is **forced-complete plus a uniform
+  natural prefix** and is biased toward Gold-target availability. It does not change these
+  particular numbers — the common-query set carries no Gold targets — but the reasoning
+  was unsound and it produced a real error elsewhere, in the partial-index family scores.
