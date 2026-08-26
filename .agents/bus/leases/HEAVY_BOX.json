@@ -8,8 +8,8 @@
   "pidResolution": "RESOLVED",
   "host": "XC",
   "acquiredAt": "2026-08-26T01:37:57.448Z",
-  "heartbeatAt": "2026-08-26T01:37:57.448Z",
-  "lastProgressAt": "2026-08-26T01:37:57.448Z",
+  "heartbeatAt": "2026-08-26T01:44:26.621Z",
+  "lastProgressAt": "2026-08-26T01:40:11.692Z",
   "task": "R8.1 §6: bounded 100k passage tranche -- 520 documents remain after the 01:32Z reboot; then HNSW rebuild on the complete table, 295-task four-arm eval, common-query rerun, abstention freeze",
   "purpose": "the single box: GPU, large DB writes/scans, OCR fleets, restore/replay, mixed load",
   "jobId": "new1-tranche-embed",
@@ -17,7 +17,7 @@
   "inputVersion": null,
   "durableOutputMetric": "select count(*) from new1_tranche_passages",
   "startingOutput": "417262",
-  "currentOutput": "417262",
+  "currentOutput": "418116",
   "contentionClass": "GPU_SIDECAR+DB_WRITE",
   "pauseResume": null,
   "launcher": null,
@@ -28,5 +28,7 @@
     "pid": 22688,
     "health": "DEAD",
     "reason": "same holder NEW1, same session; prior lease pid 22688 died in the 01:32Z reboot along with the worker, keeper and sidecar"
-  }
+  },
+  "previousOutput": "418116",
+  "zeroDeltaWindows": 1
 }

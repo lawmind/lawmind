@@ -321,7 +321,8 @@ materially.
 | item | state |
 |---|---|
 | R8.1 digest provenance | `CONFLICT_REQUIRES_REMEASUREMENT` — no canonical on-disk copy existed |
-| tranche embedding | `PARTIAL` — 46,200 / 81,720 documents, `RUNNING_PROGRESSING` |
+| tranche embedding | **`PROVEN` — COMPLETE 2026-08-26T01:39:27Z. 418,116 passages over 81,720 documents (5.12 chunks/doc), confirmed by row count, not by the process being gone.** Two deaths and two restarts (uncaught timeout 16:44Z; machine reboot 23:05Z), zero rows lost |
+| tranche embed supervision, relaunch path | **`PROVEN` 2026-08-26T01:36:34Z** — `TRANCHE EMBED SILENT for 151 min — relaunch #1`, resumed at the correct offset and wrote rows. No longer `NOT_MEASURED` |
 | HNSW index on complete tranche | `NOT_MEASURED` — current artifact is a 26% prefix |
 | 295-task four-arm eval | `NOT_MEASURED` — awaiting the complete index |
 | abstention policy | `NOT_MEASURED` — grid-edge signal failure recorded on the partial index |

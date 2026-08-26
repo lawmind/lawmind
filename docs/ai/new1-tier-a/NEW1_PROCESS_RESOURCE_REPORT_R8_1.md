@@ -211,31 +211,64 @@ consequence of the chunker defect reported in bus 1224.
 
 **Not a recommendation — that is `HEAD_VS_PASSAGE_DECISION_V2`. This is the arithmetic.**
 
-At **13,891 B per passage including a fresh HNSW**, and taking the Tier A deduplicated
-population of **8,854,281 documents**:
+> **UPDATED 2026-08-26T01:44Z with the completed build. The earlier version of this
+> section used a 3.6 chunks/doc projection and was too optimistic.** The true rate is
+> **5.116** and the fresh index is now measured rather than extrapolated. The direction of
+> the conclusion did not change; its margin got worse.
 
-| chunks/doc assumed | passages | storage |
+### Measured at completion — no projection in this table
+
+| | value |
+|---|---:|
+| documents | 81,720 |
+| passages | **418,116** |
+| **chunks / document** | **5.116** |
+| heap + TOAST + pkey | 2,387,927,040 B → **5,711 B / passage** |
+| **fresh HNSW at 418,116** | 3,401,678,848 B → **8,136 B / passage** |
+| **total per passage** | **13,847 B** |
+| build time | **224.6 s** |
+| WAL during build | 1,697,494,088 B |
+| temp spilled | **0** |
+| backend RSS | 2,110 MiB (sample after the build, not a peak) |
+| params | `m=16`, `ef_construction=64`, `maintenance_work_mem=2GB`, `max_parallel_maintenance_workers=2` |
+
+The index cost per passage barely moved — **8,136 B measured at 418k against 8,180 B at
+64,960** — so the earlier per-element basis was sound. What was wrong was the passage
+*count*.
+
+**The two builds are not comparable on time.** The 64,960 build used 1 GB and one
+maintenance worker; this one used 2 GB and two. 6.44× the rows took 3.59× the wall clock
+*with twice the memory and twice the workers*. Anyone extrapolating build time from these
+two points is extrapolating across a configuration change as well as a size change.
+
+### The projection, corrected
+
+At **13,847 B/passage** and the Tier A deduplicated population of **8,854,281 documents**:
+
+| chunks/doc | passages | storage |
 |---:|---:|---:|
-| 3.0 | 26.6 M | **369 GB** |
-| 3.6 (this tranche's current rate) | 31.9 M | **443 GB** |
+| 3.0 (earlier guess) | 26.6 M | 368 GB |
+| **5.116 (measured here)** | **45.3 M** | **≈ 627 GB** |
 
 **Against 284 GB free and a database already at 300 GB, a full-corpus passage build does
-not fit on this box** — not by a small margin, and before counting WAL, temp space or the
-build's own working set.
+not fit on this box** — now by a factor of roughly two rather than a modest overrun, and
+still before counting WAL, temp or the build's working set. At this tranche's WAL rate the
+build alone would generate on the order of 180 GB of WAL.
 
-Three caveats that must travel with those numbers:
+Three caveats that travel with the projection — the first is *not* fixed by having
+finished the build:
 
-1. **The chunks/doc rate is not corpus-representative.** This tranche is deliberately
-   era-skewed (5% pre-1990 against a 0.08% corpus share) and its later documents are
-   longer than its earlier ones — the rate has moved from 3.05 to 3.61 *within this single
-   build*. It is an input to a projection, not a corpus statistic.
-2. **The 8,180 B/passage index figure comes from a 64,960-passage build.** HNSW does not
-   scale linearly in build time and its size per element is not guaranteed constant.
-   Step 1 of the runbook replaces this with a real number at ~250k.
-3. **`halfvec` is not costed here.** Halving vector storage would move the subtotal from
-   5,711 B to roughly 3,663 B and change the conclusion materially. There is an existing
-   `NEW1_HALFVEC_TASK_FIDELITY` artifact; whether that fidelity is acceptable is a
-   separate question this report does not answer.
+1. **5.116 chunks/doc is this tranche's rate, not the corpus's.** The draw is deliberately
+   era-skewed (5% pre-1990 against a 0.08% corpus share), and the rate moved from 3.05 to
+   5.12 *within this single build* as the later documents ran longer — 648.8 M characters
+   embedded against 302.5 M at the halfway point. A corpus-representative rate needs a
+   corpus-representative sample, which this is not by construction.
+2. **HNSW build time is not linear and 45.3 M passages will not fit the working set.**
+   Two points at two different configurations do not define a curve.
+3. **`halfvec` is not costed here.** Halving vector storage moves the subtotal from
+   5,711 B to roughly 3,663 B — with the index, ~11,799 B/passage and ~535 GB. It changes
+   the number materially and *still does not fit*. `NEW1_HALFVEC_TASK_FIDELITY` exists;
+   whether that fidelity is acceptable is a separate question this report does not answer.
 
 ---
 
