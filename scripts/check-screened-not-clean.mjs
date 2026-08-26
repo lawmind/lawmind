@@ -38,11 +38,27 @@ const walk = (d) => {
   let entries;
   try { entries = readdirSync(d); } catch { return; }
   for (const e of entries) {
-    if (SKIP.has(e) || e.startsWith('.')) continue;
+    if (SKIP.has(e)) continue;
     const p = join(d, e);
     let s; try { s = statSync(p); } catch { continue; }
-    if (s.isDirectory()) walk(p);
-    else if (EXT.has(extname(e))) files.push(p);
+    /* Dot-prefixing skips DIRECTORIES only.
+     *
+     * NEW2 bus 1274. The old line was `SKIP.has(e) || e.startsWith('.')`, which
+     * is right for `.git` and `.turbo` and also made 73 dot-prefixed TypeScript
+     * and JS files inside shipping directories invisible -- among them
+     * `services/api/src/citations/.n2c-p2-reconcile.ts` and 72 under
+     * `services/ingest/`. Four carried the token. NEW2 read all four and none
+     * violated the rule, so the guard was not lying; it simply could not see
+     * them.
+     *
+     * Coverage was not the whole of it. A guard that stops applying when a file
+     * is renamed `.foo.ts` is a rule with a one-character exemption, and the
+     * exemption is invisible in review. Directories still skip on the dot --
+     * nobody needs `.git` scanned -- and a dot-prefixed FILE with a source
+     * extension is a source file. */
+    if (s.isDirectory()) {
+      if (!e.startsWith('.')) walk(p);
+    } else if (EXT.has(extname(e))) files.push(p);
   }
 };
 for (const r of ROOTS) walk(r);
