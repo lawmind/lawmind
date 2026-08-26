@@ -24,7 +24,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
-import { dateQualityFor, isDateContradicted } from './date-quality.ts';
+import { dateQualityFor, dateQualityState, isDateContradicted } from './date-quality.ts';
 import { attributionOf, type TreatmentProvenance } from './precedential-effect.ts';
 
 export const treatmentQuery = z.object({
@@ -147,6 +147,8 @@ export async function getTreatment(
       judgmentDate: r.judgment_date,
       /** Four values, `null` = nothing has looked. `judgmentDate` is never rewritten. */
       dateQuality: dateStates.get(r.judgment_id) ?? null,
+      /** The same fact named rather than absent — R8.3 §5.5. Never null. */
+      dateQualityState: dateQualityState(dateStates.get(r.judgment_id) ?? null),
       relationship: r.relationship,
       /**
        * WHO said it, on the row that shows WHAT was said.
@@ -275,6 +277,8 @@ export async function getGraph(
       judgmentDate: n.judgment_date,
       /** Same four values as the treatment list. Additive; nothing is hidden. */
       dateQuality: nodeDateStates.get(n.id) ?? null,
+      /** The same fact named rather than absent — R8.3 §5.5. Never null. */
+      dateQualityState: dateQualityState(nodeDateStates.get(n.id) ?? null),
       verificationState: 'verified' as const,
       verifiedBySource: 'corpus' as const,
       // Read live on every request. A graph node showing a stale overruled status

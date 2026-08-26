@@ -66,6 +66,39 @@ export type DateState = 'DATE_VERIFIED' | 'DATE_SUSPECT' | 'DATE_UNKNOWN';
 export type DateQuality = DateState | null;
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE SAME FOUR FACTS, NAMED — R8.3 §5.5, FIFTH bus 1322
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `DateQuality` above keeps the four facts distinct, which was the whole point,
+ * and it does it by making the fourth one `null`. That is correct in TypeScript
+ * and it is ambiguous on the wire: `null` is also what a client sees when a
+ * route never joined the table, when a field was dropped by a proxy, and when a
+ * response predates the field existing. FIFTH read `dateQuality: null` off the
+ * live reader and could not tell "nothing has looked at this judgment" from
+ * "this route does not carry the fact" — and 96.19% of the corpus is in that
+ * state, so the ambiguity covers almost everything.
+ *
+ * R8.3 §5.5 requires the four to stay distinct AND requires `DATE_UNCHECKED` to
+ * be one of the named states. So the fourth fact gets a name.
+ *
+ * **This does not merge anything.** `DATE_UNCHECKED` is exactly the population
+ * that was `null`; `DATE_UNKNOWN` — we looked, we found no witness — is
+ * untouched and still a different string. The refusal predicate is unchanged:
+ * only `DATE_SUSPECT` refuses, because silence is not contradiction.
+ *
+ * Both fields go on the wire. `dateQuality` keeps its existing four-value
+ * shape so a client reading it today behaves exactly as it does today;
+ * `dateQualityState` is the additive, never-null one that a new client reads.
+ */
+export type DateQualityState = DateState | 'DATE_UNCHECKED';
+
+/** `null` -> the named state. The only place that mapping is written. */
+export function dateQualityState(q: DateQuality | undefined): DateQualityState {
+  return q ?? 'DATE_UNCHECKED';
+}
+
+/**
  * The ONLY predicate that refuses. Deliberately not `!== 'DATE_VERIFIED'`:
  * that would sweep in the two silences and refuse most of the corpus.
  */

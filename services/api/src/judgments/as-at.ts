@@ -66,6 +66,7 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { dateQualityState, type DateQuality } from './date-quality.ts';
 
 type Row = {
   cited_id: string;
@@ -225,6 +226,12 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
         cited: r.cited_date_state,
         overruler: r.overruler_date_state,
         subject: subject.date_state,
+      },
+      /** The same three facts, named rather than null — R8.3 §5.5. */
+      dateQualityState: {
+        cited: dateQualityState(r.cited_date_state as DateQuality),
+        overruler: dateQualityState(r.overruler_date_state as DateQuality),
+        subject: dateQualityState(subject.date_state as DateQuality),
       },
       /**
        * When OUR row changed, not when the law did. Kept for the stale-badge

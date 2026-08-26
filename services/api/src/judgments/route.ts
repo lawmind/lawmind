@@ -26,7 +26,12 @@ import {
   type TreatmentProvenance,
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
-import { dateQualityOf } from './date-quality.ts';
+import { dateQualityOf, dateQualityState } from './date-quality.ts';
+import {
+  bodyTextGrade,
+  bodyTextState,
+  isBodyTextSafe,
+} from '../search/body-text-safety.ts';
 import { logger } from '../logger.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
@@ -45,6 +50,8 @@ type JudgmentRow = {
   language: string;
   source_url: string;
   full_text: string;
+  script_quality: string | null;
+  script_quality_method: string | null;
   overruled_status: string;
   overruled_by_judgment_id: string | null;
   overruled_paras: number[] | null;
@@ -59,6 +66,10 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
            -- timestamp, so the client would show a time a judgment never had.
            judgment_date::text AS judgment_date,
            case_number, case_type, language, source_url, full_text,
+           -- The body-text verdict, read LIVE on this request, exactly as
+           -- retrieval reads it. Never from a staged table: a document
+           -- convicted one second ago must be refused by the next read.
+           script_quality, script_quality_method,
            overruled_status, overruled_by_judgment_id, overruled_paras, overruled_note
     FROM judgments WHERE id = ${id}
   `;
@@ -132,6 +143,41 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
    */
   const dateQuality = await dateQualityOf(sql, row.id);
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE READER OBEYS THE SAME EVIDENCE GATE AS SEARCH — FIFTH bus 1322
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `search/body-text-safety.ts` states the split structurally: METADATA stays
+   * discoverable for a damaged document, BODY TEXT is refused. Retrieval has
+   * honoured that since it shipped. **This route did not**, and it is the route
+   * whose entire purpose is to hand an advocate the body.
+   *
+   * FIFTH proved it on a live row, 26 Aug: judgment
+   * `4c99fc8a-ed79-4ad6-afa3-7a1a617542e8` (`KAVALI THIPPANNA Vs S PRABHAVATHI`,
+   * `script_quality = 'damaged_other'`, `english_density_screen_v1`). `POST
+   * /search` returned `bodyText.evidenceWithheld: true` and no passage. `GET
+   * /judgments/:id` returned 12,731 characters of control-corrupt text with no
+   * envelope at all — so the withholding policy was not a policy, it was a
+   * property of one route, and the deep link went round it.
+   *
+   * Withheld here means the same thing it means on search: the body-derived
+   * fields are empty by REFUSAL, not by absence, and `bodyText` is the field
+   * that says which. The judgment stays reachable, its citation, title, court,
+   * date and treatment are all undamaged and all still returned — body damage
+   * is no evidence against them.
+   *
+   * Deliberately NOT hidden in the client. A client-side rule is a rule that
+   * holds until the next client, and the raw text is on the wire either way.
+   */
+  const bodySafe = isBodyTextSafe(row.script_quality);
+  const bodyText = {
+    state: bodyTextState(row.script_quality),
+    grade: bodyTextGrade(row.script_quality, row.script_quality_method),
+    evidenceWithheld: !bodySafe,
+  };
+  if (!bodySafe) row.full_text = '';
+
   const segmented = segmentParagraphs(row.full_text);
   // `citesJudgmentId` — REB §14 / V2 §39.3, RCC bus 0028/0032. Resolved through
   // the same three-source match `cite:` search uses (`citations.ts`), never
@@ -197,11 +243,38 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
      * the state is published beside it.
      */
     dateQuality,
+    /**
+     * The same fact, named rather than absent — R8.3 §5.5, FIFTH bus 1322.
+     *
+     * `dateQuality: null` is what 96.19% of the corpus reads (713,136 of
+     * 18,698,968 judgments have a `judgment_date_quality` row at all), and on
+     * the wire `null` is indistinguishable from "this route does not carry the
+     * fact". `DATE_UNCHECKED` says the true thing out loud. Nothing is merged:
+     * `DATE_UNKNOWN` — we looked and found no witness — is still its own
+     * string, and only `DATE_SUSPECT` refuses a chronology claim.
+     */
+    dateQualityState: dateQualityState(dateQuality),
     caseNumber: row.case_number,
     caseType: row.case_type,
     language: row.language,
     sourceUrl: row.source_url,
+    /**
+     * Empty string, never `null`, when `bodyText.evidenceWithheld` is true —
+     * the field keeps its type so a client that ignores the envelope renders an
+     * empty reader rather than crashing on a shape change. `bodyText` is the
+     * half it is meant to read.
+     */
     fullText: row.full_text,
+    /**
+     * The body-text state in the quality contract's own vocabulary, identical
+     * in shape to the field `POST /search` returns for the same judgment.
+     *
+     * `state` is never `CLEAN` and never will be — no writer in this repository
+     * has ever proved an extraction faithful, so `TEXT_UNKNOWN` is the honest
+     * value for nine documents in ten. `grade` is how well the damage is
+     * PROVEN, which is a different axis and is never pooled with `state`.
+     */
+    bodyText,
     // PD-9 anchors the reading view on paragraph numbers, and the client cannot
     // derive them from `fullText` without inventing them. Segmented here, with
     // access to the source, so an advocate told "see paragraph 22" lands on the

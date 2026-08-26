@@ -73,6 +73,7 @@ import {
   readKeyFreshness,
   collidingKeysInUnwalkedWindow,
 } from './key-freshness.ts';
+import { dirtyKeysBlockingUnique } from './citation-key-dirty.ts';
 import type { Sql } from 'postgres';
 
 import { citationLookupKey } from '../search/query-shape.ts';
@@ -291,10 +292,29 @@ export async function resolveBatch(
    * Skipped entirely when the frontier reports nothing unwalked, which is the
    * ordinary case, so a healthy index pays one boolean.
    */
-  const collidingUnwalked = await collidingKeysInUnwalkedWindow(sql, fresh, keys, (citation) => {
+  const keyOf = (citation: string) => {
     const gate = canonicalKeyFor(citation);
     return gate.refused ? null : gate.key;
-  });
+  };
+
+  const collidingUnwalked = await collidingKeysInUnwalkedWindow(sql, fresh, keys, keyOf);
+
+  /**
+   * THE THIRD GATE — migration `0087`, FIFTH bus 1313.
+   *
+   * The two gates above both reason about the region ABOVE the builder's
+   * cursor. A keyset cursor is monotonic, so neither can see a judgment that
+   * arrived, or changed, BELOW it — and FIFTH produced exactly that: a second
+   * judgment claiming an existing unique citation, `created_at` one day under
+   * the cursor, `lagRows: 0`, `because: []`, resolver `UNIQUE`.
+   *
+   * There is no threshold below zero, so the fix is not a wider bound. The
+   * triggers on `judgments` record WHICH judgments the index does not reflect,
+   * durably, and this asks whether any of them claims the key in hand. Empty on
+   * a healthy system, and it refuses the CLAIM rather than the candidate: the
+   * authority is still returned, the word "only" is not.
+   */
+  const dirtyBlocked = await dirtyKeysBlockingUnique(sql, keys, keyOf);
 
   /**
    * The one query. `= ANY($1)` over the indexed `citation_key`, and a hard LIMIT
@@ -354,7 +374,12 @@ export async function resolveBatch(
              * broadly behind; the per-key one says nothing in the unwalked
              * window claims THIS citation. A collision small enough to slip
              * under the threshold is caught by the second. */
-            unique && !collidingUnwalked.has(gate.key)
+            /* Three gates now. The corpus-wide one says the index is not
+             * broadly behind; the unwalked-window one says nothing ABOVE the
+             * cursor claims THIS citation; the dirty-work one says nothing
+             * BELOW it does either. The third is the only one that can see a
+             * mutation or a backfill, which is the shape FIFTH falsified. */
+            unique && !collidingUnwalked.has(gate.key) && !dirtyBlocked.has(gate.key)
             ? 'UNIQUE'
             : 'UNIQUE_UNCONFIRMED_STALE_INDEX'
           : 'AMBIGUOUS';

@@ -20,6 +20,10 @@ type Body = {
     judgmentId: string;
     caseTitle: string;
     fullText: string;
+    bodyText: { state: string; grade: string; evidenceWithheld: boolean };
+    dateQuality: string | null;
+    dateQualityState: string;
+    paragraphs: unknown[];
     neutralCitation: string | null;
     reporterCitations: string[];
     verificationState: string;
@@ -137,6 +141,80 @@ describe('GET /judgments/:id', () => {
     // that renders a citation without recording it is invisible to both.
     assert.ok(row, 'rendering a judgment must record a citation_check');
     assert.equal(row.shown_to_user, true);
+  });
+
+  /**
+   * FIFTH bus 1322. The reader was the one body-text path in the API that did
+   * not obey `body-text-safety.ts`, and it is the path whose entire purpose is
+   * to hand an advocate the body.
+   *
+   * The test is written against the DAMAGED POPULATION rather than one id, and
+   * it asserts the SAFE side too. A gate that withholds everything passes a
+   * withholding test and destroys the product; a gate that withholds nothing
+   * passes a "text is present" test and is the defect. Both halves, or neither
+   * is evidence.
+   */
+  describe('body-text evidence gate — the reader refuses what search refuses', () => {
+    it('withholds fullText and paragraphs for a convicted body, and says so', async (t) => {
+      const [damaged] = await sql<{ id: string; script_quality: string; len: number }[]>`
+        SELECT id, script_quality, length(full_text)::int AS len
+          FROM judgments
+         WHERE script_quality IS NOT NULL
+           AND script_quality <> ALL (ARRAY['clean', 'mixed_script_ok'])
+           AND length(full_text) > 0
+         LIMIT 1`;
+      if (!damaged) return t.skip('no convicted body in this corpus');
+
+      // Non-vacuity: the row really does hold text, so an empty `fullText`
+      // below is a refusal and not an empty column.
+      assert.ok(damaged.len > 0, 'the fixture must actually have text to withhold');
+
+      const { status, body } = await get(`/judgments/${damaged.id}`);
+      assert.equal(status, 200, 'a damaged body must stay REACHABLE — metadata is undamaged');
+      assert.equal(body.data?.bodyText.state, 'TEXT_DAMAGED');
+      assert.equal(body.data?.bodyText.evidenceWithheld, true);
+      assert.equal(body.data?.fullText, '', 'the body is refused, not rendered');
+      assert.deepEqual(body.data?.paragraphs, [], 'nothing derived from the body survives either');
+      // The metadata half of the split is the point: the advocate must still
+      // find and identify the case.
+      assert.ok((body.data?.caseTitle.length ?? 0) > 0, 'title is not body-derived');
+    });
+
+    it('does NOT withhold an unconvicted body — the gate is not a blanket refusal', async (t) => {
+      const [safeRow] = await sql<{ id: string }[]>`
+        SELECT id FROM judgments
+         WHERE script_quality IS NULL AND length(full_text) > 200
+         LIMIT 1`;
+      if (!safeRow) return t.skip('no unconvicted body with text in this corpus');
+
+      const { body } = await get(`/judgments/${safeRow.id}`);
+      assert.equal(body.data?.bodyText.state, 'TEXT_UNKNOWN');
+      assert.equal(body.data?.bodyText.evidenceWithheld, false);
+      assert.ok((body.data?.fullText.length ?? 0) > 0, 'an unconvicted body still reads');
+    });
+
+    it('names the unchecked date state instead of sending null alone — R8.3 §5.5', async (t) => {
+      const [unchecked] = await sql<{ id: string }[]>`
+        SELECT j.id FROM judgments j
+         WHERE NOT EXISTS (SELECT 1 FROM judgment_date_quality q WHERE q.judgment_id = j.id)
+         LIMIT 1`;
+      if (!unchecked) return t.skip('every judgment has a date verdict');
+      const { body } = await get(`/judgments/${unchecked.id}`);
+      assert.equal(body.data?.dateQuality, null, 'the existing four-value field is unchanged');
+      assert.equal(
+        body.data?.dateQualityState,
+        'DATE_UNCHECKED',
+        'and the named state says which of the four it is',
+      );
+    });
+
+    it('keeps DATE_UNKNOWN distinct from DATE_UNCHECKED — nothing is merged', async (t) => {
+      const [known] = await sql<{ id: string }[]>`
+        SELECT judgment_id AS id FROM judgment_date_quality WHERE state = 'DATE_UNKNOWN' LIMIT 1`;
+      if (!known) return t.skip('no DATE_UNKNOWN row in this corpus');
+      const { body } = await get(`/judgments/${known.id}`);
+      assert.equal(body.data?.dateQualityState, 'DATE_UNKNOWN');
+    });
   });
 
   it('404s an id that is not in the corpus', async () => {

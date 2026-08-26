@@ -31,7 +31,7 @@ import type { Sql } from 'postgres';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
-import { dateQualityOf } from '../judgments/date-quality.ts';
+import { dateQualityOf, dateQualityState } from '../judgments/date-quality.ts';
 import { toWireSourceUnsafe } from './source-strength.ts';
 
 /** What a tier did. Never collapsed — see the module note. */
@@ -141,6 +141,12 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
            * fact, not a verification failure. `judgments/date-quality.ts`.
            */
           dateQuality,
+          /**
+           * The same fact named rather than absent — R8.3 §5.5. `null` on the
+           * wire could not be told apart from "this route does not carry it",
+           * and 96.19% of the corpus is in that state.
+           */
+          dateQualityState: dateQualityState(dateQuality),
         }
       : null,
 
