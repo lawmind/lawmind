@@ -1,0 +1,1477 @@
+{
+  "artifact": "NEW2_OCR_PRIORITY_QUEUE_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.8",
+  "generated_at": "2026-08-26T01:44:07.459Z",
+  "ocr_runs": 0,
+  "method": {
+    "basis": "NEW2 R7 recovery probe: OCR 20/20, re-extraction 0/20",
+    "seconds_per_page": 3.7,
+    "pages_per_judgment_assumed": 12,
+    "highly_cited_floor": 5
+  },
+  "body_text_evidence": {
+    "SCREENED_NO_DAMAGE_FOUND": 16906647,
+    "SCREENED_DAMAGED": 1322722,
+    "PROVEN_DAMAGED": 469599,
+    "NEVER_SCREENED": 16
+  },
+  "damaged_total": 1792321,
+  "gold_targets_considered": 350,
+  "holdout_read": false,
+  "tiers": [
+    {
+      "tier": "GOLD_TARGET",
+      "documents": 14,
+      "proven_damaged": 1,
+      "screened_damaged": 13,
+      "est_ocr_hours": 0.2,
+      "cumulative_documents": 14,
+      "cumulative_ocr_hours": 0.2
+    },
+    {
+      "tier": "HIGHLY_CITED",
+      "documents": 0,
+      "proven_damaged": 0,
+      "screened_damaged": 0,
+      "est_ocr_hours": 0,
+      "cumulative_documents": 14,
+      "cumulative_ocr_hours": 0.2
+    },
+    {
+      "tier": "CURRENTNESS_BLOCKER",
+      "documents": 0,
+      "proven_damaged": 0,
+      "screened_damaged": 0,
+      "est_ocr_hours": 0,
+      "cumulative_documents": 14,
+      "cumulative_ocr_hours": 0.2
+    },
+    {
+      "tier": "RECENT_HIGH_VALUE",
+      "documents": 164004,
+      "proven_damaged": 42514,
+      "screened_damaged": 121490,
+      "est_ocr_hours": 2022.7,
+      "cumulative_documents": 164018,
+      "cumulative_ocr_hours": 2022.9
+    },
+    {
+      "tier": "RELEASE_BLOCKED_OTHER",
+      "documents": 1628303,
+      "proven_damaged": 427084,
+      "screened_damaged": 1201219,
+      "est_ocr_hours": 20082.4,
+      "cumulative_documents": 1792321,
+      "cumulative_ocr_hours": 22105.3
+    }
+  ],
+  "queue_head_sample": [
+    {
+      "id": "6e3f3f7b-665d-42a6-95a1-1d7b8aa94c78",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-17"
+    },
+    {
+      "id": "142722b9-29bc-43f2-b7c1-d1635f2ecdec",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-19"
+    },
+    {
+      "id": "14273c95-a0e5-4f7d-804f-07a767e87fb0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-23"
+    },
+    {
+      "id": "044b9b29-29aa-49d4-b457-79e056757a65",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-08-30"
+    },
+    {
+      "id": "044bea89-ad7a-4f14-a591-d48af614f0da",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-19"
+    },
+    {
+      "id": "1428772f-d00a-42f8-97df-0ef332b16b99",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-22"
+    },
+    {
+      "id": "044c834b-0681-450a-a22f-17c2ca41bd94",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-01"
+    },
+    {
+      "id": "1428ce5b-2bb3-49c5-991b-8c223132d2d0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-04"
+    },
+    {
+      "id": "6e40f85e-df96-40d0-aa06-66f5e6e85c7f",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-03-20"
+    },
+    {
+      "id": "044f6f6e-0117-443c-ae9e-2ceeb6a4acec",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-19"
+    },
+    {
+      "id": "044f8a9b-25dc-4365-a92f-ba132af9d1a1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-11-20"
+    },
+    {
+      "id": "6e412c71-b0f2-4989-b2ba-253737ba0a33",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-30"
+    },
+    {
+      "id": "142a7e52-782a-483a-a018-92051a8065a9",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-11-12"
+    },
+    {
+      "id": "044fc35c-2fa5-4189-bfb3-f2ca6cad2fe0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-05"
+    },
+    {
+      "id": "142b4cca-85cc-45a5-abe7-bb2d4959d3d3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-01-29"
+    },
+    {
+      "id": "6e41e171-d920-405a-9639-2684b3581f71",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-22"
+    },
+    {
+      "id": "142bb335-f29f-4f6b-a5a4-e1c96fb77d89",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-02-05"
+    },
+    {
+      "id": "045146a0-3658-40f0-b954-868a4aa25260",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-13"
+    },
+    {
+      "id": "142c7008-fbda-41e7-8aee-693e9b541532",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-09-04"
+    },
+    {
+      "id": "2ad4f408-06c7-46ef-869c-327c9e04d483",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Rajasthan",
+      "date": "2025-07-29"
+    },
+    {
+      "id": "6e421a0c-3f8d-4ecf-9550-c7c3341b6641",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-12"
+    },
+    {
+      "id": "35753ce9-18c5-4805-9317-06489ba349de",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-25"
+    },
+    {
+      "id": "bf16875e-7120-4f20-9166-82f37fe0f630",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-04-15"
+    },
+    {
+      "id": "6e4268d8-8b96-4db7-bdb1-7f999cdc80f0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-04"
+    },
+    {
+      "id": "199cf769-0372-4795-a64c-9d7fc59a0661",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2024-09-27"
+    },
+    {
+      "id": "6e429965-1327-435f-83db-b058105af4e7",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-08-19"
+    },
+    {
+      "id": "6e42a425-bd74-4ae8-b13b-39154caab774",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-10-01"
+    },
+    {
+      "id": "04541129-2b52-4dc0-8e97-59545e8009aa",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-02-03"
+    },
+    {
+      "id": "142db8a9-1a99-40cb-b937-0ee69a1dc60e",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-05-12"
+    },
+    {
+      "id": "045bd3da-c13b-451f-8d13-8cbc15756521",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-06-24"
+    },
+    {
+      "id": "04601d3c-e7c2-4e8c-ad1e-b93fc01c74ef",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-09-04"
+    },
+    {
+      "id": "04631191-f403-40e3-910a-3bf682682fc3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-31"
+    },
+    {
+      "id": "04637d0c-9a80-4d3f-a12a-b01474a8aa96",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-02"
+    },
+    {
+      "id": "142e64e3-f76e-4054-8d5f-13d49299de67",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-08-30"
+    },
+    {
+      "id": "046fdd59-3e04-40fb-9388-691d47271a93",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2024-09-06"
+    },
+    {
+      "id": "6e4345c9-a282-4743-85aa-753279e47bca",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-11-07"
+    },
+    {
+      "id": "bf17fd40-5c9d-4947-a9fa-e5b94a04ed75",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-15"
+    },
+    {
+      "id": "bf1847ee-4fc5-478e-9747-fb36f13b92ea",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-15"
+    },
+    {
+      "id": "6e436a03-12cd-4d27-a0df-b91d76e94e55",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-12"
+    },
+    {
+      "id": "51e25830-eec3-42b7-bae2-233479026972",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Rajasthan",
+      "date": "2025-08-05"
+    },
+    {
+      "id": "04539cf3-fbe4-4026-a066-9467e7e16e2c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-01"
+    },
+    {
+      "id": "0453a26e-bea6-43ca-8599-77eeaf8dc422",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-04-21"
+    },
+    {
+      "id": "0453d079-b792-4878-8a00-634082d3a92a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-16"
+    },
+    {
+      "id": "0453d2a5-3e45-4058-85d9-b87b8159f5e2",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-04"
+    },
+    {
+      "id": "0453e502-80b3-47a9-849a-75f5292f3d52",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-12-02"
+    },
+    {
+      "id": "142fd6ef-a883-496d-a51e-9c78f1d0fd0a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-09-14"
+    },
+    {
+      "id": "14300e70-9794-459e-9bcc-6c1335d95756",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-01-28"
+    },
+    {
+      "id": "0454c3d9-1174-4b4a-ab6c-49d968422607",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-12-12"
+    },
+    {
+      "id": "bf18c763-846e-4a09-8e7e-641abdd76630",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-03"
+    },
+    {
+      "id": "1431323f-5c5a-421f-a865-a612f3e23f99",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Chhattisgarh",
+      "date": "2025-08-17"
+    },
+    {
+      "id": "bf1929bd-32e7-4e49-b952-aef13713f2aa",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-13"
+    },
+    {
+      "id": "04556397-6059-461d-b27f-aca38568349c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-12"
+    },
+    {
+      "id": "bf1975c2-363e-4e72-a214-2dd8df08082e",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "32480a95-9bd1-493c-819b-619c047f3d88",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-26"
+    },
+    {
+      "id": "6e4498dd-c6c8-455f-aa14-eb7b02b1434a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-03-24"
+    },
+    {
+      "id": "04563406-7c41-4ed7-8b26-cb60db3fa52c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-07-12"
+    },
+    {
+      "id": "6e44d54e-39d1-4aec-8f74-41db71cc5233",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-12-16"
+    },
+    {
+      "id": "6e45bee6-3518-4882-8e25-87d5a820e259",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-12-15"
+    },
+    {
+      "id": "bf19d395-f355-470c-9dbf-af033410616f",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Himachal Pradesh",
+      "date": "2025-10-07"
+    },
+    {
+      "id": "6e45de81-fe36-49f6-b1a0-541eb87c1363",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "04575918-990b-41cf-b2f8-c1897365e65a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-20"
+    },
+    {
+      "id": "bf19f819-fe12-427f-9153-57da6abea779",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-28"
+    },
+    {
+      "id": "14340cf9-c0c9-4e5d-827e-ead0ad83e2ae",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-09-23"
+    },
+    {
+      "id": "6e466aa5-8584-4fdf-8bdb-b1fa72533709",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-03-13"
+    },
+    {
+      "id": "bf1a2b74-14d6-45e6-8408-5e17619e6b2e",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-04"
+    },
+    {
+      "id": "6e4673e8-c339-4bef-a130-3c40b711cb28",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-01"
+    },
+    {
+      "id": "04585c42-f151-453e-bd51-5fb9464a41b1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-09-12"
+    },
+    {
+      "id": "bf1a4eba-f092-48e2-9d96-af61ed365199",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-18"
+    },
+    {
+      "id": "04589c39-75ed-4db3-8106-d3c715f048fa",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-08-31"
+    },
+    {
+      "id": "14446e09-6f6a-45b4-ab85-2af747c497f8",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-01-21"
+    },
+    {
+      "id": "6e467e4f-40cf-4f6d-a834-6151588952c6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-17"
+    },
+    {
+      "id": "0458d411-7667-4970-9908-ddc67ac0858b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-07"
+    },
+    {
+      "id": "6e46d29a-4e95-4ebd-8aaa-a046d94bda00",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-12-02"
+    },
+    {
+      "id": "04599d34-862c-4d28-bede-97f2326f34b5",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-06"
+    },
+    {
+      "id": "1435ff7d-27e5-4e0f-9b2f-dc4eda4e8071",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-04"
+    },
+    {
+      "id": "6e483d13-4f60-488d-a122-df67bd2c3297",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-01-27"
+    },
+    {
+      "id": "0459b884-73f1-43fd-8f9e-9d5707b812d4",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-19"
+    },
+    {
+      "id": "6e486d43-b16c-4a50-a210-e47c7b19eff2",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-05"
+    },
+    {
+      "id": "bf1b0e57-160a-4cdc-968a-ec604f3a6eb6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-16"
+    },
+    {
+      "id": "bf1b0e96-f009-437d-8d9a-69a38ffa5f18",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-04-10"
+    },
+    {
+      "id": "143687a7-67a3-4af2-b3d7-8f248e5b9bc6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-24"
+    },
+    {
+      "id": "1436ff4a-53ba-4944-b368-6931e1f8b336",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-12"
+    },
+    {
+      "id": "1437581c-23e6-45f1-b8ab-a5ccdba9566f",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-11-06"
+    },
+    {
+      "id": "bf1bccc8-0409-4894-8a5b-e3efb649f5a1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-03-05"
+    },
+    {
+      "id": "6e4a38ee-5855-4a85-a331-9be24a8df615",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-03-03"
+    },
+    {
+      "id": "bf1c253b-47d1-4ed4-b820-3d3434c0379d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-10-27"
+    },
+    {
+      "id": "1437c82c-454a-4694-9395-f14a102a76de",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-05"
+    },
+    {
+      "id": "bf1d3d3c-049a-4b66-a042-631144324436",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-24"
+    },
+    {
+      "id": "6e4b566c-8c4e-465f-88b0-05e81fd80902",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-13"
+    },
+    {
+      "id": "bf1d4f8a-bdd5-4745-a529-950a9ed885df",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-04"
+    },
+    {
+      "id": "045cba9b-4445-4b15-9ff1-56a0fa280273",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-20"
+    },
+    {
+      "id": "143827bf-f5dd-414c-b6c4-a8ecb8ae8561",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-11-04"
+    },
+    {
+      "id": "88949aae-b580-4c83-abc0-b1e67eee0754",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-06-24"
+    },
+    {
+      "id": "045ce760-8554-4155-a57b-6dae273e8254",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-18"
+    },
+    {
+      "id": "045cf5d0-3374-4ea3-8d11-6f1e91976730",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-22"
+    },
+    {
+      "id": "51e0bf88-7c99-4f08-9d3a-2db641c3618d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-06"
+    },
+    {
+      "id": "bf1d8879-8752-4636-bdca-b723e803793a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-03-24"
+    },
+    {
+      "id": "143935a5-7e98-4910-8b48-fe361b3bd1ee",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-12-12"
+    },
+    {
+      "id": "14395f21-9f24-40d6-868b-a3fad9ec2fd3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-26"
+    },
+    {
+      "id": "14397f49-e117-4a18-ae59-7c424fad15e6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Himachal Pradesh",
+      "date": "2026-07-09"
+    },
+    {
+      "id": "6e4c6deb-d082-470f-a3dc-c8c26bdb1950",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-12-19"
+    },
+    {
+      "id": "045d79fc-8119-44fe-ad49-f1c8b142a1db",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-09-20"
+    },
+    {
+      "id": "6e4c9d71-3fc3-4d76-9037-9332e7b942ad",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-06-16"
+    },
+    {
+      "id": "6e4cec32-30f2-4206-a572-e6cad9977023",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-11"
+    },
+    {
+      "id": "045df599-9bba-4142-a4a1-fdb70071a2aa",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-10"
+    },
+    {
+      "id": "6e4d060f-1e44-4442-9259-100323572198",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-20"
+    },
+    {
+      "id": "143a6827-556c-4766-af90-41064f151af8",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-19"
+    },
+    {
+      "id": "6e4d6f76-2346-4271-9238-244f9db5644c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-23"
+    },
+    {
+      "id": "045df818-6447-4d19-9cbb-e9c2da185bd5",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-21"
+    },
+    {
+      "id": "045dfd5d-1e11-4481-8a48-fe017b1c9cc6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-02"
+    },
+    {
+      "id": "143a95e7-3d1b-4eb3-957c-cfdf70c0e5ed",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-18"
+    },
+    {
+      "id": "6e4d9b31-bdff-4026-ac9c-e574b6e94959",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-21"
+    },
+    {
+      "id": "3577280b-1f5f-40d1-abce-3f378b0a61a9",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-01-12"
+    },
+    {
+      "id": "045e03bb-7c08-499e-874f-aac48b27b418",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-11-21"
+    },
+    {
+      "id": "143b28cb-17d4-491b-9917-8d0e1020a2cf",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-03-04"
+    },
+    {
+      "id": "045ec9bb-7aaf-4ad7-95be-25f1448811f3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-05-08"
+    },
+    {
+      "id": "6e4f8b8d-2419-47dd-8320-560de7e56c5e",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-02-12"
+    },
+    {
+      "id": "045f3742-85f2-4ca1-b263-4797526175d5",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-14"
+    },
+    {
+      "id": "bf1e256c-7fb9-4fd3-96b5-5dbe5fc61267",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-03-13"
+    },
+    {
+      "id": "6e506e5c-35cf-4f10-a3d1-c7065e051ba7",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-24"
+    },
+    {
+      "id": "6e509ab8-62d6-4ca8-8438-3c047eb0387f",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-28"
+    },
+    {
+      "id": "6e517dde-6d85-4183-a6d2-b497ef8393be",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-11"
+    },
+    {
+      "id": "04608e49-f069-48bf-8948-5f5536f59f98",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-01-16"
+    },
+    {
+      "id": "143c338b-2f0e-402d-87ee-7d36fdd4fe1a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-07"
+    },
+    {
+      "id": "6e51f9db-9deb-4765-8e11-b7702eb21850",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-02-11"
+    },
+    {
+      "id": "51e15997-1047-4494-99af-b6fff84c8fe3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Rajasthan",
+      "date": "2025-11-27"
+    },
+    {
+      "id": "6e522315-0e9b-476b-b409-4091d22e55f1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-06"
+    },
+    {
+      "id": "6e52ce18-eeb4-4011-ab76-6d942b288f3b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-05"
+    },
+    {
+      "id": "143cfd6a-fbca-4734-9f91-caeba88ed81c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Rajasthan",
+      "date": "2024-12-06"
+    },
+    {
+      "id": "51e1721f-751e-48cc-a90f-21f9dcbbbcab",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-12-15"
+    },
+    {
+      "id": "6e531cd1-83f5-42ed-88db-d10c6ab9c9d1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-18"
+    },
+    {
+      "id": "6e53330a-d7f7-412e-aaa0-c90e33fc7e0d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-01-28"
+    },
+    {
+      "id": "6e53725d-d0c4-4581-8e71-7cc078159d24",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-02-09"
+    },
+    {
+      "id": "04638f6f-aae2-463b-b8b8-7501ac638501",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-17"
+    },
+    {
+      "id": "143e5898-fbec-4540-8418-14179188e7e6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-01-13"
+    },
+    {
+      "id": "143e61ca-80c9-4734-b08d-85c357e17e2d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-03-05"
+    },
+    {
+      "id": "046403ba-81ec-4037-8884-dfcf241e312c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-01-22"
+    },
+    {
+      "id": "6e53f065-ae9f-47e6-b290-5ce5d79d9d3c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-02-28"
+    },
+    {
+      "id": "143ea3e4-0478-4dec-a0b6-528aae147840",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-12-14"
+    },
+    {
+      "id": "6e542fb8-5845-401b-a3a1-b68c30ccffb4",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-05-06"
+    },
+    {
+      "id": "04648b7b-9076-402e-bd12-9d3c1ba019e8",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-26"
+    },
+    {
+      "id": "2ad2244a-d2db-4c72-af9e-5e61a817e784",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-01-28"
+    },
+    {
+      "id": "0464bfde-19be-4331-b60a-76a69b5ec5b2",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-24"
+    },
+    {
+      "id": "f6d48258-7f06-4b34-bc67-ac6ce6f45f92",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-27"
+    },
+    {
+      "id": "6e548ece-ff69-47ab-8188-7f2c912f778b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Himachal Pradesh",
+      "date": "2025-06-04"
+    },
+    {
+      "id": "51e1ae47-d50b-4295-ad40-136e00f8ac09",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Madras High Court",
+      "date": "2025-09-22"
+    },
+    {
+      "id": "143fdb47-68b9-4e99-a12a-ba94843b4654",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Gujarat",
+      "date": "2025-09-09"
+    },
+    {
+      "id": "4b9a630a-f2fc-437a-8616-35a58ec4f024",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-10"
+    },
+    {
+      "id": "4b9b082c-625a-45f2-8a57-a191f9a96301",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-05-20"
+    },
+    {
+      "id": "2ad250e7-65b0-42c2-a748-5f56cd00f6d2",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-19"
+    },
+    {
+      "id": "04655c18-2407-40ea-abf0-8e289158c415",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-13"
+    },
+    {
+      "id": "04655c8a-65a2-4a3e-93b6-08ec97dddc7f",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-23"
+    },
+    {
+      "id": "6e5612f7-51ea-405b-913b-d19eb9aec0ab",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-16"
+    },
+    {
+      "id": "0466bb7f-8ff1-401d-a51d-fbddd925bb7b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-21"
+    },
+    {
+      "id": "6e56de0d-ba33-4e23-8372-50aaf7e89c6c",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-08-29"
+    },
+    {
+      "id": "6e5706df-07b7-4380-b0c6-492552655b35",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-06-24"
+    },
+    {
+      "id": "04673269-2fa1-4d3d-a49d-65ff85e6289a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-21"
+    },
+    {
+      "id": "04675b38-fe36-46ee-a4f8-fda71e6c94be",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-26"
+    },
+    {
+      "id": "6e57e34e-bdfc-456c-970b-ba96feb19bdd",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-09-06"
+    },
+    {
+      "id": "863ff76e-6d4e-44e4-893f-4d8b187a95bf",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-29"
+    },
+    {
+      "id": "04685068-fa12-4e45-8f27-9c83e7153e55",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-12-18"
+    },
+    {
+      "id": "6e581f87-b828-4023-b97f-bbc9780cf9ef",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-07"
+    },
+    {
+      "id": "41f70f7b-1739-44f6-9a79-469cf11d6ec1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-23"
+    },
+    {
+      "id": "6e58cdca-19dc-4c92-83b0-7f96ebd6d1c1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-18"
+    },
+    {
+      "id": "6e58d743-f9bc-477f-ad75-e90da354456a",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-16"
+    },
+    {
+      "id": "1442a34e-45fb-454a-88fa-b6f40ab04cff",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Himachal Pradesh",
+      "date": "2025-05-29"
+    },
+    {
+      "id": "6e58e188-39bc-4058-bbc6-441769f8b2e0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court Of Chhattisgarh",
+      "date": "2025-08-20"
+    },
+    {
+      "id": "50387f49-eba5-4857-b630-b9f9e9a83ae9",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-09-17"
+    },
+    {
+      "id": "046a563b-27d8-4320-b6e4-1ee63fcefd3e",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-16"
+    },
+    {
+      "id": "046aa67d-5121-4fae-bbe3-a8cf41aa60ea",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-03-10"
+    },
+    {
+      "id": "bf1f3372-cda4-47c5-b161-b490b2b9a570",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-05-11"
+    },
+    {
+      "id": "bf1fb79d-bcc4-4d2c-828b-abe3c57056fa",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-15"
+    },
+    {
+      "id": "046b866a-1114-466f-a4d9-c7fa5e5ba4df",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-10-04"
+    },
+    {
+      "id": "bf20a0d9-6531-4b4f-af31-650be64c4bef",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-09"
+    },
+    {
+      "id": "bf20c7aa-e419-4c0d-8f6a-c6c80cd414e3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2024-10-14"
+    },
+    {
+      "id": "046b9da2-991a-4068-96aa-02446e093355",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2026-01-14"
+    },
+    {
+      "id": "bf20cdbb-bd74-4672-83b4-7de952b5fcf2",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2024-12-18"
+    },
+    {
+      "id": "bf216d5f-505f-4a17-9fc3-5c1006478854",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-23"
+    },
+    {
+      "id": "bf21a0df-7764-4267-a825-8f5b346d9efc",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-03-25"
+    },
+    {
+      "id": "1445fe11-ce37-4fda-8155-bf9b1969e4f0",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Himachal Pradesh",
+      "date": "2026-06-03"
+    },
+    {
+      "id": "bf2230d2-42e9-499b-abd5-5506a6414b12",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-24"
+    },
+    {
+      "id": "1446223e-ea77-46ba-a67a-8d4da7ed6130",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2025-07-25"
+    },
+    {
+      "id": "046cce74-8f9b-44f7-8d10-bc5de8a9bd08",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-11"
+    },
+    {
+      "id": "49d21ab7-adbe-4289-833d-46aa9e1ed20d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-15"
+    },
+    {
+      "id": "8ed7d5cf-5163-4f6d-bd4f-9c9bf5e4e7d6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-09-12"
+    },
+    {
+      "id": "8ed7f937-4d12-4eee-a043-8a80dd1094a4",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-13"
+    },
+    {
+      "id": "bf23a3c2-a9a1-41ec-ae04-dc95a3ef15b5",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-05"
+    },
+    {
+      "id": "1446c945-17b1-4951-80d7-6ce27af5c3ce",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-03-05"
+    },
+    {
+      "id": "046f76fa-d541-4c5e-b0bd-29725f23db75",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-03-19"
+    },
+    {
+      "id": "046fce09-ca8b-44cd-bd4c-13a4e8fdfbf3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-06"
+    },
+    {
+      "id": "3e329b71-f7cf-4e6b-b379-e0dde1c04310",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-12-11"
+    },
+    {
+      "id": "0470fbd0-4380-4fef-bbfb-bc7d1e349c73",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-09-13"
+    },
+    {
+      "id": "1449afba-570f-44c1-b7e5-eb89d42092d3",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Karnataka",
+      "date": "2025-11-18"
+    },
+    {
+      "id": "047151d4-7065-4711-a6d1-fcfdecd5fb5d",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-01-15"
+    },
+    {
+      "id": "144a2278-83e8-47cd-b67b-3913eac919c6",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2024-11-11"
+    },
+    {
+      "id": "144a7d6c-c78d-49a5-85d0-d7335265df7b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-04-24"
+    },
+    {
+      "id": "144bfc39-19f2-48a0-ba8b-5332148a77a1",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-11-17"
+    },
+    {
+      "id": "3e32d492-9b81-4278-94c5-6a8c790bd52b",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2026-02-12"
+    },
+    {
+      "id": "ed9eb450-9b5b-498f-ace2-29286e004c27",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "High Court of Punjab and Haryana",
+      "date": "2025-02-20"
+    },
+    {
+      "id": "6e6de095-ff28-4d20-9f7f-d9474292ebbf",
+      "tier": "RECENT_HIGH_VALUE",
+      "inbound": 0,
+      "court": "Bombay High Court",
+      "date": "2026-01-30"
+    }
+  ],
+  "caveats": [
+    "pages_per_judgment is an ASSUMPTION carried from the R7 probe, not a corpus measurement. Every hour figure moves linearly with it.",
+    "inbound citation counts use RESOLVED pins only, and 4,688 of those are scheduled to be cleared as unsafe (§7.3). The HIGHLY_CITED tier will shrink slightly after that repair.",
+    "the Gold HOLDOUT split was deliberately not read; holdout targets that are damaged fall to a lower tier by design.",
+    "SCREENED_DAMAGED and PROVEN_DAMAGED are kept separate throughout; they are different strengths of evidence and must not be pooled into one \"damaged\" claim."
+  ]
+}
