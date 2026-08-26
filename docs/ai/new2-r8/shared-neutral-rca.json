@@ -1,0 +1,309 @@
+{
+  "artifact": "NEW2_SHARED_NEUTRAL_RCA_V1",
+  "lane": "NEW2",
+  "protocol": "LAWMIND_FINAL_R8_1_ORCHESTRATION_LOCK_2026-08-25.md §7.5",
+  "generated_at": "2026-08-26T03:03:32.474Z",
+  "writes_to_corpus": 0,
+  "population": {
+    "shared_keys": 155387,
+    "judgments_involved": 361044,
+    "worst_group": 1257,
+    "structural_split": {
+      "COMMON_ORDER_SHARED_ORDER": {
+        "groups": 80224,
+        "judgments": 192939
+      },
+      "DISTINCT_TEXTS": {
+        "groups": 74377,
+        "judgments": 160153
+      },
+      "MIXED_PARTIAL_DUPLICATION": {
+        "groups": 778,
+        "judgments": 7931
+      },
+      "CROSS_COURT_COLLISION": {
+        "groups": 5,
+        "judgments": 12
+      },
+      "UNKNOWN_NO_HASH": {
+        "groups": 3,
+        "judgments": 9
+      }
+    }
+  },
+  "group_verdicts": {
+    "DOCUMENT_PRINTED_VALUE": 8
+  },
+  "groups": [
+    {
+      "neutral_citation": "2025:AHC-LKO:30511",
+      "court": "Allahabad High Court",
+      "n": 1257,
+      "hashes": 1255,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "WRIA/12625/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:AHC-LKO:30511"
+          ],
+          "bytes": 43921,
+          "text_chars": 1287,
+          "sha256_16": "2e55d97d7c03a0e0",
+          "fetched_at": "2026-08-26T03:03:14.639Z",
+          "excerpt": "Neutral Citation No. - 2025:AHC-LKO:30511 C"
+        },
+        {
+          "case_number": "WRIA/10624/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:AHC-LKO:30511"
+          ],
+          "bytes": 43822,
+          "text_chars": 1170,
+          "sha256_16": "b30fd6d934005a25",
+          "fetched_at": "2026-08-26T03:03:14.827Z",
+          "excerpt": "Neutral Citation No. - 2025:AHC-LKO:30511 Court No. "
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2025:PHHC:052490-DB",
+      "court": "High Court of Punjab and Haryana",
+      "n": 253,
+      "hashes": 253,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "CWP/23237/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:PHHC:052490-DB"
+          ],
+          "bytes": 114514,
+          "text_chars": 1543,
+          "sha256_16": "547d5717c6f0a39f",
+          "fetched_at": "2026-08-26T03:03:15.640Z",
+          "excerpt": " 2025:PHHC:052490-DB IN THE HIGH COURT"
+        },
+        {
+          "case_number": "CWP/18796/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:PHHC:052490-DB"
+          ],
+          "bytes": 108583,
+          "text_chars": 1640,
+          "sha256_16": "d031ddf1b57deda6",
+          "fetched_at": "2026-08-26T03:03:15.800Z",
+          "excerpt": " 2025:PHHC:052490-DB IN TH"
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2024:MHC:1405",
+      "court": "Madras High Court",
+      "n": 150,
+      "hashes": 150,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "CMA/1479/2022",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2024:MHC:1405"
+          ],
+          "bytes": 89732,
+          "text_chars": 4944,
+          "sha256_16": "d8f3228b8be5f19f",
+          "fetched_at": "2026-08-26T03:03:16.645Z",
+          "excerpt": "Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held t"
+        },
+        {
+          "case_number": "CMA/1420/2022",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2024:MHC:1405"
+          ],
+          "bytes": 110690,
+          "text_chars": 4783,
+          "sha256_16": "2eba122a9c16652e",
+          "fetched_at": "2026-08-26T03:03:16.785Z",
+          "excerpt": "Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held t"
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2025:CGHC:16566",
+      "court": "High Court Of Chhattisgarh",
+      "n": 135,
+      "hashes": 133,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "WPS/5225/2021",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:CGHC:16566"
+          ],
+          "bytes": 126295,
+          "text_chars": 5251,
+          "sha256_16": "dbcdaaf8bf2a3130",
+          "fetched_at": "2026-08-26T03:03:17.791Z",
+          "excerpt": "ASHISH Digitally TIWARI signed by ASHISH TIWARI Date: "
+        },
+        {
+          "case_number": "WPS/358/2022",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:CGHC:16566"
+          ],
+          "bytes": 117793,
+          "text_chars": 4063,
+          "sha256_16": "d2438d71cffdf560",
+          "fetched_at": "2026-08-26T03:03:17.955Z",
+          "excerpt": "ASHISH Digitally TIWARI signed by ASHISH TIWARI Date: "
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2025:RJ-JP:35135-DB",
+      "court": "High Court Of Rajasthan",
+      "n": 132,
+      "hashes": 132,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "CW/19850/2023",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:RJ-JP:35135-DB"
+          ],
+          "bytes": 109575,
+          "text_chars": 3198,
+          "sha256_16": "ee640261e4a062c5",
+          "fetched_at": "2026-08-26T03:03:18.605Z",
+          "excerpt": "[2025:RJ-JP:35135-DB] HIGH COURT OF JUDICATURE FOR RAJASTHAN "
+        },
+        {
+          "case_number": "CW/7897/2023",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:RJ-JP:35135-DB"
+          ],
+          "bytes": 109723,
+          "text_chars": 3260,
+          "sha256_16": "38ec6fcdb3500e7f",
+          "fetched_at": "2026-08-26T03:03:18.743Z",
+          "excerpt": "[2025:RJ-JP:35135-DB] HIGH COURT OF JUDICATURE FOR RAJASTHAN "
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2024:DHC:5411-DB",
+      "court": "High Court of Delhi",
+      "n": 107,
+      "hashes": 107,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "W.P.(C)/15644/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2024:DHC:5411-DB"
+          ],
+          "bytes": 67006,
+          "text_chars": 5341,
+          "sha256_16": "9377dad2ed250ee2",
+          "fetched_at": "2026-08-26T03:03:19.806Z",
+          "excerpt": "Neutral Citation: 2024:DHC:5411-DB. 6. The learned counsel for the petitioner also r"
+        },
+        {
+          "case_number": "W.P.(C)/14061/2024",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2024:DHC:5411-DB"
+          ],
+          "bytes": 36058,
+          "text_chars": 2576,
+          "sha256_16": "ba883e5cfb99be50",
+          "fetched_at": "2026-08-26T03:03:19.917Z",
+          "excerpt": "Neutral Citation: 2024:DHC:5411-DB. 6. In view of above, the present petition is allowed."
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2025:KHC:28074",
+      "court": "High Court of Karnataka",
+      "n": 49,
+      "hashes": 49,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "WP/12474/2025",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:KHC:28074"
+          ],
+          "bytes": 70439,
+          "text_chars": 7131,
+          "sha256_16": "fdd85f13bdf7269c",
+          "fetched_at": "2026-08-26T03:03:21.223Z",
+          "excerpt": " - 1 - NC: 2025:KHC:280"
+        },
+        {
+          "case_number": "WP/13022/2025",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:KHC:28074"
+          ],
+          "bytes": 67626,
+          "text_chars": 7026,
+          "sha256_16": "9707e3a4fdec7dc3",
+          "fetched_at": "2026-08-26T03:03:21.331Z",
+          "excerpt": " - 1 - NC: 2025:KHC:280"
+        }
+      ]
+    },
+    {
+      "neutral_citation": "2025:GAU-AS:16697",
+      "court": "Gauhati High Court",
+      "n": 21,
+      "hashes": 21,
+      "group_verdict": "DOCUMENT_PRINTED_VALUE",
+      "documents": [
+        {
+          "case_number": "AB/2142/2025",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:GAU-AS:16697"
+          ],
+          "bytes": 98034,
+          "text_chars": 3753,
+          "sha256_16": "f4787dc9abd501fe",
+          "fetched_at": "2026-08-26T03:03:32.212Z",
+          "excerpt": " Page No.# 1/3 GAHC010182132025 "
+        },
+        {
+          "case_number": "AB/2194/2025",
+          "verdict": "DOCUMENT_PRINTED_VALUE",
+          "printed_citations": [
+            "2025:GAU-AS:16697"
+          ],
+          "bytes": 99560,
+          "text_chars": 4300,
+          "sha256_16": "a5f90432f267b670",
+          "fetched_at": "2026-08-26T03:03:32.473Z",
+          "excerpt": " Page No.# 1/4 GAHC010182132025 "
+        }
+      ]
+    }
+  ],
+  "caveats": [
+    "ONE group per court, two documents per group. This tells apart \"the court assigned it\" from \"we assigned it\"; it does not estimate a rate.",
+    "NOT_PRINTED_IN_DOCUMENT does not distinguish SOURCE_METADATA_WRONG from EXTRACTOR_WRONG. Both leave the document silent, and separating them needs the parquet row, which this script does not read.",
+    "magic bytes are checked before any verdict — a soft 404 can arrive as HTTP 200 with Content-Type application/pdf.",
+    "NO_TEXT_LAYER is not evidence of an absent citation. An empty extraction and a silent document read identically."
+  ]
+}

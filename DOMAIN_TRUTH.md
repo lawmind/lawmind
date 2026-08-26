@@ -76,6 +76,29 @@ generic tools flatten.
 Neutral citations and reporter citations are different and both appear. Store
 both. Never construct a citation string by pattern — render only what is stored.
 
+**A neutral citation is NOT a unique identifier.** It identifies a *disposal
+event*, and an Indian High Court routinely disposes of hundreds of connected
+matters in one event while issuing each party a separate sheet. Every sheet
+carries the same neutral citation, printed by the Registry, over different
+parties, different case numbers and different text.
+
+Measured 26 Aug 2026: 155,387 neutral citations are shared by 361,044 judgments,
+the worst by 1,257. Eight of the eight worst groups, across eight different High
+Courts, were refetched from the canonical source and **every one prints the
+shared citation on the face of the PDF** — the court assigned it, not our
+extractor and not the source metadata. `docs/ai/new2-r8/SHARED_NEUTRAL_RCA_V1.md`.
+
+Three consequences that are easy to get wrong:
+
+- **There is nothing to repair.** A "fix" that de-duplicated or re-assigned
+  these citations would falsify the record.
+- **`AMBIGUOUS` is the correct answer** when a citation resolves to several
+  judgments, and it is the only correct one. There is no right rank-1 to pick.
+- **Copy must not blame us.** "We could not confirm which case this is" is
+  false. The truth is "this citation covers a batch of connected matters" — the
+  first sounds like our failure, the second is the court's design, and they send
+  the advocate to different next actions.
+
 ## Overruled judgments
 `overruled_status` and `overruled_by_judgment_id` on every judgment. An advocate
 citing overruled law is nearly as damaged as one citing a fake case. Overruled
