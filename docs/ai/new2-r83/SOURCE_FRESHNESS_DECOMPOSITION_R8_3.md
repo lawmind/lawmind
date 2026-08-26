@@ -141,11 +141,18 @@ being small.
 | Calcutta | 4,964 | 4,276 | 6,611 | **36** |
 
 The per-court view says something the corpus-wide number could not: **the
-frontier is ragged, not flat.** Allahabad and Bombay fell off in JULY, not
-August; Madras, Punjab and Haryana, Patna, Karnataka and Orissa were still full
-in July and stopped in August. Those are different stop dates, so this is not one
-switch being thrown — it is a walk that ran out per scope, which is the failure
-shape `row growth hides a dead scope` describes.
+frontier is ragged, not flat.** Allahabad and Bombay fall off in JULY; Madras,
+Punjab and Haryana, Patna, Karnataka and Orissa are full in July and stop in
+August.
+
+**CORRECTED, same day, by `INGEST_STOP_DIAGNOSIS_R8_3.md`.** I read the
+raggedness as different stop events — a walk running out per scope. It is not.
+Every scope stopped at the same wall-clock moment, **2026-08-19 19:02–19:56 +04**,
+and what differs is how far each had got through its own 2026 partition when the
+fleet died. A court whose walk was near the end of its file holds August; one
+mid-file does not. **The raggedness is position in the walk, not a per-scope
+failure**, and the simpler explanation only became available once the stop date
+was measured rather than inferred from the shape of the data.
 
 ---
 
