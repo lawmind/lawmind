@@ -8,7 +8,9 @@ index; the evidence is in the three documents beside it.
 | `COARSE_RESTART_R9.md` | why the walk stopped, the second defect nobody had found, and the restart's numbers |
 | `SEARCH_STACK_COVERAGE_R9.md` | what each search layer actually reaches, and the non-judgment path |
 | `PASSAGE_TRANCHE_2_DESIGN.md` | the storage budget, and what fits inside it |
+| `DELTA_RECONCILIATION.md` | 339 judgments that were in nobody's list, and why |
 | `coarse-walk-telemetry.jsonl` | the 15-minute ledger, appended live |
+| `delta/queue-ledger.jsonl` | the continuous incremental queue's own record |
 
 ---
 
@@ -47,8 +49,21 @@ consumes. 27,610 representatives standing for 30,306 judgments, cut under
 definition `5b5d02384b46c96c`, `idsHash cfe144f0275af4ae`. This is R9 §8's
 incremental queue, and it means no future delta blocks on a 2 h 17 m census.
 
-**4 — Statute sections are being embedded** into a table that keeps source kinds
-apart, behind one additive `CHECK` widening requested from LCC.
+**3b — And the queue is continuous, not a tool plus a habit.** `delta-queue.mjs`
+carries a `created_at` watermark (never an id — random uuids put half of every
+future row below an id watermark), restarts each pass a deliberate minute early
+because a gap is worse than a repeat, and **advances only after the durable row
+count actually moved**, because an exit code is a claim and three jobs in this
+repository have reported COMPLETE while doing nothing. Building it exposed two
+defects that would both have fired days from now: `delta-manifest` cast `--since`
+to `::date`, so a one-minute window silently became the whole day (339 requested,
+28,318 returned); and the queue spawned `tsx` from a path that does not exist
+under `services/harness` because pnpm hoists it to the root. Both fixed, both
+verified.
+
+**4 — 36,663 statute sections are embedded** into a table that keeps source kinds
+apart, behind one additive `CHECK` widening requested from LCC. 0 skipped, 1,717 s
+at 21 sections/second while sharing the GPU with two judgment walks.
 
 **5 — The staged coarse vectors were proven correct before nine more days were
 spent producing them.** 20 rows via `TABLESAMPLE SYSTEM` across the whole table,

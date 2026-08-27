@@ -1,0 +1,20 @@
+{
+  "kind": "new1_doc_vector_stage_run",
+  "scriptQualityVerdictsAtStart": 1792321,
+  "batchFile": "C:/Users/Xerxus/Documents/Lawmind/docs/ai/new1-r9/delta/delta-new2-r9.jsonl",
+  "rowsInBatch": 27610,
+  "inserted": 27607,
+  "skippedNoText": 0,
+  "skippedNowIneligible": 0,
+  "admittedCitedAuthority": 0,
+  "skippedTextUnsafe": 3,
+  "skippedByRefusedClass": {},
+  "skippedAlreadyStaged": 0,
+  "tableRows": 2090350,
+  "nonUnitNormVectors": 0,
+  "tokens": 29456504,
+  "elapsedSeconds": 6979.704,
+  "tokensPerSecond": 4220.308482995841,
+  "recipe": "HEAD:4800",
+  "finishedAt": "2026-08-27T13:42:03.339Z"
+}

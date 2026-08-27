@@ -1,0 +1,18 @@
+{
+  "kind": "new1_text_unsafe_quarantine",
+  "movedIds": [
+    "bddec341-260b-4cff-995a-62a84cdc6c4b",
+    "d888b86b-aa86-4bb7-8231-888bf88b5754",
+    "5d48fe9e-f3f4-49a0-bd2e-7a7a3f58a0ef",
+    "75ead632-7c9b-4bca-8b3b-6f7642301616",
+    "2334ebda-c536-48b0-946d-6319d6e57e23",
+    "677bb925-7702-4d70-9947-940f8eba02ec",
+    "c2e77395-bb7c-41c2-8960-2a7902a01128"
+  ],
+  "moved": 7,
+  "remainingUnsafeInStage": 0,
+  "stageRows": 2093679,
+  "refusedRows": 72099,
+  "reversal": "INSERT INTO new1_doc_vector_stage (judgment_id, content_hash, court, year, member_count, text_chars, embedded_chars, tokens, recipe, model, embedding, created_at) SELECT judgment_id, content_hash, court, year, member_count, text_chars, embedded_chars, tokens, recipe, model, embedding, created_at FROM new1_doc_vector_stage_refused WHERE judgment_id = ANY(<the ids above>)",
+  "at": "2026-08-27T13:48:03.886Z"
+}
