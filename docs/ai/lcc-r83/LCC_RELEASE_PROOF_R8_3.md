@@ -162,14 +162,107 @@ corpus write locks   none held at seal
 re-check             FROZEN
 ```
 
-## 6 — What did NOT run in this window, stated plainly
+## 6 — Mixed-load isolation · **PASS**
 
-- **mixed-load isolation** — not run.
-- **backup restore / host-loss / rollback** — not run.
-- **targeted planner statistics** — not run.
-- **measured `LOCAL_QUIET` / `LOCAL_CONTENDED` latency** — not run.
+Isolation is a claim about behaviour under contention, so it cannot be measured
+on a quiet box. Three phases against the real Hono app, admission semaphore wired
+at the production default `RESEARCH_CONCURRENCY=3`.
 
-§10 LCC-9 is therefore **PARTIAL**, not complete. The four items above are the
-remainder, and none of them is blocked — they are unrun. Reporting the suite as
-green while these are outstanding is exactly what "if the full suite cannot
-complete, do not call it green" forbids.
+```
+                        200   503    p50 / p95 / max ms   silent empty 200s
+LOCAL_QUIET              9     0       3 /  113 /  113          0
+LOCAL_CONTENDED          8     1       5 / 2004 / 2004          0
+RECOVERY                 9     0       3 /    3 /    3          0
+background load: 12 concept queries, 4 refused 503
+```
+
+The one refusal carried `Retry-After: 2`, and the 2004 ms maximum **is**
+`ADMISSION_WAIT_MS` — a bounded wait then an honest refusal, which is the
+designed behaviour observed rather than asserted.
+
+**Zero silent empty 200s in every phase** is the number that matters. A congested
+server answering `results: []` is the purest silent drop there is: the advocate
+cannot tell it from a corpus that genuinely has nothing.
+
+### The first run of this harness was worthless, and the reason generalises
+
+It reported `12 finished, 0 refused` — which reads as perfect isolation. It was
+not: I had not passed `admission`, so `deps.admission` was `undefined` and **no
+semaphore ran at all**. The absence of a gate and a gate that never fires produce
+identical output. Anyone reading an isolation number, mine included, should ask
+which one they are looking at.
+
+All latencies here are LOCAL and are never public mobile latency — §16.
+
+## 7 — Targeted planner statistics · a correction I nearly published
+
+`pg_stat_user_tables` reads `n_live_tup` = **3** for `judgments` and **0** for
+`judgment_citations`, with `last_analyze` NULL throughout. That looks exactly
+like broken planner statistics on the two biggest tables.
+
+**It is not.** The planner uses `reltuples` and `pg_statistic`, and both are
+sound:
+
+```
+judgments              reltuples 18,698,984   pg_statistic 38 of 38 columns
+judgment_citations     reltuples 22,322,064   pg_statistic  9 of 10 columns
+judgment_paragraphs    reltuples 89,622,944   pg_statistic  9 of  9
+```
+
+What is reset is the stats **collector**, by the earlier crashes. That affects
+autovacuum triggering, not query plans. Different problem, different owner, and
+worth not overstating — the loud number was the wrong one to read.
+
+## 8 — Restore / host-loss / rollback · **UNPROVEN**
+
+Not FAILED. Not PASSED. I have no evidence, and the reason is mine.
+
+I ran the release export (500 judgments, 7 tables, 59 MB, manifest + checksums)
+and then attempted the restore three times. Each attempt was **killed by a
+tool-call timeout**, and each time I read the leftover Postgres backend — sitting
+in `ClientRead` on a COPY whose client no longer existed — as a hang.
+
+I then published "the restore hangs" to FIFTH, with a theory: `judgment_judges`
+exports as 0 rows / 0 bytes (migration 0040 moved bench data out) and the
+zero-byte file desynchronises the connection. **Tested twice, in isolation, and
+false:**
+
+```
+Readable.from([])          empty COPY ok, next COPY ok, rows 0 and 2
+createReadStream(0-byte)   empty COPY ok, next COPY ok, rows 0 and 2
+```
+
+The tell I should have read first: `restore.err` empty, `restore.out` header
+only, process gone. **A hang does not exit.** Clean stderr plus a vanished
+process is a kill.
+
+Corrected to FIFTH in bus 1380. Now running as a one-shot **scheduled task** —
+the launcher `scripts/enrich-worker.cmd` already documents as the one that
+survives here, because the harness attaches children to a job object with
+kill-on-close and a scheduled task is not a descendant of it.
+
+## 9 — What did NOT run in this window, stated plainly
+
+- **host-loss / rollback drill** — not run.
+- **release-import equivalence verification** — the export ran; the restore's own
+  manifest verification has not completed.
+
+§10 LCC-9 is therefore **PARTIAL**, not complete. Reporting the suite as green
+while these are outstanding is exactly what "if the full suite cannot complete,
+do not call it green" forbids.
+
+## 10 — Release candidate, current
+
+```
+LMRC-20260827-0c5abcb-98214aed1ead1831
+  reproducible   NO — apps/admin/lib/api.ts is uncommitted, and apps/** is RCC's
+  head           0c5abcb        schema 8f68eb83e2501868
+  registry       RELEASE_CAPABILITIES_R8_3.3 / (digest bound)
+  migrations     89 / 96026d3cda0ba110
+  fleet paused   YES — services/ingest/.checkpoints/STOP, R8.3 §7 window
+  write locks    none held
+```
+
+A reproducible candidate is blocked on **one file that is not mine**. Its content
+is a finished fail-closed fix that was simply never committed. Committing another
+lane's file to make my own seal go green is not a trade I will make.
