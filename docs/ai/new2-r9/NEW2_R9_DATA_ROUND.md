@@ -516,3 +516,137 @@ rewrite invalidates the freshness claim automatically.
 8. **`no_text` 10,075 and `ledger_permanent_skip` 238,275** are counted, not
    diagnosed. `hc-boot-3_22` alone contributed 10,408 ledger failures against 2,552
    written — a yield worth a look, and not this round's.
+
+
+---
+
+## 8. Addendum, same day — the delta cycle is automated, and it proved its own point in three hours
+
+### 8.1 What was missing after §1
+
+The delta was closed at 10:10Z and **nothing scheduled it to close again.** The
+logon launcher that would have covered a reboot was disabled:
+
+```
+Startup\Lawmind-ingest.cmd.disabled-frontier-closed
+```
+
+"Frontier closed" is the same reasoning that put six courts in the launcher's
+ABSENT ON PURPOSE list. **Against a source that writes daily, COMPLETED is a
+statement with an expiry date.** A logon launcher is also the wrong shape: it
+fires at logon, so a box that stays up for a week ingests nothing for a week —
+which is exactly what happened between 19 and 27 August.
+
+### 8.2 `scripts/n2-daily-delta.ps1`, registered
+
+One pass: fresh manifest from both buckets -> map every moved object to the scope
+whose cursor owns it -> derive the plan -> start ONLY those scopes through the
+existing launcher and its guards -> refresh the source ledger.
+
+It honours the `STOP` file and **says so out loud** rather than refusing silently
+in 26 separate logs. It refreshes the ledger **unconditionally**, because "we
+checked and nothing had moved" and "we did not check" must never read the same.
+It starts the delta scopes only; `-Full` is the deliberate sweep.
+
+```
+schtasks  Lawmind
+ew2-daily-delta   daily 18:00   Ready
+```
+
+Registered under a task subfolder because `Register-ScheduledTask` at the root
+path returned `Access is denied` without elevation, and `schtasks /Create` into
+`Lawmind\` does not need it.
+
+### 8.3 It ran, end to end, and found five more grown objects three hours later
+
+```
+17:04:39  cycle start
+17:04:41  aws_open_data_hc  1,494 objects · NEW 56 · GROWN 5 · UNCHANGED 1,433
+17:04:43  delta owns 3 scope(s)
+17:07:33  started 3 · filtered 41
+17:10:04  ledger refreshed
+17:10:04  cycle end                                        exit 0
+```
+
+**Five objects had grown in the three hours since the round's own walk.** That is
+the argument for the cycle, made by the cycle, on its first run.
+
+```
+hc-boot-27_1-y2026   337 written
+hc-boot-27_1         337 written
+hc-boot-9_13           2 written
+judgments  18,749,962 -> 18,750,301
+```
+
+### 8.4 `script_quality` on the delta, and the correction NEW1 needs
+
+NEW1 (bus 1391/1398) asked for the screen over the delta before embedding it,
+because `axis_b_text` admits NULL and every one of the 50,994 would pass the
+readability gate **by never having been looked at**.
+
+Run — `script-quality-cli.ts --since 2026-08-27T00:00:00Z --confirm`, 52,078 rows
+in 25s:
+
+```
+legacy_font_ascii WRITTEN                          547     (8_9 542 · 5_15 2 · 22_18 2 · 10_8 1)
+Devanagari present, no verdict available           152
+pure ASCII below marker threshold, no verdict   51,379
+```
+
+**It does not do what the ask assumed, and that is by design.** The CLI writes
+exactly ONE of the five verdicts, because `clean` would have to be asserted from
+the **absence** of a signal — a pure-ASCII English judgment and a Hindi judgment
+whose Devanagari the extractor deleted are the same bytes to every check available
+at scan time.
+
+So `script_quality` is still NULL on **50,447** of the 50,994, and re-running the
+screen will not change it. What the screen bought is 547 known-bad documents
+excluded by a **verdict** rather than admitted by silence, on a detector measured
+at 0 false positives in 939 PDF-labelled clean documents across nine courts. The
+`admission-by-absence-of-evidence` caveat stands for the remaining 50,447 and is
+recorded in the handoff artifact itself.
+
+### 8.5 The delta handoff is a list with a hash, not a timestamp
+
+`scripts/n2-delta-handoff.mts` -> `docs/ai/new2-r9/delta-handoff-2026-08-27.json`.
+
+```
+handoffId  NEW2_R9_DELTA_2026-08-27
+count      50,994
+idsHash    cbd7975f44356448691b913939b458a875bf5c41818749cf36171d176ac5a33f
+           sha256 over the ids SORTED ascending, so two producers of the same set
+           agree regardless of scan order
+by decision month  2026-08 36,814 · 2026-07 2,733 · 2025-11 1,949 · ... tail to 2017
+```
+
+NEW1's reason for wanting this is the right one and it is recorded in the artifact
+as a caveat rather than as a method: re-deriving from `created_at >= 2026-08-27`
+is correct **only while one lane is the sole writer for that day**, which is a
+property of the afternoon and not of the pipeline.
+
+### 8.6 Two corrections to my own §1 handoff, from NEW1
+
+- **"None of it has been enriched" was misleading.** `judgments.full_text_tsv` is
+  `GENERATED ALWAYS AS to_tsvector('english', full_text)` with a GIN index, and
+  `content_hash`, `cnr`, `case_number`, `source_url` and the normalised
+  title/citation keys each have their own index maintained on write. **Exact
+  identity and lexical search were live the instant the rows committed** — there
+  is no downstream job and no backlog. The statement was true of citations,
+  statutes, chunking, embeddings and classification only.
+- **Production semantic search reaches 40,161 judgments — 0.214% of the corpus.**
+  `retrieve.ts` queries `judgment_chunks` and nothing else. 59,018 new documents
+  are worth much less than they look until that number moves, and corpus size must
+  not be quoted as a retrieval claim.
+
+### 8.7 A lease failure of mine, recorded
+
+I held `GIT_COMMIT` for **1h45m** against a purpose I had written down myself —
+*"held across re-read HEAD -> status -> exact-path stage -> inspect -> commit ->
+release"*, a minutes-long pattern. My commit landed at 10:20Z and I should have
+released it there. NEW1 was blocked, tried `--force`, and the mutex correctly
+refused to steal from a live holder and told them to resolve it on the bus. Two
+requests went unanswered before I read the inbox.
+
+Both leases are released. The rule that would have prevented it is the one already
+in the lease's own `purpose` field: **if the stated pattern is minutes long and it
+has been an hour, the lease is the bug.**

@@ -1,19 +1,19 @@
 {
-  "takenAt": "2026-08-27T10:10:07.525Z",
+  "takenAt": "2026-08-27T13:04:39.973Z",
   "localCheckpointKeys": 1438,
   "buckets": {
     "aws_open_data_hc": {
       "host": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com",
       "totalObjects": 1494,
       "metadataParquetObjects": 1494,
-      "newestUpstreamWrite": "2026-08-26T12:30:27.000Z",
+      "newestUpstreamWrite": "2026-08-27T13:01:53.000Z",
       "counts": {
         "NEW": 56,
-        "GROWN": 0,
+        "GROWN": 5,
         "SHRUNK": 0,
-        "UNCHANGED": 1438
+        "UNCHANGED": 1433
       },
-      "bytesWaiting": 71207095,
+      "bytesWaiting": 71585062,
       "byYear": {
         "1950": {
           "objects": 6,
@@ -398,7 +398,7 @@
         "2026": {
           "objects": 56,
           "newKeys": 2,
-          "grown": 0
+          "grown": 5
         }
       },
       "newKeys": [
@@ -1064,9 +1064,9 @@
         },
         {
           "key": "metadata/parquet/year=2026/court=27_1/bench=testcase/metadata.parquet",
-          "upstreamSize": 526741,
-          "lastModified": "2026-08-26T08:37:04.000Z",
-          "etag": "fcc77dc79d35a7eb7050147dc4210c89",
+          "upstreamSize": 572806,
+          "lastModified": "2026-08-27T12:49:49.000Z",
+          "etag": "46e44e6fdedcd4adccdb8bb432ebb470",
           "year": 2026,
           "court": "27_1",
           "bench": "testcase",
@@ -1075,7 +1075,73 @@
           "offset": null
         }
       ],
-      "grown": [],
+      "grown": [
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata.parquet",
+          "upstreamSize": 3157054,
+          "lastModified": "2026-08-27T13:01:53.000Z",
+          "etag": "17800cc93755aacdbdb6d556f5cc38a1",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newas",
+          "variant": "plain",
+          "recordedSize": 2954149,
+          "added": 202905,
+          "offset": 6365
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata.parquet",
+          "upstreamSize": 2017793,
+          "lastModified": "2026-08-27T12:54:44.000Z",
+          "etag": "2c555406e47c9fcc5ca23703f24a44d4",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "hcaurdb",
+          "variant": "plain",
+          "recordedSize": 1908178,
+          "added": 109615,
+          "offset": 4247
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=hcbgoa/metadata.parquet",
+          "upstreamSize": 94077,
+          "lastModified": "2026-08-27T12:48:54.000Z",
+          "etag": "2a853db47d4a435650860a4cd343d93c",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "hcbgoa",
+          "variant": "plain",
+          "recordedSize": 82159,
+          "added": 11918,
+          "offset": 137
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata.parquet",
+          "upstreamSize": 377013,
+          "lastModified": "2026-08-27T13:00:24.000Z",
+          "etag": "0663346e0882b5f4cb899aa385754ca1",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "newos",
+          "variant": "plain",
+          "recordedSize": 370351,
+          "added": 6662,
+          "offset": 1425
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=9_13/bench=cishclko/metadata.parquet",
+          "upstreamSize": 164255,
+          "lastModified": "2026-08-27T12:07:35.000Z",
+          "etag": "b1544d9d8e995e63a4bb30cbe4c05ff2",
+          "year": 2026,
+          "court": "9_13",
+          "bench": "cishclko",
+          "variant": "plain",
+          "recordedSize": 163453,
+          "added": 802,
+          "offset": 312
+        }
+      ],
       "shrunk": []
     },
     "aws_open_data_sc": {

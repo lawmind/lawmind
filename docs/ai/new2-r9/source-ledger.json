@@ -1,5 +1,5 @@
 {
-  "takenAt": "2026-08-27T10:10:43.862Z",
+  "takenAt": "2026-08-27T13:07:33.359Z",
   "sources": [
     {
       "source": "aws_open_data_hc",
@@ -11,18 +11,18 @@
       },
       "adapter": "services/ingest/src/harvest/hc-load-cli.ts",
       "adapterSha256": "547c293e82f5172a",
-      "newestUpstreamWrite": "2026-08-26T12:30:27.000Z",
-      "heldDocuments": 18711611,
+      "newestUpstreamWrite": "2026-08-27T13:01:53.000Z",
+      "heldDocuments": 18711950,
       "newestLocalDecision": "2026-08-25",
       "naiveLagDays": 2,
       "honestCurrencyFrontier": "2026-07-01",
       "honestLagDays": 57,
-      "lastSuccessfulIngest": "2026-08-27 09:55:10.499107+00",
+      "lastSuccessfulIngest": "2026-08-27 13:05:10.69418+00",
       "monthly": [
         {
           "month": "2026-08",
-          "documents": 37292,
-          "shareOfBaseline": 0.3148,
+          "documents": 37631,
+          "shareOfBaseline": 0.3177,
           "state": "PARTIAL"
         },
         {
@@ -106,7 +106,7 @@
       ],
       "baselineDocumentsPerMonth": 118460,
       "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
-      "newestCheckpointWrite": "2026-08-27T09:58:01.401Z"
+      "newestCheckpointWrite": "2026-08-27T13:07:32.789Z"
     },
     {
       "source": "aws_open_data_sc",
@@ -213,7 +213,7 @@
       ],
       "baselineDocumentsPerMonth": 32,
       "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
-      "newestCheckpointWrite": "2026-08-27T09:58:01.401Z"
+      "newestCheckpointWrite": "2026-08-27T13:07:32.789Z"
     },
     {
       "source": "ecourts",
