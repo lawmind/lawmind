@@ -52,7 +52,18 @@ apart, behind one additive `CHECK` widening requested from LCC.
 
 **5 — The staged coarse vectors were proven correct before nine more days were
 spent producing them.** 20 rows via `TABLESAMPLE SYSTEM` across the whole table,
-re-embedded and compared: cosine 1.000000 at min, median and max.
+re-embedded and compared: cosine 1.000000 at min, median and max. The same check
+on the 36,663 statute vectors: also 1.000000, 0 below 0.99.
+
+**6 — And one claim of mine did not survive its own test.** I wrote that putting
+the Act name inside the embedded text is what separates IPC s.302 from BNS s.103.
+Measured against the counterfactual it separates them by **five hundredths**
+(0.8725 → 0.8169, still "same provision" territory), does **nothing at all** for
+BSA s.63 vs Evidence Act s.65B (0.8749 → 0.8751), and raises mean similarity
+across every other pair because titles share tokens. **Which Act a provision
+belongs to is a filter on the row, not a hope about the ranking** — `statute_id`
+and `short_title` are columns, and a query that must not mix codes constrains on
+them. Details and the full pair table in `SEARCH_STACK_COVERAGE_R9.md`.
 
 ---
 

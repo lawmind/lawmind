@@ -139,13 +139,45 @@ embedded text             "<short title> — s. <number> — <heading>\n<section
 recipe / model            HEAD:4800, byte-identical to the judgment walk's
 ```
 
-The Act name is **inside the vector**, not only in the metadata, and that is the
-one non-obvious decision in the file. *"Whoever commits murder shall be punished
-with death…"* is nearly identical in the Penal Code 1860 and the Bharatiya Nyaya
-Sanhita 2023, and the entire reason we hold both is that the advocate needs to
-know which. Without the title in the text the two provisions are near-duplicates
-in the vector space. Sections average ~1,000 characters, so the 4,800-character
-cap essentially never binds and the vector covers the whole provision.
+The Act name is inside the vector so a retrieved passage is self-describing: a
+section quoted without the Act it belongs to is unusable to an advocate whatever
+the metadata says. Sections average ~1,000 characters, so the 4,800-character cap
+essentially never binds and the vector covers the whole provision.
+
+### I claimed the title was the discriminator. I tested it. It mostly is not.
+
+Both encodings, same sidecar, same day, 27 Aug 2026:
+
+| pair | with title | body only | delta |
+| --- | ---: | ---: | ---: |
+| BNS s.101 *Murder* vs IPC s.300 *Murder* | 0.9093 | 0.9570 | **−0.0477** |
+| BNS s.103 *Punishment for murder* vs IPC s.302 | 0.8169 | 0.8725 | **−0.0556** |
+| BSA s.63 vs Evidence Act s.65B | 0.8751 | 0.8749 | **+0.0002** |
+| mean over **all** cross-Act pairs | 0.5449 | 0.5249 | +0.0200 |
+| IPC s.300 vs IPC s.302 (same Act) | 0.7030 | 0.6715 | +0.0315 |
+
+The title separates the old-code/new-code twins by about five hundredths — which
+leaves them at **0.82–0.91, still firmly "these are the same provision"** — and
+does **nothing whatsoever** for the Evidence Act pair. It also raises mean
+similarity everywhere else, because every title shares *"The"*, *"Act"* and a
+year, so even sections **within** one Act got closer together.
+
+**The correct conclusion, and it is the one the citation harness already enforces
+elsewhere: which Act a provision belongs to is a FILTER on the row, never a hope
+about the ranking.** `statute_id` and `short_title` are columns; a query that must
+not mix codes constrains on them. The vector carries what a provision *means*, and
+the reason cross-code twins score 0.9 is that they mean the same thing — which is
+correct behaviour and directly useful for *"what replaced this section"*, not a
+defect to tune away.
+
+The title stays in the text for the self-describing reason. It is no longer
+claimed to be doing a job it measurably does not do.
+
+### The vectors are correct
+
+20 rows drawn with `TABLESAMPLE`, re-composed and re-embedded: cosine
+**1.000000** at min, median and max; 0 below 0.99. 36,663 written, 0 skipped,
+1,717 s at 21 sections/second while sharing the GPU with two judgment walks.
 
 ### Why 36,663 rows matter more than the count suggests
 
