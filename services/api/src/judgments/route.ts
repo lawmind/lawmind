@@ -32,6 +32,7 @@ import {
   bodyTextState,
   isBodyTextSafe,
 } from '../search/body-text-safety.ts';
+import { generationEvidenceEligible, textOriginOf } from './text-origin.ts';
 import { logger } from '../logger.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
@@ -170,6 +171,23 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
    * Deliberately NOT hidden in the client. A client-side rule is a rule that
    * holds until the next client, and the raw text is on the wire either way.
    */
+  /**
+   * WHOSE EDITION THIS IS — R8.3 §8.3, FIFTH bus 1367.
+   *
+   * Derived from PROVENANCE, never from a content classifier: the role
+   * detector's reporter recall is 42.1%, so gating on it would let more than
+   * half through while sounding like a guarantee. `text-origin.ts` carries the
+   * measurement — every one of the 38,342 Supreme Court judgments from the
+   * S.C.R. bucket is the reporter's paginated edition, and their bodies carry
+   * its running head and marginal letters.
+   *
+   * The body is still served. An advocate must be able to read the authority,
+   * and withholding 38,342 Supreme Court judgments would be a far larger defect
+   * than the one being fixed. What changes is that the wire now SAYS whose text
+   * it is, and says the body may not support a generated proposition.
+   */
+  const textOrigin = textOriginOf(row);
+
   const bodySafe = isBodyTextSafe(row.script_quality);
   const bodyText = {
     state: bodyTextState(row.script_quality),
@@ -275,6 +293,26 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
      * PROVEN, which is a different axis and is never pooled with `state`.
      */
     bodyText,
+    /**
+     * `REPORTER_EDITION` | `COURT_SOURCE` | `UNKNOWN`.
+     *
+     * A statement about the RETAINED ARTIFACT, not a segmentation of the body:
+     * nothing here can yet separate a reporter's headnote from the court's
+     * reasoning inside the text, and claiming otherwise is the failure §8.3
+     * names. It decides no rights question either — §8.2 keeps retain / index /
+     * display / generation-evidence / training separate, and the content-use
+     * decision is open and is not the server's to make.
+     */
+    textOrigin,
+    /**
+     * FALSE for a reporter edition. §8.3 fail-closed, made mechanical: reporter
+     * or editorial text cannot be represented as the court's own words and
+     * cannot support a generated legal proposition while content-use is open.
+     *
+     * This field must survive every route (§10 LCC-6). A consumer that drops it
+     * is a consumer that will eventually argue from a headnote.
+     */
+    generationEvidenceEligible: generationEvidenceEligible(textOrigin),
     // PD-9 anchors the reading view on paragraph numbers, and the client cannot
     // derive them from `fullText` without inventing them. Segmented here, with
     // access to the source, so an advocate told "see paragraph 22" lands on the

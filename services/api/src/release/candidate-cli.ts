@@ -5,6 +5,8 @@
  *   seal              seal a new candidate and write its manifest
  *   check <manifest>  re-read the corpus and report FROZEN or MUTATED
  *   writers           list the corpus-mutating processes visible right now
+ *   pause <reason>    write the fleet STOP file so no writer can restart
+ *   resume            remove it
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * `writers` DOES NOT KILL ANYTHING
@@ -12,12 +14,41 @@
  *
  * §3.4 and §10 LCC-8 are explicit: do not kill an unknown process until owner,
  * command and output delta are verified. This lists what is writing and what it
- * is called; deciding is a person's job, and the pause in §7 is a declaration on
- * the bus, not a signal sent to another lane's PID.
+ * is called; deciding is a person's job, and no signal is ever sent to another
+ * lane's PID.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `pause` IS THE §7 FREEZE, AND IT IS NOT A DECLARATION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * FIFTH bus 1373: attributing the sleeping hourly `--apply --resume` wrapper as
+ * CAUGHT_UP closes "unknown owner", and it does NOT establish the §7 pause. That
+ * wrapper is restart-capable — it wakes every 3600s and would process anything
+ * new — so "nothing is running right now" is not the same as "nothing can start".
+ *
+ * The switch already exists and is already honoured in both the places that
+ * matter: `scripts/enrich-worker.cmd` checks
+ * `services/ingest/.checkpoints/STOP` BEFORE its first start (which is all a
+ * boot launcher ever does) and again at every loop iteration, and
+ * `scripts/supervise.mjs` checks it before restarting anything. NEW2 wrote the
+ * guard after a reboot during a write freeze nearly started two writers.
+ *
+ * So the pause is not new machinery and not a promise on the bus — it is that
+ * file, written with a reason, as a step of the release protocol rather than
+ * something somebody has to remember.
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/**
+ * The fleet pause switch. NEW2 owns the file; every launcher already honours it.
+ * Named here so the release protocol writes the same path the workers read.
+ */
+const STOP_FILE = fileURLToPath(
+  new URL('../../../../services/ingest/.checkpoints/STOP', import.meta.url),
+);
 
 import postgres from 'postgres';
 
@@ -124,6 +155,14 @@ try {
       /** ADVISORY: command lines that look like a corpus job. Heuristic only. */
       possibleWriterProcessesAtSeal: writers,
       /**
+       * FIFTH bus 1373. "Nothing is running" is not "nothing can start": the
+       * paragraphs wrapper sleeps an hour and wakes restart-capable. A sealed
+       * candidate records whether the fleet STOP file was in place, because that
+       * is the difference between a quiet box and a frozen one.
+       */
+      fleetPaused: existsSync(STOP_FILE),
+      fleetPauseReason: existsSync(STOP_FILE) ? readFileSync(STOP_FILE, 'utf8').trim() : null,
+      /**
        * The honest statement of what the seal does and does not guarantee.
        * Written INTO the manifest so a later reader cannot mistake a declared
        * pause for an enforced one.
@@ -184,6 +223,31 @@ try {
     for (const w of corpusWriters()) console.log('  advisory os ' + w.pid + '  ' + w.cmd);
     // Exit code so a script can gate on it. MUTATED is a fact, not a crash.
     process.exitCode = drift.state === 'FROZEN' ? 0 : 1;
+  } else if (cmd === 'pause') {
+    if (!arg) throw new Error('usage: pause "<reason>" — a pause without a reason is not auditable');
+    const at = new Date().toISOString();
+    writeFileSync(
+      STOP_FILE,
+      `PAUSED BY LCC ${at}${String.fromCharCode(10)}reason: ${arg}${String.fromCharCode(10)}` +
+        `R8.3 §7 release-candidate freeze. Remove with: release:candidate resume${String.fromCharCode(10)}`,
+    );
+    console.log(`PAUSED  ${STOP_FILE}`);
+    console.log(`  reason  ${arg}`);
+    // Say what it does and does NOT stop, in the same breath. A worker already
+    // mid-run keeps running to completion; the guard is at start and restart.
+    console.log('  effect  enrich-worker.cmd refuses to start AND to restart; supervise.mjs will not restart');
+    console.log('  NOT     a running statement is not interrupted, and no PID is signalled');
+    for (const w of await corpusWritersFromPostgres(sql)) {
+      console.log('  STILL WRITING pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode);
+    }
+  } else if (cmd === 'resume') {
+    if (existsSync(STOP_FILE)) {
+      console.log('was:' + String.fromCharCode(10) + readFileSync(STOP_FILE, 'utf8').trim());
+      rmSync(STOP_FILE);
+      console.log(`RESUMED  ${STOP_FILE} removed`);
+    } else {
+      console.log('no STOP file — nothing was paused');
+    }
   } else if (cmd === 'writers') {
     const locking = await corpusWritersFromPostgres(sql);
     if (locking.length === 0) console.log('EVIDENCE: no backend holds a corpus write lock');
@@ -195,7 +259,9 @@ try {
     if (writers.length === 0) console.log('ADVISORY: no process looks like a corpus job');
     for (const w of writers) console.log('ADVISORY os ' + w.pid + '  ' + w.cmd);
   } else {
-    console.error('usage: candidate-cli.ts <seal [path] | check <manifest> | writers>');
+    console.error(
+      'usage: candidate-cli.ts <seal [path] | check <manifest> | writers | pause "<reason>" | resume>',
+    );
     process.exitCode = 2;
   }
 } finally {

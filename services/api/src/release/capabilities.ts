@@ -62,7 +62,7 @@
  * capability set was this candidate frozen with" is answerable by query rather
  * than by reading a commit log.
  */
-export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.2';
+export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.3';
 
 export type CapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPERIMENTAL_INTERNAL';
 
@@ -198,11 +198,16 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
     reason:
       '688,123 of 862,594 statute references are linked to a held Act — 79.77%, NOT complete ' +
       'coverage, and it must never be presented as such. The remaining 20.23% are references to Acts ' +
-      'we do not hold or that no deterministic rule could pin safely.',
-    asOf: AS_OF,
+      'we do not hold or that no deterministic rule could pin safely. LIMITED also carries a known ' +
+      'PRECISION defect, not only a coverage one: FIFTH measured 1,723 current links whose statute ' +
+      'was enacted AFTER the judgment that cites it — 1,117 of them CrPC references from before ' +
+      '1974 pinned to the 1973 Code — so a link is a candidate correspondence and is never evidence ' +
+      'that the cited section is the one the court applied.',
+    asOf: '2026-08-27',
     unblockedBy:
-      "FIFTH's independent stratified precision attack on the join, including alias/collision and " +
-      'negative controls (§5.3, §7 Correction 7).',
+      'A chronology constraint in the join (no Act may be selected for a judgment that predates its ' +
+      "enactment), then FIFTH's stratified precision attack including alias/collision and negative " +
+      'controls (§5.3, §7 Correction 7). NEW2 owns the join; LCC owns this claim.',
   },
   'statute.old_new_correspondence': {
     state: 'DISABLED',

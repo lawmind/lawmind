@@ -1,8 +1,36 @@
 {
-  "releaseCandidateId": "LMRC-20260826-d12f2a9-8bc29635f62fa69b",
-  "sealedAt": "2026-08-26T19:23:25.359Z",
-  "head": "d12f2a9bf8ec801058576081796151f426e6400c",
+  "releaseCandidateId": "LMRC-20260827-0c5abcb-98214aed1ead1831",
+  "sealedAt": "2026-08-27T00:10:40.211Z",
+  "head": "0c5abcb7948e85fc9059422c28780951c87c34ce",
+  "reproducible": false,
   "capabilityRegistryVersion": "RELEASE_CAPABILITIES_R8_3.2",
+  "code": {
+    "head": "0c5abcb7948e85fc9059422c28780951c87c34ce",
+    "treeClean": false,
+    "dirtyPaths": [
+      "apps/admin/lib/api.ts"
+    ],
+    "operationalChurn": [
+      "agents/bus/leases/GIT_COMMIT.json",
+      ".agents/bus/leases/HEAVY_BOX.json",
+      ".agents/bus/leases/LCC.json",
+      ".agents/bus/leases/MIGRATION_SLOT.json",
+      ".agents/bus/leases/NEW1.json",
+      ".agents/jobs/observations.jsonl",
+      ".agents/logs/new1-sidecar-keeper.8799.lock",
+      ".agents/logs/new2-hc-classify-resume.err",
+      "docs/ai/lcc-r83/RELEASE_CANDIDATE_R8_3.json",
+      "docs/ai/new1-tier-a/stage-embed-summary.json",
+      "services/ingest/.checkpoints/citation-keys.json",
+      "services/ingest/.checkpoints/hc-classify.cursor",
+      "services/ingest/.checkpoints/text-safety-screen-all.json"
+    ],
+    "migrationFiles": 89,
+    "migrationDigest": "96026d3cda0ba110",
+    "registryVersion": "RELEASE_CAPABILITIES_R8_3.2",
+    "registryDigest": "d16b6532eb470cdc",
+    "schemaDigest": "8f68eb83e2501868"
+  },
   "corpus": {
     "judgmentsEstimate": 18698984,
     "judgmentCitationsEstimate": 22322064,
@@ -12,12 +40,12 @@
     "statuteSections": 36480,
     "statuteRefs": 862594,
     "statuteRefsLinked": 688123,
-    "migrationsApplied": 88,
+    "migrationsApplied": 89,
     "citationKeyCursorAt": "2026-08-24 18:59:19.088+00",
     "citationKeyDirtyOpen": 0,
     "maxJudgmentDate": "2026-08-18"
   },
-  "corpusDigest": "8bc29635f62fa69b",
+  "corpusDigest": "98214aed1ead1831",
   "capabilities": {
     "registryVersion": "RELEASE_CAPABILITIES_R8_3.2",
     "asOf": "2026-08-26",
@@ -161,6 +189,11 @@
     }
   },
   "corpusWriteLocksAtSeal": [],
-  "possibleWriterProcessesAtSeal": [],
+  "possibleWriterProcessesAtSeal": [
+    {
+      "pid": 10680,
+      "cmd": "C:\\WINDOWS\\system32\\cmd.exe  /K \"C:\\Users\\Xerxus\\Documents\\Lawmind\\scripts\\enrich-worker.cmd\"  paragraphs services/ingest/src/paragraphs-cli.ts --apply --resume"
+    }
+  ],
   "pauseSemantics": "The seal RECORDS the writers visible at seal time. It cannot stop another lane. Re-run `check` to detect movement; a MUTATED result names the fields that moved."
 }
