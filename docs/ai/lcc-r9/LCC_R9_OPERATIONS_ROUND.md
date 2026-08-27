@@ -228,6 +228,31 @@ retired that morning, adopted `lcc-paragraphs-apply`'s wrapper and both rows
 reported the same live instance — one logical job, two owners, the retired one
 wearing RUNNING.
 
+### The stalled keeper was not stalled, and the monitor was crying wolf
+
+`new1-sidecar-keeper` was the round's one PAGEABLE alert: *"alive, but nothing
+moved for 2,217m"*. It is not stalled. `sidecar-keeper.mjs` logs **only
+anomalies** — a health miss, a restart, a failed sweep — so silence is its correct
+output, and the sidecar it protects was answering `/health` with CUDA resident
+while its consumer inserted vectors. Verified by hand before anything was changed.
+
+Two fixes, both narrow:
+
+1. **The keeper now declares an output probe**, and it is the same one the sidecar
+   already has: the CONSUMER's rows. A watchdog has no output of its own, so the
+   only honest measure of one is whether the thing it exists to protect is still
+   producing — the argument `job-health.mjs` already makes for the sidecar, now
+   applied one level up.
+2. **A DECLARED probe that was not measured no longer reads as a stall.** The
+   stall branch reads checkpoint/log motion, which is the weaker signal, and the
+   same file says forty lines later that "when a job declares an output probe, the
+   probe decides". Without `--with-output` the probe is `NOT_MEASURED`, so the
+   stall verdict was resting on exactly the signal the job had said not to trust.
+   It now returns UNKNOWN, naming the probe and the flag that would settle it —
+   still in NEEDS ATTENTION, no longer waking anyone.
+
+`PAGEABLE (0)`.
+
 ### `job-register.mjs`: PAUSED can now be written
 
 `job-health.classify()` has always READ `PAUSED`. Nothing could ever write it. A
@@ -424,6 +449,76 @@ because it is the part a future reader will be tempted to undo.
 
 ---
 
+## 8b — THE QUIET WINDOW WAS THE WRONG INSTINCT, AND IT WAS MY MISTAKE
+
+I asked three lanes to hold writes on `judgments` so the full suite could pass.
+NEW1 answered precisely (bus 1416) — the 339 rows were NEW2's ingest, finished at
+13:05:10.694Z, and nothing of NEW1's touches `judgments`. Then the same three
+tests failed again, and the cause was me.
+
+```
+old-row-backfill-falsifier  "the dirty-work table is empty on a healthy system"
+old-row-backfill-falsifier  "a colliding judgment BELOW the cursor no longer
+                             resolves UNIQUE"      (precondition: index CURRENT)
+key-freshness               "counts exactly the judgments created after the cursor"
+```
+
+**They do not assert that nothing is writing. They assert that the pipeline keeps
+up with what is written.** An empty dirty table means every mark has been
+discharged; a zero lag means the key builder has walked to the frontier. Both are
+properties of a system whose downstream jobs are RUNNING — and I had stopped the
+one process that discharges a mark and advances the cursor.
+
+Pausing the pipeline to test the pipeline. The factory stays running.
+
+**What it exposed is not a test problem.** The downstream cycle after every ingest
+is four steps and the third is wired nowhere:
+
+```
+ingest committed
+  -> citation-key index walked to the new frontier     Lawmind-citation-keys
+  -> RISK REPLAY re-run against the new cursor         MANUAL, nobody's job
+  -> citations / paragraphs consumers                  two more tasks
+```
+
+`readKeyFreshness` compares the replay's `frontier_at` with the live cursor as
+TEXT, so **every advance of the index invalidates the replay that vouches for
+it.** On a corpus that ingests daily the resolver gate is STALE by default and
+CURRENT only in the minutes after somebody runs the replay by hand — I ran it
+twice today for exactly that reason. It belongs in NEW2's daily cycle, after the
+key walk and before the consumers. Not automated unilaterally: it writes an
+adjudicated-evidence row and that is theirs.
+
+---
+
+## 8c — THE FULL API SUITE, GREEN
+
+```
+tests 794 · suites 137 · pass 792 · fail 0 · skipped 2 · 1,026.4s
+```
+
+Both skips are deliberate and data-conditional, printed with their reason:
+*no criminal judgments matched* and *no Supreme Court judgment matched* on the
+fixture the filter tests pick. Neither is a suppressed failure.
+
+It took five runs and every one of the six failures was a real defect, not
+flakiness:
+
+| failure | what it actually was |
+| --- | --- |
+| Allahabad coverage | a data fact that outran its test; the survey was not wrong |
+| `_at::text` sweep | a guard that over-matched AND under-matched, hiding a live client-facing leak |
+| `returns the judgment with its full text` | an unordered `LIMIT 1` landed on a body the evidence gate correctly withholds |
+| `counts exactly the judgments created after the cursor` | the check used the truncated bind the module under test is documented to avoid |
+| three dirty-work / cursor tests | the test suite leaving permanent `JUDGMENT_DELETED` marks, plus me pausing the pipeline that clears them |
+
+**Not one of them was fixed by relaxing an assertion.** Two got stronger: the
+coverage test now proves the number is derived live rather than pinning a
+snapshot, and the empty-check now proves nothing survives the repair rather than
+that no earlier file deleted a fixture.
+
+---
+
 ## 9 — OPEN, AND HONESTLY
 
 1. **Full API suite is not green and is not being called green.** Four tests
@@ -442,3 +537,34 @@ because it is the part a future reader will be tempted to undo.
 6. **`/corpus/freshness` costs ~12 s** and `/corpus/coverage` ~22 s. Both are
    index-backed and bounded; neither is a hot path today, and the numbers are in
    the response (`computeMs`) rather than in a comment.
+6b. **The test suite was slowly poisoning the resolver gate.** At least six test
+   files delete their fixture judgments in an `after()` — `admin`,
+   `alerts/route`, `briefings/assemble`, `briefings/route`, `citations/fanout`,
+   `citations/recheck` — and each deletion writes a `JUDGMENT_DELETED` mark that,
+   before this round, nothing ever removed. Observed live: `citations/fanout`
+   runs alphabetically before `old-row-backfill-falsifier` and left a mark at
+   `14:20:08.445Z` carrying `["(2001) 3 SCC 111"]`, which then blocked keys for
+   the tests that follow. Every full-suite run added marks permanently, and at
+   `DIRTY_WINDOW_CAP` the resolver fails closed for every key. The discharge fixes
+   the accumulation; the empty-check now discharges before it asserts, so it
+   claims **"nothing is left that the repair path cannot clear"** instead of "no
+   earlier file deleted a fixture".
+7. **Nothing clears a `citation_key_dirty` mark for any reason other than
+   `JUDGMENT_DELETED`.** `clearDirtyWork()` is documented as "called INSIDE the
+   transaction that rebuilds them" and its only callers are tests — the intended
+   design was never wired. Reported rather than half-wired: it is a change to the
+   citation pipeline, which `CLAUDE.md` exempts from simplification, and it needs
+   the rebuild path to name the judgments it rebuilt. Today's marks are all
+   `JUDGMENT_DELETED` so the gap is not yet costing anything, and at
+   `DIRTY_WINDOW_CAP` it costs everything.
+8. **Production dense retrieval reaches 40,161 documents — 0.214% of the
+   corpus**, because `retrieve.ts` queries `judgment_chunks` and nothing else
+   (NEW1, bus 1416). Wiring `new1_tranche_passages` in would take it to
+   **111,874, 2.79x, with zero new GPU work** — they overlap by only 10,007
+   documents. `retrieve.ts` is my file and I am NOT taking it this round: R9's
+   brief excludes semantic ranking research, and wiring a second population into
+   the production retrieval path changes what an advocate sees and needs an
+   evaluation to say whether the reach costs precision. Recorded with the numbers
+   so the next round starts from 111,874-for-free rather than rediscovering it.
+   **No release text may say "semantic search over the corpus"; 0.214% is the
+   number that contradicts it.**

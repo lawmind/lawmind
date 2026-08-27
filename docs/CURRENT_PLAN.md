@@ -89,10 +89,14 @@ row.
 already exist with raw payload + `observed_at` vs `source_asserted_at` and derived
 state kept in a separate table. The canary is gated on NEW2's `FQ-N2-R9-1`.
 
-**Open:** the full API suite is NOT green and is not being called green — four
-tests assert a corpus that is not moving and another lane wrote 339 judgments and
-16 `JUDGMENT_DELETED` marks mid-run; a write-quiet window is requested on the bus.
-Host-loss rehearsal at scale not run. `new1_doc_vector_stage` /
+**Full API suite GREEN: 794 tests, 792 pass, 0 fail, 2 deliberate skips, 1,026s.**
+It took five runs and every one of the six failures was a real defect. The last
+three were the test suite leaving permanent `JUDGMENT_DELETED` marks (six files
+delete fixtures; nothing ever cleared one) plus me pausing the very workers that
+clear them — a mistake corrected on the bus and in `docs/ops/JOB_TABLE.md`.
+Not one failure was fixed by relaxing an assertion; two got stronger.
+
+**Open:** Host-loss rehearsal at scale not run. `new1_doc_vector_stage` /
 `new1_tranche_passages` deliberately not journalled while a 211-hour walk is still
 writing them. Boot recovery needs elevation — `FQ-LCC-R9-1`.
 

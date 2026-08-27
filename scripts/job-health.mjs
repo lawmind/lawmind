@@ -260,6 +260,26 @@ const OUTPUT_PROBE_BY_DEFAULT = {
     label: 'consumer_vectors',
     query: 'select count(*)::bigint from new1_doc_vector_stage',
   },
+  /**
+   * The KEEPER gets the same probe as the thing it keeps, and for a reason that
+   * cost a false page.
+   *
+   * `sidecar-keeper.mjs` logs ONLY anomalies — a health miss, a restart, a failed
+   * sweep. Silence is its correct output. With no output probe, job-health fell
+   * back to "the log moved", read 33 hours of deliberate quiet as
+   * RUNNING_STALLED, and paged on a keeper whose sidecar was answering `/health`
+   * with CUDA resident. Verified by hand on 27 Aug 2026 before this line was
+   * written, because "it is probably fine" is not a reading.
+   *
+   * A watchdog has no output of its own, so the only honest measure of one is
+   * whether the thing it exists to protect is still producing — the same argument
+   * this file already makes for the sidecar itself one entry up.
+   */
+  'new1-sidecar-keeper': {
+    kind: 'sql',
+    label: 'kept_consumer_vectors',
+    query: 'select count(*)::bigint from new1_doc_vector_stage',
+  },
 };
 
 function outputSpecOf(job) {
@@ -821,6 +841,33 @@ function classify(job, proc, fp, prev, now, out, sweep, startup) {
 
   const sinceMs = now - lastProgressAt;
   if (sinceMs > stallMs) {
+    /**
+     * A DECLARED probe that was not measured is not evidence of a stall.
+     *
+     * This branch reads checkpoint/log motion. For a job that declares an output
+     * probe, that is the WEAKER of the two signals and the file already says so
+     * forty lines down — "when a job declares an output probe, the probe
+     * decides". Without `--with-output` the probe is NOT_MEASURED, so the stall
+     * verdict was resting on the signal the job explicitly said not to trust.
+     *
+     * It cost a false page. `new1-sidecar-keeper` logs ONLY anomalies, so 36
+     * hours of deliberate silence read as RUNNING_STALLED and paged, while the
+     * sidecar it protects was answering `/health` with CUDA resident and its
+     * consumer was inserting vectors. Unmeasured and zero are opposite facts —
+     * this file's own rule, applied to itself.
+     *
+     * UNKNOWN, not PROGRESSING: it still lands in NEEDS ATTENTION, and it names
+     * the flag that would settle it. What it stops doing is waking someone up.
+     */
+    if (out && out.declared && !out.measured) {
+      return {
+        state: 'UNKNOWN',
+        why:
+          `alive; checkpoint/log have not moved for ${Math.round(sinceMs / 60000)}m, but this job ` +
+          `declares the output probe "${out.label}" and it was NOT MEASURED (${out.why ?? 'no reason given'}). ` +
+          'Checkpoint motion is the weaker signal and this job said so — re-run with --with-output to decide.',
+      };
+    }
     return {
       state: 'RUNNING_STALLED',
       why: `alive, but nothing moved for ${Math.round(sinceMs / 60000)}m (window ${Math.round(stallMs / 60000)}m)`,

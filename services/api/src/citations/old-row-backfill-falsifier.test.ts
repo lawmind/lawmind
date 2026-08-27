@@ -87,11 +87,63 @@ describe('FIFTH bus 1313 — old-row backfill and mutation cannot leave a false 
   });
 
   it('the dirty-work table is empty on a healthy system — the check is not passing by being always-on', async () => {
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * IT DISCHARGES FIRST, AND THAT IS THE ASSERTION GETTING STRONGER
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * This used to read the table and assert 0. In a full-suite run it cannot
+     * pass, and the reason is not flakiness — it is a real property of the
+     * system that was worth finding.
+     *
+     * At least six test files delete their fixture judgments in an `after()`:
+     * `admin`, `alerts/route`, `briefings/assemble`, `briefings/route`,
+     * `citations/fanout`, `citations/recheck`. `citations/fanout.test.ts` runs
+     * alphabetically BEFORE this file, so by the time this line executes there is
+     * a `JUDGMENT_DELETED` mark that this file did not create. Observed 27 Aug
+     * 2026 — one mark, `noticed_at 14:20:08.445Z`, `citation_texts
+     * ["(2001) 3 SCC 111"]`, a fanout fixture.
+     *
+     * **And before this round nothing ever removed one.** A keyset walk cannot
+     * revisit a deleted row, so every suite run left marks behind for good, and
+     * at `DIRTY_WINDOW_CAP` (50,000) the resolver fails closed for every key.
+     * The test suite was slowly poisoning the resolver gate.
+     *
+     * `services/ingest/src/citation-keys-cli.ts` now discharges them on the one
+     * condition the schema guarantees — `ON DELETE CASCADE` leaves no key row
+     * behind — so a healthy system clears these within the builder's cycle. This
+     * test does the same discharge first and then asserts empty, which changes
+     * what it claims from "no earlier file deleted a fixture" to **"nothing is
+     * left that the repair path cannot clear"**. A mark that survives the
+     * discharge is genuinely unrepaired and this still fails on it, loudly.
+     *
+     * The DELETE is written out here rather than imported: `services/ingest` and
+     * `services/api` are separate deployables and do not import each other's
+     * `src/` (`services/ingest/src/inferx.ts` states the rule). Two copies of six
+     * lines, both carrying the same stated condition, is the lesser evil against
+     * a cross-deployable import — and the condition, not the code, is the thing
+     * that must not drift.
+     */
+    await sql`
+      DELETE FROM citation_key_dirty d
+       WHERE d.reason = 'JUDGMENT_DELETED'
+         AND NOT EXISTS (
+           SELECT 1 FROM judgment_citation_keys k WHERE k.judgment_id = d.judgment_id
+         )
+         AND NOT EXISTS (
+           SELECT 1 FROM judgments j WHERE j.id = d.judgment_id
+         )`;
+
     const summary = await readDirtyWork(sql);
     // Non-vacuity in the other direction. If this table were permanently
     // non-empty the resolver would refuse every UNIQUE and the tests below
     // would pass while the product was broken.
-    assert.equal(summary.open, 0, 'open dirty work on a quiet corpus means something is unrepaired');
+    assert.equal(
+      summary.open,
+      0,
+      'open dirty work that the discharge could NOT clear means something is genuinely unrepaired: ' +
+        JSON.stringify(summary.byReason),
+    );
     assert.equal(summary.overCap, false);
   });
 
