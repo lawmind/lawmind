@@ -90,6 +90,7 @@
     "0085_citation_key_freshness": "59148273c7a5b3cef08efcfdfdb6f456b27662fe53e70034c5d484d06ba69caa",
     "0086_quality_screen_runs": "e0c13ac5efc76108699d1f48e3cc9c116581802b4e9667806e3327c70bb24918",
     "0087_citation_key_dirty": "7c5f9f3c1383805eefe174d2f8a2a541890488fc1688ac5f302954477eba2fcf",
-    "0088_citation_key_dirty_old_identity": "870033b6d132e84e00d9b27c3c4ff4d9bee435115e07355a8f755d3b6ebf03ad"
+    "0088_citation_key_dirty_old_identity": "870033b6d132e84e00d9b27c3c4ff4d9bee435115e07355a8f755d3b6ebf03ad",
+    "0089_document_vector_source_types": "3b7089525fa77565ff31caf206fae5edc0240fb210effb1446c5009bae129e0a"
   }
 }

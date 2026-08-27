@@ -1,0 +1,5 @@
+{"kind":"queue_seed","at":"2026-08-27T13:30:14.459Z","watermark":"2026-08-27T13:05:10.694Z","why":"no stored watermark; seeded from the newest already-staged judgment"}
+{"kind":"queue_dry_run","at":"2026-08-27T13:30:14.459Z","from":"2026-08-27T13:04:10.694Z","pending":339,"emitted":2406,"alreadyCovered":25912}
+{"kind":"queue_seed","at":"2026-08-27T13:32:11.553Z","watermark":"2026-08-27T13:05:10.694Z","why":"no stored watermark; seeded from the newest already-staged judgment"}
+{"kind":"queue_dry_run","at":"2026-08-27T13:32:11.553Z","from":"2026-08-27T13:04:10.694Z","pending":339,"emitted":0,"alreadyCovered":132}
+{"kind":"queue_nothing_to_embed","at":"2026-08-27T13:33:11.456Z","from":"2026-08-27T13:04:10.694Z","pending":339,"emitted":0,"alreadyCovered":132}

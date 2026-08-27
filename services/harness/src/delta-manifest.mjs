@@ -107,7 +107,13 @@ try {
        WHERE ${
          ids
            ? sql`j.id = ANY(${ids}::uuid[])`
-           : sql`j.created_at >= ${SINCE}::date`
+           : // `::timestamptz`, NOT `::date`. This was `::date`, and the cast
+             // silently truncated `--since 2026-08-27T13:04:10Z` to midnight, so
+             // the incremental queue's one-minute window quietly became the whole
+             // day: it asked for 339 rows and the manifest answered about 28,318.
+             // A bare date still casts cleanly to midnight, so `--since 2026-08-27`
+             // behaves exactly as documented and a timestamp now means what it says.
+             sql`j.created_at >= ${SINCE}::timestamptz`
        }
     ),
     eligible AS (
