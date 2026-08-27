@@ -1,0 +1,11 @@
+{
+  "kind": "new1_source_vector_promotion",
+  "sourceObjectType": "statute_section",
+  "fallbackRows": 36663,
+  "sharedBefore": 0,
+  "sharedAfter": 36663,
+  "inserted": 36663,
+  "fallbackRetained": true,
+  "why": "the fallback rows are KEPT until someone has read this artifact — a promotion that drops its source on the strength of an INSERT not throwing can lose a whole population silently",
+  "at": "2026-08-27T13:52:30.107Z"
+}

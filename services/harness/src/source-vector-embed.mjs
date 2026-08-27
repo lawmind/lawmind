@@ -156,6 +156,8 @@ if (!spec) {
   process.exit(2);
 }
 
+const PROMOTE = process.argv.includes('--promote');
+
 const sql = postgres(url, { ssl: false, max: 2, onnotice: () => {}, connection: { statement_timeout: 0 } });
 
 /**
@@ -230,6 +232,68 @@ async function embed(texts) {
   return out;
 }
 
+/**
+ * Move rows out of the fallback and into the shared table, once the CHECK admits
+ * the kind. One `INSERT ... SELECT`, as this file's header promised.
+ *
+ * It re-reads the constraint first rather than trusting that a migration landed:
+ * "LCC says 0089 is applied" is a report, and `pg_get_constraintdef` is the
+ * contract. It also refuses to delete the fallback rows until it has COUNTED
+ * what arrived — a promotion that drops the source on the strength of an INSERT
+ * not throwing is a promotion that can lose 36,663 vectors silently.
+ */
+async function promote() {
+  const [row] = await sql`
+    SELECT pg_get_constraintdef(oid) AS def FROM pg_constraint
+     WHERE conrelid = 'document_vector_staging'::regclass
+       AND conname = 'document_vector_staging_source_object_type_check'`;
+  if (!row || !row.def.includes(`'${spec.objectType}'`)) {
+    console.error('REFUSED: the live CHECK still does not admit ' + spec.objectType);
+    console.error('  ' + (row?.def ?? '(constraint absent)'));
+    return 4;
+  }
+  const cols =
+    'representation_type, source_object_type, source_object_id, source_hash, ' +
+    'embedding_model, embedding_model_version, definition_version, dim, precision, ' +
+    'embedding_fp32, status, created_at';
+  const [before] = await sql.unsafe(
+    `SELECT count(*)::int AS n FROM document_vector_staging WHERE source_object_type = $1`,
+    [spec.objectType],
+  );
+  const [src] = await sql.unsafe(
+    `SELECT count(*)::int AS n FROM ${FALLBACK_TABLE} WHERE source_object_type = $1`,
+    [spec.objectType],
+  );
+  await sql.unsafe(
+    `INSERT INTO document_vector_staging (${cols})
+     SELECT ${cols} FROM ${FALLBACK_TABLE} WHERE source_object_type = $1
+     ON CONFLICT DO NOTHING`,
+    [spec.objectType],
+  );
+  const [after] = await sql.unsafe(
+    `SELECT count(*)::int AS n FROM document_vector_staging WHERE source_object_type = $1`,
+    [spec.objectType],
+  );
+  const result = {
+    kind: 'new1_source_vector_promotion',
+    sourceObjectType: spec.objectType,
+    fallbackRows: src.n,
+    sharedBefore: before.n,
+    sharedAfter: after.n,
+    inserted: after.n - before.n,
+    fallbackRetained: true,
+    why: 'the fallback rows are KEPT until someone has read this artifact — a promotion that drops its source on the strength of an INSERT not throwing can lose a whole population silently',
+    at: new Date().toISOString(),
+  };
+  mkdirSync(new URL('docs/ai/new1-r9/', ROOT), { recursive: true });
+  writeFileSync(
+    new URL('docs/ai/new1-r9/source-vector-promotion-' + SOURCE + '.json', ROOT),
+    JSON.stringify(result, null, 2) + '\n',
+  );
+  console.log(JSON.stringify(result, null, 2));
+  return after.n - before.n === src.n ? 0 : 1;
+}
+
 const t0 = Date.now();
 let cursor = null;
 let seen = 0;
@@ -238,6 +302,11 @@ let skippedExisting = 0;
 let target = null;
 
 try {
+  if (PROMOTE) {
+    process.exitCode = await promote();
+    await sql.end({ timeout: 10 });
+    process.exit(process.exitCode);
+  }
   target = await targetTable();
   if (!target) process.exit(4);
   console.log('target table: ' + target.table + '  (' + target.reason + ')');

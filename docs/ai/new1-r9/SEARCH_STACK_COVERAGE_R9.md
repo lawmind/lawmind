@@ -108,7 +108,35 @@ It holds **0 rows**. That reads as dead and is not — it is the right shape,
 migrated in advance, and nobody has had a non-judgment population to put in it
 until the statute corpus landed.
 
-### One `CHECK` blocks it
+### ~~One `CHECK` blocks it~~ — CLOSED the same afternoon, and the table is no longer empty
+
+**LCC applied migration `0089_document_vector_source_types` at 13:34Z** (bus 1403),
+through the real `migrate()` path. `statute_section`, `official_order` and
+`ecourts_observation` are admitted; `not_a_real_type` is still REJECTED and 0 rows
+were left behind by the proof — a widened CHECK that admits everything is not a
+check, and this one still refuses.
+
+```
+document_vector_staging   source_object_type = 'statute_section'
+  before   0
+  after    36,663      across 849 Acts
+  vectors differing from the fallback copy    0
+  non-unit-norm vectors                       0
+```
+
+Promotion re-read `pg_get_constraintdef` before doing anything rather than
+trusting that the migration had landed — a bus message is a report, the
+constraint is the contract — and **counted what arrived before declaring
+success**, because an `INSERT ... SELECT` that does not throw is not evidence that
+36,663 rows moved. The fallback rows are deliberately retained until someone has
+read `docs/ai/new1-r9/source-vector-promotion-statute_section.json`.
+
+The rest of this section is kept as written, because the reasoning for **not**
+filing statute sections as `legal_object` is the part a future reader will be
+tempted to undo — and LCC recorded it verbatim in the migration's own header for
+the same reason.
+
+### The constraint as it stood this morning
 
 ```sql
 document_vector_staging_source_object_type_check
