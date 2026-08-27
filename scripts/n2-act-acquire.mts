@@ -92,6 +92,14 @@ type ActSpec = {
   spotChecks: number[];
   /** One section that must exist only in the amended edition, when a control exists. */
   amendedWitness: string | null;
+  /**
+   * How this edition's typesetter ends a section heading. `dash` (the default)
+   * requires the em-dash CrPC and the IPC both use. `dash-or-period` also
+   * accepts `Heading.  Body`, which is the Evidence Act derivative's layout.
+   * Per-spec rather than global: a looser default would admit table-of-contents
+   * lines into an Act that does use the dash.
+   */
+  headTerminator?: 'dash' | 'dash-or-period';
   row: { actId: string; shortTitle: string; actNumber: string; actYear: number; enactmentDate: string; enforcementDate: string; ministry: string };
   currency: { repealedBy: string; repealedFrom: string };
 };
@@ -210,6 +218,97 @@ const ACTS: ActSpec[] = [
     },
     currency: { repealedBy: 'Bharatiya Nyaya Sanhita, 2023 (Act 45 of 2023)', repealedFrom: '2024-07-01' },
   },
+  {
+    /**
+     * THE INDIAN EVIDENCE ACT, 1872 — the third of the three Codes, and the one
+     * this corpus did not hold at all. `judgments` cites it constantly and
+     * `statutes` had no row for it.
+     *
+     * ## Which of four India Code items, decided by measurement
+     *
+     * Four items on India Code carry this Act. Three are unusable and the reason
+     * differs in each case, which is why they are recorded rather than skipped:
+     *
+     * | item | file | text derivative | verdict |
+     * | --- | --- | --- | --- |
+     * | `488783` CENTRAL | `A1872-1.pdf` 639,810 B | 101,130 B, **exactly 100,000 chars** | TRUNCATED — stops at s.66 |
+     * | `547821` Chandigarh | `indian_evidence_act.pdf` | 101,122 B, **exactly 100,000 chars** | TRUNCATED — 65 of 167 |
+     * | `550883` DNH&DD | 8.5 MB scan | 164,774 B | UNPARSEABLE — no `ACT NO` line, no section structure; an OCR layer of a scan |
+     * | **`547533` Chandigarh** | `iea_1872.pdf` 432,048 B | **187,682 B** | **COMPLETE — 165 bare + 18 lettered** |
+     *
+     * The founder's instruction was explicit: *do not accept the previously
+     * measured damaged/truncated derivatives as complete.* Two of the four ARE
+     * those derivatives, and the 100,000-character cap that the CrPC run
+     * identified as a per-item property is what makes them identifiable rather
+     * than a matter of judgement.
+     *
+     * ## What stands in for a byte-identical control, and why it is weaker
+     *
+     * There is **no byte-identical second source**. The CENTRAL `A1872-1.pdf` is
+     * a different file from `iea_1872.pdf` — different size, different MD5 — so
+     * the two-checksum proof the CrPC has is not available here.
+     *
+     * What IS available is an OVERLAP control: the CENTRAL text derivative,
+     * though truncated, covers ss.1-66, and the ingest text is compared against
+     * it section by section over exactly that range. Agreement there is evidence
+     * that the Chandigarh repository is serving the CENTRAL Act rather than a
+     * State variant — which is the actual risk, since the item sits in a
+     * Chandigarh collection. It is weaker than a checksum and is labelled so.
+     *
+     * ## Two things this run does NOT assert
+     *
+     * - **Currency.** The file states `Last updated:-13-3-2020`. That is recorded
+     *   as the edition date. Whether any amendment between 2020 and the repeal is
+     *   missing is `NOT_MEASURED`.
+     * - **`no_of_section` from the platform.** Every India Code item for this Act
+     *   publishes `no_of_section: 0`, which is metadata rot, not a section count.
+     *
+     * s.2 is absent from the body because **Parliament repealed it** — the Act
+     * prints `2. [Repealed.]`. That is a fact about the Act, not about the parse.
+     */
+    key: 'evidence',
+    outJson: 'docs/ai/new2-r9/iea-1872-acquisition.json',
+    cache: join(ROOT, '.cache', 'n2-iea-1872'),
+    // ss.1-167 as published; s.2 is repealed and is expected to be absent.
+    publishedSections: 167,
+    minSections: 160,
+    headTerminator: 'dash-or-period',
+    ingest: {
+      itemUuid: '83a3b119-004c-44d2-a4f0-ad180e69ec6c',
+      handle: '123456789/547533',
+      page: 'https://indiacode.gov.in/handle/123456789/547533',
+      pdfName: 'iea_1872.pdf',
+      pdfBytes: 432048,
+      pdfMd5: '9e639b5ebe22d20288651e30db77704c',
+      text: {
+        url: 'https://indiacode.gov.in/server/api/core/bitstreams/391549c2-cca2-4fb8-9053-c1bb0f3cbb22/content',
+        bytes: 187682,
+        md5: 'fee39795c57d5dc0bf30c28ddf597fbe',
+      },
+    },
+    control: null,
+    /**
+     * ss.65A/65B (electronic records, Act 21 of 2000), 53A and 114A (Act 13 of
+     * 2013) and 113A/113B are the sections an advocate reaches for that a
+     * pre-2000 or pre-2013 edition would silently lack. 86 is the section whose
+     * dash-less heading exposed the parser's assumption.
+     */
+    spotChecks: [3, 8, 24, 25, 27, 32, 45, 60, 65, 86, 101, 106, 113, 114, 118, 132, 145, 167],
+    amendedWitness: null,
+    row: {
+      actId: 'INDIACODE_547533_iea_1872',
+      shortTitle: 'The Indian Evidence Act, 1872',
+      actNumber: '1',
+      actYear: 1872,
+      enactmentDate: '1872-03-15',
+      // s.1 of the Act: "It shall come into force on the first day of September,
+      // 1872." Two independent State repository items (Chhattisgarh 549111,
+      // Rajasthan 588125) publish `enforcement_date 1872-09-01` and agree.
+      enforcementDate: '1872-09-01',
+      ministry: 'Ministry of Law and Justice',
+    },
+    currency: { repealedBy: 'Bharatiya Sakshya Adhiniyam, 2023 (Act 47 of 2023)', repealedFrom: '2024-07-01' },
+  },
 ];
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
@@ -231,6 +330,54 @@ function digest(buf: Buffer, algo: 'md5' | 'sha256'): string {
 }
 
 type Parsed = { sections: SectionRecord[]; bare: Set<number>; lettered: string[]; principalChars: number };
+
+/**
+ * `376AB` -> `[376, 'AB']`. A section's order is its number, then its letter
+ * suffix compared AS A STRING.
+ *
+ * NOT base-26 arithmetic, which is what the first version did and which
+ * mis-ordered every three-character suffix in the corpus: `376A` scored .001,
+ * `376B` .002 and `376AB` .028, so `376AB` sorted AFTER `376B` and the
+ * monotonic filter dropped a real section to restore order. It cost IPC
+ * ss.153B, 376AB and 376E and CrPC s.376D — four sections of real law, silently,
+ * and only the CrPC/IPC control run made it visible.
+ *
+ * Lexicographic suffix order is the right rule and matches how the Acts print:
+ * `'' < 'A' < 'AA' < 'AB' < 'B'`.
+ */
+function sectionOrder(sec: string): [number, string] | null {
+  const m = /^(\d+)([A-Z]*)$/.exec(sec);
+  return m ? [Number(m[1]), m[2]!] : null;
+}
+
+function sectionBefore(a: string, b: string): boolean {
+  const x = sectionOrder(a);
+  const y = sectionOrder(b);
+  if (!x || !y) return false;
+  if (x[0] !== y[0]) return x[0] < y[0];
+  return x[1] < y[1];
+}
+
+/** The longest strictly increasing subsequence of section hits, in document order. */
+function longestIncreasingByNumber(hits: { sec: string; at: number }[]): { sec: string; at: number }[] {
+  const n = hits.length;
+  if (n === 0) return [];
+  const len = new Array<number>(n).fill(1);
+  const prev = new Array<number>(n).fill(-1);
+  let bestEnd = 0;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < i; j++) {
+      if (sectionBefore(hits[j]!.sec, hits[i]!.sec) && len[j]! + 1 > len[i]!) {
+        len[i] = len[j]! + 1;
+        prev[i] = j;
+      }
+    }
+    if (len[i]! > len[bestEnd]!) bestEnd = i;
+  }
+  const out: { sec: string; at: number }[] = [];
+  for (let i = bestEnd; i !== -1; i = prev[i]!) out.push(hits[i]!);
+  return out.reverse();
+}
 
 /**
  * Parse sections out of the verified text derivative.
@@ -276,16 +423,84 @@ function parse(text: string, spec: ActSpec): Parsed {
   while ((m = re.exec(principal))) {
     const flat = principal.slice(m.index, m.index + 320).replace(/\s+/g, ' ');
     const dash = /[—–]/.exec(flat);
-    if (!dash || dash.index > 200) continue;
-    hits.push({ sec: m[1]!, at: m.index });
+    if (dash && dash.index <= 200) {
+      hits.push({ sec: m[1]!, at: m.index });
+      continue;
+    }
+    /**
+     * THE EM-DASH IS NOT UNIVERSAL, and assuming it was scored a real section
+     * absent from a file that contains it.
+     *
+     * The Evidence Act derivative prints `86. Presumption as to certified
+     * copies of foreign judicial records.  The Court may presume that …` —
+     * heading, full stop, TWO SPACES, body. No dash anywhere. CrPC and the IPC
+     * both use the dash, so this is a per-edition typesetting fact and gets a
+     * per-spec flag rather than being loosened for everyone: a looser default
+     * would let a table-of-contents line into an Act that does use the dash.
+     */
+    if (spec.headTerminator === 'dash-or-period') {
+      /**
+       * Tested on the RAW slice, NOT on `flat`. `flat` collapses whitespace, and
+       * the two spaces after the heading's full stop ARE the discriminator — the
+       * first version tested `\s{2}` against a string that had just had every
+       * run of whitespace turned into one space, so it could never match and
+       * s.86 stayed absent from a file plainly containing it.
+       *
+       * The same two spaces are what separate a body heading from a
+       * table-of-contents line: the TOC prints `86. …records. \n\n87. …`, whose
+       * heading is followed by a newline rather than by more text on the line.
+       */
+      const raw = principal.slice(m.index + 1, m.index + 360);
+      if (/^[ \t]{0,6}(?:\d{0,2}\[)?\d{1,3}[A-Z]{0,2}\.?[ \t]{1,4}[A-Z“(][^.\n]{2,180}\.[ \t]{2,}[A-Z“(]/.test(raw)) {
+        hits.push({ sec: m[1]!, at: m.index });
+      }
+    }
   }
 
+  /**
+   * AN ACT'S SECTIONS RUN IN ASCENDING ORDER THROUGH ITS OWN BODY. A FOOTNOTE
+   * MARKER DOES NOT.
+   *
+   * The Evidence Act derivative interleaves footnotes with the text — `3. Ins.
+   * by Act 43 of 1986, s. 12 (w.e.f. 5-1-1986).` sits in the middle of s.48 —
+   * and footnote numbers restart per page, so `3.` reappears long after s.3.
+   * The dash test cannot see this: the footnote's own line has no dash, but the
+   * NEXT real section's does, inside the 200-character window.
+   *
+   * Every one of those captures is a confident wrong row: it would store
+   * amendment bookkeeping as the text of s.3. Sixteen of them survived the dash
+   * test on this Act.
+   *
+   * The discriminator used is a property of what an Act IS, not a phrase list
+   * about how footnotes are worded — so it should survive a different
+   * typesetter, which `a-phrase-list-scores-100-on-the-documents-it-was-written-from`
+   * says a wording rule would not. The kept set is the longest strictly
+   * increasing subsequence of the hits in document order.
+   *
+   * Applied to EVERY Act, not only the one that needed it, and the CrPC and IPC
+   * runs are the control. THAT CONTROL EARNED ITS KEEP TWICE:
+   *
+   * - it caught the ordering bug described on {@link sectionOrder} — the first
+   *   version silently dropped IPC ss.153B, 376AB, 376E and CrPC s.376D;
+   * - once ordering was fixed, IPC returned to exactly its previous 552 sections
+   *   and CrPC settled at 532 rather than 533. The one CrPC section removed is
+   *   `376D`, which the corpus HELD as a section of the Code and which is not
+   *   one: the stored text is the fragment
+   *   `376DA, 376DB]  or section 376E of the Indian Penal Code (45 of 1860)…`,
+   *   a cross-reference caught by the dash test. CrPC s.376 is "No appeal in
+   *   petty cases" and the Code has no s.376D at all.
+   *
+   * So the filter is not neutral on the existing corpus — it removes a confident
+   * wrong row that an advocate looking up "CrPC 376D" would have been served.
+   */
+  const ordered = longestIncreasingByNumber(hits);
+
   const best = new Map<string, { start: number; end: number }>();
-  for (let i = 0; i < hits.length; i++) {
-    const start = hits[i]!.at;
-    const end = i + 1 < hits.length ? hits[i + 1]!.at : principal.length;
-    const prev = best.get(hits[i]!.sec);
-    if (!prev || end - start > prev.end - prev.start) best.set(hits[i]!.sec, { start, end });
+  for (let i = 0; i < ordered.length; i++) {
+    const start = ordered[i]!.at;
+    const end = i + 1 < ordered.length ? ordered[i + 1]!.at : principal.length;
+    const prev = best.get(ordered[i]!.sec);
+    if (!prev || end - start > prev.end - prev.start) best.set(ordered[i]!.sec, { start, end });
   }
 
   const sections: SectionRecord[] = [];
@@ -376,7 +591,12 @@ async function acquire(spec: ActSpec, apply: boolean): Promise<void> {
   const full = txtBuf.toString('utf8');
   // The `Rep. by …` note sometimes lands on the NEXT line — s.492's does — so
   // the marker is looked for across the wrap rather than on one line.
+  // The marker is sometimes INSIDE the bracket rather than after it: the
+  // Evidence Act prints s.2 as `2. [Repealed.]` and nothing follows, so a rule
+  // that only looked after the closing bracket reported Parliament's own repeal
+  // as an unexplained parser gap and failed the gate on it.
   const repealed = missing.filter((n) =>
+    new RegExp(`(^|\\n)[ \\t]{0,8}(?:\\d{0,2}\\[)?${n}\\.[ \\t]*\\[[^\\]]{0,300}(Omitted|Rep\\.|Repealed)`, 'i').test(full) ||
     new RegExp(`(^|\\n)[ \\t]{0,8}(?:\\d{0,2}\\[)?${n}\\.[ \\t]*\\[[^\\]]{0,300}\\][\\s\\S]{0,120}?(Omitted|Rep\\.|Repealed)`, 'i').test(full),
   );
   const unexplained = missing.filter((n) => !repealed.includes(n));
@@ -505,6 +725,38 @@ async function acquire(spec: ActSpec, apply: boolean): Promise<void> {
   const sql = await openDb(process.env['DATABASE_URL']!, 2);
   try {
     const res = await upsertAct(sql, act, sections);
+
+    /**
+     * PRUNE: sections this Act's row holds that the CURRENT parse does not
+     * produce.
+     *
+     * `upsertAct` only inserts and updates — it has no delete — so a row written
+     * by an earlier, wronger parse survives every re-run. That is how CrPC
+     * `376D` stayed in the corpus: a cross-reference fragment stored as a
+     * section of the Code, which a re-apply would leave exactly where it was.
+     *
+     * Deletion is bounded to THIS act_id and to section numbers absent from a
+     * parse that has already passed every gate, and each row is printed with its
+     * stored text before it goes, so the removal is reviewable rather than
+     * silent. Nothing is pruned when the parse produced no sections.
+     */
+    const parsedNumbers = sections.map((s) => s.sectionNumber);
+    const stale = await sql<{ id: string; section_number: string; section_text: string }[]>`
+      SELECT id::text, section_number, section_text
+      FROM statute_sections
+      WHERE statute_id = ${res.statuteId}
+        AND section_number <> ALL(${parsedNumbers}::text[])
+      ORDER BY section_number
+    `;
+    if (stale.length > 0) {
+      console.log(`  PRUNE  ${stale.length} row(s) held but not produced by this parse:`);
+      for (const s of stale) {
+        console.log(`    s.${s.section_number.padEnd(6)} ${JSON.stringify(s.section_text.slice(0, 110))}`);
+      }
+      await sql`DELETE FROM statute_sections WHERE id = ANY(${stale.map((s) => s.id)}::uuid[])`;
+      console.log(`  PRUNE  deleted ${stale.length}`);
+    }
+
     const [check] = await sql<{ n: string }[]>`
       SELECT count(*)::text AS n FROM statute_sections WHERE statute_id = ${res.statuteId}
     `;
@@ -513,6 +765,7 @@ async function acquire(spec: ActSpec, apply: boolean): Promise<void> {
     json.applied = true;
     json.statute_id = res.statuteId;
     json.sections_written = res.sections;
+    json.pruned = stale.map((s) => ({ sectionNumber: s.section_number, text: s.section_text.slice(0, 400) }));
     json.verified_rows = Number(check?.n ?? 0);
     writeFileSync(join(ROOT, spec.outJson), JSON.stringify(json, null, 1) + '\n');
   } finally {

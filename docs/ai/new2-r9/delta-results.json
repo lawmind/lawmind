@@ -1,0 +1,400 @@
+{
+  "takenAt": "2026-08-27T10:09:50.368Z",
+  "totals": {
+    "seen": 72934,
+    "mapped": 59018,
+    "written": 59018,
+    "ledgerFailures": 13916
+  },
+  "aggregateOutcomes": {
+    "ledger_permanent_skip": 238275,
+    "pdf_absent": 3709,
+    "pdf_failed": 132,
+    "no_text": 10075,
+    "duplicate_in_batch": 23,
+    "already_held": 7004833
+  },
+  "scopes": [
+    {
+      "scope": "hc-boot-27_1",
+      "state": "RESULTS",
+      "seen": 9605,
+      "mapped": 8815,
+      "written": 8815,
+      "ledgerFailures": 790,
+      "outcomes": {
+        "ledger_permanent_skip": 122222,
+        "pdf_absent": 775,
+        "pdf_failed": 14,
+        "no_text": 1,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-27_1-y2026",
+      "state": "RESULTS",
+      "seen": 9005,
+      "mapped": 8155,
+      "written": 8155,
+      "ledgerFailures": 850,
+      "outcomes": {
+        "already_held": 87880,
+        "ledger_permanent_skip": 11142,
+        "pdf_absent": 842,
+        "pdf_failed": 8,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-19_16",
+      "state": "RESULTS",
+      "seen": 3520,
+      "mapped": 3485,
+      "written": 3485,
+      "ledgerFailures": 35,
+      "outcomes": {
+        "already_held": 406385,
+        "pdf_absent": 22,
+        "pdf_failed": 13,
+        "ledger_permanent_skip": 2,
+        "duplicate_in_batch": 1
+      }
+    },
+    {
+      "scope": "hc-boot-27_1-y2025",
+      "state": "RESULTS",
+      "seen": 3719,
+      "mapped": 3712,
+      "written": 3712,
+      "ledgerFailures": 7,
+      "outcomes": {
+        "already_held": 302090,
+        "ledger_permanent_skip": 36820,
+        "pdf_absent": 7,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-29_3",
+      "state": "RESULTS",
+      "seen": 3963,
+      "mapped": 3910,
+      "written": 3910,
+      "ledgerFailures": 53,
+      "outcomes": {
+        "already_held": 729105,
+        "ledger_permanent_skip": 95,
+        "pdf_absent": 33,
+        "pdf_failed": 19,
+        "no_text": 1,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-33_10",
+      "state": "RESULTS",
+      "seen": 4474,
+      "mapped": 4449,
+      "written": 4449,
+      "ledgerFailures": 25,
+      "outcomes": {
+        "ledger_permanent_skip": 164,
+        "pdf_absent": 18,
+        "pdf_failed": 7,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-22_18",
+      "state": "RESULTS",
+      "seen": 2791,
+      "mapped": 2781,
+      "written": 2781,
+      "ledgerFailures": 10,
+      "outcomes": {
+        "already_held": 401685,
+        "pdf_absent": 9,
+        "ledger_permanent_skip": 4,
+        "pdf_failed": 1,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-7_26",
+      "state": "RESULTS",
+      "seen": 3118,
+      "mapped": 2758,
+      "written": 2758,
+      "ledgerFailures": 360,
+      "outcomes": {
+        "already_held": 236172,
+        "pdf_absent": 355,
+        "ledger_permanent_skip": 201,
+        "pdf_failed": 5,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-8_9",
+      "state": "RESULTS",
+      "seen": 2559,
+      "mapped": 2546,
+      "written": 2546,
+      "ledgerFailures": 13,
+      "outcomes": {
+        "already_held": 814217,
+        "ledger_permanent_skip": 195,
+        "pdf_failed": 10,
+        "pdf_absent": 2,
+        "no_text": 1,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-3_22",
+      "state": "RESULTS",
+      "seen": 12960,
+      "mapped": 2552,
+      "written": 2552,
+      "ledgerFailures": 10408,
+      "outcomes": {
+        "no_text": 10068,
+        "pdf_absent": 330,
+        "ledger_permanent_skip": 88,
+        "pdf_failed": 10,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-21_11",
+      "state": "RESULTS",
+      "seen": 2727,
+      "mapped": 2722,
+      "written": 2722,
+      "ledgerFailures": 5,
+      "outcomes": {
+        "already_held": 760447,
+        "ledger_permanent_skip": 465,
+        "pdf_absent": 5,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-2_5",
+      "state": "RESULTS",
+      "seen": 2786,
+      "mapped": 2775,
+      "written": 2775,
+      "ledgerFailures": 11,
+      "outcomes": {
+        "already_held": 188533,
+        "pdf_absent": 6,
+        "pdf_failed": 5,
+        "duplicate_in_batch": 0,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-10_8",
+      "state": "RESULTS",
+      "seen": 1858,
+      "mapped": 1844,
+      "written": 1844,
+      "ledgerFailures": 14,
+      "outcomes": {
+        "ledger_permanent_skip": 66,
+        "pdf_absent": 11,
+        "pdf_failed": 3,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-18_6",
+      "state": "RESULTS",
+      "seen": 1660,
+      "mapped": 1420,
+      "written": 1420,
+      "ledgerFailures": 240,
+      "outcomes": {
+        "already_held": 232036,
+        "pdf_absent": 236,
+        "duplicate_in_batch": 13,
+        "pdf_failed": 4,
+        "ledger_permanent_skip": 3
+      }
+    },
+    {
+      "scope": "hc-boot-28_2",
+      "state": "RESULTS",
+      "seen": 2048,
+      "mapped": 1598,
+      "written": 1598,
+      "ledgerFailures": 450,
+      "outcomes": {
+        "already_held": 349812,
+        "ledger_permanent_skip": 626,
+        "pdf_absent": 444,
+        "pdf_failed": 6,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-20_7",
+      "state": "RESULTS",
+      "seen": 1264,
+      "mapped": 1228,
+      "written": 1228,
+      "ledgerFailures": 36,
+      "outcomes": {
+        "already_held": 383045,
+        "pdf_absent": 32,
+        "pdf_failed": 4,
+        "ledger_permanent_skip": 1,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-5_15",
+      "state": "RESULTS",
+      "seen": 1183,
+      "mapped": 1181,
+      "written": 1181,
+      "ledgerFailures": 2,
+      "outcomes": {
+        "already_held": 137867,
+        "pdf_failed": 2,
+        "duplicate_in_batch": 0,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-1_12",
+      "state": "RESULTS",
+      "seen": 804,
+      "mapped": 789,
+      "written": 789,
+      "ledgerFailures": 15,
+      "outcomes": {
+        "already_held": 112034,
+        "pdf_absent": 10,
+        "pdf_failed": 3,
+        "no_text": 2,
+        "duplicate_in_batch": 0,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-24_17",
+      "state": "RESULTS",
+      "seen": 782,
+      "mapped": 778,
+      "written": 778,
+      "ledgerFailures": 4,
+      "outcomes": {
+        "already_held": 290138,
+        "ledger_permanent_skip": 4,
+        "pdf_failed": 4,
+        "duplicate_in_batch": 0
+      }
+    },
+    {
+      "scope": "hc-boot-36_29",
+      "state": "RESULTS",
+      "seen": 1385,
+      "mapped": 1185,
+      "written": 1185,
+      "ledgerFailures": 200,
+      "outcomes": {
+        "already_held": 525040,
+        "ledger_permanent_skip": 998,
+        "pdf_absent": 197,
+        "pdf_failed": 2,
+        "duplicate_in_batch": 1,
+        "no_text": 1
+      }
+    },
+    {
+      "scope": "hc-boot-17_21",
+      "state": "RESULTS",
+      "seen": 145,
+      "mapped": 145,
+      "written": 145,
+      "ledgerFailures": 0,
+      "outcomes": {
+        "already_held": 11744,
+        "duplicate_in_batch": 0,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-14_25",
+      "state": "RESULTS",
+      "seen": 144,
+      "mapped": 143,
+      "written": 143,
+      "ledgerFailures": 1,
+      "outcomes": {
+        "already_held": 20887,
+        "duplicate_in_batch": 2,
+        "pdf_absent": 1,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-11_24",
+      "state": "RESULTS",
+      "seen": 15,
+      "mapped": 15,
+      "written": 15,
+      "ledgerFailures": 0,
+      "outcomes": {
+        "already_held": 1628,
+        "duplicate_in_batch": 0,
+        "ledger_permanent_skip": 0
+      }
+    },
+    {
+      "scope": "hc-boot-32_4",
+      "state": "RESULTS",
+      "seen": 14,
+      "mapped": 11,
+      "written": 11,
+      "ledgerFailures": 3,
+      "outcomes": {
+        "already_held": 511194,
+        "ledger_permanent_skip": 102,
+        "duplicate_in_batch": 2,
+        "pdf_failed": 2,
+        "no_text": 1
+      }
+    },
+    {
+      "scope": "hc-boot-23_23",
+      "state": "RESULTS",
+      "seen": 19,
+      "mapped": 16,
+      "written": 16,
+      "ledgerFailures": 3,
+      "outcomes": {
+        "already_held": 502894,
+        "ledger_permanent_skip": 42693,
+        "duplicate_in_batch": 3,
+        "pdf_failed": 3
+      }
+    },
+    {
+      "scope": "hc-boot-9_13",
+      "state": "RESULTS",
+      "seen": 386,
+      "mapped": 5,
+      "written": 5,
+      "ledgerFailures": 381,
+      "outcomes": {
+        "ledger_permanent_skip": 22384,
+        "pdf_absent": 374,
+        "pdf_failed": 7,
+        "duplicate_in_batch": 1
+      }
+    }
+  ]
+}

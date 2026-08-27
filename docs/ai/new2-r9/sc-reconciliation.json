@@ -1,0 +1,358 @@
+{
+  "takenAt": "2026-08-27T10:10:09.580Z",
+  "bucket": "https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com",
+  "upstream": {
+    "pdfObjects": 177563,
+    "englishPdfObjects": 43535,
+    "newestUpstreamWrite": "2026-08-15T16:48:37.000Z",
+    "years": 77
+  },
+  "local": {
+    "heldRows": 38351,
+    "newestLocalDecision": "2026-08-04",
+    "oldestLocalDecision": "1950-03-14"
+  },
+  "gap": {
+    "missingByExactUrl": 5184,
+    "missingAlsoByBasename": 4,
+    "note": "A judgment listed under two adjacent year partitions is held under one URL only; the basename figure is the real gap.",
+    "heldButNotUpstream": 0
+  },
+  "byYear": {
+    "1950": {
+      "upstream": 43,
+      "missing": 0
+    },
+    "1951": {
+      "upstream": 66,
+      "missing": 0
+    },
+    "1952": {
+      "upstream": 106,
+      "missing": 0
+    },
+    "1953": {
+      "upstream": 132,
+      "missing": 0
+    },
+    "1954": {
+      "upstream": 174,
+      "missing": 0
+    },
+    "1955": {
+      "upstream": 177,
+      "missing": 0
+    },
+    "1956": {
+      "upstream": 83,
+      "missing": 0
+    },
+    "1957": {
+      "upstream": 138,
+      "missing": 0
+    },
+    "1958": {
+      "upstream": 210,
+      "missing": 0
+    },
+    "1959": {
+      "upstream": 293,
+      "missing": 0
+    },
+    "1960": {
+      "upstream": 382,
+      "missing": 0
+    },
+    "1961": {
+      "upstream": 533,
+      "missing": 0
+    },
+    "1962": {
+      "upstream": 698,
+      "missing": 0
+    },
+    "1963": {
+      "upstream": 537,
+      "missing": 0
+    },
+    "1964": {
+      "upstream": 582,
+      "missing": 0
+    },
+    "1965": {
+      "upstream": 443,
+      "missing": 0
+    },
+    "1966": {
+      "upstream": 467,
+      "missing": 0
+    },
+    "1967": {
+      "upstream": 447,
+      "missing": 0
+    },
+    "1968": {
+      "upstream": 501,
+      "missing": 0
+    },
+    "1969": {
+      "upstream": 580,
+      "missing": 0
+    },
+    "1970": {
+      "upstream": 520,
+      "missing": 0
+    },
+    "1971": {
+      "upstream": 550,
+      "missing": 0
+    },
+    "1972": {
+      "upstream": 492,
+      "missing": 0
+    },
+    "1973": {
+      "upstream": 475,
+      "missing": 0
+    },
+    "1974": {
+      "upstream": 454,
+      "missing": 0
+    },
+    "1975": {
+      "upstream": 528,
+      "missing": 0
+    },
+    "1976": {
+      "upstream": 550,
+      "missing": 0
+    },
+    "1977": {
+      "upstream": 432,
+      "missing": 0
+    },
+    "1978": {
+      "upstream": 369,
+      "missing": 0
+    },
+    "1979": {
+      "upstream": 426,
+      "missing": 0
+    },
+    "1980": {
+      "upstream": 406,
+      "missing": 0
+    },
+    "1981": {
+      "upstream": 322,
+      "missing": 0
+    },
+    "1982": {
+      "upstream": 201,
+      "missing": 0
+    },
+    "1983": {
+      "upstream": 254,
+      "missing": 0
+    },
+    "1984": {
+      "upstream": 322,
+      "missing": 0
+    },
+    "1985": {
+      "upstream": 384,
+      "missing": 0
+    },
+    "1986": {
+      "upstream": 286,
+      "missing": 0
+    },
+    "1987": {
+      "upstream": 457,
+      "missing": 0
+    },
+    "1988": {
+      "upstream": 520,
+      "missing": 0
+    },
+    "1989": {
+      "upstream": 398,
+      "missing": 0
+    },
+    "1990": {
+      "upstream": 401,
+      "missing": 0
+    },
+    "1991": {
+      "upstream": 351,
+      "missing": 0
+    },
+    "1992": {
+      "upstream": 363,
+      "missing": 0
+    },
+    "1993": {
+      "upstream": 398,
+      "missing": 0
+    },
+    "1994": {
+      "upstream": 624,
+      "missing": 0
+    },
+    "1995": {
+      "upstream": 917,
+      "missing": 0
+    },
+    "1996": {
+      "upstream": 1537,
+      "missing": 1
+    },
+    "1997": {
+      "upstream": 846,
+      "missing": 0
+    },
+    "1998": {
+      "upstream": 494,
+      "missing": 2
+    },
+    "1999": {
+      "upstream": 572,
+      "missing": 0
+    },
+    "2000": {
+      "upstream": 610,
+      "missing": 0
+    },
+    "2001": {
+      "upstream": 613,
+      "missing": 0
+    },
+    "2002": {
+      "upstream": 580,
+      "missing": 0
+    },
+    "2003": {
+      "upstream": 752,
+      "missing": 0
+    },
+    "2004": {
+      "upstream": 729,
+      "missing": 0
+    },
+    "2005": {
+      "upstream": 631,
+      "missing": 0
+    },
+    "2006": {
+      "upstream": 1029,
+      "missing": 1
+    },
+    "2007": {
+      "upstream": 1325,
+      "missing": 0
+    },
+    "2008": {
+      "upstream": 1508,
+      "missing": 0
+    },
+    "2009": {
+      "upstream": 1326,
+      "missing": 0
+    },
+    "2010": {
+      "upstream": 907,
+      "missing": 0
+    },
+    "2011": {
+      "upstream": 848,
+      "missing": 0
+    },
+    "2012": {
+      "upstream": 623,
+      "missing": 0
+    },
+    "2013": {
+      "upstream": 854,
+      "missing": 0
+    },
+    "2014": {
+      "upstream": 795,
+      "missing": 0
+    },
+    "2015": {
+      "upstream": 761,
+      "missing": 0
+    },
+    "2016": {
+      "upstream": 589,
+      "missing": 0
+    },
+    "2017": {
+      "upstream": 732,
+      "missing": 0
+    },
+    "2018": {
+      "upstream": 795,
+      "missing": 0
+    },
+    "2019": {
+      "upstream": 1050,
+      "missing": 0
+    },
+    "2020": {
+      "upstream": 571,
+      "missing": 0
+    },
+    "2021": {
+      "upstream": 708,
+      "missing": 0
+    },
+    "2022": {
+      "upstream": 1017,
+      "missing": 0
+    },
+    "2023": {
+      "upstream": 854,
+      "missing": 0
+    },
+    "2024": {
+      "upstream": 782,
+      "missing": 0
+    },
+    "2025": {
+      "upstream": 897,
+      "missing": 0
+    },
+    "2026": {
+      "upstream": 208,
+      "missing": 0
+    }
+  },
+  "missingSample": [
+    {
+      "key": "data/pdf/year=1996/english/S_1996_2_866_868_EN.pdf",
+      "size": 199,
+      "lastModified": "2026-06-04T04:21:28.000Z"
+    },
+    {
+      "key": "data/pdf/year=1998/english/1998_1_937_947_EN.pdf",
+      "size": 129,
+      "lastModified": "2026-06-04T04:29:59.000Z"
+    },
+    {
+      "key": "data/pdf/year=1998/english/1998_1_948_960_EN.pdf",
+      "size": 129,
+      "lastModified": "2026-06-04T04:29:59.000Z"
+    },
+    {
+      "key": "data/pdf/year=2006/english/2009_9_810_820_EN.pdf",
+      "size": 403918,
+      "lastModified": "2026-06-04T04:44:20.000Z"
+    }
+  ],
+  "missingYearsToIngest": [
+    "1996",
+    "1998",
+    "2006"
+  ]
+}

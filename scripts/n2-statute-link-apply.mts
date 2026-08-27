@@ -17,6 +17,28 @@
  *   truth sample   `--sample N` prints N random (judgment, act as printed, act linked)
  *                  triples before and after, so the link can be read by a human.
  *   no model       nothing here calls one.
+ *   chronological  a ref is refused if the target Act's `act_year` is LATER than the
+ *                  year of the judgment. Added R9 — see below.
+ *
+ * ## THE CHRONOLOGY GUARD, added R9 on FIFTH's bus 1357
+ *
+ * A pair-level rule links every ref sharing an `(act_key, act_named)`. That is
+ * blind to WHEN each of those judgments was delivered, so a 1959 judgment saying
+ * "Cantonments Act" was linked to the Cantonments Act 2006 — an Act that did not
+ * exist when the judge wrote. An exhaustive control found 1,723 such rows AFTER
+ * the R8.3 name-only precision repair, because chronology is independent of both
+ * rules that repair used: sections overlap between an Act and its predecessor, and
+ * a year printed in `act_named` can be the EXTRACTOR's expansion of a bare
+ * predecessor name rather than the court's own words.
+ *
+ * So the guard is in the WHERE clause of both the dry-run count and the write,
+ * not in a follow-up pass: a repair that runs after the fact can be forgotten, and
+ * this apply is re-runnable. `scripts/n2-statute-chronology.mts` is the detector
+ * and the repair for rows already written; this is the prevention.
+ *
+ * `judgment_date IS NULL` is deliberately allowed through — chronology has nothing
+ * to say about a judgment with no date, and refusing on absent evidence would be
+ * the same over-refusal in the other direction.
  *
  * Default mode is DRY RUN. `--apply` is required to write, and is refused while
  * another lane holds HEAVY_BOX unless `--i-hold-heavy-box` is also passed.
@@ -126,18 +148,30 @@ async function main() {
 
     if (!APPLY) {
       const [{ n }] = await sql<{ n: number }[]>`
-        select count(*)::int as n from judgment_statute_refs
-        where act_key = ${l.act_key} and act_named = ${l.act_named}
-          and statute_id is distinct from ${l.statute_id}::uuid
+        select count(*)::int as n from judgment_statute_refs r
+        where r.act_key = ${l.act_key} and r.act_named = ${l.act_named}
+          and r.statute_id is distinct from ${l.statute_id}::uuid
+          and not exists (
+            select 1 from judgments j, statutes s
+             where j.id = r.judgment_id and s.id = ${l.statute_id}::uuid
+               and j.judgment_date is not null
+               and s.act_year > extract(year from j.judgment_date)
+          )
       `;
       updated += n;
       already += l.refs - n;
     } else {
       const res = await sql`
-        update judgment_statute_refs
+        update judgment_statute_refs r
            set statute_id = ${l.statute_id}::uuid
-         where act_key = ${l.act_key} and act_named = ${l.act_named}
-           and statute_id is distinct from ${l.statute_id}::uuid
+         where r.act_key = ${l.act_key} and r.act_named = ${l.act_named}
+           and r.statute_id is distinct from ${l.statute_id}::uuid
+           and not exists (
+             select 1 from judgments j, statutes s
+              where j.id = r.judgment_id and s.id = ${l.statute_id}::uuid
+                and j.judgment_date is not null
+                and s.act_year > extract(year from j.judgment_date)
+           )
       `;
       updated += res.count;
       already += l.refs - res.count;

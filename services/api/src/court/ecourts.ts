@@ -24,6 +24,7 @@
  */
 import type { Sql } from 'postgres';
 
+import { grantAttribution } from './authorisation.ts';
 import { decide, record } from './guard.ts';
 
 /** A single listing. Shape stays minimal until a real response defines it. */
@@ -116,7 +117,9 @@ export async function fetchCauseList(
         // The grant requires attribution and it rides on every request rather
         // than being asserted in a document somewhere. If the registrar looks at
         // their own logs, we should be identifiable there too.
-        'user-agent': decision.authorisation.attribution,
+        // Read live, not from the decision's snapshot: `guard.decide()` has
+        // already refused when this is absent, so by here it is a string.
+        'user-agent': grantAttribution()!,
       },
     });
     const body = await response.text();

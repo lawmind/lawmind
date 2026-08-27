@@ -1,0 +1,91 @@
+{
+ "artifact": "NEW2_EVIDENCE_ACQUISITION",
+ "lane": "NEW2",
+ "protocol": "LAWMIND_FINAL_R8_3_LIMITED_FREEZE_ORCHESTRATION_2026-08-26.md §11 N2-5 / N2-6",
+ "generated_at": "2026-08-27T10:04:01.037Z",
+ "verdict": "AVAILABLE_COMPLETE",
+ "act": {
+  "actId": "INDIACODE_547533_iea_1872",
+  "shortTitle": "The Indian Evidence Act, 1872",
+  "hindiTitle": null,
+  "actNumber": "1",
+  "actYear": 1872,
+  "enactmentDate": "1872-03-15",
+  "enforcementDate": "1872-09-01",
+  "ministry": "Ministry of Law and Justice",
+  "sourceUrl": "https://indiacode.gov.in/handle/123456789/547533"
+ },
+ "ingest_source": {
+  "role": "the amended edition — the text actually written to statute_sections",
+  "itemUuid": "83a3b119-004c-44d2-a4f0-ad180e69ec6c",
+  "handle": "123456789/547533",
+  "page": "https://indiacode.gov.in/handle/123456789/547533",
+  "pdfName": "iea_1872.pdf",
+  "pdfBytes": 432048,
+  "pdfMd5": "9e639b5ebe22d20288651e30db77704c",
+  "text": {
+   "url": "https://indiacode.gov.in/server/api/core/bitstreams/391549c2-cca2-4fb8-9053-c1bb0f3cbb22/content",
+   "bytes": 187682,
+   "md5": "fee39795c57d5dc0bf30c28ddf597fbe"
+  },
+  "observed_text_bytes": 187682,
+  "observed_text_md5": "fee39795c57d5dc0bf30c28ddf597fbe"
+ },
+ "identity_control": {
+  "role": "NONE",
+  "note": "no byte-identical second source was found, so this acquisition rests on one platform checksum — weaker evidence than a cross-checked one, and recorded as such"
+ },
+ "edition_delta": {
+  "sections_only_in_amended": []
+ },
+ "parse": {
+  "principal_chars": 171944,
+  "sections_parsed": 184,
+  "bare_sections": 166,
+  "published_sections": 167,
+  "lettered": [
+   "111A",
+   "113A",
+   "113B",
+   "114A",
+   "22A",
+   "45A",
+   "47A",
+   "53A",
+   "65A",
+   "65B",
+   "67A",
+   "73A",
+   "81A",
+   "85A",
+   "85B",
+   "85C",
+   "88A",
+   "90A"
+  ],
+  "missing_bare": [
+   2
+  ],
+  "missing_but_printed_repealed": [
+   2
+  ],
+  "missing_unexplained": []
+ },
+ "gates": {
+  "ingest_text_checksum": true,
+  "section_recall": true,
+  "all_gaps_explained": true
+ },
+ "currency": {
+  "repealed_by": "Bharatiya Sakshya Adhiniyam, 2023 (Act 47 of 2023)",
+  "repealed_from": "2024-07-01",
+  "basis": "DOMAIN_TRUTH.md",
+  "source_metadata_says": "repealed: false — WRONG, and not propagated",
+  "note": "ingested as the law that governs pre-1-July-2024 conduct, never as current law"
+ },
+ "applied": true,
+ "statute_id": "a9d6b529-3e20-4fd6-aa77-39c4d12e4649",
+ "sections_written": 184,
+ "pruned": [],
+ "verified_rows": 184
+}

@@ -26,7 +26,7 @@
  */
 import type { Sql } from 'postgres';
 
-import { AUTHORISATION, type EcourtsAuthorisation, istHour } from './authorisation.ts';
+import { AUTHORISATION, type EcourtsAuthorisation, grantAttribution, istHour } from './authorisation.ts';
 
 /** The kill-switch key. Fixed set — `docs/SCHEMA_TRUTH.md` §platform_config. */
 export const ECOURTS_KILL_SWITCH_KEY = 'ecourts_harvest';
@@ -34,6 +34,7 @@ export const ECOURTS_KILL_SWITCH_KEY = 'ecourts_harvest';
 export type RefusalReason =
   | 'terms_not_on_file'
   | 'authorisation_expired'
+  | 'attribution_not_on_file'
   | 'kill_switch_off'
   | 'court_not_permitted'
   | 'outside_permitted_hours'
@@ -90,6 +91,39 @@ export async function decide(
       // `detail` is one `detail: decision.detail` away from a client payload.
       // The reference is recorded where it belongs — the fetch ledger.
       detail: `the grant expired at ${grant.expiresAt}`,
+    };
+  }
+
+  /**
+   * THE GRANT REQUIRES ATTRIBUTION ON EVERY REQUEST, AND WE CANNOT SEND ONE
+   * WITHOUT IT.
+   *
+   * `authorisation.ts` made `attribution` optional and says "there is nowhere it
+   * is rendered and nothing that breaks when it is absent." That is true of the
+   * product surfaces and FALSE of the wire: `ecourts.ts` puts this exact string
+   * in the `user-agent` of every request it makes, because the registrar should
+   * be able to identify us in their own logs. With the value absent, the first
+   * live request would go out unattributed — a silent breach of a condition of
+   * the grant, made by a system that had just told itself it was allowed.
+   *
+   * So it is a refusal, in the same shape as `terms_not_on_file` and for the same
+   * reason: a request whose compliance we could not demonstrate must not be
+   * made. `packages/auth/src/mail.ts` is the standing pattern — refuse honestly
+   * rather than run in a degraded mode that looks like the working one.
+   *
+   * Checked BEFORE the kill switch on purpose. Flipping the switch is a
+   * deliberate human act, and it should not be the thing that surfaces a missing
+   * credential: the operator turning harvesting on deserves to be told why it
+   * will not run before they turn it on, not after.
+   */
+  if (!grantAttribution()) {
+    return {
+      allowed: false,
+      reason: 'attribution_not_on_file',
+      detail:
+        'ECOURTS_GRANT_ATTRIBUTION is not set, and the grant requires its attribution string ' +
+        'verbatim on every request; the adapter sends it as the user-agent. Refusing rather ' +
+        'than making an unattributed request under an attributed permission.',
     };
   }
 

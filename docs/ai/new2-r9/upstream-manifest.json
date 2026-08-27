@@ -1,0 +1,1716 @@
+{
+  "takenAt": "2026-08-27T10:10:07.525Z",
+  "localCheckpointKeys": 1438,
+  "buckets": {
+    "aws_open_data_hc": {
+      "host": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com",
+      "totalObjects": 1494,
+      "metadataParquetObjects": 1494,
+      "newestUpstreamWrite": "2026-08-26T12:30:27.000Z",
+      "counts": {
+        "NEW": 56,
+        "GROWN": 0,
+        "SHRUNK": 0,
+        "UNCHANGED": 1438
+      },
+      "bytesWaiting": 71207095,
+      "byYear": {
+        "1950": {
+          "objects": 6,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1951": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1952": {
+          "objects": 4,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1953": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1954": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1955": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1956": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1957": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1958": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1959": {
+          "objects": 1,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1960": {
+          "objects": 4,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1961": {
+          "objects": 2,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1962": {
+          "objects": 2,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1963": {
+          "objects": 4,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1964": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1965": {
+          "objects": 1,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1966": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1967": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1968": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1969": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1970": {
+          "objects": 6,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1971": {
+          "objects": 1,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1972": {
+          "objects": 3,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1973": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1974": {
+          "objects": 3,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1975": {
+          "objects": 4,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1976": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1977": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1978": {
+          "objects": 7,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1979": {
+          "objects": 2,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1980": {
+          "objects": 6,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1981": {
+          "objects": 2,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1982": {
+          "objects": 5,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1983": {
+          "objects": 5,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1984": {
+          "objects": 4,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1985": {
+          "objects": 5,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1986": {
+          "objects": 5,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1987": {
+          "objects": 9,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1988": {
+          "objects": 8,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1989": {
+          "objects": 10,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1990": {
+          "objects": 7,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1991": {
+          "objects": 10,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1992": {
+          "objects": 11,
+          "newKeys": 0,
+          "grown": 0
+        },
+        "1993": {
+          "objects": 15,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1994": {
+          "objects": 16,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1995": {
+          "objects": 19,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1996": {
+          "objects": 23,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1997": {
+          "objects": 23,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1998": {
+          "objects": 23,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "1999": {
+          "objects": 29,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2000": {
+          "objects": 32,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2001": {
+          "objects": 31,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2002": {
+          "objects": 35,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2003": {
+          "objects": 33,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2004": {
+          "objects": 33,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2005": {
+          "objects": 37,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2006": {
+          "objects": 34,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2007": {
+          "objects": 37,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2008": {
+          "objects": 38,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2009": {
+          "objects": 38,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2010": {
+          "objects": 41,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2011": {
+          "objects": 40,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2012": {
+          "objects": 42,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2013": {
+          "objects": 43,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2014": {
+          "objects": 43,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2015": {
+          "objects": 45,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2016": {
+          "objects": 46,
+          "newKeys": 1,
+          "grown": 0
+        },
+        "2017": {
+          "objects": 49,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2018": {
+          "objects": 50,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2019": {
+          "objects": 51,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2020": {
+          "objects": 50,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2021": {
+          "objects": 52,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2022": {
+          "objects": 53,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2023": {
+          "objects": 54,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2024": {
+          "objects": 55,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2025": {
+          "objects": 56,
+          "newKeys": 2,
+          "grown": 0
+        },
+        "2026": {
+          "objects": 56,
+          "newKeys": 2,
+          "grown": 0
+        }
+      },
+      "newKeys": [
+        {
+          "key": "metadata/parquet/year=1960/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13163,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "ad31b2cc3e756b4eff59e515dce3847d",
+          "year": 1960,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1961/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13943,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "2591d69a6739747fbc7901e0c8b0ca38",
+          "year": 1961,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1962/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 12970,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "78c0e56ccc38606b92f6edb12be85fe5",
+          "year": 1962,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1974/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 12763,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "c516c9ceef0173dcd53c5790c34eaf6c",
+          "year": 1974,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1980/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 12819,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "f2fbdc17ba465589eca9234b19ab06b9",
+          "year": 1980,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1981/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 12820,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "abeaec1c56675da52c58b82b606efa22",
+          "year": 1981,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1983/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 14151,
+          "lastModified": "2026-02-22T17:50:30.000Z",
+          "etag": "cf1c6c9dc5629601f9faa548fe735d1c",
+          "year": 1983,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1988/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13464,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "57c5acdf52645eca61b554e42c8830e2",
+          "year": 1988,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1989/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 14697,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "0755de110de01593f49e43f9283a45e7",
+          "year": 1989,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1990/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13315,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "258af6ba9c5c0616a602e9b47e286638",
+          "year": 1990,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1993/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13026,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "bdaf2dcbb622c5759f0de716e67d43d7",
+          "year": 1993,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1994/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 12525,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "43207d9e9f68dd9218fa9f3bc7e36659",
+          "year": 1994,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1995/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13984,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "c80f9c1a461a1147b78f611fef46fe69",
+          "year": 1995,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1996/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 14297,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "5f2727a9d900317fe9bab9344de8f828",
+          "year": 1996,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1997/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 13013,
+          "lastModified": "2026-02-22T17:50:31.000Z",
+          "etag": "bd09d16638da6568c45f502dba07f298",
+          "year": 1997,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1998/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 14569,
+          "lastModified": "2026-05-23T04:59:32.000Z",
+          "etag": "2b6e4f39441cfabcbdf0ab54fde79c36",
+          "year": 1998,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1999/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 14140,
+          "lastModified": "2026-02-22T17:50:32.000Z",
+          "etag": "8427777d9eff390b3d21f0b50f4152bd",
+          "year": 1999,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2000/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 16296,
+          "lastModified": "2026-02-22T17:50:32.000Z",
+          "etag": "f0415ccbedb7b8b57febe030baa0ade3",
+          "year": 2000,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2001/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 19894,
+          "lastModified": "2026-05-23T04:59:36.000Z",
+          "etag": "213c526b83d0785d0a0f37f056f4a780",
+          "year": 2001,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2002/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 20386,
+          "lastModified": "2026-02-22T17:50:32.000Z",
+          "etag": "983ecd3e56649f7fc3e9338d6ac0b9f3",
+          "year": 2002,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2003/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 20598,
+          "lastModified": "2026-02-22T17:50:33.000Z",
+          "etag": "3a8ec8c504dd7b01c25a979be0c9461a",
+          "year": 2003,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2004/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 18877,
+          "lastModified": "2026-05-23T04:59:41.000Z",
+          "etag": "cff5a97b669f5beef9d504a8d518e3cb",
+          "year": 2004,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2005/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 33335,
+          "lastModified": "2026-02-22T17:50:33.000Z",
+          "etag": "daf25f7f170f0305d42c36abc862bf9d",
+          "year": 2005,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2006/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 185616,
+          "lastModified": "2026-02-22T17:50:34.000Z",
+          "etag": "338af3748630492def2fc688e28ab99b",
+          "year": 2006,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2007/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 960360,
+          "lastModified": "2026-04-29T17:34:08.000Z",
+          "etag": "d35f8c5a256ec257f59034fed4983512",
+          "year": 2007,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2008/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 2238820,
+          "lastModified": "2026-04-29T17:33:30.000Z",
+          "etag": "b63ecf724f7d4402270e68978b19ef74",
+          "year": 2008,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2009/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3477693,
+          "lastModified": "2026-05-23T04:59:57.000Z",
+          "etag": "9ff94f06d725fc37163911681e73d399",
+          "year": 2009,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2010/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 4511251,
+          "lastModified": "2026-05-23T05:00:02.000Z",
+          "etag": "93b4b2bf8080e19bfb9c6f66611c3bba",
+          "year": 2010,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2011/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3914223,
+          "lastModified": "2026-04-29T17:33:44.000Z",
+          "etag": "802f8e0022b793b1aeb2b3081a3e8f2f",
+          "year": 2011,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2012/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 9738,
+          "lastModified": "2026-06-25T07:03:50.000Z",
+          "etag": "6ab49826bd2d44e4f048fb11cc12955a",
+          "year": 2012,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2012/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3674105,
+          "lastModified": "2026-04-29T17:34:04.000Z",
+          "etag": "30c0a24243f5e75963b1c850d14cde88",
+          "year": 2012,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2013/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3477069,
+          "lastModified": "2026-04-29T17:33:36.000Z",
+          "etag": "75d705b680f3cedec4eb849b8dec230a",
+          "year": 2013,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2014/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 2993859,
+          "lastModified": "2026-05-23T05:00:26.000Z",
+          "etag": "dea202bd4bd5e6b7989fe5032bdce66d",
+          "year": 2014,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2015/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 10305,
+          "lastModified": "2026-06-25T07:03:56.000Z",
+          "etag": "68c9d0c408426a236de6013e1751a79c",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2015/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3677948,
+          "lastModified": "2026-04-29T17:34:15.000Z",
+          "etag": "2c6245fd85eb6dc6440350604ef2dd27",
+          "year": 2015,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2016/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3376239,
+          "lastModified": "2026-05-23T05:00:42.000Z",
+          "etag": "1612cf321b80e5757c976e4af58fa42c",
+          "year": 2016,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2017/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 9980,
+          "lastModified": "2026-06-25T07:04:03.000Z",
+          "etag": "d0cef250bf132f24f4d46b0104ad8f6b",
+          "year": 2017,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2017/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3351066,
+          "lastModified": "2026-05-23T05:00:51.000Z",
+          "etag": "8ba63cbc8abdc0fb43fb0dabb237246e",
+          "year": 2017,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2018/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 12928,
+          "lastModified": "2026-06-25T07:04:06.000Z",
+          "etag": "f959424e0b680b320d1b78c5e5d76fa4",
+          "year": 2018,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2018/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 2692994,
+          "lastModified": "2026-05-23T05:01:01.000Z",
+          "etag": "21f92e98b1f01bcb347ed025e1c834e5",
+          "year": 2018,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2019/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 16146,
+          "lastModified": "2026-06-25T07:04:09.000Z",
+          "etag": "cf05292deac2a254c8698ab56e5d3ec8",
+          "year": 2019,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2019/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3807817,
+          "lastModified": "2026-05-23T05:01:14.000Z",
+          "etag": "441a7273b5f5d310e49d0a7821b7fc68",
+          "year": 2019,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2020/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 12953,
+          "lastModified": "2026-06-25T07:04:11.000Z",
+          "etag": "2c9d54a641f3153b52665c906104a9fd",
+          "year": 2020,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2020/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 1654524,
+          "lastModified": "2026-05-23T05:01:26.000Z",
+          "etag": "71ed78a1084cdfe906c9a4cdcfd9900d",
+          "year": 2020,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2021/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 25681,
+          "lastModified": "2026-06-25T07:04:14.000Z",
+          "etag": "87fb38e9fc482e336a5810562ae0eca9",
+          "year": 2021,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2021/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 3253286,
+          "lastModified": "2026-04-29T17:34:18.000Z",
+          "etag": "ca802d2b78710f1474fd5430a31bcf48",
+          "year": 2021,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2022/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 24961,
+          "lastModified": "2026-06-25T07:04:19.000Z",
+          "etag": "fd16ef81e4014b8b4d406e61e4dfc8ae",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2022/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 4201925,
+          "lastModified": "2026-05-23T05:01:50.000Z",
+          "etag": "a394d0b943af6add9ef8f657cf966246",
+          "year": 2022,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2023/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 55638,
+          "lastModified": "2026-06-25T07:04:26.000Z",
+          "etag": "9c4d5261e8c7d6b91ed1f012dc7c4a95",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2023/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 4874952,
+          "lastModified": "2026-05-23T05:02:08.000Z",
+          "etag": "78359a2942c5543892c545e7bb796f09",
+          "year": 2023,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2024/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 1129754,
+          "lastModified": "2026-06-25T07:05:05.000Z",
+          "etag": "523fa2d98ea43fb4055aab0b874f80cc",
+          "year": 2024,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2024/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 4369013,
+          "lastModified": "2026-06-25T03:11:33.000Z",
+          "etag": "01a793a0b4187d69c081153dc9196979",
+          "year": 2024,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2025/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 1646401,
+          "lastModified": "2026-06-25T07:06:24.000Z",
+          "etag": "9ede1db2e3cff419929536a5227fc3c8",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2025/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 5258123,
+          "lastModified": "2026-08-26T05:49:32.000Z",
+          "etag": "9ff66bbf5e60f3de6cb813e8a1e21b21",
+          "year": 2025,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=testcase/metadata-mobile.parquet",
+          "upstreamSize": 1415941,
+          "lastModified": "2026-06-25T07:06:53.000Z",
+          "etag": "9c8a47d0eec6ad20730d278e5ffb070c",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "mobile",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=27_1/bench=testcase/metadata.parquet",
+          "upstreamSize": 526741,
+          "lastModified": "2026-08-26T08:37:04.000Z",
+          "etag": "fcc77dc79d35a7eb7050147dc4210c89",
+          "year": 2026,
+          "court": "27_1",
+          "bench": "testcase",
+          "variant": "plain",
+          "recordedSize": null,
+          "offset": null
+        }
+      ],
+      "grown": [],
+      "shrunk": []
+    },
+    "aws_open_data_sc": {
+      "host": "https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com",
+      "totalObjects": 77,
+      "metadataParquetObjects": 77,
+      "newestUpstreamWrite": "2026-08-15T16:48:53.000Z",
+      "counts": {
+        "NEW": 77,
+        "GROWN": 0,
+        "SHRUNK": 0,
+        "UNCHANGED": 0
+      },
+      "bytesWaiting": 48558116,
+      "byYear": {},
+      "newKeys": [
+        {
+          "key": "metadata/parquet/year=1950/metadata.parquet",
+          "upstreamSize": 60343,
+          "lastModified": "2026-04-11T05:46:06.000Z",
+          "etag": "79c7e055461ef1079e4afbc14fbdf294",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1951/metadata.parquet",
+          "upstreamSize": 85845,
+          "lastModified": "2026-04-11T05:46:06.000Z",
+          "etag": "e9fea03e57c1551445d0f17d936f98da",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1952/metadata.parquet",
+          "upstreamSize": 129660,
+          "lastModified": "2026-04-11T05:46:07.000Z",
+          "etag": "693ccb6d37d9b93490d4b0a18b8f7ed4",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1953/metadata.parquet",
+          "upstreamSize": 157920,
+          "lastModified": "2026-04-11T05:46:07.000Z",
+          "etag": "b691dc0cded0cf43df82994db8ba88cb",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1954/metadata.parquet",
+          "upstreamSize": 202216,
+          "lastModified": "2026-04-11T05:46:07.000Z",
+          "etag": "39efc98ee708f8dbc142d8ca6793d243",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1955/metadata.parquet",
+          "upstreamSize": 207350,
+          "lastModified": "2026-04-11T06:00:11.000Z",
+          "etag": "997f01347bf0e26fa926da78ebe16009",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1956/metadata.parquet",
+          "upstreamSize": 102049,
+          "lastModified": "2026-04-11T06:00:10.000Z",
+          "etag": "2effd452fbfe7a49c8eac1aad7f9694b",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1957/metadata.parquet",
+          "upstreamSize": 160867,
+          "lastModified": "2026-04-11T06:00:11.000Z",
+          "etag": "e620ef78886b17988e4b7cf34e1de20e",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1958/metadata.parquet",
+          "upstreamSize": 247463,
+          "lastModified": "2026-04-11T06:00:11.000Z",
+          "etag": "b92ad7a5e8b648035307315b98e9cf0a",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1959/metadata.parquet",
+          "upstreamSize": 339910,
+          "lastModified": "2026-04-11T06:00:12.000Z",
+          "etag": "2eeceee8ab46fd4974b422708624600b",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1960/metadata.parquet",
+          "upstreamSize": 436468,
+          "lastModified": "2026-04-11T06:35:04.000Z",
+          "etag": "6eeee80a9286fa998db623aa4e5ccd5c",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1961/metadata.parquet",
+          "upstreamSize": 598048,
+          "lastModified": "2026-04-11T06:35:01.000Z",
+          "etag": "cb1fc3d82a5acfa2b0bb532780f8f719",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1962/metadata.parquet",
+          "upstreamSize": 780567,
+          "lastModified": "2026-04-11T06:35:05.000Z",
+          "etag": "ffde890653c185f246deb876479215e4",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1963/metadata.parquet",
+          "upstreamSize": 597369,
+          "lastModified": "2026-04-11T06:35:03.000Z",
+          "etag": "5e49de95d2047acf67dfc08871a6576c",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1964/metadata.parquet",
+          "upstreamSize": 653717,
+          "lastModified": "2026-04-11T06:35:02.000Z",
+          "etag": "5c4b96e0a512390db87bcb0ee3414580",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1965/metadata.parquet",
+          "upstreamSize": 494417,
+          "lastModified": "2026-04-11T07:05:02.000Z",
+          "etag": "e8b0d76ca0d38ab9bf0644185013464b",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1966/metadata.parquet",
+          "upstreamSize": 524300,
+          "lastModified": "2026-04-11T07:04:59.000Z",
+          "etag": "7319b86e7874fd925dec4489e86ff7cc",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1967/metadata.parquet",
+          "upstreamSize": 500330,
+          "lastModified": "2026-04-11T07:05:00.000Z",
+          "etag": "3ec2aa4a9c13a7362862e192f18d9858",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1968/metadata.parquet",
+          "upstreamSize": 556969,
+          "lastModified": "2026-04-11T07:05:01.000Z",
+          "etag": "ecf5e7d55a114fd1165acbe259ef64a7",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1969/metadata.parquet",
+          "upstreamSize": 640437,
+          "lastModified": "2026-04-11T07:05:01.000Z",
+          "etag": "a5213622fdc692ba80a494de88ece225",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1970/metadata.parquet",
+          "upstreamSize": 576460,
+          "lastModified": "2026-04-11T07:26:19.000Z",
+          "etag": "612317025b296470e2e22a6e9a99bf6e",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1971/metadata.parquet",
+          "upstreamSize": 609078,
+          "lastModified": "2026-04-11T07:26:23.000Z",
+          "etag": "26242da1b0fd3298c514af0ce1c6d123",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1972/metadata.parquet",
+          "upstreamSize": 549405,
+          "lastModified": "2026-04-11T07:26:23.000Z",
+          "etag": "64e2bf35b43eb56b2b45f377121d075c",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1973/metadata.parquet",
+          "upstreamSize": 534976,
+          "lastModified": "2026-04-11T07:26:23.000Z",
+          "etag": "1fbed43357467dfbca723664468afdfd",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1974/metadata.parquet",
+          "upstreamSize": 507287,
+          "lastModified": "2026-04-11T07:26:21.000Z",
+          "etag": "553a58a3c397c4625bbca68c68c39496",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1975/metadata.parquet",
+          "upstreamSize": 588641,
+          "lastModified": "2026-04-11T07:54:53.000Z",
+          "etag": "21b44e78d0c50c5aa450522f326e7ad6",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1976/metadata.parquet",
+          "upstreamSize": 612008,
+          "lastModified": "2026-04-11T07:54:53.000Z",
+          "etag": "0fb23d018e372bce9300a7ecb4225288",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1977/metadata.parquet",
+          "upstreamSize": 483843,
+          "lastModified": "2026-04-11T07:54:50.000Z",
+          "etag": "78273f860c2ae4d9359fbef5cb3fa4d2",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1978/metadata.parquet",
+          "upstreamSize": 417343,
+          "lastModified": "2026-04-11T07:54:51.000Z",
+          "etag": "ba6cf663298c7030099eff301fac8aed",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1979/metadata.parquet",
+          "upstreamSize": 477605,
+          "lastModified": "2026-04-11T07:54:53.000Z",
+          "etag": "f10cb6bee8f57aa75e9a93c530ce1ab1",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1980/metadata.parquet",
+          "upstreamSize": 458668,
+          "lastModified": "2026-04-11T09:20:17.000Z",
+          "etag": "c8951ab4a63e13e35559f8788bbce000",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1981/metadata.parquet",
+          "upstreamSize": 362477,
+          "lastModified": "2026-04-11T09:20:16.000Z",
+          "etag": "5daa610839db7e90bbc853da191bcd03",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1982/metadata.parquet",
+          "upstreamSize": 232025,
+          "lastModified": "2026-04-11T09:20:16.000Z",
+          "etag": "72cd9d3005b91afa477aa67e0068cfe9",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1983/metadata.parquet",
+          "upstreamSize": 289003,
+          "lastModified": "2026-04-11T09:20:15.000Z",
+          "etag": "c56ebd7cdaf8567bee67a36c4187ea17",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1984/metadata.parquet",
+          "upstreamSize": 363223,
+          "lastModified": "2026-04-11T09:20:17.000Z",
+          "etag": "24e9c744b7f17fcd002971018fda831b",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1985/metadata.parquet",
+          "upstreamSize": 435731,
+          "lastModified": "2026-04-11T09:45:30.000Z",
+          "etag": "f4ae3f2c00286c16e9e3328b0f98e98a",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1986/metadata.parquet",
+          "upstreamSize": 322638,
+          "lastModified": "2026-04-11T09:45:30.000Z",
+          "etag": "e1b94050d5449fae5477cdbbf07f5b1e",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1987/metadata.parquet",
+          "upstreamSize": 503330,
+          "lastModified": "2026-04-11T09:45:34.000Z",
+          "etag": "81a7d6189c1410e24a90da3f9f156f35",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1988/metadata.parquet",
+          "upstreamSize": 576844,
+          "lastModified": "2026-04-11T09:45:33.000Z",
+          "etag": "1681552bd6afe048a1d832987b5f8386",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1989/metadata.parquet",
+          "upstreamSize": 450064,
+          "lastModified": "2026-04-11T09:45:34.000Z",
+          "etag": "729237aea466c22dd8e29a2f84f6fa8f",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1990/metadata.parquet",
+          "upstreamSize": 456319,
+          "lastModified": "2026-04-11T10:16:58.000Z",
+          "etag": "aebac12ef4657adb7d46f94c42f32110",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1991/metadata.parquet",
+          "upstreamSize": 402055,
+          "lastModified": "2026-04-11T10:17:00.000Z",
+          "etag": "b42d9d96a1674677769df1e15469c380",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1992/metadata.parquet",
+          "upstreamSize": 412490,
+          "lastModified": "2026-04-11T10:16:59.000Z",
+          "etag": "2b3f881b489493857c8c0be830160eb2",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1993/metadata.parquet",
+          "upstreamSize": 449994,
+          "lastModified": "2026-04-11T10:17:00.000Z",
+          "etag": "57c4b642d41b80f493c4fd7822e83185",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1994/metadata.parquet",
+          "upstreamSize": 706203,
+          "lastModified": "2026-04-11T10:17:01.000Z",
+          "etag": "cd99215871b142ab18fc424624cb254b",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1995/metadata.parquet",
+          "upstreamSize": 1033814,
+          "lastModified": "2026-04-11T11:06:23.000Z",
+          "etag": "3de9a4bcbb678d305d7b74f11fe60334",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1996/metadata.parquet",
+          "upstreamSize": 1765084,
+          "lastModified": "2026-04-11T11:06:25.000Z",
+          "etag": "9448e5038f8e7db0800af26b8fc14f56",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1997/metadata.parquet",
+          "upstreamSize": 971590,
+          "lastModified": "2026-04-11T11:06:22.000Z",
+          "etag": "70232213ddb1a3ef771421a13774556a",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1998/metadata.parquet",
+          "upstreamSize": 564133,
+          "lastModified": "2026-04-11T11:06:18.000Z",
+          "etag": "7342970cdc798498a509f9e093fe6125",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=1999/metadata.parquet",
+          "upstreamSize": 656646,
+          "lastModified": "2026-04-11T11:06:19.000Z",
+          "etag": "ce9250d6ebcb87a7a654f9e54ecf14db",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2000/metadata.parquet",
+          "upstreamSize": 692663,
+          "lastModified": "2026-04-11T11:40:59.000Z",
+          "etag": "6d719375e70c9c16b8472f57b4be8db8",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2001/metadata.parquet",
+          "upstreamSize": 687672,
+          "lastModified": "2026-04-11T11:40:54.000Z",
+          "etag": "dd1a4f9b9a1ab0d37676f9adf704c40a",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2002/metadata.parquet",
+          "upstreamSize": 644927,
+          "lastModified": "2026-04-11T11:40:57.000Z",
+          "etag": "332b4a88fb28cbd648452ae14cc642e7",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2003/metadata.parquet",
+          "upstreamSize": 832106,
+          "lastModified": "2026-04-11T11:40:59.000Z",
+          "etag": "5cbdbc22835f10c3d164ead16c4a49fd",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2004/metadata.parquet",
+          "upstreamSize": 811831,
+          "lastModified": "2026-04-11T11:40:59.000Z",
+          "etag": "68cc10a078132dcb19e979e0555e6274",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2005/metadata.parquet",
+          "upstreamSize": 709554,
+          "lastModified": "2026-04-11T12:19:17.000Z",
+          "etag": "60b1fc0b7f0b82dbc37f0bad35bb0376",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2006/metadata.parquet",
+          "upstreamSize": 1136462,
+          "lastModified": "2026-04-11T12:19:20.000Z",
+          "etag": "9af1ed692734e88bb57f379e0cfef026",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2007/metadata.parquet",
+          "upstreamSize": 1448990,
+          "lastModified": "2026-04-11T12:19:27.000Z",
+          "etag": "f3658e855fb3385f7356a6bc24fcdcdc",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2008/metadata.parquet",
+          "upstreamSize": 1628969,
+          "lastModified": "2026-04-11T12:19:27.000Z",
+          "etag": "24ce177ae684acac0f5915840d658cfa",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2009/metadata.parquet",
+          "upstreamSize": 1433347,
+          "lastModified": "2026-04-11T12:19:23.000Z",
+          "etag": "42895bd23bbf5dabf66128eeb5d7797c",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2010/metadata.parquet",
+          "upstreamSize": 999108,
+          "lastModified": "2026-04-11T12:56:49.000Z",
+          "etag": "afa55f587e665cd2ec3101b8756ee589",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2011/metadata.parquet",
+          "upstreamSize": 932751,
+          "lastModified": "2026-04-11T12:56:50.000Z",
+          "etag": "ee7a284989d695e0a109abead3b1c646",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2012/metadata.parquet",
+          "upstreamSize": 684977,
+          "lastModified": "2026-04-11T12:56:50.000Z",
+          "etag": "5bcfee2886590e8736243ef7c604cd56",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2013/metadata.parquet",
+          "upstreamSize": 935967,
+          "lastModified": "2026-04-11T12:56:50.000Z",
+          "etag": "cb27b210690e6765531de6f3c6ab2680",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2014/metadata.parquet",
+          "upstreamSize": 879794,
+          "lastModified": "2026-04-11T12:56:50.000Z",
+          "etag": "650e6c740615dc78fc10a7dd4fccd01f",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2015/metadata.parquet",
+          "upstreamSize": 837458,
+          "lastModified": "2026-04-11T13:34:28.000Z",
+          "etag": "c8c12dfd89c1923c7ead9f70a3106671",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2016/metadata.parquet",
+          "upstreamSize": 652076,
+          "lastModified": "2026-04-11T13:34:27.000Z",
+          "etag": "013999ddb0420bbc1fd2c17cd7616dbd",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2017/metadata.parquet",
+          "upstreamSize": 807830,
+          "lastModified": "2026-04-11T13:34:28.000Z",
+          "etag": "e97364aa17915541244b6d087d683afa",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2018/metadata.parquet",
+          "upstreamSize": 852502,
+          "lastModified": "2026-04-11T13:34:26.000Z",
+          "etag": "8bfa0dd8d5b3a2c8ed42325e7ffdaae0",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2019/metadata.parquet",
+          "upstreamSize": 1136767,
+          "lastModified": "2026-04-11T13:34:27.000Z",
+          "etag": "a4dc2f8d88ac233047735b9954228fd7",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2020/metadata.parquet",
+          "upstreamSize": 627923,
+          "lastModified": "2026-04-11T13:53:43.000Z",
+          "etag": "21db805de751fc62a16d02b3026a5f6f",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2021/metadata.parquet",
+          "upstreamSize": 771190,
+          "lastModified": "2026-04-11T16:56:44.000Z",
+          "etag": "06298fc3d861651d40ce27586b29293f",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2022/metadata.parquet",
+          "upstreamSize": 1098148,
+          "lastModified": "2026-04-11T13:54:03.000Z",
+          "etag": "c56f4b4367943928ab7444381e4b2575",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2023/metadata.parquet",
+          "upstreamSize": 963467,
+          "lastModified": "2026-04-11T13:53:51.000Z",
+          "etag": "4cd46d5528c5affb58efa8f6ad50938c",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2024/metadata.parquet",
+          "upstreamSize": 895264,
+          "lastModified": "2026-04-11T13:53:49.000Z",
+          "etag": "899823ca77c2dde7e5768196da11a232",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2025/metadata.parquet",
+          "upstreamSize": 969598,
+          "lastModified": "2026-04-11T14:00:02.000Z",
+          "etag": "d04750e7d133734c395caa91db0b89b2",
+          "recordedSize": null,
+          "offset": null
+        },
+        {
+          "key": "metadata/parquet/year=2026/metadata.parquet",
+          "upstreamSize": 241553,
+          "lastModified": "2026-08-15T16:48:53.000Z",
+          "etag": "4e8cc8ee5b0f80efbdb8fa3bd80b2f81",
+          "recordedSize": null,
+          "offset": null
+        }
+      ],
+      "grown": [],
+      "shrunk": []
+    }
+  }
+}

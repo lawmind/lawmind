@@ -342,6 +342,27 @@ function buildAuthorisation(): EcourtsAuthorisation | null {
 export const AUTHORISATION: EcourtsAuthorisation | null = buildAuthorisation();
 
 /**
+ * The attribution string the grant requires on every request, read LIVE.
+ *
+ * `AUTHORISATION.attribution` snapshots `process.env` at module load, which is
+ * the wrong binding time for a value that is deliberately not in source: it
+ * arrives from Railway, and a module-load snapshot means the only way to observe
+ * a change is a process restart — which is fine in production and makes the
+ * value untestable, because an ESM import has already run by the time any test
+ * body executes.
+ *
+ * Late binding is also the honest semantics. This is a credential, not a
+ * transcribed condition; the transcribed conditions are frozen in
+ * `GRANT_CONDITIONS` and fingerprinted, and this is not one of them.
+ *
+ * Everything that must not proceed without attribution reads THIS, not the
+ * snapshot: `guard.decide()` refuses on it and `ecourts.ts` sends it.
+ */
+export function grantAttribution(): string | undefined {
+  return process.env['ECOURTS_GRANT_ATTRIBUTION'] ?? undefined;
+}
+
+/**
  * When the renewal must be paid to avoid any interruption.
  *
  * Computed, so the answer cannot drift from the grant it depends on. `null`

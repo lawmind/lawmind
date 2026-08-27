@@ -1,0 +1,239 @@
+{
+  "takenAt": "2026-08-27T10:10:43.862Z",
+  "sources": [
+    {
+      "source": "aws_open_data_hc",
+      "label": "AWS Open Data — Indian High Court judgments",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "AWS Open Data, CC-BY-4.0; no copyright in a judgment (Copyright Act s.52(1)(q)(iv))",
+        "expires": null
+      },
+      "adapter": "services/ingest/src/harvest/hc-load-cli.ts",
+      "adapterSha256": "547c293e82f5172a",
+      "newestUpstreamWrite": "2026-08-26T12:30:27.000Z",
+      "heldDocuments": 18711611,
+      "newestLocalDecision": "2026-08-25",
+      "naiveLagDays": 2,
+      "honestCurrencyFrontier": "2026-07-01",
+      "honestLagDays": 57,
+      "lastSuccessfulIngest": "2026-08-27 09:55:10.499107+00",
+      "monthly": [
+        {
+          "month": "2026-08",
+          "documents": 37292,
+          "shareOfBaseline": 0.3148,
+          "state": "PARTIAL"
+        },
+        {
+          "month": "2026-07",
+          "documents": 96058,
+          "shareOfBaseline": 0.8109,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-06",
+          "documents": 71886,
+          "shareOfBaseline": 0.6068,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-05",
+          "documents": 100506,
+          "shareOfBaseline": 0.8484,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-04",
+          "documents": 143982,
+          "shareOfBaseline": 1.2154,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-03",
+          "documents": 124935,
+          "shareOfBaseline": 1.0547,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-02",
+          "documents": 143712,
+          "shareOfBaseline": 1.2132,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-01",
+          "documents": 125739,
+          "shareOfBaseline": 1.0614,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-12",
+          "documents": 144588,
+          "shareOfBaseline": 1.2206,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-11",
+          "documents": 159985,
+          "shareOfBaseline": 1.3505,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-10",
+          "documents": 134213,
+          "shareOfBaseline": 1.133,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-09",
+          "documents": 203720,
+          "shareOfBaseline": 1.7197,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-08",
+          "documents": 167671,
+          "shareOfBaseline": 1.4154,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-07",
+          "documents": 209462,
+          "shareOfBaseline": 1.7682,
+          "state": "COMPLETE_ENOUGH"
+        }
+      ],
+      "baselineDocumentsPerMonth": 118460,
+      "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
+      "newestCheckpointWrite": "2026-08-27T09:58:01.401Z"
+    },
+    {
+      "source": "aws_open_data_sc",
+      "label": "AWS Open Data — Indian Supreme Court judgments",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "AWS Open Data, CC-BY-4.0",
+        "expires": null
+      },
+      "adapter": "services/ingest/src/sci.ts",
+      "adapterSha256": "5cfc299fd74b13a7",
+      "newestUpstreamWrite": "2026-08-15T16:48:53.000Z",
+      "heldDocuments": 38351,
+      "newestLocalDecision": "2026-08-04",
+      "naiveLagDays": 23,
+      "honestCurrencyFrontier": "2026-05-01",
+      "honestLagDays": 118,
+      "lastSuccessfulIngest": "2026-08-27 09:51:16.083224+00",
+      "monthly": [
+        {
+          "month": "2026-08",
+          "documents": 2,
+          "shareOfBaseline": 0.0625,
+          "state": "EFFECTIVELY_ABSENT"
+        },
+        {
+          "month": "2026-07",
+          "documents": 15,
+          "shareOfBaseline": 0.4688,
+          "state": "PARTIAL"
+        },
+        {
+          "month": "2026-06",
+          "documents": 19,
+          "shareOfBaseline": 0.5938,
+          "state": "PARTIAL"
+        },
+        {
+          "month": "2026-05",
+          "documents": 29,
+          "shareOfBaseline": 0.9063,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-04",
+          "documents": 35,
+          "shareOfBaseline": 1.0938,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-03",
+          "documents": 27,
+          "shareOfBaseline": 0.8438,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-02",
+          "documents": 38,
+          "shareOfBaseline": 1.1875,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2026-01",
+          "documents": 43,
+          "shareOfBaseline": 1.3438,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-12",
+          "documents": 22,
+          "shareOfBaseline": 0.6875,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-11",
+          "documents": 26,
+          "shareOfBaseline": 0.8125,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-10",
+          "documents": 24,
+          "shareOfBaseline": 0.75,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-09",
+          "documents": 64,
+          "shareOfBaseline": 2,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-08",
+          "documents": 95,
+          "shareOfBaseline": 2.9688,
+          "state": "COMPLETE_ENOUGH"
+        },
+        {
+          "month": "2025-07",
+          "documents": 89,
+          "shareOfBaseline": 2.7813,
+          "state": "COMPLETE_ENOUGH"
+        }
+      ],
+      "baselineDocumentsPerMonth": 32,
+      "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
+      "newestCheckpointWrite": "2026-08-27T09:58:01.401Z"
+    },
+    {
+      "source": "ecourts",
+      "label": "eCourts India (registrar authorisation, to Jan 2029)",
+      "authorization": {
+        "state": "AUTHORIZED",
+        "basis": "registrar's written authorisation 7 Aug 2026",
+        "expires": "2029-01"
+      },
+      "adapter": "services/api/src/court/ecourts.ts",
+      "adapterSha256": "40ab33889c2c3e37",
+      "newestUpstreamWrite": "NOT_MEASURED — live source, no listing endpoint",
+      "heldDocuments": 0,
+      "newestLocalDecision": null,
+      "naiveLagDays": null,
+      "honestCurrencyFrontier": null,
+      "honestLagDays": null,
+      "lastSuccessfulIngest": null,
+      "nextCheckpoint": "none — adapter has never run",
+      "note": "ZERO observations. The only adapter that can close the bulk-drop lag, and it has never run."
+    }
+  ]
+}

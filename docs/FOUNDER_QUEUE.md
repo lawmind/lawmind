@@ -5872,6 +5872,71 @@ It does not need a platform or a budget line — it needs access to advocates.
 
 ---
 
+## FQ-N2-R9-1 — `ECOURTS_GRANT_ATTRIBUTION` and `ECOURTS_GRANT_REFERENCE`  ·  NEW2, 27 Aug 2026
+
+**What is needed.** Two environment variables, in Railway. Both are the
+registrar's confidential identifiers and are deliberately not in source.
+
+**Why it blocks something concrete.** The grant requires its attribution string
+verbatim **on every request**, and `services/api/src/court/ecourts.ts` sends it as
+the `user-agent`. Without it a live request goes out **unattributed** — a silent
+breach of a condition of the grant. eCourts is the only adapter that can produce
+law newer than the last bulk drop, and it has **zero observations**.
+
+**What was built anyway.** Everything except the first request. The grant's terms
+are transcribed and fingerprinted (`authorisation.ts`), the rate limiter and fetch
+ledger enforce them, `ecourts_observation` is append-only and trigger-enforced,
+and `ecourts-derivation.ts` refuses to turn `LISTED_OBSERVED` into
+`HEARING_OCCURRED`.
+
+**What stays broken without it.** No canary, so no captured response, so
+`parseCauseList` stays unimplemented — and it correctly returns `failed`, never
+`empty`, so nothing downstream reads a court that published nothing.
+
+**Where it plugs in.** `grantAttribution()` in
+`services/api/src/court/authorisation.ts`, read live. With the value present and
+the kill switch flipped (`platform_config.ecourts_harvest`, which requires a
+`reason`), the first cause-list request is one call.
+
+**Also worth correcting when convenient:** the grant expiry is transcribed as
+`2029-01-01T06:30:00Z` because the founder stated "12 PM, January 2029" without a
+day. The conservative day was chosen deliberately; the exact date would recover up
+to a month of permitted harvesting.
+
+---
+
+## FQ-N2-R9-2 — every official Supreme Court discovery surface is CAPTCHA-gated  ·  NEW2, 27 Aug 2026
+
+**What is needed.** A decision, not a credential: how LawMind obtains recent
+Supreme Court judgments.
+
+**Why.** The AWS SC bucket is **materially incomplete at source** — 208 rows for
+two-thirds of 2026, where the Court delivers that in a fortnight — and the bulk
+reconciliation is otherwise finished (4 documents outstanding of 43,535). Every
+official `sci.gov.in` surface that could supply the delta requires a CAPTCHA:
+`judgements-judgement-date`, `judgements`, and `scr.sci.gov.in` (e-SCR).
+`digiscr.sci.gov.in` no longer resolves and the WordPress REST API returns 403.
+
+**Why the eCourts permission does not cover it.** CAPTCHA bypass is a field ON the
+eCourts grant, scoped to `services/api/src/court/ecourts.ts` and to bulk
+cause-list harvesting. Extending it to `sci.gov.in` is exactly the widening
+`CLAUDE.md` §6 forbids, and it was not done.
+
+**The three options, none of which a lane may pick alone.**
+
+1. A human-solved session — the same posture as Tier 3 citation confirmation,
+   where a person solves the CAPTCHA and vouches.
+2. Ask the Supreme Court registry for the same kind of written permission the
+   eCourts registrar gave, which would make the bypass lawful here too.
+3. Accept the AWS bulk drop's cadence for the Supreme Court and say so in product.
+
+**What was built anyway.** The three-stage bridge is designed
+(`docs/ai/new2-r83/RECENCY_BRIDGE_R8_3.md`) and the bulk path is exact: the SC
+bucket key space and `judgments.source_url` are the same space, so "do we hold
+everything" has a yes/no answer, and it is currently **4 documents**.
+
+---
+
 ## Not queued, deliberately
 
 These looked like founder items and are not, so I did them or filed them in the

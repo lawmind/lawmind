@@ -70,17 +70,34 @@ describe('eCourts guard', () => {
     assert.equal(enabled, false);
   });
 
-  it('refuses while the grant terms are not transcribed — even before the switch', async () => {
+  it('refuses, and names the STRONGEST lock in force rather than the switch', async () => {
     // CLAUDE.md: if the authorisation's terms are not in the repo, the switch
-    // stays off. This lock outranks the switch, so it is the reason returned even
+    // stays off. That lock outranks the switch, so it is the reason returned even
     // though the switch is also off.
+    //
+    // R9 added a rung between them: the grant requires its attribution string on
+    // every request and `ecourts.ts` sends it as the user-agent, so an absent
+    // `ECOURTS_GRANT_ATTRIBUTION` means the first live request would go out
+    // unattributed. That is a breach of a condition of the grant, and it now
+    // refuses ahead of the switch — deliberately, so an operator is told before
+    // they flip the switch rather than after.
+    //
+    // The assertion is written as the LADDER rather than as one expected string,
+    // because the property under test is the precedence, and a single hard-coded
+    // reason has now been wrong twice for the same reason: it encodes the ladder
+    // as it was on the day it was written.
     const decision = await decide(sql, 'delhi_hc');
     assert.equal(decision.allowed, false);
     if (decision.allowed) return;
+    const expected = !AUTHORISATION
+      ? 'terms_not_on_file'
+      : !AUTHORISATION.attribution
+        ? 'attribution_not_on_file'
+        : 'kill_switch_off';
     assert.equal(
       decision.reason,
-      AUTHORISATION ? 'kill_switch_off' : 'terms_not_on_file',
-      'with no transcribed terms the refusal must name the terms, not the switch',
+      expected,
+      'the refusal must name the strongest lock in force, never a weaker one further down',
     );
   });
 

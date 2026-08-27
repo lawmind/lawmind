@@ -1,0 +1,361 @@
+{
+  "takenAt": "2026-08-27T09:37:24.947Z",
+  "mode": "APPLY",
+  "totals": {
+    "refs": 862594,
+    "linked": 688123
+  },
+  "impossibleLinks": 1723,
+  "bySuspect": {
+    "ACT_FUTURE": 1715,
+    "DATE_UNSAFE": 8
+  },
+  "yearConfirmedAmongImpossible": 303,
+  "distinctActs": 18,
+  "topActs": [
+    {
+      "actId": "MHA_JUD_2022-09_ccp1973",
+      "actYear": 1974,
+      "refs": 1117,
+      "shortTitle": "The Code of Criminal Procedure, 1973"
+    },
+    {
+      "actId": "AC_CEN_3_46_00004_199626_1517807323919",
+      "actYear": 1996,
+      "refs": 298,
+      "shortTitle": "The Arbitration and Conciliation Act, 1996"
+    },
+    {
+      "actId": "AC_CEN_30_42_00009_198859_1517807326286",
+      "actYear": 1988,
+      "refs": 92,
+      "shortTitle": "The Motor Vehicles Act, 1988"
+    },
+    {
+      "actId": "AC_CEN_21_44_00007_201935_1596441164903",
+      "actYear": 2019,
+      "refs": 52,
+      "shortTitle": "The Consumer Protection Act, 2019"
+    },
+    {
+      "actId": "AC_CEN_3_20_00005_196336_1517807319297",
+      "actYear": 1963,
+      "refs": 42,
+      "shortTitle": "The Limitation Act, 1963"
+    },
+    {
+      "actId": "AC_CEN_19_22_00001_200336_1517807317930",
+      "actYear": 2003,
+      "refs": 37,
+      "shortTitle": "The Electricity Act, 2003"
+    },
+    {
+      "actId": "AC_CEN_11_60_00004_199947_1517807323972",
+      "actYear": 1999,
+      "refs": 20,
+      "shortTitle": "The Trade Marks Act, 1999"
+    },
+    {
+      "actId": "AC_CEN_3_20_00009_196347_1517807320084",
+      "actYear": 1963,
+      "refs": 16,
+      "shortTitle": "The Specific Relief Act, 1963"
+    },
+    {
+      "actId": "AC_CEN_1_1_00003_198924_1517807322596",
+      "actYear": 1989,
+      "refs": 15,
+      "shortTitle": "The Railways Act, 1989"
+    },
+    {
+      "actId": "AC_CEN_28_38_00011_200641_1517807323015",
+      "actYear": 2006,
+      "refs": 12,
+      "shortTitle": "The Cantonments Act, 2006"
+    },
+    {
+      "actId": "AC_CEN_198_0_00006_2025-24_1777264737276",
+      "actYear": 2025,
+      "refs": 5,
+      "shortTitle": "The Merchant Shipping Act, 2025"
+    },
+    {
+      "actId": "AC_CEN_198_0_00008_2025-7_1780909543261",
+      "actYear": 2025,
+      "refs": 5,
+      "shortTitle": "The Indian Ports Act 2025"
+    },
+    {
+      "actId": "AC_CEN_10_10_00009_196234_1517807322487",
+      "actYear": 1962,
+      "refs": 3,
+      "shortTitle": "The Extradition Act, 1962"
+    },
+    {
+      "actId": "AC_CEN_2_2_00016_198735_1517807320073",
+      "actYear": 1987,
+      "refs": 2,
+      "shortTitle": "The Expenditure-tax Act, 1987"
+    },
+    {
+      "actId": "AC_CEN_2_11_00052_201111_1517807327275",
+      "actYear": 2011,
+      "refs": 2,
+      "shortTitle": "The Coinage Act, 2011"
+    },
+    {
+      "actId": "AC_CEN_3_20_00014_196944_1517807320915",
+      "actYear": 1969,
+      "refs": 2,
+      "shortTitle": "The Oaths Act, 1969"
+    },
+    {
+      "actId": "AC_CEN_22_29_00008_201318_1517807327856",
+      "actYear": 2013,
+      "refs": 2,
+      "shortTitle": "The Companies Act, 2013"
+    },
+    {
+      "actId": "AC_CEN_2_11_00041_197814_1517807325128",
+      "actYear": 1978,
+      "refs": 1,
+      "shortTitle": "The Interest Act, 1978"
+    }
+  ],
+  "gapHistogram": {
+    "<=10": 861,
+    "11-25": 701,
+    "26-50": 160,
+    ">50": 1
+  },
+  "sample": [
+    {
+      "refId": "48b34a5b-3727-4c2b-aef9-eeee1cdb6481",
+      "judgmentYear": 1968,
+      "judgmentDate": "1968-08-23",
+      "actNamed": "Code of Criminal Procedure",
+      "section": "144",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "4a8bc28b-eecb-4bd0-9090-4ce603d3d5a2",
+      "judgmentYear": 1960,
+      "judgmentDate": "1960-03-11",
+      "actNamed": "Code of Criminal Procedure, 1973",
+      "section": "251A",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "349c8ff5-b346-4449-b84a-58166aed8ccc",
+      "judgmentYear": 1969,
+      "judgmentDate": "1969-08-13",
+      "actNamed": "Code of Criminal Procedure, 1973",
+      "section": "195",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "492648f3-b009-4c73-bbcd-e0abfe60f625",
+      "judgmentYear": 1970,
+      "judgmentDate": "1970-12-17",
+      "actNamed": "Code of Criminal Procedure, 1973",
+      "section": "342",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "4b1f37d1-810e-4cce-b21a-844af105c8c0",
+      "judgmentYear": 1960,
+      "judgmentDate": "1960-03-07",
+      "actNamed": "Motor Vehicles Act",
+      "section": "42",
+      "linkedTo": "The Motor Vehicles Act, 1988 (1988)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "fbfc1d83-adf7-4211-8914-54900f678ecf",
+      "judgmentYear": 1952,
+      "judgmentDate": "1952-12-05",
+      "actNamed": "Motor Vehicles Act",
+      "section": "68",
+      "linkedTo": "The Motor Vehicles Act, 1988 (1988)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "c326ab82-00ff-43cb-9f8a-2508838c7bc0",
+      "judgmentYear": 1962,
+      "judgmentDate": "1962-03-01",
+      "actNamed": "Electricity Act",
+      "section": "7",
+      "linkedTo": "The Electricity Act, 2003 (2003)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "eadb03d8-74f6-4958-84dc-7ee3fdcb7592",
+      "judgmentYear": 1962,
+      "judgmentDate": "1962-03-01",
+      "actNamed": "Electricity Act",
+      "section": "3",
+      "linkedTo": "The Electricity Act, 2003 (2003)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "f66fd467-cfb6-4cf8-9c9e-e69695c0383d",
+      "judgmentYear": 1962,
+      "judgmentDate": "1962-03-19",
+      "actNamed": "Code of Criminal Procedure",
+      "section": "439",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "126ad266-0c10-4041-97a2-cb20f6c9b768",
+      "judgmentYear": 1962,
+      "judgmentDate": "1962-03-19",
+      "actNamed": "Criminal Procedure Code",
+      "section": "439",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "fbd40e26-bdea-4513-856e-7d4509c4969a",
+      "judgmentYear": 1964,
+      "judgmentDate": "1964-01-13",
+      "actNamed": "Criminal Procedure Code",
+      "section": "144",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "c249ae99-3b22-4525-9cd6-46a354fb27c2",
+      "judgmentYear": 1953,
+      "judgmentDate": "1953-05-15",
+      "actNamed": "Criminal Procedure Code",
+      "section": "342",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "9e1805c4-07a7-46a5-bdf7-6f1df1fcff79",
+      "judgmentYear": 1954,
+      "judgmentDate": "1954-10-22",
+      "actNamed": "Criminal Procedure Code",
+      "section": "162",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "a1dfaad7-e10b-4c4b-8a1d-4010aaf48b2e",
+      "judgmentYear": 1954,
+      "judgmentDate": "1954-10-22",
+      "actNamed": "Criminal Procedure Code",
+      "section": "1",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "56427942-994c-427c-ad41-dfe2f0bb5c80",
+      "judgmentYear": 1954,
+      "judgmentDate": "1954-10-22",
+      "actNamed": "Criminal Procedure Code",
+      "section": "297",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "7c607e98-0016-4756-b724-a51b3d2b5129",
+      "judgmentYear": 1999,
+      "judgmentDate": "1999-09-23",
+      "actNamed": "Consumer Protection Act",
+      "section": "11",
+      "linkedTo": "The Consumer Protection Act, 2019 (2019)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "688354ab-b957-4a3a-a569-3d7a40640ba6",
+      "judgmentYear": 1968,
+      "judgmentDate": "1968-10-31",
+      "actNamed": "Code of Criminal Procedure",
+      "section": "190",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "1d965df6-f026-42bf-a896-b818924f7c9e",
+      "judgmentYear": 1968,
+      "judgmentDate": "1968-10-31",
+      "actNamed": "Code of Criminal Procedure, 1973",
+      "section": "173",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "81af4121-639e-430d-9e03-d788bc051aca",
+      "judgmentYear": 1968,
+      "judgmentDate": "1968-10-31",
+      "actNamed": "Code of Criminal Procedure, 1973",
+      "section": "190",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "b9a170d8-13e9-4093-9de1-50c4f04e3d9a",
+      "judgmentYear": 1968,
+      "judgmentDate": "1968-10-31",
+      "actNamed": "Criminal Procedure Code",
+      "section": "162",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "977163d2-e59b-474f-ab7b-db60bdb0c0fa",
+      "judgmentYear": 1963,
+      "judgmentDate": "1963-08-19",
+      "actNamed": "Code of Criminal Procedure",
+      "section": "161",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "3a397ddc-de41-453e-9196-1abb85950ac0",
+      "judgmentYear": 1963,
+      "judgmentDate": "1963-08-19",
+      "actNamed": "Criminal Procedure Code",
+      "section": "161",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "6acb1a07-f09f-4fe0-9783-83d763657e28",
+      "judgmentYear": 2001,
+      "judgmentDate": "2001-08-02",
+      "actNamed": "Electricity Act",
+      "section": "15",
+      "linkedTo": "The Electricity Act, 2003 (2003)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "e14f8bf5-a1fe-4427-a04c-77d58e828794",
+      "judgmentYear": 2017,
+      "judgmentDate": "2017-04-20",
+      "actNamed": "Merchant Shipping Act",
+      "section": "40",
+      "linkedTo": "The Merchant Shipping Act, 2025 (2025)",
+      "suspect": "ACT_FUTURE"
+    },
+    {
+      "refId": "2be28d62-ef2f-424c-b866-95749aa2ace3",
+      "judgmentYear": 1964,
+      "judgmentDate": "1964-01-24",
+      "actNamed": "Code of Criminal Procedure",
+      "section": "162",
+      "linkedTo": "The Code of Criminal Procedure, 1973 (1974)",
+      "suspect": "ACT_FUTURE"
+    }
+  ],
+  "applied": 1723,
+  "recheckRemaining": 0,
+  "rollbackSha256": "174acc60da65c379c713f6a51a6bd899ab56bec3c295b96d93cdd0fa99583e05"
+}

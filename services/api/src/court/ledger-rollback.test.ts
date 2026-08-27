@@ -48,6 +48,19 @@ import postgres from 'postgres';
 import { ECOURTS_KILL_SWITCH_KEY } from './guard.ts';
 import { fetchCauseList } from './ecourts.ts';
 
+/**
+ * The drill needs `decide()` to ALLOW, so the attribution lock added in R9 has to
+ * be satisfied — otherwise the guard refuses before the fetch and the drill
+ * measures nothing. Its own `fetchAttempted` assertion caught exactly that, which
+ * is the second time this file's vacuity guard has earned its place.
+ *
+ * Set here rather than in the environment because it is only meaningful for this
+ * process, and `grantAttribution()` reads live for precisely this reason. The
+ * value is a test string and never the registrar's — the real one is confidential
+ * and lives only in Railway.
+ */
+process.env['ECOURTS_GRANT_ATTRIBUTION'] ??= 'LawMind-ledger-drill/1.0 (test only)';
+
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
 
 /** Rolls the probe back. Nothing this file does is allowed to survive it. */

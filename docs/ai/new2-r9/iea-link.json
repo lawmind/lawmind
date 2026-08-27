@@ -1,0 +1,164 @@
+{
+  "takenAt": "2026-08-27T10:05:52.995Z",
+  "mode": "APPLY",
+  "statuteId": "a9d6b529-3e20-4fd6-aa77-39c4d12e4649",
+  "actId": "INDIACODE_547533_iea_1872",
+  "sectionsHeld": 184,
+  "candidates": 17576,
+  "wouldLink": 17459,
+  "refusedByReason": {
+    "REFUSE_SECTION_ABSENT": 60,
+    "REFUSE_WRONG_YEAR_PRINTED:1871": 2,
+    "REFUSE_BARE_NAME_POST_BSA": 10,
+    "REFUSE_WRONG_YEAR_PRINTED:1892": 2,
+    "REFUSE_NAME_NOT_THIS_ACT": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1982": 2,
+    "REFUSE_WRONG_YEAR_PRINTED:1972": 22,
+    "REFUSE_WRONG_YEAR_PRINTED:1882": 8,
+    "REFUSE_WRONG_YEAR_PRINTED:1875": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1860": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1987": 3,
+    "REFUSE_WRONG_YEAR_PRINTED:1881": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1876": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1963": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1870": 1,
+    "REFUSE_WRONG_YEAR_PRINTED:1862": 1
+  },
+  "byPrintedName": [
+    {
+      "act_named": "Indian Evidence Act, 1872",
+      "linked": 12987,
+      "refused": 43
+    },
+    {
+      "act_named": "Indian Evidence Act",
+      "linked": 4317,
+      "refused": 17
+    },
+    {
+      "act_named": "Indian Evidence Act 1872",
+      "linked": 94,
+      "refused": 0
+    },
+    {
+      "act_named": "Indian Evidence Act, 1972",
+      "linked": 0,
+      "refused": 22
+    },
+    {
+      "act_named": "The Evidence Act",
+      "linked": 8,
+      "refused": 8
+    },
+    {
+      "act_named": "Indian Evidence Act,1872",
+      "linked": 15,
+      "refused": 0
+    },
+    {
+      "act_named": "Evidence Act",
+      "linked": 10,
+      "refused": 2
+    },
+    {
+      "act_named": "The Indian Evidence Act, 1872",
+      "linked": 12,
+      "refused": 0
+    },
+    {
+      "act_named": "The Indian Evidence Act",
+      "linked": 10,
+      "refused": 0
+    },
+    {
+      "act_named": "Indian Evidence Act, 1882",
+      "linked": 0,
+      "refused": 8
+    },
+    {
+      "act_named": "Indian Evidence Act , 1872",
+      "linked": 4,
+      "refused": 0
+    },
+    {
+      "act_named": "Indian Evidence Act, 1987",
+      "linked": 0,
+      "refused": 3
+    },
+    {
+      "act_named": "Indian Evidence Act, 1871",
+      "linked": 0,
+      "refused": 2
+    },
+    {
+      "act_named": "Indian Evidence Act, 1892",
+      "linked": 0,
+      "refused": 2
+    },
+    {
+      "act_named": "Evidence Act1872",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1982",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "The Evidence Act, 1872",
+      "linked": 1,
+      "refused": 0
+    },
+    {
+      "act_named": "Indian Evidence Act,1982",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act 1875",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1860",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1881",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1876",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1963",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "INDIAN EVIDENCE Act 1872",
+      "linked": 1,
+      "refused": 0
+    },
+    {
+      "act_named": "Indian Evidence Act, 1870",
+      "linked": 0,
+      "refused": 1
+    },
+    {
+      "act_named": "Indian Evidence Act, 1862",
+      "linked": 0,
+      "refused": 1
+    }
+  ],
+  "applied": 17459,
+  "recheck": {
+    "linkedRefs": 17459,
+    "sectionAbsent": 0
+  }
+}

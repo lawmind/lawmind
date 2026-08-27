@@ -16,6 +16,46 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 27 August 2026 (R9) — NEW2: THE FLEET IS RESTARTED, THE UPSTREAM DELTA IS CLOSED, AND THE 1,723 IMPOSSIBLE STATUTE LINKS ARE GONE
+
+**Round:** R9 data-first, founder-directed. Leases: `NEW2`, `HEAVY_BOX`.
+**Evidence:** `docs/ai/new2-r9/NEW2_R9_DATA_ROUND.md` and the seven JSON artifacts beside it.
+
+| what | number |
+| --- | ---: |
+| `judgments` rows | 18,698,968 -> **18,749,962** |
+| August 2026 High Court documents | 480 -> **37,292** |
+| documents written by the delta walk | **59,018** across 26 of 26 scopes |
+| upstream HC objects GROWN and unwalked | 46 -> **0** |
+| SC documents missing by basename | 13 -> **4** |
+| temporally impossible statute links | 1,723 -> **0** |
+| Indian Evidence Act 1872 | absent -> **held, 184 sections** |
+| Evidence Act references linked | 1 -> **17,460** |
+
+**The finding that will recur if nothing changes.** Six courts — HP, Uttarakhand,
+J&K, Meghalaya, Manipur, Sikkim — had grown their 2026 partition upstream with **no
+launcher line able to read it**. `start-ingest-fleet.ps1` named them ABSENT ON
+PURPOSE at ">=99.99% of that window", which was true when written. `COMPLETED` is
+only ever true for a moment against a bucket that writes daily. The fix is a
+derived delta plan, not six more typed names.
+
+**Two confident wrong rows removed, both found by a control rather than by a
+search for them:** CrPC `s.376D`, which the corpus held as a section of the Code
+and is a cross-reference fragment about the Penal Code (the Code has no s.376D);
+and 1,723 statute links to Acts enacted after the judgment.
+
+**eCourts: the terms were recoverable and did not need the founder.** The canary
+did not run because the grant's required attribution string is env-only and
+absent — now an honest refusal (`attribution_not_on_file`) ahead of the kill
+switch, rather than an unattributed request. `FQ-N2-R9-1`.
+
+**Open:** downstream enrichment of the 50,994 new judgments is NEW1's and LCC's;
+`n2-statute-link-apply.mts` would still restore 1,179 precision-repaired links and
+was not run; the delta reopens daily and nothing schedules it while the box stays
+up.
+
+---
+
 ### 27 August 2026 (R8.3) — LCC: THE READER WENT ROUND ITS OWN EVIDENCE GATE, A BELOW-CURSOR ROW STILL RESOLVED UNIQUE, AND EVERY SUPREME COURT JUDGMENT WE HOLD IS THE REPORTER'S EDITION
 
 **Round:** R8.3 LIMITED-FREEZE, §10 LCC mission. **First HEAVY_BOX owner.**

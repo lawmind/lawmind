@@ -482,6 +482,49 @@ foreach ($c in @('2_5','5_15')) {
 # -- the general sweep. No --court, so no checkpoint, by design. -------------
 Start-Worker 'hc-boot-sweep' (HcArgs -FromYear '2016' -Concurrency '16')
 
+# -- upstream DELTA plan, GENERATED from a fresh object manifest ------------
+#    docs\ops\migration\new2-delta-plan.json, written by
+#      node scripts\n2-upstream-manifest.mts   (bucket -> manifest)
+#      node scripts\n2-delta-scopes.mjs        (manifest -> owning scopes)
+#      node scripts\n2-delta-plan.mjs          (scopes -> this plan)
+#
+#    WHY THIS BLOCK EXISTS, AND WHY IT IS NOT SIX MORE COURT CODES ABOVE.
+#    The standing list names seven courts as ABSENT ON PURPOSE at ">=99.99% of
+#    that window", so "a missing worker here means COMPLETED, not forgotten."
+#    That was true when written and was FALSE on 27 Aug 2026: the manifest
+#    found 1_12, 2_5, 5_15, 11_24, 14_25 and 17_21 had all GROWN their 2026
+#    partition upstream, with no scope able to read it. COMPLETED is only ever
+#    true for a moment against a bucket that writes daily.
+#
+#    Typing six more names would recreate the same staleness on the next
+#    rollover, which is the defect the year-scope plan already replaced. So the
+#    delta is DERIVED per run, and this block is the launcher line it lands on.
+#
+#    The yearscope plan answers "which court-year is under-held"; this one
+#    answers "which upstream object moved since our cursor read it". They are
+#    different questions and a scope can be finished for one and open for the
+#    other -- which is exactly the state on 27 Aug: yearscope reported ZERO
+#    candidates while 46 objects had grown.
+#
+#    A MISSING FILE STARTS NOTHING AND SAYS SO. Same rule as the block above:
+#    there is no fallback list, because a stale typed list is what this removes.
+$deltaPath = Join-Path $repo 'docs\ops\migration\new2-delta-plan.json'
+if (-not (Test-Path $deltaPath)) {
+  Log "DELTA   MISSING $deltaPath -- starting NO delta workers."
+  Log "DELTA   regenerate with: node scripts\n2-upstream-manifest.mts; node scripts\n2-delta-scopes.mjs; node scripts\n2-delta-plan.mjs"
+} else {
+  $deltaPlan = Get-Content -LiteralPath $deltaPath -Raw | ConvertFrom-Json
+  $deltaWorkers = @($deltaPlan.workers)
+  Log "DELTA   $deltaPath ($($deltaPlan.takenAt)) -- $($deltaWorkers.Count) worker(s); $($deltaPlan.alreadyCovered.Count) delta scope(s) already covered by a standing block"
+  foreach ($w in $deltaWorkers) {
+    Start-Worker $w.scope (HcArgs -Court $w.court `
+      -Year $(if ($null -ne $w.year) { [string]$w.year } else { '' }) `
+      -FromYear $(if ($null -ne $w.fromYear) { [string]$w.fromYear } else { '' }) `
+      -ToYear $(if ($null -ne $w.toYear) { [string]$w.toYear } else { '' }) `
+      -Concurrency ([string]$w.concurrency))
+  }
+}
+
 # -- classification backfill. --resume walks only hc_class_method IS NULL. ---
 Start-Worker 'hc-classify-boot' @('--env-file=../../.env', 'src/hc-classify-cli.ts', '--resume', '--confirm')
 
