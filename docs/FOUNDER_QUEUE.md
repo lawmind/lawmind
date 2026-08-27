@@ -5733,6 +5733,29 @@ authority-bearing retrieval will concentrate.
 **Needed:** counsel's view, or a decision to strip the apparatus and keep only
 the judgment text. The second is engineering and I can do it once told.
 
+**LCC, 27 Aug 2026 — the server now fails closed on this while the question is
+open, so the decision has somewhere to land.** FIFTH (bus 1367) found the reader
+serving an S.C.R. headnote as undifferentiated judgment text. `GET /judgments/:id`
+now carries `textOrigin` (`REPORTER_EDITION` | `COURT_SOURCE` | `UNKNOWN`) and
+`generationEvidenceEligible`, both derived from PROVENANCE — the bucket plus the
+`year_volume_startpage_endpage` object naming — and from no content classifier,
+because the role detector's reporter recall is 42.1% and a gate that lets more
+than half through is worse than none.
+
+The body is still served: an advocate must be able to read the authority, and
+withholding 38,342 Supreme Court judgments would be a larger defect than the one
+being fixed. What is refused is using it as generation evidence.
+
+This changes nothing about the legal question and decides no rights dimension —
+§8.2 keeps retain / index / display / generation-evidence / training separate.
+It means the answer, whichever way it goes, is a change to one predicate rather
+than a migration: *strip the apparatus* stays available, and *keep it, do not
+generate from it* is already the running behaviour.
+
+Independently reached the same 38,342 by a different route (object naming +
+100% S.C.R. citation coverage), which is worth one line only because two methods
+agreeing on the population is better evidence than either alone.
+
 ---
 
 ## FQ-N2-3 · IPC, CrPC and the Indian Evidence Act are not in the corpus, and no authorised source holds them
