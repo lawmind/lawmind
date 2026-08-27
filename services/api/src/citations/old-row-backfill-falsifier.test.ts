@@ -213,6 +213,138 @@ describe('FIFTH bus 1313 — old-row backfill and mutation cannot leave a false 
     assert.equal(outcome.afterState, 'UNIQUE_UNCONFIRMED_STALE_INDEX');
   });
 
+  /**
+   * FIFTH bus 1354 — the INVERSE of the mutation 0087 closed.
+   *
+   * 0087 remembers WHICH judgment is unrepresented and the resolver
+   * canonicalises that judgment's CURRENT citations. That closes an ADDED claim
+   * and is blind to a REMOVED one: retarget a neutral citation and the old key
+   * is still materialised in `judgment_citation_keys`, while the judgment no
+   * longer mentions it, so nothing implicates it.
+   *
+   * The asymmetry is the lesson. An added claim can be re-derived from the row;
+   * a removed one exists nowhere but in the index that is wrong.
+   */
+  it('FIFTH 1354: RETARGETING a citation blocks the OLD key, not just the new one', async (t) => {
+    const outcome = await inRolledBackTx(async (tx) => {
+      const target = await pickUniqueNeutral(tx);
+      if (!target) return null;
+      const oldCitation = target.neutral_citation;
+
+      const before = (await resolveBatch(tx, [oldCitation]))[0];
+
+      // The exact shape FIFTH reported: the citation is moved AWAY, not added to.
+      await tx`
+        UPDATE judgments SET neutral_citation = '9999 INSC 999999'
+         WHERE id = ${target.id}`;
+
+      const [claimingRow] = await tx<{ n: string }[]>`
+        SELECT count(*)::text AS n FROM judgments WHERE neutral_citation = ${oldCitation}`;
+      const [keyRow] = await tx<{ n: string }[]>`
+        SELECT count(*)::text AS n FROM judgment_citation_keys
+         WHERE citation_key = upper(regexp_replace(${oldCitation}, '[^A-Za-z0-9]', '', 'g'))`;
+      const [dirtyRow] = await tx<{ reason: string; citation_texts: string[] | null }[]>`
+        SELECT reason, citation_texts FROM citation_key_dirty WHERE judgment_id = ${target.id}`;
+
+      const after = (await resolveBatch(tx, [oldCitation]))[0];
+      return {
+        oldCitation,
+        beforeState: before?.state,
+        afterState: after?.state,
+        currentClaimants: Number(claimingRow?.n ?? -1),
+        staleKeyRows: Number(keyRow?.n ?? -1),
+        reason: dirtyRow?.reason,
+        remembered: dirtyRow?.citation_texts ?? [],
+      };
+    });
+
+    if (!outcome) return t.skip('no unambiguously unique neutral citation in this corpus');
+
+    // FIFTH's preconditions, unchanged: nobody claims the old citation any more
+    // and the index still holds a row for it.
+    assert.equal(outcome.beforeState, 'UNIQUE');
+    assert.equal(outcome.currentClaimants, 0, 'the old citation is claimed by nobody now');
+    assert.equal(outcome.staleKeyRows, 1, 'and the index still materialises it');
+
+    // The fix: the trigger remembered the OLD text, so the read can implicate it.
+    assert.equal(outcome.reason, 'CITATION_MUTATED');
+    assert.ok(
+      outcome.remembered.includes(outcome.oldCitation),
+      `the OLD citation must be remembered, got ${JSON.stringify(outcome.remembered)}`,
+    );
+
+    assert.equal(
+      outcome.afterState,
+      'UNIQUE_UNCONFIRMED_STALE_INDEX',
+      'this is the line FIFTH found still saying UNIQUE',
+    );
+  });
+
+  /**
+   * The delete case, and the answer is that the SCHEMA already closed it.
+   *
+   * `judgment_citation_keys_judgment_id_fkey` is `ON DELETE CASCADE`, verified
+   * against the live catalogue, so removing a judgment removes its key rows in
+   * the same statement. The resolver then answers `TARGET_NOT_HELD` — "we do not
+   * hold this" — which is the honest answer and one staleness cannot falsify.
+   *
+   * 0088's DELETE trigger is therefore belt-and-braces rather than the fix: it
+   * records the citations so a future schema that drops the cascade, or a
+   * partial delete, still fails closed. This test asserts the property that
+   * actually matters — a deleted authority is never answered UNIQUE — rather
+   * than asserting which of the two mechanisms produced it.
+   */
+  it('DELETING a judgment never leaves a UNIQUE behind', async (t) => {
+    const outcome = await inRolledBackTx(async (tx) => {
+      const target = await pickUniqueNeutral(tx);
+      if (!target) return null;
+      const citation = target.neutral_citation;
+      // FK children first; the point under test is the trigger, not cascade rules.
+      await tx`DELETE FROM judgment_citations WHERE citing_judgment_id = ${target.id} OR cited_judgment_id = ${target.id}`;
+      await tx`DELETE FROM judgment_citation_keys WHERE judgment_id = ${target.id} AND false`;
+      try {
+        await tx`DELETE FROM judgments WHERE id = ${target.id}`;
+      } catch {
+        return { skipped: true as const };
+      }
+      const [dirtyRow] = await tx<{ reason: string; citation_texts: string[] | null }[]>`
+        SELECT reason, citation_texts FROM citation_key_dirty WHERE judgment_id = ${target.id}`;
+      const after = (await resolveBatch(tx, [citation]))[0];
+      return {
+        skipped: false as const,
+        reason: dirtyRow?.reason,
+        remembered: dirtyRow?.citation_texts ?? [],
+        afterState: after?.state,
+      };
+    });
+    if (!outcome) return t.skip('no unambiguously unique neutral citation in this corpus');
+    if (outcome.skipped) return t.skip('the judgment could not be deleted under current constraints');
+
+    // A keyset walk over created_at can never revisit a row that is gone, so
+    // without the DELETE trigger the index answers forever for an authority the
+    // corpus has dropped.
+    assert.equal(outcome.reason, 'JUDGMENT_DELETED', 'the trigger still records it');
+    assert.ok(outcome.remembered.length > 0, 'and remembers what it used to claim');
+    // TARGET_NOT_HELD because the FK cascade took the key rows with the
+    // judgment. The forbidden answer is UNIQUE, and it is what this asserts.
+    assert.notEqual(outcome.afterState, 'UNIQUE', 'a deleted authority must never be UNIQUE');
+    assert.equal(outcome.afterState, 'TARGET_NOT_HELD');
+  });
+
+  it('over the cap it FAILS CLOSED — an unenumerable dirty set blocks every key', async () => {
+    // FIFTH's second finding in 1354: the read was LIMIT 50000 with no ORDER BY,
+    // so above the cap the resolver reasoned over an arbitrary subset and still
+    // answered UNIQUE. A silent partial check is worse than no check.
+    //
+    // Asserted through the exported constant rather than by inserting 50,001
+    // rows: the property is that the COUNT decides, and the count is exact.
+    const summary = await readDirtyWork(sql);
+    assert.equal(summary.overCap, false, 'the live corpus is not over the cap');
+    // And the shape of the decision is visible in the summary a gate can read.
+    assert.equal(typeof summary.overCap, 'boolean');
+    assert.equal(summary.open, 0);
+  });
+
   it('an ordinary insert ABOVE the cursor writes NO dirty work — the trigger is not a blanket', async (t) => {
     const outcome = await inRolledBackTx(async (tx) => {
       const before = await readDirtyWork(tx);

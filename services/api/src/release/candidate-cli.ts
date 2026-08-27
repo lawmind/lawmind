@@ -138,6 +138,21 @@ try {
     console.log(`SEALED ${candidate.releaseCandidateId}`);
     console.log(`  digest   ${candidate.corpusDigest}`);
     console.log(
+      '  reproducible  ' +
+        (candidate.reproducible
+          ? 'YES - the named HEAD reproduces this candidate'
+          : 'NO - sealed over a dirty tree; this candidate CANNOT be frozen as a release'),
+    );
+    if (!candidate.reproducible) {
+      for (const p of candidate.code.dirtyPaths.slice(0, 10)) console.log('      dirty ' + p);
+    }
+    console.log('  head     ' + candidate.code.head);
+    console.log('  schema   ' + candidate.code.schemaDigest);
+    console.log(
+      '  registry ' + candidate.code.registryVersion + ' / ' + candidate.code.registryDigest,
+    );
+    console.log('  migrations ' + candidate.code.migrationFiles + ' / ' + candidate.code.migrationDigest);
+    console.log(
       '  writing  ' +
         (locking.length === 0
           ? 'no corpus write lock held'
@@ -152,10 +167,16 @@ try {
   } else if (cmd === 'check') {
     if (!arg) throw new Error('usage: check <manifest.json>');
     const manifest = JSON.parse(readFileSync(arg, 'utf8')) as ReleaseCandidate;
-    const drift = await checkCandidateDrift(sql, manifest);
+    const drift = await checkCandidateDrift(sql, manifest, new Date(), head());
     console.log(`${drift.state} ${manifest.releaseCandidateId}  checked ${drift.checkedAt}`);
+    if (manifest.reproducible === false) {
+      console.log('  NOT REPRODUCIBLE - this candidate was sealed over a dirty tree');
+    }
+    for (const m of drift.movedCode) {
+      console.log(`  CODE MOVED  ${String(m.field)}: ${String(m.sealed)} -> ${String(m.now)}`);
+    }
     for (const m of drift.moved) {
-      console.log(`  MOVED ${String(m.field)}: ${String(m.sealed)} -> ${String(m.now)}`);
+      console.log(`  CORPUS MOVED ${String(m.field)}: ${String(m.sealed)} -> ${String(m.now)}`);
     }
     for (const w of await corpusWritersFromPostgres(sql)) {
       console.log('  WRITE LOCK pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode);

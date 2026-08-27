@@ -122,6 +122,76 @@ describe('release candidate — drift detection', () => {
   });
 });
 
+/**
+ * FIFTH bus 1365 and 1374. The candidate bound corpus counts and a HEAD string,
+ * and `check` compared only the counts — so it reported FROZEN while HEAD, the
+ * capability registry and the schema had all moved, and while the sealed HEAD
+ * did not reproduce the sealed registry at all.
+ */
+describe('release candidate — the CODE side is bound too', () => {
+  it('records reproducibility honestly instead of assuming a clean tree', async () => {
+    const c = await sealReleaseCandidate(sql, 'abc1234def5678');
+    assert.equal(typeof c.reproducible, 'boolean');
+    assert.equal(typeof c.code.treeClean, 'boolean');
+    // The invariant that matters: `reproducible` can NEVER be true over a dirty
+    // tree, whatever else is going on. A candidate whose named HEAD does not
+    // reproduce it is a note about a moment, not a release.
+    if (!c.code.treeClean) assert.equal(c.reproducible, false);
+    // And a dirty seal must say WHICH paths, so it is actionable.
+    if (!c.code.treeClean) assert.ok(c.code.dirtyPaths.length > 0);
+  });
+
+  it('binds the registry CONTENT, not only its version string', async () => {
+    const c = await sealReleaseCandidate(sql, 'abc1234def5678');
+    assert.equal(c.code.registryVersion, RELEASE_CAPABILITIES_VERSION);
+    assert.equal(c.code.registryDigest.length, 16);
+    // A version that is not bumped when a capability state changes is exactly
+    // the stale-flag failure §6 names. The digest notices without anyone
+    // remembering to bump.
+    assert.notEqual(c.code.registryDigest, c.code.schemaDigest);
+  });
+
+  it('a MOVED HEAD makes the candidate MUTATED — FIFTH 1365', async () => {
+    const c = await sealReleaseCandidate(sql, 'aaaaaaa000000');
+    const drift = await checkCandidateDrift(sql, c, new Date(), 'bbbbbbb111111');
+    assert.equal(drift.state, 'MUTATED', 'a checker blind to HEAD reports FROZEN here');
+    assert.ok(drift.movedCode.some((m) => m.field === 'head'));
+  });
+
+  it('a MOVED capability registry makes it MUTATED', async () => {
+    const c = await sealReleaseCandidate(sql, 'aaaaaaa000000');
+    const doctored = {
+      ...c,
+      code: { ...c.code, registryDigest: 'deadbeefdeadbeef' },
+    };
+    const drift = await checkCandidateDrift(sql, doctored, new Date(), c.code.head);
+    assert.equal(drift.state, 'MUTATED');
+    assert.ok(drift.movedCode.some((m) => m.field === 'registryDigest'));
+  });
+
+  it('a MOVED schema makes it MUTATED, and the schema digest is stable otherwise', async () => {
+    const c = await sealReleaseCandidate(sql, 'aaaaaaa000000');
+    const again = await sealReleaseCandidate(sql, 'aaaaaaa000000');
+    // Stable: two reads of an unchanged schema must agree, or the digest is
+    // measuring something time-varying and every check would read MUTATED.
+    assert.equal(c.code.schemaDigest, again.code.schemaDigest);
+
+    const doctored = { ...c, code: { ...c.code, schemaDigest: 'cafecafecafecafe' } };
+    const drift = await checkCandidateDrift(sql, doctored, new Date(), c.code.head);
+    assert.equal(drift.state, 'MUTATED');
+    assert.ok(drift.movedCode.some((m) => m.field === 'schemaDigest'));
+  });
+
+  it('an unchanged code side does NOT make it MUTATED — the check can still say FROZEN', async () => {
+    // The other half. A code check that always fires is as useless as one that
+    // never does.
+    const c = await sealReleaseCandidate(sql, 'aaaaaaa000000');
+    const drift = await checkCandidateDrift(sql, c, new Date(), c.code.head);
+    assert.deepEqual(drift.movedCode, []);
+    assert.equal(drift.state, 'FROZEN', JSON.stringify(drift.moved));
+  });
+});
+
 describe('release candidate — who is writing', () => {
   it('asks Postgres, and does not report our own read as a writer', async () => {
     const writers = await corpusWritersFromPostgres(sql);

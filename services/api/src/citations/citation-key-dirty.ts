@@ -48,7 +48,7 @@ import type { Sql } from 'postgres';
 
 /**
  * The keys that MUST NOT be answered UNIQUE because some judgment the index does
- * not reflect claims them.
+ * not reflect claims them — or USED to claim them.
  *
  * Bounded by construction. `citation_key_dirty` is empty on a healthy system —
  * the INSERT trigger writes nothing for a row stamped `now()`, and the UPDATE
@@ -59,6 +59,32 @@ import type { Sql } from 'postgres';
  */
 const DIRTY_WINDOW_CAP = 50_000;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE OLD CITATION IS THE ONE THAT MATTERS — FIFTH bus 1354
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The first version of this read joined `judgments` and canonicalised the
+ * citations the row has NOW. That closes an ADDED claim and is blind to a
+ * REMOVED one, which FIFTH proved on the real path: retarget
+ * `neutral_citation` from `1950 INSC 1` to something else and the dirty row is
+ * written correctly, but `1950 INSC 1` is no longer on the judgment, so nothing
+ * implicates the stale key still sitting in `judgment_citation_keys`. The
+ * resolver answered `UNIQUE`, `heldCandidates=1`, for a citation that judgment
+ * had stopped claiming.
+ *
+ * The asymmetry is the whole lesson: an added claim can be re-derived from the
+ * row, and a removed one exists nowhere except in the index that is wrong. So
+ * migration `0088` has the trigger remember the citation TEXTS from both sides
+ * of the mutation, and this canonicalises the union of
+ *
+ *   - what the judgment claims now (still read, for rows written by 0087
+ *     before `citation_texts` existed), and
+ *   - every text the triggers recorded.
+ *
+ * Still one definition of citation identity: the texts are raw source strings
+ * and `keyOf` — the caller's own — is the only thing that turns them into keys.
+ */
 export async function dirtyKeysBlockingUnique(
   sql: Sql,
   keys: readonly string[],
@@ -67,17 +93,51 @@ export async function dirtyKeysBlockingUnique(
   const unsafe = new Set<string>();
   if (keys.length === 0) return unsafe;
 
+  /**
+   * The exact count first, and it is never truncated.
+   *
+   * FIFTH's second finding in the same message: the read below was `LIMIT
+   * 50000` with no `ORDER BY`, so above the cap the resolver reasoned over an
+   * arbitrary subset and still answered UNIQUE. A silent partial check is worse
+   * than no check, because it looks like one.
+   *
+   * Over the cap, EVERY key in the batch is blocked. That is a heavy refusal and
+   * it is the correct one: the honest statement is "we cannot currently
+   * enumerate what the index is wrong about", and no UNIQUE claim survives that.
+   * It cannot fire on a healthy system, where this table is empty.
+   */
+  const [countRow] = await sql<{ n: string }[]>`
+    SELECT count(*)::text AS n FROM citation_key_dirty`;
+  // An unreadable count is not permission. Same rule as `premiumEnabled`: the
+  // honest reading of "I do not know" for a safety gate is no.
+  const open = countRow === undefined ? Number.POSITIVE_INFINITY : Number(countRow.n);
+  if (open === 0) return unsafe;
+  if (open > DIRTY_WINDOW_CAP) {
+    for (const k of keys) unsafe.add(k);
+    return unsafe;
+  }
+
   const rows = await sql<
-    { neutral_citation: string | null; reporter_citations: string[] }[]
+    {
+      neutral_citation: string | null;
+      reporter_citations: string[] | null;
+      citation_texts: string[] | null;
+    }[]
   >`
-    SELECT j.neutral_citation, j.reporter_citations
+    SELECT j.neutral_citation, j.reporter_citations, d.citation_texts
       FROM citation_key_dirty d
-      JOIN judgments j ON j.id = d.judgment_id
-     LIMIT ${DIRTY_WINDOW_CAP}`;
+      -- LEFT, because JUDGMENT_DELETED has no judgment left to join to and is
+      -- exactly the case whose only surviving record is d.citation_texts.
+      LEFT JOIN judgments j ON j.id = d.judgment_id`;
 
   const wanted = new Set(keys);
   for (const row of rows) {
-    for (const citation of [row.neutral_citation, ...(row.reporter_citations ?? [])]) {
+    const citations = [
+      row.neutral_citation,
+      ...(row.reporter_citations ?? []),
+      ...(row.citation_texts ?? []),
+    ];
+    for (const citation of citations) {
       if (!citation) continue;
       const key = keyOf(citation);
       if (key && wanted.has(key)) unsafe.add(key);

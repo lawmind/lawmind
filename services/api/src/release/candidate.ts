@@ -52,8 +52,13 @@
  */
 import type { Sql } from 'postgres';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { RELEASE_CAPABILITIES_VERSION, capabilityRegistry } from './capabilities.ts';
+
+const MIGRATIONS_DIR = fileURLToPath(new URL('../../../../packages/db/drizzle', import.meta.url));
 
 /**
  * The counts a candidate is bound to.
@@ -102,11 +107,68 @@ export type CorpusIdentity = {
   maxJudgmentDate: string | null;
 };
 
+/**
+ * -----------------------------------------------------------------------------
+ * THE CODE SIDE OF THE CANDIDATE - FIFTH bus 1365
+ * -----------------------------------------------------------------------------
+ *
+ * The first version bound corpus counts and a HEAD string, and `check` compared
+ * only the counts. FIFTH found what that permits, on this very candidate:
+ *
+ *   sealed head   d12f2a9        current HEAD   63eb0b1
+ *   checker says  FROZEN
+ *
+ * Worse, checking out `d12f2a9` does NOT reproduce the sealed capability set:
+ * the manifest embeds `RELEASE_CAPABILITIES_R8_3.2` with NEW1's dotted names,
+ * and that registry was only committed later, in `63eb0b1`. The candidate was
+ * sealed from a DIRTY TREE, so the HEAD it names is not the code it was sealed
+ * from. A release candidate that cannot be checked out is not a candidate; it is
+ * a note about a moment.
+ *
+ * So the seal now binds code identity as well, and refuses to call itself
+ * reproducible when the tree is dirty:
+ *
+ *   head              the commit
+ *   treeClean         whether the working tree had uncommitted changes
+ *   dirtyPaths        which ones, when it did not
+ *   migrationFiles    count + digest of the migration FILENAMES
+ *   registryDigest    a hash of the capability set actually embedded
+ *   schemaDigest      tables/columns/indexes/triggers/enums/views of the live DB
+ *
+ * `check` compares every one of them. `FROZEN` may not mean "the counts did not
+ * move" while §7 requires code, DB, capabilities and build frozen together.
+ */
+export type CodeIdentity = {
+  head: string;
+  /** False when the seal was taken over uncommitted changes. */
+  treeClean: boolean;
+  /**
+   * The paths that made it dirty, capped.
+   *
+   * Present so `reproducible: false` is actionable rather than a scold: the
+   * fastest route to a reproducible candidate is knowing what to commit.
+   */
+  dirtyPaths: string[];
+  migrationFiles: number;
+  migrationDigest: string;
+  registryVersion: string;
+  registryDigest: string;
+  /** Shape of the live schema: tables, columns, indexes, triggers, enums, views. */
+  schemaDigest: string;
+};
+
 export type ReleaseCandidate = {
   releaseCandidateId: string;
   sealedAt: string;
   head: string;
+  /**
+   * TRUE only when the tree was clean at seal time, so the named HEAD really
+   * does reproduce this candidate. A candidate sealed dirty is still useful for
+   * measurement and must never be frozen as a release.
+   */
+  reproducible: boolean;
   capabilityRegistryVersion: string;
+  code: CodeIdentity;
   corpus: CorpusIdentity;
   /**
    * A digest over the identity above.
@@ -172,6 +234,90 @@ async function readCorpusIdentity(sql: Sql): Promise<CorpusIdentity> {
   };
 }
 
+/**
+ * The live schema's SHAPE, hashed.
+ *
+ * Not the data - the structure a restore has to reproduce. It is the same set
+ * the fresh-install replay compares, so a candidate that passes replay and a
+ * candidate whose schema later drifts are distinguishable by one string.
+ */
+async function schemaDigest(sql: Sql): Promise<string> {
+  const rows = await sql<{ sig: string }[]>`
+    SELECT string_agg(sig, chr(10) ORDER BY sig) AS sig FROM (
+      SELECT 'c:' || table_name || ':' || column_name || ':' || data_type || ':' || is_nullable AS sig
+        FROM information_schema.columns WHERE table_schema = 'public'
+      UNION ALL
+      SELECT 'i:' || indexname || ':' || indexdef FROM pg_indexes WHERE schemaname = 'public'
+      UNION ALL
+      SELECT 't:' || c.relname || ':' || t.tgname
+        FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+       WHERE NOT t.tgisinternal AND n.nspname = 'public'
+      UNION ALL
+      SELECT 'e:' || ty.typname || ':' || e.enumlabel
+        FROM pg_type ty JOIN pg_enum e ON e.enumtypid = ty.oid
+        JOIN pg_namespace n ON n.oid = ty.typnamespace WHERE n.nspname = 'public'
+      UNION ALL
+      SELECT 'v:' || table_name FROM information_schema.views WHERE table_schema = 'public'
+    ) s`;
+  return createHash('sha256').update(rows[0]?.sig ?? '').digest('hex').slice(0, 16);
+}
+
+/**
+ * Read the code side. `git` is shelled here rather than in the CLI because the
+ * candidate's reproducibility is part of its identity, not a display concern.
+ */
+async function readCodeIdentity(sql: Sql, head: string): Promise<CodeIdentity> {
+  let dirtyPaths: string[] = [];
+  let treeClean = false;
+  try {
+    const out = execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], {
+      encoding: 'utf8',
+      maxBuffer: 8 * 1024 * 1024,
+    });
+    dirtyPaths = out.trim().split(String.fromCharCode(10)).filter(Boolean).map((l) => l.slice(3));
+    treeClean = dirtyPaths.length === 0;
+  } catch {
+    // Unreadable git is not a clean tree. Same rule as an unreadable config:
+    // the honest reading of "I do not know" for a release gate is no.
+    treeClean = false;
+    dirtyPaths = ['UNREADABLE: git status failed'];
+  }
+
+  let migrationFiles = 0;
+  let migrationDigest = '';
+  try {
+    const files = readdirSync(MIGRATIONS_DIR)
+      .filter((f) => f.endsWith('.sql'))
+      .sort();
+    migrationFiles = files.length;
+    migrationDigest = createHash('sha256')
+      .update(files.join(String.fromCharCode(10)))
+      .digest('hex')
+      .slice(0, 16);
+  } catch {
+    migrationDigest = 'UNREADABLE';
+  }
+
+  const registry = capabilityRegistry();
+  return {
+    head,
+    treeClean,
+    dirtyPaths: dirtyPaths.slice(0, 40),
+    migrationFiles,
+    migrationDigest,
+    registryVersion: RELEASE_CAPABILITIES_VERSION,
+    // The registry's CONTENT, not only its version string. A version that is not
+    // bumped when a state changes is exactly the stale-flag failure R8.3 §6
+    // names, and this notices it without anyone remembering to bump.
+    registryDigest: createHash('sha256')
+      .update(JSON.stringify(registry.capabilities))
+      .digest('hex')
+      .slice(0, 16),
+    schemaDigest: await schemaDigest(sql),
+  };
+}
+
 function digestOf(identity: CorpusIdentity): string {
   // Key order is fixed by sorting, so a field added later cannot silently change
   // a digest that was supposed to mean "the same corpus".
@@ -192,6 +338,7 @@ export async function sealReleaseCandidate(
   now = new Date(),
 ): Promise<ReleaseCandidate> {
   const corpus = await readCorpusIdentity(sql);
+  const code = await readCodeIdentity(sql, head);
   const sealedAt = now.toISOString();
   /**
    * Human-legible and unique in one string. The date is first so a directory of
@@ -204,14 +351,29 @@ export async function sealReleaseCandidate(
     releaseCandidateId,
     sealedAt,
     head,
+    /**
+     * A candidate sealed over uncommitted changes names a HEAD that does not
+     * reproduce it. Recorded as a FIELD rather than refused outright: the seal
+     * is still the right measurement to take while blockers are open, and the
+     * flag is what stops it being frozen as a release.
+     */
+    reproducible: code.treeClean && head !== 'UNKNOWN_HEAD',
     capabilityRegistryVersion: RELEASE_CAPABILITIES_VERSION,
+    code,
     corpus,
     corpusDigest: digestOf(corpus),
   };
 }
 
 export type CandidateDrift = {
+  /**
+   * `FROZEN` requires BOTH sides unchanged. FIFTH bus 1365: a checker that
+   * compares corpus counts only reports FROZEN while HEAD, the capability
+   * registry and the schema have all moved underneath it.
+   */
   state: 'FROZEN' | 'MUTATED';
+  /** Which side moved, so the reason is readable without diffing the lists. */
+  movedCode: { field: keyof CodeIdentity; sealed: unknown; now: unknown }[];
   /** Every COMPARED field whose value moved since the seal, with both values. */
   moved: { field: keyof CorpusIdentity; sealed: unknown; now: unknown }[];
   /**
@@ -236,8 +398,21 @@ export async function checkCandidateDrift(
   sql: Sql,
   candidate: ReleaseCandidate,
   now = new Date(),
+  headNow?: string,
 ): Promise<CandidateDrift> {
   const current = await readCorpusIdentity(sql);
+  const currentCode = await readCodeIdentity(sql, headNow ?? candidate.code?.head ?? candidate.head);
+  const movedCode: CandidateDrift['movedCode'] = [];
+  if (candidate.code) {
+    for (const key of ['head', 'migrationFiles', 'migrationDigest', 'registryVersion', 'registryDigest', 'schemaDigest'] as const) {
+      // `treeClean`/`dirtyPaths` are deliberately NOT compared: they describe the
+      // moment of sealing, not the candidate's identity, and a later edit to an
+      // unrelated file is not corpus or code drift in this candidate.
+      if (currentCode[key] !== candidate.code[key]) {
+        movedCode.push({ field: key, sealed: candidate.code[key], now: currentCode[key] });
+      }
+    }
+  }
   const moved: CandidateDrift['moved'] = [];
   for (const key of Object.keys(candidate.corpus) as (keyof CorpusIdentity)[]) {
     // The two `reltuples` fields are informational. Comparing them would make a
@@ -249,7 +424,8 @@ export async function checkCandidateDrift(
     }
   }
   return {
-    state: moved.length === 0 ? 'FROZEN' : 'MUTATED',
+    state: moved.length === 0 && movedCode.length === 0 ? 'FROZEN' : 'MUTATED',
+    movedCode,
     moved,
     estimatesInformational: (['judgmentsEstimate', 'judgmentCitationsEstimate'] as const).map(
       (field) => ({ field, sealed: candidate.corpus[field], now: current[field] }),
