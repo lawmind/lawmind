@@ -1,19 +1,19 @@
 {
-  "takenAt": "2026-08-27T13:04:39.973Z",
+  "takenAt": "2026-08-27T14:00:20.689Z",
   "localCheckpointKeys": 1438,
   "buckets": {
     "aws_open_data_hc": {
       "host": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com",
       "totalObjects": 1494,
       "metadataParquetObjects": 1494,
-      "newestUpstreamWrite": "2026-08-27T13:01:53.000Z",
+      "newestUpstreamWrite": "2026-08-27T13:30:48.000Z",
       "counts": {
         "NEW": 56,
         "GROWN": 5,
         "SHRUNK": 0,
         "UNCHANGED": 1433
       },
-      "bytesWaiting": 71585062,
+      "bytesWaiting": 71659695,
       "byYear": {
         "1950": {
           "objects": 6,
@@ -1077,69 +1077,69 @@
       ],
       "grown": [
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata.parquet",
-          "upstreamSize": 3157054,
-          "lastModified": "2026-08-27T13:01:53.000Z",
-          "etag": "17800cc93755aacdbdb6d556f5cc38a1",
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "upstreamSize": 15380456,
+          "lastModified": "2026-08-27T13:16:24.000Z",
+          "etag": "45826c35cbdf08cd1ce5f46530329bc6",
           "year": 2026,
-          "court": "27_1",
-          "bench": "newas",
+          "court": "19_16",
+          "bench": "calcutta_appellate_side",
           "variant": "plain",
-          "recordedSize": 2954149,
-          "added": 202905,
-          "offset": 6365
+          "recordedSize": 15061102,
+          "added": 319354,
+          "offset": 32278
         },
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata.parquet",
-          "upstreamSize": 2017793,
-          "lastModified": "2026-08-27T12:54:44.000Z",
-          "etag": "2c555406e47c9fcc5ca23703f24a44d4",
+          "key": "metadata/parquet/year=2026/court=27_1/bench=kolhcdb/metadata.parquet",
+          "upstreamSize": 433514,
+          "lastModified": "2026-08-27T13:12:29.000Z",
+          "etag": "6ecea1a7c58e7d1c9c6c9e36bf769279",
           "year": 2026,
           "court": "27_1",
-          "bench": "hcaurdb",
+          "bench": "kolhcdb",
           "variant": "plain",
-          "recordedSize": 1908178,
-          "added": 109615,
-          "offset": 4247
+          "recordedSize": 370300,
+          "added": 63214,
+          "offset": 831
         },
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcbgoa/metadata.parquet",
-          "upstreamSize": 94077,
-          "lastModified": "2026-08-27T12:48:54.000Z",
-          "etag": "2a853db47d4a435650860a4cd343d93c",
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_original_side/metadata.parquet",
+          "upstreamSize": 1382068,
+          "lastModified": "2026-08-27T13:30:03.000Z",
+          "etag": "22ebc0c1c73fa60d296445731ad89c0c",
           "year": 2026,
-          "court": "27_1",
-          "bench": "hcbgoa",
+          "court": "19_16",
+          "bench": "calcutta_original_side",
           "variant": "plain",
-          "recordedSize": 82159,
-          "added": 11918,
-          "offset": 137
+          "recordedSize": 1369615,
+          "added": 12453,
+          "offset": 3561
         },
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata.parquet",
-          "upstreamSize": 377013,
-          "lastModified": "2026-08-27T13:00:24.000Z",
-          "etag": "0663346e0882b5f4cb899aa385754ca1",
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_jalpaiguri/metadata.parquet",
+          "upstreamSize": 734114,
+          "lastModified": "2026-08-27T13:28:47.000Z",
+          "etag": "be6b1c4e6d97e61c3fde23f5b8c5b04b",
           "year": 2026,
-          "court": "27_1",
-          "bench": "newos",
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_jalpaiguri",
           "variant": "plain",
-          "recordedSize": 370351,
-          "added": 6662,
-          "offset": 1425
+          "recordedSize": 722622,
+          "added": 11492,
+          "offset": 3329
         },
         {
-          "key": "metadata/parquet/year=2026/court=9_13/bench=cishclko/metadata.parquet",
-          "upstreamSize": 164255,
-          "lastModified": "2026-08-27T12:07:35.000Z",
-          "etag": "b1544d9d8e995e63a4bb30cbe4c05ff2",
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+          "upstreamSize": 291527,
+          "lastModified": "2026-08-27T13:30:48.000Z",
+          "etag": "efe78b0232b1047f1c930afaa630d629",
           "year": 2026,
-          "court": "9_13",
-          "bench": "cishclko",
+          "court": "19_16",
+          "bench": "calcutta_circuit_bench_at_port_blair",
           "variant": "plain",
-          "recordedSize": 163453,
-          "added": 802,
-          "offset": 312
+          "recordedSize": 291505,
+          "added": 22,
+          "offset": 759
         }
       ],
       "shrunk": []

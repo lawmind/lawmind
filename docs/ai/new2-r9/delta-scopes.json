@@ -1,40 +1,57 @@
 {
-  "takenAt": "2026-08-27T13:04:41.975Z",
-  "manifestTakenAt": "2026-08-27T13:04:39.973Z",
+  "takenAt": "2026-08-27T14:01:09.141Z",
+  "manifestTakenAt": "2026-08-27T14:00:20.689Z",
   "scopes": [
+    {
+      "scope": "hc-boot-19_16",
+      "court": "19_16",
+      "fromYear": 2016,
+      "keys": [
+        {
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_appellate_side/metadata.parquet",
+          "class": "GROWN",
+          "added": 319354,
+          "offset": 32278
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_original_side/metadata.parquet",
+          "class": "GROWN",
+          "added": 12453,
+          "offset": 3561
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_jalpaiguri/metadata.parquet",
+          "class": "GROWN",
+          "added": 11492,
+          "offset": 3329
+        },
+        {
+          "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
+          "class": "GROWN",
+          "added": 22,
+          "offset": 759
+        }
+      ],
+      "bytes": 343321,
+      "classes": {
+        "GROWN": 4
+      }
+    },
     {
       "scope": "hc-boot-27_1-y2026",
       "court": "27_1",
       "year": 2026,
       "keys": [
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata.parquet",
+          "key": "metadata/parquet/year=2026/court=27_1/bench=kolhcdb/metadata.parquet",
           "class": "GROWN",
-          "added": 202905,
-          "offset": 6365
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata.parquet",
-          "class": "GROWN",
-          "added": 109615,
-          "offset": 4247
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcbgoa/metadata.parquet",
-          "class": "GROWN",
-          "added": 11918,
-          "offset": 137
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata.parquet",
-          "class": "GROWN",
-          "added": 6662,
-          "offset": 1425
+          "added": 63214,
+          "offset": 831
         }
       ],
-      "bytes": 331100,
+      "bytes": 63214,
       "classes": {
-        "GROWN": 4
+        "GROWN": 1
       }
     },
     {
@@ -43,48 +60,13 @@
       "fromYear": 2016,
       "keys": [
         {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newas/metadata.parquet",
+          "key": "metadata/parquet/year=2026/court=27_1/bench=kolhcdb/metadata.parquet",
           "class": "GROWN",
-          "added": 202905,
-          "offset": 6365
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcaurdb/metadata.parquet",
-          "class": "GROWN",
-          "added": 109615,
-          "offset": 4247
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=hcbgoa/metadata.parquet",
-          "class": "GROWN",
-          "added": 11918,
-          "offset": 137
-        },
-        {
-          "key": "metadata/parquet/year=2026/court=27_1/bench=newos/metadata.parquet",
-          "class": "GROWN",
-          "added": 6662,
-          "offset": 1425
+          "added": 63214,
+          "offset": 831
         }
       ],
-      "bytes": 331100,
-      "classes": {
-        "GROWN": 4
-      }
-    },
-    {
-      "scope": "hc-boot-9_13",
-      "court": "9_13",
-      "fromYear": 2016,
-      "keys": [
-        {
-          "key": "metadata/parquet/year=2026/court=9_13/bench=cishclko/metadata.parquet",
-          "class": "GROWN",
-          "added": 802,
-          "offset": 312
-        }
-      ],
-      "bytes": 802,
+      "bytes": 63214,
       "classes": {
         "GROWN": 1
       }
