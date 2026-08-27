@@ -140,15 +140,45 @@ export type CorpusIdentity = {
  */
 export type CodeIdentity = {
   head: string;
-  /** False when the seal was taken over uncommitted changes. */
+  /**
+   * False when RELEASE-RELEVANT paths were uncommitted at seal time.
+   *
+   * -----------------------------------------------------------------------------
+   * WHY THIS IS NOT "the tree is clean"
+   * -----------------------------------------------------------------------------
+   *
+   * Five agents share one worktree. `.agents/bus/leases/*.json` change on every
+   * lease acquire, `.agents/jobs/observations.jsonl` grows whenever the job
+   * observer runs, and another lane's ingest checkpoints move while its walk
+   * does. A literal `git status --porcelain` is NEVER empty here and never will
+   * be, so a `reproducible` flag defined against it would be permanently false
+   * and would therefore say nothing.
+   *
+   * The question the flag has to answer is narrower and is the one FIFTH's bus
+   * 1365 actually asked: **does checking out this HEAD give you the code that
+   * was sealed?** Lease churn does not affect that. An uncommitted edit to
+   * `services/`, `packages/`, `apps/` or the API contract does, and it is exactly
+   * what happened -- the capability registry was sealed from a dirty tree and
+   * only committed afterwards, so the named HEAD did not reproduce it.
+   *
+   * So `treeClean` is scoped to {@link RELEASE_RELEVANT}, and BOTH lists are
+   * recorded. Narrowing a check to what it can actually mean is not the same as
+   * relaxing it, and hiding the churn would be.
+   */
   treeClean: boolean;
   /**
-   * The paths that made it dirty, capped.
+   * Release-relevant paths that were uncommitted, capped.
    *
    * Present so `reproducible: false` is actionable rather than a scold: the
    * fastest route to a reproducible candidate is knowing what to commit.
    */
   dirtyPaths: string[];
+  /**
+   * Everything else that was uncommitted — lease files, logs, another lane's
+   * checkpoints. Recorded and NOT judged, so a reader can see the whole state
+   * without the verdict turning on somebody else's heartbeat.
+   */
+  operationalChurn: string[];
   migrationFiles: number;
   migrationDigest: string;
   registryVersion: string;
@@ -267,15 +297,41 @@ async function schemaDigest(sql: Sql): Promise<string> {
  * Read the code side. `git` is shelled here rather than in the CLI because the
  * candidate's reproducibility is part of its identity, not a display concern.
  */
+/**
+ * Paths whose uncommitted state means the named HEAD does not reproduce the
+ * candidate. Everything outside this is operational churn on a shared worktree.
+ */
+const RELEASE_RELEVANT = [/^services\//, /^packages\//, /^apps\//, /^scripts\//, /^docs\/API_CONTRACTS\.md$/];
+
+/**
+ * Excluded from the above even though they live under a release-relevant root.
+ *
+ * `services/ingest/.checkpoints/*` is a walk cursor, `*.log` and `*.lock` are
+ * runtime artefacts. None of them is code, and checking out HEAD reproduces the
+ * candidate whatever they say -- they move because a worker ran, which is the
+ * definition of operational churn.
+ */
+const NOT_CODE = [/\.checkpoints\//, /\.log$/, /\.lock$/, /\.err$/, /^\.agents\//];
+
+const isReleaseRelevant = (p: string) =>
+  RELEASE_RELEVANT.some((re) => re.test(p)) && !NOT_CODE.some((re) => re.test(p));
+
 async function readCodeIdentity(sql: Sql, head: string): Promise<CodeIdentity> {
   let dirtyPaths: string[] = [];
+  let operationalChurn: string[] = [];
   let treeClean = false;
   try {
     const out = execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], {
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
     });
-    dirtyPaths = out.trim().split(String.fromCharCode(10)).filter(Boolean).map((l) => l.slice(3));
+    const all = out
+      .trim()
+      .split(String.fromCharCode(10))
+      .filter(Boolean)
+      .map((l) => l.slice(3).trim());
+    dirtyPaths = all.filter(isReleaseRelevant);
+    operationalChurn = all.filter((p) => !isReleaseRelevant(p));
     treeClean = dirtyPaths.length === 0;
   } catch {
     // Unreadable git is not a clean tree. Same rule as an unreadable config:
@@ -304,6 +360,7 @@ async function readCodeIdentity(sql: Sql, head: string): Promise<CodeIdentity> {
     head,
     treeClean,
     dirtyPaths: dirtyPaths.slice(0, 40),
+    operationalChurn: operationalChurn.slice(0, 40),
     migrationFiles,
     migrationDigest,
     registryVersion: RELEASE_CAPABILITIES_VERSION,
