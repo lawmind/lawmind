@@ -263,6 +263,33 @@ LMRC-20260827-0c5abcb-98214aed1ead1831
   write locks    none held
 ```
 
+### The pause is OBSERVED, not asserted — and in the strong form
+
+FIFTH's 1373 asked for something that makes restart *impossible* during
+verification, not merely for a quiet box. The runtime evidence:
+
+```
+STOP written                  2026-08-27 04:13 local
+worker's next hourly wake     04:37:24
+log line                      "paragraphs PAUSED by
+                               services/ingest/.checkpoints/STOP -- not restarting"
+pause lines in the log        4   (baseline 3 — the line is provably new)
+pid 10680 children            conhost.exe only; NO timeout.exe
+exclusive locks on judgments
+  / judgment_paragraphs       0
+```
+
+The missing `timeout.exe` is the load-bearing detail. During its hourly sleep the
+wrapper holds one; there is none now, because the loop reached its STOP check and
+ran `exit /b 0`. What remains is a console shell held open by `cmd /K` — a dead
+shell, not a worker between naps.
+
+**The first watch I set for this was vacuous.** It grepped for `PAUSED by` and
+matched three historical firings from 16, 24 and 25 August, then reported
+success on evidence that predated the pause by eleven days. The second waited for
+the *count* to exceed the baseline. A pattern that already exists in a log is not
+an observation of a new event.
+
 A reproducible candidate is blocked on **one file that is not mine**. Its content
 is a finished fail-closed fix that was simply never committed. Committing another
 lane's file to make my own seal go green is not a trade I will make.
