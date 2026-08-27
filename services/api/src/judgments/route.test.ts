@@ -44,7 +44,33 @@ describe('GET /judgments/:id', () => {
   let id: string | null = null;
 
   before(async () => {
-    const [row] = await sql<{ id: string }[]>`SELECT id FROM judgments LIMIT 1`;
+    /**
+     * NOT a bare `SELECT id FROM judgments LIMIT 1`.
+     *
+     * An unordered `LIMIT` is not a sample — it returns whatever the executor
+     * reaches first, which moves with the physical layout, so this `before` chose
+     * a different judgment on every run. On 27 Aug 2026 it chose
+     * `c4b09c53-3380-4a08-811b-d63624b72a87`, a Karnataka judgment convicted
+     * `script_quality = 'damaged_other'`, and the first test below failed on
+     * `fullText.length > 0`.
+     *
+     * **The reader was right and the fixture was wrong.** R8.3 §8.3 / FIFTH 1322:
+     * a body convicted damaged is WITHHELD by refusal, with `bodyText.state =
+     * TEXT_DAMAGED` — and the sibling test forty lines down asserts exactly that,
+     * and passed in the same run. This block's subject is the happy path of the
+     * reading view, so it has to select a row the evidence gate does not refuse.
+     * Asking for one is the fix; relaxing the assertion would have deleted the
+     * only test that says the reader renders anything at all.
+     *
+     * `length(full_text) > 200` for the same reason the unconvicted-body test
+     * uses it: a judgment whose text is genuinely a stub is not a counterexample
+     * to "the reading view renders full text" either.
+     */
+    const [row] = await sql<{ id: string }[]>`
+      SELECT id FROM judgments
+       WHERE script_quality IS NULL
+         AND length(full_text) > 200
+       LIMIT 1`;
     id = row?.id ?? null;
   });
 

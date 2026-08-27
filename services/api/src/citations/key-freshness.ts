@@ -216,6 +216,7 @@ function riskReplayReasons(
 export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
   const [frontier] = await sql<
     { cursor_at: string; scanned: string; updated_at: string; run_id: string | null }[]
+  // iso-time-exempt: full-precision IDENTITY read. The cursor is compared with the replay record and bound back into a `created_at >` predicate; postgres.js truncates a timestamptz bind to milliseconds. Rendered for the wire in admin/metrics.ts, never here.
   >`SELECT cursor_at::text, scanned::text, updated_at::text, run_id FROM citation_key_frontier`;
 
   const [replay] = await sql<
@@ -227,8 +228,9 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
       frontier_at: string | null;
       truth_set: string | null;
     }[]
+  // iso-time-exempt: full-precision IDENTITY read — `frontier_at` must compare exactly equal to the live cursor or the replay vouched for a different index.
   >`SELECT ran_at::text, records, false_unique, materially_unsafe,
-           frontier_at::text, truth_set
+           frontier_at::text, truth_set -- iso-time-exempt: same IDENTITY read as the line above; a SQL line comment, so the continuation carries its own marker.
       FROM resolver_risk_replay ORDER BY ran_at DESC LIMIT 1`;
 
   const lastRiskReplayAt = replay?.ran_at ?? null;
@@ -260,6 +262,7 @@ export async function readKeyFreshness(sql: Sql): Promise<KeyFreshness> {
 
   const [lag] = await sql<{ n: string; ingest_at: string | null }[]>`
     SELECT count(*)::text AS n,
+           -- iso-time-exempt: read alongside the cursor at the same precision so the two are comparable; rendered for the wire in admin/metrics.ts.
            (SELECT max(created_at)::text FROM judgments) AS ingest_at
       FROM judgments
      WHERE created_at > (${frontier.cursor_at}::text)::timestamptz`;

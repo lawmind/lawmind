@@ -36,3 +36,45 @@ export const ISO_8601 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 export function isoColumn(column: string): string {
   return `to_char(${column} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
 }
+
+/**
+ * The same rendering, applied to a value ALREADY read as Postgres text.
+ *
+ * Some reads cast to text deliberately and correctly. `citations/key-freshness.ts`
+ * compares cursors for IDENTITY, and postgres.js truncates a `timestamptz` bind to
+ * millisecond resolution — two cursors 78 microseconds apart would compare equal
+ * through a JS `Date`. Rendering those with `isoColumn()` would break the one thing
+ * they exist to do.
+ *
+ * **The cast is not the defect. Putting the cast's OUTPUT on the wire is.** That is
+ * exactly what happened: `readKeyFreshness()` was spread whole into the
+ * `/admin/metrics` payload, so four Postgres-text timestamps reached a client out of
+ * a function whose casts had been argued to be internal — the argument was true of
+ * the casts and false of the response. Converting HERE, at the boundary, keeps the
+ * full-precision string where the comparison needs it and gives the client the one
+ * form every engine is required to parse.
+ *
+ * Returns `null` for `null` and — deliberately — for anything it cannot parse. A
+ * timestamp we cannot render is absent. It is never a guess.
+ */
+export function isoFromPgText(value: string | null | undefined): string | null {
+  if (value === null || value === undefined) return null;
+  // 2026-08-06 20:34:06.383686+05:30 — also accepts a `T`, an absent fraction, and
+  // a bare-hour offset (`+00`), which is the shape that shipped "Invalid Date".
+  const m =
+    /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}(?::?\d{2})?)?$/.exec(
+      value.trim(),
+    );
+  if (!m) return null;
+  const [, date, time, frac = '', offsetRaw] = m;
+  const ms = (frac + '000').slice(0, 3);
+  let offset = 'Z';
+  if (offsetRaw && offsetRaw !== 'Z') {
+    const sign = offsetRaw[0];
+    const digits = offsetRaw.slice(1).replace(':', '');
+    offset = `${sign}${digits.slice(0, 2)}:${(digits.slice(2) || '00').padEnd(2, '0')}`;
+  }
+  const parsed = Date.parse(`${date}T${time}.${ms}${offset}`);
+  if (Number.isNaN(parsed)) return null;
+  return new Date(parsed).toISOString();
+}

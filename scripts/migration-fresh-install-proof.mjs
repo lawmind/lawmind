@@ -169,16 +169,65 @@ async function fingerprint(sql) {
  */
 const LANE_SCRATCH = /\b(new1|new2|new3)_/i;
 
+/**
+ * NAMED lab objects, because the prefix rule above is a convention and a
+ * convention is not a declaration.
+ *
+ * `n1_lab_passage_role` is NEW1's role-classification experiment surface. It
+ * carries the `n1_` prefix rather than `new1_`, so `LANE_SCRATCH` never matched
+ * it, and its 14 objects — 1 table, 5 columns, 2 indexes, 6 constraints — were
+ * the ENTIRE difference in the fresh-install verdict from 26 to 27 Aug 2026
+ * (FIFTH bus 1363/1364, blocker D of bus 1386).
+ *
+ * Widening the prefix to `n[123]_` was the obvious fix and is the wrong one: it
+ * is a regex over strings like `some_table.n1_column`, so it would silently
+ * exempt any future product column whose name happened to start that way, and
+ * an exemption nobody can enumerate is how a real table goes missing from a
+ * restore. This list is enumerable. Adding to it is a review.
+ *
+ * The claim each entry makes is NOT "it is a lab table" — it is **"nothing in
+ * the product reads it, so a restore that lacks it is complete."** For
+ * `n1_lab_passage_role` on 27 Aug 2026 that was checked rather than asserted:
+ * the only references anywhere in the tree are
+ * `services/harness/src/n1-role-materialise-cli.mjs` (the writer) and
+ * `services/harness/src/n1-evidence-safe-cli.mjs` (the lab reader). Zero in
+ * `services/api`, zero in `packages/db`, zero in `apps`. If that ever stops
+ * being true the entry must come out, and the object must become a migration.
+ */
+const DECLARED_LAB_OBJECTS = [
+  {
+    table: 'n1_lab_passage_role',
+    owner: 'NEW1',
+    declared: '2026-08-27',
+    why: 'role-classification lab surface; readers are services/harness only, zero production readers',
+  },
+];
+
+/**
+ * An object BELONGS to a declared lab table when the identifier it is named
+ * after is that table. Anchored at the start of the signature, so
+ * `judgments.n1_lab_passage_role_id` — a product column that merely mentions the
+ * name — is NOT exempt.
+ */
+function isDeclaredLabObject(signature) {
+  return DECLARED_LAB_OBJECTS.some(({ table }) => {
+    const s = signature.startsWith('r:') ? signature.slice(2) : signature;
+    return s === table || s.startsWith(`${table}.`) || s.startsWith(`${table}_`);
+  });
+}
+
+const isNonProduct = (x) => LANE_SCRATCH.test(x) || isDeclaredLabObject(x);
+
 function diff(liveArr, freshArr) {
   const live = new Set(liveArr);
   const fresh = new Set(freshArr);
   const onlyLive = liveArr.filter((x) => !fresh.has(x));
   const onlyFresh = freshArr.filter((x) => !live.has(x));
   return {
-    only_in_live: onlyLive.filter((x) => !LANE_SCRATCH.test(x)),
-    only_in_fresh: onlyFresh.filter((x) => !LANE_SCRATCH.test(x)),
-    lane_scratch_only_in_live: onlyLive.filter((x) => LANE_SCRATCH.test(x)),
-    lane_scratch_only_in_fresh: onlyFresh.filter((x) => LANE_SCRATCH.test(x)),
+    only_in_live: onlyLive.filter((x) => !isNonProduct(x)),
+    only_in_fresh: onlyFresh.filter((x) => !isNonProduct(x)),
+    lane_scratch_only_in_live: onlyLive.filter(isNonProduct),
+    lane_scratch_only_in_fresh: onlyFresh.filter(isNonProduct),
   };
 }
 

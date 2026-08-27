@@ -90,6 +90,7 @@ describe('timestamptz bind precision', () => {
         }
 
         const rows = await tx<{ ts: string }[]>`
+          -- iso-time-exempt: reading the RAW Postgres form is this test's subject — it proves the driver truncates a bind to milliseconds, and isoColumn() would erase the microseconds being measured.
           SELECT created_at::text AS ts FROM audit_log
            WHERE action = 'probe.pagination' ORDER BY created_at DESC`;
         assert.equal(rows.length, 3);

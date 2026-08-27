@@ -1,0 +1,192 @@
+{
+  "releaseVersion": "2026-08-27.mtbf2n33",
+  "createdAt": "2026-08-27T11:05:45.959Z",
+  "source": {
+    "database": "lawmind",
+    "serverVersion": "18.6",
+    "collation": "English_United States.1252",
+    "ctype": "English_United States.1252",
+    "encoding": "UTF8",
+    "extensions": [
+      {
+        "name": "pg_trgm",
+        "version": "1.6"
+      },
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "vector",
+        "version": "0.8.5"
+      }
+    ]
+  },
+  "schemaVersion": {
+    "highestMigration": "0088_citation_key_dirty_old_identity",
+    "migrationCount": 89
+  },
+  "bounded": {
+    "judgmentLimit": 500
+  },
+  "tables": [
+    {
+      "table": "judgments",
+      "rows": 500,
+      "checksum": "cca6cdbc3fb2c6029477901a72288868",
+      "bytes": 2508352,
+      "file": "judgments.copy",
+      "columns": [
+        "id",
+        "case_title",
+        "neutral_citation",
+        "reporter_citations",
+        "court",
+        "bench",
+        "judgment_date",
+        "full_text",
+        "language",
+        "source_url",
+        "overruled_status",
+        "overruled_status_changed_at",
+        "overruled_by_judgment_id",
+        "overruled_paras",
+        "overruled_note",
+        "created_at",
+        "case_number",
+        "case_type",
+        "storage_key",
+        "content_hash",
+        "text_quality",
+        "source_document_type",
+        "cnr",
+        "native_text",
+        "petitioner",
+        "respondent",
+        "parties_extraction_method",
+        "disposal_nature",
+        "source_bench_code",
+        "hc_document_class",
+        "hc_class_method",
+        "text_extraction_method",
+        "generated_holding",
+        "generated_holding_at",
+        "script_quality",
+        "script_quality_method",
+        "script_quality_at"
+      ]
+    },
+    {
+      "table": "judgment_citations",
+      "rows": 559,
+      "checksum": "cf1e498d47b5281f0a1d26843bd4d332",
+      "bytes": 73417,
+      "file": "judgment_citations.copy",
+      "columns": [
+        "id",
+        "citing_judgment_id",
+        "cited_judgment_id",
+        "citation_text",
+        "normalised_citation",
+        "relationship",
+        "evidence",
+        "char_offset",
+        "created_at",
+        "treatment_provenance"
+      ]
+    },
+    {
+      "table": "judgment_judges",
+      "rows": 0,
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+      "bytes": 0,
+      "file": "judgment_judges.copy",
+      "columns": [
+        "id",
+        "judgment_id",
+        "judge_name",
+        "judge_key",
+        "seat_index",
+        "created_at"
+      ]
+    },
+    {
+      "table": "judgment_statute_refs",
+      "rows": 36,
+      "checksum": "ece215db2a333ea433a18850c4658451",
+      "bytes": 7432,
+      "file": "judgment_statute_refs.copy",
+      "columns": [
+        "id",
+        "judgment_id",
+        "statute_id",
+        "act_named",
+        "section_number",
+        "occurrences",
+        "first_offset",
+        "created_at",
+        "act_key"
+      ]
+    },
+    {
+      "table": "statutes",
+      "rows": 849,
+      "checksum": "f968cd5a8d762d7bf2def3e55d06858c",
+      "bytes": 301222,
+      "file": "statutes.copy",
+      "columns": [
+        "id",
+        "act_id",
+        "short_title",
+        "hindi_title",
+        "act_number",
+        "act_year",
+        "enactment_date",
+        "enforcement_date",
+        "ministry",
+        "source_url",
+        "created_at"
+      ]
+    },
+    {
+      "table": "statute_sections",
+      "rows": 36663,
+      "checksum": "840f0ec1080ec5690733a725f4efd62e",
+      "bytes": 50885979,
+      "file": "statute_sections.copy",
+      "columns": [
+        "id",
+        "statute_id",
+        "section_number",
+        "heading",
+        "section_text",
+        "footnote",
+        "order_index",
+        "source_url",
+        "created_at"
+      ]
+    },
+    {
+      "table": "lexeme_document_frequency",
+      "rows": 128243,
+      "checksum": "af4db3b47dba9795f02867c970760ff7",
+      "bytes": 5988480,
+      "file": "lexeme_document_frequency.copy",
+      "columns": [
+        "lexeme",
+        "document_count",
+        "sampled_documents",
+        "built_at"
+      ]
+    }
+  ],
+  "excluded": [
+    "users / auth_user / auth_session / refresh_tokens — identity",
+    "matters / matter_events / matter_authorities / matter_shares — client detail",
+    "documents / ocr_jobs — uploaded files",
+    "judgment_annotations / saved_searches / searches / alerts — an advocate’s work",
+    "audit_log / citation_disputes / data_requests — platform records, not law",
+    "llm_calls / search_events — telemetry",
+    "judgment_chunks / new1_doc_vector_stage — retrieval representations, NOT YET APPROVED (NEW1 owns the decision; the master plan forbids promoting the staged vectors)"
+  ]
+}

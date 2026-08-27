@@ -37,6 +37,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
 import { ok } from '../envelope.ts';
+import { isoColumn } from '../iso-time.ts';
 
 /** The bucket this coverage describes. One source today; the column exists for the next. */
 const HIGH_COURT_SOURCE = 'aws_high_court';
@@ -68,7 +69,11 @@ export async function getCorpusCoverage(c: Context, sql: Sql): Promise<Response>
   `;
 
   const [enumerated] = await sql<{ at: string | null }[]>`
-    SELECT max(enumerated_at)::text AS at
+    -- ISO-8601, not Postgres text. enumeratedAt goes straight onto the wire, and
+    -- the old ::text form is the one Hermes refuses to parse. The test guarding
+    -- it only asserted Date.parse was not NaN, which passes on Node against the
+    -- broken value -- exactly the trap src/iso-time.ts names in its header.
+    SELECT ${sql.unsafe(isoColumn('max(enumerated_at)'))} AS at
     FROM judgment_coverage WHERE source = ${HIGH_COURT_SOURCE}
   `;
 

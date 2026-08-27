@@ -156,3 +156,10 @@ docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl
 
 # Resource-lease mutexes are live OS state, never repository content.
 .agents/bus/leases/*.lock
+
+# Release packs. release-export-cli.ts writes COPY files and a manifest; the
+# bounded 500-judgment rehearsal pack alone is 58 MB and a real one is the whole
+# corpus. The MANIFEST and the RESTORE_TRACE are the evidence and are copied into
+# docs/ai/<lane>-<round>/ deliberately; the data never belongs in git.
+/release/
+/release-rehearsal/

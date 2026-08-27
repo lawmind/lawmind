@@ -151,6 +151,7 @@ import {
   savedSearchBody,
 } from './search/saved.ts';
 import { getCorpusCoverage } from './corpus/coverage.ts';
+import { getCorpusFreshness } from './corpus/freshness.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
 import { validate } from './validate.ts';
 
@@ -796,6 +797,12 @@ export function createApp(deps: AppDeps) {
     // frozen contract. `CLAUDE.md`: silence about a gap does the same damage as
     // a fabricated citation, and today every judgment we hold is Supreme Court.
     app.get('/corpus/coverage', (c) => getCorpusCoverage(c, sql));
+    // How CURRENT what we hold is, as against how MUCH of it we hold. Also an
+    // ADDITION. It reports the naive `max(judgment_date)` reading next to the
+    // honest completeness ratio, because the naive one is what anybody computes
+    // for themselves and the only way to stop it being believed is to show it
+    // losing: 8 days against a real 56.
+    app.get('/corpus/freshness', (c) => getCorpusFreshness(c, sql));
 
     app.get('/statutes', (c) => listStatutes(c, sql));
     app.get('/statutes/sections', validate('query', sectionQuery), (c) =>

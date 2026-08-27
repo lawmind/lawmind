@@ -325,6 +325,70 @@ async function safeFrontier(): Promise<Frontier> {
  */
 const YEAR_RE = '(1[89][0-9][0-9]|20[0-9][0-9])';
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * DISCHARGING A `JUDGMENT_DELETED` DIRTY MARK — THE ONE REASON A WALK CAN CLOSE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `citation_key_dirty` (migrations 0087 / 0088) records judgments whose key rows
+ * the resolver must not trust. Its own discipline is that **a dirty row goes away
+ * because something was done, not because time passed** — nothing in it expires.
+ *
+ * `JUDGMENT_DELETED` is written by an `AFTER DELETE` trigger, and it is the one
+ * reason no walk can ever discharge: this is a keyset scan over `(created_at,
+ * id)` and it cannot revisit a row that is gone. So those marks only go up.
+ *
+ * That is not cosmetic. Above `DIRTY_WINDOW_CAP` (50,000) the resolver fails
+ * CLOSED for **every key in every batch** — correct behaviour for a dirty set it
+ * cannot enumerate, and a total outage of the resolution path arriving from
+ * nothing worse than ordinary deletions. Measured 27 Aug 2026: 16 marks from one
+ * afternoon's cleanup, oldest 10:56Z, with nothing able to remove them.
+ *
+ * **The discharge condition is the one thing the schema already guarantees.**
+ * Migration 0088's stated reason for the DELETE trigger is that *"removing a
+ * judgment leaves its key rows behind until the builder walks again"*. On this
+ * schema that is not true: `judgment_citation_keys_judgment_id_fkey` is
+ * `ON DELETE CASCADE`, so the key rows go with the judgment in the same
+ * statement. Verified on the live database — of the 16 marks, surviving key rows
+ * = 0.
+ *
+ * So this deletes a mark only when BOTH are provably true: no key row survives
+ * for that judgment id, and no judgment survives either. It is a positive check
+ * rather than a blanket delete of the reason, because the day somebody drops that
+ * CASCADE this must stop firing on its own rather than keep clearing marks that
+ * have become real again.
+ *
+ * The comment/schema conflict in 0088 is REPORTED, not resolved here (bus 1405 /
+ * 1406). Blocking a key whose judgment is gone is conservative under either
+ * reading, so discharging only the provably-complete ones is safe under both.
+ *
+ * **NOT fixed here, and it is the larger half:** nothing in production clears a
+ * dirty mark for ANY other reason either. `clearDirtyWork()` exists in
+ * `services/api/src/citations/citation-key-dirty.ts`, documented as "called
+ * INSIDE the transaction that rebuilds them", and its only callers are tests. The
+ * intended design was never wired. That needs the rebuild path to name the
+ * judgments it rebuilt and is a change to the citation pipeline, which
+ * `CLAUDE.md` exempts from simplification — so it is reported with numbers rather
+ * than half-wired by a round whose brief is plumbing.
+ *
+ * Written here rather than imported from `services/api`: `services/ingest` and
+ * `services/api` are separate deployables and do not import each other's `src/`
+ * (`services/ingest/src/inferx.ts` states the rule).
+ */
+async function dischargeCompletedDeletions(): Promise<number> {
+  const rows = await sql<{ judgment_id: string }[]>`
+    DELETE FROM citation_key_dirty d
+     WHERE d.reason = 'JUDGMENT_DELETED'
+       AND NOT EXISTS (
+         SELECT 1 FROM judgment_citation_keys k WHERE k.judgment_id = d.judgment_id
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM judgments j WHERE j.id = d.judgment_id
+       )
+    RETURNING judgment_id`;
+  return rows.length;
+}
+
 async function derivePage(cursorAt: string, cursorId: string, upperBound: string) {
   return sql<{ created_at: string; id: string; n: number }[]>`
     WITH page AS (
@@ -531,6 +595,24 @@ async function main() {
     // autovacuum to chase during the rebuild that follows it.
     console.log('--rebuild: truncating judgment_citation_keys');
     await sql`TRUNCATE judgment_citation_keys`;
+  }
+
+  /**
+   * Discharge the deletions BEFORE the walk, because the walk can never do it.
+   *
+   * A `JUDGMENT_DELETED` dirty mark waits for key rows that `ON DELETE CASCADE`
+   * has already removed, and nothing else on any path clears one — they only go
+   * up, and at `DIRTY_WINDOW_CAP` the resolver fails closed for every key. This
+   * is the only job that runs often enough to be the right place for it, and it
+   * costs one bounded DELETE per pass. See `citation-key-dirty.ts` for why the
+   * condition is "no key row survives" and not a timeout.
+   */
+  const discharged = await dischargeCompletedDeletions();
+  if (discharged > 0) {
+    console.log(
+      `discharged ${discharged.toLocaleString()} JUDGMENT_DELETED dirty mark(s) — ` +
+        'their key rows were already removed by the foreign key',
+    );
   }
 
   const resumed = readCheckpoint();

@@ -205,7 +205,12 @@ async function main() {
   const [unwalked] = await sql<{ n: number }[]>`
     select count(*)::int as n
       from judgments
-     where created_at > ${freshness.frontierAt}::timestamptz
+     -- (x::text)::timestamptz, never x::timestamptz. postgres.js infers the
+     -- parameter type from the cast and routes the string through a JS Date, which
+     -- has millisecond resolution -- so the bound arrives up to 999us EARLY and this
+     -- count is inflated by every row in that window. NEW2 bus 1231; the same rule
+     -- citation-keys-cli.ts states in its own header.
+     where created_at > (${freshness.frontierAt}::text)::timestamptz
   `;
 
   const totals = {
@@ -324,7 +329,16 @@ async function main() {
     await sql`
       insert into resolver_risk_replay (ran_at, truth_set, records, false_unique, materially_unsafe, frontier_at, notes)
       values (now(), ${TRUTH_SET_NAME}, ${totals.records}, ${totals.false_unique}, ${totals.materially_unsafe},
-              ${freshness.frontierAt}::timestamptz, ${JSON.stringify(notes)})
+              -- THE IDENTITY FIELD, and it must be written at FULL PRECISION.
+              -- readKeyFreshness compares this against the live cursor as TEXT,
+              -- deliberately, because two cursors 78us apart are different indexes.
+              -- Bound as ::timestamptz it arrives truncated to milliseconds, so a
+              -- cursor carrying microseconds could NEVER be matched and the gate was
+              -- permanently closed: state STALE, mayAssertUnique false, every
+              -- citation answering UNIQUE_UNCONFIRMED_STALE_INDEX. Observed 27 Aug
+              -- 2026 -- written .499+00 against a live .499107+00. The 24 Aug row
+              -- matched only because the frontier itself was truncated back then.
+              (${freshness.frontierAt}::text)::timestamptz, ${JSON.stringify(notes)})
     `;
     const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from resolver_risk_replay`;
     console.log('');

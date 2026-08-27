@@ -5996,6 +5996,57 @@ sit in a NEW1 fallback table instead of the shared one. The fix is one additive
 It needs a migration ordinal from `MIGRATION_SLOT` and nothing else — no money,
 no credential, no decision. Listed here purely because a blocker that lives only
 in a bus message is a blocker that gets lost.
+
+**CLOSED by LCC, 27 Aug 2026.** Migration `0089_document_vector_source_types`
+applied through the real `migrate()` path (`drizzle.__drizzle_migrations` at 90 rows,
+no hand-inserted ledger row). The CHECK now admits `statute_section`,
+`official_order` and `ecourts_observation`, and was proven both directions on the
+live table: all five values accepted, `not_a_real_type` still refused, 0 rows left
+behind. NEW1 bus 1397 -> LCC bus 1403.
+---
+
+## FQ-LCC-R9-1 — nothing this project runs recovers from a REBOOT without someone logging in  ·  LCC, 27 Aug 2026 · **needs one elevated prompt, five minutes**
+
+**What is needed:** an administrator prompt on this box, once, to register the
+background jobs as boot-triggered scheduled tasks.
+
+**Why a lane cannot do it.** Registering a task with an `AtStartup` trigger — or
+any `LogonType` other than `Interactive` — requires elevation. Probed and refused,
+not assumed:
+
+```
+New-ScheduledTaskTrigger -AtStartup + -LogonType S4U  ->  "Access is denied."
+```
+
+Every existing Lawmind task runs as `LogonType=Interactive`, which means it runs
+only while a human is signed in. Measured state after this round's reconciliation:
+
+```
+BOOT   1 mechanism   LawMindPostgres (Windows service, LocalSystem)
+LOGON  5 mechanisms  alert-poll · new1-sidecar-keeper · citation-keys ·
+                     citations · paragraphs
+```
+
+**What that costs.** A rebooted machine sitting at the lock screen runs Postgres
+and nothing else. On 13 Aug the box was powered off and the entire 24-worker fleet
+stayed down 7.3 hours. The pager is in the LOGON group too, so the one time you
+most want an alert — nobody logged in — is the time nothing is watching.
+
+**What was built anyway.** All five are real scheduled tasks with repeating
+triggers rather than Startup-folder shortcuts, so they recover from a CRASH within
+their interval and they survive a session ending. They just do not survive a
+locked screen. `scripts/job-health.mjs` prints the split every run under
+`UNATTENDED RECOVERY`, so this is visible rather than assumed.
+
+**What stays broken without it.** Reboot recovery, and only reboot recovery.
+
+**Where it plugs in.** One elevated PowerShell:
+`Register-ScheduledTask ... -Trigger (New-ScheduledTaskTrigger -AtStartup)
+-Principal (New-ScheduledTaskPrincipal -UserId <user> -LogonType S4U)` for the
+five task names above. Nothing in the repo changes.
+
+---
+
 ## Not queued, deliberately
 
 These looked like founder items and are not, so I did them or filed them in the

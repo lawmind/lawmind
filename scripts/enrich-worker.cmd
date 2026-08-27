@@ -76,6 +76,34 @@ if errorlevel 1 (
 )
 echo %DATE% %TIME% > "%LOCK%"
 
+REM ---------------------------------------------------------------------------
+REM  WHO ACTUALLY GUARANTEES ONE OWNER PER JOB -- LCC, 27 Aug 2026
+REM ---------------------------------------------------------------------------
+REM  Not this file. The node check above closes the common case and it has a hole
+REM  the width of the backoff: this loop spends 30 seconds to an HOUR with no node
+REM  process at all, and a second wrapper starting inside that window sees nothing.
+REM  MEASURED -- registering the three scheduled tasks on 27 Aug while three
+REM  hand-started wrappers were already looping produced SIX wrapper shells and
+REM  three concurrent `citations` workers on the same rows, which is the Orissa
+REM  collision returning by a different door.
+REM
+REM  The guarantee is the SCHEDULED TASK's `MultipleInstances = IgnoreNew`, which
+REM  is enforced by Windows and cannot be raced. Each worker has exactly one task
+REM  (`Lawmind-citation-keys`, `Lawmind-citations`, `Lawmind-paragraphs`), the task
+REM  is the owner, and the 15-minute trigger is what restarts a wrapper that died.
+REM
+REM  I TRIED to elect a leader here instead, with the wrapper's own PID in the lock
+REM  file, and removed it: `for /f` runs its command inside a transient `cmd /c`,
+REM  so the ancestor walk kept landing on that throwaway shell -- whose command
+REM  line contains the literal text `enrich-worker.cmd` because the SEARCH PATTERN
+REM  is part of it. A probe that matches itself. The lock recorded a PID that was
+REM  already dead, which is a guard that never guards, and a second mechanism that
+REM  silently does nothing is worse than one honest one.
+REM
+REM  So: DO NOT hand-start this wrapper while its task exists. `Start-ScheduledTask
+REM  -TaskName Lawmind-<name>` is the only supported way in.
+REM ---------------------------------------------------------------------------
+
 cd /d "%REPO%"
 
 REM ---------------------------------------------------------------------------

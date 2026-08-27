@@ -82,6 +82,7 @@ describe('readKeyFreshness — against the live frontier', () => {
     const f = await readKeyFreshness(sql);
     if (f.state === 'UNKNOWN') return; // nothing published yet; nothing to compare
     const [row] = await sql<{ cursor_at: string }[]>`
+      -- iso-time-exempt: the cursor is compared for IDENTITY against the live frontier; a millisecond rendering makes two cursors 78 microseconds apart equal.
       SELECT cursor_at::text FROM citation_key_frontier`;
     assert.ok(row, 'a non-UNKNOWN reading requires a frontier row');
     assert.equal(
@@ -94,8 +95,27 @@ describe('readKeyFreshness — against the live frontier', () => {
   it('counts exactly the judgments created after the cursor', async () => {
     const f = await readKeyFreshness(sql);
     if (f.state === 'UNKNOWN' || f.frontierAt === null) return;
+    /**
+     * `(x::text)::timestamptz`, NOT `x::timestamptz` — and this test failed for
+     * exactly the reason it exists to check.
+     *
+     * postgres.js infers a bind's type from the cast it is written against and
+     * routes the string through a JavaScript `Date`, which has millisecond
+     * resolution. `readKeyFreshness` writes the production count the correct way;
+     * this independent check did not, so its bound arrived up to 999 microseconds
+     * EARLY and it counted rows the production code correctly excluded. Measured
+     * 27 Aug 2026: production 339, this check 340. Off by exactly the row sitting
+     * inside the truncated microsecond.
+     *
+     * NEW2 bus 1231, and this is its THIRD site — after `key-freshness.ts` itself
+     * and `scripts/n2-resolver-risk-replay.mts`, whose truncated `frontier_at`
+     * had the resolver gate permanently closed. An independent check written in
+     * the shape the thing under test is documented to avoid is not independent;
+     * it is a second copy of the bug.
+     */
     const [check] = await sql<{ n: string }[]>`
-      SELECT count(*)::text AS n FROM judgments WHERE created_at > ${f.frontierAt}::timestamptz`;
+      SELECT count(*)::text AS n
+        FROM judgments WHERE created_at > (${f.frontierAt}::text)::timestamptz`;
     assert.equal(f.lagRows, Number(check?.n ?? -1));
   });
 });

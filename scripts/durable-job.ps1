@@ -61,7 +61,10 @@ param(
   [Parameter(Mandatory = $true)][string]$Name,
   [string]$Command = '',
   [int]$EveryMinutes = 5,
-  [switch]$Remove
+  [switch]$Remove,
+  # Declare this job a NON-WRITER and omit the freeze check from its wrapper.
+  # Ask for it deliberately; the reason is recorded in the generated wrapper.
+  [switch]$IgnoreStopFile
 )
 
 $ErrorActionPreference = 'Stop'
@@ -97,9 +100,47 @@ $wrapper = Join-Path $jobDir "$Name.cmd"
 
 # stderr is folded into the same file deliberately. Two files means two things to
 # check, and the failures worth catching here announce themselves on stderr.
+# THE FREEZE SWITCH GOES IN THE GENERATED WRAPPER, NOT IN THIS SCRIPT.
+#
+# `scripts/check-stop-coverage.mjs` found this file as a launcher that could
+# start a WRITER during a freeze, and it was right: it will register any command
+# it is handed, on a repeating trigger, with nothing between that command and the
+# database. Its own docstring already warns "do not point this at a job with no
+# guard" -- a warning is not a guard.
+#
+# It goes in the WRAPPER because that is what actually runs, on every fire,
+# however the task was created. Putting the check here would test the state of
+# the world at REGISTRATION time, which is the one moment it does not matter.
+#
+# `-IgnoreStopFile` exists for jobs that are not writers -- the GPU sidecar
+# keeper holds no database connection and pausing it during a corpus freeze buys
+# nothing and costs a warm sidecar. It has to be asked for, and the reason is
+# written into the wrapper so the next reader sees the claim rather than an
+# unexplained absence.
+$stopGuard = if ($IgnoreStopFile) {
+@"
+REM  STOP file NOT checked -- registered with -IgnoreStopFile.
+REM  This job is declared a NON-WRITER: it holds no database connection, so the
+REM  fleet freeze has nothing to protect from it.
+"@
+} else {
+@"
+REM  THE FLEET FREEZE. services\ingest\.checkpoints\STOP is written by
+REM  `release:candidate pause` and by scripts\fleet-stop.ps1, and every writer in
+REM  this repo is expected to cross it. Checked on EVERY fire, because a
+REM  repeating trigger means "every n minutes" is also "every n minutes during a
+REM  freeze".
+if exist "$repo\services\ingest\.checkpoints\STOP" (
+  echo [%DATE% %TIME%] PAUSED by services/ingest/.checkpoints/STOP -- not starting >> "$log"
+  exit /b 0
+)
+"@
+}
+
 @"
 @echo off
 cd /d "$repo"
+$stopGuard
 $Command >> "$log" 2>&1
 "@ | Set-Content -Path $wrapper -Encoding ascii
 

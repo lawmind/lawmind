@@ -161,6 +161,7 @@ export async function decide(
   // refusals would lock out the requests the grant actually allows.
   const [counts] = await sql<{ last_at: string | null; in_hour: number; in_day: number }[]>`
     SELECT
+      -- iso-time-exempt: consumed by Date.parse three lines below for the min-interval arithmetic and never returned; nothing in the decision this function makes reaches a client as a timestamp.
       max(requested_at)::text                                                       AS last_at,
       count(*) FILTER (WHERE requested_at > ${at.toISOString()}::timestamptz - interval '1 hour') AS in_hour,
       count(*) FILTER (WHERE requested_at > ${at.toISOString()}::timestamptz - interval '1 day')  AS in_day

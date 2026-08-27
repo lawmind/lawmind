@@ -91,6 +91,18 @@ endpoint.
 | `GET /statutes` | BUILT |
 | `GET /statutes/sections` | BUILT |
 | `GET /corpus/coverage` | BUILT |
+| `GET /corpus/freshness` | BUILT |
+| `GET /release/capabilities` | BUILT |
+
+`GET /corpus/freshness` — how CURRENT what we hold is, as against how MUCH of it
+we hold. It returns the naive `max(judgment_date)` reading **and** the honest
+completeness-ratio reading side by side, with the naive one labelled: a month
+holding one document has a newest date and no coverage, and the only way to stop
+that number being believed is to show it losing. ADDED 27 Aug 2026, LCC R9.
+
+`GET /release/capabilities` — the server-enforced capability registry. A disabled
+route returns 409 with its reason rather than an empty 200. Mounted in R8.3;
+added to this table 27 Aug 2026.
 
 **Feature-parity endpoints — LCC owns · ADDED 6 Aug 2026**
 

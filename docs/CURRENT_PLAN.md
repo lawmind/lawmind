@@ -16,6 +16,88 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 27 August 2026 (R9) — LCC: THE RESTORE NEVER HUNG, THE RESOLVER GATE WAS PERMANENTLY CLOSED, AND THE FACTORY IS RESTARTED WITH ONE OWNER PER JOB
+
+**Round:** R9 operational, founder-directed. Leases: `LCC`, `MIGRATION_SLOT`.
+**Evidence:** `docs/ai/lcc-r9/LCC_R9_OPERATIONS_ROUND.md`, `docs/ops/JOB_TABLE.md`,
+`release-rehearsal/RESTORE_TRACE.jsonl`.
+
+**The restore was never a hang.** `judgment_statute_refs` loads BEFORE `statutes`
+and references it, so every row of the fourth COPY violated an FK against an empty
+parent — and postgres.js resolves a COPY query at `CopyInResponse` and completes
+its writable only from `CommandComplete`, so the `ErrorResponse` landed on an
+already-settled query and nothing ever called `final`. Server idle in
+`ClientRead`, client blocked, no error anywhere. Found in the PostgreSQL server
+log, which no client-side hypothesis was going to reach.
+
+| load order | triggers | result |
+| --- | --- | --- |
+| topological | **ON** | VERIFIED 10.3s — **the ordering was the defect** |
+| topological | OFF | VERIFIED 10.3s |
+| manifest (HEAD) | ON | fails loudly at the deadline, names table + byte position |
+| manifest (HEAD) | OFF | VERIFIED 10.4s |
+| HEAD code | ON | **HANGS**, reproduced twice |
+
+Bounded rehearsal end to end: 7/7 tables, rows and checksums match, 7 FK
+constraints 0 dangling, 259 indexes 0 invalid, exact search on the rebuilt
+GENERATED tsvector, statute/citation joins, source untouched, and a rollback
+(DROP → migrate 90/90 → re-restore → VERIFIED). Host loss at real scale is NOT
+proven and is the next restore item.
+
+**The resolver gate could never be satisfied again, and that outranks the
+restore.** `n2-resolver-risk-replay.mts` wrote `frontier_at` as a `::timestamptz`
+bind, which postgres.js truncates to milliseconds, while `readKeyFreshness`
+compares it against the live cursor as TEXT on purpose. `.499+00` against
+`.499107+00` — STALE for ever, `mayAssertUnique` false for ever, every citation
+answering `UNIQUE_UNCONFIRMED_STALE_INDEX`. Fixed with `(x::text)::timestamptz`;
+state CURRENT, `because: []`. **The downstream cycle is four steps, not three:
+the risk replay must be re-run after every index advance.**
+
+**The factory.** NEW2's 50,994-row delta fully consumed — citations 50,994→0,
+paragraphs 50,994→121, key cursor at the live frontier. Registry reconciled: two
+fake-RUNNING declarations closed, two re-claimed on observation (including
+`new1-doc-vector-embed`, which I retired correctly at 11:04Z and re-claimed at
+11:29Z when NEW1 relaunched it). Registering the scheduled tasks while
+hand-started wrappers looped produced **six wrappers and three concurrent
+`citations` workers**; single ownership is the task's
+`MultipleInstances = IgnoreNew`, not the wrapper — an attempt to elect a leader in
+`enrich-worker.cmd` was removed because the probe matched itself.
+
+**Fresh install EQUIVALENT** — `n1_lab_passage_role` declared non-product through
+a NAMED, anchored list rather than a widened `n[123]_` prefix, and proven
+non-vacuous with a planted probe table whose column was deliberately named
+`n1_lab_passage_role_id` and was NOT exempted. FIFTH 1363/1364 and 1386-D closed.
+
+**The two red tests, both fixed by making the assertion truer rather than
+looser.** Allahabad is 65.143% held and the survey did not need rewriting — it
+counts the SOURCE, which has not moved; the test now asserts the number is derived
+live from `judgments` rather than pinning a snapshot. The timestamp guard
+over-matched (internal identity casts) AND under-matched (`max(created_at)::text`
+was invisible to it, and `corpus/coverage.ts` was leaking `enumeratedAt` to the
+client as Postgres text); it now carries an auditable per-line exemption with
+pinned files AND an assertion on the real `/admin/metrics` payload, which caught
+four leaked timestamps.
+
+**Shipped:** `GET /corpus/freshness` — completeness ratio against a trailing
+baseline, never a maximum. `dataAsOf 2026-07-31`, honest lag **27 days** against a
+naive 2. Migration **0089** widens `document_vector_staging` to admit
+`statute_section` / `official_order` / `ecourts_observation` (NEW1 bus 1397),
+applied through the real `migrate()` path — ledger at 90 rows, no hand-inserted
+row.
+
+**eCourts needed nothing built:** `ecourts_observation` and `ecourts_transition`
+already exist with raw payload + `observed_at` vs `source_asserted_at` and derived
+state kept in a separate table. The canary is gated on NEW2's `FQ-N2-R9-1`.
+
+**Open:** the full API suite is NOT green and is not being called green — four
+tests assert a corpus that is not moving and another lane wrote 339 judgments and
+16 `JUDGMENT_DELETED` marks mid-run; a write-quiet window is requested on the bus.
+Host-loss rehearsal at scale not run. `new1_doc_vector_stage` /
+`new1_tranche_passages` deliberately not journalled while a 211-hour walk is still
+writing them. Boot recovery needs elevation — `FQ-LCC-R9-1`.
+
+---
+
 ### 27 August 2026 (R9) — NEW1: EXACT AND LEXICAL ARE AT 100%, THE COARSE WALK IS RUNNING AGAIN, AND PRODUCTION SEMANTIC SEARCHES 40,161 JUDGMENTS
 
 **Round:** R9 retrieval-coverage, founder-directed. Lease: `NEW1`.

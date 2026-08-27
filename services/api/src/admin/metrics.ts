@@ -45,6 +45,7 @@ import type { Sql } from 'postgres';
 import { fail, ok } from '../envelope.ts';
 import { readKeyFreshness } from '../citations/key-freshness.ts';
 import { buildSha } from '../build-info.ts';
+import { isoFromPgText } from '../iso-time.ts';
 import { CORE_POOL_MAX, RESEARCH_POOL_MAX, RESEARCH_CONCURRENCY } from '../pools.ts';
 import type { Admission } from '../search/admission.ts';
 
@@ -633,7 +634,28 @@ export async function collectMetrics(
        * null means migration 0085 has not run here — NOT that the index is
        * current. The same distinction `backgroundJobs` above it makes.
        */
-      citationKeys,
+      /**
+       * Its four timestamps are rendered HERE, not read differently.
+       *
+       * `readKeyFreshness()` reads its cursors as Postgres text on purpose — the
+       * comparison it feeds is an identity check at microsecond resolution, and
+       * postgres.js truncates a `timestamptz` bind to milliseconds. That argument
+       * was made and it is correct. What nobody checked is that the whole object
+       * was then spread into THIS payload, so `2026-08-26 19:41:00.123456+00`
+       * reached an admin client four times over — the exact string that rendered
+       * "Invalid Date" beside "Safe to file" on a Galaxy S24.
+       *
+       * So the boundary converts and the internals do not change. `isoFromPgText`
+       * returns null for anything it cannot parse: an unrenderable timestamp is
+       * absent, never a guess.
+       */
+      citationKeys: citationKeys && {
+        ...citationKeys,
+        frontierAt: isoFromPgText(citationKeys.frontierAt),
+        ingestAt: isoFromPgText(citationKeys.ingestAt),
+        lastRiskReplayAt: isoFromPgText(citationKeys.lastRiskReplayAt),
+        lastRiskReplayFrontierAt: isoFromPgText(citationKeys.lastRiskReplayFrontierAt),
+      },
       /**
        * The whole point. Empty means every rule above is inside its threshold
        * right now — not that nothing is wrong, only that nothing we know how to

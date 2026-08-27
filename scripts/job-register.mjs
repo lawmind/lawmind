@@ -325,9 +325,22 @@ function retire(argv) {
   const prev = jobs.get(jobId);
   if (!prev) die(`no registry line for "${jobId}" — nothing to retire`);
 
+  /**
+   * PAUSED is accepted here because `job-health.mjs` already READS it —
+   * `classify()` returns `{ state: 'PAUSED', why: 'declared paused by its lane' }`
+   * — and nothing could ever WRITE it. A state the reader understands and the
+   * writer cannot produce is a state that does not exist.
+   *
+   * It matters for the case it was missing in: a continuous job stopped
+   * DELIBERATELY, for a quiet window or a freeze, and left declared RUNNING reads
+   * as FAILED — "declared RUNNING but no process matches". That is a fake alarm,
+   * and a control plane that cries wolf on its own maintenance is one nobody
+   * reads. The difference between "it died" and "I stopped it" is the difference
+   * between a page and a note.
+   */
   const state = flag(argv, 'state', 'STOPPED');
-  if (!['STOPPED', 'FINISHED', 'FAILED'].includes(state)) {
-    die('--state must be STOPPED, FINISHED or FAILED');
+  if (!['STOPPED', 'FINISHED', 'FAILED', 'PAUSED'].includes(state)) {
+    die('--state must be STOPPED, FINISHED, FAILED or PAUSED');
   }
   const now = new Date().toISOString();
   const line = {
@@ -381,7 +394,7 @@ else {
     'usage: job-register.mjs <claim|cadence|retire|show> <job_id> [flags]\n' +
       '       claim   <job_id> --pid <pid> [--lane LCC] [--output-sql "..."] [--reason "..."]\n' +
       '       cadence <job_id> --task <scheduled task> --every <seconds> --lane LCC --output-lines <receipts>\n' +
-      '       retire  <job_id> --reason "..." [--state STOPPED|FINISHED|FAILED]\n' +
+      '       retire  <job_id> --reason "..." [--state STOPPED|FINISHED|FAILED|PAUSED]\n' +
       '       show    [job_id]',
   );
   process.exit(2);

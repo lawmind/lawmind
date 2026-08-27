@@ -696,7 +696,20 @@ function identify(job, sweep, live) {
   // The recorded pid is not there. Before calling it dead, ask whether the job
   // is running under a different pid — a keeper restart, a logon relaunch, a
   // supervise.mjs respawn. A job that moved is not a job that failed.
-  if (declaredSig) {
+  /**
+   * A RETIRED job does not get to rediscover itself.
+   *
+   * Rediscovery exists for a job that MOVED — a keeper restart, a logon
+   * relaunch. It is the wrong answer for a job whose lane has declared it
+   * finished, because the process that matches its signature is almost always
+   * its SUCCESSOR under a new job_id, and adopting it prints the retired line as
+   * RUNNING_PROGRESSING. Measured 27 Aug 2026: `new2-paragraphs-apply`, retired
+   * that morning with a written reason, adopted `lcc-paragraphs-apply`'s wrapper
+   * and both rows reported the same live instance. One logical job, two owners,
+   * and the retired one wearing a RUNNING state — which is the exact fiction this
+   * file exists to refuse.
+   */
+  if (declaredSig && !TERMINAL.has(String(job.status || '').toUpperCase())) {
     const candidates = live.filter((p) =>
       signatureMatches(declaredSig, commandSignature(p.CommandLine)),
     );

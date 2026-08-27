@@ -12,6 +12,7 @@ import { after, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
+import { ISO_8601 } from '../iso-time.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
 const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
@@ -53,31 +54,67 @@ describe('corpus coverage', () => {
     }
   });
 
-  it('THE GAP IS VISIBLE — Allahabad is the largest and we hold effectively none of it', async () => {
+  /**
+   * THE PREMISE THIS TEST PINNED HAS MOVED, AND THE SURVEY IT POINTED AT WAS NOT WRONG.
+   *
+   * The assertion here was `heldShare < 0.001` — "we hold effectively none of
+   * Allahabad" — with a message saying `docs/HC_CORPUS_SURVEY.md` would need
+   * rewriting before it was relaxed. On 27 Aug 2026 it reads **65.143%
+   * (2,276,087 of 3,493,991)**. NEW2's High Court ingest did that, on purpose,
+   * over three weeks.
+   *
+   * **The survey does not need rewriting.** It counts the SOURCE — 20,529,202
+   * documents in the AWS bucket, from parquet footers — and that number has not
+   * moved. What moved is what we HOLD. The old assertion read a snapshot of our
+   * holdings as if it were a property of the source, and those are the two sides
+   * of the very ratio this endpoint exists to publish. Pinning either one pins
+   * the wrong half.
+   *
+   * So what replaces it is the claim that cannot go stale and is the one that
+   * would actually hurt an advocate if it broke: **the number is derived live
+   * from `judgments`, and it is the same number a direct count gives.** A
+   * coverage figure that is stale in the reassuring direction is worse than no
+   * figure at all — `coverage.ts` says so in its own comment — and a cached or
+   * optimistic `held` is the only way this endpoint can lie.
+   *
+   * Two more assertions ride along, both about shape rather than snapshot: the
+   * ratio must be reportable (a zero denominator would make every share NaN and
+   * render as nothing), and `held` must not exceed `sourceDocuments`, which would
+   * mean the denominator is measuring a different population from the numerator.
+   *
+   * The three-week-old failure this replaces was NOT a defect and was not stale
+   * prose either: it was a data fact outrunning its test, and the pin worked.
+   */
+  it('THE GAP IS VISIBLE — the largest court reports a live, checkable share', async () => {
     const cov = await fetchCoverage();
     const allahabad = cov.highCourts.find((x) => x.courtName === 'Allahabad High Court');
     assert.ok(allahabad, 'Allahabad missing from coverage');
-    // 3,493,695 in the last decade alone; this is all years.
+    // 3,493,695 in the last decade alone; this is all years. A SOURCE count, and
+    // the half of the ratio that a survey of the bucket is entitled to pin.
     assert.ok(allahabad.sourceDocuments > 3_000_000);
 
-    // This assertion USED to pin `held === 0`, with a comment saying it should
-    // be updated deliberately if an ingest ever landed. It landed — 11 Aug 2026,
-    // 6 rows — and the pin did exactly its job by going red.
-    //
-    // What replaces it is the invariant rather than the next snapshot. High
-    // Court ingest is a running job, so a hand-edited number here would be
-    // re-edited on every batch, and an assertion people update reflexively
-    // stops being an assertion. The claim worth defending is the one this
-    // endpoint exists for: the hole is total in every sense an advocate cares
-    // about, and if it ever stopped being total that is a change nobody should
-    // be able to make quietly.
-    assert.ok(allahabad.held >= 0);
+    // DERIVED LIVE, NOT STORED. The one failure this endpoint can have that an
+    // advocate would never see: a held count that is behind the corpus, or ahead
+    // of it. Same query the route runs, asked independently.
+    const [direct] = await sql<{ n: number }[]>`
+      SELECT count(*)::int AS n FROM judgments WHERE court = 'Allahabad High Court'`;
+    assert.ok(direct, 'the direct count returned no row');
+    // An ingest can commit between the two reads, so the bound is drift, not
+    // equality — but it is a tight bound, because the route must not be reading a
+    // cache. 5,000 rows is under four minutes of the fleet's measured best rate.
+    assert.ok(
+      Math.abs(allahabad.held - direct.n) < 5_000,
+      `the endpoint reported ${allahabad.held} held and a direct count says ${direct.n} — ` +
+        'this figure is supposed to be derived live, never cached',
+    );
+
+    // Reportable, and the two sides measure the same population.
+    assert.ok(allahabad.sourceDocuments > 0, 'a zero denominator renders as nothing at all');
     const heldShare = allahabad.held / allahabad.sourceDocuments;
     assert.ok(
-      heldShare < 0.001,
-      `Allahabad coverage is now ${(heldShare * 100).toFixed(3)}% (${allahabad.held} of ` +
-        `${allahabad.sourceDocuments}). If that is real, this endpoint's whole premise has ` +
-        `changed and docs/HC_CORPUS_SURVEY.md needs rewriting before this test is relaxed.`,
+      heldShare >= 0 && heldShare <= 1,
+      `held share is ${heldShare} (${allahabad.held} of ${allahabad.sourceDocuments}) — ` +
+        'held cannot exceed the source count unless the two are counting different things',
     );
   });
 
@@ -124,6 +161,10 @@ describe('corpus coverage', () => {
   it('carries the date the SOURCE was counted — a coverage claim with no date is not checkable', async () => {
     const cov = await fetchCoverage();
     assert.ok(cov.enumeratedAt !== null);
-    assert.ok(!Number.isNaN(Date.parse(cov.enumeratedAt!)));
+    // ISO_8601, not `Date.parse` — this test asserted only that Node could parse
+    // it, and Node parses the Postgres text form that Hermes refuses. It WAS the
+    // Postgres form: `max(enumerated_at)::text` reached the client here until
+    // 27 Aug 2026, and the assertion below is what would have caught it.
+    assert.match(cov.enumeratedAt!, ISO_8601);
   });
 });

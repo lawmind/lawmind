@@ -243,9 +243,11 @@ async function readCorpusIdentity(sql: Sql): Promise<CorpusIdentity> {
       (SELECT count(*) FROM judgment_statute_refs WHERE statute_id IS NOT NULL)::text   AS refs_linked,
       (SELECT count(*) FROM drizzle.__drizzle_migrations)::text                        AS migrations,
       (SELECT count(*) FROM citation_key_dirty)::text                                  AS dirty,
+      -- iso-time-exempt: candidate IDENTITY field. Sealed to a JSON manifest by a CLI and compared for exact equality by the drift detector; there is no route that serves it.
       (SELECT cursor_at::text FROM citation_key_frontier LIMIT 1)                      AS cursor_at,
       (SELECT max(judgment_date)::text FROM judgments)                                 AS max_date,
       -- Index-backed: judgments (created_at, id) is the key builder's walk order.
+      -- iso-time-exempt: candidate IDENTITY field. Sealed to a JSON manifest by a CLI and compared for exact equality by the drift detector; there is no route that serves it.
       (SELECT max(created_at)::text FROM judgments)                                    AS newest_created`;
 
   return {

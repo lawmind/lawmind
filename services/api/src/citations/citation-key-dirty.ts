@@ -46,6 +46,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { isoColumn } from '../iso-time.ts';
+
 /**
  * The keys that MUST NOT be answered UNIQUE because some judgment the index does
  * not reflect claims them — or USED to claim them.
@@ -166,7 +168,12 @@ export type DirtyWorkSummary = {
 /** For the admin monitor and the release manifest. One aggregate read. */
 export async function readDirtyWork(sql: Sql): Promise<DirtyWorkSummary> {
   const rows = await sql<{ reason: string; n: string; oldest: string | null }[]>`
-    SELECT reason, count(*)::text AS n, min(noticed_at)::text AS oldest
+    -- ISO-8601 rather than Postgres text: this summary is documented as going to
+    -- the admin monitor and the release manifest, and oldest is compared with a
+    -- string less-than below. Lexicographic order on a fixed-width UTC ISO string
+    -- IS chronological order, so the min still works and the wire form is right.
+    SELECT reason, count(*)::text AS n,
+           ${sql.unsafe(isoColumn('min(noticed_at)'))} AS oldest
       FROM citation_key_dirty GROUP BY reason`;
 
   const byReason: Record<string, number> = {};

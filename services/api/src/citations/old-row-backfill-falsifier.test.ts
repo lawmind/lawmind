@@ -101,6 +101,7 @@ describe('FIFTH bus 1313 — old-row backfill and mutation cannot leave a false 
       if (!target) return null;
 
       const [frontier] = await tx<{ cursor_at: string }[]>`
+        -- iso-time-exempt: the cursor is compared for IDENTITY against the live frontier; a millisecond rendering makes two cursors 78 microseconds apart equal.
         SELECT cursor_at::text FROM citation_key_frontier LIMIT 1`;
       if (!frontier) return null;
       const cursorAt = frontier.cursor_at;
