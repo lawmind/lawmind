@@ -650,3 +650,114 @@ requests went unanswered before I read the inbox.
 Both leases are released. The rule that would have prevented it is the one already
 in the lease's own `purpose` field: **if the stated pattern is minutes long and it
 has been an hour, the lease is the bug.**
+
+
+---
+
+## 9. Addendum 2 — the two questions the founder asked, answered against live measurement
+
+### 9.1 Newest upstream DECISION vs newest local DECISION — 25 of 25 benches at parity
+
+§1 and §6 both reported the newest upstream **WRITE** (the object's
+`LastModified`). That answers *"is the publisher still active"* and NOT *"is there
+law upstream we do not hold"*, which is a fact about decision dates INSIDE the
+file. `scripts/n2-coverage-frontier.mts` opens every 2026 partition and reads
+`decision_date` in bounded windows over `num_rows`, whole column, one column
+projected.
+
+```
+corpus-wide newest UPSTREAM decision   2026-08-25
+corpus-wide newest LOCAL    decision   2026-08-25
+frontier gap                                    0 days
+courts at parity 25 · behind 0 · ahead 0
+```
+
+Per bench, upstream = local to the day: `9_13` `33_10` `27_1` `3_22` `29_3`
+`21_11` `19_16` `2_5` `5_15` `10_8` all at 2026-08-25; `8_9` `11_24` `17_21`
+`20_7` `24_17` at 2026-08-24; `14_25` `18_6` `22_18` `28_2` at 2026-08-23;
+`1_12` `23_23` `32_4` `36_29` `7_26` at 2026-08-21; `16_20` at 2026-07-02.
+
+**Not a tail sample.** These partitions are not sorted by decision date — the
+Bombay file's last row is July while its newest is August — so reading the end
+would have understated the frontier.
+
+### 9.2 The measurement was wrong twice before it was right, and both errors were mine
+
+**First run: "Bombay is 94 days behind, newest upstream decision 2026-11-27."**
+Three months in the future on the day it was measured. All three future-dated rows
+live in `court=27_1/bench=testcase/metadata-mobile.parquet` — the fixture partition
+`isTestFixture` already refuses at ingest and §1.1 already excluded from the delta.
+Bombay's twelve real bench partitions all top out at 2026-08-25, exactly what we
+hold.
+
+`fixture-partition-inflates-the-denominator` recurring **in a frontier rather than
+a denominator**, which is why the standing note about denominators did not catch
+it. Two fixes, both in the script with the incident recorded: exclude
+`bench=testcase`, and cap the frontier at TODAY — a decision dated tomorrow is a
+bad date upstream, not law we lack, and those rows are counted and reported rather
+than silently dropped.
+
+**Second: `upstreamRows` next to `heldThisYear` invited a division that is
+meaningless.** Court `23_23` showed 109 held against 3,587 upstream parquet rows —
+3% coverage, and worth a founder's attention. Measured properly:
+
+```
+upstream PDF OBJECTS under data/pdf/year=2026/court=23_23/     109
+held                                                           109
+coverage                                                      100%
+hc_ingest_ledger for that court-year   3,477 rows, ALL pdf_absent, ALL permanent
+109 + 3,477 = 3,586  ≈  3,587 parquet rows
+```
+
+The 3,477 are metadata rows whose `pdf_link` points at objects the publisher never
+uploaded. The naming is the tell: every object that exists uses the plain variant's
+form `MPHC030008222020_1_2020-01-10.pdf`, every absent one the mobile variant's
+bare `orders_2025_...pdf`. Four candidate paths HEADed, all 404.
+
+The column is renamed **`upstreamParquetRows`** and carries a caveat naming this
+worked example. `failed-documents-need-a-ledger` is what made it answerable at all:
+`source_url` records only successes, and without the failure side this reads as an
+unexplained 3% forever.
+
+**I also named that court "Jharkhand" to FIFTH before checking.** It is Madhya
+Pradesh — the database's own `court` column says so. Corrected on bus 1423.
+
+### 9.3 The chronology package FIFTH asked for — published
+
+`docs/ai/new2-r9/chronology-test-package.json`, 141 KB, from
+`scripts/n2-chronology-test-package.mts`. FIFTH's 1357 asked to *"add a chronology
+refusal/control and predecessor identity handling, then reapply and republish the
+F-4 package"*. §3 did the control; this is the republication, and it was
+outstanding until now.
+
+```
+refs 862,594 · linked 703,859 · temporally impossible 0     (queried live)
+cleared 1,723 · re-read 1,723 of 1,723 · linked again 0
+non-vacuity: a re-apply restores 1,723 WITHOUT the guard, 0 WITH it  -> NON_VACUOUS
+```
+
+Built around the error that sampling my output cannot find. A refusal rule's
+dangerous failure is **over-refusal**, and `verification-catches-false-positives-only`
+says that leaves no trace in what remains. So:
+
+- **91 cleared rows** across 52 (Act × forum × decade) strata, each with 460
+  characters of the court's own text. Two that carry the argument: a **1960**
+  judgment citing `s. 251A(2), Cr. P. C.` linked to the 1973 Code, where s.251A is
+  an 1898-Code section and `section_exists = FALSE`; and a **1968** judgment citing
+  s.144 where `section_exists = TRUE`, because s.144 is in both Codes — a
+  per-section test passes and only chronology catches it.
+- **Boundary controls**: `SAME_YEAR` (population 112, sampled 25) and
+  `ONE_YEAR_INSIDE` (1,061, sampled 25). If the comparison is off by one it shows
+  there and nowhere else. `NULL_JUDGMENT_DATE` has a population of **zero**, so the
+  rule's tolerance for it has no live evidence — the package carries an
+  `empty_classes` field so that reads `UNTESTED`, never `PASSED`.
+- **Predecessor identity handling is NOT built**, and it is the first field in the
+  package. We hold none of the predecessors — not the Indian Ports Act 1908, the
+  Cantonments Act 1924, the Companies Act 1956, the Arbitration Act 1940, the Trade
+  Marks Act 1940 — so "handling" means linking to an Act we have never ingested.
+  The predecessor the court names is exhibited so the acquisition target stays
+  nameable; nothing is linked to it.
+- `predecessor_named_by_the_court` fires on **3 of 91**, and that is recorded as a
+  limit of my regex rather than a fact about courts: judgments write "Cr. P. C.",
+  not "Code of Criminal Procedure, 1898". Tuning it until the number looked better
+  would be scoring a phrase list on the documents it was written from.
