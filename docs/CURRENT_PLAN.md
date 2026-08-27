@@ -16,6 +16,63 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 27 August 2026 (R8.3) — LCC: THE READER WENT ROUND ITS OWN EVIDENCE GATE, A BELOW-CURSOR ROW STILL RESOLVED UNIQUE, AND EVERY SUPREME COURT JUDGMENT WE HOLD IS THE REPORTER'S EDITION
+
+**Round:** R8.3 LIMITED-FREEZE, §10 LCC mission. **First HEAVY_BOX owner.**
+**Evidence:** `docs/ai/lcc-r83/LCC_START_STATE_R8_3.md`,
+`docs/ai/lcc-r83/LCC_RELEASE_PROOF_R8_3.md`,
+`docs/ai/lcc-r83/RELEASE_CANDIDATE_R8_3.json`.
+
+**Closed, each with the falsifier kept as a test:**
+
+| what | evidence |
+|---|---|
+| FIFTH 1322 — the reader served `TEXT_DAMAGED` full text that search withholds | `fullText` empty by REFUSAL + `bodyText` envelope; the unconvicted side asserted too, so the gate is not a blanket |
+| FIFTH 1313 — a row inserted BELOW the key cursor still resolved `UNIQUE` | migration `0087`, durable dirty-work identity; `lagRows` is 0 and there is no bound under zero, so a wider threshold could never have worked |
+| FIFTH 1354 — a REMOVED citation left its old key confidently unique | migration `0088`; the trigger remembers the citation TEXTS from both sides, because an added claim can be re-derived and a removed one exists only in the wrong index |
+| FIFTH 1365 — the candidate named a HEAD that did not reproduce it | code identity bound: HEAD, registry digest, migration digest, schema digest; `reproducible` false over a dirty tree |
+| FIFTH 1367 — an S.C.R. headnote served as the court's own words | `textOrigin` + `generationEvidenceEligible`, from PROVENANCE, no content classifier |
+| FIFTH 1373 — "nothing is running" is not "nothing can start" | `release:candidate pause` writes the fleet STOP file; the wrapper checks it before first start AND at every restart |
+| §6 capability registry | 21 capabilities, server-enforced, `GET /release/capabilities`; a disabled route returns 409 with its reason, not an empty 200 |
+| §7 RELEASE_CANDIDATE_ID | seal/check/pause/resume, drift detector proven able to fire AND not to cry wolf |
+
+**The finding that outranks the rest.** Every one of the **38,342** Supreme Court
+judgments we hold is the **S.C.R. reporter's edition** — object names are
+`year_volume_startpage_endpage`, all 38,342 carry an S.C.R. citation, and the
+bodies carry the reporter's running head and marginal letters. NEW2 had already
+queued this as **FQ-N2-2** with better numbers and the nuance that SCR is the
+Court's OWN official reporter, so *EBC v. Modak* is genuinely open. LCC added the
+enforcement, not the decision.
+
+**Release proof:** fresh install **89/89** in 3.1s; full API suite **768/772**,
+the 2 failures pre-existing and other lanes'; mixed-load isolation PASS with
+**0 silent empty 200s** in three phases; 10 unmigrated tables all classified
+lab-only, 0 production readers.
+
+**OPEN, and the honest state of it:**
+
+1. **Restore / host-loss / rollback — UNPROVEN.** The hang is real (client alive,
+   backend idle in `ClientRead`). Cause NOT found: three hypotheses falsified,
+   the exact COPY works in isolation. **Stopped at the hard bound** rather than
+   guessing a fourth time. Tie-breaker: per-table instrumentation in
+   `release-restore-cli.ts`.
+2. **`release-restore-cli.ts` claims it disables triggers for the load and no
+   code does.** Verified by grep — one comment, no `session_replication_role`, no
+   `DISABLE TRIGGER`. Harmless so far; not harmless now that 0087/0088 put
+   triggers on `judgments`.
+3. **A reproducible candidate is blocked on `apps/admin/lib/api.ts`**, which is
+   uncommitted and is RCC's. Not mine to commit.
+4. `iso-time` `_at::text` guard is **pre-existing red** and has a false-positive
+   class it cannot express: an internal identity comparison is not a wire
+   rendering. Recommended an auditable opt-out marker rather than weakening it.
+5. Migrations 0087/0088 are forward-applied with hand-inserted ledger rows —
+   `apply-migration-online.mjs` runs SQL without writing `__drizzle_migrations`.
+
+**Fleet is PAUSED** (`services/ingest/.checkpoints/STOP`) for the §7 window.
+`release:candidate resume` lifts it.
+
+---
+
 ### 26 August 2026 (R8.1) — NEW2: THE FRESHNESS GATE PASSED WITH ZERO EVIDENCE, THE CORPUS IS 56 DAYS BEHIND NOT 8, AND ~72,000 DEVANAGARI JUDGMENTS ARE LABELLED ENGLISH
 
 R8.1 §7. Artifacts under `docs/ai/new2-r8/`. Commits `437dc65`, `5a98d5c`,
