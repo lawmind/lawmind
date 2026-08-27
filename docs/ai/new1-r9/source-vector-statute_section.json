@@ -1,0 +1,18 @@
+{
+  "kind": "new1_source_vector_run",
+  "source": "statute_section",
+  "sourceObjectType": "statute_section",
+  "definitionVersion": "statute-section-v1",
+  "targetTable": "new1_source_vector_stage",
+  "targetReason": "constraint refuses statute_section; staging to fallback",
+  "pendingMigration": "ALTER TABLE document_vector_staging DROP CONSTRAINT document_vector_staging_source_object_type_check;\nALTER TABLE document_vector_staging ADD CONSTRAINT document_vector_staging_source_object_type_check\n  CHECK (source_object_type = ANY (ARRAY['judgment','legal_object','statute_section','official_order','ecourts_observation']));",
+  "recipe": "HEAD:4800",
+  "model": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+  "dryRun": false,
+  "seen": 36663,
+  "written": 36663,
+  "skippedExisting": 0,
+  "rowsForThisType": 36663,
+  "elapsedSeconds": 1716.717,
+  "finishedAt": "2026-08-27T12:06:24.445Z"
+}

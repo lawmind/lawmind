@@ -1,225 +1,18 @@
 {
   "kind": "new1_stage_coverage_census",
-  "measuredAt": "2026-08-20T23:19:43.872Z",
-  "completeTolerance": 25,
-  "stageTableRows": 480627,
-  "quarantinedRows": 5021,
-  "accountedIds": 485648,
+  "measuredAt": "2026-08-27T11:18:57.885Z",
+  "completeTolerance": 2000,
+  "stageTableRows": 2026872,
+  "quarantinedRows": 72092,
+  "accountedIds": 2098953,
   "batchFiles": 888,
   "manifestRows": 8857219,
-  "stagedInManifest": 491923,
-  "missingTotal": 8365296,
-  "filesComplete": 24,
-  "filesPartial": 861,
+  "stagedInManifest": 2105228,
+  "missingTotal": 6751991,
+  "filesComplete": 231,
+  "filesPartial": 654,
   "filesUntouched": 3,
   "worklist": [
-    "tier-a-batch-00010.jsonl",
-    "tier-a-batch-00011.jsonl",
-    "tier-a-batch-00012.jsonl",
-    "tier-a-batch-00013.jsonl",
-    "tier-a-batch-00014.jsonl",
-    "tier-a-batch-00015.jsonl",
-    "tier-a-batch-00016.jsonl",
-    "tier-a-batch-00017.jsonl",
-    "tier-a-batch-00018.jsonl",
-    "tier-a-batch-00019.jsonl",
-    "tier-a-batch-00020.jsonl",
-    "tier-a-batch-00021.jsonl",
-    "tier-a-batch-00022.jsonl",
-    "tier-a-batch-00023.jsonl",
-    "tier-a-batch-00024.jsonl",
-    "tier-a-batch-00025.jsonl",
-    "tier-a-batch-00026.jsonl",
-    "tier-a-batch-00027.jsonl",
-    "tier-a-batch-00028.jsonl",
-    "tier-a-batch-00029.jsonl",
-    "tier-a-batch-00030.jsonl",
-    "tier-a-batch-00031.jsonl",
-    "tier-a-batch-00032.jsonl",
-    "tier-a-batch-00033.jsonl",
-    "tier-a-batch-00034.jsonl",
-    "tier-a-batch-00035.jsonl",
-    "tier-a-batch-00036.jsonl",
-    "tier-a-batch-00037.jsonl",
-    "tier-a-batch-00038.jsonl",
-    "tier-a-batch-00039.jsonl",
-    "tier-a-batch-00040.jsonl",
-    "tier-a-batch-00041.jsonl",
-    "tier-a-batch-00042.jsonl",
-    "tier-a-batch-00043.jsonl",
-    "tier-a-batch-00044.jsonl",
-    "tier-a-batch-00045.jsonl",
-    "tier-a-batch-00046.jsonl",
-    "tier-a-batch-00047.jsonl",
-    "tier-a-batch-00048.jsonl",
-    "tier-a-batch-00049.jsonl",
-    "tier-a-batch-00050.jsonl",
-    "tier-a-batch-00051.jsonl",
-    "tier-a-batch-00052.jsonl",
-    "tier-a-batch-00053.jsonl",
-    "tier-a-batch-00054.jsonl",
-    "tier-a-batch-00055.jsonl",
-    "tier-a-batch-00056.jsonl",
-    "tier-a-batch-00057.jsonl",
-    "tier-a-batch-00058.jsonl",
-    "tier-a-batch-00059.jsonl",
-    "tier-a-batch-00060.jsonl",
-    "tier-a-batch-00061.jsonl",
-    "tier-a-batch-00062.jsonl",
-    "tier-a-batch-00063.jsonl",
-    "tier-a-batch-00064.jsonl",
-    "tier-a-batch-00065.jsonl",
-    "tier-a-batch-00066.jsonl",
-    "tier-a-batch-00067.jsonl",
-    "tier-a-batch-00068.jsonl",
-    "tier-a-batch-00069.jsonl",
-    "tier-a-batch-00070.jsonl",
-    "tier-a-batch-00071.jsonl",
-    "tier-a-batch-00072.jsonl",
-    "tier-a-batch-00073.jsonl",
-    "tier-a-batch-00074.jsonl",
-    "tier-a-batch-00075.jsonl",
-    "tier-a-batch-00076.jsonl",
-    "tier-a-batch-00089.jsonl",
-    "tier-a-batch-00090.jsonl",
-    "tier-a-batch-00091.jsonl",
-    "tier-a-batch-00092.jsonl",
-    "tier-a-batch-00093.jsonl",
-    "tier-a-batch-00094.jsonl",
-    "tier-a-batch-00095.jsonl",
-    "tier-a-batch-00096.jsonl",
-    "tier-a-batch-00097.jsonl",
-    "tier-a-batch-00098.jsonl",
-    "tier-a-batch-00099.jsonl",
-    "tier-a-batch-00100.jsonl",
-    "tier-a-batch-00101.jsonl",
-    "tier-a-batch-00102.jsonl",
-    "tier-a-batch-00103.jsonl",
-    "tier-a-batch-00104.jsonl",
-    "tier-a-batch-00105.jsonl",
-    "tier-a-batch-00106.jsonl",
-    "tier-a-batch-00107.jsonl",
-    "tier-a-batch-00108.jsonl",
-    "tier-a-batch-00109.jsonl",
-    "tier-a-batch-00110.jsonl",
-    "tier-a-batch-00111.jsonl",
-    "tier-a-batch-00112.jsonl",
-    "tier-a-batch-00113.jsonl",
-    "tier-a-batch-00114.jsonl",
-    "tier-a-batch-00115.jsonl",
-    "tier-a-batch-00116.jsonl",
-    "tier-a-batch-00117.jsonl",
-    "tier-a-batch-00118.jsonl",
-    "tier-a-batch-00119.jsonl",
-    "tier-a-batch-00120.jsonl",
-    "tier-a-batch-00121.jsonl",
-    "tier-a-batch-00122.jsonl",
-    "tier-a-batch-00123.jsonl",
-    "tier-a-batch-00124.jsonl",
-    "tier-a-batch-00125.jsonl",
-    "tier-a-batch-00126.jsonl",
-    "tier-a-batch-00127.jsonl",
-    "tier-a-batch-00128.jsonl",
-    "tier-a-batch-00129.jsonl",
-    "tier-a-batch-00130.jsonl",
-    "tier-a-batch-00131.jsonl",
-    "tier-a-batch-00132.jsonl",
-    "tier-a-batch-00133.jsonl",
-    "tier-a-batch-00134.jsonl",
-    "tier-a-batch-00135.jsonl",
-    "tier-a-batch-00136.jsonl",
-    "tier-a-batch-00137.jsonl",
-    "tier-a-batch-00138.jsonl",
-    "tier-a-batch-00139.jsonl",
-    "tier-a-batch-00140.jsonl",
-    "tier-a-batch-00141.jsonl",
-    "tier-a-batch-00142.jsonl",
-    "tier-a-batch-00143.jsonl",
-    "tier-a-batch-00144.jsonl",
-    "tier-a-batch-00145.jsonl",
-    "tier-a-batch-00146.jsonl",
-    "tier-a-batch-00147.jsonl",
-    "tier-a-batch-00148.jsonl",
-    "tier-a-batch-00149.jsonl",
-    "tier-a-batch-00150.jsonl",
-    "tier-a-batch-00151.jsonl",
-    "tier-a-batch-00152.jsonl",
-    "tier-a-batch-00153.jsonl",
-    "tier-a-batch-00154.jsonl",
-    "tier-a-batch-00155.jsonl",
-    "tier-a-batch-00156.jsonl",
-    "tier-a-batch-00157.jsonl",
-    "tier-a-batch-00158.jsonl",
-    "tier-a-batch-00159.jsonl",
-    "tier-a-batch-00160.jsonl",
-    "tier-a-batch-00161.jsonl",
-    "tier-a-batch-00162.jsonl",
-    "tier-a-batch-00163.jsonl",
-    "tier-a-batch-00164.jsonl",
-    "tier-a-batch-00165.jsonl",
-    "tier-a-batch-00166.jsonl",
-    "tier-a-batch-00167.jsonl",
-    "tier-a-batch-00168.jsonl",
-    "tier-a-batch-00169.jsonl",
-    "tier-a-batch-00170.jsonl",
-    "tier-a-batch-00171.jsonl",
-    "tier-a-batch-00172.jsonl",
-    "tier-a-batch-00173.jsonl",
-    "tier-a-batch-00174.jsonl",
-    "tier-a-batch-00175.jsonl",
-    "tier-a-batch-00176.jsonl",
-    "tier-a-batch-00177.jsonl",
-    "tier-a-batch-00178.jsonl",
-    "tier-a-batch-00179.jsonl",
-    "tier-a-batch-00180.jsonl",
-    "tier-a-batch-00181.jsonl",
-    "tier-a-batch-00182.jsonl",
-    "tier-a-batch-00183.jsonl",
-    "tier-a-batch-00184.jsonl",
-    "tier-a-batch-00185.jsonl",
-    "tier-a-batch-00186.jsonl",
-    "tier-a-batch-00187.jsonl",
-    "tier-a-batch-00188.jsonl",
-    "tier-a-batch-00189.jsonl",
-    "tier-a-batch-00190.jsonl",
-    "tier-a-batch-00191.jsonl",
-    "tier-a-batch-00192.jsonl",
-    "tier-a-batch-00193.jsonl",
-    "tier-a-batch-00194.jsonl",
-    "tier-a-batch-00195.jsonl",
-    "tier-a-batch-00196.jsonl",
-    "tier-a-batch-00197.jsonl",
-    "tier-a-batch-00198.jsonl",
-    "tier-a-batch-00199.jsonl",
-    "tier-a-batch-00200.jsonl",
-    "tier-a-batch-00201.jsonl",
-    "tier-a-batch-00202.jsonl",
-    "tier-a-batch-00203.jsonl",
-    "tier-a-batch-00204.jsonl",
-    "tier-a-batch-00205.jsonl",
-    "tier-a-batch-00206.jsonl",
-    "tier-a-batch-00207.jsonl",
-    "tier-a-batch-00208.jsonl",
-    "tier-a-batch-00209.jsonl",
-    "tier-a-batch-00210.jsonl",
-    "tier-a-batch-00211.jsonl",
-    "tier-a-batch-00212.jsonl",
-    "tier-a-batch-00213.jsonl",
-    "tier-a-batch-00214.jsonl",
-    "tier-a-batch-00215.jsonl",
-    "tier-a-batch-00216.jsonl",
-    "tier-a-batch-00217.jsonl",
-    "tier-a-batch-00218.jsonl",
-    "tier-a-batch-00219.jsonl",
-    "tier-a-batch-00220.jsonl",
-    "tier-a-batch-00221.jsonl",
-    "tier-a-batch-00222.jsonl",
-    "tier-a-batch-00223.jsonl",
-    "tier-a-batch-00224.jsonl",
-    "tier-a-batch-00225.jsonl",
-    "tier-a-batch-00226.jsonl",
-    "tier-a-batch-00227.jsonl",
-    "tier-a-batch-00228.jsonl",
     "tier-a-batch-00229.jsonl",
     "tier-a-batch-00230.jsonl",
     "tier-a-batch-00231.jsonl",
@@ -979,537 +772,537 @@
       "file": "tier-a-batch-00010.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 8398,
-      "missing": 1595,
-      "complete": false
+      "staged": 9757,
+      "missing": 236,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00011.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 8411,
-      "missing": 1585,
-      "complete": false
+      "staged": 9748,
+      "missing": 248,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00012.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8391,
-      "missing": 1601,
-      "complete": false
+      "staged": 9750,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00013.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8417,
-      "missing": 1574,
-      "complete": false
+      "staged": 9776,
+      "missing": 215,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00014.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8408,
-      "missing": 1584,
-      "complete": false
+      "staged": 9746,
+      "missing": 246,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00015.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8410,
-      "missing": 1578,
-      "complete": false
+      "staged": 9752,
+      "missing": 236,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00016.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8432,
-      "missing": 1560,
-      "complete": false
+      "staged": 9761,
+      "missing": 231,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00017.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8399,
-      "missing": 1592,
-      "complete": false
+      "staged": 9731,
+      "missing": 260,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00018.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8414,
-      "missing": 1577,
-      "complete": false
+      "staged": 9749,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00019.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8411,
-      "missing": 1577,
-      "complete": false
+      "staged": 9734,
+      "missing": 254,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00020.jsonl",
       "kind": "lcc",
       "rows": 9997,
-      "staged": 8393,
-      "missing": 1604,
-      "complete": false
+      "staged": 9728,
+      "missing": 269,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00021.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 8450,
-      "missing": 1539,
-      "complete": false
+      "staged": 9736,
+      "missing": 253,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00022.jsonl",
       "kind": "lcc",
       "rows": 9985,
-      "staged": 8425,
-      "missing": 1560,
-      "complete": false
+      "staged": 9771,
+      "missing": 214,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00023.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8341,
-      "missing": 1650,
-      "complete": false
+      "staged": 9733,
+      "missing": 258,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00024.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 8409,
-      "missing": 1581,
-      "complete": false
+      "staged": 9736,
+      "missing": 254,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00025.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 8437,
-      "missing": 1552,
-      "complete": false
+      "staged": 9747,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00026.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8357,
-      "missing": 1635,
-      "complete": false
+      "staged": 9765,
+      "missing": 227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00027.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 8380,
-      "missing": 1607,
-      "complete": false
+      "staged": 9776,
+      "missing": 211,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00028.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 8470,
-      "missing": 1519,
-      "complete": false
+      "staged": 9761,
+      "missing": 228,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00029.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 8457,
-      "missing": 1538,
-      "complete": false
+      "staged": 9751,
+      "missing": 244,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00030.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8365,
-      "missing": 1623,
-      "complete": false
+      "staged": 9733,
+      "missing": 255,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00031.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 8443,
-      "missing": 1550,
-      "complete": false
+      "staged": 9765,
+      "missing": 228,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00032.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8457,
-      "missing": 1534,
-      "complete": false
+      "staged": 9762,
+      "missing": 229,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00033.jsonl",
       "kind": "lcc",
       "rows": 9985,
-      "staged": 8371,
-      "missing": 1614,
-      "complete": false
+      "staged": 9748,
+      "missing": 237,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00034.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 8346,
-      "missing": 1643,
-      "complete": false
+      "staged": 9724,
+      "missing": 265,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00035.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 8397,
-      "missing": 1598,
-      "complete": false
+      "staged": 9766,
+      "missing": 229,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00036.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8386,
-      "missing": 1605,
-      "complete": false
+      "staged": 9759,
+      "missing": 232,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00037.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8401,
-      "missing": 1590,
-      "complete": false
+      "staged": 9752,
+      "missing": 239,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00038.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 8450,
-      "missing": 1540,
-      "complete": false
+      "staged": 9788,
+      "missing": 202,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00039.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8379,
-      "missing": 1613,
-      "complete": false
+      "staged": 9754,
+      "missing": 238,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00040.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 3577,
-      "missing": 6418,
-      "complete": false
+      "staged": 9769,
+      "missing": 226,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00041.jsonl",
       "kind": "lcc",
       "rows": 9985,
-      "staged": 9,
-      "missing": 9976,
-      "complete": false
+      "staged": 9747,
+      "missing": 238,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00042.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 15,
-      "missing": 9978,
-      "complete": false
+      "staged": 9787,
+      "missing": 206,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00043.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 12,
-      "missing": 9980,
-      "complete": false
+      "staged": 9738,
+      "missing": 254,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00044.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 12,
-      "missing": 9981,
-      "complete": false
+      "staged": 9759,
+      "missing": 234,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00045.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 11,
-      "missing": 9981,
-      "complete": false
+      "staged": 9768,
+      "missing": 224,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00046.jsonl",
       "kind": "lcc",
       "rows": 9986,
-      "staged": 10,
-      "missing": 9976,
-      "complete": false
+      "staged": 9755,
+      "missing": 231,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00047.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 9,
-      "missing": 9982,
-      "complete": false
+      "staged": 9775,
+      "missing": 216,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00048.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 13,
-      "missing": 9979,
-      "complete": false
+      "staged": 9759,
+      "missing": 233,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00049.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 10,
-      "missing": 9980,
-      "complete": false
+      "staged": 9756,
+      "missing": 234,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00050.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 7,
-      "missing": 9986,
-      "complete": false
+      "staged": 9736,
+      "missing": 257,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00051.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 7,
-      "missing": 9980,
-      "complete": false
+      "staged": 9745,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00052.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 12,
-      "missing": 9978,
-      "complete": false
+      "staged": 9759,
+      "missing": 231,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00053.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 14,
-      "missing": 9978,
-      "complete": false
+      "staged": 9770,
+      "missing": 222,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00054.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 12,
-      "missing": 9977,
-      "complete": false
+      "staged": 9747,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00055.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 9749,
+      "missing": 240,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00056.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 13,
-      "missing": 9983,
-      "complete": false
+      "staged": 9753,
+      "missing": 243,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00057.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 13,
-      "missing": 9978,
-      "complete": false
+      "staged": 9751,
+      "missing": 240,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00058.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 11,
-      "missing": 9984,
-      "complete": false
+      "staged": 9753,
+      "missing": 242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00059.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8,
-      "missing": 9984,
-      "complete": false
+      "staged": 9764,
+      "missing": 228,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00060.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 4,
-      "missing": 9986,
-      "complete": false
+      "staged": 9741,
+      "missing": 249,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00061.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 8819,
+      "missing": 1170,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00062.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 11,
-      "missing": 9980,
-      "complete": false
+      "staged": 8912,
+      "missing": 1079,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00063.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8,
-      "missing": 9983,
-      "complete": false
+      "staged": 8849,
+      "missing": 1142,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00064.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 12,
-      "missing": 9975,
-      "complete": false
+      "staged": 8806,
+      "missing": 1181,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00065.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 7,
-      "missing": 9981,
-      "complete": false
+      "staged": 8841,
+      "missing": 1147,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00066.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8,
-      "missing": 9984,
-      "complete": false
+      "staged": 8806,
+      "missing": 1186,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00067.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 11,
-      "missing": 9979,
-      "complete": false
+      "staged": 8795,
+      "missing": 1195,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00068.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 10,
-      "missing": 9979,
-      "complete": false
+      "staged": 8817,
+      "missing": 1172,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00069.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 8781,
+      "missing": 1208,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00070.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 14,
-      "missing": 9978,
-      "complete": false
+      "staged": 8836,
+      "missing": 1156,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00071.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 8809,
+      "missing": 1180,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00072.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 8755,
+      "missing": 1234,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00073.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 14,
-      "missing": 9978,
-      "complete": false
+      "staged": 8787,
+      "missing": 1205,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00074.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 12,
-      "missing": 9979,
-      "complete": false
+      "staged": 8794,
+      "missing": 1197,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00075.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 11,
-      "missing": 9978,
-      "complete": false
+      "staged": 8770,
+      "missing": 1219,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00076.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 11,
-      "missing": 9982,
-      "complete": false
+      "staged": 8808,
+      "missing": 1185,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00077.jsonl",
@@ -1611,1128 +1404,1128 @@
       "file": "tier-a-batch-00089.jsonl",
       "kind": "lcc",
       "rows": 9982,
-      "staged": 16,
-      "missing": 9966,
-      "complete": false
+      "staged": 8755,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00090.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 11,
-      "missing": 9976,
-      "complete": false
+      "staged": 8791,
+      "missing": 1196,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00091.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 7,
-      "missing": 9981,
-      "complete": false
+      "staged": 8788,
+      "missing": 1200,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00092.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 12,
-      "missing": 9978,
-      "complete": false
+      "staged": 8763,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00093.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 14,
-      "missing": 9980,
-      "complete": false
+      "staged": 8751,
+      "missing": 1243,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00094.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 11,
-      "missing": 9979,
-      "complete": false
+      "staged": 8795,
+      "missing": 1195,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00095.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 9,
-      "missing": 9987,
-      "complete": false
+      "staged": 8830,
+      "missing": 1166,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00096.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 13,
-      "missing": 9977,
-      "complete": false
+      "staged": 8813,
+      "missing": 1177,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00097.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 11,
-      "missing": 9979,
-      "complete": false
+      "staged": 8827,
+      "missing": 1163,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00098.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 13,
-      "missing": 9978,
-      "complete": false
+      "staged": 8833,
+      "missing": 1158,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00099.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 13,
-      "missing": 9980,
-      "complete": false
+      "staged": 8800,
+      "missing": 1193,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00100.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 7,
-      "missing": 9985,
-      "complete": false
+      "staged": 8805,
+      "missing": 1187,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00101.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 7,
-      "missing": 9987,
-      "complete": false
+      "staged": 8816,
+      "missing": 1178,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00102.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 10,
-      "missing": 9979,
-      "complete": false
+      "staged": 8846,
+      "missing": 1143,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00103.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 9,
-      "missing": 9981,
-      "complete": false
+      "staged": 8776,
+      "missing": 1214,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00104.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 15,
-      "missing": 9976,
-      "complete": false
+      "staged": 8762,
+      "missing": 1229,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00105.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 10,
-      "missing": 9980,
-      "complete": false
+      "staged": 8841,
+      "missing": 1149,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00106.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 8,
-      "missing": 9986,
-      "complete": false
+      "staged": 8810,
+      "missing": 1184,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00107.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 8,
-      "missing": 9982,
-      "complete": false
+      "staged": 8836,
+      "missing": 1154,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00108.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 11,
-      "missing": 9982,
-      "complete": false
+      "staged": 8782,
+      "missing": 1211,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00109.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 8,
-      "missing": 9986,
-      "complete": false
+      "staged": 8831,
+      "missing": 1163,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00110.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 10,
-      "missing": 9977,
-      "complete": false
+      "staged": 8816,
+      "missing": 1171,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00111.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 12,
-      "missing": 9981,
-      "complete": false
+      "staged": 8824,
+      "missing": 1169,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00112.jsonl",
       "kind": "lcc",
       "rows": 9985,
-      "staged": 9,
-      "missing": 9976,
-      "complete": false
+      "staged": 8779,
+      "missing": 1206,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00113.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8,
-      "missing": 9980,
-      "complete": false
+      "staged": 8794,
+      "missing": 1194,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00114.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 9,
-      "missing": 9979,
-      "complete": false
+      "staged": 8797,
+      "missing": 1191,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00115.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 13,
-      "missing": 9976,
-      "complete": false
+      "staged": 8737,
+      "missing": 1252,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00116.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 7,
-      "missing": 9981,
-      "complete": false
+      "staged": 8827,
+      "missing": 1161,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00117.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 7,
-      "missing": 9987,
-      "complete": false
+      "staged": 8787,
+      "missing": 1207,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00118.jsonl",
       "kind": "lcc",
       "rows": 9986,
-      "staged": 7,
-      "missing": 9979,
-      "complete": false
+      "staged": 8666,
+      "missing": 1320,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00119.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 9,
-      "missing": 9987,
-      "complete": false
+      "staged": 8763,
+      "missing": 1233,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00120.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 15,
-      "missing": 9976,
-      "complete": false
+      "staged": 8804,
+      "missing": 1187,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00121.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 8,
-      "missing": 9985,
-      "complete": false
+      "staged": 8802,
+      "missing": 1191,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00122.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 10,
-      "missing": 9982,
-      "complete": false
+      "staged": 8790,
+      "missing": 1202,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00123.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 7,
-      "missing": 9986,
-      "complete": false
+      "staged": 8766,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00124.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 14,
-      "missing": 9979,
-      "complete": false
+      "staged": 8791,
+      "missing": 1202,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00125.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8,
-      "missing": 9980,
-      "complete": false
+      "staged": 8812,
+      "missing": 1176,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00126.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 11,
-      "missing": 9978,
-      "complete": false
+      "staged": 8790,
+      "missing": 1199,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00127.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 11,
-      "missing": 9976,
-      "complete": false
+      "staged": 8798,
+      "missing": 1189,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00128.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 11,
-      "missing": 9984,
-      "complete": false
+      "staged": 8885,
+      "missing": 1110,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00129.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 6,
-      "missing": 9984,
-      "complete": false
+      "staged": 8776,
+      "missing": 1214,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00130.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 6,
-      "missing": 9986,
-      "complete": false
+      "staged": 8821,
+      "missing": 1171,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00131.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 13,
-      "missing": 9977,
-      "complete": false
+      "staged": 8811,
+      "missing": 1179,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00132.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 16,
-      "missing": 9979,
-      "complete": false
+      "staged": 8804,
+      "missing": 1191,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00133.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 6,
-      "missing": 9982,
-      "complete": false
+      "staged": 8798,
+      "missing": 1190,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00134.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 9,
-      "missing": 9980,
-      "complete": false
+      "staged": 8800,
+      "missing": 1189,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00135.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 5,
-      "missing": 9989,
-      "complete": false
+      "staged": 8772,
+      "missing": 1222,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00136.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 5,
-      "missing": 9987,
-      "complete": false
+      "staged": 8778,
+      "missing": 1214,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00137.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 12,
-      "missing": 9976,
-      "complete": false
+      "staged": 8822,
+      "missing": 1166,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00138.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 6,
-      "missing": 9985,
-      "complete": false
+      "staged": 8806,
+      "missing": 1185,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00139.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 10,
-      "missing": 9980,
-      "complete": false
+      "staged": 8760,
+      "missing": 1230,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00140.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 13,
-      "missing": 9977,
-      "complete": false
+      "staged": 8809,
+      "missing": 1181,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00141.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 12,
-      "missing": 9977,
-      "complete": false
+      "staged": 8795,
+      "missing": 1194,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00142.jsonl",
       "kind": "lcc",
       "rows": 9984,
-      "staged": 8,
-      "missing": 9976,
-      "complete": false
+      "staged": 8773,
+      "missing": 1211,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00143.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 4,
-      "missing": 9985,
-      "complete": false
+      "staged": 8814,
+      "missing": 1175,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00144.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8,
-      "missing": 9980,
-      "complete": false
+      "staged": 8835,
+      "missing": 1153,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00145.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 14,
-      "missing": 9980,
-      "complete": false
+      "staged": 8786,
+      "missing": 1208,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00146.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 11,
-      "missing": 9982,
-      "complete": false
+      "staged": 8790,
+      "missing": 1203,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00147.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 7,
-      "missing": 9988,
-      "complete": false
+      "staged": 8773,
+      "missing": 1222,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00148.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 13,
-      "missing": 9979,
-      "complete": false
+      "staged": 8818,
+      "missing": 1174,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00149.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 11,
-      "missing": 9978,
-      "complete": false
+      "staged": 8802,
+      "missing": 1187,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00150.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 16,
-      "missing": 9975,
-      "complete": false
+      "staged": 8779,
+      "missing": 1212,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00151.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8,
-      "missing": 9984,
-      "complete": false
+      "staged": 8744,
+      "missing": 1248,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00152.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 12,
-      "missing": 9981,
-      "complete": false
+      "staged": 8806,
+      "missing": 1187,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00153.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 9,
-      "missing": 9982,
-      "complete": false
+      "staged": 8806,
+      "missing": 1185,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00154.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 11,
-      "missing": 9981,
-      "complete": false
+      "staged": 8777,
+      "missing": 1215,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00155.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 6,
-      "missing": 9987,
-      "complete": false
+      "staged": 8810,
+      "missing": 1183,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00156.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 9,
-      "missing": 9982,
-      "complete": false
+      "staged": 8764,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00157.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 8,
-      "missing": 9984,
-      "complete": false
+      "staged": 8832,
+      "missing": 1160,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00158.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 7,
-      "missing": 9985,
-      "complete": false
+      "staged": 8840,
+      "missing": 1152,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00159.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 7,
-      "missing": 9982,
-      "complete": false
+      "staged": 8829,
+      "missing": 1160,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00160.jsonl",
       "kind": "lcc",
       "rows": 9986,
-      "staged": 8,
-      "missing": 9978,
-      "complete": false
+      "staged": 8754,
+      "missing": 1232,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00161.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 9,
-      "missing": 9985,
-      "complete": false
+      "staged": 8765,
+      "missing": 1229,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00162.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 11,
-      "missing": 9985,
-      "complete": false
+      "staged": 8833,
+      "missing": 1163,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00163.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 11,
-      "missing": 9977,
-      "complete": false
+      "staged": 8776,
+      "missing": 1212,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00164.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 9,
-      "missing": 9983,
-      "complete": false
+      "staged": 8764,
+      "missing": 1228,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00165.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 11,
-      "missing": 9978,
-      "complete": false
+      "staged": 8797,
+      "missing": 1192,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00166.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 6,
-      "missing": 9984,
-      "complete": false
+      "staged": 8798,
+      "missing": 1192,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00167.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 7,
-      "missing": 9984,
-      "complete": false
+      "staged": 8751,
+      "missing": 1240,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00168.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 11,
-      "missing": 9977,
-      "complete": false
+      "staged": 8778,
+      "missing": 1210,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00169.jsonl",
       "kind": "lcc",
       "rows": 9986,
-      "staged": 9,
-      "missing": 9977,
-      "complete": false
+      "staged": 8804,
+      "missing": 1182,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00170.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 3,
-      "missing": 9991,
-      "complete": false
+      "staged": 8814,
+      "missing": 1180,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00171.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 7,
-      "missing": 9983,
-      "complete": false
+      "staged": 8793,
+      "missing": 1197,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00172.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 8,
-      "missing": 9983,
-      "complete": false
+      "staged": 8764,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00173.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 5,
-      "missing": 9985,
-      "complete": false
+      "staged": 8816,
+      "missing": 1174,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00174.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 12,
-      "missing": 9977,
-      "complete": false
+      "staged": 8792,
+      "missing": 1197,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00175.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 8,
-      "missing": 9980,
-      "complete": false
+      "staged": 8786,
+      "missing": 1202,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00176.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 9,
-      "missing": 9983,
-      "complete": false
+      "staged": 8832,
+      "missing": 1160,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00177.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 6,
-      "missing": 9983,
-      "complete": false
+      "staged": 8735,
+      "missing": 1254,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00178.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 14,
-      "missing": 9973,
-      "complete": false
+      "staged": 8860,
+      "missing": 1127,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00179.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 8,
-      "missing": 9979,
-      "complete": false
+      "staged": 8731,
+      "missing": 1256,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00180.jsonl",
       "kind": "lcc",
       "rows": 9988,
-      "staged": 11,
-      "missing": 9977,
-      "complete": false
+      "staged": 8779,
+      "missing": 1209,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00181.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 12,
-      "missing": 9983,
-      "complete": false
+      "staged": 8789,
+      "missing": 1206,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00182.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 10,
-      "missing": 9983,
-      "complete": false
+      "staged": 8820,
+      "missing": 1173,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00183.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 5,
-      "missing": 9991,
-      "complete": false
+      "staged": 8807,
+      "missing": 1189,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00184.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 5,
-      "missing": 9988,
-      "complete": false
+      "staged": 8771,
+      "missing": 1222,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00185.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 10,
-      "missing": 9982,
-      "complete": false
+      "staged": 8801,
+      "missing": 1191,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00186.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 8,
-      "missing": 9985,
-      "complete": false
+      "staged": 8813,
+      "missing": 1180,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00187.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 8,
-      "missing": 9987,
-      "complete": false
+      "staged": 8816,
+      "missing": 1179,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00188.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 6,
-      "missing": 9986,
-      "complete": false
+      "staged": 8759,
+      "missing": 1233,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00189.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 3,
-      "missing": 9988,
-      "complete": false
+      "staged": 8764,
+      "missing": 1227,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00190.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 11,
-      "missing": 9981,
-      "complete": false
+      "staged": 8823,
+      "missing": 1169,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00191.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 7,
-      "missing": 9985,
-      "complete": false
+      "staged": 8788,
+      "missing": 1204,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00192.jsonl",
       "kind": "lcc",
       "rows": 9985,
-      "staged": 9,
-      "missing": 9976,
-      "complete": false
+      "staged": 8770,
+      "missing": 1215,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00193.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 8,
-      "missing": 9987,
-      "complete": false
+      "staged": 8795,
+      "missing": 1200,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00194.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 7,
-      "missing": 9983,
-      "complete": false
+      "staged": 8808,
+      "missing": 1182,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00195.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 10,
-      "missing": 9985,
-      "complete": false
+      "staged": 8807,
+      "missing": 1188,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00196.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 5,
-      "missing": 9987,
-      "complete": false
+      "staged": 8784,
+      "missing": 1208,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00197.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 12,
-      "missing": 9983,
-      "complete": false
+      "staged": 8805,
+      "missing": 1190,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00198.jsonl",
       "kind": "lcc",
       "rows": 9987,
-      "staged": 8,
-      "missing": 9979,
-      "complete": false
+      "staged": 8780,
+      "missing": 1207,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00199.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 13,
-      "missing": 9978,
-      "complete": false
+      "staged": 8809,
+      "missing": 1182,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00200.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 11,
-      "missing": 9982,
-      "complete": false
+      "staged": 8816,
+      "missing": 1177,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00201.jsonl",
       "kind": "lcc",
       "rows": 9986,
-      "staged": 5,
-      "missing": 9981,
-      "complete": false
+      "staged": 8762,
+      "missing": 1224,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00202.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 9,
-      "missing": 9983,
-      "complete": false
+      "staged": 8833,
+      "missing": 1159,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00203.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 8,
-      "missing": 9987,
-      "complete": false
+      "staged": 8848,
+      "missing": 1147,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00204.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 8,
-      "missing": 9982,
-      "complete": false
+      "staged": 8806,
+      "missing": 1184,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00205.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 10,
-      "missing": 9984,
-      "complete": false
+      "staged": 8800,
+      "missing": 1194,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00206.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 5,
-      "missing": 9984,
-      "complete": false
+      "staged": 8782,
+      "missing": 1207,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00207.jsonl",
       "kind": "lcc",
       "rows": 9983,
-      "staged": 12,
-      "missing": 9971,
-      "complete": false
+      "staged": 8831,
+      "missing": 1152,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00208.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 7,
-      "missing": 9986,
-      "complete": false
+      "staged": 8808,
+      "missing": 1185,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00209.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 13,
-      "missing": 9979,
-      "complete": false
+      "staged": 8834,
+      "missing": 1158,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00210.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 10,
-      "missing": 9981,
-      "complete": false
+      "staged": 8749,
+      "missing": 1242,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00211.jsonl",
       "kind": "lcc",
       "rows": 9983,
-      "staged": 8,
-      "missing": 9975,
-      "complete": false
+      "staged": 8726,
+      "missing": 1257,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00212.jsonl",
       "kind": "lcc",
       "rows": 9994,
-      "staged": 11,
-      "missing": 9983,
-      "complete": false
+      "staged": 8762,
+      "missing": 1232,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00213.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 9,
-      "missing": 9986,
-      "complete": false
+      "staged": 8769,
+      "missing": 1226,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00214.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 4,
-      "missing": 9989,
-      "complete": false
+      "staged": 8833,
+      "missing": 1160,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00215.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 6,
-      "missing": 9984,
-      "complete": false
+      "staged": 8782,
+      "missing": 1208,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00216.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 11,
-      "missing": 9980,
-      "complete": false
+      "staged": 8815,
+      "missing": 1176,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00217.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 4,
-      "missing": 9992,
-      "complete": false
+      "staged": 8813,
+      "missing": 1183,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00218.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 11,
-      "missing": 9980,
-      "complete": false
+      "staged": 8836,
+      "missing": 1155,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00219.jsonl",
       "kind": "lcc",
       "rows": 9996,
-      "staged": 10,
-      "missing": 9986,
-      "complete": false
+      "staged": 8857,
+      "missing": 1139,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00220.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 11,
-      "missing": 9979,
-      "complete": false
+      "staged": 8782,
+      "missing": 1208,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00221.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 7,
-      "missing": 9983,
-      "complete": false
+      "staged": 8837,
+      "missing": 1153,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00222.jsonl",
       "kind": "lcc",
       "rows": 9992,
-      "staged": 11,
-      "missing": 9981,
-      "complete": false
+      "staged": 8793,
+      "missing": 1199,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00223.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 9,
-      "missing": 9981,
-      "complete": false
+      "staged": 8797,
+      "missing": 1193,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00224.jsonl",
       "kind": "lcc",
       "rows": 9995,
-      "staged": 6,
-      "missing": 9989,
-      "complete": false
+      "staged": 8775,
+      "missing": 1220,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00225.jsonl",
       "kind": "lcc",
       "rows": 9991,
-      "staged": 6,
-      "missing": 9985,
-      "complete": false
+      "staged": 8802,
+      "missing": 1189,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00226.jsonl",
       "kind": "lcc",
       "rows": 9990,
-      "staged": 10,
-      "missing": 9980,
-      "complete": false
+      "staged": 8830,
+      "missing": 1160,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00227.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 7,
-      "missing": 9982,
-      "complete": false
+      "staged": 8834,
+      "missing": 1155,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00228.jsonl",
       "kind": "lcc",
       "rows": 9989,
-      "staged": 12,
-      "missing": 9977,
-      "complete": false
+      "staged": 8697,
+      "missing": 1292,
+      "complete": true
     },
     {
       "file": "tier-a-batch-00229.jsonl",
       "kind": "lcc",
       "rows": 9993,
-      "staged": 10,
-      "missing": 9983,
+      "staged": 887,
+      "missing": 9106,
       "complete": false
     },
     {

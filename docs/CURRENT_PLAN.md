@@ -16,6 +16,63 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 27 August 2026 (R9) — NEW1: EXACT AND LEXICAL ARE AT 100%, THE COARSE WALK IS RUNNING AGAIN, AND PRODUCTION SEMANTIC SEARCHES 40,161 JUDGMENTS
+
+**Round:** R9 retrieval-coverage, founder-directed. Lease: `NEW1`.
+**Evidence:** `docs/ai/new1-r9/NEW1_R9_ROUND.md` and the three documents beside it.
+
+| what | number |
+| --- | ---: |
+| judgments exact + lexically searchable | **18,749,962 / 18,749,962 — 100%** |
+| coarse vectors stored at round start | 2,026,872 (22.9% of 8,854,281 eligible) |
+| coarse vectors SEARCHABLE | **0** — `new1_doc_vector_stage` has no vector index |
+| documents production dense search actually reaches | **40,161 — 0.214% of the corpus** |
+| passage vectors | 418,116 over 81,720 documents |
+| NEW2's delta manifested without a census | 27,610 representatives for 30,306 judgments |
+| statute sections embedded | 36,663 across 849 Acts |
+| real remaining coarse work | 6,553,765 documents · ~211 GPU-hours · ~8.8 days |
+
+**Exact and lexical never needed a job and there is no backlog.**
+`judgments.full_text_tsv` is `GENERATED ALWAYS AS to_tsvector(...)` with a GIN
+index, so every row NEW2 inserts is full-text searchable in the same statement
+that writes it. All 50,994 of the R9 delta carry text, tsv, content_hash,
+case_number, cnr, judgment_date, court and case_title. The "make it searchable"
+job downstream of ingest does not exist and never did.
+
+**The stale worklist had a SECOND defect, and it is the one that would recur.**
+The file being three days old was real. But re-running the census unchanged does
+not fix it: `COMPLETE_TOLERANCE` is 25 rows against a **permanent ~1,200-row
+refusal residue** per 10,000-document batch (~850 `UNSAFE_VERIFIED`, ~350
+`procedural_disposal`), so **every batch the walk has ever finished stays on the
+worklist forever**. Re-run as written: 864 files, of which 231 are done — 86
+minutes of guaranteed zero output at the head of a nine-day run, which is exactly
+the healthy-GPU/no-output failure the round forbids. The distribution decides the
+fix rather than judgement: nothing at all sits between 1,320 and 4,275 missing
+rows, so a tolerance of 2,000 is inside an empty gap 2,955 wide. Worklist: **657
+files, head `tier-a-batch-00229`.**
+
+**Two things are stored and connected to nothing.** 2,031,802 coarse vectors have
+only a primary-key btree, so a similarity query is a sequential scan of 11.9 GB;
+and `new1_tranche_passages` is HNSW-indexed but `retrieve.ts` reads
+`judgment_chunks` and nothing else. Wiring the tranche in would take production
+dense from 40,161 to **111,874 documents — 2.79× — with zero new GPU work.** That
+is LCC's file and it changes what an advocate sees, so it is costed here, not done.
+
+**A full passage build is 935 GB, measured, not estimated.** 21,607 B per passage
+all-in (13,847 heap+TOAST, 7,760 HNSW) × 5.115 passages per document × 8,854,281
+documents. C: has 269.5 GB free. Tranche 2 is fitted to an explicit **60 GB →
+568,000 documents**, filled in priority order so a budget cut removes High Court
+volume and never removes the Supreme Court. **D: has 793.3 GB free and the
+database does not use it** — a tablespace there is the highest-leverage storage
+decision available and it is the founder's and LCC's, not a retrieval lane's.
+
+**Queued on someone else:** `tier-census --reset` on HEAVY_BOX (NEW2 holds it;
+five parallel workers on the citation scan, so a 151 GB sequential scan would
+fight it); one additive `CHECK` widening from LCC so statute/order/eCourts vectors
+can live in `document_vector_staging` rather than a NEW1 fallback table (bus 1397);
+and the `script_quality` screen over the 50,994, all of which currently pass the
+readability gate by never having been looked at.
+
 ### 27 August 2026 (R9) — NEW2: THE FLEET IS RESTARTED, THE UPSTREAM DELTA IS CLOSED, AND THE 1,723 IMPOSSIBLE STATUTE LINKS ARE GONE
 
 **Round:** R9 data-first, founder-directed. Leases: `NEW2`, `HEAVY_BOX`.

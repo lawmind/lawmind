@@ -1,0 +1,82 @@
+{
+  "kind": "new1_passage_tranche2_plan",
+  "cap": 568000,
+  "definitionHash": "5b5d02384b46c96c",
+  "bands": [
+    "standard",
+    "full",
+    "substantial"
+  ],
+  "keptFromTranche1": 81720,
+  "newlySelected": 486280,
+  "totalDocuments": 568000,
+  "estimatedPassages": 2905320,
+  "estimatedBytes": 62775360000,
+  "estimatedGiB": 58.5,
+  "estimatedGpuHours": 76.5,
+  "populations": [
+    {
+      "population": "supreme_court",
+      "why": "binding on every court in India; the paragraph is what gets pleaded",
+      "candidates": 38351,
+      "novel": 28345,
+      "eligible": 28252,
+      "taken": 28252,
+      "slotsLeft": 458028,
+      "seconds": 46.7
+    },
+    {
+      "population": "cited_authority",
+      "why": "a judgment other judgments actually cite is the definition of one worth quoting",
+      "candidates": 35890,
+      "novel": 18630,
+      "eligible": 10676,
+      "taken": 10676,
+      "slotsLeft": 447352,
+      "seconds": 14.6
+    },
+    {
+      "population": "bns_bnss_bsa",
+      "why": "no frontier model knows the 2023 codes; retrieval is the only path to them",
+      "candidates": 116678,
+      "novel": 116254,
+      "eligible": 91365,
+      "taken": 91365,
+      "slotsLeft": 355987,
+      "seconds": 75
+    },
+    {
+      "population": "treatment_currentness",
+      "why": "the population where showing the wrong paragraph is worst",
+      "candidates": 137,
+      "novel": 0,
+      "eligible": 0,
+      "taken": 0,
+      "slotsLeft": 355987,
+      "seconds": 0
+    },
+    {
+      "population": "saved_to_matters",
+      "why": "must be a continuous queue, not a tranche member; 0 rows today because there are no users",
+      "candidates": 0,
+      "novel": 0,
+      "eligible": 0,
+      "taken": 0,
+      "slotsLeft": 355987,
+      "seconds": 0
+    },
+    {
+      "population": "recent_high_court",
+      "why": "newest first; spends the remainder on law that is still current",
+      "candidates": null,
+      "novel": null,
+      "eligible": 355987,
+      "taken": 355987,
+      "slotsLeft": 0,
+      "seconds": 246.1
+    }
+  ],
+  "idsHash": "3592efcbc5165a9f",
+  "generatedAt": "2026-08-27T12:02:33.406Z",
+  "plan": false
+}

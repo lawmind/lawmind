@@ -1,0 +1,29 @@
+{
+  "kind": "new1_delta_manifest",
+  "label": "new2-r9",
+  "selector": {
+    "since": "2026-08-27"
+  },
+  "definitionHash": "5b5d02384b46c96c",
+  "bands": [
+    "standard",
+    "full",
+    "substantial"
+  ],
+  "deltaRowsConsidered": null,
+  "eligibleRepresentatives": 28194,
+  "alreadyCoveredByContentHash": 584,
+  "emitted": 27610,
+  "membersRepresented": 30306,
+  "idsHash": "cfe144f0275af4ae",
+  "byTier": {
+    "BROAD_SEARCHABLE": 27610
+  },
+  "byBand": {
+    "standard": 13200,
+    "full": 9094,
+    "substantial": 5316
+  },
+  "generatedAt": "2026-08-27T11:45:23.647Z",
+  "dryRun": false
+}
