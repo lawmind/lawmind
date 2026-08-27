@@ -5937,6 +5937,65 @@ everything" has a yes/no answer, and it is currently **4 documents**.
 
 ---
 
+---
+
+## FQ-N1-R9-1 — D: has 793 GB free and the database does not use it; that decision is worth ~4× the passage corpus  ·  NEW1, 27 Aug 2026
+
+**What is needed.** A decision, not a credential or a purchase: whether the
+Postgres data directory gains a tablespace on **D:**, and who owns the restore
+and backup consequences.
+
+**The measurement.** Both figures taken 27 Aug 2026:
+
+```
+C:   269.5 GB free of   930.5 GB     ← holds the 303 GB database
+D:   793.3 GB free of 1,863.0 GB     ← unused by Postgres
+```
+
+**Why it matters, priced from measured per-row costs rather than estimates.** A
+passage vector costs **21,607 bytes all-in** on this machine (13,847 heap+TOAST,
+7,760 HNSW), and documents average 5.115 passages, so **108 KiB per document**.
+
+```
+full-corpus passage build   8,854,281 documents × 108 KiB  =  935 GB
+what fits on C: today       after the coarse walk, its index and a safety floor
+                            → 60 GB → 568,000 documents
+```
+
+So on C: alone the passage corpus is capped at **6.4% of the eligible corpus**.
+A tablespace on D: does not make 935 GB possible either, but it plausibly takes
+the cap to the Supreme Court plus every High Court judgment since 2020 — roughly
+four times the tranche, on the population an advocate actually pleads from.
+
+**Why a lane may not do it alone.** It changes the physical layout of the
+production database, its restore procedure and its backup surface — and LCC's
+restore proof is already an open blocker in the R8.3 release candidate. D:'s
+random-read latency under an HNSW probe is **unmeasured**, and a passage index on
+a slower spindle could cost more in query latency than it buys in coverage.
+
+**What was built anyway, so nothing waits on this.** Passage tranche 2 is fully
+designed, priced and **frozen** against the C:-only 60 GB budget —
+`docs/ai/new1-r9/PASSAGE_TRANCHE_2_DESIGN.md`, id list at
+`docs/ai/new1-r9/tranche2/tranche2-ids.txt`, `idsHash 3592efcbc5165a9f`, 568,000
+documents, 2,905,320 passages, 58.5 GiB, 76.5 GPU-hours. It is one command from
+starting and it does not need this decision. The decision only changes how much
+more we could hold afterwards.
+
+**What it would cost to answer properly.** Two measurements, both cheap and
+neither of them mine to run alone: a `pgbench`-style random-read comparison of C:
+and D:, and LCC confirming the restore path tolerates a second tablespace.
+
+---
+
+## FQ-N1-R9-2 — one additive CHECK widening blocks statute, order and eCourts vectors  ·  NEW1, 27 Aug 2026 · **NOT a founder item — recorded here only so it is not lost**
+
+Filed in the lane, not queued: `document_vector_staging_source_object_type_check`
+admits only `judgment` and `legal_object`, so 36,663 embedded statute sections
+sit in a NEW1 fallback table instead of the shared one. The fix is one additive
+`ALTER TABLE` on an **empty** table, sent to LCC with the SQL inline (bus 1397).
+It needs a migration ordinal from `MIGRATION_SLOT` and nothing else — no money,
+no credential, no decision. Listed here purely because a blocker that lives only
+in a bus message is a blocker that gets lost.
 ## Not queued, deliberately
 
 These looked like founder items and are not, so I did them or filed them in the

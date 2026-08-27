@@ -1,0 +1,29 @@
+{
+  "kind": "new1_delta_manifest",
+  "label": "post-handoff-drift",
+  "selector": {
+    "ids": 339
+  },
+  "definitionHash": "5b5d02384b46c96c",
+  "bands": [
+    "standard",
+    "full",
+    "substantial"
+  ],
+  "deltaRowsConsidered": null,
+  "eligibleRepresentatives": 132,
+  "alreadyCoveredByContentHash": 0,
+  "emitted": 132,
+  "membersRepresented": 135,
+  "idsHash": "57c00a5ea523902a",
+  "byTier": {
+    "BROAD_SEARCHABLE": 132
+  },
+  "byBand": {
+    "substantial": 41,
+    "full": 30,
+    "standard": 61
+  },
+  "generatedAt": "2026-08-27T13:26:06.316Z",
+  "dryRun": false
+}
