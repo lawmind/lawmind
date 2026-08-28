@@ -37,6 +37,11 @@ const tsvector = customType<{ data: string; driverData: string }>({
   dataType: () => 'tsvector',
 });
 
+/** Postgres `bytea`, used only for bounded raw official-source captures. */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => 'bytea',
+});
+
 /* ------------------------------------------------------------------ enums -- */
 
 /**
@@ -816,7 +821,8 @@ export const verificationCache = pgTable(
     verificationState: verificationStateEnum('verification_state').notNull(),
     verifiedBySource: verifiedBySourceEnum('verified_by_source').notNull(),
     matchConfidence: numeric('match_confidence', { precision: 4, scale: 3 }),
-    // Set for eCourts human confirmation. We never bypass the CAPTCHA.
+    // Set only for an attributable HUMAN Tier-3 confirmation. Authorized bulk
+    // automation writes ecourts_bulk and must never impersonate that evidence.
     confirmedByUserId: uuid('confirmed_by_user_id').references(() => users.id),
     rawResponse: jsonb('raw_response').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
@@ -1266,6 +1272,68 @@ export const ecourtsTransition = pgTable(
   ],
 );
 
+/* ------------------------------------ official source evidence (0090) -- */
+
+/**
+ * Every official network decision, including refusals. Append-only in SQL.
+ * This is deliberately generic across SCI/eCourts/AWS while authorization
+ * remains source-specific in `authorizationBasis` and `conditionsVersion`.
+ */
+export const officialSourceFetchLedger = pgTable(
+  'official_source_fetch_ledger',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    source: text('source').notNull(),
+    endpoint: text('endpoint').notNull(),
+    requestedAt: timestamp('requested_at', { withTimezone: true }).notNull().defaultNow(),
+    outcome: text('outcome').notNull(),
+    httpStatus: integer('http_status'),
+    durationMs: integer('duration_ms'),
+    refusalReason: text('refusal_reason'),
+    authorizationBasis: text('authorization_basis').notNull(),
+    conditionsVersion: text('conditions_version'),
+  },
+  (t) => [index('official_source_fetch_requested_idx').on(t.requestedAt.desc())],
+);
+
+/**
+ * Raw official-source artifact, separate from the derived/canonical judgment.
+ * `rawBytes` is populated for bounded canaries; large-scale retention may use
+ * `storageKey`. A repeated identical response remains a new observation.
+ */
+export const officialSourceArtifacts = pgTable(
+  'official_source_artifact',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    source: text('source').notNull(),
+    artifactRole: text('artifact_role').notNull(),
+    observationState: text('observation_state').notNull(),
+    observedAt: timestamp('observed_at', { withTimezone: true }).notNull().defaultNow(),
+    sourceAssertedAt: timestamp('source_asserted_at', { withTimezone: true }),
+    sourceUrl: text('source_url').notNull(),
+    sourceDocumentKey: text('source_document_key'),
+    contentType: text('content_type'),
+    payloadSha256: text('payload_sha256').notNull(),
+    payloadBytes: integer('payload_bytes').notNull(),
+    rawBytes: bytea('raw_bytes'),
+    storageKey: text('storage_key'),
+    metadata: jsonb('metadata').notNull().default({}),
+    extractionNote: text('extraction_note'),
+    authorizationBasis: text('authorization_basis').notNull(),
+    conditionsVersion: text('conditions_version'),
+    fetchLedgerId: uuid('fetch_ledger_id').references(() => officialSourceFetchLedger.id),
+    judgmentId: uuid('judgment_id').references(() => judgments.id, { onDelete: 'set null' }),
+  },
+  (t) => [
+    index('official_source_artifact_observed_idx').on(t.observedAt.desc()),
+    index('official_source_artifact_url_idx').on(t.sourceUrl),
+    index('official_source_artifact_hash_idx').on(t.payloadSha256),
+    index('official_source_artifact_judgment_idx')
+      .on(t.judgmentId)
+      .where(sql`judgment_id IS NOT NULL`),
+  ],
+);
+
 /**
  * The citation fan-out — **one implementation, two triggers.**
  *
@@ -1652,6 +1720,11 @@ export const judgmentStatuteRefs = pgTable(
     /** A section mentioned once in passing and one the judgment turns on are different things. */
     occurrences: integer('occurrences').notNull().default(1),
     firstOffset: integer('first_offset').notNull(),
+    /** Exact-date identity decision. NULL is legacy/unclassified, never confirmed. */
+    resolutionState: text('resolution_state'),
+    /** Machine-readable evidence/reason for the current resolution state. */
+    resolutionReason: text('resolution_reason'),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -1659,6 +1732,9 @@ export const judgmentStatuteRefs = pgTable(
     index('judgment_statute_refs_section_idx').on(t.sectionNumber),
     index('judgment_statute_refs_statute_idx').on(t.statuteId),
     index('judgment_statute_refs_judgment_idx').on(t.judgmentId),
+    index('judgment_statute_refs_resolution_idx')
+      .on(t.resolutionState)
+      .where(sql`resolution_state IS NOT NULL`),
   ],
 );
 

@@ -1,6 +1,6 @@
 {
   "_comment": "Content hash of every migration at the moment it was journalled. A migration is FORWARD-ONLY: once applied anywhere its SQL must never change, because every database that already ran it will never run it again and would silently diverge. check-migration-journal.mjs fails if a hash here stops matching its file. To supersede a hash deliberately, change it here in the SAME commit and add a supersededReason saying why -- an unexplained hash change is the defect this file exists to catch.",
-  "_recordedAt": "2026-08-25T11:40:50.933Z",
+  "_recordedAt": "2026-08-28",
   "hashes": {
     "0000_enable_extensions": "820fa1787221d62fe1e33fecf86670c144df0741da2eee085970bc1664ce8da6",
     "0001_initial_schema": "82c81204f7154d3b9212ab235bedbe63e495104c56768186d0bc5f2a0b415e3d",
@@ -91,6 +91,9 @@
     "0086_quality_screen_runs": "e0c13ac5efc76108699d1f48e3cc9c116581802b4e9667806e3327c70bb24918",
     "0087_citation_key_dirty": "7c5f9f3c1383805eefe174d2f8a2a541890488fc1688ac5f302954477eba2fcf",
     "0088_citation_key_dirty_old_identity": "870033b6d132e84e00d9b27c3c4ff4d9bee435115e07355a8f755d3b6ebf03ad",
-    "0089_document_vector_source_types": "3b7089525fa77565ff31caf206fae5edc0240fb210effb1446c5009bae129e0a"
+    "0089_document_vector_source_types": "3b7089525fa77565ff31caf206fae5edc0240fb210effb1446c5009bae129e0a",
+    "0090_official_source_artifacts": "5451f047737171f9ba737a666811c93934e324a751622955184b5f5580629812",
+    "0091_statute_ref_resolution": "0c9f640b70fdca110592e2dcf0adc89438e321b8c2b42358feb30a4e6823e70b",
+    "0092_judgment_row_provenance": "88b2d59b99bf7d6d9e59d6d76b2917adb5d2bf8fcedae8bb2569688bbaaf91e9"
   }
 }

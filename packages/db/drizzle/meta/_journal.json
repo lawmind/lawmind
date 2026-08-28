@@ -631,6 +631,27 @@
       "when": 1787880000000,
       "tag": "0089_document_vector_source_types",
       "breakpoints": true
+    },
+    {
+      "idx": 90,
+      "version": "7",
+      "when": 1787881000000,
+      "tag": "0090_official_source_artifacts",
+      "breakpoints": true
+    },
+    {
+      "idx": 91,
+      "version": "7",
+      "when": 1787882000000,
+      "tag": "0091_statute_ref_resolution",
+      "breakpoints": true
+    },
+    {
+      "idx": 92,
+      "version": "7",
+      "when": 1787883000000,
+      "tag": "0092_judgment_row_provenance",
+      "breakpoints": true
     }
   ]
 }

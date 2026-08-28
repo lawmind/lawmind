@@ -744,20 +744,76 @@ async function dense(
     return tx<
       {
         judgment_id: string;
-        chunk_text: string;
+        chunk_text: string | null;
         distance: number;
         char_offset: number | null;
         char_length: number | null;
       }[]
     >`
-      WITH candidates AS MATERIALIZED (
+      WITH chunk_candidates AS MATERIALIZED (
         SELECT c.judgment_id, c.chunk_text, c.text_quality, c.char_offset, c.char_length,
                c.embedding <=> ${queryVector}::vector AS d
         FROM judgment_chunks c
         ORDER BY c.embedding <=> ${queryVector}::vector
         LIMIT ${annDepth}
+      ),
+      -- NEW1's tranche. A SECOND index over a DIFFERENT set of documents, not a
+      -- denser sampling of the same one: 81,720 documents against
+      -- judgment_chunks' 40,161, overlapping on 10,007, so the union reaches
+      -- 111,874 -- 2.786x. Measured 28 Aug 2026, both tables counted directly.
+      --
+      -- Its own MATERIALIZED CTE with its own ORDER BY ... LIMIT because that is
+      -- the only shape new1_tranche_passages_hnsw can accelerate; folding the
+      -- two arms into one ORDER BY over a union would scan both sets of vectors
+      -- and lose both indexes.
+      tranche_candidates AS MATERIALIZED (
+        SELECT p.judgment_id, p.char_offset, p.body_length,
+               p.embedding <=> ${queryVector}::vector AS d
+        FROM new1_tranche_passages p
+        ORDER BY p.embedding <=> ${queryVector}::vector
+        LIMIT ${annDepth}
+      ),
+      candidates AS (
+        SELECT judgment_id, chunk_text, text_quality, char_offset, char_length, d
+        FROM chunk_candidates
+        UNION ALL
+        -- The tranche stores no text and no per-passage quality, so both are
+        -- reconstructed rather than invented.
+        --
+        -- char_offset = -1 is chunk.ts's "the position could not be VERIFIED",
+        -- and chunk.ts is explicit that it must never be treated as a literal
+        -- offset -- 7,535 of 418,116 rows, 1.802%. judgment_chunks spells the
+        -- same state NULL, so it is mapped to NULL here and the whole pipeline
+        -- below sees one convention instead of two. A row in that state still
+        -- ranks -- its vector is real -- it just carries no quotable passage,
+        -- which is the same honest degrade a chunk with no backfilled offset
+        -- already makes.
+        --
+        -- text_quality NULL takes the multiplier of 1.0 below, which is what an
+        -- unscored chunk already gets. Deliberate, not a shortcut: the damage
+        -- refusal for both arms alike is andBodyTextSafe, on the JUDGMENT.
+        SELECT t.judgment_id,
+               NULL::text AS chunk_text,
+               NULL::numeric AS text_quality,
+               CASE WHEN t.char_offset >= 0 THEN t.char_offset END AS char_offset,
+               CASE WHEN t.char_offset >= 0 THEN t.body_length END AS char_length,
+               t.d
+        FROM tranche_candidates t
       )
-      SELECT c.judgment_id, c.chunk_text, c.char_offset, c.char_length,
+      SELECT c.judgment_id,
+             -- "sourceText.slice(offset, offset + bodyLength) is exactly the
+             -- body" -- chunk.ts's own words, and the invariant it VERIFIES
+             -- before it will store an offset at all. So the tranche's passage
+             -- is recovered from the judgment rather than stored twice, and
+             -- what comes back is the verified span rather than
+             -- judgment_chunks.chunk_text, which carries a synthesised heading
+             -- in front of the same body.
+             COALESCE(
+               c.chunk_text,
+               CASE WHEN c.char_offset IS NOT NULL AND c.char_length IS NOT NULL
+                    THEN substr(j.full_text, c.char_offset + 1, c.char_length) END
+             ) AS chunk_text,
+             c.char_offset, c.char_length,
              -- Down-ranked, never excluded: damaged text is still the judgment.
              -- quality 1.0 leaves distance untouched; 0.5 costs it 50%. Unscored
              -- chunks (no Latin tokens, e.g. Devanagari) are treated as clean
@@ -783,14 +839,30 @@ async function dense(
 
   const bestChunk = new Map<string, BestChunk>();
   const ranked: Ranked[] = [];
+  /**
+   * Ranking and evidence are tracked SEPARATELY now, and they used to be the
+   * same Set by accident.
+   *
+   * `bestChunk.has(...)` was the dedup key, which was correct only while every
+   * matched row was guaranteed to carry text. A tranche passage whose offset
+   * was never verified ranks but cannot be quoted, and under the old shape its
+   * judgment would have been re-admitted on every later row -- a duplicate in
+   * the ranked list, which RRF would then have scored twice.
+   */
+  const seen = new Set<string>();
   for (const row of rows) {
     // Rows arrive nearest-first, so the first sighting of a judgment is its best chunk.
-    if (bestChunk.has(row.judgment_id)) continue;
-    bestChunk.set(row.judgment_id, {
-      text: row.chunk_text,
-      charOffset: row.char_offset,
-      charLength: row.char_length,
-    });
+    if (seen.has(row.judgment_id)) continue;
+    seen.add(row.judgment_id);
+    // No text means no evidence, never empty evidence: `''` would read
+    // downstream as "we looked and the passage was blank".
+    if (row.chunk_text != null) {
+      bestChunk.set(row.judgment_id, {
+        text: row.chunk_text,
+        charOffset: row.char_offset,
+        charLength: row.char_length,
+      });
+    }
     ranked.push({ judgmentId: row.judgment_id, rank: ranked.length + 1 });
     if (ranked.length >= CANDIDATE_DEPTH) break;
   }

@@ -1093,6 +1093,88 @@ btree on (target_type, target_id).
 `before`/`after` are the changed fields only, not whole rows. A founder override
 of a template gate (`template.override_gate`) is mandatory-reason.
 
+## official_source_fetch_ledger / official_source_artifact
+
+Added by migration `0090`. Both tables are append-only, enforced by database
+triggers. `official_source_fetch_ledger` records every official-source network
+decision, including refusals and errors: source · endpoint · requested_at ·
+outcome · HTTP/duration fields · refusal_reason · authorization_basis ·
+conditions_version.
+
+`official_source_artifact` stores the observation separately from any canonical
+judgment: source · artifact_role · observation_state · observed/source-asserted
+times · URL/document key · content type · SHA-256/byte count · bounded raw bytes
+or a storage key · source metadata · extraction note · authorization basis and
+conditions version · optional fetch-ledger and judgment links.
+
+Roles distinguish `judgment_index`, `judgment_pdf`, order material, editorial
+summaries, cause lists and case status. Only a verified `judgment_pdf` may feed a
+canonical judgment. A repeated response remains another observation; evidence is
+never updated or deleted to match later derived state.
+
+## judgment_statute_refs resolution state
+
+Migration `0091` adds nullable `resolution_state` · `resolution_reason` ·
+`resolved_at` to the existing statute-reference link. `NULL` means a legacy or
+not-yet-classified decision, never a confirmed link. Allowed states are
+`linked_exact`, `linked_chronology_permitted`, `unresolved_predecessor`,
+`refused_pre_enactment`, `unresolved_pre_commencement`,
+`unresolved_date_unsafe`, `unresolved_section_absent`, and
+`unresolved_ambiguous`.
+
+The state is evidence about identity resolution. Chronology-permitted does not
+claim that the statute governed the dispute, and an unresolved state keeps the
+raw `act_named`, section, occurrences and offset while `statute_id` remains
+NULL. Enactment and commencement are separate official dates; neither is
+substituted for the other when one is absent.
+
+## judgments row provenance — source, edition, authorization basis
+
+Migration `0092` adds four nullable columns to `judgments`: `source_id` ·
+`source_edition` · `authorization_basis` · `provenance_recorded_at`. Additive,
+backfill-free, and every row is NULL on the day it lands.
+
+**`source_url` is not this.** It is NOT NULL and it is the uniqueness and
+resumability key (see "Unique: `source_url`" above); it was never a licence key.
+Audited 28 Aug 2026: of the 38 columns on `judgments`, none named a source, an
+edition or an authorization basis. The only provenance available was inferred
+from a URL prefix, and a hash-ordered sample of 20,000 rows resolved to exactly
+two hosts — both AWS Open Data. That inference holds only while one licence
+family covers the whole corpus, and stops identifying anything the moment two
+grants serve from one host.
+
+`source_edition` is the axis nothing could express: `court_raw` ·
+`reporter_edited` · `mixed_unseparated`. There is no copyright in a judgment
+(Copyright Act s. 52(1)(q)(iv)); a law reporter's copy-edited version IS
+protected (_EBC v. D.B. Modak_), so "whose edition is this text" decides whether
+a row is safe to hold. `text_extraction_method` records HOW text was extracted,
+never WHOSE edition it is, and the two have been confused before.
+
+`authorization_basis` uses the SAME value set as
+`official_source_artifact.authorization_basis` (`0090`), extended by
+`founder_declared_grant` for the CLAUDE.md §6a source agreements. One vocabulary
+across both tables, deliberately: two spellings of one fact is how a licence
+boundary becomes unqueryable.
+
+`source_id` carries `supreme_ai` and `supreme_today` as SEPARATE values. CLAUDE.md
+§6a's naming rule says they are different sources; bus 0094 asserted they are the
+same. That identity is not settled, so a row records the name it actually came
+from and recording one asserts nothing about the other.
+
+**NULL means UNRECORDED. It never means safe.** A consumer that wants "safe to
+hold" tests for the VALUE, never for the absence of a refusal — this corpus has
+already measured what an absent-evidence pass costs.
+
+The three CHECK constraints are `NOT VALID` and the three partial indexes are
+deliberately NOT created. Both are stated in full in the migration: validating or
+indexing would scan 2,822,704 pages under a lock, to confirm a fact the DDL
+already guarantees about columns that are entirely NULL. The exact
+`VALIDATE CONSTRAINT` and `CREATE INDEX CONCURRENTLY` statements are recorded
+there for the moment real values exist.
+
+The precondition this satisfies: the SCR counsel outcome, and any future licensed
+ingest, are remediable **by WHERE clause and not by re-ingest**.
+
 ## platform_config
 
 Maintenance mode, the five kill switches, and feature flags. One row per key —
