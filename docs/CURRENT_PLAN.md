@@ -16,6 +16,95 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 29 August 2026 (R10) — LCC: THE 25-SECOND SCAN WAS A SERIAL PLAN, NOT A COLD PLANNER, AND AUTOVACUUM HAD NEVER BEEN TOLD THE TABLE EXISTED
+
+**Round:** R10 factory + database performance, founder-directed. Leases:
+`MIGRATION_SLOT` (0092, 0093), `GIT_COMMIT`. **`HEAVY_BOX` was not taken.**
+**Evidence:** `docs/ai/lcc-r10/LCC_R10_FACTORY_AND_PLANNER.md`,
+`docs/ai/lcc-r10/vacuum-judgments.json`.
+
+**Two hypotheses were tested and BOTH were wrong; the third was measured.**
+
+The brief said `judgments` lacks planner statistics — `last_analyze` and
+`last_autoanalyze` both NULL. Both NULLs reproduce; the inference does not.
+`pg_statistic` holds 38 columns with MCVs and histograms and the `judgment_date`
+histogram runs to 2026-08-01. The NULLs are lost COUNTERS: `n_tup_ins` reads
+**52,716** on an 18,698,984-row table. `EXPLAIN` settles it — estimated 747,959
+rows against an actual 748,498, **0.07% error**.
+
+The second hypothesis was the visibility map, and it had a real defect behind it:
+`judgments` had `vacuum_count 0` / `autovacuum_count 0`, never vacuumed on this
+instance, 75.14% all-visible, `Heap Fetches 5,379,222`.
+
+| | before | after `VACUUM (ANALYZE, INDEX_CLEANUP OFF)` |
+| --- | ---: | ---: |
+| relallvisible | 75.14% | **83.52%** |
+| Heap Fetches | 5,379,222 | **3,447,267** (−36%) |
+| pages read | 1,932,349 | **748,666** (−61%) |
+| **Execution Time** | **25,025 ms** | **26,156 ms — WORSE** |
+
+**Refuted by its own measurement.** The bottleneck was `loops=25`: a correlated
+subquery runs one SERIAL index-only scan per court group and cannot be
+parallelised. One `GROUP BY court` reads the SAME 1.44M pages and does the SAME
+3.45M heap fetches in **2,764 ms** — a Parallel Index Only Scan, 5 workers.
+**9.5×.** Fixed in `corpus/coverage.ts`; differential test 25/25 courts agree,
+both totals 18,713,781; the seven coverage tests each drive a real request and
+run at **~2.6 s against ~25 s**.
+
+**The autovacuum cause, and it was neither suppression nor a bad setting.**
+Thresholds are PROPORTIONAL — analyze needs 374,030 modifications, insert-vacuum
+3,739,847 inserts — and the counters are zeroed by every unclean shutdown, of
+which there were **26 between 15 and 24 Aug**. Migration **0093** sets
+`scale_factor = 0` with absolute thresholds on four factory-core tables.
+**Proved non-vacuously:** `judgment_paragraphs` autovacuumed and autoanalyzed for
+the first time in its life at 05:25, and `judgments` began its first-ever
+autovacuum on its 700,125 dead tuples.
+
+**Migration 0092 — per-row provenance.** `source_id` / `source_edition` /
+`authorization_basis` / `provenance_recorded_at` on `judgments`, all nullable,
+every row NULL. The audit: of 38 columns none named a source, an edition or an
+authorization basis, and a hash-ordered 20,000-row sample resolved to two hosts,
+both AWS Open Data. `source_edition` is the *EBC v. D.B. Modak* axis nothing
+could express. **NULL means UNRECORDED, never safe.** The SCR counsel outcome and
+any licensed ingest are now remediable **by WHERE clause, not re-ingest**.
+**0090 and 0091 were applied to production and never committed** — both now
+committed, each file's sha256 verified against its ledger row.
+
+**The tranche is wired.** `dense()` searches `new1_tranche_passages` beside
+`judgment_chunks`: 40,161 + 81,720 documents overlapping on 10,007, union
+**111,874 — 2.786×**, counted directly. The passage is rebuilt as
+`substr(full_text, char_offset + 1, body_length)` and proved against an
+independently stored copy: **8,072 of 8,072** byte-identical. User-facing
+reachability unchanged, asserted three ways, non-vacuity proved by three
+mutations.
+
+**`GET /corpus/freshness/object`** — recency and completeness never collapsed;
+a test asserts no `freshnessScore`-shaped key can appear.
+`latestUpstreamDecisionDate` is **NOT_MEASURED** and is not substituted;
+`upstreamLocalCompleteness` declares `PARQUET_ROWS_NOT_DEDUPED`.
+
+**`founder-cli`** closes `FQ-ECOURTS-ACTOR` (open since 17 Aug). Creates the
+first identity + profile at `advocate` and stops. An applied run **cannot be
+deleted** — `audit_log` is append-only and FKs to `users` — so the reversal is
+`erasure.ts`'s: anonymise the identity, destroy the credential.
+
+**`clearDirtyWork()` removed.** It had NO callers, not even tests, and could
+never have been the production step — the two services do not import each
+other's `src/`. The lifecycle is `rebuildDirtyPage()` in `citation-keys-cli.ts`,
+whose own file comment still claimed it "was never wired". Corrected.
+
+**Factory: the delta reaches 4 of 6 named consumers.** Of NEW2's 1,334-judgment
+scheduled cycle — exact/lexical 1,334/1,334, citations 1,334/1,334, paragraphs
+1,334/1,334, citation-keys **95/95 eligible** (the denominator is 95, not 1,334;
+it nearly went out as a 7.1% gap). **Statute-reference 0/1,334, last output
+13 Aug.** **NEW1 embedding 0/1,334** — manifest-driven, not delta-driven. Both
+reported to their owning lanes.
+
+**Open:** `ECOURTS_GRANT_ATTRIBUTION` still absent, so the harvest guard still
+refuses. Host-loss rehearsal at real scale still not run.
+
+---
+
 ### 27 August 2026 (R9) — LCC: THE RESTORE NEVER HUNG, THE RESOLVER GATE WAS PERMANENTLY CLOSED, AND THE FACTORY IS RESTARTED WITH ONE OWNER PER JOB
 
 **Round:** R9 operational, founder-directed. Leases: `LCC`, `MIGRATION_SLOT`.
@@ -99,6 +188,75 @@ Not one failure was fixed by relaxing an assertion; two got stronger.
 **Open:** Host-loss rehearsal at scale not run. `new1_doc_vector_stage` /
 `new1_tranche_passages` deliberately not journalled while a 211-hour walk is still
 writing them. Boot recovery needs elevation — `FQ-LCC-R9-1`.
+
+---
+
+### 29 August 2026 (R10) — NEW2: THE HIGH COURT CORPUS IS AT 98.775% HELD AND 99.943% ACCOUNTED, AND `permanent` NEVER MEANT WHAT THE MATRIX DIVIDED BY
+
+**Round:** R10 data acquisition, founder-directed. Leases: **none taken** —
+HEAVY_BOX stayed with NEW1 and MIGRATION_SLOT with LCC throughout.
+**Evidence:** `docs/ai/new2-r10/NEW2_R10_DATA_ROUND.md` and the eight artifacts
+beside it.
+
+| what | number |
+| --- | ---: |
+| upstream unique High Court records, read from the bucket | **18,944,673** |
+| actually held | **18,712,648 — 98.775%** |
+| accounted (held + proven source-unavailable) | **99.943%** |
+| upstream, present, not held — **ours** | **11,118** |
+| never attempted, entire corpus | **1** |
+| upstream rows read | 20,058,317 over 1,438 partitions, 0 errors |
+
+**The headline moved DOWN, and that is the round.** `hc_ingest_ledger.permanent`
+is a RETRY BUDGET, not a claim about the source — `ingest-ledger.ts` says so and
+the first parity matrix divided by it anyway. Re-probing the marks against the
+live bucket with a magic-byte verdict: every `pdf_absent` stratum confirmed, but
+**410 of 410 sampled `no_text` objects are live real PDFs**, and 185 of 185 are
+IMAGE_ONLY scans. 3,709 of them were marked permanent — an OCR backlog filed under
+the publisher's name. `accounted_upstream` 99.963% → **99.943%**, and
+`docs/SCHEMA_TRUTH.md` §hc_ingest_ledger now carries the split so the next lane
+does not repeat it.
+
+**Allahabad, Bombay and Tripura, the three the founder named.** Allahabad 99.03%
+held / 99.99% accounted; Bombay 93.03% / 99.99% — both deficits are objects the
+publisher named and never uploaded, confirmed by probe. Tripura's deficit was
+**one file**, and it is the only never-attempted record in 18.9 million: it serves
+200 with `%PDF-1.5` and `unpdf` returns `Invalid PDF structure`. A malformed
+upstream file — a third class the ledger cannot express.
+
+**The registry could not see the daily worker for two independent reasons**, and
+the second is the one that recurs: `job-health.mjs` matched `TaskName -match
+'awmind'`, and the task is `Lawmind
+ew2-daily-delta` — its Lawmind identity is
+in the PATH, because `Register-ScheduledTask` at the root needs elevation and
+`schtasks /Create` into a subfolder does not. Both fixed; one unattended cycle
+observed end to end with a receipt read back off disk.
+
+**Supreme Court:** the `sci.ts` partition-year defect is real and fixed **without
+moving identity** — `sourceUrlFor` unchanged for 38,352 rows, a new
+`fetchUrlCandidatesFor` separates retrieval from identity. Recovered *STATE OF
+PUNJAB v SOHAN SINGH*, 2006-05-15. The other three are upstream soft-404s.
+
+**Citation graph:** `resolver-dryrun-cli.ts` drew its tranche with no sentinel
+exclusion — **3,658 of its first 5,000 rows were sentinels**. Fixed. A clean
+50,000 tranche: 42.51% UNIQUE, 5.88% AMBIGUOUS, 51.61% not-held, 11,542 rows/sec,
+0 tokens. Independent adjudication: **0 of 500 pins contradicted, 0 of 500 recall
+misses**, negative probe proven non-vacuous. **99.5% of the not-held class is
+Supreme Court citations** — the ceiling on citation coverage is SC acquisition,
+not resolver tuning. The expansion job is registered, resumable, and running
+DECIDE-ONLY: the apply gate's third condition is independent confirmation and that
+signature is not NEW2's to forge.
+
+**eCourts:** all three required inputs absent — no attribution env, kill switch
+off since 7 Aug, and no founder `users` row (every non-fixture user is
+`erased+<uuid>@invalid`). No canary, no improvised substitute. The ledger's 92
+rows are 92 refusals: the guard is non-vacuous by its own record.
+
+**Open:** 10,308 records need OCR (out of scope by instruction). 810 `pdf_failed`
+rows are 595-of-599 live and recoverable by a re-walk — only the Tripura scope was
+re-walked. Bombay's full `pdf_absent` re-probe is estimated from 120 rows, not
+counted. `FQ-N2-R10-1` (elevation for the Task Scheduler operational log) and
+`FQ-N2-R10-2` (the founder's users row).
 
 ---
 
@@ -3847,8 +4005,7 @@ change what we do next:
    That URL was never fetched and does not resolve — carried across three docs
    without anyone running the one command that would have killed it, exactly
    `FQ-V1`'s point. The real site, `https://scr.sci.gov.in/scrsearch/`, is
-   CAPTCHA-gated (built on the eCourts platform but outside our eCourts grant's
-   scope — a different portal) and its search form has no SCC/AIR field at
+   CAPTCHA-gated and its search form has no SCC/AIR field at
    all, only S.C.R. and neutral citation, which we already hold at
    100%/99.7%. It cannot close the SCC/AIR↔S.C.R. gap even if the CAPTCHA
    were solved. Full account: `docs/RESEARCH_2026-08-11.md` §3a.

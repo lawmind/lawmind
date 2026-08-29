@@ -3,7 +3,48 @@
 **One table. No narrative.** Regenerate the live view with `pnpm job:health`; this
 file is the human-readable snapshot and the ownership record behind it.
 
-Last reconciled: **27 August 2026, LCC (R9)**.
+Last reconciled: **29 August 2026, LCC (R10)**.
+
+**R10 addition — the delta reaches four of six named consumers.** Measured
+against NEW2's scheduled cycle of 29 Aug 04:51:24Z–05:00:33Z, which wrote
+**1,334 judgments**:
+
+| consumer | reached | of eligible | state |
+| --- | ---: | ---: | --- |
+| exact / lexical (`full_text_tsv`) | 1,334 | 1,334 | AT FRONTIER |
+| `lcc-citations-extract` | 1,334 | 1,334 | AT FRONTIER |
+| `lcc-paragraphs-apply` | 1,334 | 1,334 | AT FRONTIER |
+| `lcc-citation-keys` | 95 | **95** | AT FRONTIER |
+| statute-reference | 0 | 1,334 | **NOT WIRED** — last output 13 Aug 12:38 |
+| NEW1 embedding | 0 | 1,334 | **NOT WIRED** — manifest-driven, not delta-driven |
+
+**The 95 is not a gap, and the denominator is the whole reason.** 95 of 1,334 is
+7.1% and reads like a stalled worker. `judgment_citation_keys` only holds rows
+for a judgment that HAS a citation, and exactly 95 of the 1,334 carry a
+`neutral_citation` or a non-empty `reporter_citations`. The builder is at 95 of
+95. **Check the denominator before filing a coverage number as a defect.**
+
+Both LCC cursors sit on the delta's own frontier exactly — same timestamp, same
+row id:
+
+```
+judgments   max(created_at)  2026-08-29 04:55:22.134122+00
+citation-keys.json  cursorAt 2026-08-29 04:55:22.134122+00  id ee04adc0-35b0-4b23-b454-6d1da92d0a83
+paragraphs-0_1.json cursorAt 2026-08-29T04:55:22.134Z       id ee04adc0-35b0-4b23-b454-6d1da92d0a83
+```
+
+**A flat durable-output metric is not evidence of a dead job.** NEW1's HEAVY_BOX
+lease read `count(*) FROM new1_doc_vector_stage` static at 2,360,247 for four
+hours and I concluded the job was dead. It was live and had moved on to an HNSW
+index build, a phase that does not write that metric. The box was busy; a
+measurement taken then read 198.7 s for a statement that takes 25.0 s quiet.
+Sample `pg_stat_activity` and read what it says.
+
+**`resource-lease.mjs status` and `acquire` can disagree on the same lease.**
+Observed 28 Aug on `HEAVY_BOX`: `status` said "process DEAD" while `acquire`
+said "held by NEW1 (process HEALTHY)". The record (`.json`) was stale and the
+lock (`.lock`) was current — a takeover had written the lock and not the record.
+**The lock file is the truth.** Read it before writing a `--force --reason`.
 
 `.agents/jobs/registry.jsonl` is the declaration; `pnpm job:health` is the
 observation. **Where they disagree, the observation wins** and the registry gets a

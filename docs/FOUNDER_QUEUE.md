@@ -686,8 +686,9 @@ proposed eSCR (`digiscr.sci.gov.in`) as a free official substitute for a paid
 concordance. That URL was never actually fetched before being written down
 across three docs — it does not resolve. The real site,
 `https://scr.sci.gov.in/scrsearch/`, is (1) CAPTCHA-gated on the same
-`securimage` widget eCourts uses, outside our eCourts grant's scope, so
-automating it needs its own authorization decision, not a free pass, and (2)
+`securimage` widget eCourts uses and governed by Lawmind's **separate written
+Supreme Court permission through 2029** (recorded 27 Aug 2026 in
+`SCI_AUTHORISATION.md`), and (2)
 even with access, its search form has no SCC/AIR field at all — only S.C.R.
 and neutral citation, both of which we already hold at 100%/99.7%. It cannot
 resolve an SCC/AIR citation to anything. **This does not change what this
@@ -6055,3 +6056,138 @@ lane instead: the 293 stranded citations (fixed, 293 → 0); the 61 live false p
 pins (a deterministic repair); linking 323,524 statute references (a join, no
 acquisition); OCR for 469,599 damaged documents (compute, not money); and coram
 recovery from our own header text (a hypothesis I can test without any source).
+
+---
+
+## FQ-N2-R10-1 — the Task Scheduler operational log is disabled, and enabling it needs elevation  ·  NEW2, 28 Aug 2026
+
+**What is needed.** One elevated command. Nothing else, no money, no account:
+
+```
+wevtutil sl Microsoft-Windows-TaskScheduler/Operational /e:true
+```
+
+**Why it blocks something concrete.** At **05:23:56 on 28 Aug** the
+`\Lawmind\new2-daily-delta` task — the daily changed-object cycle, the thing that
+stops the ingest fleet going eight days without noticing again — returned
+**0x800710E0**, *"the operator or administrator has refused the request."* The
+task was Ready, the box has no battery, and it ran perfectly when triggered again
+forty minutes later. **The reason that run was refused is not recoverable**,
+because the only place Windows records it is the operational log, and that log is
+off. Every future refusal will be equally undiagnosable.
+
+**What was built anyway.** Everything that does not need elevation. The task now
+has `StartWhenAvailable = True`, so a missed daily run catches up instead of
+vanishing — that was the logon-launcher failure mode reincarnated, and it is the
+same reasoning that let the fleet sit dead from 19 to 27 August. The battery
+conditions are off. The job is now in `.agents/jobs/registry.jsonl` as a
+`cadence` job, and it writes a receipt per cycle to
+`.agents/ops/n2-daily-delta-receipts.jsonl` carrying the manifest and ledger
+numbers read back off disk, so a fired-and-did-nothing tick is distinguishable
+from a healthy one **from our side**, without Windows' help.
+
+**What stays broken without it.** Only the diagnosis. Detection is covered: a
+refused run writes no receipt, and `job-health.mjs` reads the task's
+`LastTaskResult` and reports a non-zero rc as FAILED. We will know THAT a cycle
+was refused; we will not know WHY.
+
+**Where it plugs in.** Nothing in the repo changes. It is one line in an elevated
+PowerShell, and it pairs naturally with the `-AtStartup` / `S4U` registration
+already queued above for the five other tasks.
+
+---
+
+## FQ-N2-R10-2 — the founder's own `users` row does not exist, and it is one of the three eCourts canary inputs  ·  NEW2, 28 Aug 2026
+
+**What is needed.** A real founder account in `users`, or an explicit statement of
+which existing row is yours.
+
+**Why.** The eCourts canary has three required runtime inputs and this is the one
+that was not previously written down. Measured 28 Aug 2026 against the live
+database:
+
+| required input | state |
+| --- | --- |
+| `ECOURTS_GRANT_ATTRIBUTION` in the runtime env | **ABSENT** — already queued as FQ-N2-R9-1 |
+| `platform_config.ecourts_harvest` kill switch flipped with a reason | **OFF**, untouched since 2026-08-07T10:14:37Z |
+| the founder's `users` row | **ABSENT** |
+
+`users` holds 390 rows: 87 `admin` and 303 `advocate`. Every row that is not a
+`@example.test` fixture has been anonymised to
+`erased+<uuid>@invalid` — the erasure path ran and did its job. **There is no row
+that can be identified as the founder**, so a request made "on the founder's
+authority" has no principal to attribute it to.
+
+**What was built anyway.** The refusal path, and it is proven working rather than
+assumed. `ecourts_fetch_ledger` holds **92 rows and every one is a refusal**: 72
+`kill_switch_off` between 9 and 26 August, and 20 `attribution_not_on_file` on
+27 August. **Zero requests have ever left this machine.** The guard is
+non-vacuous by its own ledger, which is the strongest form this evidence takes.
+
+**What stays broken without it.** The canary — one court, a handful of
+case-status lookups and one cause list — cannot run. **This lane will not
+improvise a substitute for any of the three inputs.** An unattributed or
+misattributed request is the single failure that can cost the grant itself, and a
+guessed principal is exactly that failure wearing a different name.
+
+**Where it plugs in.** Create the row (or name the existing one), set the two
+environment variables, then flip the switch through
+`POST /admin/platform/kill-switches/ecourts_harvest` with a `reason` so the change
+is audited. The first cause-list request is one call after that.
+
+---
+
+## FQ-ECOURTS-ACTOR — HALF OF IT IS NOW CLOSED IN CODE · LCC, 29 Aug 2026
+
+**What changed.** The "create the row" half no longer needs you. Measured
+29 Aug: `users` holds 390 rows, 87 of them already `role = 'admin'`, and they
+are fixtures — the account path works end to end (magic link → `PATCH /me` →
+`role-cli`) but its **first** step needs a mailer and a device, so on this box
+there was no way to bring a real identity into existence, and `role-cli` cannot
+grant a role to a user that does not exist.
+
+`services/api/src/admin/founder-cli.ts` closes exactly that, and nothing wider:
+
+```
+node --import tsx src/admin/founder-cli.ts \
+  --email <you>@lawmind.in --name "<your name>" --phone "<your phone>" \
+  --reason "first operator account" --apply
+```
+
+It creates the `auth_user` identity and the `users` profile in one transaction,
+at `role = 'advocate'`, with an `audit_log` row. It **does not** grant admin
+(that stays `role-cli`, which writes its own audit row), does not create a
+session or a credential, does not mark the email verified, and does not accept
+the terms on your behalf. Dry run is the default.
+
+**One property to know before you run it: an applied run cannot be undone.**
+`audit_log` is append-only at the database level and `audit_log.actor_user_id`
+has a foreign key to `users`, so the row it writes pins the account permanently.
+The reversal is the product's own erasure path — anonymise the identity, destroy
+the credential — not a delete. Use the dry run to rehearse.
+
+**What is STILL yours, and it is the only thing left.**
+
+`ECOURTS_GRANT_ATTRIBUTION` is **not set** — zero `ECOURTS_*` variables are in
+the environment. `guard.ts` refuses every eCourts network request until it is
+present, which is correct and deliberate: the registrar asked that the letter's
+identifying details never reach users, so the attribution string is supplied by
+environment and never committed. `ECOURTS_GRANT_REFERENCE` is optional and its
+absence is not a refusal — provenance is carried by `CONDITIONS_VERSION`.
+
+**What was built anyway.** Everything else. Verified 29 Aug: **39 of 39** eCourts
+tests pass, including that the grant reference never reaches a user, that an
+unrecorded fetch never produces usable data, that the CAPTCHA bypass dies with
+the grant at **noon** on its final day rather than at end of day, and that
+silence in the letter reads as refusal on every permission. The transactional
+config + audit path is built and was verified, not rebuilt.
+
+**What stays broken without it.** The `ecourts_harvest` kill switch cannot
+usefully be turned on: the guard refuses every request, so flipping it changes
+nothing except an audit row. Tier 3 per-citation confirmation is unaffected — it
+is a human solving the CAPTCHA and vouching, and `citations/verify.ts` still
+holds no HTTP client.
+
+**Where it plugs in.** Set `ECOURTS_GRANT_ATTRIBUTION` in Railway, run
+`founder-cli` once, then `role-cli --role admin`, then flip the switch through
+`POST /admin/platform/kill-switches/ecourts_harvest` with a `reason`.
