@@ -1,0 +1,217 @@
+{
+  "artifact": "NEW2_R10_OPERATIONAL_GATE",
+  "lane": "NEW2",
+  "takenAt": "2026-08-29T10:30:50.983Z",
+  "finalHeadObserved": "7d29799be7a869c75c575c505447c894875ffd97",
+  "headContainsR10GateClosureLayer": true,
+  "headDivergenceNote": "CORRECTED AT 2026-08-29T10:35Z. At FINAL_HEAD 7d29799 the R10 gate-closure layer was absent. LCC landed it concurrently during this session in 6ff5439, 069eac6 and 371414f, and HEAD is now 371414f. Verified against the new HEAD: hc-parity-definition-v2.json, parity-matrix.json, source-freshness.json, n2-hc-parity-matrix.mts, n2-source-freshness-r10.mts, n2-hc-gap-closure.mts and corpus/freshness-object.ts are all in HEAD and agree on HC_PARITY_V2_2026-08-29 sha 1e5bdd90. GET /corpus/freshness/object is therefore reproducible from HEAD. The ONE exception is docs/SCI_AUTHORISATION.md, deliberately withheld by LCC (bus 1499) together with the wider authorization-policy rewrite, because that set widens the CAPTCHA scope from bulk cause-list only to enumerated grant data types and asserts a written SCI grant through 2029 while CLAUDE.md section 6, the binding statement they all derive from, is unmodified. It is queued for the founder, not committed. No repository code was mutated by this session.",
+  "highCourt": {
+    "definitionVersion": "HC_PARITY_V2_2026-08-29",
+    "definitionSha256": "1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7",
+    "upstreamManifestObservedAt": "2026-08-29T10:11:42.965Z",
+    "upstreamWalk": {
+      "startedAt": "2026-08-29T10:12:26Z",
+      "completedAt": "2026-08-29T10:23:46Z",
+      "partitions": 1438,
+      "rows": 20295796,
+      "errors": 0,
+      "out": ".tmp-new2/upstream3"
+    },
+    "matrixTakenAt": "2026-08-29T10:24:14.563Z",
+    "frontierTakenAt": "2026-08-29T10:19:28.784Z",
+    "upstreamUnique": 18947807,
+    "sourceArtifactHeld": 18724692,
+    "textReadable": 18714126,
+    "imageOnlyOcrPending": 10318,
+    "heldMalformed": 248,
+    "sourceUnavailableCurrent": 221281,
+    "policyRefused": 0,
+    "actionableFailures": 0,
+    "neverAttempted": 1834,
+    "accountedPercent": 99.99,
+    "actuallyHeldPercent": 98.822,
+    "accountingIdentity": "18724692 + 221281 + 0 + 0 + 1834 = 18947807",
+    "neverAttemptedComposition": {
+      "cause": "upstream publication that postdates the last successful ingest (2026-08-29T07:49:03Z). 14 HC metadata partitions were rewritten by the publisher between 08:44:15Z and 09:29:52Z, adding 746,391 bytes and 1,819 net upstream object identities.",
+      "allInDecisionMonth": "2026-08",
+      "byCourt": {
+        "27_1": 680,
+        "19_16": 630,
+        "18_6": 442,
+        "36_29": 82
+      },
+      "disposition": "the 18:00 IST daily delta cycle (scheduled task Lawmind/new2-daily-delta) takes these in its normal window; no manual action required"
+    },
+    "sourceUnavailableRevalidation": {
+      "windowDays": 90,
+      "rowsInsideWindow": 221305,
+      "rowsDueNow": 0,
+      "oldestLastAttemptedAt": "2026-08-18T02:05:01.418Z",
+      "earliestExpiry": "2026-11-16",
+      "changedObjectRule": "recheck when the owning upstream partition is NEW, GROWN, SHRUNK or CHANGED; one partition (9_13/cishclko) shrank at 08:23:58Z this cycle"
+    },
+    "artifacts": {
+      "parity": "docs/ai/new2-r10/parity-matrix-gate.json",
+      "frontier": "docs/ai/new2-r10/coverage-frontier-gate.json",
+      "freshness": "docs/ai/new2-r10/source-freshness-gate.json",
+      "gaps": ".tmp-new2/parity-gaps-gate.ndjson"
+    },
+    "contention": "pg_stat_activity active: 1 before, 1 after; NEW1 coarse-walk residual query held up to 5 backends during the held-url stream"
+  },
+  "freshness": {
+    "latestUpstreamDecisionDate": "2026-08-28",
+    "latestLocalDecisionDate": "2026-08-27",
+    "lastSuccessfulIngestAt": "2026-08-29T07:49:03+00",
+    "sourceLagDays": 1,
+    "sourceLagDefinition": "latestUpstreamDecisionDate minus latestLocalDecisionDate, both measured within 6h of each other",
+    "honestLagDaysLastCycle": 59,
+    "honestLagDefinition": "today minus the start of the newest decision month holding at least 60 percent of the settled-month baseline; a different question from sourceLagDays and not a contradiction",
+    "twelveMonthCompleteness": 0.9685,
+    "allTimeCompleteness": 0.9882,
+    "courtsAtParity": 21,
+    "courtsBehind": 4,
+    "courtsBehindDetail": [
+      {
+        "court": "18_6",
+        "name": "Gauhati High Court",
+        "newestUpstreamDecision": "2026-08-27",
+        "newestLocalDecision": "2026-08-23",
+        "gapDays": 4
+      },
+      {
+        "court": "36_29",
+        "name": "High Court for State of Telangana",
+        "newestUpstreamDecision": "2026-08-25",
+        "newestLocalDecision": "2026-08-21",
+        "gapDays": 4
+      },
+      {
+        "court": "19_16",
+        "name": "Calcutta High Court",
+        "newestUpstreamDecision": "2026-08-28",
+        "newestLocalDecision": "2026-08-27",
+        "gapDays": 1
+      },
+      {
+        "court": "27_1",
+        "name": "Bombay High Court",
+        "newestUpstreamDecision": "2026-08-28",
+        "newestLocalDecision": "2026-08-27",
+        "gapDays": 1
+      }
+    ]
+  },
+  "supremeCourt": {
+    "sciHomepageFeed": "AUTHORIZED_AND_OPERATING",
+    "sciLinkedPdfFetch": "AUTHORIZED_AND_OPERATING",
+    "sciExpandedSearchAccess": "NOT_AUTHORIZED_UNDER_COMMITTED_POLICY",
+    "controllingRecord": "docs/SCI_AUTHORISATION.md",
+    "controllingRecordSha256": "cbf8cf3530058c3e34b01a60ff0d54ed64cd903ed5866c3a79bd4d19a2fef19d",
+    "controllingRecordInHead": false,
+    "runtimeConditionsVersion": "sci-public-official-v1",
+    "authorizationBasis": "public_official",
+    "observedLedger": {
+      "sci_homepage_ok": 6,
+      "sci_pdf_ok": 36,
+      "sci_search": 0,
+      "lastFetchAt": "2026-08-29T06:56:55.205Z"
+    },
+    "heldFromHomepageFeed": 25,
+    "heldFromAwsBucket": 38352,
+    "noCaptchaImplementationAnywhere": true,
+    "controllingRecordStatus": "CONTESTED. docs/SCI_AUTHORISATION.md is untracked and deliberately withheld pending a founder decision; it contradicts the unmodified CLAUDE.md section 6. Under committed policy the only authorized SC automated path is the public homepage judgments feed on the public_official basis."
+  },
+  "citation": {
+    "bulkApply": "HOLD",
+    "applyState": "DECIDE_ONLY_HOLD",
+    "rowsApplied": 0,
+    "signedEdgeGrowth": 0,
+    "resolvedRows": 227382,
+    "distinctResolvedEdges": 200626,
+    "resolvableUnresolvedFrontier": 6046427,
+    "unresolvedWithoutNormalisedCitation": 16124526,
+    "signedPopulation": 2556146,
+    "keyFrontierCursorAt": "2026-08-29T07:49:03.805Z",
+    "falsifiersStillAmbiguous": [
+      {
+        "citationKey": "2026JHHC24297",
+        "edgeId": "0e0f69b3-dec3-4e5f-904c-14c870c88b3a",
+        "candidates": 2,
+        "citedJudgmentId": null
+      },
+      {
+        "citationKey": "2026KHC39949DB",
+        "edgeId": "1959a76d-e3a6-48c4-8ce6-90a4b2d2b4f8",
+        "candidates": 2,
+        "citedJudgmentId": null
+      }
+    ],
+    "secondStalenessCause": "266 new resolvable edges were created 07:18:55Z to 08:23:02Z, after the signed sweep snapshot at 05:24:41.964Z; the signed population is stale by those rows as well as by the two falsifiers",
+    "riskReplay": {
+      "generatedAt": "2026-08-29T10:01:32.469Z",
+      "records": 406,
+      "falseUnique": 0,
+      "materiallyUnsafe": 0,
+      "freshnessState": "CURRENT"
+    },
+    "decideOnlyMechanism": "scripts/n2-citation-expand.mts, registered, resumable, per-row journal, applied 0"
+  },
+  "ecourts": {
+    "founderActorPresent": false,
+    "founderActorIsNonFixture": false,
+    "founderActorDetail": "the only account.founder_bootstrap audit row (2026-08-29T05:31:51.454Z) is an LCC verification probe (lcc-probe@lawmind.test) whose users row now carries the .invalid anonymisation domain. users holds 443 rows across two fixture domains plus exactly one real-domain row (id 3d37f77f-23f3-4eb0-b34f-d1700ec652a5) whose full_name is still 'Adv. Test Verify'.",
+    "grantAttributionPresent": false,
+    "harvestSwitchEnabled": false,
+    "harvestSwitchLastUpdatedAt": "2026-08-07T10:14:37.611Z",
+    "authorizationRecordPresent": true,
+    "conditionsVersion": "071259eb864b8e6d",
+    "authorizationNotExpired": true,
+    "expiresAt": "2029-01-01T06:30:00.000Z",
+    "guardReady": false,
+    "guardFirstRefusal": "attribution_not_on_file",
+    "guardSecondRefusal": "kill_switch_off",
+    "activeEcourtsNetworkWorkers": 0,
+    "logicalEcourtsNetworkOwners": 1,
+    "logicalOwnerModule": "services/api/src/court/ecourts.ts",
+    "requestsThisQuotaHour": 0,
+    "requestsThisQuotaDay": 0,
+    "networkRequestsEver": 0,
+    "fetchLedgerRows": 102,
+    "fetchLedgerAllRefused": true,
+    "refusalBreakdown": {
+      "kill_switch_off": 72,
+      "attribution_not_on_file": 30
+    },
+    "rawObservationCount": 0,
+    "rawObservationAppendOnlyTrigger": "ecourts_observation_no_update",
+    "latestSuccessfulObservationAt": null,
+    "dailyPilotRegistered": false,
+    "latestPilotRunAt": null,
+    "canary": "NOT_RUN",
+    "dailyPilot": "HOLD",
+    "encodedLimits": {
+      "minIntervalMs": 2000,
+      "maxRequestsPerHour": 100,
+      "maxRequestsPerDay": 1000,
+      "permittedHoursIst": "0-24",
+      "permittedCourts": "ALL_COURTS"
+    },
+    "missingImplementation": [
+      "services/api/src/court/ecourts.ts parseCauseList is a deliberate stub that always returns status failed with error parser_not_implemented; a live canary would ledger one attributed request and produce zero usable observations",
+      "no module anywhere INSERTs into ecourts_observation; every reference is a count or the schema definition, so no raw observation row can be produced",
+      "no bounded case-status lookup exists; services/api/src/court/lookup.ts holds no HTTP client by design and returns available false",
+      "no scheduler or cadence job for eCourts exists; the only caller of fetchCauseList is retryCauseList, an attributable admin HTTP request"
+    ]
+  },
+  "sprint0": {
+    "F1": "ABSENT. All three inputs missing: real founder identity, ECOURTS_GRANT_ATTRIBUTION, audited activation. Zero audit_log rows have ever targeted ecourts_harvest; all 118 platform.kill_switch.toggle rows target signups.",
+    "F2": "ABSENT / CONTESTED. Corrected from PARTIAL. The document asserting a separate written SC permission through 2029 is uncommitted, is withheld by LCC pending a founder decision, and contradicts the unmodified CLAUDE.md section 6 which still scopes the grant to bulk cause-list only. There is no recorded founder decision either supplying the grant terms or stating that no separate grant exists. Not inferred from the public homepage feed, which runs on an independent public_official basis.",
+    "F3": "UNKNOWN. No repository or bus evidence names a legal-advisor booking; no Sprint-0 roadmap document in this repo enumerates F1/F2/F3."
+  },
+  "noOcrRun": true,
+  "noResolverTuning": true,
+  "noCitationRowsApplied": true,
+  "noNetworkCallsToEcourts": true,
+  "noRepositoryCodeMutated": true,
+  "headAtEndOfSession": "371414ff1631a0c6fd2f09117d52bbb72a8e0156"
+}

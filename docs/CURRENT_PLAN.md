@@ -16,6 +16,82 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 29 August 2026 (R10 INTEGRATION) — LCC: 0095 WAS LIVE ON THE DATABASE AND ABSENT FROM GIT, AND THE FRESHNESS ROUTE READ A FILE NOBODY HAD COMMITTED
+
+**Round:** R10 integration and reproducibility closure, founder-directed. Leases:
+`GIT_COMMIT`, `MIGRATION_SLOT` (0095 receipt). **`HEAVY_BOX` was not taken and no
+data worker was stopped** — NEW1's coarse walk and doc-vector embed ran
+throughout.
+
+**Pre-integration HEAD `7d29799`. Final HEAD `371414f`. Ten commits.**
+
+**The two defects the round existed to find, both real.**
+
+1. **Migration 0095 was applied to the live database with no file, no journal
+   entry, no hash and no receipt.** `check-migration-journal.mjs` named it in one
+   line. The column and its CHECK constraint were on the box; a fresh clone would
+   have built a different schema and nothing would have said so. Committed, then
+   `migrate()` run against live — 0095 is idempotent by construction, so it
+   recorded the missing receipt without touching the column. **96 committed / 96
+   applied / 0 mismatch.**
+
+2. **`freshness-object.ts` reads `docs/ai/new2-r10/hc-parity-definition-v2.json`
+   at request time and that file was UNTRACKED.** Committed HEAD shipped a route
+   that would throw ENOENT on the artifact deciding whether its answer means
+   anything. The two measurement artifacts in HEAD were also pre-`HC_PARITY_V2`,
+   so the version check would have failed even with the file present.
+
+**What was proven, not assumed.**
+
+- **Fresh-install schema proof: PASS.** Every committed migration replays from an
+  empty database and reaches the live PRODUCT schema. 0 product objects only-live,
+  0 only-fresh; 157 lane-scratch objects correctly absent via the existing declared
+  exclusion. `text_state`, its CHECK, all four 0092 provenance columns, 96
+  bookkeeping rows and the identical cursor observed directly on a second scratch
+  replay. 0 invalid indexes on both sides.
+- **Live DB = committed HEAD.** Every applied hash exists in HEAD and every
+  committed migration is applied; every receipt's `created_at` equals its journal
+  `when`. Receipt *id* order differs for 0071/0072 — an artifact of the 25 Aug
+  reconciliation inserting them early — and carries no meaning; the invariant
+  drizzle's cursor actually reads is the timestamp, and it agrees everywhere.
+- **Freshness contract fails closed and is 7,000× faster.** p50 **7.5 ms**, p95
+  10.0 ms, **0 database queries per request**, against 53 s when it scanned the
+  corpus. Definition `HC_PARITY_V2_2026-08-29`, sha
+  `1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7`, agreed by
+  all three artifacts **as committed** — re-verified from the git blobs, not the
+  worktree, to rule out a torn write from the parity job running at the time.
+- **Image-only state is 95% of what we retain.** 11,119 artifacts held, 548
+  `TEXT_AVAILABLE`, 10,318 `IMAGE_ONLY_OCR_PENDING`.
+- **Provenance writer: 173 complete rows, 0 partial.** The all-or-nothing gate
+  holds against the live table. **The 18.7M historical rows are NOT backfilled**
+  and must not be assumed to be.
+- **API suite 805/805 pass, 0 fail, 2 skipped** and **ingest 887/887**, both run
+  from a tree byte-identical to HEAD (the four held API files were checked out to
+  HEAD for the run and restored afterwards, verified by md5). Typecheck clean for
+  api, ingest, db, auth, storage, embed, cron. Schema truth ok. Contract status ok,
+  105 endpoints. Fail-closed proven non-vacuous: four tampered artifact triples,
+  all REFUSED, one of them differing by a single trailing space.
+
+**Two things this round did NOT fix, deliberately.**
+
+- **`services/harness` typecheck has 5 pre-existing errors** (`treatmentAttribution`
+  missing on a test fixture; four `possibly undefined` on destructured query rows).
+  `services/harness` and `services/api/src/search` are byte-identical to HEAD, so
+  these are in the committed tree already and were not introduced here.
+- **Reboot recovery is still logon-gated.** Every Lawmind scheduled task has
+  `Principal.LogonType = Interactive`; the coarse walk is a time trigger with
+  `PT5M` repetition, `MultipleInstances = IgnoreNew`, `StartWhenAvailable = False`.
+  So **restart after user logon = yes, headless boot recovery = no**, and a missed
+  window is not made up. Unchanged from FQ-LCC-R9-1; not an R10 item.
+
+**What is deliberately still dirty.** The eCourts/SCI authorization-narrative
+rewrite (15 files) is held for the founder — `FOUNDER_QUEUE.md` **FQ-LCC-R10-1**.
+`DOMAIN_TRUTH.md` and `STATUTE_MAPPING_SOURCES.md` are held pending an advocate's
+sign-off — **FQ-LCC-R10-2**. `apps/admin/lib/api.ts` is RCC's scope — **FQ-LCC-R10-3**.
+NEW2 was asked twice on the bus (1493, 1498) to ACK its paths and is DEAD; the
+decision to proceed without the ACK, and exactly what was committed of theirs, is
+recorded in bus 1499. Every commit is separable and revertible on its own.
+
 ### 29 August 2026 (R10) — LCC: THE 25-SECOND SCAN WAS A SERIAL PLAN, NOT A COLD PLANNER, AND AUTOVACUUM HAD NEVER BEEN TOLD THE TABLE EXISTED
 
 **Round:** R10 factory + database performance, founder-directed. Leases:

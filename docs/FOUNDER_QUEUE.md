@@ -6248,3 +6248,129 @@ holds no HTTP client.
 **Where it plugs in.** Set `ECOURTS_GRANT_ATTRIBUTION` in Railway, run
 `founder-cli` once, then `role-cli --role admin`, then flip the switch through
 `POST /admin/platform/kill-switches/ecourts_harvest` with a `reason`.
+
+---
+
+## FQ-LCC-R10-1 — twelve documents rewrote the eCourts CAPTCHA scope and asserted a new Supreme Court grant, and CLAUDE.md §6 did not move  ·  LCC, 29 Aug 2026 · **HELD OUT OF THE R10 INTEGRATION COMMIT**
+
+**What is sitting uncommitted in the working tree.** A coherent, well-argued
+rewrite of Lawmind's source-authorization narrative, spanning fifteen files. It
+is not vandalism and it is not sloppy — it reads like deliberate work. It is
+held because it is a policy change wearing documentation clothes, and only the
+founder can make it.
+
+**The change, stated plainly.** Today's binding rule (`CLAUDE.md` §6, and the
+per-turn core injection) is:
+
+> CAPTCHA bypass is permitted ONLY while the grant is non-null and unexpired,
+> ONLY in `services/api/src/court/ecourts.ts`, and ONLY for **bulk cause-list
+> harvesting**.
+
+Every held file replaces "bulk cause-list harvesting" with **"the enumerated
+grant data types"**. `docs/MISSING_PDF_RECOVERY.md` spells out what that widens
+to: *"the enumerated eCourts data types, **including judgments and orders**."*
+That is a materially larger permission than the one CLAUDE.md grants.
+
+**The tell.** `CLAUDE.md` itself is NOT modified. Neither is
+`PRODUCT_DECISIONS.md` and neither is `docs/OPEN_DECISIONS.md`. Twelve
+derivative documents were rewritten and the document they all derive from was
+left saying the opposite. Whichever direction is right, the repository cannot
+hold both.
+
+**A second, separate claim rides along.** `docs/SCI_AUTHORISATION.md` (untracked)
+asserts *"the founder confirms Lawmind holds a separate written Supreme Court
+permission, valid through 2029, that permits automated CAPTCHA handling."*
+`CLAUDE.md` §6a names three authorized sources — BharatLaw, Supreme AI, eCourts
+India — and says new sources remain subject to the normal provenance process. A
+separate SCI grant is a fourth source. §6a also carries an explicit naming rule
+about `Supreme AI` versus `Supreme Today`, which is exactly the kind of
+adjacency that makes a fourth name worth confirming rather than inferring.
+
+**`docs/CORPUS_ACQUISITION_QUEUE.md` item 4b flips.** It goes from *"NOT VIABLE
+... do not adopt, do not evaluate further"* on the third-party eCourts scrapers
+to *"components may be evaluated ... as transport/parser code behind Lawmind's
+guarded adapter."* Defensible if the scope widening is real. Not defensible on
+its own.
+
+**The exact held set, all still dirty in the tree:**
+
+- `services/api/src/citations/check.ts` — Tier 3 wire `detail` string
+- `services/api/src/citations/verify.ts` — the `instructions` string an advocate reads, from *"We never solve it for you"* to *"This human-confirmation route does not solve it for you"*
+- `services/api/src/citations/verify.test.ts`
+- `services/api/src/court/authorisation.ts` — doc comments only, no behaviour
+- `docs/SCI_AUTHORISATION.md` (new), `docs/ECOURTS_AUTHORISATION.md`, `docs/CITATION_HARNESS.md`, `docs/BLOCKER_REGISTER.md`, `docs/CORPUS_ACQUISITION_QUEUE.md`, `docs/CORPUS_TIERING.md`, `docs/DATA_ADVANTAGE.md`, `docs/HARVEST_ENGINE.md`, `docs/MIGRATION_WINDOWS.md`, `docs/MISSING_PDF_RECOVERY.md`, `docs/RCC_STANDING_PROMPT.md`, `docs/AGENT_BROWSER.md`, `docs/GTM_INDIA.md`, `docs/LCC_MASTER_PLAN.md`, `docs/TECHNICAL_INVENTORY.md`, `docs/RESEARCH_2026-08-11.md`, `.ai/09-project.md`
+- `scripts/ecourts-canary-status.mts` (new, read-only, opens no socket)
+- `docs/ai/new2-r10/sc-authorization-reanchor.json` and `docs/ai/new2-r10/NEW2_R10_CLOSURE.md` — both name `SCI_AUTHORISATION.md` as their controlling record
+
+**What was verified, so this is not an alarm about nothing.** No behaviour
+changed. `court/authorisation.ts` is 25 changed lines and every one is a comment
+line. Nothing in the held set opens a socket. **Zero eCourts requests have ever
+been made** and the kill switch is still off. The two things that actually moved
+are (1) two user-visible strings and (2) what the repository tells the next agent
+it is allowed to do — and (2) is the one that compounds.
+
+**What is NOT in dispute and was not touched.** Tier 3 remains human-only.
+`citations/verify.ts` still holds no HTTP client and the test asserting that
+still passes. Automation still writes `ecourts_bulk` and never `ecourts`. Every
+version of this text agrees on that, which is why the disagreement is only about
+scope.
+
+**What is needed.** One decision, in the founder's words, recorded in
+`CLAUDE.md` §6 first and propagated outward — not the reverse:
+
+1. Does the eCourts grant cover **bulk cause-list harvesting only**, or **all
+   enumerated data types including judgments and orders**?
+2. Is there a **separate written Supreme Court grant valid through 2029**? If
+   yes it belongs in `CLAUDE.md` §6a beside the other three, under its own name.
+3. Given (1), does `CORPUS_ACQUISITION_QUEUE.md` 4b stay closed?
+
+**What was built anyway.** All of R10's actual integration landed: migration
+0095 committed and its receipt recorded, the fresh-install schema proof passing,
+the provenance writer, the image-only state, and the freshness contract at 7.5ms
+with zero database queries. None of it depends on this decision.
+
+**What stays broken without it.** Nothing runs. Nothing is blocked. The cost is
+that the repository disagrees with itself about what it may fetch, and the next
+agent to read `docs/` instead of `CLAUDE.md` will get the wider answer.
+
+**Where it plugs in.** Answer 1–3, edit `CLAUDE.md` §6 and §6a to match, then the
+held files either commit as they stand or revert with `git checkout -- <paths>`.
+Both directions are one command.
+
+---
+
+## FQ-LCC-R10-2 — the BNS and BSA repeal-section numbers now have a tool that reads the Acts, and the DOMAIN_TRUTH edit that uses it is held  ·  LCC, 29 Aug 2026 · **not urgent, needs a legal call**
+
+`STATUTE_MAPPING_SOURCES.md` admitted against itself that BSA §170 and BNS §358
+*"were seen only on secondary aggregator sites ... not read directly from the
+India Code PDF text."* `pnpm --filter @lawmind/ingest verify:criminal-codes` now
+fetches the enacted PDFs and asserts title and provision against the bytes; the
+tool and its hashed output are committed.
+
+Held, because it is a legal-truth change and not R10 integration:
+
+- `DOMAIN_TRUTH.md` — would stop the product inferring the applicable regime
+  from the 1 July 2024 date alone, and label it **unresolved** until an advocate
+  signs the evidence pack. This is the more conservative reading and it is
+  probably right; it is also a change to the file `CLAUDE.md` calls the only
+  place a legal fact exists, so it should not land as a side effect of an
+  integration round.
+- `docs/STATUTE_MAPPING_SOURCES.md` — records §170 and §358 as machine-observed.
+
+**Needed:** an advocate's sign-off on
+`docs/ai/lcc/criminal-code-official-artifacts.json`, then both files commit.
+
+---
+
+## FQ-LCC-R10-3 — RCC's admin BASE_URL fix is written, correct, and unowned  ·  LCC, 29 Aug 2026 · **thirty seconds of RCC's time**
+
+`apps/admin/lib/api.ts` is dirty with a real fix: `NEXT_PUBLIC_API_URL` used to
+fall back to `api-production-1c0b4.up.railway.app` — 0 active deployments since
+11 Aug — in **every** environment including a real production build. The change
+throws at import time on a production build and keeps a localhost default for
+`next dev`. Same defect and same fix as `apps/mobile/src/api/client.ts`.
+
+Not committed because `apps/**` is RCC's `CLIENT_APPS` scope and RCC's lease has
+been stale-HELD since 25 Aug. Flagging so a good fix is not lost to a dead lease.
+
+---
