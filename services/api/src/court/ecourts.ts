@@ -376,10 +376,36 @@ export async function fetchCauseList(
 export const ECOURTS_BASE = 'https://services.ecourts.gov.in/ecourtindia_v6';
 
 /**
- * The constant the licensed client puts in its `delimeter` and `Kjweuru253`
- * request headers — `components.js`, `ajaxCall`. Every AJAX endpoint checks it.
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE TWO `ajaxCall` HEADERS — READ FROM BYTES, AFTER THE TRANSCRIPTION WAS
+ * FOUND WRONG IN BOTH HALVES
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * These stood here as `delimeter` / `Kjweuru253`, both `jkhfkjhkjert33`,
+ * described as "transcribed from the licensed client's own source" and credited
+ * in R11/R12 with fixing an `Invalid Request` reply.
+ *
+ * `components.js` was retained on 30 Aug 2026
+ * (`__fixtures__/ecourts-components-2026-08-29.js`, sha256 `749fa62f…7a086`)
+ * and says, at `ajaxCall`:
+ *
+ *     var delimeter = "764r6hry7ffds";
+ *     headers: { "delimeter": delimeter, "G73hdfdsh": delimeter }
+ *
+ * **The second header's NAME and both VALUES were wrong.** Nothing detected it,
+ * because the only cause-list request ever attempted failed for other reasons
+ * and no test compared our bytes to the client's. This is the round's lesson in
+ * one constant: a `TRANSCRIBED` row is a claim, and this one was false.
+ *
+ * They are plainly rotating anti-automation tokens, so they will drift again.
+ * `official-client-recorder.test.ts` now executes the retained `ajaxCall` and
+ * asserts our headers equal the ones it emits, which turns the next drift into a
+ * failing test instead of a silent `Invalid Request`.
  */
-const ECOURTS_AJAX_DELIMETER = 'jkhfkjhkjert33';
+export const ECOURTS_AJAX_DELIMETER = '764r6hry7ffds';
+
+/** The second header `ajaxCall` sends, carrying the same value. */
+export const ECOURTS_AJAX_DELIMETER_HEADER_2 = 'G73hdfdsh';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -518,18 +544,17 @@ async function guardedRequest(
       headers['x-requested-with'] = 'XMLHttpRequest';
       headers['referer'] = `${ECOURTS_BASE}/?p=cause_list/index`;
       /**
-       * The two headers `ajaxCall` sends on every request (`components.js`,
-       * where `delimeter` is declared at the top of the function and set on
-       * both `delimeter` and `Kjweuru253`).
+       * The two headers `ajaxCall` sends on every request — read from the
+       * retained `components.js`, not transcribed. See the constants above for
+       * what the previous, wrong pair cost.
        *
        * They are not decoration: without them the endpoint answers
-       * `{"errormsg":"...Invalid Request...!"}` with an empty `app_token`, which
-       * is what the first attempt here got. Transcribed from the source rather
-       * than guessed, and named as what they are — a constant the licensed
-       * client sends — so nobody later mistakes them for a secret of ours.
+       * `{"errormsg":"...Invalid Request...!"}` with an empty `app_token`. Named
+       * as what they are — constants the licensed client sends — so nobody later
+       * mistakes them for a secret of ours.
        */
       headers['delimeter'] = ECOURTS_AJAX_DELIMETER;
-      headers['Kjweuru253'] = ECOURTS_AJAX_DELIMETER;
+      headers[ECOURTS_AJAX_DELIMETER_HEADER_2] = ECOURTS_AJAX_DELIMETER;
     }
     response = await doFetch(request.endpoint, {
       method: request.method ?? 'GET',
@@ -718,6 +743,107 @@ export async function fetchCaptchaImage(
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
+ * RETAINING THE INTERFACE'S OWN SCRIPTS — the request that turns transcription
+ * into evidence
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `docs/ai/lcc-r12/ECOURTS_OFFLINE_REQUEST_DIFF.md` reconciled our request shape
+ * against the licensed client field by field, and had to mark most rows
+ * `TRANSCRIBED`: the functions that BUILD a cause-list request — `fillDistrict`,
+ * `fillcomplex`, `fillCauseList`, `submitCauseList` and the `app_token` rotation
+ * — are not in the page we retained. They live in
+ * `/ecourtindia_v6/js/searchByCauselist.js`, an external asset the page only
+ * references.
+ *
+ * A `TRANSCRIBED` row is one a future agent cannot re-derive from this
+ * repository, and that is the whole reason to spend a request here: retaining
+ * the script turns those rows into `BYTES`, and it is what makes the offline
+ * execution the round asks for possible at all. Without the script, "run the
+ * official functions against a recording transport" is an instruction with no
+ * functions to run.
+ *
+ * It is one GET of a static asset inside the licensed interface, squarely within
+ * the enumerated `permittedDataTypes`, and it costs one slot out of a thousand.
+ * It goes through `guardedRequest` like everything else — reserved, ledgered
+ * before the socket opens, attributed, rate-limited, retained before anything
+ * reads it. There is no cheaper path for "it's only a script".
+ *
+ * The tier is `interface_probe`, and that is load-bearing:
+ * `mayProduceObservations` refuses to turn anything read out of it into an
+ * `ecourts_observation`. A script is not a court's day.
+ */
+export const ECOURTS_INTERFACE_ASSETS = {
+  /** The cause-list module's own client. It defines the request this adapter makes. */
+  search_by_causelist: `${ECOURTS_BASE}/js/searchByCauselist.js`,
+  /** `ajaxCall` / `jsonCall` — where the `delimeter` headers and token rotation live. */
+  components: `${ECOURTS_BASE}/js/components.js`,
+  /** The cascading `fillDistrict` / `fillcomplex` chain, shared across modules. */
+  common_header: `${ECOURTS_BASE}/js/common_header.js`,
+} as const;
+
+export type InterfaceAssetName = keyof typeof ECOURTS_INTERFACE_ASSETS;
+
+/**
+ * Fetch and retain one static asset of the licensed interface.
+ *
+ * Returns rather than throws on a non-2xx, because for a diagnostic the status
+ * IS the finding: a 404 on a script the page references is a fact about the
+ * interface, not a fault in us. The bytes are retained either way.
+ */
+export async function retainInterfaceAsset(
+  sql: Db,
+  asset: InterfaceAssetName,
+  deps: FetchDeps & { session?: EcourtsSession | undefined } = {},
+): Promise<
+  | {
+      refused: false;
+      ok: boolean;
+      status: number;
+      contentType: string | null;
+      bytes: Buffer;
+      endpoint: string;
+      artifactId?: string | undefined;
+      fetchLedgerId: string;
+    }
+  | { refused: true; reason: string; endpoint: string; fetchLedgerId: string }
+> {
+  const at = deps.now ?? new Date();
+  const listDate = at.toISOString().slice(0, 10);
+  const endpoint = ECOURTS_INTERFACE_ASSETS[asset];
+  const source: CauseListSourceKey = {
+    tier: 'interface_probe',
+    probe: `interface_asset_${asset}`,
+    listDate,
+  };
+  const result = await guardedRequest(sql, {
+    court: ledgerCourt(source),
+    endpoint,
+    strategy: deps.strategy ?? 'CAUSE_LIST_BATCH',
+    sourceKeyId: sourceKeyId(source),
+    listDate,
+    accept: 'application/javascript, text/javascript, */*',
+    at,
+    ...(deps.session === undefined ? {} : { session: deps.session }),
+    ...(deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl }),
+  });
+
+  if (result.refused) {
+    return { refused: true, reason: result.reason, endpoint, fetchLedgerId: result.fetchLedgerId };
+  }
+  return {
+    refused: false,
+    ok: result.ok,
+    status: result.status,
+    contentType: result.contentType,
+    bytes: result.body,
+    endpoint,
+    artifactId: result.artifactId,
+    fetchLedgerId: result.fetchLedgerId,
+  };
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
  * THE DIMENSION CHAIN — how a request acquires the five codes it needs
  * ─────────────────────────────────────────────────────────────────────────────
  *
@@ -743,12 +869,174 @@ export async function fetchCaptchaImage(
  * one request and then silent failures. It is threaded through every call here.
  */
 
+/**
+ * One field of an AJAX body, in the order the licensed client sends it.
+ *
+ * An ordered array rather than an object because ORDER is part of what the
+ * recorder compares, and a `Record`'s order is an implementation detail nobody
+ * should have to reason about when the comparison is byte-level.
+ */
+export type AjaxField = { name: string; value: string };
+
+/**
+ * Encode an AJAX body exactly as `ajaxCall` assembles one.
+ *
+ * `components.js`: `data: postdata + '&ajax_req=' + true + '&app_token=' + token`
+ * — so both are appended, in that order, AFTER everything the caller built.
+ *
+ * **One deliberate difference: we percent-encode, the client concatenates.**
+ * `submit_causelist` builds `"&court_name_txt=" + court_name_txt` with no
+ * encoding, so a judge's name goes out with raw spaces and commas. We encode
+ * with the same rules jQuery's own `serialize()` uses (space -> `+`), which
+ * decodes to an identical value under standard form parsing and is not
+ * malformed. The recorder's test compares DECODED name/value pairs for this
+ * reason, and asserts the two decode alike.
+ */
+export function ajaxBody(fields: readonly AjaxField[], appToken: string): string {
+  const params = new URLSearchParams();
+  for (const f of fields) params.append(f.name, f.value);
+  return `${params.toString()}&ajax_req=true&app_token=${appToken}`;
+}
+
+/** `casestatus/fillDistrict` — `common_header.js`, `fillDistrict`. */
+export function fillDistrictFields(stateCode: string): AjaxField[] {
+  return [{ name: 'state_code', value: stateCode }];
+}
+
+/** `casestatus/fillcomplex` — `common_header.js`, `fillCourtComplex`. */
+export function fillComplexFields(stateCode: string, distCode: string): AjaxField[] {
+  return [
+    { name: 'state_code', value: stateCode },
+    { name: 'dist_code', value: distCode },
+  ];
+}
+
+/** `casestatus/fillCourtEstablishment` — `common_header.js`, `fillEst`. */
+export function fillCourtEstablishmentFields(where: {
+  stateCode: string;
+  distCode: string;
+  complexCode: string;
+}): AjaxField[] {
+  return [
+    { name: 'state_code', value: where.stateCode },
+    { name: 'dist_code', value: where.distCode },
+    { name: 'court_complex_code', value: where.complexCode },
+  ];
+}
+
+/**
+ * `cause_list/fillCauseList` — `common_header.js`, `fillCauseList`.
+ *
+ * **`search_act` is sent, and its value is the literal string `undefined`.**
+ * That is not a bug here; it is what the licensed client puts on the wire. The
+ * cause-list page has no `#search_act` element, so `$("#search_act").val()`
+ * answers `undefined` and the client's string concatenation renders it. We match
+ * the client rather than "fix" it: a request that differs from the licensed
+ * one — even in a way that looks tidier — is a request the registrar's logs
+ * cannot recognise as ours behaving normally.
+ */
+export const ECOURTS_SEARCH_ACT_ABSENT = 'undefined';
+
+export function fillCauseListFields(where: {
+  stateCode: string;
+  distCode: string;
+  complexCode: string;
+  establishmentCode: string;
+}): AjaxField[] {
+  return [
+    { name: 'state_code', value: where.stateCode },
+    { name: 'dist_code', value: where.distCode },
+    { name: 'court_complex_code', value: where.complexCode },
+    { name: 'est_code', value: where.establishmentCode },
+    { name: 'search_act', value: ECOURTS_SEARCH_ACT_ABSENT },
+  ];
+}
+
+/**
+ * The value the establishment SELECT holds — which is what `submit_causelist`
+ * posts as `est_code`, and it is NOT the complex value's second segment.
+ *
+ * `common_header.js` sets `$('#court_est_code').val('')` whenever the complex's
+ * `differ_mast_est` flag is not `Y`, and only populates it (via `fillEst`) when
+ * it is. `searchByCauselist.js` then reads that select unconditionally:
+ *
+ *     var est_code = $('#court_est_code').val();
+ *
+ * So on SUBMIT the establishment is empty unless the complex actually has
+ * separate establishments — while `fillCauseList` in the same session sends the
+ * complex's second segment in that same field when the flag is off. The two
+ * differ on purpose, and sending the segment on submit is the mistake this
+ * function exists to prevent.
+ */
+export function establishmentSelectValue(
+  parts: CourtComplexParts,
+  chosenEstablishment: string | null,
+): string {
+  return parts.requiresEstablishment ? (chosenEstablishment ?? '') : '';
+}
+
+/**
+ * `selprevdays`, computed the way `searchByCauselist.js` computes it.
+ *
+ *     var seldate = new Date(y, m-1, d);                       // local midnight
+ *     var daysdiff = Math.ceil(((today - seldate) / 86400000) - 1);
+ *     selprevdays = daysdiff >= 1 ? 1 : 0;
+ *
+ * In effect: **1 when the requested list date is before today, 0 otherwise.**
+ * It was hardcoded to `'0'` here with a comment claiming historical dates set
+ * it — the comment was right and the code was not, which would have made every
+ * retention probe a request the licensed client would never send.
+ */
+export function selPrevDays(causelistDate: string, now: Date = new Date()): '0' | '1' {
+  const [d = '', m = '', y = ''] = causelistDate.split('-');
+  const seldate = new Date(Number(y), Number(m) - 1, Number(d));
+  const daysdiff = Math.ceil((now.getTime() - seldate.getTime()) / 86_400_000 - 1);
+  return daysdiff >= 1 ? '1' : '0';
+}
+
+/**
+ * `cause_list/submitCauseList` — `searchByCauselist.js`, `submit_causelist`.
+ *
+ * The first three fields are what `$("#frm_causelist").serialize()` yields, in
+ * document order. **Only three**, because every other control on that page —
+ * the cascading selects and all the hidden state — sits OUTSIDE
+ * `<form id="frm_causelist">` and is therefore not a successful control. The
+ * client appends the rest by hand, which is why its body looks half-built.
+ */
+export function submitCauseListFields(where: {
+  courtNo: string;
+  causelistDate: string;
+  captchaCode: string;
+  courtNameText: string;
+  stateCode: string;
+  distCode: string;
+  complexCode: string;
+  establishmentSelectValue: string;
+  cicri: string;
+  selprevdays: string;
+}): AjaxField[] {
+  return [
+    // --- $("#frm_causelist").serialize(), in document order ---
+    { name: 'CL_court_no', value: where.courtNo },
+    { name: 'causelist_date', value: where.causelistDate },
+    { name: 'cause_list_captcha_code', value: where.captchaCode },
+    // --- appended by submit_causelist, in its order ---
+    { name: 'court_name_txt', value: where.courtNameText },
+    { name: 'state_code', value: where.stateCode },
+    { name: 'dist_code', value: where.distCode },
+    { name: 'court_complex_code', value: where.complexCode },
+    { name: 'est_code', value: where.establishmentSelectValue },
+    { name: 'cicri', value: where.cicri },
+    { name: 'selprevdays', value: where.selprevdays },
+  ];
+}
+
 /** One AJAX hop. Every one is a ledgered, rate-limited request like any other. */
 async function postAjax(
   sql: Db,
   session: EcourtsSession,
   path: string,
-  params: Record<string, string>,
+  fields: readonly AjaxField[],
   probe: string,
   deps: FetchDeps = {},
 ): Promise<{
@@ -759,7 +1047,7 @@ async function postAjax(
   const at = deps.now ?? new Date();
   const listDate = at.toISOString().slice(0, 10);
   const source: CauseListSourceKey = { tier: 'interface_probe', probe, listDate };
-  const body = `${new URLSearchParams(params).toString()}&ajax_req=true&app_token=${session.appToken}`;
+  const body = ajaxBody(fields, session.appToken);
 
   const result = await guardedRequest(sql, {
     court: ledgerCourt(source),
@@ -822,7 +1110,7 @@ export async function listDistricts(
     sql,
     session,
     'casestatus/fillDistrict',
-    { state_code: stateCode },
+    fillDistrictFields(stateCode),
     'fill_district',
     deps,
   );
@@ -848,7 +1136,7 @@ export async function listCourtComplexes(
     sql,
     session,
     'casestatus/fillcomplex',
-    { state_code: stateCode, dist_code: distCode },
+    fillComplexFields(stateCode, distCode),
     'fill_complex',
     deps,
   );
@@ -871,7 +1159,38 @@ export function splitComplexValue(value: string): CourtComplexParts {
   };
 }
 
-/** The courts sitting in one establishment — the `CL_court_no` options. */
+/**
+ * The establishments inside one court complex — the `court_est_code` options.
+ *
+ * Only meaningful when the complex's `differ_mast_est` flag is `Y`
+ * (`splitComplexValue(...).requiresEstablishment`). `common_header.js` calls
+ * `fillEst` exactly then, and leaves the select empty otherwise.
+ */
+export async function listCourtEstablishments(
+  sql: Db,
+  session: EcourtsSession,
+  where: { stateCode: string; distCode: string; complexCode: string },
+  deps: FetchDeps = {},
+): Promise<NamedCode[]> {
+  const { json } = await postAjax(
+    sql,
+    session,
+    'casestatus/fillCourtEstablishment',
+    fillCourtEstablishmentFields(where),
+    'fill_court_establishment',
+    deps,
+  );
+  return optionsOf(String(json['establishment_list'] ?? ''));
+}
+
+/**
+ * The courts sitting in one establishment — the `CL_court_no` options.
+ *
+ * `establishmentCode` is the value `fillCauseList` sends, which for a complex
+ * WITHOUT separate establishments is the complex value's second `@` segment and
+ * for one WITH them is the chosen establishment. That is not the same value
+ * `submitCauseList` posts — see {@link establishmentSelectValue}.
+ */
 export async function listCauseListCourts(
   sql: Db,
   session: EcourtsSession,
@@ -882,20 +1201,19 @@ export async function listCauseListCourts(
     sql,
     session,
     'cause_list/fillCauseList',
-    {
-      state_code: where.stateCode,
-      dist_code: where.distCode,
-      court_complex_code: where.complexCode,
-      est_code: where.establishmentCode,
-    },
+    fillCauseListFields(where),
     'fill_cause_list_courts',
     deps,
   );
-  // The reply names its own field inconsistently across eCourts modules, so
-  // take whichever of the known keys carries option markup rather than assuming
-  // one — and refuse if none does, instead of returning an empty court list that
-  // would read as "this establishment has no courts".
-  for (const key of ['court_list', 'causelist_court', 'court_no', 'data']) {
+  /**
+   * `cause_list` FIRST, and that is now read from bytes rather than guessed:
+   * `common_header.js` does `$('#CL_court_no').html(obj.cause_list)`. The four
+   * names that stood here were all wrong, so this call would have thrown on a
+   * perfectly good reply and reported it as an interface change. The others are
+   * kept as fallbacks because other eCourts modules do name it differently, and
+   * a refusal is still better than an empty court list read as "no courts".
+   */
+  for (const key of ['cause_list', 'court_list', 'causelist_court', 'court_no', 'data']) {
     const candidate = String(json[key] ?? '');
     if (candidate.includes('<option')) return optionsOf(candidate);
   }
@@ -932,8 +1250,16 @@ export async function submitCauseList(
     stateCode: string;
     distCode: string;
     complexCode: string;
-    establishmentCode: string;
+    /**
+     * The value of the ESTABLISHMENT SELECT — `''` unless the complex declares
+     * separate establishments. Build it with {@link establishmentSelectValue};
+     * it is deliberately NOT the complex value's second `@` segment, which is
+     * what `fillCauseList` sends and what this used to send by mistake.
+     */
+    establishmentSelectValue: string;
     courtNo: string;
+    /** The visible text of the chosen `CL_court_no` option — `court_name_txt`. */
+    courtNameText: string;
     /** `dd-mm-yyyy`, the format the form's own date field uses. */
     causelistDate: string;
     /** `0` civil, `1` criminal — the two buttons in the licensed interface. */
@@ -946,19 +1272,20 @@ export async function submitCauseList(
     sql,
     session,
     'cause_list/submitCauseList',
-    {
-      causelist_date: where.causelistDate,
-      cause_list_captcha_code: captchaCode,
-      CL_court_no: where.courtNo,
-      state_code: where.stateCode,
-      dist_code: where.distCode,
-      court_complex_code: where.complexCode,
-      est_code: where.establishmentCode,
+    submitCauseListFields({
+      courtNo: where.courtNo,
+      causelistDate: where.causelistDate,
+      captchaCode,
+      courtNameText: where.courtNameText,
+      stateCode: where.stateCode,
+      distCode: where.distCode,
+      complexCode: where.complexCode,
+      establishmentSelectValue: where.establishmentSelectValue,
       cicri: where.cicri,
-      // `searchByCauselist.js` computes this from the requested date. Historical
-      // dates set it; today's does not.
-      selprevdays: '0',
-    },
+      // Computed the way the client computes it. It was hardcoded '0', which
+      // would have made every historical request one the client never sends.
+      selprevdays: selPrevDays(where.causelistDate, deps.now ?? new Date()),
+    }),
     'submit_cause_list',
     deps,
   );

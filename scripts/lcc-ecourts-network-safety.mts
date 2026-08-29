@@ -138,6 +138,33 @@ const PROPERTIES: readonly { property: string; suite: string; test: string }[] =
     suite: 'src/testing/isolated-schema.test.ts',
     test: 'ecourts_harvest: enabling it in a test does not enable it in production',
   },
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * OUR REQUEST IS THE LICENSED CLIENT'S REQUEST
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The grant permits the licensed interface's scope. A request that is not the
+   * one the licensed interface makes is, at best, a request nobody authorised
+   * anybody to evaluate — and at worst it is what an operator reading their logs
+   * sees as an unfamiliar client poking at endpoints.
+   *
+   * Bound here because the five known defects (two header constants, `est_code`,
+   * `selprevdays`, the reply key) were all invisible to our own tests and all
+   * came from TRANSCRIBING the client rather than running it. The assertion now
+   * executes the retained client offline, so deleting it reports `NOT_COVERED`
+   * instead of passing quietly — which is exactly how the wrong `delimeter` pair
+   * survived two rounds.
+   */
+  {
+    property: 'REQUEST_SHAPE_MATCHES_LICENSED_CLIENT',
+    suite: 'src/court/official-client-recorder.test.ts',
+    test: 'submitCauseList — flag off, so est_code is EMPTY, not the complex segment',
+  },
+  {
+    property: 'AJAX_HEADERS_READ_FROM_RETAINED_BYTES',
+    suite: 'src/court/official-client-recorder.test.ts',
+    test: 'the two ajaxCall headers match the client, name and value',
+  },
 ];
 
 const suites = [...new Set(PROPERTIES.map((p) => p.suite))];

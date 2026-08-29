@@ -54,9 +54,11 @@ import { sourceKeyId, type DistrictSourceKey } from './cause-list-source-key.ts'
 import { writeCauseListObservations } from './ecourts-observation-writer.ts';
 import {
   ECOURTS_BASE,
+  establishmentSelectValue,
   fetchCaptchaImage,
   listCauseListCourts,
   listCourtComplexes,
+  listCourtEstablishments,
   listDistricts,
   openCauseListSession,
   splitComplexValue,
@@ -118,6 +120,7 @@ const apply = process.argv.includes('--apply');
 const stateCode = arg('state') ?? '26';
 const wantDistrict = arg('district');
 const wantComplex = arg('complex');
+const wantEstablishment = arg('establishment');
 const wantCourt = arg('court');
 const cicri = arg('cicri') ?? '0';
 const attempts = Number(arg('attempts') ?? '3');
@@ -208,15 +211,52 @@ try {
   );
   await sleep(SPACING);
 
+  /**
+   * The establishment step, which only exists when the complex says it does.
+   *
+   * `common_header.js` calls `fillEst` exactly when the complex value's third
+   * `@` segment is `Y`, and leaves the select empty otherwise. Walking it
+   * unconditionally would spend a request the licensed client never makes;
+   * skipping it when the flag IS set would send an establishment nobody chose.
+   */
+  let chosenEstablishment: string | null = null;
+  if (parts.requiresEstablishment) {
+    await sleep(SPACING);
+    const establishments = await listCourtEstablishments(sql, session, {
+      stateCode,
+      distCode: district.value,
+      complexCode: parts.complexCode,
+    });
+    const picked = wantEstablishment
+      ? establishments.find((e) => e.value === wantEstablishment)
+      : establishments[0];
+    if (!picked) throw new Error(`no establishment (${establishments.length} offered)`);
+    chosenEstablishment = picked.value;
+    console.log(`establishment   ${picked.value}  ${picked.label}`);
+    await sleep(SPACING);
+  }
+
+  /**
+   * TWO different establishment values, and conflating them is the defect the
+   * retained client exposed. `fillCauseList` sends the complex's second segment
+   * when the flag is off; `submit_causelist` sends the SELECT, which is empty
+   * then. See `establishmentSelectValue`.
+   */
+  const fillEstCode = parts.requiresEstablishment
+    ? (chosenEstablishment ?? '')
+    : parts.establishmentCode;
+  const submitEstCode = establishmentSelectValue(parts, chosenEstablishment);
+
   const courts = await listCauseListCourts(sql, session, {
     stateCode,
     distCode: district.value,
     complexCode: parts.complexCode,
-    establishmentCode: parts.establishmentCode,
+    establishmentCode: fillEstCode,
   });
   const court = wantCourt ? courts.find((c) => c.value === wantCourt) : courts[0];
   if (!court) throw new Error(`no court offered for this establishment`);
   console.log(`court           ${court.value}  ${court.label}`);
+  console.log(`est (fill)      ${JSON.stringify(fillEstCode)}   est (submit) ${JSON.stringify(submitEstCode)}`);
 
   const sourceKey: DistrictSourceKey = {
     tier: 'district',
@@ -246,8 +286,9 @@ try {
         stateCode,
         distCode: district.value,
         complexCode: parts.complexCode,
-        establishmentCode: parts.establishmentCode,
+        establishmentSelectValue: submitEstCode,
         courtNo: court.value,
+        courtNameText: court.label,
         causelistDate: listDate,
         cicri,
       },
