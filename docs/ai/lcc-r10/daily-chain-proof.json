@@ -1,0 +1,63 @@
+{
+  "artifact": "LCC_R10_DAILY_CHAIN_PROOF",
+  "takenAt": "2026-08-29T07:55:55.846Z",
+  "selector": {
+    "createdAtExclusive": "2026-08-27T14:10:08.698525Z",
+    "createdAtInclusive": "2026-08-29T04:55:22.134122Z",
+    "sourceUrlPrefix": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/",
+    "idsSha256": "c0db789c15b7045c979649a65db7174a3e89162a5608f3c3beaab7a4ed75ed2c"
+  },
+  "ingested": 1334,
+  "consumers": {
+    "exactLexical": {
+      "eligible": 1334,
+      "delivered": 1334,
+      "queued": 0,
+      "eligibility": "canonical judgment with non-empty full_text; full_text_tsv is generated in the same row"
+    },
+    "citationExtraction": {
+      "eligible": 1334,
+      "delivered": 1334,
+      "withExtractedEdges": 155,
+      "explicitNoCitationSentinels": 1179,
+      "edgeRows": 371,
+      "queued": 0
+    },
+    "citationKeys": {
+      "eligible": 95,
+      "delivered": 95,
+      "ineligibleNoValidPublishedCitation": 1239,
+      "keyRows": 95,
+      "queued": 0
+    },
+    "paragraphs": {
+      "eligible": 1334,
+      "delivered": 1334,
+      "ineligible": 0,
+      "refusedLostSpan": 0,
+      "paragraphRows": 10344,
+      "queued": 0
+    },
+    "statuteReferences": {
+      "eligible": 240,
+      "delivered": 240,
+      "ineligibleNoExtractedReference": 1094,
+      "referenceRows": 515,
+      "queued": 0
+    },
+    "new1IncrementalEmbeddings": {
+      "eligibleJudgments": 563,
+      "eligibleDistinctContentHashes": 451,
+      "ineligibleJudgments": 771,
+      "representedBeforeQueuePass": 1,
+      "eligibleQueueDenominator": 450,
+      "representedDuringQueuePass": 450,
+      "representedNow": 451,
+      "queued": 0,
+      "queuePassWindow": {
+        "from": "2026-08-29T05:44:36.020Z",
+        "toExclusive": "2026-08-29T05:59:02.422Z"
+      }
+    }
+  }
+}

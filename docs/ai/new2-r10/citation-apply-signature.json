@@ -1,0 +1,24 @@
+{
+  "artifact": "FIFTH_R10_CITATION_APPLY_SIGNATURE",
+  "sourceThreadId": "01a04c35-c8f1-7c20-8aae-a8fa2afe3add",
+  "sourceThreadTitle": "Audit citation gate and HC counts",
+  "signature": "PASS",
+  "resolverVersion": "citation-resolver-v0.1",
+  "verifiedPopulation": {
+    "state": "UNIQUE",
+    "count": 2556146,
+    "unresolvedPopulation": 6046161
+  },
+  "sampleSize": 882,
+  "positiveSamples": 542,
+  "negativeControls": 340,
+  "plusOneYearCasesChecked": 59,
+  "falsePinCount": 0,
+  "materialRecallMissCount": 0,
+  "signedDecisionJournal": {
+    "path": ".tmp-new2/citation-expand-journal.ndjson",
+    "sha256": "9e0d0fb3ae6e5c326436911ba9e9e3f8fe0805577e50e8e851fe673c94f37a24",
+    "decidedRows": 6046161,
+    "sweepStartedAt": "2026-08-29T05:24:41.964Z"
+  }
+}

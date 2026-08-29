@@ -1,0 +1,38 @@
+{
+  "artifact": "FIFTH_R10_CITATION_APPLY_HOLD",
+  "recordedAt": "2026-08-29T09:33:57.127Z",
+  "source": "FIFTH result relayed verbatim by the user",
+  "sourceThreadId": "01a04c35-c8f1-7c20-8aae-a8fa2afe3add",
+  "signature": "HOLD",
+  "resolverVersion": "citation-resolver-v0.1",
+  "frontierAt": "2026-08-29 07:49:03.805314+00",
+  "effect": "No citation application is authorized. Preserve the earlier PASS as historical evidence; do not apply a subset or tune around these falsifiers.",
+  "falsifiers": [
+    {
+      "edgeId": "0e0f69b3-dec3-4e5f-904c-14c870c88b3a",
+      "citation": "2026:JHHC:24297",
+      "signedTarget": "66f8a648-d0a8-40b1-bc9b-6221da840401",
+      "currentState": "AMBIGUOUS",
+      "currentCandidates": [
+        "66f8a648-d0a8-40b1-bc9b-6221da840401",
+        "e092675e-04bf-426f-ad3e-fe6ee9bf2e72"
+      ]
+    },
+    {
+      "edgeId": "1959a76d-e3a6-48c4-8ce6-90a4b2d2b4f8",
+      "citation": "2026:KHC:39949-DB",
+      "signedTarget": "5913c129-2a40-4d4a-a9b4-2f3fdc16ad13",
+      "currentState": "AMBIGUOUS",
+      "currentCandidates": [
+        "22b2569a-4e64-4a64-b25f-f6d9fc3d00e0",
+        "5913c129-2a40-4d4a-a9b4-2f3fdc16ad13"
+      ]
+    }
+  ],
+  "application": {
+    "rowsApplied": 0,
+    "edgeGrowth": 0,
+    "state": "DECIDE_ONLY_HOLD"
+  },
+  "supportingPreflight": "docs/ai/new2-r10/citation-signed-preflight.json"
+}

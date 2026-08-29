@@ -1,0 +1,35 @@
+{
+  "artifact": "NEW2_HC_GAP_CLOSURE_R10",
+  "mode": "closure",
+  "apply": true,
+  "definitionVersion": "HC_PARITY_V2_2026-08-29",
+  "startedAt": "2026-08-29T07:46:57.470Z",
+  "completedAt": "2026-08-29T07:49:03.822Z",
+  "input": {
+    "selectedThisRun": 687,
+    "retryExhaustedNotHeld": 312,
+    "pdfFailedCompletePopulation": 687,
+    "pdfFailedAlreadyHeldOverlap": 375,
+    "revalidationWindowDays": 90,
+    "changedScopesArtifact": "docs/ai/new2-r9/delta-scopes.json"
+  },
+  "results": {
+    "TEXT_READABLE": 432,
+    "IMAGE_ONLY_OCR_PENDING": 10,
+    "SOURCE_ARTIFACT_HELD_TEXT_UNAVAILABLE": 243,
+    "SOURCE_UNAVAILABLE_CURRENT": 2,
+    "POLICY_REFUSED": 0,
+    "ACTIONABLE_FAILURE": 0,
+    "recoveredPdfFailed": 432,
+    "staleHeldLedgerRowsCleared": 375,
+    "metadataMissing": 0,
+    "bytesRetained": 104235347,
+    "r2Operations": {
+      "classA": 685,
+      "classB": 0,
+      "free": 0
+    }
+  },
+  "journal": ".tmp-new2/hc-closure-journal.jsonl",
+  "noOcrRun": true
+}

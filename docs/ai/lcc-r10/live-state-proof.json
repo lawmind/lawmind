@@ -1,0 +1,39 @@
+{
+  "artifact": "LCC_R10_LIVE_STATE_PROOF",
+  "takenAt": "2026-08-29T10:30:46.295Z",
+  "schema": {
+    "textStateColumn": true,
+    "textStateConstraint": true
+  },
+  "officialHcArtifacts": {
+    "latestObservations": 11119,
+    "sourceArtifactHeld": 11119,
+    "textAvailable": 548,
+    "imageOnlyOcrPending": 10318,
+    "heldTextEvidenceUnavailable": 10571,
+    "generationEvidenceUnavailableForImageOnly": 10318
+  },
+  "judgmentProvenance": {
+    "completeRows": 173,
+    "partialRows": 0,
+    "latestRecordedAt": "2026-08-29 07:49:03.8+00",
+    "note": "No mass backfill was run; live writer coverage is proven separately by the rollback canary."
+  },
+  "currentSupremeCourtAuthorizationLedger": [
+    {
+      "source": "sci_homepage",
+      "authorizationBasis": "public_official",
+      "observations": 6
+    },
+    {
+      "source": "sci_pdf",
+      "authorizationBasis": "public_official",
+      "observations": 36
+    }
+  ],
+  "freshnessIndex": {
+    "relation": "judgments_date_court_idx",
+    "bytes": 141959168,
+    "note": "This relation size is the reported ~135 MB. It was never an HTTP response body."
+  }
+}

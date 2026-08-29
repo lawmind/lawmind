@@ -1,0 +1,32 @@
+{
+  "artifact": "NEW2_HC_GAP_CLOSURE_R10",
+  "mode": "revalidate",
+  "apply": false,
+  "definitionVersion": "HC_PARITY_V2_2026-08-29",
+  "startedAt": "2026-08-29T06:48:50.596Z",
+  "completedAt": "2026-08-29T06:48:52.586Z",
+  "input": {
+    "selectedThisRun": 0,
+    "revalidationWindowDays": 90,
+    "changedScopesArtifact": "docs/ai/new2-r9/delta-scopes.json"
+  },
+  "results": {
+    "TEXT_READABLE": 0,
+    "IMAGE_ONLY_OCR_PENDING": 0,
+    "SOURCE_ARTIFACT_HELD_TEXT_UNAVAILABLE": 0,
+    "SOURCE_UNAVAILABLE_CURRENT": 0,
+    "POLICY_REFUSED": 0,
+    "ACTIONABLE_FAILURE": 0,
+    "recoveredPdfFailed": 0,
+    "staleHeldLedgerRowsCleared": 0,
+    "metadataMissing": 0,
+    "bytesRetained": 0,
+    "r2Operations": {
+      "classA": 0,
+      "classB": 0,
+      "free": 0
+    }
+  },
+  "journal": ".tmp-new2/hc-revalidate-journal.jsonl",
+  "noOcrRun": true
+}

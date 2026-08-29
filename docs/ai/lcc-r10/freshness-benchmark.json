@@ -1,0 +1,19 @@
+{
+  "artifact": "LCC_R10_FRESHNESS_BENCHMARK",
+  "takenAt": "2026-08-29T10:30:57.814Z",
+  "label": "LOCAL_CONTENDED",
+  "activeQueriesAtStart": 6,
+  "iterations": 31,
+  "responseBytes": 63578,
+  "courtMonthRowCount": 296,
+  "sourceSummaryRowCount": 1,
+  "latencyMs": {
+    "p50": 7.525,
+    "p95": 9.993,
+    "max": 10.553
+  },
+  "databaseQueriesPerRequest": 0,
+  "definitionVersion": "HC_PARITY_V2_2026-08-29",
+  "definitionArtifactSha256": "1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7",
+  "noFreshnessScore": true
+}
