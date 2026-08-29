@@ -11,6 +11,7 @@ import {
   citationIsTheQuery,
   citationLookupKey,
   classifyQuery,
+  looksLikePartyName,
   warrantsExactLookup,
 } from './query-shape.ts';
 
@@ -231,4 +232,89 @@ test('a mentioned citation falls through to the shape it really is', () => {
     'facts, and relies on the discussion in (2019) 4 SCC 221 to support that reading of it.';
   assert.equal(classifyQuery(withSection).shape, 'section');
   assert.equal(classifyQuery(withSection).section, '138');
+});
+
+/* ----------------------------------------------------------- party names -- */
+
+/**
+ * AB-1. `SATENDER KUMAR ANTIL` — an authority we hold, and the most-cited node
+ * in the sampled citation graph — was answered by the body-text ranker because
+ * `CASE_NAME_RE` requires a literal `v`. The trigram title probe it should have
+ * reached had existed since R8 and was never broken; the request never arrived.
+ *
+ * The direction of error here is the opposite of the citation rules above. A
+ * wrongly-claimed CITATION pins the wrong judgment at rank 1. A wrongly-claimed
+ * party name pins NOTHING — the probe's `word_similarity` floor of 0.65 sees to
+ * that — and costs a bounded budget before falling through. So these tests are
+ * about the two things that would actually hurt: a concept query paying the
+ * probe, and an identifier losing its route.
+ */
+test('a bare run of party names is recognised', () => {
+  for (const q of [
+    'SATENDER KUMAR ANTIL',
+    'SANJAY KUMAR MISHRA @ SANJAY MISHRA',
+    'KARTICK CHANDRA BISWAS',
+    'Bellamkonda Anjaneya',
+    // Common personal names are the CASE, not the exception: an advocate
+    // searching for a client's matter types exactly this.
+    'Ram Kumar',
+    'Mohammed Khan',
+  ]) {
+    assert.equal(classifyQuery(q).shape, 'party_name', `not recognised: ${q}`);
+  }
+});
+
+test('a concept query never reaches the party-name path', () => {
+  for (const q of [
+    'bail',
+    'anticipatory bail',
+    'quashing FIR',
+    'interim injunction',
+    'res judicata',
+    'natural justice',
+    'burden of proof',
+    'specific performance of contract',
+    'limitation period for filing appeal',
+    'when may a court grant anticipatory bail',
+    'whether a second bail application is maintainable',
+    // A single token is a term, not a name — and `Antil` alone is also a
+    // surname, a village and a company.
+    'Antil',
+    // Institutional, and the corpus holds it in a very large share of titles.
+    'State of Maharashtra',
+  ]) {
+    assert.notEqual(classifyQuery(q).shape, 'party_name', `wrongly routed to the party path: ${q}`);
+  }
+});
+
+/**
+ * **Document frequency measures the OPPOSITE of what it appears to here, and
+ * the first version of this gate used it.** Measured on this corpus,
+ * 30 August 2026: `kumar` 0.44229, `ram` 0.09759, `anticipatori` 0.06902,
+ * `injunct` 0.01685. Indian personal names are among the most frequent tokens
+ * precisely BECAUSE they are party names, so a "common token means concept
+ * query" rule sends `Ram Kumar` to the ranker and `interim injunction` to the
+ * title probe. This test is the regression guard on that reasoning.
+ */
+test('the party-name gate is structural, not frequency-based', () => {
+  assert.equal(looksLikePartyName('Ram Kumar'), true, 'a frequent name is still a name');
+  assert.equal(looksLikePartyName('interim injunction'), false, 'a rare concept is still a concept');
+});
+
+test('an identifier still wins over a party-shaped reading', () => {
+  // Every identifier route is tried BEFORE the party gate is consulted, so a
+  // party name can only ever take a query away from `concept`.
+  assert.equal(classifyQuery('2019 INSC 227').shape, 'citation');
+  assert.equal(classifyQuery('(2019) 4 SCC 221').shape, 'citation');
+  assert.equal(classifyQuery('section 302 IPC').shape, 'section');
+  assert.equal(classifyQuery('Garware Nylons v Pimpri Chinchwad').shape, 'case_name');
+  assert.equal(classifyQuery('KARTICK CHANDRA BISWAS Vs STATE OF WEST BENGAL').shape, 'case_name');
+});
+
+test('a digit anywhere disqualifies a party name', () => {
+  // A case number, a year and a section number are all digit-bearing and all
+  // have their own route. Guessing a name from one is how a page number
+  // returns a murder provision.
+  assert.equal(looksLikePartyName('MUNSHI ALI HASAN AND 2 OTHERS'), false);
+  assert.equal(looksLikePartyName('Ram Kumar 2019'), false);
 });

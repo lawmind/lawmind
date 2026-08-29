@@ -94,4 +94,91 @@ describe('sparse arm — the bound on the ranked set', () => {
     );
     assert.ok(results.length > 0);
   });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * AB-2 — THE BOUND MUST ASK ABOUT THIS POPULATION, NOT ABOUT THE LEXEME
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * NEW3 measured a court+month `bail` refused on a corpus-wide document
+   * frequency. Measured again 30 August 2026 across eight scopes, `rarestDf`
+   * for `bail` was `0.25773984261292154` in ALL EIGHT — unfiltered, in one
+   * court, and in a 54-document window. The refusal was a property of the word
+   * and of nothing else.
+   */
+  it('admits a globally common term inside a NARROW court+date population', async (t) => {
+    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
+
+    /**
+     * The scope is CHOSEN FROM THE LIVE CORPUS, not hardcoded. A fixed court
+     * and month would start skipping silently the day that window changed, and
+     * a test that skips looks exactly like a test that passes.
+     */
+    const [scope] = await sql<{ court: string; from: string; to: string; n: number }[]>`
+      SELECT court,
+             min(judgment_date)::text AS from,
+             max(judgment_date)::text AS to,
+             count(*)::int AS n
+      FROM judgments
+      WHERE judgment_date >= '2026-06-01' AND judgment_date <= '2026-06-30'
+      GROUP BY court
+      HAVING count(*) BETWEEN 200 AND 20000
+      ORDER BY count(*) DESC
+      LIMIT 1`;
+    if (!scope) return t.skip('no bounded court-month population in this corpus');
+
+    const degraded: DegradedArm[] = [];
+    const started = Date.now();
+    const results = await hybridSearch(
+      sql,
+      'bail',
+      null,
+      { court: scope.court, dateFrom: scope.from, dateTo: scope.to },
+      10,
+      'hybrid',
+      (a) => degraded.push(a),
+    );
+    const ms = Date.now() - started;
+
+    assert.ok(
+      !degraded.includes('sparse_unbounded'),
+      `a ${scope.n}-document window must not be refused because 'bail' is globally common`,
+    );
+    assert.ok(results.length > 0, 'the bounded population must actually be ranked');
+    /**
+     * **This number is asserting the PLAN FENCE, not the admission.** Admission
+     * alone was implemented first and the same admitted query took 10,799 ms:
+     * the planner cannot cost a tsquery built inside a CTE, so it BitmapAnd'd
+     * 4,518,732 `bail` postings against the date index and applied the court as
+     * a heap filter — to answer a 54-document window. If this assertion starts
+     * failing, the `MATERIALIZED` fence in `rankWithinBoundedPopulation` has
+     * been removed or inlined, and admission on its own will not catch it.
+     */
+    assert.ok(ms < 5000, `admitted narrow query must be fast; took ${ms}ms`);
+  });
+
+  it('still refuses a globally common term over a population it has NOT bounded', async (t) => {
+    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
+
+    /**
+     * The largest court in the corpus. A filter IS present, so the filtered
+     * probe runs — and must report the population as too large. "A filter was
+     * supplied" is not evidence of narrowness, and treating it as such would
+     * re-buy the site stall this whole bound exists to prevent.
+     */
+    const [big] = await sql<{ court: string }[]>`
+      SELECT court FROM judgments GROUP BY court ORDER BY count(*) DESC LIMIT 1`;
+    if (!big) return t.skip('no courts in this corpus');
+
+    const degraded: DegradedArm[] = [];
+    await hybridSearch(sql, 'bail', null, { court: big.court }, 10, 'hybrid', (a) =>
+      degraded.push(a),
+    );
+    assert.ok(
+      degraded.includes('sparse_unbounded'),
+      'a filter that does not actually narrow must not buy admission',
+    );
+  });
 });

@@ -1,0 +1,1774 @@
+{
+  "artifact": "LCC_R12_SEARCH_BATTERY",
+  "takenAt": "2026-08-29T20:30:43.586Z",
+  "headBefore": "831c6c28b6ec94f6368aaa30ff6b8127a4b734d6",
+  "box": "LOCAL_CONTENDED — NEW1 coarse walk, doc-vector embed and NEW2 citations-cli ran throughout; nothing was stopped.",
+  "method": {
+    "ranker": "services/api/src/search/hybridSearch, the function the route calls",
+    "queryVector": "null. semanticArmPermitted() is false in v1, so null is what production passes today. Measuring with an embedding would measure a DISABLED capability.",
+    "repeats": 3,
+    "latencyCaveat": "p50 of 3 runs. First runs are frequently 5-25x the settled value on this box (cold cache under a live embedding fleet) and are retained in `runs` rather than discarded."
+  },
+  "populations": {
+    "unfiltered": 18758460,
+    "one-court": 2276089,
+    "court-month": 54,
+    "court-year": 478870,
+    "court-casetype": 315028,
+    "sc-only": 38379,
+    "small-hc": 12827,
+    "large-hc-month": 5489
+  },
+  "ab1": {
+    "rootCause": "READ FROM CODE. query-shape.ts CASE_NAME_RE requires a literal v/vs/versus, so a bare run of party names classified as `concept` and never reached caseNamePins. The trigram title probe had existed since R8 and was not broken.",
+    "correctedDiagnosis": "NEW3 reported \"returns zero\". Measured across six court-spread fixtures the failure is broader and different: the query IS admitted (party tokens are rare, rarestDf 0.0001-0.003) and is answered by the BODY-TEXT ranker, which ranks the judgments CITING the authority above the authority itself, or times out. Zero was one presentation of it.",
+    "fixtureDerivation": "Six fixtures drawn from six DIFFERENT courts at run time. A LIMIT after a filter on this corpus returns a court-clustered slab, not a sample.",
+    "precisionAfter": {
+      "full-title": {
+        "probes": 6,
+        "found": 6,
+        "ranks": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "p50s": [
+          3.3,
+          1.9,
+          2,
+          2.3,
+          2.3,
+          1.9
+        ]
+      },
+      "party-only": {
+        "probes": 6,
+        "found": 6,
+        "ranks": [
+          2,
+          1,
+          3,
+          3,
+          3,
+          3
+        ],
+        "p50s": [
+          185.4,
+          33.7,
+          85.6,
+          52.5,
+          40.8,
+          65.4
+        ]
+      },
+      "two-party": {
+        "probes": 6,
+        "found": 4,
+        "ranks": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "p50s": [
+          93,
+          12.2,
+          59.2,
+          52.4,
+          45.3,
+          79.5
+        ]
+      },
+      "punct": {
+        "probes": 6,
+        "found": 6,
+        "ranks": [
+          2,
+          1,
+          3,
+          3,
+          3,
+          3
+        ],
+        "p50s": [
+          78.1,
+          30.6,
+          54.9,
+          50.1,
+          158.5,
+          65.2
+        ]
+      }
+    },
+    "pairs": [
+      {
+        "id": "ab1-0-full-title",
+        "query": "GAURAV BHATNAGAR AND 10 OTHERS Vs State of U.P. AND 2 OTHERS",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 3.6,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 3.4,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-0-party-only",
+        "query": "GAURAV BHATNAGAR",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 223.9,
+          "degraded": [],
+          "hitRank": 7
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 79.6,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-0-two-party",
+        "query": "GAURAV BHATNAGAR v State of",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 185.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 85,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-0-punct",
+        "query": "gaurav bhatnagar",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 144.4,
+          "degraded": [],
+          "hitRank": 7
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 79.7,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-1-full-title",
+        "query": "HAMID YUSUF KACHCHI Vs THE STATE OF MAHARASHTRA AND ANOTHER",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2.3,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-1-party-only",
+        "query": "HAMID YUSUF KACHCHI",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 172.2,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "after": {
+          "state": "results",
+          "results": 2,
+          "p50Ms": 33.4,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-1-two-party",
+        "query": "HAMID YUSUF v STATE OF",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 4,
+          "p50Ms": 210.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 4,
+          "p50Ms": 145.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-1-punct",
+        "query": "hamid yusuf kachchi",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 179.6,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "after": {
+          "state": "results",
+          "results": 2,
+          "p50Ms": 32.6,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-2-full-title",
+        "query": "KARTICK CHANDRA BISWAS @ JOTAN Vs STATE OF WEST BENGAL",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2.3,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2.3,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-2-party-only",
+        "query": "KARTICK CHANDRA BISWAS",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 47,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 166.8,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-2-two-party",
+        "query": "KARTICK CHANDRA v STATE OF",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 183.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 58.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-2-punct",
+        "query": "kartick chandra biswas",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 47.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 57.8,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-3-full-title",
+        "query": "ANARUL HUSSAIN @ ANUWAR AND ANR Vs THE STATE OF ASSAM",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2.3,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2.1,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-3-party-only",
+        "query": "ANARUL HUSSAIN",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 36,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 79,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-3-two-party",
+        "query": "ANARUL HUSSAIN v STATE OF",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 78.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 80.6,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-3-punct",
+        "query": "anarul hussain",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 32.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 79.4,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-4-full-title",
+        "query": "Bellamkonda Anjaneya Vs The State of Telangana and 8 others",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 5.1,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 3.1,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-4-party-only",
+        "query": "Bellamkonda Anjaneya",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 147.2,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 85.3,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-4-two-party",
+        "query": "Bellamkonda Anjaneya v State of",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 4,
+          "p50Ms": 54.2,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 4,
+          "p50Ms": 53.9,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-4-punct",
+        "query": "bellamkonda anjaneya",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 152,
+          "degraded": [],
+          "hitRank": 2
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 54.9,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-5-full-title",
+        "query": "M YESU BABU Vs THE STATE OF ANDHRA PRADESH",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 2,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 1.9,
+          "degraded": [],
+          "hitRank": 1
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-5-party-only",
+        "query": "M YESU BABU",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 70.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 68.5,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-5-two-party",
+        "query": "M YESU v STATE OF",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 77,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 72.6,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-5-punct",
+        "query": "m yesu babu",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 69.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 5,
+          "p50Ms": 69.4,
+          "degraded": [],
+          "hitRank": 3
+        },
+        "rarestDf": null
+      },
+      {
+        "id": "ab1-ctrl-common-name",
+        "query": "Ram Kumar",
+        "filters": {},
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 1262,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.09758985618077312
+      },
+      {
+        "id": "ab1-ctrl-common-name-2",
+        "query": "Mohammed Khan",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 4463.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 5130.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.013617189234526482
+      },
+      {
+        "id": "ab1-neg-concept",
+        "query": "when may a court grant anticipatory bail",
+        "filters": {},
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 2,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab1-neg-nonsense",
+        "query": "Zzqxwvut Plkjhgfd",
+        "filters": {},
+        "before": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 1.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 4.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0
+      },
+      {
+        "id": "ab1-neg-citation",
+        "query": "2019 INSC 227",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 5.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 4.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": null
+      }
+    ],
+    "twoPartyNote": "The two-party abbreviated form is UNCHANGED by this round and no improvement is claimed for it. Those queries contain \" v \", so CASE_NAME_RE matches under both old and new code and they take no branch this round touched. Its first measurement (1/6) was a FIXTURE DEFECT: the abbreviation truncated both parties to two words, deleting BISWAS from KARTICK CHANDRA BISWAS, after which the engine correctly returned KARTICK CHANDRA KAR and the harness scored it a miss. With the corrected fixture it is 4/6.",
+    "residuals": [
+      "A common-name query that the probe cannot narrow still pays its budget and then falls through. `Ram Kumar` went 0.9ms -> 2566.7ms when the routing changed; PARTY_NAME_BUDGET_MS = 1200 brought it to 1253.4ms. It is bounded, not good.",
+      "`Mohammed Khan` p50 4463.9ms before, 5130.1ms after, with a 25187.5ms cold first run. That query is admitted by the corpus-wide rule (df 0.0136) and is ranked by the sparse arm both before and after; the difference is inside run-to-run variance and NO improvement is claimed."
+    ]
+  },
+  "ab2": {
+    "proof": "rarestDf for `bail` was 0.25773984261292154 in ALL EIGHT scopes - unfiltered, one court, and an Allahabad July-2026 window holding 54 documents. The bound was a property of the lexeme alone.",
+    "firstAttemptWasWrong": {
+      "what": "The bound was first written as rarestDf x population <= maxRankedRows, justified by a hand-written EXPLAIN (ANALYZE) showing 18.204 ms for the 54-document window.",
+      "whatHappened": "It admitted the query, and the query then took 10,799 ms.",
+      "why": "The hand EXPLAIN inlined to_tsquery('english','bail') as a LITERAL so the planner could cost it and chose judgments_date_court_idx. The real query builds its tsquery inside a CTE from string_agg, so the planner cannot see it and BitmapAnd'd judgments_full_text_idx (4,518,732 rows) against judgments_judgment_date_idx, applying court as a heap filter: 471,836 rows removed by index recheck, 64,527 lossy heap blocks, 2,444,828 buffers.",
+      "lesson": "An inlined EXPLAIN is not evidence for a query whose parameters are bound. This repository had already recorded that exact failure once."
+    },
+    "design": {
+      "chosen": "Structured filtering BEFORE lexical ranking (candidate 1) + a cheap capped filtered-population probe (candidate 3). The probe admits; a MATERIALIZED fence guarantees the plan.",
+      "rejected": {
+        "a per-court/month counts table": "coverage_cell exists but is court x YEAR and its `held` was measured 19 August. Admission would depend on a stale artifact owned by a different concern, and a month-scoped query would be judged on a year.",
+        "ask the planner via EXPLAIN": "a second parse per request, returning an estimate this file has already measured as wrong by 200x (rows=84744 against 16,965,472).",
+        "drop the guard and rely on statement_timeout": "that is the site-stall behaviour, re-bought.",
+        "ParadeDB / a semantic router": "excluded by the round."
+      },
+      "boundDerivation": "Cost is per ELIGIBLE row, not per matched row, because every eligible row must have its tsvector read to test @@. Measured filter-first: 54 rows/12ms, 5,489/1,363ms, 12,827/3,503ms = 0.22, 0.248, 0.27 ms per eligible row. FILTERED_MAX_ELIGIBLE_ROWS = 5,000ms budget / 0.25ms = 20,000, against CORE_STATEMENT_TIMEOUT_MS 10,000.",
+      "sargability": "The probe and the fence use judgment_date range predicates, never date_part(year, ...), so judgments_date_court_idx stays usable. No ILIKE is introduced where an indexed identifier exists."
+    },
+    "costCurve": [
+      {
+        "scope": "court-month-54",
+        "probeMs": 44.3,
+        "probeN": 54,
+        "cappedAtProbe": false,
+        "rankMs": 4.8,
+        "rankRows": 1,
+        "plan": "Limit > Sort > Index Scan:judgments_date_court_idx"
+      },
+      {
+        "scope": "large-hc-month-5489",
+        "probeMs": 1.1,
+        "probeN": 5489,
+        "cappedAtProbe": false,
+        "rankMs": 125.2,
+        "rankRows": 100,
+        "plan": "Limit > Sort > Index Scan:judgments_date_court_idx"
+      },
+      {
+        "scope": "small-hc-12827",
+        "probeMs": 1.2,
+        "probeN": 12827,
+        "cappedAtProbe": false,
+        "rankMs": 310.3,
+        "rankRows": 100,
+        "plan": "Limit > Sort > Index Scan:judgments_court_idx"
+      },
+      {
+        "scope": "sc-only-38379",
+        "probeMs": 2.6,
+        "probeN": 38379,
+        "cappedAtProbe": false,
+        "rankMs": 11152.1,
+        "rankRows": 100,
+        "plan": "Limit > Sort > Bitmap Heap Scan > BitmapAnd > Bitmap Index Scan:judgments_court_idx > Bitmap Index Scan:judgments_full_text_idx"
+      },
+      {
+        "scope": "hc-quarter",
+        "probeMs": 15,
+        "probeN": 107941,
+        "cappedAtProbe": false,
+        "rankMs": 11950.4,
+        "rankRows": 100,
+        "plan": "Limit > Sort > Bitmap Heap Scan > BitmapAnd > Bitmap Index Scan:judgments_date_court_idx > Bitmap Index Scan:judgments_full_text_idx"
+      },
+      {
+        "scope": "court-year-478870",
+        "probeMs": 28.3,
+        "probeN": 250000,
+        "cappedAtProbe": true,
+        "rankMs": 11168.2,
+        "rankRows": 100,
+        "plan": "Limit > Gather Merge > Sort > Bitmap Heap Scan > BitmapAnd > Bitmap Index Scan:judgments_date_court_idx > Bitmap Index Scan:judgments_full_text_idx"
+      }
+    ],
+    "acceptance": {
+      "unfiltered bail may still honestly require refinement": "HELD - refused, degraded=[sparse_unbounded], 0.7ms.",
+      "narrowly bounded court/month bail must not be refused": "HELD - Allahabad 2026-07 (54 documents): refused -> results in 4.1ms. Allahabad 2026-06 (5,489): refused -> 84.9ms. Meghalaya (12,827): refused -> 170.5ms.",
+      "no query may regain the old site-stall behaviour": "HELD - the fence caps the admitted scan at 20,000 eligible rows and the worst measured admitted query is 170.5ms.",
+      "timeout/degraded semantics remain explicit": "HELD - sparse_unbounded is still emitted for every population the probe could not bound, including filtered ones.",
+      "the honest broad-query guard is not deleted": "HELD - the corpus-wide rule is unchanged and is a CEILING: the filtered path can only ever admit more, and only inside a population it has counted."
+    },
+    "pairs": [
+      {
+        "id": "ab2-unfiltered-bail",
+        "query": "bail",
+        "filters": {},
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-unfiltered-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {},
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-unfiltered-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {},
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-unfiltered-interim-injunction",
+        "query": "interim injunction",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 5943.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 6100.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-unfiltered-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {},
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 2039.8,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 671.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-one-court-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Allahabad High Court"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 1,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 23.5,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-one-court-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Allahabad High Court"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 22.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-one-court-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Allahabad High Court"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 23.6,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-one-court-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Allahabad High Court"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 815.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 1298.3,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-one-court-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Allahabad High Court"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 578,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 467.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-court-month-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-07-01",
+          "dateTo": "2026-07-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 1,
+          "p50Ms": 4.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-court-month-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-07-01",
+          "dateTo": "2026-07-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 2.3,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-court-month-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-07-01",
+          "dateTo": "2026-07-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-court-month-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-07-01",
+          "dateTo": "2026-07-31"
+        },
+        "before": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 88.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 86.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-court-month-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-07-01",
+          "dateTo": "2026-07-31"
+        },
+        "before": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 40.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "empty",
+          "results": 0,
+          "p50Ms": 39.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-court-year-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2025-01-01",
+          "dateTo": "2025-12-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 16.2,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-court-year-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2025-01-01",
+          "dateTo": "2025-12-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 16.4,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-court-year-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2025-01-01",
+          "dateTo": "2025-12-31"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 16.1,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-court-year-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2025-01-01",
+          "dateTo": "2025-12-31"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 175.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 176.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-court-year-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2025-01-01",
+          "dateTo": "2025-12-31"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 129.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 123.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-court-casetype-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "caseType": "criminal"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 1107.2,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-court-casetype-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "caseType": "criminal"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 856.5,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-court-casetype-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Allahabad High Court",
+          "caseType": "criminal"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 924.3,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-court-casetype-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Allahabad High Court",
+          "caseType": "criminal"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 689.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 751.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-court-casetype-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Allahabad High Court",
+          "caseType": "criminal"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 450.7,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 698.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-sc-only-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Supreme Court of India"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 15.4,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-sc-only-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Supreme Court of India"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 15.3,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-sc-only-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Supreme Court of India"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.7,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 15.1,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-sc-only-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Supreme Court of India"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 147.8,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 233.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-sc-only-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Supreme Court of India"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 102.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 169.1,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-small-hc-bail",
+        "query": "bail",
+        "filters": {
+          "court": "High Court of Meghalaya"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 1,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 170.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-small-hc-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "High Court of Meghalaya"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 160.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-small-hc-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "High Court of Meghalaya"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 171.6,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-small-hc-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "High Court of Meghalaya"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 113.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 116.2,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-small-hc-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "High Court of Meghalaya"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 65.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 163.8,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      },
+      {
+        "id": "ab2-large-hc-month-bail",
+        "query": "bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-06-01",
+          "dateTo": "2026-06-30"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.8,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 84.9,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.25773984261292154
+      },
+      {
+        "id": "ab2-large-hc-month-anticipatory-bail",
+        "query": "anticipatory bail",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-06-01",
+          "dateTo": "2026-06-30"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 78.8,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.06902336137355995
+      },
+      {
+        "id": "ab2-large-hc-month-quashing-fir",
+        "query": "quashing FIR",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-06-01",
+          "dateTo": "2026-06-30"
+        },
+        "before": {
+          "state": "refused",
+          "results": 0,
+          "p50Ms": 0.9,
+          "degraded": [
+            "sparse_unbounded"
+          ],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 80.5,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.11922441226533784
+      },
+      {
+        "id": "ab2-large-hc-month-interim-injunction",
+        "query": "interim injunction",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-06-01",
+          "dateTo": "2026-06-30"
+        },
+        "before": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 140.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 10,
+          "p50Ms": 115,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.016848804795618816
+      },
+      {
+        "id": "ab2-large-hc-month-statute-concept",
+        "query": "dishonour of cheque section 138",
+        "filters": {
+          "court": "Allahabad High Court",
+          "dateFrom": "2026-06-01",
+          "dateTo": "2026-06-30"
+        },
+        "before": {
+          "state": "results",
+          "results": 2,
+          "p50Ms": 63.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "after": {
+          "state": "results",
+          "results": 2,
+          "p50Ms": 66.4,
+          "degraded": [],
+          "hitRank": null
+        },
+        "rarestDf": 0.004021017835557639
+      }
+    ],
+    "residuals": [
+      "A refused query with a court+caseType filter now pays the probe: 0.8ms -> ~880-1107ms, because case_type has no composite index with court and the probe scans judgments_court_idx to find 20,001 rows. Bounded and only on the refusal path, but it is a real cost that did not exist before.",
+      "sc-only bail (38,379 documents) is refused. That is a deliberate consequence of the 20,000-row bound and is a genuinely broad question, but an advocate filtering to the Supreme Court is told to refine."
+    ]
+  }
+}

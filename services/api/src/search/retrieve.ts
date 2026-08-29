@@ -535,6 +535,246 @@ const SPARSE_RARE_LEXEMES = 3;
  */
 const SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY = 0.05;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * AB-2 — THE BOUND WAS ASKING THE WRONG QUESTION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * {@link SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY} answers *"is this lexeme
+ * globally common"*. The question an advocate's request actually poses is
+ * *"is this query unsafe over THIS population"* — and `filters` is a parameter
+ * of the very function that refuses, sitting unread.
+ *
+ * NEW3 measured `bail` refused inside a court+month window. **Measured again
+ * here, 30 August 2026, across eight scopes, `rarestDf` for `bail` was
+ * `0.25773984261292154` in ALL EIGHT** — unfiltered, in one court, and in an
+ * Allahabad July-2026 window holding **54 documents**. The refusal is a
+ * property of the word and of nothing else.
+ *
+ * **What the refusal was protecting, measured.** The exact query it refuses,
+ * run against that 54-document window:
+ *
+ *     Limit > Sort > Index Scan using judgments_date_court_idx
+ *     Index Cond: judgment_date >= '2026-07-01' AND <= '2026-07-31'
+ *                 AND court = 'Allahabad High Court'
+ *     Rows Removed by Filter: 53
+ *     Execution Time: 18.204 ms
+ *
+ * Eighteen milliseconds. The guard is honest about unfiltered `bail` and
+ * nonsense about this one.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE COST CURVE THE NEW BOUND IS SET FROM
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `bail`, filter-first, measured on this box 30 August 2026 — population, the
+ * capped population probe, and the full filtered rank:
+ *
+ * | population | probe | rank | plan |
+ * | --- | --- | --- | --- |
+ * | 54 | 2.5 ms | 12 ms | Index Scan `judgments_date_court_idx` |
+ * | 5,489 | 2.5 ms | 1,363 ms | Index Scan `judgments_date_court_idx` |
+ * | 12,827 | 1.3 ms | 3,503 ms | Index Scan `judgments_court_idx` |
+ * | 38,379 | 3.7 ms | 13,940 ms | BitmapAnd court + `full_text_tsv` |
+ * | 107,941 | 12.6 ms | 12,891 ms | BitmapAnd date/court + `full_text_tsv` |
+ * | ≥250,000 | 27.3 ms | 11,265 ms | Gather Merge over the same BitmapAnd |
+ *
+ * Two things fall out. **Ranking costs about 1 ms per matched row** —
+ * `0.2577 × 12,827 = 3,305` rows against 3,503 ms, and `0.2577 × 5,489 = 1,414`
+ * against 1,363 ms — which agrees with the 0.67 ms/row this file already
+ * records. And **the probe is cheap at every size measured**, because a capped
+ * `LIMIT` on an existing sargable index cannot degrade.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THIS DESIGN AND NOT THE OTHER THREE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * - **A per-court/month counts table.** `coverage_cell` already exists and was
+ *   the obvious source. It is court × YEAR, and its `held` was measured on
+ *   19 August: admission would then depend on a stale artifact owned by a
+ *   different concern, and a month-scoped query would be judged on a year.
+ * - **Ask the planner.** `EXPLAIN` from the request path costs a second parse
+ *   and returns an estimate this file has already measured as wrong by 200x
+ *   (`rows=84744` against 16,965,472).
+ * - **Drop the guard and rely on `statement_timeout`.** That is the site-stall
+ *   behaviour, re-bought.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY IT CANNOT MAKE ANY QUERY WORSE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The probe runs **only when the corpus-wide rule has already refused, and only
+ * when a narrowing filter is present.** A query admitted today never touches
+ * this code and pays nothing. A query refused today either becomes admitted or
+ * stays refused with one extra bounded index probe. The corpus-wide rule is a
+ * ceiling that is never raised: this can only ADMIT more, and only inside a
+ * population it has counted.
+ */
+const FILTERED_ADMISSION_BUDGET_MS = 5_000;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE COST IS PER ELIGIBLE ROW, NOT PER MATCHED ROW — AND THE FIRST VERSION OF
+ * THIS BOUND GOT IT WRONG
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The bound was first written as `rarestDf × population ≤ maxRankedRows`, which
+ * is the natural reading of "how many rows will `ts_rank` read". It admitted the
+ * 54-document court-month `bail` — and that query then took **10,799 ms**.
+ *
+ * The plan says why, and it is the mistake this repository has already recorded
+ * once. The hand-written `EXPLAIN` that justified the bound inlined
+ * `to_tsquery('english','bail')` as a literal, so the planner could cost the
+ * match and chose `judgments_date_court_idx`: 18.204 ms. **The real query builds
+ * its tsquery inside a CTE from `string_agg`, so the planner cannot see it** —
+ * exactly the condition {@link SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY}'s note
+ * describes — and it picked something else entirely:
+ *
+ *     Bitmap Heap Scan on judgments
+ *       Rows Removed by Index Recheck: 471836
+ *       Heap Blocks: exact=1651 lossy=64527
+ *       Buffers: shared hit=1815415 read=629413
+ *       ->  BitmapAnd
+ *             ->  Bitmap Index Scan on judgments_full_text_idx   rows=4518732
+ *             ->  Bitmap Index Scan on judgments_judgment_date_idx  rows=96074
+ *       Filter: court = 'Allahabad High Court'   Rows Removed: 26237
+ *
+ * It read four and a half million `bail` postings and applied the COURT as a
+ * heap filter, to return one row out of a 54-document window.
+ *
+ * So admission alone was never the fix. {@link rankWithinBoundedPopulation}
+ * fences the population first, and the cost of that plan is proportional to the
+ * ELIGIBLE rows it reads, not to the matched ones. Measured, filter-first:
+ * 54 rows / 12 ms · 5,489 / 1,363 ms · 12,827 / 3,503 ms — **0.22, 0.248 and
+ * 0.27 ms per eligible row.** One constant, three populations, no fitting.
+ */
+const MEASURED_MS_PER_ELIGIBLE_ROW = 0.25;
+
+/**
+ * The most judgments a FILTERED query may be admitted to scan.
+ *
+ * 20,000 at the measured rate is the 5,000 ms budget, against a
+ * `CORE_STATEMENT_TIMEOUT_MS` of 10,000 — roughly a factor of two of headroom on
+ * a box also running the embedding fleet. It admits the 12,827-document small
+ * High Court and the 5,489-document court-month, and refuses the 38,379-document
+ * Supreme-Court-wide `bail`, which is a genuinely broad question and is told so.
+ *
+ * **Note it does not consult `rarestDf` at all.** The old form did, and that was
+ * the error above: the term's frequency decides how many rows COME BACK, and the
+ * population decides how many are READ. The budget is spent on reading.
+ */
+const FILTERED_MAX_ELIGIBLE_ROWS = Math.round(
+  FILTERED_ADMISSION_BUDGET_MS / MEASURED_MS_PER_ELIGIBLE_ROW,
+);
+
+/** Does this request narrow the corpus at all? An empty filter set cannot. */
+function narrowsPopulation(filters: SearchFilters): boolean {
+  return (
+    filters.court !== undefined ||
+    filters.courts !== undefined ||
+    filters.dateFrom !== undefined ||
+    filters.dateTo !== undefined ||
+    filters.caseType !== undefined
+  );
+}
+
+/**
+ * Count the eligible population, stopping at `cap`.
+ *
+ * `SELECT 1 ... LIMIT cap` inside a subquery so Postgres can stop early: the
+ * question is never "how many are there" but "are there more than `cap`", and
+ * counting past the answer is work nobody reads. Every predicate is the SAME
+ * one the ranker will apply, `courtWhere` included, so the number cannot
+ * describe a different population from the one being admitted.
+ *
+ * Uses `judgment_date` range predicates rather than `date_part(year, ...)`
+ * precisely so `judgments_date_court_idx` stays usable — the EXPLAIN above is
+ * the receipt.
+ */
+async function eligiblePopulation(
+  sql: Sql,
+  filters: SearchFilters,
+  cap: number,
+): Promise<{ population: number; capped: boolean }> {
+  const rows = await sql<{ n: string }[]>`
+    SELECT count(*)::text AS n FROM (
+      SELECT 1
+      FROM judgments j
+      WHERE true
+        ${andBodyTextSafe(sql)}
+        ${courtWhere(sql, filters)}
+        ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+        ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+        ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+      LIMIT ${cap}
+    ) bounded`;
+  const population = Number(rows[0]!.n);
+  return { population, capped: population >= cap };
+}
+
+/**
+ * Rank inside a population that has already been COUNTED and found small.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY `MATERIALIZED`, AND WHY IT IS THE WHOLE FIX
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `MATERIALIZED` is an optimisation FENCE. Without it Postgres inlines the CTE
+ * and is free to reorder — which is precisely how a 54-document window came to
+ * be answered by reading 4,518,732 `bail` postings, because the planner cannot
+ * cost a tsquery it cannot see and guessed that the full-text index was the
+ * selective one. With the fence the structured predicates run FIRST, on
+ * `judgments_date_court_idx`, and the tsvector is only ever consulted for rows
+ * that already passed them.
+ *
+ * The plan is therefore chosen by construction rather than by the planner's
+ * luck with an opaque parameter. That matters more than the milliseconds: the
+ * fast plan was reproducible from an inlined `EXPLAIN` and the slow one was
+ * what production actually ran, and nothing in between reported a fault.
+ *
+ * **`LIMIT` inside the fence is a second belt.** The caller has already proved
+ * the population is at or under {@link FILTERED_MAX_ELIGIBLE_ROWS}, so this can
+ * only bind if the corpus grew between the probe and the rank — in which case
+ * truncating is the correct failure, because the alternative is an unbounded
+ * scan the request never agreed to.
+ *
+ * Row identity is carried, not the tsvector, so the fence holds ids and the
+ * vectors are fetched by primary key for the rows that survive.
+ */
+async function rankWithinBoundedPopulation(
+  sql: Sql,
+  lexemes: { lexeme: string; df: string }[],
+  filters: SearchFilters,
+): Promise<Ranked[]> {
+  const rows = await sql<{ id: string }[]>`
+    WITH eligible AS MATERIALIZED (
+      SELECT j.id
+      FROM judgments j
+      WHERE true
+        ${andBodyTextSafe(sql)}
+        ${courtWhere(sql, filters)}
+        ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+        ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+        ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+      LIMIT ${FILTERED_MAX_ELIGIBLE_ROWS}
+    ),
+    q AS (
+      SELECT to_tsquery(
+        'english',
+        string_agg(quote_literal(lexeme), ' & ')
+      ) AS tsq
+      FROM unnest(${lexemes.map((l) => l.lexeme)}::text[]) AS lexeme
+    )
+    SELECT j.id
+    FROM eligible e
+    JOIN judgments j ON j.id = e.id, q
+    WHERE q.tsq IS NOT NULL
+      AND j.full_text_tsv @@ q.tsq
+    ORDER BY ts_rank(j.full_text_tsv, q.tsq) DESC
+    LIMIT ${CANDIDATE_DEPTH}`;
+  return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
+}
+
 async function sparseAny(
   sql: Sql,
   query: string,
@@ -584,8 +824,34 @@ async function sparseAny(
   // query that comfortably passed from one that nearly did not.
   if (signals && Number.isFinite(rarestDf)) signals.sparseRarestDf = rarestDf;
   if (rarestDf > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY) {
-    onDegrade?.('sparse_unbounded');
-    return [];
+    /**
+     * AB-2. The corpus-wide rule has refused; ask the question it could not.
+     *
+     * Only when the request actually narrows the corpus — with no filters the
+     * eligible population IS the corpus and the probe would re-derive the
+     * number the rule just used, at a cost.
+     */
+    let admitted = false;
+    if (narrowsPopulation(filters)) {
+      const { population, capped } = await eligiblePopulation(
+        sql,
+        filters,
+        FILTERED_MAX_ELIGIBLE_ROWS + 1,
+      );
+      if (signals) {
+        signals.filteredPopulation = population;
+        signals.filteredPopulationCapped = capped;
+      }
+      // A capped probe proves only "at least `cap`", which is never a reason to
+      // admit. Unknown is not small.
+      admitted = !capped && population <= FILTERED_MAX_ELIGIBLE_ROWS;
+      if (signals) signals.filteredAdmission = admitted ? 'admitted' : 'refused';
+    }
+    if (!admitted) {
+      onDegrade?.('sparse_unbounded');
+      return [];
+    }
+    return rankWithinBoundedPopulation(sql, lexemes, filters);
   }
 
   const rows = await sql<{ id: string }[]>`
@@ -1070,6 +1336,11 @@ async function caseNamePins(
   filters: SearchFilters,
   limit: number,
   signals?: RetrievalSignals,
+  /**
+   * How long the trigram probe may run. Defaulted to the explicit-case-name
+   * budget so every existing caller is unchanged.
+   */
+  budgetMs: number = CASE_TITLE_BUDGET_MS,
 ): Promise<string[]> {
   /**
    * The exact set takes the PAGE, not `floor(limit/2)` slots.
@@ -1086,10 +1357,32 @@ async function caseNamePins(
   const exact = await exactCaseTitle(sql, queryText, filters);
   if (signals) signals.exactTitleCandidates = exact.length;
   if (exact.length > 0) return exact;
-  return caseTitleTrigram(sql, queryText, filters, limit);
+  return caseTitleTrigram(sql, queryText, filters, limit, budgetMs);
 }
 
 const CASE_TITLE_BUDGET_MS = 2500;
+
+/**
+ * The same probe, on weaker evidence, and therefore on a shorter clock.
+ *
+ * A `case_name` query carries an explicit `v` — the advocate has SAID this is a
+ * case. A `party_name` query is inferred from shape alone, so it is wrong more
+ * often, and the cost of being wrong is paid by whoever typed it.
+ *
+ * **Measured, 30 August 2026.** Six party-name fixtures drawn from six different
+ * courts resolved their own judgment at p50 33–113 ms, so 1,200 ms leaves an
+ * order of magnitude of headroom for every case the probe can actually answer.
+ * What it cuts is the case it cannot: `Ram Kumar` — two of the most frequent
+ * tokens in Indian cause titles — burned the full 2,500 ms budget on a
+ * `case_title ILIKE '%RAM%'` narrowing that is not a narrowing, and then
+ * refused anyway. That query went from 0.9 ms to 2,566.7 ms when the routing
+ * changed, which is a regression the routing fix caused and must pay for.
+ *
+ * It does not make that query GOOD — a common-name search still costs its budget
+ * and still falls through. It bounds it. The residual is recorded in
+ * `docs/ai/lcc-r12/search-battery.json` rather than left for someone to find.
+ */
+const PARTY_NAME_BUDGET_MS = 1200;
 
 /**
  * The lowest `word_similarity` that may be PINNED at the top of the page.
@@ -1222,10 +1515,11 @@ async function caseTitleTrigram(
   queryText: string,
   filters: SearchFilters,
   limit: number,
+  budgetMs: number = CASE_TITLE_BUDGET_MS,
 ): Promise<string[]> {
   try {
     return await sql.begin(async (tx) => {
-      await tx.unsafe(`SET LOCAL statement_timeout = ${CASE_TITLE_BUDGET_MS}`);
+      await tx.unsafe(`SET LOCAL statement_timeout = ${budgetMs}`);
       const token = await rarestToken(tx as unknown as Sql, queryText);
       if (token === null) return [];
       const rows = await tx<{ id: string }[]>`
@@ -1619,6 +1913,22 @@ export type RetrievalSignals = {
    * Null when the sparse arm did not run or reached no lexeme scoring.
    */
   sparseRarestDf?: number | undefined;
+  /**
+   * AB-2. How many judgments the request's own filters left eligible, when the
+   * corpus-wide rule refused and the filtered probe therefore ran.
+   *
+   * Absent when the query was admitted outright or narrows nothing — its
+   * PRESENCE is the signal that a filtered admission decision was taken, which
+   * is why it is not defaulted to zero.
+   */
+  filteredPopulation?: number | undefined;
+  /**
+   * True when the probe stopped at its cap, so `filteredPopulation` is a floor
+   * and not a count. A capped probe never admits: unknown is not small.
+   */
+  filteredPopulationCapped?: boolean | undefined;
+  /** What the filtered bound decided, once it was asked. */
+  filteredAdmission?: 'admitted' | 'refused' | undefined;
 };
 
 export async function hybridSearch(
@@ -1716,8 +2026,22 @@ export async function hybridSearch(
         ? [await exactCitation(sql, shape.citation, filters)]
         : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
           ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
-          : shape.shape === 'case_name'
-            ? await caseNamePins(sql, query, filters, Math.floor(limit / 2), signals)
+          : /**
+             * `party_name` joins `case_name` here rather than getting a route
+             * of its own. AB-1 was never a missing retrieval path — the title
+             * probe existed and worked — it was a query that never arrived at
+             * it. Giving the new shape a second probe would be building the
+             * thing that already exists.
+             */
+            shape.shape === 'case_name' || shape.shape === 'party_name'
+            ? await caseNamePins(
+                sql,
+                query,
+                filters,
+                Math.floor(limit / 2),
+                signals,
+                shape.shape === 'party_name' ? PARTY_NAME_BUDGET_MS : CASE_TITLE_BUDGET_MS,
+              )
             : [],
     onDegrade,
   );
@@ -1725,15 +2049,24 @@ export async function hybridSearch(
   for (const id of pins) if (id !== null && !pinned.includes(id)) pinned.push(id);
 
   /**
-   * Skipped only for the two shapes whose answer came from an index, and only
-   * when it did. `case_name` is deliberately NOT here: the lexical ranker is
-   * genuinely strong on case titles, it is the arm that finds the party name
-   * spelled differently, and `Garware Nylons v Pimpri` was measured at 1.66 s —
-   * it is not the expensive shape.
+   * Skipped only for the shapes whose answer came from an index, and only when
+   * it actually did.
+   *
+   * **`party_name` is here, and that is the CASE-FIRST requirement.** For a
+   * bare party name the title matches ARE the answer; the sparse arm's hits are
+   * the judgments that CITE the authority, which is a different and usually
+   * larger question. Letting them fuse is how `SATENDER KUMAR ANTIL` put its
+   * own citing judgments above itself.
+   *
+   * Still conditional on `pinned.length > 0`, so a probe that found nothing
+   * costs the query nothing: the ordinary pipeline runs exactly as before.
    */
   const skipSparse =
     pinned.length > 0 &&
-    (shape.shape === 'citation' || shape.shape === 'section' || shape.shape === 'case_name');
+    (shape.shape === 'citation' ||
+      shape.shape === 'section' ||
+      shape.shape === 'case_name' ||
+      shape.shape === 'party_name');
 
   const emptyDense = { ranked: [] as Ranked[], bestChunk: new Map<string, BestChunk>() };
   /**

@@ -49,6 +49,16 @@ export type QueryShape =
   | 'section'
   /** `X v Y` — a case by name, where the lexical ranker is already strong. */
   | 'case_name'
+  /**
+   * A bare run of party names with no `v` — `SATENDER KUMAR ANTIL`.
+   *
+   * Separate from {@link QueryShape} `case_name` because it is recognised on
+   * DIFFERENT evidence and is allowed to be wrong more often: `case_name` has
+   * an explicit separator announcing the advocate's intent, this one infers it
+   * from shape alone. Both route to the same title probe, so the extra value
+   * buys a routing decision and not a second retrieval path.
+   */
+  | 'party_name'
   /** A question about law. The existing hybrid pipeline is correct for this. */
   | 'concept';
 
@@ -96,6 +106,120 @@ const SECTION_RE =
  * a case name.
  */
 const CASE_NAME_RE = /\S+\s+(?:v|vs|versus)\.?\s+\S+/i;
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A PARTY NAME WITH NO `v` — AB-1, AND WHY FREQUENCY CANNOT DECIDE IT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * NEW3 measured `SATENDER KUMAR ANTIL` — an authority we hold, and the
+ * most-cited node in the sampled citation graph — returning **zero results**.
+ * `retrieve.ts` has had a party-name trigram probe since R8 and it is not
+ * broken; the request never reached it. {@link CASE_NAME_RE} requires a literal
+ * `v`/`vs`/`versus`, so a bare run of party names classified as `concept` and
+ * went to the body-text ranker, which ranks the judgments CITING the authority
+ * above the authority itself, or runs out of clock trying.
+ *
+ * **The obvious gate was measured and rejected.** The first design read
+ * `lexeme_document_frequency` and treated a corpus-common token as evidence of
+ * a concept query. Measured on this corpus, 30 August 2026:
+ *
+ * | token | df | what it actually is |
+ * | --- | --- | --- |
+ * | `kumar` | 0.44229 | a party name in a very large share of Indian titles |
+ * | `ram` | 0.09759 | a party name |
+ * | `anticipatori` | 0.06902 | a legal concept |
+ * | `injunct` | 0.01685 | a legal concept |
+ *
+ * Frequency orders these **exactly backwards**: it would send `Ram Kumar` to
+ * the concept pipeline and `interim injunction` to the party probe. Indian
+ * personal names are among the most frequent tokens in this corpus precisely
+ * BECAUSE they are party names. So the gate is structural, plus a small
+ * explicit vocabulary of legal terms — domain knowledge, which is what
+ * `DOMAIN_TRUTH.md` exists to hold, rather than a statistic that measures the
+ * opposite of what it appears to.
+ *
+ * **Erring towards `false` is free.** A party name we fail to recognise gets
+ * today's behaviour exactly. A concept query we wrongly recognise pays
+ * `CASE_TITLE_BUDGET_MS` and then falls through — and cannot return a wrong
+ * case, because the probe pins nothing below `word_similarity` 0.65.
+ */
+const LEGAL_CONCEPT_WORDS = new Set(
+  [
+    // Procedure and relief — what an advocate asks a court FOR.
+    'bail', 'anticipatory', 'interim', 'injunction', 'stay', 'quash', 'quashing',
+    'quashed', 'appeal', 'appellate', 'revision', 'review', 'writ', 'petition',
+    'petitioner', 'respondent', 'application', 'suit', 'plaint', 'decree',
+    'execution', 'remand', 'discharge', 'acquittal', 'conviction', 'sentence',
+    'compensation', 'damages', 'maintenance', 'custody', 'divorce', 'probate',
+    'arbitration', 'award', 'contempt', 'mandamus', 'certiorari', 'habeas',
+    'corpus', 'caveat', 'injunctive', 'interlocutory', 'ex', 'parte',
+    // Institutions and instruments.
+    'court', 'tribunal', 'bench', 'judge', 'justice', 'judgment', 'judgement',
+    'order', 'section', 'sections', 'act', 'rule', 'rules', 'article',
+    'schedule', 'clause', 'proviso', 'statute', 'ordinance', 'notification',
+    'fir', 'chargesheet', 'charge', 'complaint', 'summons', 'warrant', 'notice',
+    'affidavit', 'evidence', 'witness', 'testimony', 'cognizance', 'trial',
+    // Doctrine.
+    'law', 'legal', 'liability', 'negligence', 'jurisdiction', 'limitation',
+    'precedent', 'ratio', 'obiter', 'estoppel', 'res', 'judicata', 'mens',
+    'rea', 'actus', 'reus', 'burden', 'proof', 'presumption', 'natural',
+    'justice', 'fundamental', 'rights', 'constitutional', 'ultra', 'vires',
+    // Interrogatives and function words — a question is never a party name.
+    'what', 'when', 'where', 'which', 'who', 'whom', 'whose', 'why', 'how',
+    'whether', 'can', 'may', 'must', 'should', 'would', 'could', 'does', 'do',
+    'did', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'has', 'have',
+    'had', 'the', 'a', 'an', 'and', 'or', 'but', 'if', 'then', 'than', 'that',
+    'this', 'these', 'those', 'for', 'from', 'with', 'without', 'under', 'over',
+    'into', 'onto', 'about', 'against', 'between', 'during', 'after', 'before',
+    'above', 'below', 'to', 'of', 'in', 'on', 'at', 'by', 'as', 'not', 'no',
+    'any', 'all', 'some', 'each', 'every', 'other', 'such', 'same', 'case',
+    'cases', 'grant', 'granted', 'refuse', 'refused', 'allow', 'allowed',
+    'dismiss', 'dismissed', 'held', 'hold', 'holding', 'apply', 'applied',
+  ].map((w) => w.toLowerCase()),
+);
+
+/**
+ * How many tokens a bare party name may carry.
+ *
+ * The floor is 2 because a single token is hopeless — `Antil` alone is a
+ * surname, a village and a company, and one token is also what a one-word
+ * concept search looks like. The ceiling is 6 because Indian cause titles run
+ * long but an advocate typing SIX proper nouns with no separator and no legal
+ * vocabulary has left concept-query territory entirely. Beyond it the query is
+ * prose and belongs to the ranker.
+ */
+const PARTY_NAME_MIN_TOKENS = 2;
+const PARTY_NAME_MAX_TOKENS = 6;
+
+/**
+ * Is this a bare run of party names?
+ *
+ * Exported so the rule can be tested directly rather than inferred from a
+ * classification, the same way {@link citationIsTheQuery} is.
+ *
+ * **This does not build a person. It routes to CASES.** There is no
+ * person entity, no dossier and no profile anywhere behind it — an ambiguous
+ * party term returns every case whose title carries it, which is the same
+ * answer `exactCitation` gives when a lookup is not unique.
+ */
+export function looksLikePartyName(text: string): boolean {
+  const trimmed = text.trim();
+  // A digit is a citation, a section, a year or a case number — never a name.
+  if (/\d/.test(trimmed)) return false;
+  const tokens = trimmed
+    .split(/[\s,]+/)
+    .map((t) => t.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, ''))
+    .filter((t) => t.length > 0);
+  if (tokens.length < PARTY_NAME_MIN_TOKENS || tokens.length > PARTY_NAME_MAX_TOKENS) return false;
+  // Every token must be alphabetic. `@` and `.` are stripped above because
+  // Indian titles carry `ANKIT @ SHETTY` and `M/S`, which are name furniture.
+  if (!tokens.every((t) => /^\p{L}+$/u.test(t))) return false;
+  if (tokens.some((t) => LEGAL_CONCEPT_WORDS.has(t.toLowerCase()))) return false;
+  // At least two tokens of real length, so `of the` and initials-only cannot
+  // reach the probe.
+  return tokens.filter((t) => t.length >= 3).length >= PARTY_NAME_MIN_TOKENS;
+}
 
 /**
  * How much non-citation text a query may carry and still be a citation LOOKUP.
@@ -202,6 +326,18 @@ export function classifyQuery(raw: string): ClassifiedQuery {
 
   if (looksLikeCaseName) {
     return { shape: 'case_name', citation: null, section: null, act: null };
+  }
+
+  /**
+   * **Last before the concept floor, and that order is the whole safety
+   * argument.** Every identifier-shaped route above has already had its chance:
+   * a citation, a section with a named act, and an explicit `X v Y` all win
+   * before a bare name is even considered. `party_name` therefore never takes a
+   * query away from an exact lookup — it only takes one away from `concept`,
+   * which is where AB-1's queries were going to die anyway.
+   */
+  if (looksLikePartyName(text)) {
+    return { shape: 'party_name', citation: null, section: null, act: null };
   }
 
   return empty;
