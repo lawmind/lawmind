@@ -25,6 +25,45 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 29 August 2026 (R11, POST-GATE-A ECOURTS) — LCC: THE GRANT PERMITS THE CAPTCHA BYPASS AND DOES NOT SAY HOW
+
+**Round:** post-Gate-A eCourts data-moat continuation, founder-directed. Gate A
+was not reopened. Lease: `GIT_COMMIT`. `HEAVY_BOX` not taken, no migration
+written, **no data worker stopped** — NEW1's coarse walk, doc-vector embed and
+GPU sidecar ran throughout.
+
+**Full record: `docs/ai/lcc-r11/LCC_R11_ECOURTS_CONTINUATION.md`.**
+
+**The one thing to carry forward.** The switch was enabled through the audited
+path, ONE authorised request was made — the first ever under this grant — and
+the response settles the blocking question in the court's own words: the cause
+list serves no data until `cause_list_captcha_code` is satisfied (securimage,
+audio alternative). `captchaBypassPermitted` is true and **no operational basis
+is recorded anywhere**. Reading the image, transcribing the audio or exploiting
+the generator would each be inventing a security bypass, so none was done.
+`CAPTCHA_OPERATIONAL_BASIS = NONE_RECORDED`; `FOUNDER_QUEUE.md`
+**FQ-ECOURTS-CAPTCHA** needs one sentence from the registrar.
+
+**Switch is OFF again**, through the audited path, reason recorded: canary NOT
+PASS (0 parsed observations), pilot not registered, nothing scheduled to use it.
+Quota spent 2/1000 day, 2/100 hour.
+
+**What landed.** Production kill-switch state is now structurally unreachable
+from tests (`testing/isolated-schema.ts` + falsifiers) — `signups.reason` read
+"test cleanup" and an interrupted run had left `ecourts_harvest` ON. The M0
+denominator has a per-partition receipt that re-derives 18,947,807 exactly
+(`docs/ai/lcc-r11/m0-identity-receipt.json`). The request identity is modelled
+from the response, not from an assumption: five dimensions and a date, not "a
+court". The parser is fixture-bound and caught its own first bug — the page's
+inline translation dictionary contains "Record not found", and matching it
+document-wide read a CAPTCHA form as an empty court day. Network safety is
+re-verified by running it: 13/13 properties, 60 tests, 0 fail.
+
+**Next, in order.** (1) FQ-ECOURTS-CAPTCHA is the only thing between here and a
+daily pilot; nothing downstream of it is worth building further. (2) The pilot's
+source key still needs a real establishment, which comes from the same interface.
+(3) `services/harness` still has its 5 pre-existing typecheck errors, untouched.
+
 ### 29 August 2026 (R10 INTEGRATION) — LCC: 0095 WAS LIVE ON THE DATABASE AND ABSENT FROM GIT, AND THE FRESHNESS ROUTE READ A FILE NOBODY HAD COMMITTED
 
 **Round:** R10 integration and reproducibility closure, founder-directed. Leases:

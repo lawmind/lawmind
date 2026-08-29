@@ -1,0 +1,182 @@
+{
+  "artifact": "LCC_ECOURTS_DATA_QUALITY",
+  "version": "ECOURTS_DQ_V1",
+  "takenAt": "2026-08-29T16:58:04.160Z",
+  "purpose": "Internal evidence that the authorised eCourts pipeline stayed inside the grant and what it has actually produced. Not a product metric and not a marketing claim.",
+  "authorisation": {
+    "grantOnFile": true,
+    "conditionsVersion": "071259eb864b8e6d",
+    "expiresAt": "2029-01-01T06:30:00.000Z",
+    "permittedDataTypes": [
+      "court_names",
+      "case_status",
+      "cause_list",
+      "caveat_search",
+      "court_orders",
+      "judgments"
+    ],
+    "limits": {
+      "minIntervalMs": 2000,
+      "maxRequestsPerHour": 100,
+      "maxRequestsPerDay": 1000
+    },
+    "attribution": {
+      "configured": true,
+      "transformed": true,
+      "sendable": true,
+      "configuredLength": 127,
+      "wireLength": 127,
+      "wireSha256": "2d3eede5c9d3d91d4f42d069ed16d34a4dd598805292b0a87415c1e61d169979"
+    },
+    "captcha": {
+      "bypassPermittedByGrant": true,
+      "operationalBasis": "NONE_RECORDED",
+      "implementable": false,
+      "note": "The grant permits the bypass and does not say by what means. The licensed cause-list interface serves no data until cause_list_captcha_code is satisfied (securimage, with an audio alternative), observed directly in the retained response. Reading the image, transcribing the audio or exploiting the generator would each be inventing a security bypass, so this is CAPTCHA_IMPLEMENTATION_BLOCKED and only the registrar can clear it."
+    }
+  },
+  "killSwitch": {
+    "key": "ecourts_harvest",
+    "enabled": false,
+    "reason": "CAPTCHA_IMPLEMENTATION_BLOCKED after the bounded post-Gate-A pilot: 1 authorised request made and retained (sha 4ae6bbe1, 75405 bytes); the licensed cause-list interface serves no data until cause_list_captcha_code is satisfied (securimage, audio alternative), and the grant permits bypass without recording any operational basis (CAPTCHA_OPERATIONAL_BASIS=NONE_RECORDED). Canary NOT PASS: 0 parsed observations. Pilot not registered. Switch OFF because nothing is scheduled to use it and an unused permission left on is risk without benefit. Quota spent 2/1000 day, 2/100 hour.",
+    "updatedAt": "2026-08-29T16:57:56.620Z",
+    "actor": {
+      "id": "3d37f77f-23f3-4eb0-b34f-d1700ec652a5",
+      "role": "admin"
+    }
+  },
+  "trafficExclusions": {
+    "testEndpointRows": 1,
+    "syntheticCourtRows": 5,
+    "note": "Excluded from every count below. test:// rows are non-network by identity and are already excluded from the limiter; ZZ_ courts are suite traffic under a synthetic court key. Both are stated rather than silently dropped."
+  },
+  "requests": {
+    "attempted": 122,
+    "successful": 1,
+    "errored": 1,
+    "refused": 120,
+    "byOutcome": [
+      {
+        "outcome": "refused",
+        "refusalReason": "kill_switch_off",
+        "count": 76,
+        "first": "2026-08-09T21:29:01.687Z",
+        "last": "2026-08-29T13:58:11.703Z"
+      },
+      {
+        "outcome": "refused",
+        "refusalReason": "attribution_not_on_file",
+        "count": 44,
+        "first": "2026-08-27T10:07:30.679Z",
+        "last": "2026-08-29T14:00:32.682Z"
+      },
+      {
+        "outcome": "error",
+        "refusalReason": null,
+        "count": 1,
+        "first": "2026-08-29T16:41:57.612Z",
+        "last": "2026-08-29T16:41:57.612Z"
+      },
+      {
+        "outcome": "ok",
+        "refusalReason": null,
+        "count": 1,
+        "first": "2026-08-29T16:45:31.666Z",
+        "last": "2026-08-29T16:45:31.666Z"
+      }
+    ],
+    "networkErrors": 1
+  },
+  "quotaUtilisation": {
+    "inLastHour": 2,
+    "inLastDay": 2,
+    "hourlyLimit": 100,
+    "dailyLimit": 1000,
+    "hourlyPercent": 2,
+    "dailyPercent": 0.2,
+    "lastNetworkAttemptAt": "2026-08-29T16:45:31.666Z",
+    "note": "Counted exactly as guard.decide counts it — non-refused rows excluding test:// — so this artifact cannot disagree with the limiter it describes."
+  },
+  "rawArtifacts": {
+    "retained": 1,
+    "total": 1,
+    "byState": [
+      {
+        "observationState": "observed",
+        "count": 1,
+        "bytes": 75405,
+        "retainedBytesPresent": 1,
+        "contentTypes": [
+          "text/html; charset=utf-8"
+        ]
+      }
+    ],
+    "sourceKeysCovered": [
+      {
+        "sourceKeyId": "ecourts:interface_probe:cause_list_module_index:2026-08-29",
+        "captures": 1,
+        "first": "2026-08-29T16:45:31.666Z",
+        "last": "2026-08-29T16:45:31.666Z"
+      }
+    ]
+  },
+  "parser": {
+    "version": "CAUSE_LIST_PARSER_V1_2026-08-29",
+    "state": "FIXTURE_BOUND",
+    "fixture": {
+      "path": "services/api/src/court/__fixtures__/ecourts-cause-list-module-index-2026-08-29.html",
+      "sha256": "4ae6bbe1c19824964ca3705c724561c1e8506b51e6fc42147832aef958566e94",
+      "bytes": 75405,
+      "contentType": "text/html; charset=utf-8",
+      "observedAt": "2026-08-29"
+    },
+    "fixtureOnDiskSha256": "4ae6bbe1c19824964ca3705c724561c1e8506b51e6fc42147832aef958566e94",
+    "fixtureMatchesRecordedSha": true,
+    "artifactsConsidered": 1,
+    "artifactsProducingObservations": 0,
+    "successPercent": 0,
+    "refusedPercent": 100,
+    "note": "The denominator is retained cause-list artifacts and the numerator is artifacts that produced at least one observation. The ledger records requests, not parses, so this is the honest pairing available; a per-refusal-code breakdown would need a parse ledger and there is nothing yet to put in one."
+  },
+  "observations": {
+    "written": 0,
+    "parsed": 0,
+    "partial": 0,
+    "distinctSourceArtifacts": 0,
+    "latestObservedAt": null,
+    "carryingSourceWarning": 0,
+    "transitionsDerived": 0,
+    "idempotency": {
+      "mechanism": "pg_advisory_xact_lock(OBSERVATION_WRITE_LOCK_NAMESPACE, hashtext(source_artifact_id)) then a check for existing rows, inside the writing transaction",
+      "duplicateArtifactWrites": 0,
+      "note": "A replay returns the ids that already exist rather than inserting a second set. Verified by test (raw-capture.test.ts, \"writes one page once, however many times it is replayed\"); with zero production observations there is nothing live to count."
+    },
+    "sourceUncertainty": {
+      "warning": "Cause list displayed may differ from the actual cause list. For further queries, contact court administrator.",
+      "note": "The court's own statement about its own cause lists. Carried into every observation this parser writes, in the payload and the extraction note, so a derived state of ours can never read as certified by the court."
+    }
+  },
+  "pilot": {
+    "id": "ecourts-cause-list-pilot",
+    "enabled": false,
+    "registeredWithScheduler": false,
+    "sourceKey": {
+      "court": "PENDING_ACTIVATION",
+      "establishment": null,
+      "listType": null
+    },
+    "blockers": [
+      "pilot_disabled",
+      "captcha_implementation_blocked",
+      "source_key_unresolved",
+      "kill_switch_off"
+    ],
+    "state": "HOLD"
+  },
+  "retentionProbe": {
+    "HC": "UNMEASURED",
+    "DISTRICT": "UNMEASURED",
+    "note": "Not attempted. Every probe date would meet the same CAPTCHA that blocks a first-day fetch, so twelve requests would buy twelve identical refusals and spend the grant to learn nothing already known. A 404, an empty page or a failed CAPTCHA is not evidence that a historical list does not exist, so no availability class may be inferred from them — UNMEASURED is the only honest classification until the CAPTCHA basis exists."
+  },
+  "monitoringProductState": "DISABLED_NOT_READY"
+}

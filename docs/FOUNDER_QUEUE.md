@@ -181,6 +181,72 @@ new one.
 
 # CREDENTIALS AND ACCOUNTS
 
+### [OPEN — ONE FACT FROM THE REGISTRAR] FQ-ECOURTS-CAPTCHA — the grant permits the bypass and does not say how · LCC · 29 Aug 2026
+
+**What is needed:** one sentence from the registrar saying by what MEANS an
+authorised LawMind request is meant to get past the eCourts CAPTCHA. Any of
+these ends it:
+
+- a credential issued with the grant that exempts our requests;
+- our source address whitelisted;
+- an endpoint that does not present a CAPTCHA to us;
+- or written confirmation that a named technique is the permitted one.
+
+**Why the work stopped here rather than around it.** On 29 Aug 2026 the switch
+was enabled through the audited path and **one** authorised request was made —
+the first ever under this grant. It returned 200, 75,405 bytes of HTML, sha256
+`4ae6bbe1c19824964ca3705c724561c1e8506b51e6fc42147832aef958566e94`, retained
+append-only in `official_source_artifact` and committed as the parser's fixture.
+
+That response settles the question in the court's own words. Step 4 of its
+instructions: *"Enter the Captcha (the 5 digit numbers shown on the screen) in
+the text box provided."* The field is `cause_list_captcha_code`, the image comes
+from `vendor/securimage/securimage_show.php`, an audio alternative is offered,
+and **no cause-list data is served until it is satisfied.**
+
+The grant says `captchaBypassPermitted: true`. It does not say by what means, and
+nothing else in this repository does either — no API key, no whitelisted address,
+no exempt endpoint. The only methods available without a stated basis would be to
+read the image, transcribe the audio, or exploit a weakness in the generator.
+**Each of those is inventing a security bypass**, and a permission to bypass is
+not a specification of one — which is exactly the move `CLAUDE.md` warns turns a
+bounded permission into an unbounded one. So it was not done.
+
+**What was built anyway, and works:**
+
+- `cause-list-source-key.ts` — the REAL request identity, confirmed by the
+  response rather than assumed: state, district, court complex, establishment,
+  court, date, then civil or criminal. "One court, one request" was wrong by
+  more than an order of magnitude and the quota plan divides by this.
+- `cause-list-parser.ts` — written against the retained bytes. Every string it
+  matches is quoted from that response, including the result vocabulary the page
+  publishes in its own translation dictionary. It classifies the observed
+  response as `captcha_required` and carries the court's own warning —
+  *"Cause list displayed may differ from the actual cause list"* — onto every
+  observation it will write.
+- The whole pipeline downstream of the CAPTCHA is proven end to end against a
+  synthetic page: reservation → ledger → retained artifact → parse →
+  `ecourts_observation`, in one transaction, replay-safe.
+
+**What stays broken without it:** no cause-list observation can ever be written,
+so the daily pilot cannot be registered, the retention probe cannot be run (every
+probe date meets the same wall), and cause-list monitoring stays
+`DISABLED_NOT_READY`. `platform_config.ecourts_harvest` was turned back OFF
+through the audited path on 29 Aug with this reason recorded, because nothing is
+scheduled to use it and an unused permission left on is risk without benefit.
+
+**Where it plugs in:** `services/api/src/court/authorisation.ts` —
+`CAPTCHA_OPERATIONAL_BASIS`, currently `NONE_RECORDED`. Set it to the basis the
+registrar confirms and `captchaImplementable()` becomes true, which clears the
+`captcha_implementation_blocked` pilot blocker. Nothing else needs changing to
+make the pilot runnable except the pilot's own source key and its `enabled` flag.
+
+**Cost so far:** 2 of 1,000 daily requests, 2 of 100 hourly. Evidence:
+`docs/ai/lcc-r11/ecourts-data-quality.json`.
+
+---
+
+
 ### [RESOLVED 29 Aug 2026 — founder decision] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
 
 > **RESOLVED 29 August 2026, founder decision (`CLAUDE.md` §6a).** The founder
