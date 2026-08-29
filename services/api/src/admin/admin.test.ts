@@ -12,11 +12,27 @@ import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 
 import { signAccessToken } from '@lawmind/auth';
-import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
+import { createIsolatedSchema } from '../testing/isolated-schema.ts';
 
-const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 3, onnotice: () => {} });
+/**
+ * `platform_config` is ISOLATED for this suite - `testing/isolated-schema.ts`.
+ *
+ * The kill-switch case below toggles `signups` through the real endpoint, which
+ * is the point of it: the property under test is that the config row and the
+ * audit row move together. It used to toggle the PRODUCTION row and put it back
+ * afterwards, and the live database still carries the evidence that this is not
+ * a promise a test can keep - `platform_config.signups.reason` is literally
+ * "test cleanup", written by a fixture user.
+ *
+ * The app is constructed with this client, so `admin/platform.ts` resolves
+ * `platform_config` into the throwaway schema without knowing the fixture
+ * exists. The founder's real `signups` state is not restored correctly here; it
+ * is unreachable.
+ */
+const isolation = await createIsolatedSchema(process.env['DATABASE_URL'] ?? '');
+const sql = isolation.connect({ max: 3 });
 const SECRET = 'test-secret-not-used-anywhere-real-0123456789';
 const TAG = 'test-admin';
 
@@ -57,6 +73,7 @@ describe('S6 admin', () => {
 
   after(async () => {
     await sql`DELETE FROM platform_config WHERE key = ANY(${['test_flag_' + TAG]})`;
+    // The schema goes with it, so even this delete is belt-and-braces.
     // `admin` is left in place, deliberately. Every test above writes an
     // audit_log row with actor_user_id = admin.userId, and audit_log is
     // APPEND-ONLY — REVOKE'd UPDATE/DELETE plus a raising trigger
@@ -66,7 +83,7 @@ describe('S6 admin', () => {
     // cannot be deleted, in a test or in production. `TAG` keeps this fixture
     // identifiable as synthetic, the same convention `SYNTHETIC —` judgment
     // titles use elsewhere for rows other suites cannot clean up either.
-    await sql.end();
+    await isolation.drop();
   });
 
   describe('401 without a token — every route in this section', () => {
@@ -188,8 +205,10 @@ describe('S6 admin', () => {
         ORDER BY created_at DESC LIMIT 1`;
       assert.equal(audit?.reason, reason);
 
-      // Leave it as found — false, the created-OFF default — so this test is
-      // not order-dependent on a shared production-shaped row.
+      // Leave it as found - false, the fixture's created-OFF default - so this
+      // test is not order-dependent on the other cases in this file. It is no
+      // longer load-bearing for production safety: the row lives in a throwaway
+      // schema, and a killed run cannot leave signups in the wrong state.
       await app.request('/admin/platform/kill-switches/signups', {
         method: 'POST',
         headers: { ...auth(admin.token), ...json },

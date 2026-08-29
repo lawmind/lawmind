@@ -22,8 +22,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { after, before, describe, it } from 'node:test';
 
-import postgres from 'postgres';
-
+import { createIsolatedSchema } from '../testing/isolated-schema.ts';
 import {
   AUTHORISATION,
   captchaBypassAllowed,
@@ -33,7 +32,38 @@ import {
 import { ECOURTS_CAUSE_LIST_ENDPOINT, fetchCauseList, parseCauseList } from './ecourts.ts';
 import { decide, ECOURTS_KILL_SWITCH_KEY, killSwitchEnabled } from './guard.ts';
 
-const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+/**
+ * `platform_config` is ISOLATED for this suite — see
+ * `testing/isolated-schema.ts`. Every assertion below is about the
+ * switch's DEFAULT state, and reading production would make that premise move
+ * with whatever an operator last did: the founder enabled `ecourts_harvest` on
+ * 29 Aug 2026, and a suite that read the live row would have silently flipped
+ * from proving containment to proving nothing.
+ *
+ * Nothing here can write the production row. That is the guarantee, not a
+ * tidier `after()`.
+ *
+ * `ecourts_fetch_ledger` is isolated with it. Every refusal below is a ledger
+ * row - deliberately, because "a lock that leaves no trace proves nothing" - and
+ * those rows used to land in the record that answers whether we stayed inside
+ * the grant, under the name of a real court. A registrar reading that ledger
+ * should see requests, not a test suite.
+ */
+const isolation = await createIsolatedSchema(process.env['DATABASE_URL'] ?? '', [
+  'ecourts_fetch_ledger',
+]);
+const sql = isolation.connect({ max: 2 });
+
+/**
+ * A court key no grant condition and no harvest will ever use.
+ *
+ * `delhi_hc` was here before, and it put test refusals into
+ * `ecourts_fetch_ledger` under the name of a real court — which makes "did we
+ * stay inside the grant" unanswerable by query, the one thing the ledger
+ * exists to answer. The `ZZ_` convention is already used by the raw-capture and
+ * quota suites for exactly this.
+ */
+const TEST_COURT = 'ZZ_GUARD_TEST';
 
 /** Throws if anything calls it. The point is that nothing does. */
 const forbiddenFetch: typeof fetch = (input) => {
@@ -51,15 +81,19 @@ describe('eCourts guard', () => {
   });
 
   after(async () => {
-    await sql.end();
+    await isolation.drop();
   });
 
-  it('ships with the kill switch OFF', async () => {
+  it('creates the eCourts kill switch OFF, carrying a reason', async () => {
     const [row] = await sql<{ enabled: boolean; reason: string | null }[]>`
       SELECT enabled, reason FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
     `;
     assert.ok(row, 'the ecourts_harvest kill switch row should exist — migration 0013 creates it');
     assert.equal(row.enabled, false, 'the eCourts kill switch must default to off');
+    // Deliberately a statement about the DEFAULT, not about production. The
+    // founder enabled harvesting on 29 Aug 2026 through the audited path, and a
+    // test that asserted the live row was off would now be asserting that the
+    // founder's decision had not been taken.
     assert.ok(row.reason, 'a kill switch must carry the reason it is in its current state');
   });
 
@@ -86,7 +120,7 @@ describe('eCourts guard', () => {
     // because the property under test is the precedence, and a single hard-coded
     // reason has now been wrong twice for the same reason: it encodes the ladder
     // as it was on the day it was written.
-    const decision = await decide(sql, 'delhi_hc');
+    const decision = await decide(sql, TEST_COURT);
     assert.equal(decision.allowed, false);
     if (decision.allowed) return;
     const expected = !AUTHORISATION
@@ -102,7 +136,7 @@ describe('eCourts guard', () => {
   });
 
   it('makes no request at all, and says why', async () => {
-    const result = await fetchCauseList(sql, 'delhi_hc', { fetchImpl: forbiddenFetch });
+    const result = await fetchCauseList(sql, TEST_COURT, { fetchImpl: forbiddenFetch });
     assert.equal(result.status, 'failed');
     if (result.status !== 'failed') return;
     assert.match(result.error, /refused:/);
@@ -111,7 +145,7 @@ describe('eCourts guard', () => {
   it('writes the refusal to the ledger — a lock that leaves no trace proves nothing', async () => {
     const before = await sql<{ n: string }[]>`
       SELECT count(*) AS n FROM ecourts_fetch_ledger WHERE outcome = 'refused'`;
-    await fetchCauseList(sql, 'delhi_hc', { fetchImpl: forbiddenFetch });
+    await fetchCauseList(sql, TEST_COURT, { fetchImpl: forbiddenFetch });
     const after = await sql<{ n: string }[]>`
       SELECT count(*) AS n FROM ecourts_fetch_ledger WHERE outcome = 'refused'`;
     assert.equal(
@@ -375,7 +409,7 @@ describe('CAPTCHA bypass is bounded by the grant', () => {
 describe('the grant reference never reaches a user', () => {
   const read = (rel: string): string => readFileSync(new URL(rel, import.meta.url), 'utf8');
 
-  it('OPERATES without the confidential identifiers, because provenance does not need them', () => {
+  it('OPERATES whatever the confidential identifiers are, because provenance does not need them', () => {
     // The registrar asked that their identifiers stay out of the application.
     // An earlier design here REQUIRED the reference to operate, which made
     // honouring that request equivalent to switching the integration off.
@@ -387,9 +421,23 @@ describe('the grant reference never reaches a user', () => {
       AUTHORISATION.conditionsVersion.length > 0,
       'every ledger row must be stampable with the transcription in force',
     );
-    // Neither env var is set in this environment, and that is the point.
-    assert.equal(AUTHORISATION.reference, undefined);
-    assert.equal(AUTHORISATION.attribution, undefined);
+
+    /**
+     * ASSERTED AGAINST THE ENVIRONMENT, NOT AGAINST ITS ABSENCE.
+     *
+     * This used to assert both identifiers were `undefined`, which was true of
+     * every machine on the day it was written and stopped being true on
+     * 29 Aug 2026: the founder configured `ECOURTS_GRANT_ATTRIBUTION` as part
+     * of the eCourts activation (`CLAUDE.md` §6a), and the suite then failed
+     * for having encoded the absence of a decision that had since been taken.
+     *
+     * The property actually worth holding is the one below - the values come
+     * from the environment and from nowhere else. That is what keeps them out
+     * of git, and it is true whether they are set or not. The complementary
+     * half, that no literal is transcribed into source, is the next case.
+     */
+    assert.equal(AUTHORISATION.reference, process.env['ECOURTS_GRANT_REFERENCE']);
+    assert.equal(AUTHORISATION.attribution, process.env['ECOURTS_GRANT_ATTRIBUTION']);
   });
 
   it('changes the fingerprint when the transcribed conditions change', () => {

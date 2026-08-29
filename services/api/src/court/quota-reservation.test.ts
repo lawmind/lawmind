@@ -14,24 +14,56 @@
  * refuses at both of those before it ever reaches the quota arithmetic, and a
  * concurrency test that stops at `attribution_not_on_file` proves nothing at
  * all.
+ *
+ * -----------------------------------------------------------------------------
+ * TWO THINGS THIS SUITE USED TO BORROW FROM PRODUCTION, AND NO LONGER CAN
+ * -----------------------------------------------------------------------------
+ *
+ * 1. **The kill switch.** The race needs COMMITTED rows visible across eight
+ *    independent connections, so it cannot hide the flip inside a rolled-back
+ *    transaction the way `raw-capture.test.ts` does. It used to flip the
+ *    production row and restore it in a `finally` - correct on every path except
+ *    the one that actually happened: a run killed mid-body left eCourts
+ *    harvesting ENABLED on this database. `platform_config` is now an isolated
+ *    schema (`testing/isolated-schema.ts`) and the production row is
+ *    unreachable from here.
+ *
+ * 2. **The registrar's quota.** Reservations commit ledger rows with outcome
+ *    `error`, and those COUNT - that is the point of the design. An abandoned
+ *    run therefore used to spend real slots out of the grant's 1,000/day, and
+ *    filled the ledger that answers "did we stay inside the grant" with traffic
+ *    that never left this machine.
+ *
+ *    The obvious fix is the wrong one, and was tried: pointing these at the
+ *    `test://` endpoint makes `guard.decide` exclude them from the interval,
+ *    hourly and daily counts - so all eight racing callers succeed and the test
+ *    measures nothing at all. The rows have to be genuine quota rows. So
+ *    `ecourts_fetch_ledger` is isolated alongside the switch, and the race runs
+ *    against a ledger that starts empty and is dropped afterwards.
  */
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';
 
-import postgres from 'postgres';
-
+import { createIsolatedSchema } from '../testing/isolated-schema.ts';
 import { AUTHORISATION } from './authorisation.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT } from './ecourts.ts';
 import { ECOURTS_KILL_SWITCH_KEY, ECOURTS_QUOTA_LOCK_KEY, reserve, settle } from './guard.ts';
 
-const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 8, onnotice: () => {} });
+const isolation = await createIsolatedSchema(process.env['DATABASE_URL'] ?? '', [
+  'ecourts_fetch_ledger',
+]);
+const sql = isolation.connect({ max: 8 });
 
 /** A court name no grant condition or real harvest will ever use. */
 const TEST_COURT = 'ZZ_QUOTA_RESERVATION_TEST';
+/**
+ * The REAL endpoint, deliberately. These rows must be counted by the limiter or
+ * the race proves nothing - see the header. They are safe because the ledger
+ * they land in is the fixture's, not the registrar's.
+ */
 const TEST_ENDPOINT = `${ECOURTS_CAUSE_LIST_ENDPOINT}#quota-reservation-test`;
 
 let priorAttribution: string | undefined;
-let priorSwitch: { enabled: boolean; reason: string | null } | undefined;
 
 async function ledgerRows() {
   return sql<
@@ -48,26 +80,21 @@ describe('eCourts quota reservation is globally atomic', () => {
   before(async () => {
     priorAttribution = process.env['ECOURTS_GRANT_ATTRIBUTION'];
     process.env['ECOURTS_GRANT_ATTRIBUTION'] = 'LawMind quota-reservation test (no network)';
-    const [row] = await sql<{ enabled: boolean; reason: string | null }[]>`
-      SELECT enabled, reason FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
-    `;
-    priorSwitch = row;
     await sql`DELETE FROM ecourts_fetch_ledger WHERE court = ${TEST_COURT}`;
   });
 
   after(async () => {
     await sql`DELETE FROM ecourts_fetch_ledger WHERE court = ${TEST_COURT}`;
-    await restoreSwitch();
     if (priorAttribution === undefined) delete process.env['ECOURTS_GRANT_ATTRIBUTION'];
     else process.env['ECOURTS_GRANT_ATTRIBUTION'] = priorAttribution;
-    await sql.end();
+    await isolation.drop();
   });
 
+  /** Back to the fixture's seeded state. Never production's - see the header. */
   async function restoreSwitch(): Promise<void> {
-    if (!priorSwitch) return;
     await sql`
       UPDATE platform_config
-         SET enabled = ${priorSwitch.enabled}, reason = ${priorSwitch.reason}
+         SET enabled = false, reason = 'isolated test fixture - restored OFF'
        WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
     `;
   }
@@ -78,9 +105,9 @@ describe('eCourts quota reservation is globally atomic', () => {
    * The racing callers need independent connections, so unlike
    * `raw-capture.test.ts` this cannot hide the flip inside a rolled-back
    * transaction — the whole point is that they see each other's COMMITTED rows.
-   * The next best thing is to make the window as small as possible and restore
-   * in a `finally`, because a suite-wide flip left harvesting enabled on this
-   * database once already when a run was killed mid-suite.
+   * The window is still kept small and still restored in a `finally`, but the
+   * row being flipped is the ISOLATED one; a run killed inside the body leaves a
+   * throwaway schema enabled, not the switch that authorises contacting a court.
    */
   async function withHarvestEnabled(body: () => Promise<void>): Promise<void> {
     await sql`
@@ -95,11 +122,25 @@ describe('eCourts quota reservation is globally atomic', () => {
     }
   }
 
-  it('leaves the switch it borrowed exactly as it found it', () => {
-    // Stated as an assertion so a future edit that forgets the restore fails
-    // here rather than leaving harvesting enabled on a developer's database.
-    assert.ok(priorSwitch, 'the ecourts_harvest row must exist — migration 0013 creates it');
-    assert.equal(priorSwitch.enabled, false, 'the switch must have been OFF before this ran');
+  it('runs against an isolated switch and an isolated ledger, both starting clean', async () => {
+    // Stated as assertions because every case below is only meaningful if the
+    // switch being flipped and the ledger being counted are both the fixture's.
+    const [row] = await sql<{ enabled: boolean }[]>`
+      SELECT enabled FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
+    `;
+    assert.ok(row, 'the isolated fixture seeds all six kill switches');
+    assert.equal(row.enabled, false, 'the isolated switch must start OFF');
+
+    const [resolved] = await sql<{ schema: string }[]>`
+      SELECT n.nspname AS schema
+        FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+       WHERE c.oid = 'ecourts_fetch_ledger'::regclass
+    `;
+    assert.equal(
+      resolved?.schema,
+      isolation.schema,
+      'the reservations below spend quota, and they must not spend the registrar\'s',
+    );
   });
 
   it('two concurrent callers cannot both take the same remaining slot', async () => {
@@ -116,9 +157,9 @@ describe('eCourts quota reservation is globally atomic', () => {
        * That was measured, not assumed — it is why these are separate
        * connections, each warmed before the burst.
        */
-      const clients = Array.from({ length: 8 }, () =>
-        postgres(process.env['DATABASE_URL'] ?? '', { max: 1, onnotice: () => {} }),
-      );
+      // Built through the fixture, so each racing backend resolves
+      // `platform_config` to the isolated schema and sees the flip made above.
+      const clients = Array.from({ length: 8 }, () => isolation.connect({ max: 1 }));
       let results;
       try {
         await Promise.all(clients.map((client) => client`SELECT 1`));
@@ -280,7 +321,45 @@ describe('eCourts quota reservation is globally atomic', () => {
     });
   });
 
-  it('leaves the kill switch off when it is done', async () => {
+  it('releases the quota lock at transaction exit, so nothing can leak it', async () => {
+    /**
+     * `pg_advisory_xact_lock` is transaction-scoped, which is the reason it was
+     * chosen over `pg_advisory_lock`: there is no unlock to forget, and a
+     * crashed backend releases on rollback. That is a property of the FUNCTION,
+     * and a future edit could swap it for the session-scoped one without a
+     * single existing test noticing - the race test would still pass, and the
+     * lock would simply never be given back until the pooled connection was
+     * recycled.
+     *
+     * So it is measured. `ECOURTS_QUOTA_LOCK_KEY` fits in 32 bits, so Postgres
+     * reports it as classid 0, objid <key>, objsubid 1.
+     */
+    await withHarvestEnabled(async () => {
+      await sql`DELETE FROM ecourts_fetch_ledger WHERE court = ${TEST_COURT}`;
+      const held = async () => {
+        const [row] = await sql<{ n: number }[]>`
+          SELECT count(*)::int AS n FROM pg_locks
+           WHERE locktype = 'advisory' AND objid = ${ECOURTS_QUOTA_LOCK_KEY}::bigint
+        `;
+        return row?.n ?? 0;
+      };
+      assert.equal(await held(), 0, 'nothing may hold the quota lock before a reservation');
+      const reservation = await reserve(
+        sql,
+        { court: TEST_COURT, endpoint: TEST_ENDPOINT, strategy: 'CAUSE_LIST_BATCH' },
+        new Date(),
+      );
+      assert.equal(reservation.allowed, true);
+      assert.equal(
+        await held(),
+        0,
+        'the quota lock is still held after reserve() returned; a session-scoped lock would ' +
+          'serialise every later reservation on this pooled connection until it was recycled',
+      );
+    });
+  });
+
+  it('leaves the isolated kill switch off when it is done', async () => {
     const [row] = await sql<{ enabled: boolean }[]>`
       SELECT enabled FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
     `;

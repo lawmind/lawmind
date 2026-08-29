@@ -60,8 +60,7 @@
 import assert from 'node:assert/strict';
 import { after, describe, it } from 'node:test';
 
-import postgres from 'postgres';
-
+import { createIsolatedSchema } from '../testing/isolated-schema.ts';
 import { ECOURTS_KILL_SWITCH_KEY } from './guard.ts';
 import { fetchCauseList } from './ecourts.ts';
 
@@ -78,7 +77,19 @@ import { fetchCauseList } from './ecourts.ts';
  */
 process.env['ECOURTS_GRANT_ATTRIBUTION'] ??= 'LawMind-ledger-drill/1.0 (test only)';
 
-const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+/**
+ * `platform_config` is ISOLATED - `testing/isolated-schema.ts`.
+ *
+ * The drill flips the harvest switch ON inside its transaction and relies on the
+ * ROLLBACK to put it back, which is sound and was never the failure. What was
+ * unsound is the assumption underneath it: that the production row is OFF to
+ * begin with. The founder enabled harvesting on 29 Aug 2026 through the audited
+ * path, and a drill reading the live row would now start from ON and assert at
+ * the end that the founder's decision had been undone. The fixture makes the
+ * starting state a property of this file instead of a property of the day.
+ */
+const isolation = await createIsolatedSchema(process.env['DATABASE_URL'] ?? '');
+const sql = isolation.connect({ max: 2 });
 
 /** Rolls the probe back. Nothing this file does is allowed to survive it. */
 class Rollback extends Error {}
@@ -91,7 +102,7 @@ const CAUSE_LIST_BODY = [
 
 describe('the fetch ledger is not optional', () => {
   after(async () => {
-    await sql.end();
+    await isolation.drop();
   });
 
   it('an unrecorded fetch never produces usable data', async () => {
@@ -223,7 +234,7 @@ describe('the fetch ledger is not optional', () => {
     const [row] = await sql<{ enabled: boolean; reason: string | null }[]>`
       SELECT enabled, reason FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
     `;
-    assert.equal(row?.enabled, false, 'the kill switch is ON after the drill');
+    assert.equal(row?.enabled, false, 'the isolated kill switch is ON after the drill');
     assert.notEqual(row?.reason, 'harness: ledger-failure drill');
 
     const [con] = await sql<{ n: number }[]>`

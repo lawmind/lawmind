@@ -38,8 +38,9 @@ import { readFileSync } from 'node:fs';
 import { after, before, describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import postgres, { type Sql, type TransactionSql } from 'postgres';
+import { type Sql, type TransactionSql } from 'postgres';
 
+import { createIsolatedSchema } from '../testing/isolated-schema.ts';
 import { AUTHORISATION } from './authorisation.ts';
 import { writeCauseListObservations } from './ecourts-observation-writer.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, fetchCauseList, PARSER_STATE } from './ecourts.ts';
@@ -54,6 +55,30 @@ import { assertPilotRunnable, ECOURTS_PILOT, pilotBlockers, PilotRefused } from 
 
 const url = process.env['DATABASE_URL'];
 const suite = url ? describe : describe.skip;
+
+/**
+ * `platform_config` is ISOLATED - `testing/isolated-schema.ts`.
+ *
+ * The rolled-back transaction below already prevented this suite from leaving
+ * harvesting enabled, and that part is unchanged. What the fixture adds is the
+ * other direction: this file asserts the switch is OFF before it borrows it, and
+ * the founder turned the production switch ON on 29 Aug 2026. Reading the live
+ * row would make the suite fail for a reason that has nothing to do with
+ * retention.
+ */
+const isolation = url ? await createIsolatedSchema(url) : null;
+
+/**
+ * ONE teardown for the whole file, not one per suite.
+ *
+ * All three suites below share the fixture, and a per-suite `drop()` closed it
+ * out from under the next one - the second suite then failed with a client that
+ * had already been ended. A file-level `after` runs once, after every suite in
+ * the file, which is the actual lifetime of the thing being torn down.
+ */
+after(async () => {
+  await isolation?.drop();
+});
 
 /** Thrown to unwind `sql.begin`, so nothing this file writes can persist. */
 const ROLLBACK = 'lcc-ecourts-raw-capture-rollback';
@@ -78,7 +103,7 @@ suite('an authorised response is retained before it is understood', () => {
   let residue: { artifacts: number; ledger: number };
 
   before(async () => {
-    sql = postgres(url!, { max: 2, onnotice: () => {} });
+    sql = isolation!.connect({ max: 2 });
     const [artifacts] = await sql<{ n: number }[]>`
       SELECT count(*)::int AS n FROM official_source_artifact
        WHERE metadata->>'court' = ${TEST_COURT}
@@ -87,10 +112,6 @@ suite('an authorised response is retained before it is understood', () => {
       SELECT count(*)::int AS n FROM ecourts_fetch_ledger WHERE court = ${TEST_COURT}
     `;
     residue = { artifacts: artifacts?.n ?? 0, ledger: ledger?.n ?? 0 };
-  });
-
-  after(async () => {
-    await sql?.end({ timeout: 5 });
   });
 
   /**
@@ -111,7 +132,7 @@ suite('an authorised response is retained before it is understood', () => {
         assert.equal(
           before_?.enabled,
           false,
-          'the eCourts kill switch must be OFF before a test borrows it',
+          'the ISOLATED eCourts kill switch must be OFF before a test borrows it',
         );
         await tx`
           UPDATE platform_config SET enabled = true
@@ -275,7 +296,7 @@ suite('an authorised response is retained before it is understood', () => {
     });
   });
 
-  it('leaves the kill switch off, whatever happened above', async () => {
+  it('leaves the isolated kill switch off, whatever happened above', async () => {
     const [row] = await sql<{ enabled: boolean }[]>`
       SELECT enabled FROM platform_config WHERE key = ${ECOURTS_KILL_SWITCH_KEY}
     `;
@@ -312,12 +333,8 @@ suite('an authorised response is retained before it is understood', () => {
 suite('the observation writer accepts only validated parser output', () => {
   let sql: Sql;
   before(() => {
-    sql = postgres(url!, { max: 1, onnotice: () => {} });
+    sql = isolation!.connect({ max: 1 });
   });
-  after(async () => {
-    await sql?.end({ timeout: 5 });
-  });
-
   const base = {
     court: TEST_COURT,
     listingDate: '2026-08-29',
@@ -388,12 +405,8 @@ suite('the observation writer accepts only validated parser output', () => {
 suite('the eCourts pilot is defined and disabled', () => {
   let sql: Sql;
   before(() => {
-    sql = postgres(url!, { max: 1, onnotice: () => {} });
+    sql = isolation!.connect({ max: 1 });
   });
-  after(async () => {
-    await sql?.end({ timeout: 5 });
-  });
-
   it('ships disabled, batch-strategy, one unresolved source key', () => {
     assert.equal(ECOURTS_PILOT.enabled, false);
     assert.equal(ECOURTS_PILOT.strategy, 'CAUSE_LIST_BATCH');
