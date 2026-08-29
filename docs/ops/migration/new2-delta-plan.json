@@ -1,24 +1,8 @@
 {
-  "takenAt": "2026-08-27T13:04:42.942Z",
+  "takenAt": "2026-08-29T05:53:53.734Z",
   "source": "docs/ai/new2-r9/delta-scopes.json",
-  "manifestTakenAt": "2026-08-27T13:04:39.973Z",
+  "manifestTakenAt": "2026-08-29T05:53:19.742Z",
   "note": "Derived from a fresh upstream object manifest. Scopes the launcher already starts are excluded and listed under alreadyCovered.",
-  "alreadyCovered": [
-    "hc-boot-27_1",
-    "hc-boot-9_13"
-  ],
-  "workers": [
-    {
-      "scope": "hc-boot-27_1-y2026",
-      "court": "27_1",
-      "year": 2026,
-      "fromYear": null,
-      "toYear": null,
-      "concurrency": 16,
-      "tier": 0,
-      "bytesWaiting": 331100,
-      "objects": 4,
-      "reason": "upstream object GROWN or NEW since our recorded cursor read"
-    }
-  ]
+  "alreadyCovered": [],
+  "workers": []
 }

@@ -84,6 +84,8 @@ function note(row, cls) {
 }
 
 for (const r of hc.grown) note(r, 'GROWN');
+for (const r of hc.shrunk ?? []) note(r, 'SHRUNK');
+for (const r of hc.changed ?? []) note(r, 'CHANGED');
 for (const r of hc.newKeys) {
   if (r.bench === 'testcase') continue; // refused by isTestFixture; never a work item
   note(r, 'NEW');

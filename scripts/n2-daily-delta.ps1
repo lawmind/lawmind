@@ -197,6 +197,27 @@ if ($names.Count -eq 0 -and -not $Full) {
 }
 
 <#
+  SOURCE-UNAVAILABLE IS A CURRENT OBSERVATION, NOT A BLACKLIST.
+
+  Revalidation is bounded twice: rows are eligible only when their upstream
+  partition changed or their last direct check is at least 90 days old, and a
+  cycle handles at most 2,500. Live PDFs re-enter the canonical ingestion path;
+  unavailable rows receive a new direct observation and lastCheckedAt.
+#>
+$revalidateOk = Run $tsx @('scripts\n2-hc-gap-closure.mts', '--mode', 'revalidate', '--apply', '--limit', '2500', '--concurrency', '4') 'source-revalidate'
+if (-not $revalidateOk) { Say "  source-unavailable revalidation FAILED -- eligible rows remain recoverable next cycle" }
+
+<#
+  SUPREME COURT CURRENT DELTA — EXACTLY THE INDEPENDENTLY AUTHORIZED SCOPE.
+
+  This invokes only sci-live's public, server-rendered homepage Judgments feed
+  and the official PDFs linked by that feed. It does not invoke sci_search,
+  CAPTCHA solving, archive backfill or any expanded access path.
+#>
+$sciHomepageOk = Run $tsx @('services\ingest\src\sci-live-cli.ts', '--apply', '--limit=50') 'sci-homepage'
+if (-not $sciHomepageOk) { Say "  SCI public homepage judgment delta FAILED -- expanded SCI search remains off" }
+
+<#
   THE RESOLVER RISK REPLAY, AND WHY IT BELONGS HERE RATHER THAN IN A HUMAN'S HEAD.
 
   LCC found this and handed it to NEW2 (bus 1418). The downstream cycle after
@@ -307,5 +328,11 @@ try {
   }
 } catch { $observed['resolverRiskReplayError'] = $_.Exception.Message }
 
-Receipt 'ok' @{ scopesOwned = $names.Count; scopes = $names; observed = $observed }
+Receipt 'ok' @{
+  scopesOwned = $names.Count
+  scopes = $names
+  sourceUnavailableRevalidation = $revalidateOk
+  sciHomepageJudgmentDelta = $sciHomepageOk
+  observed = $observed
+}
 Say "=== cycle $stamp end"
