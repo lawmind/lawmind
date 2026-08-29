@@ -21,11 +21,10 @@
  * **What the letter's own numbers do and do not gate.** The registrar asked
  * that the letter's identifying details not appear in the application or reach
  * its users. `reference` and `attribution` therefore come from environment and
- * are **optional** — the integration operates without them. Provenance is
- * carried by `CONDITIONS_VERSION`, a fingerprint of the limits we actually
- * enforce, which answers *"which transcription was in force"* better than a
- * letter number could: the number names the letter and would not change if we
- * re-transcribed its terms wrongly.
+ * are not committed. The letter reference is optional at runtime; the wire
+ * attribution is not. `guard.ts` refuses every network request until
+ * `ECOURTS_GRANT_ATTRIBUTION` is present, while provenance of the transcribed
+ * limits is carried by `CONDITIONS_VERSION`.
  *
  * **No CONDITION defaults to "unlimited."** A limit the letter does not state
  * is transcribed at the conservative value, never left out. An absent limit
@@ -94,9 +93,9 @@ export type EcourtsAuthorisation = {
    * recorded for our own compliance file, not displayed. Do not "helpfully"
    * surface it in a footer.
    *
-   * **Optional, same as `reference`.** The registrar asked that it not appear
-   * in the application, so there is nowhere it is rendered and nothing that
-   * breaks when it is absent.
+   * Optional in this construction type so a missing secret can be represented
+   * without inventing a value. Operationally required: `guard.ts` refuses the
+   * network boundary when it is absent. It remains absent from product output.
    */
   attribution?: string | undefined;
   /**
@@ -145,11 +144,11 @@ export type EcourtsAuthorisation = {
    * not said it — silence is never permission, the same rule the rate limits
    * follow.
    *
-   * **Scope, and it is narrow:** this authorises the bulk cause-list path in
-   * `ecourts.ts` only. Tier 3 per-citation confirmation still hands the
-   * advocate the door — `citations/verify.ts` holds no HTTP client and the
-   * test asserting that stays. Two different acts under two different parts of
-   * the grant; collapsing them turns a bounded permission into an unbounded one.
+   * **Scope is enumerated, not implied:** automated access may cover only the
+   * courts and data types recorded on this grant and must run through the
+   * guarded `ecourts.ts` network boundary. Tier 3 per-citation confirmation
+   * still hands the advocate the door because it represents a human-vouched
+   * fact. Automation writes `ecourts_bulk`, never the human source label.
    */
   captchaBypassPermitted: boolean;
   /**
