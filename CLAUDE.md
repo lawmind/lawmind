@@ -144,6 +144,59 @@ another.
 **Naming rule:** `Supreme AI` and `Supreme Today` are different sources. Older
 `Supreme Today` entries are historical unless separately marked current.
 
+### eCourts — founder decision, 29 August 2026 (made now, not a historical record)
+
+**The founder settled the open eCourts authorization/founder-input question on
+29 August 2026.** This is a decision taken on that date, not a restatement of an
+earlier one. It closes the eCourts half of `FOUNDER_QUEUE.md` FQ-LCC-R10-1 and
+all of FQ-ECOURTS-ACTOR.
+
+1. **LawMind holds full written authorization to use eCourts for the scope
+   already represented by the current eCourts authorization module**
+   (`services/api/src/court/authorisation.ts` — the enumerated
+   `permittedDataTypes`: court names, case status, cause lists, caveat search,
+   court orders, judgments). The earlier repository wording that limited the
+   automated path to "bulk cause-list harvesting only" is superseded by this
+   decision.
+2. **Authorized CAPTCHA bypass is permitted for that eCourts scope**, subject to
+   the mechanical conditions already in `CLAUDE.md` §6 (grant non-null and
+   unexpired; only in `services/api/src/court/ecourts.ts`; every request writes
+   the fetch ledger and passes the rate limiter).
+3. **The currently encoded conservative operational limits stand** unless the
+   written authorization itself states more specific ones: minimum 2,000 ms
+   between requests, maximum 100 requests/hour, maximum 1,000 requests/day,
+   encoded expiry January 2029 (`GRANT_CONDITIONS` in `authorisation.ts`).
+4. **This decision is ECOURTS ONLY.** It does not modify, infer, approve or
+   resolve the separate SCI / Supreme Court automated-access question
+   (FQ-LCC-R10-1 point 2, `docs/SCI_AUTHORISATION.md`), which remains contested
+   and untouched. `SCI_AUTHORISATION_STATE = UNCHANGED`.
+
+**`ECOURTS_GRANT_ATTRIBUTION`** is an internal audited attribution string that
+identifies LawMind's authorized eCourts access — **not** a phrase the grant
+requires us to quote verbatim (the written authorization prescribes no mandatory
+attribution wording that is recorded in this repository). Its runtime value is:
+
+> `LawMind — authorised eCourts access under written permission; independent legal research product, not a government application.`
+
+It is supplied through the runtime environment (`.env` / deployment secret),
+never committed to tracked source, and is not printed in normal logs after
+configuration. `guard.ts` still refuses every network request while it is unset.
+
+**Satisfied facts — future agents must not reopen these as founder-input
+questions** unless the authorization expires, the founder explicitly changes the
+decision, or new primary-source evidence directly contradicts the recorded
+scope:
+
+- `ECOURTS_FOUNDER_DECISION = SATISFIED`
+- `ECOURTS_AUTHORIZATION = SATISFIED`
+- `ECOURTS_FOUNDER_ACTOR = SATISFIED` — `users.id 3d37f77f-23f3-4eb0-b34f-d1700ec652a5`, a durable non-fixture admin actor designated 29 Aug 2026 for eCourts audit purposes
+- `ECOURTS_ATTRIBUTION_CONFIGURATION = SATISFIED`
+- `ECOURTS_AUDITED_ACTIVATION = SATISFIED` — `platform_config.ecourts_harvest = true`, flipped through the audited kill-switch path
+
+Technical readiness downstream of this (cause-list parser, raw-observation
+writer, quota locking, daily pilot) remains independently auditable and may
+still be HOLD. This decision resolves only the founder-input / configuration
+layer.
 
 - Citations carry **three independent fields, never one enum**:
   `verification_state` (`verified`|`unverified`|`failed`) · `verified_by_source`
@@ -164,13 +217,17 @@ another.
   headnotes, editorial numbering (_Eastern Book Company v. D.B. Modak_) — so use
   raw court text and never a law report's edition of it.
 - **eCourts harvesting: PERMITTED under the registrar's written authorisation
-  granted 7 Aug 2026, and only within its stated conditions.** The conditions are
+  granted 7 Aug 2026, and only within its stated conditions.** Scope is the
+  enumerated `permittedDataTypes` in `services/api/src/court/authorisation.ts`
+  (court names, case status, cause lists, caveat search, court orders, judgments)
+  — settled by the founder 29 Aug 2026, see §6a. The conditions are
   configuration, not folklore: the rate limiter enforces them and the fetch ledger
   records every request with timestamp, endpoint and court, so "did we stay inside
-  the grant" is answerable by query rather than by memory. The kill switch defaults
-  OFF and flipping it requires a `reason`. **If the authorisation's terms are not
-  in the repo, the switch stays off** — an unbounded harvest under a bounded
-  permission is the fastest way to lose it.
+  the grant" is answerable by query rather than by memory. The kill switch
+  (`platform_config.ecourts_harvest`) was flipped ON 29 Aug 2026 through the
+  audited kill-switch path; flipping it always requires a `reason`. **If the
+  authorisation's terms are not in the repo, the switch stays off** — an unbounded
+  harvest under a bounded permission is the fastest way to lose it.
 - **The CAPTCHA rule changed 8 Aug 2026, on the founder's authority: the grant
   expressly permits bypassing it.** The old rule ("never bypass, the advocate
   always solves it") existed for one reason — unauthorised access under IT Act
@@ -184,9 +241,11 @@ another.
   - Bypass lives **only in `services/api/src/court/ecourts.ts`**, the one module
     permitted an HTTP client. `services/api/src/citations/verify.ts` still contains
     no HTTP client and the test asserting that **stays** — Tier 3 per-citation
-    confirmation and bulk cause-list harvesting are different acts under different
-    parts of the grant, and collapsing them is how a bounded permission becomes an
-    unbounded one.
+    confirmation and the automated grant-scope harvest are different acts under
+    different parts of the grant, and collapsing them is how a bounded permission
+    becomes an unbounded one. Tier 3 remains a human solving the CAPTCHA and
+    vouching; automated resolution writes `verified_by_source = 'ecourts_bulk'`,
+    never `'ecourts'`.
   - Every bypassed request still writes the fetch ledger and still passes the rate
     limiter. Permission to bypass is not permission to flood.
 - **Never circumvent an access control you have NOT been authorised to, and never

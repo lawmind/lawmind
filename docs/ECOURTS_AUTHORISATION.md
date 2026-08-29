@@ -9,9 +9,41 @@ authorisation removes it. Going through the front door was the better route and 
 was the founder's call; the engineering position had been to treat the CAPTCHA as
 a wall.
 
-**The adapter is built and it is switched off.** Nothing in this codebase has ever
-made a request to eCourts. Two independent locks hold, and this document is one of
-them.
+**The adapter is built. The audited kill switch was turned ON on 29 August 2026**
+(founder decision, `CLAUDE.md` §6a). No eCourts HTTP request was made in that
+work — the switch grants permission, it does not initiate traffic, and there is
+no cron or poll behind it. `guard.decide()` now returns `allowed` for a permitted
+court, so the cause-list/observation tooling reaches the network the next time it
+is run; the parser, raw-capture writer and pilot remain a separate technical task.
+
+---
+
+## FOUNDER DECISION — 29 AUGUST 2026 (eCourts only)
+
+Recorded as a decision made on this date, not a restatement of an earlier one.
+Canonical text lives in `CLAUDE.md` §6a; this file is reconciled to it.
+
+- **Full written authorization for eCourts** covers the scope already represented
+  by `services/api/src/court/authorisation.ts` — the enumerated
+  `permittedDataTypes` (court names, case status, cause lists, caveat search,
+  court orders, judgments). The earlier "bulk cause-list harvesting only" wording
+  is superseded.
+- **Authorized CAPTCHA bypass** applies across that eCourts scope, under the
+  unchanged mechanical conditions in `CLAUDE.md` §6.
+- **The conservative operational limits stand** unless the written authorization
+  states more specific ones: 2,000 ms minimum interval, 100 requests/hour,
+  1,000 requests/day, expiry January 2029.
+- **`ECOURTS_GRANT_ATTRIBUTION`** is an internal audited attribution string, not
+  a grant-mandated quotation (no mandatory wording is recorded in this repo). Its
+  runtime value is configured; it stays out of tracked source and out of normal
+  logs.
+- **Founder/admin actor:** `users.id 3d37f77f-23f3-4eb0-b34f-d1700ec652a5`, a
+  durable non-fixture admin actor, its placeholder display name corrected. This
+  is the actor named on the activation audit row.
+- **eCourts only.** The separate SCI / Supreme Court automated-access question is
+  untouched and still contested (`FOUNDER_QUEUE.md` FQ-LCC-R10-1 point 2).
+
+Closes the eCourts half of FQ-LCC-R10-1 and all of FQ-ECOURTS-ACTOR.
 
 ---
 
@@ -23,7 +55,7 @@ them.
 | Scope, per the founder 8 Aug 2026 | **all available data**                                          |
 | CAPTCHA bypass                    | **expressly permitted** — see below, rule changed               |
 | Expires                           | **January 2029**, then **renewable for payment**                |
-| Kill switch `ecourts_harvest`     | **off**, created off in migration 0013                          |
+| Kill switch `ecourts_harvest`     | **ON, 29 Aug 2026** — audited kill-switch path, actor `3d37f77f…` |
 | Conditions transcribed            | **YES**, 8 Aug 2026 — corrected 17 Aug, this row said `NO` for nine days after it stopped being true |
 | Requests ever made                | **0**, and the ledger can show it                               |
 
@@ -45,9 +77,9 @@ expired now?            false
 ```
 
 `guard.ts` checks its locks cheapest-and-most-absolute first: terms on file,
-then expiry, **then** the kill switch. The first two now pass. **The kill switch
-is the only remaining refusal**, which is exactly what the founder asked to
-change.
+then expiry, attribution, **then** the kill switch. Terms and expiry now pass.
+Activation additionally requires the confidential wire attribution and the
+audited kill-switch flip; neither is inferred from the existence of the grant.
 
 **Turning it on does not start any traffic, and that is measured, not assumed.**
 The only caller of `fetchCauseList` is `retryCauseList` — an authenticated,
@@ -55,7 +87,7 @@ attributable admin request. There is no cron, no scheduler and no poll. So the
 freeze concern raised in bus 0617 does not apply to the switch itself: it grants
 permission, it cannot initiate a fetch.
 
-**What the flip still needs — and it is one field, not a decision.**
+**What the flip still needs — operational inputs, not a renewed permission decision.**
 `audit_log.actor_user_id` is `NOT NULL`, and `admin/platform.ts` is explicit that
 *"a config change with no audit trail is worse than no change."* Of the six
 switches this is the one where that is not an internal nicety: it authorises
@@ -93,8 +125,10 @@ removes that reason. What replaces it is narrower and mechanical:
   only through `captchaBypassAllowed()`, which checks grant-exists **and**
   not-expired **and** expressly-permitted, because a caller checking one
   condition is a caller who eventually checks only one.
-- **Scope is the bulk cause-list path in `ecourts.ts` alone.** Tier 3
-  per-citation confirmation still hands the advocate the door:
+- **Scope is the enumerated data types in `authorisation.ts`** (including case
+  status, cause lists, orders and judgments), and network traffic remains inside
+  the guarded `court/ecourts.ts` adapter. Tier 3 per-citation confirmation still
+  hands the advocate the door:
   `citations/verify.ts` holds no HTTP client and the test asserting that
   **stays**. Two different acts under two different parts of the grant, and
   collapsing them is how a bounded permission becomes an unbounded one.
@@ -119,13 +153,12 @@ they have only turned a handle.
 
 ---
 
-## What the founder still owes, and it is small
+## Remaining activation inputs
 
-**Three steps, in this order. Any one alone leaves the door shut.**
-
-**1. Transcribe the letter into `services/api/src/court/authorisation.ts`.**
-Replace `AUTHORISATION = null` with the object. Every field is required — there is
-no partial transcription, and nothing defaults to "unlimited":
+The enforceable conditions are already transcribed in
+`services/api/src/court/authorisation.ts`; `AUTHORISATION` is non-null. No
+condition defaults to unlimited. The remaining runtime inputs are operational,
+not a renewed permission decision:
 
 | field                     | what it is                           | if the letter is silent                                                           |
 | ------------------------- | ------------------------------------ | --------------------------------------------------------------------------------- |
@@ -142,11 +175,10 @@ no partial transcription, and nothing defaults to "unlimited":
 never omitted.** An absent limit must never read as permission — the same rule
 that stops a null `ocr_confidence` from reading as a confidence of zero.
 
-**2. Record the letter itself.** Reference, date, signatory and stated conditions,
-in this file below. The transcription in code is what the machine enforces; this
-is what a human checks it against.
-
-**3. Turn the switch on, with a reason.**
+1. Supply confidential `ECOURTS_GRANT_ATTRIBUTION` in the target environment so
+   every request carries the required identity. The letter reference is optional
+   for runtime but belongs in the restricted compliance store, not this repo.
+2. Turn the switch on with a real actor and reason through the audited admin path.
 
 ```sql
 UPDATE platform_config
@@ -212,7 +244,8 @@ other. A Tier 3 confirmation is cached permanently **because a human personally
 vouched for it** — if a scraper ever wrote that row, "the advocate confirmed this"
 would silently become "a vendor said so", and those are not the same fact.
 
-**Never circumvent an access control, and never buy data from someone who did.**
+**Never circumvent an access control without written authority, and never buy
+data whose access provenance cannot be demonstrated.**
 That is why `ecourtsIndia` and the other scraper-resellers stay out even now that
 we have our own permission: buying from someone who circumvented a control is the
 same act at one remove.
@@ -221,6 +254,10 @@ same act at one remove.
 
 ## The letter
 
-> **Not yet recorded.** Paste the grant's reference, date, signatory and stated
-> conditions here, then complete step 1 above. Until this section is filled in,
-> `AUTHORISATION` stays `null` and the guard refuses every request.
+The grant was made 7 Aug 2026; enforceable conditions were transcribed 8 Aug and
+corrected 17 Aug. Its identifying reference, signatory and verbatim attribution
+are confidential at the registrar's request and therefore belong in the
+restricted compliance store/runtime secret, not source control. This is not a
+missing-authorization state. The guard refuses live traffic only when the
+required runtime attribution is absent, the grant has expired, the audited switch
+is off, or an operational limit would be exceeded.

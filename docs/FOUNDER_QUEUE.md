@@ -181,7 +181,18 @@ new one.
 
 # CREDENTIALS AND ACCOUNTS
 
-### [OPEN — ONE COMMAND, AND IT NO LONGER NEEDS A UUID] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
+### [RESOLVED 29 Aug 2026 — founder decision] FQ-ECOURTS-ACTOR — the eCourts switch is built, verified and one field short of ON · LCC · 17 Aug 2026
+
+> **RESOLVED 29 August 2026, founder decision (`CLAUDE.md` §6a).** The founder
+> designated `users.id 3d37f77f-23f3-4eb0-b34f-d1700ec652a5` as the canonical
+> durable non-fixture founder/admin actor for eCourts audit purposes; its
+> placeholder test display name was corrected and it was granted `role = admin`,
+> both audited. `ECOURTS_GRANT_ATTRIBUTION` was configured (internal audited
+> attribution, not a grant-mandated quotation). `ecourts_harvest` was then
+> flipped ON through the audited kill-switch path with that actor named on the
+> `audit_log` row. `platform_config.ecourts_harvest = true`. No eCourts HTTP
+> request was made in this configuration work; `guard.decide()` returns
+> `allowed` for a sample court. Nothing below is outstanding.
 
 > **21 Aug 2026 — this one identifier now blocks FIVE premium surfaces, not one.**
 > The storage side landed today: `ecourts_observation` and `ecourts_transition`
@@ -6251,7 +6262,22 @@ holds no HTTP client.
 
 ---
 
-## FQ-LCC-R10-1 — twelve documents rewrote the eCourts CAPTCHA scope and asserted a new Supreme Court grant, and CLAUDE.md §6 did not move  ·  LCC, 29 Aug 2026 · **HELD OUT OF THE R10 INTEGRATION COMMIT**
+## FQ-LCC-R10-1 — twelve documents rewrote the eCourts CAPTCHA scope and asserted a new Supreme Court grant, and CLAUDE.md §6 did not move  ·  LCC, 29 Aug 2026 · **eCourts half RESOLVED 29 Aug 2026; SCI half STILL HELD**
+
+> **PARTIALLY RESOLVED — 29 August 2026, founder decision.** The founder settled
+> **point 1** (eCourts scope): the automated path covers the enumerated
+> `permittedDataTypes` in `services/api/src/court/authorisation.ts`, not "bulk
+> cause-list harvesting only". Authorized CAPTCHA bypass applies across that
+> eCourts scope; the conservative limits stand. `CLAUDE.md` §6 and §6a were moved
+> to match, and `docs/ECOURTS_AUTHORISATION.md` was reconciled and committed.
+> `platform_config.ecourts_harvest` is ON via the audited path.
+>
+> **Point 2 (a separate written Supreme Court grant) and point 3 (does
+> `CORPUS_ACQUISITION_QUEUE.md` 4b re-open) are NOT decided by this and remain
+> HELD.** `docs/SCI_AUTHORISATION.md` and every other SCI-related file in the
+> held set below are untouched and still contested. `SCI_AUTHORISATION_STATE =
+> UNCHANGED`. The non-eCourts, non-SCI documentation files in the held set stay
+> dirty pending their own resolution.
 
 **What is sitting uncommitted in the working tree.** A coherent, well-argued
 rewrite of Lawmind's source-authorization narrative, spanning fifteen files. It

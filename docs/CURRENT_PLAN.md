@@ -95,6 +95,11 @@ throughout.
 
 **What is deliberately still dirty.** The eCourts/SCI authorization-narrative
 rewrite (15 files) is held for the founder — `FOUNDER_QUEUE.md` **FQ-LCC-R10-1**.
+**Update 29 Aug 2026:** the founder settled the eCourts scope half of
+FQ-LCC-R10-1 (and all of FQ-ECOURTS-ACTOR). `CLAUDE.md` §6/§6a,
+`docs/ECOURTS_AUTHORISATION.md` and the FQ/plan files were moved and committed;
+`platform_config.ecourts_harvest` is ON via the audited path. The SCI half
+(`docs/SCI_AUTHORISATION.md` et al.) and the remaining held docs stay dirty.
 `DOMAIN_TRUTH.md` and `STATUTE_MAPPING_SOURCES.md` are held pending an advocate's
 sign-off — **FQ-LCC-R10-2**. `apps/admin/lib/api.ts` is RCC's scope — **FQ-LCC-R10-3**.
 NEW2 was asked twice on the bus (1493, 1498) to ACK its paths and is DEAD; the

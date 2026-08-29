@@ -53,12 +53,14 @@ LAWMIND NON-NEGOTIABLE:
   grant expressly permits bypass, so the old blanket rule is withdrawn. What
   replaces it is narrower, not looser. Bypass is permitted ONLY while the grant is
   non-null and unexpired (it expires with the grant, automatically, Jan 2029), ONLY
-  in `services/api/src/court/ecourts.ts`, and ONLY for bulk cause-list harvesting.
-  Every bypassed request still writes the fetch ledger and still passes the rate
-  limiter. TIER 3 IS UNCHANGED: per-citation confirmation is a human solving the
-  CAPTCHA and vouching, `citations/verify.ts` holds no HTTP client, and a test
-  asserts it. Bulk resolution writes `verified_by_source = 'ecourts_bulk'`, never
-  `'ecourts'` — a machine may not wear a human's badge. CLAUDE.md §6.
+  in `services/api/src/court/ecourts.ts`, and ONLY for the enumerated eCourts grant
+  data types in `services/api/src/court/authorisation.ts` (founder decision
+  29 Aug 2026, CLAUDE.md §6a). Every bypassed request still writes the fetch ledger
+  and passes the rate limiter. TIER 3 IS UNCHANGED: per-citation confirmation is a
+  human solving the CAPTCHA and vouching, `citations/verify.ts` holds no HTTP
+  client, and a test asserts it. Automated resolution writes `verified_by_source =
+  'ecourts_bulk'`, never `'ecourts'` — a machine may not wear a human's badge.
+  CLAUDE.md §6/§6a.
 - Route by DATA SENSITIVITY not task difficulty. Public = DeepSeek V4 Flash.
   Sensitive = pseudonymise first, then Claude. Ambiguity resolves to sensitive,
   never to public. ONE DOCUMENT PER CALL — mixing case files cross-contaminates
