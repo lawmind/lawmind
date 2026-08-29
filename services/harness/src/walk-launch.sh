@@ -17,7 +17,22 @@
 #
 # This file exists so that command has no quoting in it. An inline `bash -lc '...'`
 # with two redirections and an `exec` silently did nothing.
+#
+# THE SNAPSHOT IS A FILE, NOT A TASK ARGUMENT — 28 Aug 2026.
+#
+# The walk now runs from a Windows scheduled task, and a task's argument list is
+# not somewhere anyone looks when they want to know which population is being
+# walked. `docs/ai/new1-tier-a/.snapshot.env` is: it is read on every start, it
+# survives a reboot, and `git status` shows when it changes. Absent, everything
+# below defaults to the v1 generation exactly as before.
 set -u
 ROOT="/c/Users/Xerxus/Documents/Lawmind"
 cd "$ROOT/services/harness" || exit 1
+SNAPSHOT_ENV="$ROOT/docs/ai/new1-tier-a/.snapshot.env"
+if [ -f "$SNAPSHOT_ENV" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "$SNAPSHOT_ENV"
+  set +a
+fi
 exec bash src/stage-runner.sh >> "$ROOT/docs/ai/new1-tier-a/stage-runner.log" 2>&1

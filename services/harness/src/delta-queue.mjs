@@ -80,9 +80,34 @@ function note(rec) {
   console.log(rec.at + '  ' + rec.kind + '  ' + JSON.stringify({ ...rec, kind: undefined, at: undefined }));
 }
 
-async function stageRows() {
-  const [r] = await sql`SELECT count(*)::bigint AS n FROM new1_doc_vector_stage`;
+/**
+ * THE EVIDENCE GATE COUNTS THIS PASS OWN IDS, NOT THE TABLE — 29 Aug 2026.
+ *
+ * It used to be `count(*) FROM new1_doc_vector_stage` before and after, and the
+ * difference was the proof that the pass produced output. That was sound while
+ * this was the only writer. It no longer is: the coarse walk inserts into the
+ * same table continuously at thousands of rows an hour, so a whole-table delta
+ * is positive whatever this pass did or did not do. The gate could only ever
+ * have produced a FALSE PASS, never a false failure, which is the direction
+ * that matters — it would advance the watermark over rows it never embedded,
+ * and the hole would stay invisible until a full reconciliation.
+ *
+ * Counting the manifest OWN ids is exact under any concurrency, and it is what
+ * the docstring above always meant by "the row delta is the evidence".
+ */
+async function stagedAmong(ids) {
+  if (ids.length === 0) return 0;
+  const [r] = await sql`
+    SELECT count(*)::bigint AS n FROM new1_doc_vector_stage
+     WHERE judgment_id = ANY(${ids}::uuid[])`;
   return Number(r.n);
+}
+
+function idsInBatchFile(path) {
+  return readFileSync(path, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim())
+    .map((l) => JSON.parse(l).judgmentId);
 }
 
 async function pass() {
@@ -119,7 +144,6 @@ async function pass() {
   }
 
   const label = 'queue-' + at.replace(/[:.]/g, '-');
-  const before = await stageRows();
 
   const args = ['services/harness/src/delta-manifest.mjs', '--since', from, '--label', label, '--out', OUT_DIR];
   if (DRY_RUN) args.push('--dry-run');
@@ -140,6 +164,8 @@ async function pass() {
   }
 
   const batchFile = new URL(OUT_DIR + '/delta-' + label + '.jsonl', ROOT).pathname.replace(/^\//, '');
+  const batchIds = idsInBatchFile(batchFile);
+  const before = await stagedAmong(batchIds);
   // ABSOLUTE path to the repo-root tsx. A relative `node_modules/tsx/dist/cli.mjs`
   // resolves against `services/harness/`, where tsx is NOT installed — pnpm hoists
   // it to the root. That spelling exits with MODULE_NOT_FOUND, and it would have
@@ -159,14 +185,14 @@ async function pass() {
     },
   );
 
-  const after = await stageRows();
+  const after = await stagedAmong(batchIds);
   const delta = after - before;
 
   // THE EVIDENCE GATE. An exit code is a claim; the row delta is the proof.
   if (delta <= 0) {
     note({ kind: 'queue_NO_OUTPUT', at, from, pending, emitted: manifest.emitted,
-           rowsBefore: before, rowsAfter: after,
-           why: 'the embed exited 0 and the durable count did not move — watermark NOT advanced, the same window is retried next pass' });
+           manifestIds: batchIds.length, stagedAmongThemBefore: before, stagedAmongThemAfter: after,
+           why: 'the embed exited 0 and not one id this pass manifested became staged — watermark NOT advanced, the same window is retried next pass' });
     return { pending, embedded: 0, noOutput: true };
   }
 

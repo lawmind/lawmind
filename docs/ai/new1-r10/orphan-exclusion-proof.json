@@ -1,0 +1,43 @@
+{
+  "kind": "new1_orphan_exclusion_proof",
+  "at": "2026-08-28T02:35:43.592Z",
+  "steps": [
+    {
+      "probe_mix": {
+        "plantedRows": 10000,
+        "total": 50000,
+        "in_snapshot": 40000,
+        "planted_orphans": 10000
+      }
+    },
+    {
+      "build": {
+        "seconds": 32.3
+      }
+    },
+    {
+      "index_identity": {
+        "index_tuples": "40000",
+        "index_size": "104 MB",
+        "expected_tuples": 40000,
+        "matches": true
+      }
+    },
+    {
+      "retrieval": {
+        "probeQueries": 40,
+        "rowsReturned": 2000,
+        "orphansReturned": 0,
+        "plansUsingPartialIndex": 40
+      }
+    },
+    {
+      "non_vacuity": {
+        "queriesWithoutPredicate": 10,
+        "orphansFoundWithoutPredicate": 358,
+        "note": "a seq scan over the same table returns the planted orphans; the partial index returns none"
+      }
+    }
+  ],
+  "verdict": "ORPHANS_PROVABLY_EXCLUDED"
+}

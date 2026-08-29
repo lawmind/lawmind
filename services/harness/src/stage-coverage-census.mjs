@@ -33,9 +33,28 @@ const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
   .match(/^DATABASE_URL=(.*)$/m)[1]
   .trim();
 
-const DIR = new URL('../../../docs/ai/embedding-manifests/document-vectors/', import.meta.url);
+/**
+ * SNAPSHOT IDENTITY, 28 Aug 2026 — the manifest directory is a PARAMETER now.
+ *
+ * A worklist only means anything against the manifest generation it was measured
+ * over. `document-vectors/` was generated under definition `e76879ab6bbcd452`,
+ * `document-vectors-v2/` under the deployed `5b5d02384b46c96c`. Censusing one
+ * generation and walking the other mixes two populations and nothing in either
+ * artifact would say so — so the input directory and the output file move
+ * together, by environment, with the v1 defaults preserved.
+ *
+ * `INCLUDE_VALUE_BATCHES=0` drops `tier-a-value-batch-*` from the census. Those
+ * files belong to the v1 generation and the runner already filters them out of
+ * the worklist, so counting them into a v2 census only inflates its denominator.
+ */
+const MANIFEST_DIR = process.env.MANIFEST_DIR ?? 'document-vectors';
+const DIR = new URL(`../../../docs/ai/embedding-manifests/${MANIFEST_DIR}/`, import.meta.url);
 const VALUE_DIR = new URL('../../../docs/ai/new1-tier-a/', import.meta.url);
-const OUT = new URL('../../../docs/ai/new1-tier-a/stage-coverage.json', import.meta.url);
+const INCLUDE_VALUE_BATCHES = (process.env.INCLUDE_VALUE_BATCHES ?? '1') === '1';
+const OUT = new URL(
+  `../../../docs/ai/new1-tier-a/${process.env.COVERAGE_OUT ?? 'stage-coverage.json'}`,
+  import.meta.url,
+);
 
 /**
  * A batch is COMPLETE when every id it names is staged — but "every" is too
@@ -45,6 +64,19 @@ const OUT = new URL('../../../docs/ai/new1-tier-a/stage-coverage.json', import.m
  * cannot hide a large absolute hole behind a small ratio.
  */
 const COMPLETE_TOLERANCE = Number(process.env.COMPLETE_TOLERANCE ?? 25);
+
+/**
+ * The census NAMES the generation it measured. A worklist with no definition
+ * hash in it cannot be checked against the walk that consumes it, and
+ * `doc-vector-embed.mjs` refuses a definition it has not been reconciled with —
+ * so the two must be comparable without reading a directory name and trusting it.
+ */
+const manifestIndex = JSON.parse(readFileSync(new URL('manifest-tier-a.json', DIR), 'utf8'));
+const manifestDefinitionHash = manifestIndex.definitionHash ?? null;
+const manifestHash = manifestIndex.manifestHash ?? null;
+console.log(
+  `manifest ${MANIFEST_DIR}  definition ${manifestDefinitionHash}  batches ${manifestIndex.batches}  rows ${manifestIndex.rowsEmitted}`,
+);
 
 const sql = postgres(url, { ssl: false, max: 1, onnotice: () => {} });
 
@@ -70,7 +102,7 @@ console.log(
 );
 
 const files = [
-  ...readdirSync(VALUE_DIR)
+  ...(INCLUDE_VALUE_BATCHES ? readdirSync(VALUE_DIR) : [])
     .filter((f) => /^tier-a-value-batch-\d+\.jsonl$/.test(f))
     .sort()
     .map((f) => ({ name: f, path: new URL(f, VALUE_DIR), kind: 'value' })),
@@ -119,6 +151,10 @@ const worklist = [...partial, ...untouched].sort((a, b) => a.file.localeCompare(
 const summary = {
   kind: 'new1_stage_coverage_census',
   measuredAt: new Date().toISOString(),
+  manifestDir: MANIFEST_DIR,
+  definitionHash: manifestDefinitionHash,
+  manifestHash,
+  includeValueBatches: INCLUDE_VALUE_BATCHES,
   completeTolerance: COMPLETE_TOLERANCE,
   stageTableRows: stagedOnly,
   quarantinedRows: quarantined.length,

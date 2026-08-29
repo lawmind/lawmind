@@ -1,0 +1,65 @@
+{
+  "kind": "new1_tranche_reach_delta",
+  "measuredAt": "2026-08-28T02:47:18.651Z",
+  "gate": "search.semantic.broad = EXPERIMENTAL_INTERNAL — no user request reaches the dense arm; this is a harness measurement only",
+  "whatThisIs": "a REACH CEILING per query family, not a ranking result",
+  "corpusReach": {
+    "judgmentChunksDocuments": 40161,
+    "trancheDocuments": 81720,
+    "unionDocuments": 111874,
+    "multiple": 2.786
+  },
+  "goldRows": 684,
+  "goldDropped": 66,
+  "distinctGoldAuthorities": 228,
+  "byFamily": {
+    "proposition": {
+      "queries": 228,
+      "distinctAuthorities": 228,
+      "baselineReachable": 0,
+      "trancheReachable": 1,
+      "unionReachable": 1,
+      "newlyReachable": 1,
+      "unreachableInBoth": 227,
+      "notInCorpus": 0,
+      "baselinePct": 0,
+      "unionPct": 0.44,
+      "coarseStagedToday": 177,
+      "inCoarseSnapshot": 186,
+      "reachableWhenCoarseWalkCompletes": 186,
+      "reachableWhenCoarseWalkCompletesPct": 81.58
+    },
+    "exact_citation": {
+      "queries": 228,
+      "distinctAuthorities": 228,
+      "baselineReachable": 0,
+      "trancheReachable": 1,
+      "unionReachable": 1,
+      "newlyReachable": 1,
+      "unreachableInBoth": 227,
+      "notInCorpus": 0,
+      "baselinePct": 0,
+      "unionPct": 0.44,
+      "coarseStagedToday": 177,
+      "inCoarseSnapshot": 186,
+      "reachableWhenCoarseWalkCompletes": 186,
+      "reachableWhenCoarseWalkCompletesPct": 81.58
+    },
+    "case_title": {
+      "queries": 228,
+      "distinctAuthorities": 228,
+      "baselineReachable": 0,
+      "trancheReachable": 1,
+      "unionReachable": 1,
+      "newlyReachable": 1,
+      "unreachableInBoth": 227,
+      "notInCorpus": 0,
+      "baselinePct": 0,
+      "unionPct": 0.44,
+      "coarseStagedToday": 177,
+      "inCoarseSnapshot": 186,
+      "reachableWhenCoarseWalkCompletes": 186,
+      "reachableWhenCoarseWalkCompletesPct": 81.58
+    }
+  }
+}

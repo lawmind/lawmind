@@ -26,7 +26,7 @@
  * documents already staged are skipped by the same key.
  */
 import postgres from 'postgres';
-import { readFileSync, appendFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, appendFileSync, writeFileSync, unlinkSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
 const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
@@ -139,6 +139,84 @@ const REFUSED_CLASSES = new Set(['procedural_disposal', 'reference_stub', 'decid
  * pin, not in a bus message.
  */
 const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '5b5d02384b46c96c';
+
+/**
+ * ONE EMBEDDER ON THE GPU AT A TIME — 29 Aug 2026.
+ *
+ * `services/embed/gpu/server.py` is a `ThreadingHTTPServer`: two concurrent
+ * POSTs get two threads and both run ONNX inference. Observed VRAM with ONE
+ * consumer peaks at 7,514 MiB of 8,188, so a second concurrent batch does not
+ * queue behind the first — it competes for memory that is not there, and what
+ * the caller sees is `fetch failed`. That is how batch lcc-00010 died three
+ * times on 28 Aug while an index build had the rest of the box.
+ *
+ * This matters now and did not before: the coarse walk and `delta-queue.mjs`
+ * are both continuous, and both reach the GPU through THIS file. So the token
+ * lives here rather than in either caller — a lock that one of two callers
+ * honours is not a lock.
+ *
+ * First-come-first-served with a bounded wait, NOT a refusal. The delta queue
+ * only embeds when NEW2 has actually shipped rows, and when it does its batch
+ * is minutes long against the walk's twenty; whoever arrives second waits and
+ * then runs. A refusal would starve the queue permanently, because the walk is
+ * always running.
+ *
+ * A stale lock is one whose pid is gone, and that is CHECKED rather than
+ * assumed: `pgrep` does not exist on this box, `process.kill(pid, 0)` does.
+ */
+const GPU_LOCK = new URL('../../../.agents/logs/new1-gpu-embed.lock', import.meta.url);
+const GPU_LOCK_WAIT_MS = Number(process.env.GPU_LOCK_WAIT_MS ?? 30 * 60 * 1000);
+
+function lockHolder() {
+  try {
+    return JSON.parse(readFileSync(GPU_LOCK, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+function holderAlive(h) {
+  if (!h?.pid) return false;
+  try {
+    process.kill(h.pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+async function acquireGpuLock() {
+  const deadline = Date.now() + GPU_LOCK_WAIT_MS;
+  for (;;) {
+    try {
+      writeFileSync(
+        GPU_LOCK,
+        JSON.stringify({ pid: process.pid, batchFile: BATCH_FILE, at: new Date().toISOString() }) + '\n',
+        { flag: 'wx' },
+      );
+      return true;
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+      const h = lockHolder();
+      if (!holderAlive(h)) {
+        log('GPU lock held by dead pid ' + (h?.pid ?? '?') + ' — clearing');
+        try { unlinkSync(GPU_LOCK); } catch {}
+        continue;
+      }
+      if (Date.now() >= deadline) {
+        throw new Error(
+          'GPU embed lock held by live pid ' + h.pid + ' (' + h.batchFile + ' since ' + h.at + ') for longer than ' +
+            Math.round(GPU_LOCK_WAIT_MS / 1000) + 's. Refusing to run two embedders against one 8 GB GPU.',
+        );
+      }
+      await new Promise((r) => setTimeout(r, 5000));
+    }
+  }
+}
+function releaseGpuLock() {
+  const h = lockHolder();
+  if (h?.pid === process.pid) {
+    try { unlinkSync(GPU_LOCK); } catch {}
+  }
+}
 
 const log = (m) => {
   const line = new Date().toISOString() + '  ' + m + '\n';
@@ -293,6 +371,8 @@ let scriptQualityVerdicts = null;
 
 try {
   log('STAGE START ' + BATCH_FILE + '  rows ' + rows.length + '  headChars ' + HEAD_CHARS);
+  await acquireGpuLock();
+  log('GPU lock acquired by pid ' + process.pid);
   await assertContractHash();
   scriptQualityVerdicts = await dataIdentity();
   await sql`
@@ -321,6 +401,8 @@ try {
   let skippedTextUnsafe = 0;
   const byRefusedClass = new Map();
   let skippedAlreadyStaged = 0;
+  /** Exactly the ids THIS run wrote — the population the summary describes. */
+  const insertedIds = [];
   let inserted = 0;
   let tokensTotal = 0;
   const t0 = Date.now();
@@ -451,6 +533,7 @@ try {
       ON CONFLICT (judgment_id) DO NOTHING
     `;
     inserted += res.count ?? values.length;
+    for (const v of values) insertedIds.push(v.judgment_id);
     done += page.length;
     const secs = (Date.now() - t0) / 1000;
     log(
@@ -467,10 +550,49 @@ try {
   }
 
   const [{ n }] = await sql`SELECT count(*)::int AS n FROM new1_doc_vector_stage`;
-  const [{ bad }] = await sql`
-    SELECT count(*)::int AS bad FROM new1_doc_vector_stage
-    WHERE abs(1 - (embedding <#> embedding) * -1) > 0.01
-  `;
+  /**
+   * THE NORM CHECK IS PER RUN, 28 Aug 2026, and this is a change of MEANING.
+   *
+   * It used to scan the whole stage table. Measured at 2,363,367 rows,
+   * `EXPLAIN ANALYZE` reports **63,575 ms** over 4 parallel workers and 20.6M
+   * buffers — because `embedding <#> embedding` detoasts every vector in the
+   * table, all 13 GB of it, to certify the 431 vectors one batch just wrote. It
+   * runs once per batch and grows LINEARLY with the table, so at the snapshot's
+   * 7,654,179 rows it is ~206 s a batch. Over the ~703 batches left that is
+   * between 12.4 hours (if the table never grew) and 26.3 hours (linear mean
+   * across the growth) of GPU idling behind a scan, plus the I/O it takes from
+   * the walk and from any index build sharing the box. A RANGE, because which
+   * batch lands where on the growth curve is not knowable in advance and a
+   * single figure here would be a guess wearing a measurement's clothes.
+   *
+   * The field sits in a record called `new1_doc_vector_stage_run` and is named
+   * for what that RUN produced, so scoping it to this run's ids is the honest
+   * reading rather than a weakened one — and per vector it is STRICTER, because
+   * an exact id list cannot be satisfied by a row somebody else wrote.
+   *
+   * What is genuinely lost is an incidental corpus-wide sweep: this no longer
+   * notices a vector written by an EARLIER run going bad. That was never what
+   * the field claimed and it was never scheduled; it is now available
+   * deliberately under `FULL_NORM_CHECK=1` rather than accidentally 766 times.
+   * The keys are renamed so a new summary can never be read against an old one
+   * as though the two answered the same question.
+   */
+  const [{ bad }] = insertedIds.length
+    ? await sql`
+        SELECT count(*)::int AS bad FROM new1_doc_vector_stage
+        WHERE judgment_id = ANY(${insertedIds}::uuid[])
+          AND abs(1 - (embedding <#> embedding) * -1) > 0.01
+      `
+    : [{ bad: 0 }];
+  const badCorpus =
+    process.env.FULL_NORM_CHECK === '1'
+      ? (
+          await sql`
+            SELECT count(*)::int AS bad FROM new1_doc_vector_stage
+            WHERE abs(1 - (embedding <#> embedding) * -1) > 0.01
+          `
+        )[0].bad
+      : null;
   const summary = {
     kind: 'new1_doc_vector_stage_run',
     scriptQualityVerdictsAtStart: scriptQualityVerdicts,
@@ -484,7 +606,8 @@ try {
     skippedByRefusedClass: Object.fromEntries(byRefusedClass),
     skippedAlreadyStaged,
     tableRows: n,
-    nonUnitNormVectors: bad,
+    nonUnitNormVectorsThisRun: bad,
+    nonUnitNormVectorsCorpus: badCorpus,
     tokens: tokensTotal,
     elapsedSeconds: (Date.now() - t0) / 1000,
     tokensPerSecond: tokensTotal / Math.max((Date.now() - t0) / 1000, 0.001),
@@ -500,5 +623,6 @@ try {
   log('FAILED ' + e.message);
   process.exitCode = 1;
 } finally {
+  releaseGpuLock();
   await sql.end({ timeout: 10 });
 }

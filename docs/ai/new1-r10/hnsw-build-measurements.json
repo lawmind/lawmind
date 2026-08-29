@@ -1,0 +1,65 @@
+{
+  "kind": "new1_hnsw_build_measurements",
+  "at": "2026-08-28T03:13:02.801Z",
+  "m": 16,
+  "efConstruction": 64,
+  "type": "halfvec(1024) expression over vector(1024)",
+  "results": [
+    {
+      "rows": 250000,
+      "maintenanceWorkMem": "512MB",
+      "seconds": 188.3,
+      "rowsPerSecond": 1328,
+      "indexBytes": 682647552,
+      "indexMB": 683,
+      "bytesPerVector": 2731,
+      "spilledToDisk": true,
+      "notices": [
+        "hnsw graph no longer fits into maintenance_work_mem after 195122 tuples"
+      ],
+      "otherActiveBackendsBefore": 6,
+      "otherActiveBackendsAfter": 10
+    },
+    {
+      "rows": 250000,
+      "maintenanceWorkMem": "4GB",
+      "seconds": 94.4,
+      "rowsPerSecond": 2648,
+      "indexBytes": 682647552,
+      "indexMB": 683,
+      "bytesPerVector": 2731,
+      "spilledToDisk": false,
+      "notices": [],
+      "otherActiveBackendsBefore": 10,
+      "otherActiveBackendsAfter": 7
+    },
+    {
+      "rows": 1000000,
+      "maintenanceWorkMem": "512MB",
+      "seconds": 1367.4,
+      "rowsPerSecond": 731,
+      "indexBytes": 2729918464,
+      "indexMB": 2730,
+      "bytesPerVector": 2730,
+      "spilledToDisk": true,
+      "notices": [
+        "hnsw graph no longer fits into maintenance_work_mem after 195110 tuples"
+      ],
+      "otherActiveBackendsBefore": 1,
+      "otherActiveBackendsAfter": 0
+    },
+    {
+      "rows": 1000000,
+      "maintenanceWorkMem": "4GB",
+      "seconds": 317.2,
+      "rowsPerSecond": 3153,
+      "indexBytes": 2729910272,
+      "indexMB": 2730,
+      "bytesPerVector": 2730,
+      "spilledToDisk": false,
+      "notices": [],
+      "otherActiveBackendsBefore": 0,
+      "otherActiveBackendsAfter": 0
+    }
+  ]
+}

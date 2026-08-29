@@ -51,11 +51,23 @@ import { execFileSync } from 'node:child_process';
 const ROOT = new URL('../../../', import.meta.url);
 const url = readFileSync(new URL('.env', ROOT), 'utf8').match(/^DATABASE_URL=(.*)$/m)[1].trim();
 
-const LEDGER = new URL('docs/ai/new1-r9/coarse-walk-telemetry.jsonl', ROOT);
+/**
+ * The ledger and the coverage file are per-SNAPSHOT, 28 Aug 2026.
+ *
+ * `eligibleTotal` and therefore every remaining/ETA number in this ledger are
+ * read straight out of the coverage census. Point the telemetry at one snapshot
+ * while the walk runs another and the ledger reports a percentage of the wrong
+ * denominator — which is the exact class of error this file exists to catch, so
+ * it may not be capable of committing it. Defaults are R9's, unchanged.
+ */
+const LEDGER = new URL(process.env.TELEMETRY_LEDGER ?? 'docs/ai/new1-r9/coarse-walk-telemetry.jsonl', ROOT);
 const ALERT = new URL('docs/ai/new1-r9/WALK_ALERT.json', ROOT);
 const RUNNER_LOG = new URL('docs/ai/new1-tier-a/stage-runner.log', ROOT);
 const EMBED_LOG = new URL('docs/ai/new1-tier-a/stage-embed.log', ROOT);
-const COVERAGE = new URL('docs/ai/new1-tier-a/stage-coverage.json', ROOT);
+const COVERAGE = new URL(
+  `docs/ai/new1-tier-a/${process.env.COVERAGE_FILE ?? 'stage-coverage.json'}`,
+  ROOT,
+);
 
 const INTERVAL_MS = Number(process.env.TELEMETRY_INTERVAL_MS ?? 15 * 60 * 1000);
 const MAX_SAMPLES = Number(process.env.TELEMETRY_MAX_SAMPLES ?? 0); // 0 = forever

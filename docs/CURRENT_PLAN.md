@@ -123,10 +123,15 @@ refuses. Host-loss rehearsal at real scale still not run.
 **The v2 snapshot re-cut every batch boundary and 0 of 766 files read complete.**
 Not a regression — v2 cuts 7.65M rows into 766 batches where v1 cut 8.86M into
 886, so no v2 file is any v1 file. The R9 tolerance of 2,000 was raised to hide a
-permanent ~1,200-row refusal residue per batch and **that residue is now gone,
-measured rather than predicted**: of all 5,780,887 unstaged snapshot rows, 0 are
-outside the eligibility view, 0 are `UNSAFE_VERIFIED`, 0 are refused-class-and-
-not-cited, 0 lack text. Tolerance is back to **25**. The walk confirmed it
+permanent ~1,200-row refusal residue per batch and **that residue is measured
+gone**: across all 5,780,887 unstaged snapshot rows, 0 are `UNSAFE_VERIFIED` and
+0 are refused-class-and-not-cited -- the two predicates the v1 residue was
+actually made of (~850 and ~350 a batch), and both PROVEN ABLE TO FIRE
+elsewhere: 1,792,868 `UNSAFE_VERIFIED` corpus-wide and 2,893 refused-class in a
+200,000-row orphan sample. A third check I first quoted, "outside the
+eligibility view", is **vacuous and struck**: that view holds one row per
+judgment, so it could never fire. Tolerance is back to **25**. The walk
+confirmed it
 independently within the hour — v1's last batch reported `ineligible 340 ·
 textUnsafe 825`, v2's first reported `0 · 0 · 0 · 0`.
 
@@ -134,7 +139,7 @@ textUnsafe 825`, v2's first reported `0 · 0 · 0 · 0`.
 
 | defect | measurement | fix |
 | --- | --- | --- |
-| a corpus-wide norm scan after **every** batch | `EXPLAIN ANALYZE` **63,575 ms**, 20.6M buffers, growing linearly → ~19 h of GPU idle across the run | scoped to the ids that run inserted — stricter per vector, not weaker; corpus sweep now `FULL_NORM_CHECK=1` |
+| a corpus-wide norm scan after **every** batch | `EXPLAIN ANALYZE` **63,575 ms**, 20.6M buffers, growing linearly → **12.4–26.3 h** of GPU idle across the run | scoped to the ids that run inserted — stricter per vector, not weaker; corpus sweep now `FULL_NORM_CHECK=1` |
 | every restart re-walked finished batches | ~64 min of guaranteed zero output per restart at batch 55, growing | `stage-runner.sh` re-censuses when coverage is >45 min old; a census failure walks the stale file anyway — slow beats stopped |
 | `\| tail -3` hid the only diagnostic | a postgres.js NOTICE dump is >3 lines, so `fetch failed` was pushed out and the log recorded `routine: 'transformCreateStmt'` | `tail -20` |
 
