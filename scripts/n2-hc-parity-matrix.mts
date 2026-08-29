@@ -102,6 +102,7 @@
  *   services/ingest/node_modules/.bin/tsx scripts/n2-hc-parity-matrix.mts \
  *     [--upstream .tmp-new2/upstream] [--out docs/ai/new2-r10/parity-matrix.json]
  */
+import { createHash } from 'node:crypto';
 import { createReadStream, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -120,6 +121,10 @@ function arg(name: string, dflt: string): string {
 const UP = join(ROOT, arg('upstream', '.tmp-new2/upstream'));
 const OUT = join(ROOT, arg('out', 'docs/ai/new2-r10/parity-matrix.json'));
 const GAPS_OUT = join(ROOT, arg('gaps', '.tmp-new2/parity-gaps.ndjson'));
+const DEFINITION_PATH = join(ROOT, 'docs/ai/new2-r10/hc-parity-definition-v2.json');
+const DEFINITION_BYTES = readFileSync(DEFINITION_PATH);
+const DEFINITION = JSON.parse(DEFINITION_BYTES.toString('utf8')) as { definitionVersion: string };
+const DEFINITION_SHA256 = createHash('sha256').update(DEFINITION_BYTES).digest('hex');
 
 function databaseUrl(): string {
   if (process.env['DATABASE_URL']) return process.env['DATABASE_URL']!;
@@ -174,7 +179,8 @@ class HashSet {
     const view = this.buf.subarray(0, this.n);
     view.sort();
     let w = 0;
-    for (let i = 0; i < view.length; i++) if (i === 0 || view[i] !== view[i - 1]) view[w++] = view[i]!;
+    for (let i = 0; i < view.length; i++)
+      if (i === 0 || view[i] !== view[i - 1]) view[w++] = view[i]!;
     this.n = w;
     this.sorted = true;
   }
@@ -203,11 +209,17 @@ type Cell = {
   upstreamCases: number;
   upstreamRows: number;
   held: number;
-  terminal: number;
-  retryExhausted: number;
+  sourceUnavailableCurrent: number;
+  policyRefused: number;
+  actionableFailures: number;
 };
 
-const sql = postgres(databaseUrl(), { max: 2, idle_timeout: 30, connect_timeout: 60, onnotice: () => {} });
+const sql = postgres(databaseUrl(), {
+  max: 2,
+  idle_timeout: 30,
+  connect_timeout: 60,
+  onnotice: () => {},
+});
 
 try {
   const takenAt = new Date().toISOString();
@@ -235,6 +247,33 @@ try {
     `[parity] held ${heldRows} rows -> ${held.size} distinct hashes in ${((Date.now() - tHeld) / 1000).toFixed(0)}s`,
   );
 
+  console.log('[parity] streaming retained official source artifacts ...');
+  const sourceArtifacts = new HashSet(200_000);
+  const imageOnly = new HashSet(200_000);
+  const policyRefused = new HashSet(10_000);
+  let artifactRows = 0;
+  {
+    const cursor = sql<{ u: string; s: string; t: string | null; held: boolean }[]>`
+      SELECT source_url AS u, observation_state AS s, text_state AS t,
+             (observation_state IN ('verified_judgment','duplicate_linked')
+              AND (raw_bytes IS NOT NULL OR storage_key IS NOT NULL)) AS held
+        FROM official_source_artifact
+       WHERE source = 'aws_hc' AND artifact_role = 'judgment_pdf'
+       ORDER BY observed_at, id`.cursor(10_000);
+    for await (const chunk of cursor) {
+      for (const r of chunk) {
+        const h = hash64(r.u);
+        if (r.held) sourceArtifacts.add(h);
+        if (r.held && r.t === 'IMAGE_ONLY_OCR_PENDING') imageOnly.add(h);
+        if (r.s === 'refused_nonjudgment') policyRefused.add(h);
+        artifactRows++;
+      }
+    }
+  }
+  sourceArtifacts.finish();
+  imageOnly.finish();
+  policyRefused.finish();
+
   console.log('[parity] streaming hc_ingest_ledger ...');
   /**
    * The outcomes that are a claim ABOUT THE SOURCE. Everything else is a claim
@@ -254,13 +293,17 @@ try {
   let ledgerRows = 0;
   const ledgerCensus: Record<string, number> = {};
   {
-    const cursor = sql<{ u: string; o: string; p: boolean }[]>`
-      SELECT source_url AS u, outcome AS o, permanent AS p FROM hc_ingest_ledger`.cursor(50_000);
+    const cursor = sql<{ u: string; o: string; p: boolean; current: boolean }[]>`
+      SELECT source_url AS u, outcome AS o, permanent AS p,
+             last_attempted_at >= now() - interval '90 days' AS current
+        FROM hc_ingest_ledger`.cursor(50_000);
     for await (const chunk of cursor) {
       for (const r of chunk) {
         const key = `${r.o}/${r.p ? 'permanent' : 'open'}`;
         ledgerCensus[key] = (ledgerCensus[key] ?? 0) + 1;
-        (SOURCE_UNAVAILABLE_OUTCOMES.has(r.o) ? terminal : retryExhausted).add(hash64(r.u));
+        (SOURCE_UNAVAILABLE_OUTCOMES.has(r.o) && r.current ? terminal : retryExhausted).add(
+          hash64(r.u),
+        );
         ledgerRows++;
       }
     }
@@ -290,6 +333,10 @@ try {
   const gapWriter: string[] = [];
   let gapsWritten = 0;
   let monthConflicts = 0;
+  let textReadableUpstream = 0;
+  let imageOnlyUpstream = 0;
+  let policyRefusedUpstream = 0;
+  let sourceUnavailableUpstream = 0;
   mkdirSync(dirname(GAPS_OUT), { recursive: true });
   writeFileSync(GAPS_OUT, '');
 
@@ -358,8 +405,9 @@ try {
           upstreamCases: 0,
           upstreamRows: 0,
           held: 0,
-          terminal: 0,
-          retryExhausted: 0,
+          sourceUnavailableCurrent: 0,
+          policyRefused: 0,
+          actionableFailures: 0,
         };
         cells.set(ck, cell);
       }
@@ -373,9 +421,19 @@ try {
     for (const [h, code] of objMonth) {
       const cell = cellFor(monthLabel(code));
       cell.upstreamObjects++;
-      if (held.has(h)) cell.held++;
-      else if (terminal.has(h)) cell.terminal++;
-      else if (retryExhausted.has(h)) cell.retryExhausted++;
+      if (held.has(h)) {
+        cell.held++;
+        textReadableUpstream++;
+      } else if (sourceArtifacts.has(h)) {
+        cell.held++;
+        if (imageOnly.has(h)) imageOnlyUpstream++;
+      } else if (policyRefused.has(h)) {
+        cell.policyRefused++;
+        policyRefusedUpstream++;
+      } else if (terminal.has(h)) {
+        cell.sourceUnavailableCurrent++;
+        sourceUnavailableUpstream++;
+      } else if (retryExhausted.has(h)) cell.actionableFailures++;
       else unaccounted.add(h);
     }
 
@@ -402,7 +460,14 @@ try {
           if (!unaccounted.has(h)) continue;
           unaccounted.delete(h);
           gapWriter.push(
-            JSON.stringify({ court, bench, year, month: monthLabel(objMonth.get(h)!), url, cnr: r.c }),
+            JSON.stringify({
+              court,
+              bench,
+              year,
+              month: monthLabel(objMonth.get(h)!),
+              url,
+              cnr: r.c,
+            }),
           );
           gapsWritten++;
           if (gapWriter.length > 20_000) {
@@ -415,7 +480,9 @@ try {
     }
 
     doneCourts++;
-    console.log(`[parity] ${court} (${doneCourts}/${byCourtPartitions.size}) — ${objMonth.size} distinct objects`);
+    console.log(
+      `[parity] ${court} (${doneCourts}/${byCourtPartitions.size}) — ${objMonth.size} distinct objects`,
+    );
   }
   if (gapWriter.length) writeFileSync(GAPS_OUT, gapWriter.join('\n') + '\n', { flag: 'a' });
 
@@ -433,12 +500,23 @@ try {
     a.court === b.court ? a.month.localeCompare(b.month) : a.court.localeCompare(b.court),
   );
 
-  const pct = (num: number, den: number) => (den === 0 ? null : Number(((num / den) * 100).toFixed(3)));
+  const pct = (num: number, den: number) =>
+    den === 0 ? null : Number(((num / den) * 100).toFixed(3));
   const decorate = (c: Cell & { months?: number }) => ({
     ...c,
-    neverAttempted: c.upstreamObjects - c.held - c.terminal - c.retryExhausted,
+    terminal: c.sourceUnavailableCurrent + c.policyRefused,
+    retryExhausted: c.actionableFailures,
+    neverAttempted:
+      c.upstreamObjects -
+      c.held -
+      c.sourceUnavailableCurrent -
+      c.policyRefused -
+      c.actionableFailures,
     actuallyHeldPct: pct(c.held, c.upstreamObjects),
-    accountedUpstreamPct: pct(c.held + c.terminal, c.upstreamObjects),
+    accountedUpstreamPct: pct(
+      c.held + c.sourceUnavailableCurrent + c.policyRefused,
+      c.upstreamObjects,
+    ),
   });
 
   const byCourt = new Map<string, Cell & { months: number }>();
@@ -452,8 +530,9 @@ try {
       agg.upstreamCases += c.upstreamCases;
       agg.upstreamRows += c.upstreamRows;
       agg.held += c.held;
-      agg.terminal += c.terminal;
-      agg.retryExhausted += c.retryExhausted;
+      agg.sourceUnavailableCurrent += c.sourceUnavailableCurrent;
+      agg.policyRefused += c.policyRefused;
+      agg.actionableFailures += c.actionableFailures;
     }
     agg.months++;
   }
@@ -464,26 +543,43 @@ try {
       upstreamCases: a.upstreamCases + c.upstreamCases,
       upstreamRows: a.upstreamRows + c.upstreamRows,
       held: a.held + c.held,
-      terminal: a.terminal + c.terminal,
-      retryExhausted: a.retryExhausted + c.retryExhausted,
+      sourceUnavailableCurrent: a.sourceUnavailableCurrent + c.sourceUnavailableCurrent,
+      policyRefused: a.policyRefused + c.policyRefused,
+      actionableFailures: a.actionableFailures + c.actionableFailures,
     }),
-    { upstreamObjects: 0, upstreamCases: 0, upstreamRows: 0, held: 0, terminal: 0, retryExhausted: 0 },
+    {
+      upstreamObjects: 0,
+      upstreamCases: 0,
+      upstreamRows: 0,
+      held: 0,
+      sourceUnavailableCurrent: 0,
+      policyRefused: 0,
+      actionableFailures: 0,
+    },
   );
 
   const artifact = {
     artifact: 'NEW2_HC_PARITY_MATRIX_R10',
+    definitionVersion: DEFINITION.definitionVersion,
+    definitionArtifact: 'docs/ai/new2-r10/hc-parity-definition-v2.json',
+    definitionSha256: DEFINITION_SHA256,
     lane: 'NEW2',
     takenAt,
     method: {
-      upstreamIdentity: 'distinct pdfUrlFor(partition, basename(pdf_link)) — the exact string ingest stores',
+      upstreamIdentity:
+        'distinct pdfUrlFor(partition, basename(pdf_link)) — the exact string ingest stores',
       upstreamDedup:
         'upstreamCases = distinct non-blank cnr, reported beside the object count and never used as the accounting denominator',
-      objectMonth: 'each object resolves to the EARLIEST month any upstream row dates it; disagreements counted, not smoothed',
-      terminal:
-        'hc_ingest_ledger rows whose OUTCOME is a claim about the source — pdf_absent, no_title, no_decision_date, unparseable_date, no_pdf_link, test_fixture_bench. NOT permanent = true, which is a retry-budget flag: 410 of 410 sampled no_text objects marked permanent are live real PDFs.',
-      retryExhausted:
-        'no_text / pdf_failed / pdf_timeout / pdf_unavailable / pdf_missing, permanent or not — the artifact is upstream and we do not hold it. Ours, never folded into accounted_upstream.',
-      neverAttempted: 'upstream − held − terminal − retryExhausted',
+      objectMonth:
+        'each object resolves to the EARLIEST month any upstream row dates it; disagreements counted, not smoothed',
+      sourceUnavailableCurrent:
+        'hc_ingest_ledger rows whose OUTCOME is a claim about the source and whose direct check is inside the 90-day window — pdf_absent, no_title, no_decision_date, unparseable_date, no_pdf_link, test_fixture_bench.',
+      policyRefused:
+        'explicit refused_nonjudgment official-source evidence only; separately counted and never reported as source unavailable.',
+      actionableFailures:
+        'no_text / pdf_failed / pdf_timeout / pdf_unavailable / pdf_missing, permanent or not, unless a canonical row or retained source artifact now holds the object.',
+      neverAttempted:
+        'upstream − sourceArtifactHeld − sourceUnavailableCurrent − policyRefused − actionableFailures',
       ledgerCensus,
       fixturesExcluded: 'bench=testcase partitions are not walked and not counted',
       hashing:
@@ -492,17 +588,44 @@ try {
     },
     totals: {
       ...totals,
-      neverAttempted: totals.upstreamObjects - totals.held - totals.terminal - totals.retryExhausted,
+      terminal: totals.sourceUnavailableCurrent + totals.policyRefused,
+      retryExhausted: totals.actionableFailures,
+      upstreamUnique: totals.upstreamObjects,
+      sourceArtifactHeld: totals.held,
+      textReadable: textReadableUpstream,
+      imageOnlyOcrPending: imageOnlyUpstream,
+      sourceUnavailableCurrent: sourceUnavailableUpstream,
+      policyRefused: policyRefusedUpstream,
+      actionableFailures: totals.actionableFailures,
+      neverAttempted:
+        totals.upstreamObjects -
+        totals.held -
+        totals.sourceUnavailableCurrent -
+        totals.policyRefused -
+        totals.actionableFailures,
+      accountedPercent: pct(
+        totals.held + totals.sourceUnavailableCurrent + totals.policyRefused,
+        totals.upstreamObjects,
+      ),
+      actuallyHeldPercent: pct(totals.held, totals.upstreamObjects),
       actuallyHeldPct: pct(totals.held, totals.upstreamObjects),
-      accountedUpstreamPct: pct(totals.held + totals.terminal, totals.upstreamObjects),
+      accountedUpstreamPct: pct(
+        totals.held + totals.sourceUnavailableCurrent + totals.policyRefused,
+        totals.upstreamObjects,
+      ),
       localHeldRowsScanned: heldRows,
       localHeldDistinctHashes: held.size,
       ledgerRowsScanned: ledgerRows,
+      officialArtifactRowsScanned: artifactRows,
       upstreamPartitions: progress.length,
       objectsWithConflictingMonths: monthConflicts,
     },
     byCourt: [...byCourt.values()]
-      .map((c) => ({ ...decorate(c), courtName: courtNames.get(c.court) ?? null, months: c.months }))
+      .map((c) => ({
+        ...decorate(c),
+        courtName: courtNames.get(c.court) ?? null,
+        months: c.months,
+      }))
       .sort((a, b) => b.neverAttempted - a.neverAttempted),
     courtMonth: all.map((c) => decorate(c)),
     gapList: GAPS_OUT,
@@ -512,13 +635,15 @@ try {
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(artifact, null, 1));
   console.log(
-    `[parity] upstream ${totals.upstreamObjects} · held ${totals.held} · terminal ${totals.terminal} · retry-exhausted-ours ${totals.retryExhausted} · never-attempted ${artifact.totals.neverAttempted}`,
+    `[parity] upstream ${totals.upstreamObjects} · held ${totals.held} · source-unavailable ${totals.sourceUnavailableCurrent} · policy-refused ${totals.policyRefused} · actionable ${totals.actionableFailures} · never-attempted ${artifact.totals.neverAttempted}`,
   );
   console.log(
     `[parity] actually_held ${artifact.totals.actuallyHeldPct}% · accounted_upstream ${artifact.totals.accountedUpstreamPct}%`,
   );
   console.log(`[parity] month conflicts ${monthConflicts}`);
-  console.log(`[parity] wrote ${OUT} (${all.length} court-month cells) and ${gapsWritten} gap rows`);
+  console.log(
+    `[parity] wrote ${OUT} (${all.length} court-month cells) and ${gapsWritten} gap rows`,
+  );
 } finally {
   await sql.end({ timeout: 15 });
 }

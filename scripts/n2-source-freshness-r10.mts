@@ -73,6 +73,7 @@ const WINDOW_MONTHS = Number(arg('window', '12'));
 const OUT = join(ROOT, arg('out', 'docs/ai/new2-r10/source-freshness.json'));
 const PARITY = join(ROOT, arg('parity', 'docs/ai/new2-r10/parity-matrix.json'));
 const FRONTIER = join(ROOT, arg('frontier', 'docs/ai/new2-r10/coverage-frontier.json'));
+const DEFINITION = join(ROOT, 'docs/ai/new2-r10/hc-parity-definition-v2.json');
 
 function databaseUrl(): string {
   if (process.env['DATABASE_URL']) return process.env['DATABASE_URL']!;
@@ -90,29 +91,60 @@ type Cell = {
   upstreamObjects: number;
   upstreamCases: number;
   held: number;
-  terminal: number;
-  retryExhausted: number;
+  sourceUnavailableCurrent: number;
+  policyRefused: number;
+  actionableFailures: number;
   neverAttempted: number;
 };
 
 const days = (a: string, b: string) =>
   Math.round((Date.parse(a + 'T00:00:00Z') - Date.parse(b + 'T00:00:00Z')) / 86_400_000);
 
-const sql = postgres(databaseUrl(), { max: 2, idle_timeout: 20, connect_timeout: 60, onnotice: () => {} });
+const sql = postgres(databaseUrl(), {
+  max: 2,
+  idle_timeout: 20,
+  connect_timeout: 60,
+  onnotice: () => {},
+});
 
 try {
   const takenAt = new Date().toISOString();
-  if (!existsSync(PARITY)) throw new Error(`parity matrix absent at ${PARITY} — run n2-hc-parity-matrix.mts first`);
+  if (!existsSync(PARITY))
+    throw new Error(`parity matrix absent at ${PARITY} — run n2-hc-parity-matrix.mts first`);
   const parity = JSON.parse(readFileSync(PARITY, 'utf8')) as {
+    definitionVersion: string;
     takenAt: string;
     totals: Record<string, number>;
     courtMonth: Cell[];
     byCourt: (Cell & { courtName: string | null })[];
   };
+  const definition = JSON.parse(readFileSync(DEFINITION, 'utf8')) as {
+    definitionVersion?: unknown;
+    freshnessSummary?: { measuredWindowMonths?: unknown };
+  };
+  if (
+    typeof definition.definitionVersion !== 'string' ||
+    parity.definitionVersion !== definition.definitionVersion
+  ) {
+    throw new Error(
+      `parity definition mismatch: parity=${String(parity.definitionVersion)} ` +
+        `definition=${String(definition.definitionVersion)}`,
+    );
+  }
+  if (definition.freshnessSummary?.measuredWindowMonths !== WINDOW_MONTHS) {
+    throw new Error(
+      `freshness window mismatch: requested=${WINDOW_MONTHS} ` +
+        `definition=${String(definition.freshnessSummary?.measuredWindowMonths)}`,
+    );
+  }
   const frontier = existsSync(FRONTIER)
     ? (JSON.parse(readFileSync(FRONTIER, 'utf8')) as {
         corpusWide?: { newestUpstreamDecision?: string; newestLocalDecision?: string };
-        courts?: { court: string; newestUpstreamDecision: string; newestLocalDecision: string | null }[];
+        courts?: {
+          court: string;
+          newestUpstreamDecision: string;
+          newestLocalDecision: string | null;
+        }[];
       })
     : null;
 
@@ -156,7 +188,9 @@ try {
    */
   const SKEW_TOLERANCE_HOURS = 6;
   const frontierTakenAt = (frontier as { takenAt?: string } | null)?.takenAt ?? null;
-  const skewHours = frontierTakenAt ? (Date.parse(takenAt) - Date.parse(frontierTakenAt)) / 3_600_000 : null;
+  const skewHours = frontierTakenAt
+    ? (Date.parse(takenAt) - Date.parse(frontierTakenAt)) / 3_600_000
+    : null;
   const lagIsMeasurable = skewHours !== null && skewHours <= SKEW_TOLERANCE_HOURS;
   const lagRefusal =
     frontierTakenAt === null
@@ -173,41 +207,65 @@ try {
       upstreamRecords: c.upstreamObjects,
       upstreamCases: c.upstreamCases,
       held: c.held,
-      unavailableSourceCount: c.terminal,
-      retryExhaustedOurs: c.retryExhausted,
+      sourceUnavailableCount: c.sourceUnavailableCurrent,
+      retryExhaustedOurs: c.actionableFailures,
       neverAttempted: c.neverAttempted,
       upstreamLocalCompleteness: ratio(c.held, c.upstreamObjects),
-      accountedUpstream: ratio(c.held + c.terminal, c.upstreamObjects),
+      accountedUpstream: ratio(
+        c.held + c.sourceUnavailableCurrent + c.policyRefused,
+        c.upstreamObjects,
+      ),
     }))
-    .sort((a, b) => (a.month === b.month ? a.court.localeCompare(b.court) : b.month.localeCompare(a.month)));
+    .sort((a, b) =>
+      a.month === b.month ? a.court.localeCompare(b.court) : b.month.localeCompare(a.month),
+    );
 
   const hc = {
     source: 'aws_open_data_hc',
     label: 'AWS Open Data — Indian High Court judgments',
-    authorization: { state: 'AUTHORIZED', basis: 'AWS Open Data, CC-BY-4.0; Copyright Act s.52(1)(q)(iv)' },
+    authorization: {
+      state: 'AUTHORIZED',
+      basis: 'AWS Open Data, CC-BY-4.0; Copyright Act s.52(1)(q)(iv)',
+    },
     latestUpstreamDecisionDate: hcUpstreamNewest,
     latestUpstreamMeasuredAt: frontierTakenAt,
     latestLocalDecisionDate: hcLocalNewest,
     lastSuccessfulIngestAt: hcIngest?.at ?? null,
-    sourceLagDays: lagIsMeasurable && hcUpstreamNewest && hcLocalNewest ? days(hcUpstreamNewest, hcLocalNewest) : null,
+    sourceLagDays:
+      lagIsMeasurable && hcUpstreamNewest && hcLocalNewest
+        ? days(hcUpstreamNewest, hcLocalNewest)
+        : null,
     sourceLagRefusedBecause: lagRefusal,
-    upstreamLocalCompleteness: ratio(sum(inWindow, (c) => c.held), sum(inWindow, (c) => c.upstreamObjects)),
-    unavailableSourceCount: sum(inWindow, (c) => c.terminal),
+    upstreamLocalCompleteness: ratio(
+      sum(inWindow, (c) => c.held),
+      sum(inWindow, (c) => c.upstreamObjects),
+    ),
+    sourceUnavailableCount: sum(inWindow, (c) => c.sourceUnavailableCurrent),
     measuredWindow: {
       months: [...windowMonths].sort(),
       upstreamRecords: sum(inWindow, (c) => c.upstreamObjects),
       upstreamCases: sum(inWindow, (c) => c.upstreamCases),
       held: sum(inWindow, (c) => c.held),
-      retryExhaustedOurs: sum(inWindow, (c) => c.retryExhausted),
+      upstreamLocalCompleteness: ratio(
+        sum(inWindow, (c) => c.held),
+        sum(inWindow, (c) => c.upstreamObjects),
+      ),
+      sourceUnavailableCount: sum(inWindow, (c) => c.sourceUnavailableCurrent),
+      policyRefused: sum(inWindow, (c) => c.policyRefused),
+      retryExhaustedOurs: sum(inWindow, (c) => c.actionableFailures),
       neverAttempted: sum(inWindow, (c) => c.neverAttempted),
     },
     allTime: {
       upstreamRecords: parity.totals['upstreamObjects'] ?? null,
       held: parity.totals['held'] ?? null,
-      unavailableSourceCount: parity.totals['terminal'] ?? null,
+      sourceUnavailableCount:
+        parity.totals['sourceUnavailableCurrent'] ?? parity.totals['terminal'] ?? null,
       retryExhaustedOurs: parity.totals['retryExhausted'] ?? null,
       neverAttempted: parity.totals['neverAttempted'] ?? null,
-      upstreamLocalCompleteness: ratio(parity.totals['held'] ?? 0, parity.totals['upstreamObjects'] ?? 0),
+      upstreamLocalCompleteness: ratio(
+        parity.totals['held'] ?? 0,
+        parity.totals['upstreamObjects'] ?? 0,
+      ),
       accountedUpstream: ratio(
         (parity.totals['held'] ?? 0) + (parity.totals['terminal'] ?? 0),
         parity.totals['upstreamObjects'] ?? 0,
@@ -225,11 +283,17 @@ try {
       FROM judgments
      WHERE source_url LIKE 'https://indian-supreme-court-judgments.s3%'`;
   const scRecon = existsSync(join(ROOT, 'docs/ai/new2-r10/sc-reconciliation.json'))
-    ? (JSON.parse(readFileSync(join(ROOT, 'docs/ai/new2-r10/sc-reconciliation.json'), 'utf8')) as Record<string, unknown>)
+    ? (JSON.parse(
+        readFileSync(join(ROOT, 'docs/ai/new2-r10/sc-reconciliation.json'), 'utf8'),
+      ) as Record<string, unknown>)
     : existsSync(join(ROOT, 'docs/ai/new2-r9/sc-reconciliation.json'))
-      ? (JSON.parse(readFileSync(join(ROOT, 'docs/ai/new2-r9/sc-reconciliation.json'), 'utf8')) as Record<string, unknown>)
+      ? (JSON.parse(
+          readFileSync(join(ROOT, 'docs/ai/new2-r9/sc-reconciliation.json'), 'utf8'),
+        ) as Record<string, unknown>)
       : null;
-  const scUpstream = (scRecon?.['upstream'] as { englishPdfObjects?: number } | undefined)?.englishPdfObjects ?? null;
+  const scUpstream =
+    (scRecon?.['upstream'] as { englishPdfObjects?: number } | undefined)?.englishPdfObjects ??
+    null;
 
   const sc = {
     source: 'aws_open_data_sc',
@@ -240,7 +304,7 @@ try {
     lastSuccessfulIngestAt: scLocal?.ingest ?? null,
     sourceLagDays: null as number | null,
     upstreamLocalCompleteness: scUpstream ? ratio(Number(scLocal?.held ?? 0), scUpstream) : null,
-    unavailableSourceCount: 3,
+    sourceUnavailableCount: 3,
     unavailableDetail:
       'three English PDF objects are upstream soft-404s: the publisher serves 200 with Content-Type application/pdf carrying a 403 page (S_1996_2_866_868_EN.pdf, 199 B) and two "Page not Found" pages (1998_1_937_947_EN.pdf, 1998_1_948_960_EN.pdf, 129 B each). Proven per artifact, from two different upstream error surfaces.',
     measuredWindow: null,
@@ -263,15 +327,22 @@ try {
   const ecourts = {
     source: 'ecourts',
     label: 'eCourts India — registrar grant of 7 Aug 2026',
-    authorization: { state: 'AUTHORIZED_NOT_OPERATING', basis: 'registrar grant, terms transcribed in court/authorisation.ts' },
+    authorization: {
+      state: 'AUTHORIZED_NOT_OPERATING',
+      basis: 'registrar grant, terms transcribed in court/authorisation.ts',
+    },
     latestUpstreamDecisionDate: null,
     latestLocalDecisionDate: null,
     lastSuccessfulIngestAt: null,
     sourceLagDays: null,
     upstreamLocalCompleteness: null,
-    unavailableSourceCount: 0,
+    sourceUnavailableCount: 0,
     observations: Number(ec?.obs ?? 0),
-    fetchLedger: ledger.map((r) => ({ outcome: r.outcome, refusalReason: r.refusal_reason, count: Number(r.n) })),
+    fetchLedger: ledger.map((r) => ({
+      outcome: r.outcome,
+      refusalReason: r.refusal_reason,
+      count: Number(r.n),
+    })),
     courtMonthDetail: [],
     caveat:
       'every field is null because zero requests have ever been made, not because the source is current. The ledger holds only refusals. A null here must never be read as "no lag".',
@@ -279,6 +350,7 @@ try {
 
   const artifact = {
     artifact: 'NEW2_SOURCE_FRESHNESS_R10',
+    definitionVersion: definition.definitionVersion,
     lane: 'NEW2',
     takenAt,
     contract: {
@@ -289,26 +361,34 @@ try {
         'lastSuccessfulIngestAt',
         'upstreamLocalCompleteness',
         'sourceLagDays',
-        'unavailableSourceCount',
+        'sourceUnavailableCount',
         'courtMonthDetail',
       ],
       denominator:
-        'upstream unique records in the measured window after upstream-side dedup — distinct pdfUrlFor(partition, basename(pdf_link)) per court, each resolved to one month, fixtures excluded. Defined in scripts/n2-hc-parity-matrix.mts and read from its artifact, so LCC and NEW2 compute it identically.',
-      denominatorSource: PARITY,
+        'top-level upstreamLocalCompleteness and sourceUnavailableCount use the newest 12 decisionMonth buckets under HC_PARITY_V2. Identity is distinct pdfUrlFor(partition, basename(pdf_link)) per court, resolved to one month with fixtures excluded. All-time values remain nested. Defined in the parity artifact and consumed without recomputation.',
+      denominatorSource: 'docs/ai/new2-r10/parity-matrix.json',
       denominatorTakenAt: parity.takenAt,
       measuredWindowMonths: WINDOW_MONTHS,
       unavailableIsAccounting:
-        'unavailableSourceCount closes accounting, never completeness, and is never netted out of upstreamLocalCompleteness.',
+        'sourceUnavailableCount closes accounting, never completeness, and is never netted out of upstreamLocalCompleteness.',
     },
     sources: [hc, sc, ecourts],
   };
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(artifact, null, 1));
-  console.log(`[freshness] HC completeness ${hc.upstreamLocalCompleteness} over ${WINDOW_MONTHS} months · lag ${hc.sourceLagDays}d`);
-  console.log(`[freshness] HC all-time completeness ${hc.allTime.upstreamLocalCompleteness} · accounted ${hc.allTime.accountedUpstream}`);
-  console.log(`[freshness] SC completeness ${sc.upstreamLocalCompleteness} · held ${sc.allTime.held}`);
-  console.log(`[freshness] eCourts observations ${ecourts.observations}, ledger ${JSON.stringify(ecourts.fetchLedger)}`);
+  console.log(
+    `[freshness] HC ${WINDOW_MONTHS}-month unique completeness ${hc.upstreamLocalCompleteness} · lag ${hc.sourceLagDays}d`,
+  );
+  console.log(
+    `[freshness] HC all-time completeness ${hc.allTime.upstreamLocalCompleteness} · accounted ${hc.allTime.accountedUpstream}`,
+  );
+  console.log(
+    `[freshness] SC completeness ${sc.upstreamLocalCompleteness} · held ${sc.allTime.held}`,
+  );
+  console.log(
+    `[freshness] eCourts observations ${ecourts.observations}, ledger ${JSON.stringify(ecourts.fetchLedger)}`,
+  );
   console.log(`[freshness] wrote ${OUT}`);
 } finally {
   await sql.end({ timeout: 10 });

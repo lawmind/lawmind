@@ -92,6 +92,7 @@ endpoint.
 | `GET /statutes/sections` | BUILT |
 | `GET /corpus/coverage` | BUILT |
 | `GET /corpus/freshness` | BUILT |
+| `GET /corpus/freshness/object` | BUILT |
 | `GET /release/capabilities` | BUILT |
 
 `GET /corpus/freshness` — how CURRENT what we hold is, as against how MUCH of it
@@ -99,6 +100,15 @@ we hold. It returns the naive `max(judgment_date)` reading **and** the honest
 completeness-ratio reading side by side, with the naive one labelled: a month
 holding one document has a newest date and no coverage, and the only way to stop
 that number being believed is to show it losing. ADDED 27 Aug 2026, LCC R9.
+
+`GET /corpus/freshness/object` — the bounded NEW2/LCC upstream-parity contract.
+The summary fields are `latestUpstreamDecisionDate`, `latestLocalDecisionDate`,
+`lastSuccessfulIngestAt`, `upstreamLocalCompleteness`, `sourceLagDays`,
+`sourceUnavailableCount`, and `definitionVersion`. `courtMonthDetail` uses the
+same versioned deduplicated upstream identity denominator. The response reads a
+persisted NEW2 measurement and never scans judgments at request time. There is
+no `freshnessScore`, and clients must not derive one. UPDATED 29 Aug 2026, LCC
+R10; RCC notified because this is a mid-sprint shape change.
 
 `GET /release/capabilities` — the server-enforced capability registry. A disabled
 route returns 409 with its reason rather than an empty 200. Mounted in R8.3;

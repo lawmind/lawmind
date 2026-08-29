@@ -1,0 +1,45 @@
+{
+  "definitionVersion": "HC_PARITY_V2_2026-08-29",
+  "scope": "AWS Open Data High Court metadata records; bench=testcase excluded",
+  "upstreamUnique": {
+    "identity": "pdfUrlFor({year,courtCode,bench}, basename(pdf_link))",
+    "deduplication": "one identity per court across both metadata variants and all rows",
+    "denominator": "count of distinct upstream object identities; distinct non-blank CNR is reported separately and is never the accounting denominator"
+  },
+  "courtMonth": {
+    "keys": ["courtCode", "decisionMonth"],
+    "decisionMonth": "earliest normalized YYYY-MM assigned to the same upstream object by any metadata row; null and unparsed remain explicit buckets",
+    "conflicts": "count every object assigned more than one month before choosing the earliest"
+  },
+  "freshnessSummary": {
+    "measuredWindowMonths": 12,
+    "scope": "top-level freshness summary completeness and source-unavailable count use the newest 12 decisionMonth buckets; all-time values remain separately nested"
+  },
+  "statePrecedence": [
+    "TEXT_READABLE: a canonical judgments row exists for source_url",
+    "IMAGE_ONLY_OCR_PENDING: official_source_artifact holds raw_bytes or storage_key for the source_url and text_state=IMAGE_ONLY_OCR_PENDING",
+    "SOURCE_ARTIFACT_HELD: official_source_artifact holds raw_bytes or storage_key for the source_url",
+    "POLICY_REFUSED: latest official-source evidence explicitly records a policy refusal",
+    "SOURCE_UNAVAILABLE_CURRENT: direct source evidence records absence and lastCheckedAt remains inside the revalidation window",
+    "ACTIONABLE_FAILURE: every other attempted non-held object",
+    "NEVER_ATTEMPTED: no held row, artifact evidence, refusal, source-unavailable evidence, or failure-ledger row"
+  ],
+  "sourceUnavailableCurrent": {
+    "directEvidence": "hc_ingest_ledger outcome in pdf_absent|no_title|no_decision_date|unparseable_date|no_pdf_link|test_fixture_bench, with last_attempted_at",
+    "revalidationWindowDays": 90,
+    "changedObjectRule": "recheck a source-unavailable object when its owning upstream metadata partition is NEW, GROWN, SHRUNK, or CHANGED",
+    "expiryRule": "after 90 days the row is due for bounded revalidation and cannot be permanently blacklisted"
+  },
+  "publishedMetrics": [
+    "upstreamUnique",
+    "sourceArtifactHeld",
+    "textReadable",
+    "imageOnlyOcrPending",
+    "sourceUnavailableCurrent",
+    "policyRefused",
+    "actionableFailures",
+    "neverAttempted",
+    "accountedPercent",
+    "actuallyHeldPercent"
+  ]
+}
