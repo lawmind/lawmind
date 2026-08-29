@@ -163,7 +163,17 @@ export async function fetchPdfText(
   const res = await fetchWithRetry(url, signal);
   if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
-  return extractPdfBytes(bytes, url);
+  try {
+    return await extractPdfBytes(bytes, url);
+  } catch (error) {
+    // A provider soft-404 is HTTP 200 with PDF headers and an HTML/empty body.
+    // Keep `extractPdfBytes` honest for in-memory callers; only the network
+    // wrapper can translate that body fact into the provider-facing 404 state.
+    if (error instanceof Error && error.message === `${url} is not a PDF`) {
+      throw new Error(`GET ${url} → 404`, { cause: error });
+    }
+    throw error;
+  }
 }
 
 /**
