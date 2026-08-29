@@ -101,6 +101,95 @@ export const SERVING_TABLES: readonly { table: string; orderBy: string }[] = [
   { table: 'lexeme_document_frequency', orderBy: 'lexeme COLLATE "C"' },
 ];
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE VECTOR EXPORT CONTRACT — WRITTEN BEFORE THERE IS ANYTHING TO EXPORT
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `new1_doc_vector_stage` is **factory scratch**, and this round established
+ * that from the tree rather than from anyone's recollection:
+ *
+ * - **no `CREATE TABLE` migration exists.** Every mention of it under
+ *   `packages/db/drizzle` is a COMMENT in a migration about something else.
+ * - it is **absent from the Drizzle schema** in `packages/db/src`.
+ * - **no serving code reads it.** `services/api/src/search` and
+ *   `services/api/src/judgments` reference it zero times; every reader lives in
+ *   `services/harness`, which is the factory.
+ * - this file already refuses it by name, citing the master plan.
+ *
+ * So it stays factory-local and **gets no product migration merely to canonise
+ * scratch.** What it does get is a condition on the day someone promotes it.
+ *
+ * **The hazard, measured 30 August 2026.** `snapshot_hash` is nullable with a
+ * constant column DEFAULT of `'5b5d02384b46c96c'`, applied by no migration.
+ * `doc-vector-embed.mjs` — the live writer — mentions `snapshot_hash` **zero
+ * times** and relies entirely on that default. The table today holds
+ * 2,342,295 rows stamped `5b5d02384b46c96c` and 486,955 stamped NULL.
+ *
+ * A constant default is not an identity. When NEW1 begins the next snapshot the
+ * writer will keep stamping the CURRENT one, and the only thing standing between
+ * two snapshots and one label is somebody remembering to `ALTER COLUMN ... SET
+ * DEFAULT`. Nothing errors when they do not.
+ *
+ * This function is the refusal, and it is deliberately written while the export
+ * set contains no vector table at all — a guard added at promotion time is a
+ * guard added after the first bad export.
+ */
+export const VECTOR_SNAPSHOT_IDENTITY_COLUMN = 'snapshot_hash';
+
+export type VectorExportRefusal =
+  /** Some exported row carries no snapshot identity at all. */
+  | { reason: 'null_snapshot_identity'; table: string; nullRows: number }
+  /**
+   * The column has a constant DEFAULT, so identity is being supplied by the
+   * schema instead of by the job that produced the vectors. Even if every row is
+   * currently non-null, the NEXT snapshot inherits this one's label.
+   */
+  | { reason: 'identity_from_column_default'; table: string; columnDefault: string }
+  /** More than one snapshot in a single export, with no way to tell them apart. */
+  | { reason: 'mixed_snapshots'; table: string; snapshots: string[] };
+
+/**
+ * Refuse a vector export whose rows cannot say WHICH embedding run produced
+ * them. Returns `null` when the table may be exported.
+ *
+ * Called for any table in {@link SERVING_TABLES} that carries the snapshot
+ * identity column. Today that is none of them, and that is the intended state.
+ */
+export async function vectorExportRefusal(
+  sql: postgres.Sql,
+  table: string,
+): Promise<VectorExportRefusal | null> {
+  const [column] = await sql<{ column_default: string | null }[]>`
+    SELECT column_default
+    FROM information_schema.columns
+    WHERE table_name = ${table} AND column_name = ${VECTOR_SNAPSHOT_IDENTITY_COLUMN}`;
+  // Not a vector table. Nothing to say about it.
+  if (!column) return null;
+
+  if (column.column_default !== null) {
+    return {
+      reason: 'identity_from_column_default',
+      table,
+      columnDefault: column.column_default,
+    };
+  }
+
+  const rows = await sql.unsafe<{ snapshot: string | null; n: string }[]>(
+    `SELECT ${VECTOR_SNAPSHOT_IDENTITY_COLUMN} AS snapshot, count(*)::text AS n
+     FROM ${table} GROUP BY 1`,
+  );
+  const nullGroup = rows.find((r) => r.snapshot === null);
+  if (nullGroup) {
+    return { reason: 'null_snapshot_identity', table, nullRows: Number(nullGroup.n) };
+  }
+  const snapshots = rows.map((r) => r.snapshot).filter((s): s is string => s !== null);
+  if (snapshots.length > 1) {
+    return { reason: 'mixed_snapshots', table, snapshots: snapshots.sort() };
+  }
+  return null;
+}
+
 /** Named so a reader can see what was CONSIDERED and refused, not just what won. */
 export const DELIBERATELY_EXCLUDED = [
   'users / auth_user / auth_session / refresh_tokens — identity',
@@ -373,6 +462,22 @@ async function main(): Promise<void> {
 
   const tables: Manifest['tables'] = [];
   for (const { table, orderBy } of SERVING_TABLES) {
+    /**
+     * Checked for EVERY table, not for a list of vector tables, so promoting one
+     * into {@link SERVING_TABLES} cannot skip the guard by not being on a second
+     * list somebody forgot to update. A table without the identity column
+     * returns null and costs one `information_schema` lookup.
+     */
+    const refusal = await vectorExportRefusal(sql, table);
+    if (refusal) {
+      throw new Error(
+        `refusing to export ${table}: ${refusal.reason}. ` +
+          'A vector export must carry the embedding run\'s own snapshot identity, supplied ' +
+          'explicitly by the job or manifest that produced the rows. A constant column DEFAULT ' +
+          'is not an identity — it labels the NEXT snapshot with THIS one\'s name and nothing ' +
+          `errors when it does. Detail: ${JSON.stringify(refusal)}`,
+      );
+    }
     const where = whereFor(table);
     const columns = await writableColumns(sql, table);
     const { rows, checksum: ck } = await checksum(sql, table, orderBy, where, columns);
@@ -464,7 +569,31 @@ async function main(): Promise<void> {
   await sql.end();
 }
 
-main().catch((err: unknown) => {
-  console.error(err);
-  process.exit(1);
-});
+/**
+ * **Run only when this file IS the command, never when it is imported.**
+ *
+ * This was a bare `main()` call at module scope, so `import { SERVING_TABLES }`
+ * performed a complete release export as a side effect. A test written against
+ * the export contract discovered it by writing 58 MB to `release/` on its first
+ * run — which is the harmless version. The same import from a running service,
+ * or from a script that only wanted the table list, would open a second
+ * connection pool and stream the corpus to disk for no reason.
+ *
+ * `process.argv[1]` is the script node was actually asked to run. Comparing it
+ * to this module's own path is the check, and it is done on a normalised
+ * `file:` URL because Windows argv paths are backslashed while `import.meta.url`
+ * is not.
+ */
+const invokedDirectly = (() => {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  const normalise = (p: string): string => p.replace(/\\/g, '/').replace(/^file:\/\/\/?/, '');
+  return normalise(import.meta.url).endsWith(normalise(entry));
+})();
+
+if (invokedDirectly) {
+  main().catch((err: unknown) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
