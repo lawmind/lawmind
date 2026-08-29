@@ -1,0 +1,66 @@
+{
+  "kind": "new1_final_snapshot_plan",
+  "at": "2026-08-29T18:21:25Z",
+  "status": "PLAN ONLY — NOTHING DESTRUCTIVE HAS BEEN RUN, AND NOTHING SHOULD BE UNTIL THE WALK IS COMPLETE",
+
+  "theQuestion": "When the v2 walk finishes, how do the superseded v1-generation vectors get out of the way of the final index, safely?",
+
+  "theAnswerInOneLine": "They do not have to move at all. Exclusion by predicate is already proven; deletion is an optional space reclaim, not a correctness step.",
+
+  "populations": {
+    "measuredAt": "2026-08-29T18:21:25Z",
+    "stageTotalRows": 2757466,
+    "currentSnapshotRows": 2270511,
+    "orphanRows": 486955,
+    "orphanPredicate": "snapshot_hash IS NULL",
+    "orphanWrittenBetween": ["2026-08-19T13:18:27.402Z", "2026-08-27T22:49:45.339Z"],
+    "orphanGeneration": "document-vectors (v1), cut under eligibility definition e76879ab6bbcd452",
+    "currentGeneration": "document-vectors-v2, definition 5b5d02384b46c96c"
+  },
+
+  "theTrapInTheOBVIOUSPREDICATE": {
+    "wrongPredicate": "NOT EXISTS (SELECT 1 FROM embedding_content_representative r WHERE r.representative_judgment_id = s.judgment_id)",
+    "rowsItWouldMatch": 491145,
+    "rowsItWouldWronglyDestroy": 4190,
+    "why": [
+      "'not a current representative' and 'from the old generation' look like the same set and are not.",
+      "embedding_content_representative was cut on 2026-08-27. Every judgment NEW2 has ingested since then is embedded by the continuous delta queue and is correctly stamped with the current snapshot hash, but has no row in that table, because the table predates it.",
+      "4,190 rows are in exactly that position right now, and the number grows every day the delta queue runs. They are the newest coverage in the corpus. A cleanup built on the representative table would delete the freshest vectors and leave the stalest ones."
+    ],
+    "correctPredicate": "snapshot_hash IS NULL",
+    "correctPredicateEvidence": "measured: 0 rows are staged-and-unstamped among the 7,654,179 representatives, so the stamp partitions the table exactly — every in-snapshot row carries it, and no v1 row does."
+  },
+
+  "step1_noDeletionIsNeededForTheIndex": {
+    "claim": "The final index can simply not index the orphans.",
+    "mechanism": "CREATE INDEX ... ON new1_doc_vector_stage USING hnsw ((embedding::halfvec(1024)) halfvec_cosine_ops) WITH (m=16, ef_construction=64) WHERE snapshot_hash = '5b5d02384b46c96c'",
+    "alreadyProven": "docs/ai/new1-r10/orphan-exclusion-proof.json — a 50,000-row probe table with 10,000 planted orphans. The partial index contained exactly 40,000 tuples; 40 probe queries returned 2,000 rows and ZERO orphans; all 40 plans used the partial index; and the same queries WITHOUT the predicate returned 358 orphans, so the test was not vacuous.",
+    "consequence": "orphan removal is a storage decision, not a retrieval-correctness decision. Keeping them costs disk and nothing else."
+  },
+
+  "step2_ifSpaceIsWantedLATER": {
+    "precondition": "ALL of: the walk is complete; the final index exists; the ANN quality gate (section 10) has passed against exact search. Not before — the v1 vectors are the only fallback if anything about v2 is found wrong, and they cost about 2.6 GB of heap.",
+    "sequence": [
+      "1. Re-measure. `SELECT count(*) FROM new1_doc_vector_stage WHERE snapshot_hash IS NULL` — the number must still be 486,955, and if it is not, stop and find out why before deleting anything.",
+      "2. Export the ids first. `\\copy (SELECT judgment_id, content_hash, created_at FROM new1_doc_vector_stage WHERE snapshot_hash IS NULL) TO 'docs/ai/new1-r11/v1-orphan-ids.csv' CSV HEADER` — 487k ids is a small file and it is the difference between a reversible deletion and an irreversible one. The vectors themselves are reproducible from these ids and EMBEDDING_IDENTITY_V2.json.",
+      "3. Delete in bounded batches, never one statement. `DELETE FROM new1_doc_vector_stage WHERE ctid IN (SELECT ctid FROM new1_doc_vector_stage WHERE snapshot_hash IS NULL LIMIT 50000)` in a loop. One 487k-row DELETE holds locks the length of the whole statement, and this repository has already recorded a killed writer leaving an UPDATE holding locks that the restart then queued behind.",
+      "4. VACUUM (not FULL) afterwards. VACUUM FULL rewrites a 15 GB table and takes an ACCESS EXCLUSIVE lock on it for the duration; the space is wanted, but not at the price of taking the retrieval table offline.",
+      "5. Re-run the coverage query. eligible/embedded/remaining must be unchanged: this deletion may not move them by a single row."
+    ],
+    "spaceReclaimed": "about 2.6 GB of heap plus its share of the 15 GB total relation size. Small against 245 GB free on C:. This is why it is optional."
+  },
+
+  "whatMustNOTHappenNow": [
+    "No DELETE, no VACUUM FULL, no DROP while the walk is running. The walk inserts continuously and the table is its checkpoint.",
+    "No cleanup driven by embedding_content_representative membership — see theTrapInTheOBVIOUSPREDICATE.",
+    "No removal of new1_doc_vector_stage_refused rows. 72,099 refusals with a named reason each are the record that nothing was silently dropped; deleting them converts a documented refusal into an unexplained absence."
+  ],
+
+  "disposableLabObjects": {
+    "tables": ["new1_probe_hnsw_1000000 (7,958 MB)", "new1_probe_hnsw_250000 (1,990 MB)"],
+    "status": "KEPT, deliberately",
+    "why": "section 8's 1M-row @ 2GB probe is DEFERRED, not cancelled. Dropping these now means rebuilding a 1M-row table before it can run. They cost about 9.9 GB against 245.7 GB free, and they are named as disposable so nobody mistakes them for canonical.",
+    "dropWhen": "the 2GB probe has run, or the final index has been built and the section 8 question is moot.",
+    "dropHow": "DROP TABLE new1_probe_hnsw_1000000, new1_probe_hnsw_250000; — never anything else in the same statement."
+  }
+}

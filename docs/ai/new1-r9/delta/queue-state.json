@@ -1,5 +1,7 @@
 {
-  "watermark": "2026-08-27T13:05:10.694Z",
-  "passes": 1,
-  "embedded": 0
+  "watermark": "2026-08-29T14:31:01.286Z",
+  "passes": 48,
+  "embedded": 4517,
+  "lastLabel": "queue-2026-08-29T14-59-01-506Z",
+  "lastIdsHash": "be47ef93e00890ff"
 }

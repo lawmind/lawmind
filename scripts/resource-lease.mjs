@@ -193,6 +193,7 @@ function main() {
     console.error(`  domains: ${Object.keys(DOMAINS).join(', ')}`);
     console.error('  acquire  --task "..." [--job-id X] [--durable-metric "SQL or file"] [--command-fingerprint "..."]');
     console.error('           [--contention-class "..."] [--input-version "..."] [--starting-output N] [--force --reason "..."]');
+    console.error('           [--liveness durable-progress] [--launcher "..."]');
     console.error('  heartbeat --current-output N');
     process.exit(2);
   }
@@ -266,6 +267,11 @@ function main() {
       contentionClass: arg('contention-class', argv) ?? null,
       pauseResume: arg('pause-resume', argv) ?? null,
       launcher: arg('launcher', argv) ?? null,
+      // Which witness this lease trusts. Default (null) is the historical rule:
+      // the holder's session pid, and nothing else. `durable-progress` says the
+      // durable output metric is the witness instead, for a job that outlives the
+      // session that started it. See health() in scripts/lib/process-identity.mjs.
+      livenessSource: arg('liveness', argv) ?? null,
       state: 'HELD',
     };
 
@@ -287,7 +293,12 @@ function main() {
         console.error('--force requires --reason "..."');
         process.exit(2);
       }
-      if (h.state === 'HEALTHY' || h.state === 'HUNG') {
+      // HEALTHY_BY_PROGRESS belongs in this list, not beside DEAD. It means the
+      // session that opened the lease is gone but the job it launched is still
+      // moving the durable metric — which is the case where stealing the box does
+      // the most damage, because the thing you would collide with is invisible in
+      // the process table under the holder's name.
+      if (h.state === 'HEALTHY' || h.state === 'HUNG' || h.state === 'HEALTHY_BY_PROGRESS') {
         console.error(`REFUSED: --force will not steal ${d} from a ${h.state} holder (${holderRec?.holder}, pid ${holderRec?.pid}).`);
         console.error('  Resolve it on the bus. A mutex that can be taken from a live owner is not a mutex.');
         process.exit(1);

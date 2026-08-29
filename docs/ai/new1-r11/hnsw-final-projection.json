@@ -1,0 +1,50 @@
+{
+  "kind": "new1_hnsw_final_projection",
+  "at": "2026-08-29T18:20:47.892Z",
+  "basis": "docs/ai/new1-r10/hnsw-build-measurements.json — four measured builds, halfvec(1024) expression, m=16, ef_construction=64",
+  "eligibleRows": 7654179,
+  "bytesPerVectorMeasured": [
+    2731,
+    2731,
+    2730,
+    2730
+  ],
+  "bytesPerVectorUsed": 2731,
+  "projectedIndexBytes": 20903562849,
+  "projectedIndexGiB": 19.47,
+  "memoryToBuildFullyResidentGiB": 19.47,
+  "boxRamGiB": 31.7,
+  "spillIsCertain": true,
+  "spillNote": "the graph needs about as much memory as the finished index; this box has 31.7 GiB total and about 11.8 GiB free with the walk and Postgres running, so a 7.65M-row build spills whatever session maintenance_work_mem is set to.",
+  "buildTimeBracketHours": {
+    "fullyResident_NOT_ACHIEVABLE": 0.67,
+    "fullySpilling_512MB_shape": 2.91
+  },
+  "interpolatedUNVERIFIED": {
+    "2GB": {
+      "fracResident": 0.103,
+      "rowsPerSecondUNVERIFIED": 453,
+      "hoursUNVERIFIED": 4.69,
+      "method": "EXTRAPOLATION — below the lowest measured resident fraction (0.195). Weakest number here."
+    },
+    "4GB": {
+      "fracResident": 0.205,
+      "rowsPerSecondUNVERIFIED": 762,
+      "hoursUNVERIFIED": 2.79,
+      "method": "interpolation between the two measured points"
+    },
+    "8GB": {
+      "fracResident": 0.411,
+      "rowsPerSecondUNVERIFIED": 1380,
+      "hoursUNVERIFIED": 1.54,
+      "method": "interpolation between the two measured points"
+    },
+    "16GB": {
+      "fracResident": 0.822,
+      "rowsPerSecondUNVERIFIED": 2617,
+      "hoursUNVERIFIED": 0.81,
+      "method": "interpolation between the two measured points"
+    }
+  },
+  "interpolationCaveat": "The rows/s between the two measured points is INTERPOLATED LINEARLY IN RESIDENT FRACTION and is NOT measured. Two points cannot establish the shape of that curve, and pgvector spills in a two-pass form whose cost is not obviously linear. Treat every interpolatedUNVERIFIED number as a guess with a stated method, not as a measurement. The 1M-row @ 2GB probe in section 8 is exactly the experiment that would turn the nearest one into evidence. Note also that at 7.65M rows a 2GB setting is only 10.3% resident, which is BELOW the 19.5% of the lowest measured build — so the 2GB row is an extrapolation off the end of the data, not an interpolation inside it."
+}

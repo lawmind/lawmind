@@ -149,6 +149,96 @@ try {
   const covered = new Set(staged.map((r) => r.content_hash));
   const emit = rows.filter((r) => !covered.has(r.contentHash));
 
+  /**
+   * EVERY ROW IN THE WINDOW GETS A NAME — 29 Aug 2026.
+   *
+   * The manifest used to report three numbers — `eligibleRepresentatives`,
+   * `alreadyCoveredByContentHash`, `emitted` — and `deltaRowsConsidered: null`.
+   * The queue's ledger then printed `pending` (every judgment in the window)
+   * beside `alreadyCovered`, and the difference was a RESIDUAL NOBODY NAMED:
+   * "pending 57 / covered 42" and later "73 / 49" were read as a ledger gap and
+   * explained by inference. Inference is exactly what a coverage claim may not
+   * rest on — an unnamed residual is indistinguishable from a silent skip, and
+   * this lane has already lost one frontier to a state that had no name.
+   *
+   * So the window is decomposed EXHAUSTIVELY and DISJOINTLY here, in the order
+   * the walk itself applies its rules:
+   *
+   *   EMBEDDED                      already has its own row in the stage
+   *   REFUSED_NO_ELIGIBILITY_ROW    no row in the deployed eligibility view
+   *   REFUSED_NOT_ELIGIBLE          semantic_tier = 'NOT_ELIGIBLE'
+   *   REFUSED_TEXT_UNSAFE           text_safety  = 'UNSAFE_VERIFIED'
+   *   REFUSED_BAND_EXCLUDED         value_band outside the Tier-A band set
+   *   CONTENT_HASH_ALREADY_COVERED  a staged judgment carries the same content_hash
+   *   QUEUED                        eligible, uncovered — emitted, or collapsed
+   *                                 onto the representative that was emitted
+   *
+   * The refusal names are the view's own columns, never a guess: a reason this
+   * file cannot read off the view is not a reason it is allowed to invent.
+   *
+   * The predicate is spelled twice — once to emit, once to classify — so the
+   * check below is not decoration. `queuedMembers` recomputed from the
+   * classification must equal the member count the emit path produced; if the
+   * two spellings ever drift, the manifest says so instead of quietly
+   * disagreeing with the ledger it feeds.
+   */
+  const [decomp] = await sql`
+    WITH delta AS (
+      SELECT j.id, j.content_hash
+        FROM judgments j
+       WHERE ${
+         ids
+           ? sql`j.id = ANY(${ids}::uuid[])`
+           : sql`j.created_at >= ${SINCE}::timestamptz`
+       }
+    ),
+    marked AS (
+      SELECT d.id,
+             e.id IS NOT NULL AS has_elig,
+             e.semantic_tier, e.text_safety, e.value_band,
+             EXISTS (SELECT 1 FROM new1_doc_vector_stage s WHERE s.judgment_id = d.id) AS self_staged,
+             EXISTS (SELECT 1 FROM new1_doc_vector_stage s
+                       JOIN judgments jj ON jj.id = s.judgment_id
+                      WHERE jj.content_hash = d.content_hash)                        AS hash_staged
+        FROM delta d
+        LEFT JOIN judgment_embedding_eligibility e ON e.id = d.id
+    )
+    SELECT count(*)::int AS considered,
+           count(*) FILTER (WHERE self_staged)::int AS "EMBEDDED",
+           count(*) FILTER (WHERE NOT self_staged AND NOT has_elig)::int AS "REFUSED_NO_ELIGIBILITY_ROW",
+           count(*) FILTER (WHERE NOT self_staged AND has_elig
+                              AND semantic_tier = 'NOT_ELIGIBLE')::int AS "REFUSED_NOT_ELIGIBLE",
+           count(*) FILTER (WHERE NOT self_staged AND has_elig
+                              AND semantic_tier <> 'NOT_ELIGIBLE'
+                              AND text_safety = 'UNSAFE_VERIFIED')::int AS "REFUSED_TEXT_UNSAFE",
+           count(*) FILTER (WHERE NOT self_staged AND has_elig
+                              AND semantic_tier <> 'NOT_ELIGIBLE'
+                              AND text_safety <> 'UNSAFE_VERIFIED'
+                              AND NOT (value_band = ANY(${BANDS})))::int AS "REFUSED_BAND_EXCLUDED",
+           count(*) FILTER (WHERE NOT self_staged AND has_elig
+                              AND semantic_tier <> 'NOT_ELIGIBLE'
+                              AND text_safety <> 'UNSAFE_VERIFIED'
+                              AND value_band = ANY(${BANDS})
+                              AND hash_staged)::int AS "CONTENT_HASH_ALREADY_COVERED",
+           count(*) FILTER (WHERE NOT self_staged AND has_elig
+                              AND semantic_tier <> 'NOT_ELIGIBLE'
+                              AND text_safety <> 'UNSAFE_VERIFIED'
+                              AND value_band = ANY(${BANDS})
+                              AND NOT hash_staged)::int AS "QUEUED"
+      FROM marked`;
+
+  const { considered, ...states } = decomp;
+  const namedTotal = Object.values(states).reduce((a, v) => a + Number(v), 0);
+  const queuedMembers = emit.reduce((a, r) => a + r.memberCount, 0);
+  const residualCheck = {
+    considered,
+    named: namedTotal,
+    unnamed: considered - namedTotal,
+    queuedMembersFromClassification: Number(states.QUEUED),
+    queuedMembersFromEmitPath: queuedMembers,
+    predicatesAgree: Number(states.QUEUED) === queuedMembers,
+  };
+
   const lines = emit.map((r) => JSON.stringify(r)).join('\n') + (emit.length ? '\n' : '');
   const idsHash = createHash('sha256')
     .update(emit.map((r) => r.judgmentId).join(','))
@@ -161,11 +251,13 @@ try {
     selector: ids ? { ids: ids.length } : { since: SINCE },
     definitionHash,
     bands: BANDS,
-    deltaRowsConsidered: null,
+    deltaRowsConsidered: considered,
+    states,
+    residualCheck,
     eligibleRepresentatives: rows.length,
     alreadyCoveredByContentHash: rows.length - emit.length,
     emitted: emit.length,
-    membersRepresented: emit.reduce((a, r) => a + r.memberCount, 0),
+    membersRepresented: queuedMembers,
     idsHash,
     byTier: Object.fromEntries(
       [...emit.reduce((m, r) => m.set(r.semanticTier, (m.get(r.semanticTier) ?? 0) + 1), new Map())],

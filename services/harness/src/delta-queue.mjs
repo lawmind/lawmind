@@ -152,7 +152,13 @@ async function pass() {
 
   if (DRY_RUN || manifest.emitted === 0) {
     note({ kind: DRY_RUN ? 'queue_dry_run' : 'queue_nothing_to_embed', at, from, pending,
-           emitted: manifest.emitted, alreadyCovered: manifest.alreadyCoveredByContentHash });
+           emitted: manifest.emitted, alreadyCovered: manifest.alreadyCoveredByContentHash,
+           // `pending` counts every judgment in the window; `alreadyCovered` counts
+           // only eligible representatives. The difference used to be an unnamed
+           // residual read off two numbers that answer different questions. It is
+           // now the manifest's own exhaustive decomposition, and `unnamed` is the
+           // number that must stay at zero.
+           states: manifest.states ?? null, residual: manifest.residualCheck ?? null });
     if (!DRY_RUN && newest) {
       // Everything in the window was already covered — the watermark may advance,
       // because "covered by content hash" IS coverage.
@@ -172,18 +178,56 @@ async function pass() {
   // done so on the first real delta days from now rather than here.
   const TSX_CLI = new URL('node_modules/tsx/dist/cli.mjs', ROOT).pathname.replace(/^\//, '');
   if (!existsSync(TSX_CLI)) throw new Error('tsx cli not found at ' + TSX_CLI);
-  execFileSync(
-    process.execPath,
-    [TSX_CLI, 'src/doc-vector-embed.mjs'],
-    {
-      encoding: 'utf8',
-      cwd: new URL('services/harness/', ROOT).pathname.replace(/^\//, ''),
-      timeout: 6 * 60 * 60_000,
-      env: { ...process.env, DATABASE_URL: url, BATCH_FILE: batchFile,
-             STAGE_LOG_PATH: '../../../' + OUT_DIR + '/stage-embed-' + label + '.log',
-             SUMMARY_PATH_REL: '../../../' + OUT_DIR + '/summary-' + label + '.json' },
-    },
-  );
+  /**
+   * LOSING THE GPU RACE IS A STATE, NOT AN EXCEPTION — 29 Aug 2026.
+   *
+   * `doc-vector-embed.mjs` holds one lock for the single 8 GB card and waits up
+   * to 30 minutes for it before refusing. That refusal is correct — two
+   * embedders on this card do not queue, they compete for memory that is not
+   * there — but it arrived here as an uncaught `execFileSync` throw, so the pass
+   * died with a stack trace and wrote NOTHING to the ledger. On 29 Aug that
+   * happened twice (14:14Z and 14:44Z) behind a long coarse batch; the queue
+   * recovered at 14:59 only because the scheduled task fires again every 15
+   * minutes, and the ledger account of that afternoon jumps straight from
+   * 13:59 to 14:59 with the contention invisible.
+   *
+   * A delay nobody can see is indistinguishable from a delay nobody bounded. So
+   * the wait gets a name, the watermark is NOT advanced, and the next fire
+   * retries the same window. This adds no second writer and changes no
+   * scheduling — it only makes the fairness that already exists legible.
+   */
+  try {
+    execFileSync(
+      process.execPath,
+      [TSX_CLI, 'src/doc-vector-embed.mjs'],
+      {
+        encoding: 'utf8',
+        cwd: new URL('services/harness/', ROOT).pathname.replace(/^\//, ''),
+        timeout: 6 * 60 * 60_000,
+        env: { ...process.env, DATABASE_URL: url, BATCH_FILE: batchFile,
+               STAGE_LOG_PATH: '../../../' + OUT_DIR + '/stage-embed-' + label + '.log',
+               SUMMARY_PATH_REL: '../../../' + OUT_DIR + '/summary-' + label + '.json' },
+      },
+    );
+  } catch (e) {
+    const said = String(e?.stdout ?? '') + String(e?.stderr ?? '') + String(e?.message ?? '');
+    const deferred = said.includes('GPU embed lock held by live pid');
+    const holder = said.match(/GPU embed lock held by live pid (\d+) \(([^)]*)\)/);
+    note({
+      kind: deferred ? 'queue_DEFERRED_GPU_BUSY' : 'queue_EMBED_FAILED',
+      at, from, pending, emitted: manifest.emitted,
+      manifestIds: batchIds.length, batchFile,
+      states: manifest.states ?? null, residual: manifest.residualCheck ?? null,
+      lockHolderPid: holder ? Number(holder[1]) : null,
+      lockHolderBatch: holder ? holder[2] : null,
+      detail: said.split(/\r?\n/).filter(Boolean).slice(-3).join(' | ').slice(0, 400),
+      why: deferred
+        ? 'the coarse walk held the single-GPU lock past the wait — watermark NOT advanced, the same window is retried on the next fire. This is the fairness bound, not a fault.'
+        : 'the embed exited non-zero — watermark NOT advanced, the same window is retried on the next fire.',
+    });
+    if (deferred) return { pending, embedded: 0, deferred: true };
+    throw e;
+  }
 
   const after = await stagedAmong(batchIds);
   const delta = after - before;

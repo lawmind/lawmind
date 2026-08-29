@@ -32,6 +32,15 @@ import { execFileSync } from 'node:child_process';
 /** Heartbeat older than this and a live-looking lease is treated as HUNG. */
 export const STALE_AFTER_MS = 90 * 60 * 1000;
 
+/**
+ * How fresh `lastProgressAt` must be for a lease that opts into durable-progress
+ * liveness. Thirty minutes is longer than any single unit of work this repo
+ * heartbeats on (the coarse walk reports every 5, its batches take ~20) and far
+ * shorter than the 90-minute heartbeat staleness, so a job that has genuinely
+ * stopped stops reading alive within one window rather than one and a half hours.
+ */
+export const PROGRESS_STALE_AFTER_MS = 30 * 60 * 1000;
+
 /** Names that identify an agent session process rather than a shell or helper. */
 const AGENT_NAMES = ['claude', 'codex'];
 
@@ -162,7 +171,10 @@ export function findSessionPid() {
  * a session pid can be alive, be the same process, and still be running
  * something other than the job the lease claims.
  */
-export function health(lease, { staleAfterMs = STALE_AFTER_MS, table = null } = {}) {
+export function health(
+  lease,
+  { staleAfterMs = STALE_AFTER_MS, progressStaleAfterMs = PROGRESS_STALE_AFTER_MS, table = null } = {},
+) {
   if (!lease) return { state: 'FREE' };
   const age = Date.now() - new Date(lease.heartbeatAt).getTime();
 
@@ -186,11 +198,48 @@ export function health(lease, { staleAfterMs = STALE_AFTER_MS, table = null } = 
     !proc.commandLine ||
     String(proc.commandLine).includes(lease.commandFingerprint);
 
-  if (proc.alive === null) return { state: 'UNKNOWN', proc, age, note: proc.reason };
+  /**
+   * A PID IS NOT THE ONLY WITNESS — 29 Aug 2026.
+   *
+   * `HEAVY_BOX` records the pid of the AGENT SESSION that acquired it, and until
+   * now that pid was the only thing this function would accept as proof of life.
+   * For a lane lease that is right: the question there is literally "is that agent
+   * still running". For a heavy resource it is wrong, and measurably so — on
+   * 29 Aug the NEW1 session died at 06:12Z while the coarse GPU walk it had
+   * launched kept running detached, and for the next eleven hours the bus told
+   * every other lane `HEAVY_BOX: HELD (process DEAD)` while the box was in fact
+   * fully occupied, producing ~28,000 vectors an hour. A lane reading that and
+   * force-clearing the lock would have put a second heavy job on one GPU.
+   *
+   * So a lease MAY nominate durable output as its witness instead, by carrying
+   * `livenessSource: 'durable-progress'`. Then a fresh `lastProgressAt` — which
+   * `heartbeat --current-output` only advances when the durable metric actually
+   * MOVED — keeps it alive whatever happened to the session that opened it.
+   *
+   * This is opt-in per record and it only ever moves a verdict TOWARDS alive, so
+   * no existing lease changes behaviour and the direction of any error is
+   * "harder to steal", never "easier". A job that truly stops stops advancing its
+   * metric, and the lease then decays to DEAD on its own within one window.
+   */
+  const byProgress = () => {
+    if (lease.livenessSource !== 'durable-progress') return null;
+    if (!lease.lastProgressAt) return null;
+    const progressAge = Date.now() - new Date(lease.lastProgressAt).getTime();
+    if (!(progressAge < progressStaleAfterMs)) return null;
+    return {
+      state: 'HEALTHY_BY_PROGRESS',
+      proc,
+      age,
+      progressAge,
+      note: 'session pid is gone, but the durable output metric moved ' + Math.round(progressAge / 60000) + 'm ago',
+    };
+  };
+
+  if (proc.alive === null) return byProgress() ?? { state: 'UNKNOWN', proc, age, note: proc.reason };
   if (proc.alive && sameProcess && !fingerprintOk)
-    return { state: 'PID_RECYCLED', proc, age, note: 'command fingerprint does not match' };
+    return byProgress() ?? { state: 'PID_RECYCLED', proc, age, note: 'command fingerprint does not match' };
   if (proc.alive && sameProcess && !heartbeatCold) return { state: 'HEALTHY', proc, age };
   if (proc.alive && sameProcess && heartbeatCold) return { state: 'HUNG', proc, age };
-  if (proc.alive && !sameProcess) return { state: 'PID_RECYCLED', proc, age };
-  return { state: 'DEAD', proc, age };
+  if (proc.alive && !sameProcess) return byProgress() ?? { state: 'PID_RECYCLED', proc, age };
+  return byProgress() ?? { state: 'DEAD', proc, age };
 }

@@ -1,0 +1,161 @@
+{
+  "kind": "new1_embedding_identity",
+  "version": 1,
+  "snapshot": "document-vectors-v2",
+  "writtenAt": "2026-08-29T18:02:05.242Z",
+  "writtenBy": "NEW1",
+  "gitHead": "8795ba8b9d569ac5afbbb724d2c9299ed6094c15",
+  "purpose": "The smallest record that lets these vectors be rebuilt, or a stored vector traced back to exactly how it was produced. It is deliberately NOT the vectors: those are derived data and stay out of git. What must survive is the mapping content_hash -> embedding version -> vector row, and the identity of everything that went into it.",
+  "population": {
+    "definitionHash": "5b5d02384b46c96c",
+    "definitionHashSource": "sha256(pg_get_viewdef(judgment_embedding_eligibility))[0:16]",
+    "manifestHash": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
+    "manifestDir": "docs/ai/embedding-manifests/document-vectors-v2",
+    "batches": 766,
+    "eligibleRows": 7654179,
+    "bands": [
+      "standard",
+      "full",
+      "substantial"
+    ],
+    "predicate": "semantic_tier <> NOT_ELIGIBLE AND text_safety <> UNSAFE_VERIFIED AND value_band = ANY(bands), then collapsed DISTINCT ON (content_hash) keeping the lowest id",
+    "snapshotEnv": [
+      "MANIFEST_DIR=document-vectors-v2",
+      "COVERAGE_FILE=stage-coverage-v2.json",
+      "WORKLIST_FILE=.worklist-v2.txt",
+      "COMPLETE_TOLERANCE=25",
+      "TELEMETRY_LEDGER=docs/ai/new1-r10/coarse-walk-telemetry.jsonl"
+    ]
+  },
+  "model": {
+    "id": "Xenova/bge-m3",
+    "upstream": "BAAI/bge-m3 (config._name_or_path)",
+    "architecture": "XLMRobertaModel, 24 layers, hidden 1024, 16 heads, vocab 250002",
+    "runtime": "onnxruntime CUDAExecutionProvider, RTX 4060 Ti",
+    "dtype": "fp32",
+    "tf32": false,
+    "tf32Note": "use_tf32=0 is load-bearing. TF32 gives 10 mantissa bits and measured 0.9988 cosine against the CPU reference on 1 chunk in 48; true fp32 holds every chunk above 0.9999. Query vectors are computed on a different CPU, so the corpus has to stay comparable to them.",
+    "revision": "UNKNOWN",
+    "revisionNote": "services/embed/src/fetch-model.ts downloads from huggingface.co/<id>/resolve/main, an UNPINNED ref. The upstream commit these files came from was never recorded and cannot be recovered from this repository. The sha256 sums below are therefore the only durable identity of the weights: if the local .models copy is lost and upstream main has moved, the snapshot is not bit-reproducible. Stated rather than guessed.",
+    "artifacts": {
+      ".models/Xenova/bge-m3/onnx/model.onnx": {
+        "sha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "bytes": 607298
+      },
+      ".models/Xenova/bge-m3/onnx/model.onnx_data": {
+        "sha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "bytes": 2266820608
+      },
+      ".models/Xenova/bge-m3/tokenizer.json": {
+        "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "bytes": 17082821
+      },
+      ".models/Xenova/bge-m3/tokenizer_config.json": {
+        "sha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "bytes": 1173
+      },
+      ".models/Xenova/bge-m3/config.json": {
+        "sha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "bytes": 770
+      }
+    }
+  },
+  "tokenizer": {
+    "file": ".models/Xenova/bge-m3/tokenizer.json",
+    "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+    "library": "huggingface tokenizers (python), Tokenizer.from_file",
+    "family": "XLM-RoBERTa sentencepiece, vocab 250002"
+  },
+  "vector": {
+    "dimensions": [
+      1024
+    ],
+    "pooling": "CLS (hidden[:, 0, :])",
+    "normalization": "L2, applied in the sidecar before return",
+    "normalizationVerified": {
+      "rowsChecked": 2744328,
+      "minNorm": 0.9999997615813925,
+      "maxNorm": 1.0000002384185507,
+      "zeroNorm": 0,
+      "nonFinite": 0,
+      "method": "sqrt(-(embedding <#> embedding)) over every row, exact fp32 inner product"
+    },
+    "storageType": "vector(1024) in new1_doc_vector_stage.embedding",
+    "intendedDistance": "cosine",
+    "intendedDistanceOperator": "<=>",
+    "intendedIndexType": "halfvec(1024) expression HNSW, halfvec_cosine_ops",
+    "productionEfSearch": 200,
+    "distanceNote": "Vectors are unit-norm, so cosine and inner product rank identically. The operator is still stated because the index opclass has to match the query operator or the index is not used at all."
+  },
+  "textSelection": {
+    "recipe": "HEAD:4800",
+    "definition": "the first 4800 characters of the judgment text, one vector per representative document",
+    "headChars": 4800,
+    "identityColumn": "judgments.content_hash",
+    "identityNote": "The vector is keyed to a document identity, not a case identity. One common order disposing of forty writ petitions is ONE vector with member_count = 40; every petition keeps its own judgments row, and the map back is a lookup on content_hash."
+  },
+  "storage": {
+    "table": "new1_doc_vector_stage",
+    "primaryKey": "judgment_id",
+    "snapshotColumn": "snapshot_hash",
+    "snapshotColumnDefault": "'5b5d02384b46c96c'::text",
+    "snapshotColumnWarning": "THE SNAPSHOT STAMP IS A COLUMN DEFAULT AND IT EXISTS NOWHERE IN GIT. It was applied by hand on 28 Aug 2026 and recorded only as prose in docs/ai/new1-r10/NEW1_R10_ROUND.md. There is no migration and no code path that writes it, so a grep for snapshot_hash across the repository finds no writer, and a freshly installed database would stamp every row NULL. It is also a CONSTANT: point the walk at a different snapshot without changing the default and every new row is mislabelled with the old one, silently. Recorded here so the identity is at least written down. The durable fix is a migration, which belongs to whoever holds MIGRATION_SLOT.",
+    "ddl": [
+      "ALTER TABLE new1_doc_vector_stage ADD COLUMN IF NOT EXISTS snapshot_hash text;",
+      "ALTER TABLE new1_doc_vector_stage ALTER COLUMN snapshot_hash SET DEFAULT (the definition hash);"
+    ],
+    "rows": {
+      "total": 2744328,
+      "currentSnapshot": 2257373,
+      "orphanNullSnapshot": 486955,
+      "orphanOtherSnapshot": 0
+    },
+    "refusalLedger": {
+      "table": "new1_doc_vector_stage_refused",
+      "taxonomy": {
+        "text_unsafe:damaged_other": 67071,
+        "procedural_disposal": 5021,
+        "legacy_font_ascii": 5,
+        "damaged_other": 2
+      },
+      "note": "Refused rows are MOVED here, not deleted. A refusal that leaves no row is a silent drop."
+    },
+    "database": {
+      "postgres": "18.6",
+      "pgvector": "0.8.5"
+    }
+  },
+  "code": {
+    "embedWorker": {
+      "path": "services/harness/src/doc-vector-embed.mjs",
+      "sha256_16": "4554d94ce1829502"
+    },
+    "gpuSidecar": {
+      "path": "services/embed/gpu/server.py",
+      "sha256_16": "363514761b2f5e5e"
+    },
+    "runner": {
+      "path": "services/harness/src/stage-runner.sh",
+      "sha256_16": "81f99f6e4cbae376"
+    },
+    "deltaManifest": {
+      "path": "services/harness/src/delta-manifest.mjs",
+      "sha256_16": "b52b6f1f4ce33ae9"
+    },
+    "deltaQueue": {
+      "path": "services/harness/src/delta-queue.mjs",
+      "sha256_16": "8ffa8c8e269a65be"
+    }
+  },
+  "reconstruction": {
+    "mapping": "judgments.content_hash -> this manifest -> new1_doc_vector_stage.judgment_id -> embedding",
+    "inputs": [
+      "docs/ai/embedding-manifests/document-vectors-v2/ - 766 batch files naming every id and content hash",
+      "docs/ai/new1-tier-a/stage-coverage-v2.json - per-batch coverage, and the walk worklist",
+      "docs/ai/new1-r9/delta/queue-ledger.jsonl and queue-state.json - the continuous delta cursor",
+      "new1_doc_vector_stage_refused - every row refused, with its reason",
+      ".models/Xenova/bge-m3 - the weights, identified by the sha256 sums above"
+    ],
+    "notInGit": "the vectors themselves (15 GB) and the model weights (2.2 GB). Both are derived or fetched."
+  }
+}
