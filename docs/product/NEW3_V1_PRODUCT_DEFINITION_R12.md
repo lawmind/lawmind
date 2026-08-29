@@ -208,6 +208,14 @@ UNION REACH             111,874 documents = 0.59639% of corpus (NEW1 R10: 2.786x
 CAUGHT_UP_TO_SNAPSHOT   not reached
 ```
 
+**And this number moves while you read it.** `new1_doc_vector_stage` was 2,738,744 at
+17:45Z and **2,763,622 at 18:38Z** — 24,878 rows in 53 minutes, measured again at the end
+of this round, with +398 rows observed in a single bounded 45-second window. That is the
+whole reason this registry is *versioned*: a coverage percentage without a `takenAt` and a
+snapshot version is a number about a moment nobody recorded. **Every embedding figure in
+this document is stamped 2026-08-29T17:45Z against `document-vectors-v2`, and it was
+already stale before the document was committed.**
+
 **620,300 chunks are 40,161 documents.** The chunk count is not a coverage number and has
 been misread as one before. The semantic population is **0.21% of the corpus**.
 
