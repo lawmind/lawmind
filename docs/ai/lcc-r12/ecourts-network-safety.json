@@ -1,0 +1,114 @@
+{
+  "artifact": "LCC_ECOURTS_NETWORK_SAFETY",
+  "version": "ECOURTS_NETSAFE_V1",
+  "takenAt": "2026-08-29T21:16:40.355Z",
+  "ranSuites": [
+    "src/court/guard.test.ts",
+    "src/court/attribution-transport.test.ts",
+    "src/court/quota-reservation.test.ts",
+    "src/court/raw-capture.test.ts",
+    "src/court/ledger-rollback.test.ts",
+    "src/testing/isolated-schema.test.ts"
+  ],
+  "durationMs": 2442,
+  "exitCode": 0,
+  "summary": {
+    "tests": 64,
+    "pass": 64,
+    "fail": 0
+  },
+  "properties": [
+    {
+      "property": "ONE_LOGICAL_NETWORK_OWNER",
+      "suite": "src/court/guard.test.ts",
+      "test": "names an eCourts host in no module but the adapter and Tier 3",
+      "verdict": "PASS"
+    },
+    {
+      "property": "ATTRIBUTION_ON_EVERY_PERMITTED_REQUEST",
+      "suite": "src/court/attribution-transport.test.ts",
+      "test": "EVERY request the session makes carries the attribution header",
+      "verdict": "PASS"
+    },
+    {
+      "property": "ATTRIBUTION_IS_NOT_THE_USER_AGENT",
+      "suite": "src/court/attribution-transport.test.ts",
+      "test": "the attribution header is a dedicated header, not User-Agent",
+      "verdict": "PASS"
+    },
+    {
+      "property": "GLOBAL_ATOMIC_QUOTA_RESERVATION",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "two concurrent callers cannot both take the same remaining slot",
+      "verdict": "PASS"
+    },
+    {
+      "property": "ONE_BUDGET_NOT_ONE_PER_COURT",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "serialises on ONE lock for the whole grant, not one per court",
+      "verdict": "PASS"
+    },
+    {
+      "property": "AGGREGATE_MINIMUM_SPACING",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "refusals do not consume the quota they just protected",
+      "verdict": "PASS"
+    },
+    {
+      "property": "RESERVATION_DURABLE_BEFORE_TRANSMISSION",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "a reservation is durable before the network, so a crash cannot double-spend it",
+      "verdict": "PASS"
+    },
+    {
+      "property": "LOCK_CANNOT_LEAK_PAST_TRANSACTION",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "releases the quota lock at transaction exit, so nothing can leak it",
+      "verdict": "PASS"
+    },
+    {
+      "property": "REFUSAL_CANNOT_BE_SETTLED_INTO_SUCCESS",
+      "suite": "src/court/quota-reservation.test.ts",
+      "test": "a refusal can never be settled into a success",
+      "verdict": "PASS"
+    },
+    {
+      "property": "TEST_ROWS_EXCLUDED_FROM_REAL_QUOTA",
+      "suite": "src/court/raw-capture.test.ts",
+      "test": "never counts an explicitly non-network test ledger row against the grant",
+      "verdict": "PASS"
+    },
+    {
+      "property": "UNRECORDED_FETCH_IS_NOT_MADE",
+      "suite": "src/court/ledger-rollback.test.ts",
+      "test": "an unrecorded fetch never produces usable data",
+      "verdict": "PASS"
+    },
+    {
+      "property": "RAW_RETAINED_BEFORE_PARSE_IS_REQUIRED",
+      "suite": "src/court/raw-capture.test.ts",
+      "test": "keeps the bytes when the parser cannot read them, and writes no observation",
+      "verdict": "PASS"
+    },
+    {
+      "property": "PARSER_FAILURE_CANNOT_ERASE_SOURCE",
+      "suite": "src/court/raw-capture.test.ts",
+      "test": "retains a non-2xx response too, marked fetch_failed rather than observed",
+      "verdict": "PASS"
+    },
+    {
+      "property": "REPLAY_CANNOT_DUPLICATE_OBSERVATIONS",
+      "suite": "src/court/raw-capture.test.ts",
+      "test": "writes one page once, however many times it is replayed",
+      "verdict": "PASS"
+    },
+    {
+      "property": "TESTS_CANNOT_REACH_PRODUCTION_KILL_SWITCH",
+      "suite": "src/testing/isolated-schema.test.ts",
+      "test": "ecourts_harvest: enabling it in a test does not enable it in production",
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS",
+  "note": "Each property is bound to the NAME of the test that covers it, so a test that is renamed or deleted reports NOT_COVERED instead of quietly passing. Nothing here contacts eCourts: every suite drives the adapter with an injected fetch, and the two that need committed rows run against an isolated schema."
+}

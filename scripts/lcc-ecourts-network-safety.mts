@@ -56,6 +56,28 @@ const PROPERTIES: readonly { property: string; suite: string; test: string }[] =
     suite: 'src/court/guard.test.ts',
     test: 'names an eCourts host in no module but the adapter and Tier 3',
   },
+  /**
+   * The grant requires attribution on EVERY request. It says nothing about
+   * which header, so R12 moved it off `User-Agent` — the most-logged header on
+   * the internet — onto a dedicated one.
+   *
+   * Bound here because the move is exactly the kind of change that can quietly
+   * become a removal, and because it already did on one of the module's two
+   * fetch sites: `guardedRequest` calls itself "The ONE network path", and the
+   * word doing the work is "below". `fetchCauseList` predates it and calls
+   * `fetch` directly, so the first version of this change left that site
+   * sending a `User-Agent` and no attribution at all. Nothing errored.
+   */
+  {
+    property: 'ATTRIBUTION_ON_EVERY_PERMITTED_REQUEST',
+    suite: 'src/court/attribution-transport.test.ts',
+    test: 'EVERY request the session makes carries the attribution header',
+  },
+  {
+    property: 'ATTRIBUTION_IS_NOT_THE_USER_AGENT',
+    suite: 'src/court/attribution-transport.test.ts',
+    test: 'the attribution header is a dedicated header, not User-Agent',
+  },
   {
     property: 'GLOBAL_ATOMIC_QUOTA_RESERVATION',
     suite: 'src/court/quota-reservation.test.ts',

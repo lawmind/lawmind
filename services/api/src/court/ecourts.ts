@@ -181,17 +181,36 @@ export async function fetchCauseList(
   let body: Buffer;
   try {
     response = await doFetch(endpoint, {
+      /**
+       * ───────────────────────────────────────────────────────────────────────
+       * THERE ARE TWO FETCH SITES IN THIS MODULE, AND ONLY ONE HAD BEEN UPDATED
+       * ───────────────────────────────────────────────────────────────────────
+       *
+       * `guardedRequest` below describes itself as *"The ONE network path ...
+       * Everything below goes through here rather than calling `fetch` itself"*
+       * — and the word doing the work in that sentence is **below**. This
+       * function predates it and calls `fetch` directly.
+       *
+       * When attribution moved off `User-Agent` onto its own header, this site
+       * was missed. Nothing failed: the request still went out, still carried a
+       * `User-Agent`, and was simply **unattributed** — the one property the
+       * grant actually requires. `attribution-transport.test.ts` caught it by
+       * asserting on the bytes rather than on the constant, which is why it
+       * asserts there.
+       *
+       * The headers are built identically to `guardedRequest`'s so the two
+       * cannot drift again on this property.
+       */
       headers: {
-        // The grant requires attribution and it rides on every request rather
-        // than being asserted in a document somewhere. If the registrar looks at
-        // their own logs, we should be identifiable there too.
-        //
-        // Read live, not from the decision's snapshot, and rendered into bytes a
-        // header can legally carry. The first real request under this grant died
-        // here, before a socket opened, on a single em dash — `attributionForWire`
-        // and its note in `authorisation.ts` are that failure's fix. The guard
-        // has already refused when it is absent, so by here it is a string.
-        'user-agent': attributionForWire()!,
+        'user-agent': ECOURTS_CLIENT_USER_AGENT,
+        /**
+         * Read live, not from the decision's snapshot, and rendered into bytes a
+         * header can legally carry. The first real request under this grant died
+         * here, before a socket opened, on a single em dash — `attributionForWire`
+         * and its note in `authorisation.ts` are that failure's fix. The guard
+         * has already refused when it is absent, so by here it is a string.
+         */
+        [ECOURTS_ATTRIBUTION_HEADER]: attributionForWire()!,
       },
     });
     body = Buffer.from(await response.arrayBuffer());
@@ -362,6 +381,54 @@ export const ECOURTS_BASE = 'https://services.ecourts.gov.in/ecourtindia_v6';
  */
 const ECOURTS_AJAX_DELIMETER = 'jkhfkjhkjert33';
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * USER-AGENT AND ATTRIBUTION ARE TWO DIFFERENT THINGS, AND ONE HEADER WAS DOING
+ * BOTH
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The attribution string was being sent AS the `User-Agent`. Read literally,
+ * the binding record does not ask for that. `CLAUDE.md` §6a says
+ * `ECOURTS_GRANT_ATTRIBUTION` is *"an internal audited attribution string that
+ * identifies LawMind's authorized eCourts access — **not** a phrase the grant
+ * requires us to quote verbatim (the written authorization prescribes no
+ * mandatory attribution wording that is recorded in this repository)"*, and
+ * nothing anywhere records a mandated HEADER either. What is required is that
+ * attribution be present on every request. The channel was our choice, and it
+ * was the wrong one for two reasons:
+ *
+ * - **`User-Agent` is the most-logged header on the internet.** Proxies, CDNs
+ *   and analytics retain it by default. A compliance value that identifies our
+ *   authorised access does not belong in the field most likely to be written to
+ *   somebody else's disk.
+ * - **A `User-Agent` is supposed to identify the CLIENT SOFTWARE**, so that an
+ *   operator debugging traffic can tell what is talking to them. A sentence of
+ *   English prose in that field tells them nothing useful about the client.
+ *
+ * So the two are separated. `User-Agent` carries a conventional, interoperable
+ * client identity that still names us; `x-lawmind-attribution` carries the
+ * audited attribution, on **every** request, asserted by
+ * `attribution-transport.test.ts`.
+ *
+ * **Attribution is not weakened and is not removed.** It is still read live from
+ * the environment, still rendered into header-legal bytes, and `guard.decide`
+ * still refuses every network request while it is unset. What changed is which
+ * header carries it. Nothing here prints it.
+ *
+ * **This is not inferred from the `Invalid Request` response.** That reply was
+ * explained and fixed by the two `ajaxCall` headers above, transcribed from the
+ * licensed client's own source. No legal-policy conclusion is drawn from an
+ * HTTP error, and none should be.
+ */
+export const ECOURTS_ATTRIBUTION_HEADER = 'x-lawmind-attribution';
+
+/**
+ * A conventional client identity. Deliberately NOT a browser string: claiming to
+ * be Chrome would be a misrepresentation to the party that authorised us, which
+ * is a bad trade for a header nobody is checking.
+ */
+export const ECOURTS_CLIENT_USER_AGENT = 'LawMind/1.0 (+authorised eCourts access; legal research)';
+
 export type EcourtsSession = {
   /** `SERVICES_SESSID` and friends, already folded into a Cookie header. */
   cookieHeader: string;
@@ -430,9 +497,19 @@ async function guardedRequest(
   let body: Buffer;
   try {
     const headers: Record<string, string> = {
-      // Read live and rendered into header-legal bytes. The grant requires
-      // attribution on EVERY request, the CAPTCHA image fetch included.
-      'user-agent': attributionForWire()!,
+      /**
+       * A conventional client identity, so an operator reading their logs can
+       * tell what is talking to them. See {@link ECOURTS_CLIENT_USER_AGENT} for
+       * why this is no longer the attribution's channel.
+       */
+      'user-agent': ECOURTS_CLIENT_USER_AGENT,
+      /**
+       * Read live and rendered into header-legal bytes. The grant requires
+       * attribution on EVERY request, the CAPTCHA image fetch included — this
+       * is the ONE place it is attached, so there is no request shape that can
+       * omit it. `guard.decide` has already refused if it is unset.
+       */
+      [ECOURTS_ATTRIBUTION_HEADER]: attributionForWire()!,
       accept: request.accept ?? '*/*',
     };
     if (request.session) headers['cookie'] = request.session.cookieHeader;
