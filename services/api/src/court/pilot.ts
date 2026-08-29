@@ -12,6 +12,15 @@
  * available — there is no actor row, no attribution in the runtime environment,
  * the kill switch is off, and the parser has never seen a response.
  *
+ * **Updated 29 Aug 2026, after the first authorised request.** Two of those four
+ * are now false: there IS an actor row, there IS attribution in the runtime
+ * environment, the switch is ON through the audited path, and the parser has
+ * seen a response. What replaced them is narrower and worse for the pilot: the
+ * licensed cause-list interface serves no data until a CAPTCHA is satisfied, and
+ * the grant permits the bypass without saying by what means
+ * (`CAPTCHA_OPERATIONAL_BASIS`). So the pilot still refuses, and now refuses for
+ * a reason only the registrar can clear.
+ *
  * So the pilot exists as a value that can be read, tested and reviewed, and it
  * is **not** registered as a runnable task. A disabled job in a scheduler is one
  * config edit away from running; a definition that no scheduler knows about
@@ -28,7 +37,11 @@
  * their real costs are known, and implementing a second strategy before the
  * first has ever returned a byte would be building on an assumed cost model.
  */
-import { AUTHORISATION } from './authorisation.ts';
+import {
+  AUTHORISATION,
+  CAPTCHA_OPERATIONAL_BASIS,
+  captchaImplementable,
+} from './authorisation.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, PARSER_STATE } from './ecourts.ts';
 import { type Db, killSwitchEnabled, type ObservationStrategy } from './guard.ts';
 
@@ -87,6 +100,16 @@ export const ECOURTS_PILOT: EcourtsPilot = {
 export type PilotBlocker =
   | 'pilot_disabled'
   | 'parser_needs_authorized_fixture'
+  /**
+   * The grant permits the bypass and does not say how.
+   *
+   * Separate from `parser_needs_authorized_fixture` on purpose: the parser is
+   * now written against a real retained response, so that blocker is cleared and
+   * this one is not. Collapsing them would make a solved problem and an
+   * unsolved one indistinguishable, and would hide which of the two the founder
+   * can actually do something about.
+   */
+  | 'captcha_implementation_blocked'
   | 'source_key_unresolved'
   | 'terms_not_on_file'
   | 'attribution_not_on_file'
@@ -102,9 +125,10 @@ export type PilotBlocker =
 export async function pilotBlockers(sql: Db): Promise<PilotBlocker[]> {
   const blockers: PilotBlocker[] = [];
   if (!ECOURTS_PILOT.enabled) blockers.push('pilot_disabled');
-  if (PARSER_STATE === 'NEEDS_AUTHORIZED_FIXTURE') {
+  if (PARSER_STATE !== 'FIXTURE_BOUND') {
     blockers.push('parser_needs_authorized_fixture');
   }
+  if (!captchaImplementable()) blockers.push('captcha_implementation_blocked');
   if (
     ECOURTS_PILOT.sourceKey.court === 'PENDING_ACTIVATION' ||
     ECOURTS_PILOT.sourceKey.establishment === null
@@ -121,7 +145,16 @@ export class PilotRefused extends Error {
   override name = 'PilotRefused';
   readonly blockers: PilotBlocker[];
   constructor(blockers: PilotBlocker[]) {
-    super(`the eCourts pilot is not runnable: ${blockers.join(', ')}`);
+    super(
+      `the eCourts pilot is not runnable: ${blockers.join(', ')}` +
+        // Named in the message because this is the one blocker nobody here can
+        // clear by writing code, and an operator reading "captcha_implementation
+        // _blocked" deserves to be told immediately that the missing thing is a
+        // fact from the registrar rather than an unfinished function.
+        (blockers.includes('captcha_implementation_blocked')
+          ? ` (captcha operational basis on the grant: ${CAPTCHA_OPERATIONAL_BASIS})`
+          : ''),
+    );
     this.blockers = blockers;
   }
 }

@@ -84,6 +84,11 @@ after(async () => {
 const ROLLBACK = 'lcc-ecourts-raw-capture-rollback';
 
 const TEST_COURT = 'ZZ_RAW_CAPTURE_TEST';
+const TEST_SOURCE = {
+  tier: 'legacy_court_key',
+  court: TEST_COURT,
+  listDate: '2026-08-29',
+} as const;
 const BODY = Buffer.from('<html><body>a cause list we cannot read yet</body></html>', 'utf8');
 const BODY_SHA = createHash('sha256').update(BODY).digest('hex');
 
@@ -152,14 +157,19 @@ suite('an authorised response is retained before it is understood', () => {
   it('keeps the bytes when the parser cannot read them, and writes no observation', async () => {
     await inRolledBackHarvest(async (tx) => {
       const at = new Date();
-      const result = await fetchCauseList(tx, TEST_COURT, {
+      const result = await fetchCauseList(tx, TEST_SOURCE, {
         fetchImpl: cannedFetch(200, BODY, 'text/html; charset=utf-8'),
         now: at,
-        listDate: '2026-08-29',
       });
 
-      assert.equal(result.status, 'failed', 'the parser is a stub and must say so');
-      assert.match(result.status === 'failed' ? result.error : '', /parser_not_implemented/);
+      assert.equal(result.status, 'failed', 'an unreadable page must never read as ok or empty');
+      // The refusal CODE, not a prose match. Four causes are distinguishable now
+      // and an operator has to be told which one applies; `BODY` is a scrap of
+      // HTML that is not a cause-list surface at all.
+      assert.match(
+        result.status === 'failed' ? result.error : '',
+        /^not_a_cause_list_response:/,
+      );
       assert.ok(result.artifactId, 'the response must be retained even though it was unreadable');
 
       const [artifact] = await tx<
@@ -216,7 +226,7 @@ suite('an authorised response is retained before it is understood', () => {
   it('retains a non-2xx response too, marked fetch_failed rather than observed', async () => {
     await inRolledBackHarvest(async (tx) => {
       const body = Buffer.from('<html>service unavailable</html>', 'utf8');
-      const result = await fetchCauseList(tx, TEST_COURT, {
+      const result = await fetchCauseList(tx, TEST_SOURCE, {
         fetchImpl: cannedFetch(503, body, 'text/html'),
         now: new Date(),
       });
@@ -238,7 +248,7 @@ suite('an authorised response is retained before it is understood', () => {
       const exploding: typeof fetch = (async () => {
         throw new Error('ECONNRESET');
       }) as unknown as typeof fetch;
-      const result = await fetchCauseList(tx, TEST_COURT, {
+      const result = await fetchCauseList(tx, TEST_SOURCE, {
         fetchImpl: exploding,
         now: new Date(),
       });
@@ -265,7 +275,7 @@ suite('an authorised response is retained before it is understood', () => {
         { court: TEST_COURT, endpoint: ECOURTS_CAUSE_LIST_ENDPOINT, strategy: 'CAUSE_LIST_BATCH' },
         at,
       );
-      const result = await fetchCauseList(tx, TEST_COURT, {
+      const result = await fetchCauseList(tx, TEST_SOURCE, {
         fetchImpl: forbidden,
         now: new Date(at.getTime() + 5),
       });
@@ -293,6 +303,117 @@ suite('an authorised response is retained before it is understood', () => {
         true,
         'test:// rows never reached eCourts and must not consume interval/hour/day quota',
       );
+    });
+  });
+
+  /**
+   * A SYNTHETIC results page. It proves the WIRING - reservation, ledger,
+   * retained artifact, parser, observation writer, all in one transaction - and
+   * it proves nothing about what a served eCourts cause list looks like, because
+   * no served cause list has been seen: the CAPTCHA stands in front of one
+   * (`authorisation.CAPTCHA_OPERATIONAL_BASIS`). Its headers are the labels the
+   * real retained response publishes in its own translation dictionary, which is
+   * the closest thing to evidence available without satisfying the CAPTCHA.
+   */
+  const SYNTHETIC_RESULT_PAGE = Buffer.from(
+    '<html><body>' +
+      '<h2>Cause list displayed may differ from the actual cause list. ' +
+      'For further queries, contact court administrator.</h2>' +
+      '<div id="CauseList"><table>' +
+      '<tr><th>Sr No</th><th>Case Number</th><th>Party Name</th></tr>' +
+      '<tr><td>1</td><td>CRL.A. 100/2024</td><td>State versus Somebody</td></tr>' +
+      '<tr><td>2</td><td>CS 55/2025</td><td>A versus B</td></tr>' +
+      '</table></div></body></html>',
+    'utf8',
+  );
+
+  it('carries a page end to end: reservation, ledger, artifact, parse, observations', async () => {
+    await inRolledBackHarvest(async (tx) => {
+      const at = new Date();
+      const result = await fetchCauseList(tx, TEST_SOURCE, {
+        fetchImpl: cannedFetch(200, SYNTHETIC_RESULT_PAGE, 'text/html; charset=utf-8'),
+        now: at,
+      });
+
+      assert.equal(result.status, 'ok');
+      if (result.status !== 'ok') return;
+      assert.equal(result.items.length, 2);
+      assert.ok(result.artifactId, 'the bytes are retained before anything reads them');
+      assert.equal(result.observationIds?.length, 2);
+
+      const rows = await tx<
+        {
+          observation_kind: string;
+          cnr: string | null;
+          case_number: string | null;
+          extraction_note: string | null;
+          source_artifact_id: string;
+          payload: Record<string, unknown>;
+        }[]
+      >`
+        SELECT observation_kind, cnr, case_number, extraction_note, source_artifact_id, payload
+          FROM ecourts_observation WHERE source_artifact_id = ${result.artifactId!}::uuid
+         ORDER BY item_number
+      `;
+      assert.equal(rows.length, 2);
+      assert.ok(rows.every((r) => r.observation_kind === 'cause_list_entry'));
+      // A listing is not a hearing, and there is no value that could say it was.
+      assert.ok(rows.every((r) => r.observation_kind !== 'hearing_occurred'));
+      assert.ok(rows.every((r) => r.source_artifact_id === result.artifactId));
+      // The court's uncertainty survived the write, on every row.
+      assert.ok(
+        rows.every((r) => (r.extraction_note ?? '').includes('may differ from the actual cause list')),
+        'the source’s own warning must reach the record, not just the log',
+      );
+      assert.ok(
+        rows.every((r) => typeof r.payload['_parserVersion'] === 'string'),
+        'a row whose parser is unknown cannot be re-examined when that parser is wrong',
+      );
+    });
+  });
+
+  it('writes one page once, however many times it is replayed', async () => {
+    await inRolledBackHarvest(async (tx) => {
+      const at = new Date();
+      const first = await fetchCauseList(tx, TEST_SOURCE, {
+        fetchImpl: cannedFetch(200, SYNTHETIC_RESULT_PAGE, 'text/html; charset=utf-8'),
+        now: at,
+      });
+      assert.equal(first.status, 'ok');
+      if (first.status !== 'ok') return;
+
+      /**
+       * The replay a parser fix actually looks like: the same retained artifact,
+       * read again. `ecourts_observation` is append-only, so a duplicate here is
+       * permanent and would make "how many matters were listed" wrong by however
+       * many times the job ran.
+       */
+      const replay = await writeCauseListObservations(tx, {
+        court: TEST_COURT,
+        listingDate: TEST_SOURCE.listDate,
+        observedAt: at,
+        endpoint: ECOURTS_CAUSE_LIST_ENDPOINT,
+        payloadSha256: createHash('sha256').update(SYNTHETIC_RESULT_PAGE).digest('hex'),
+        sourceArtifactId: first.artifactId!,
+        fetchLedgerId: first.fetchLedgerId,
+        strategy: 'CAUSE_LIST_BATCH',
+        parserVersion: 'REPLAY',
+        items: [
+          { cnr: null, caseNumber: 'CRL.A. 100/2024', courtNumber: null, itemNumber: 1, raw: {} },
+          { cnr: null, caseNumber: 'CS 55/2025', courtNumber: null, itemNumber: 2, raw: {} },
+        ],
+      });
+
+      assert.deepEqual(
+        [...replay].sort(),
+        [...(first.observationIds ?? [])].sort(),
+        'a replay must return the rows that already exist, not a second set',
+      );
+      const [count] = await tx<{ n: number }[]>`
+        SELECT count(*)::int AS n FROM ecourts_observation
+         WHERE source_artifact_id = ${first.artifactId!}::uuid
+      `;
+      assert.equal(count?.n, 2, 'replaying one artifact must not double its listings');
     });
   });
 
@@ -344,6 +465,7 @@ suite('the observation writer accepts only validated parser output', () => {
     sourceArtifactId: '00000000-0000-0000-0000-000000000001',
     fetchLedgerId: '00000000-0000-0000-0000-000000000002',
     strategy: 'CAUSE_LIST_BATCH' as const,
+    parserVersion: 'TEST_PARSER',
   };
 
   // Every case below is refused BEFORE any INSERT is attempted, so none of them
@@ -418,17 +540,29 @@ suite('the eCourts pilot is defined and disabled', () => {
   it('refuses to run, and names every reason at once', async () => {
     const blockers = await pilotBlockers(sql);
     assert.ok(blockers.includes('pilot_disabled'));
-    assert.ok(blockers.includes('parser_needs_authorized_fixture'));
     assert.ok(blockers.includes('source_key_unresolved'));
     assert.ok(blockers.includes('kill_switch_off'));
+    /**
+     * The blocker that replaced `parser_needs_authorized_fixture` on
+     * 29 Aug 2026. The parser HAS its authorised response now; what it does not
+     * have is a way past the CAPTCHA that the grant actually gave us. Asserting
+     * the new one and not the old one is the point — they are different
+     * problems, and only one of them is ours to solve.
+     */
+    assert.ok(blockers.includes('captcha_implementation_blocked'));
+    assert.ok(!blockers.includes('parser_needs_authorized_fixture'));
     await assert.rejects(assertPilotRunnable(sql), (error: unknown) => {
       assert.ok(error instanceof PilotRefused);
       return true;
     });
   });
 
-  it('states the parser has never seen an authorised response', () => {
-    assert.equal(PARSER_STATE, 'NEEDS_AUTHORIZED_FIXTURE');
+  it('states that the parser is bound to a real response, and is not called ready', () => {
+    // `FIXTURE_BOUND`, deliberately not `READY`: the response it was written
+    // against is the licensed interface's FORM, so the row-extraction half has
+    // been built from the source's published labels and has never run against a
+    // real result table. See `ecourts.ts` PARSER_STATE.
+    assert.equal(PARSER_STATE, 'FIXTURE_BOUND');
   });
 
   it('is registered with no scheduler', () => {

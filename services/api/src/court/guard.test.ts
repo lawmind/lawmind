@@ -65,6 +65,17 @@ const sql = isolation.connect({ max: 2 });
  */
 const TEST_COURT = 'ZZ_GUARD_TEST';
 
+/**
+ * The under-specified tier, deliberately. This suite is about the LOCKS, and a
+ * lock that refuses must refuse the same way whichever tier asked - so the tier
+ * that carries the fewest dimensions is the honest one to test them with.
+ */
+const TEST_SOURCE = {
+  tier: 'legacy_court_key',
+  court: TEST_COURT,
+  listDate: '2026-08-29',
+} as const;
+
 /** Throws if anything calls it. The point is that nothing does. */
 const forbiddenFetch: typeof fetch = (input) => {
   throw new Error(
@@ -136,7 +147,7 @@ describe('eCourts guard', () => {
   });
 
   it('makes no request at all, and says why', async () => {
-    const result = await fetchCauseList(sql, TEST_COURT, { fetchImpl: forbiddenFetch });
+    const result = await fetchCauseList(sql, TEST_SOURCE, { fetchImpl: forbiddenFetch });
     assert.equal(result.status, 'failed');
     if (result.status !== 'failed') return;
     assert.match(result.error, /refused:/);
@@ -145,7 +156,7 @@ describe('eCourts guard', () => {
   it('writes the refusal to the ledger — a lock that leaves no trace proves nothing', async () => {
     const before = await sql<{ n: string }[]>`
       SELECT count(*) AS n FROM ecourts_fetch_ledger WHERE outcome = 'refused'`;
-    await fetchCauseList(sql, TEST_COURT, { fetchImpl: forbiddenFetch });
+    await fetchCauseList(sql, TEST_SOURCE, { fetchImpl: forbiddenFetch });
     const after = await sql<{ n: string }[]>`
       SELECT count(*) AS n FROM ecourts_fetch_ledger WHERE outcome = 'refused'`;
     assert.equal(
@@ -179,7 +190,7 @@ describe('eCourts guard', () => {
     // `empty` means the court published nothing. `failed` means we could not read
     // what it published. Collapsing them is how a briefing goes out with a stale
     // date and no warning — the exact failure this module exists to prevent.
-    const parsed = parseCauseList('<html>anything at all</html>');
+    const parsed = parseCauseList(Buffer.from('<html>anything at all</html>', 'utf8'), 'text/html');
     assert.equal(parsed.status, 'failed');
     assert.notEqual(parsed.status, 'empty');
   });

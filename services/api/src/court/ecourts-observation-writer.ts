@@ -28,6 +28,13 @@
  * **Every row names the bytes it came from.** `source_artifact_id` (migration
  * 0096) points at the retained response. Without it, `payload_sha256` proves a
  * hash was computed and nothing about whether the evidence still exists.
+ *
+ * **Re-reading one response twice writes it once.** The retained artifact is the
+ * unit of work — one request, one page, one set of listings — so replaying it
+ * (a re-parse after a parser fix, a retried job, two workers handed the same
+ * artifact) must not double the record. This table is append-only, so a
+ * duplicate cannot be cleaned up afterwards; it is permanent, and it would make
+ * "how many matters were listed" wrong by however many times the job ran.
  */
 import type { JSONValue } from 'postgres';
 
@@ -71,7 +78,40 @@ export type CauseListObservationBatch = {
   fetchLedgerId: string;
   strategy: ObservationStrategy;
   items: ValidatedCauseListItem[];
+  /**
+   * Which extractor read these rows. Required.
+   *
+   * An observation is only as good as the code that produced it, and the code
+   * changes. Without this, a parser bug found in November leaves no way to ask
+   * which rows came from the broken version — the rows are append-only, so the
+   * answer has to be recorded at write time or it does not exist.
+   */
+  parserVersion: string;
+  /**
+   * The SOURCE's own statements about its data — for the cause list, the
+   * court's "Cause list displayed may differ from the actual cause list."
+   *
+   * Carried into every row rather than logged. Master Roadmap v5 and the
+   * founder's instruction both require the court's uncertainty to survive as
+   * source uncertainty; a derived state of ours must never read as though the
+   * court certified it.
+   */
+  sourceWarnings?: readonly string[];
 };
+
+/**
+ * The advisory-lock namespace for one artifact's write.
+ *
+ * The SAME primitive the quota reservation uses — `pg_advisory_xact_lock`,
+ * transaction-scoped, released by commit or rollback — deliberately, because a
+ * second kind of lock is a second set of semantics to get wrong. A different key
+ * space, because this protects a different resource: quota admission is one
+ * global budget, this is one artifact at a time.
+ *
+ * Two classids keep them from ever colliding: the quota lock is the single-arg
+ * form (classid 0), this is the two-arg form under a namespace of its own.
+ */
+export const OBSERVATION_WRITE_LOCK_NAMESPACE = 20_260_829;
 
 export class ObservationWriteRefused extends Error {
   override name = 'ObservationWriteRefused';
@@ -114,6 +154,40 @@ export async function writeCauseListObservations(
   if (!/^[0-9a-f]{64}$/.test(batch.payloadSha256)) {
     refuse(`payloadSha256 ${batch.payloadSha256} is not a sha256 over the received bytes`);
   }
+  if (!batch.parserVersion) {
+    refuse(
+      'an observation must name the extractor that produced it; rows whose parser is unknown ' +
+        'cannot be re-examined when that parser turns out to be wrong',
+    );
+  }
+  /**
+   * IDEMPOTENCY, TAKEN BEFORE THE CHECK RATHER THAN HOPED FOR AFTER IT.
+   *
+   * `hashtext` gives a stable int4 for the artifact id, and the lock is held
+   * until this transaction ends — so two callers handed the same artifact
+   * serialise here, and the second one sees the first one's committed rows
+   * instead of racing it to insert a second copy. Without the lock this would be
+   * the same read-then-act race the quota reservation already had to fix, with a
+   * worse failure: the duplicate rows are append-only and permanent.
+   */
+  await sql`
+    SELECT pg_advisory_xact_lock(${OBSERVATION_WRITE_LOCK_NAMESPACE}, hashtext(${batch.sourceArtifactId}))
+  `;
+  const already = await sql<{ id: string }[]>`
+    SELECT id FROM ecourts_observation
+     WHERE source_artifact_id = ${batch.sourceArtifactId}::uuid
+     ORDER BY item_number NULLS LAST, id
+  `;
+  if (already.length > 0) {
+    /**
+     * Not an error. Replaying one artifact is a normal, wanted thing — it is how
+     * a parser fix is applied to evidence we already hold — and the honest
+     * result is the ids that already exist, so a caller counting observations
+     * counts the same list it counted the first time.
+     */
+    return already.map((row) => row.id);
+  }
+
   if (batch.items.length === 0) {
     // An empty LIST is a real Tuesday and is recorded on `cause_list_syncs` as
     // `empty`. It is not zero observations plus a claim; there is simply
@@ -138,6 +212,26 @@ export async function writeCauseListObservations(
       refuse(`item ${index} declares an extraction state this writer does not accept: ${state}`);
     }
 
+    /**
+     * Provenance and the source's own uncertainty ride INSIDE the payload,
+     * under reserved keys, because `ecourts_observation` is append-only and
+     * adding columns to it later cannot backfill rows written today.
+     */
+    const payload: Record<string, JSONValue> = {
+      ...item.raw,
+      _parserVersion: batch.parserVersion,
+      _sourceWarnings: [...(batch.sourceWarnings ?? [])],
+    };
+
+    const extractionNote = [
+      item.extractionNote ?? null,
+      (batch.sourceWarnings ?? []).length > 0
+        ? `source states: ${(batch.sourceWarnings ?? []).join(' ')}`
+        : null,
+    ]
+      .filter((v): v is string => Boolean(v))
+      .join(' | ');
+
     const [row] = await sql<{ id: string }[]>`
       INSERT INTO ecourts_observation
         (observation_kind, source, observed_at, source_asserted_at, court, court_code,
@@ -155,9 +249,9 @@ export async function writeCauseListObservations(
         ${item.cnr}, ${item.caseNumber}, ${item.caseYear ?? null}, ${item.caseType ?? null},
         ${batch.listingDate}::date,
         ${item.bench ?? null}, ${item.courtNumber}, ${item.itemNumber},
-        ${sql.json(item.raw)}, ${batch.payloadSha256}, ${batch.endpoint},
+        ${sql.json(payload)}, ${batch.payloadSha256}, ${batch.endpoint},
         'cause_list', ${conditionsVersion}, ${batch.fetchLedgerId},
-        ${state}, ${item.extractionNote ?? null}, ${batch.sourceArtifactId}
+        ${state}, ${extractionNote === '' ? null : extractionNote}, ${batch.sourceArtifactId}
       )
       RETURNING id
     `;

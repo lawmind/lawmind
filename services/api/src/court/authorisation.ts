@@ -362,6 +362,104 @@ export function grantAttribution(): string | undefined {
 }
 
 /**
+ * The attribution as it may legally travel in an HTTP header.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * FOUND BY THE FIRST REAL REQUEST, WHICH NEVER LEFT THE MACHINE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The first authorised eCourts request under this grant failed before a socket
+ * opened:
+ *
+ *   Cannot convert argument to a ByteString because the character at index 8
+ *   has a value of 8212 which is greater than 255.
+ *
+ * 8212 is an em dash. HTTP header values are ByteStrings — one byte per
+ * character — and the configured attribution contains exactly one character
+ * outside that range. Every lock had passed. `decide()` returned ALLOWED, the
+ * quota slot was reserved and committed, and then `fetch` refused to build the
+ * header. The guard's ladder can only check that the attribution EXISTS; it
+ * could not have known it was unsendable.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY TRANSLITERATING IT IS PERMITTED, AND WHY IT IS STILL RECORDED
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `CLAUDE.md` §6a is explicit that this string is an internal audited
+ * attribution identifying our authorised access, and **not** a phrase the grant
+ * requires us to quote verbatim — the written authorisation prescribes no
+ * mandatory wording that this repository records. So rendering it into the
+ * bytes a header can carry is faithful, where mangling a verbatim requirement
+ * would not be.
+ *
+ * It is still a transformation of a compliance value, so it is deliberate and
+ * narrow rather than a lossy sweep: a fixed table of the punctuation that
+ * actually occurs in prose written for humans, and then a refusal.
+ * `attributionWireSafety()` reports whether anything changed and what remains,
+ * so the data-quality artifact can state what went on the wire without printing
+ * it.
+ *
+ * A value that cannot be rendered at all returns `undefined`, which
+ * `guard.decide` already treats as "no attribution on file" — refusing is
+ * correct there, because a request we could not attribute is a request whose
+ * compliance we could not demonstrate.
+ */
+const WIRE_SUBSTITUTIONS: readonly (readonly [RegExp, string])[] = [
+  [/[\u2010-\u2015]/g, '-'],
+  [/[\u2018\u2019\u201A\u201B]/g, "'"],
+  [/[\u201C\u201D\u201E\u201F]/g, '"'],
+  [/\u2026/g, '...'],
+  [/\u00A0/g, ' '],
+];
+
+export function attributionForWire(): string | undefined {
+  const raw = grantAttribution();
+  if (!raw) return undefined;
+  let out = raw;
+  for (const [pattern, replacement] of WIRE_SUBSTITUTIONS) out = out.replace(pattern, replacement);
+  /**
+   * Header values are also forbidden control characters and newlines — a
+   * newline in a header value is header injection, not a formatting problem.
+   * Anything still outside printable Latin-1 after the substitutions is
+   * dropped rather than guessed at.
+   */
+  out = out
+    .replace(/[\r\n\t]+/g, ' ')
+    .replace(/[^\u0020-\u007E\u00A1-\u00FF]/g, '')
+    .replace(/ {2,}/g, ' ')
+    .trim();
+  return out.length > 0 ? out : undefined;
+}
+
+/**
+ * What happened to the attribution on its way to the wire, without printing it.
+ *
+ * The registrar asked that their identifiers stay out of the application, so
+ * this reports SHAPE — lengths, a digest, whether a substitution was needed —
+ * and never the string. That is enough for the audit to answer "was the value
+ * we configured the value we sent", which is the only question worth asking.
+ */
+export function attributionWireSafety(): {
+  configured: boolean;
+  transformed: boolean;
+  sendable: boolean;
+  configuredLength: number;
+  wireLength: number;
+  wireSha256: string | null;
+} {
+  const raw = grantAttribution();
+  const wire = attributionForWire();
+  return {
+    configured: Boolean(raw),
+    transformed: Boolean(raw) && raw !== wire,
+    sendable: Boolean(wire),
+    configuredLength: raw?.length ?? 0,
+    wireLength: wire?.length ?? 0,
+    wireSha256: wire ? createHash('sha256').update(wire).digest('hex') : null,
+  };
+}
+
+/**
  * When the renewal must be paid to avoid any interruption.
  *
  * Computed, so the answer cannot drift from the grant it depends on. `null`
@@ -391,6 +489,63 @@ export function renewalDueBy(): Date | null {
  */
 export function captchaBypassAllowed(at: Date = new Date()): boolean {
   return grantPermits('captchaBypassPermitted', at);
+}
+
+/**
+ * HOW an authorised request is supposed to get past the CAPTCHA — and the
+ * honest answer is that this repository does not know.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * PERMITTED IS NOT IMPLEMENTABLE, AND CONFLATING THEM WOULD BE THE BREACH
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `captchaBypassPermitted` is `true`: the registrar's grant expressly permits
+ * the bypass, and `CLAUDE.md` §6a records the founder's 29 Aug 2026 decision
+ * that this covers the enumerated data types. That answers *may we*. It does not
+ * answer *by what means*, and nothing transcribed here answers it either — there
+ * is no API key on the grant, no whitelisted address, no exempt endpoint, and no
+ * recorded statement of a permitted mechanism.
+ *
+ * The first authorised request settled what the interface requires. The
+ * retained response (`cause-list-parser.ts`, `PARSER_FIXTURE`) says in the
+ * court's own words: *"Enter the Captcha (the 5 digit numbers shown on the
+ * screen) in the text box provided"*, into `cause_list_captcha_code`, generated
+ * by `vendor/securimage`, with an audio alternative. No data is served before
+ * it is satisfied.
+ *
+ * The only methods available to us without a stated basis would be to read the
+ * image, transcribe the audio, or exploit a weakness in the generator. **Each of
+ * those is inventing a security bypass**, and a permission to bypass is not a
+ * specification of one. Inventing it would also be the exact move `CLAUDE.md`
+ * warns against: turning a bounded permission into an unbounded one by supplying
+ * the unbounded half ourselves.
+ *
+ * So this is `NONE_RECORDED`, and `captchaImplementable()` is false, and the
+ * pilot refuses. What unblocks it is a fact from the registrar, not a technique
+ * from us — `docs/FOUNDER_QUEUE.md`.
+ */
+export type CaptchaOperationalBasis =
+  /** Nothing in the grant says how. Refuse. */
+  | 'NONE_RECORDED'
+  /** The registrar supplies a credential that exempts our requests. */
+  | 'GRANT_ISSUED_CREDENTIAL'
+  /** The registrar exempts our source address. */
+  | 'ADDRESS_WHITELISTED'
+  /** The registrar names an endpoint that does not present one. */
+  | 'EXEMPT_ENDPOINT';
+
+export const CAPTCHA_OPERATIONAL_BASIS: CaptchaOperationalBasis = 'NONE_RECORDED';
+
+/**
+ * May we ACT on the CAPTCHA permission?
+ *
+ * Both halves, and both are necessary: the grant must permit it (and still be
+ * live), and the means must be one the grant actually gave us. A caller that
+ * reads `captchaBypassAllowed()` alone will eventually improvise the second
+ * half, which is why that function is not enough on its own.
+ */
+export function captchaImplementable(at: Date = new Date()): boolean {
+  return captchaBypassAllowed(at) && CAPTCHA_OPERATIONAL_BASIS !== 'NONE_RECORDED';
 }
 
 /**

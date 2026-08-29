@@ -135,7 +135,21 @@ export async function retryCauseList(
   // Goes through the guard like every other request. A retry from the admin is
   // not a privileged path to the network — with the switch off it is refused and
   // the refusal is written to the ledger, same as any other attempt.
-  const result = await fetchCauseList(sql, row.court);
+  /**
+   * `cause_list_syncs` holds a bare court string and no bench, which is not a
+   * requestable source under any licensed eCourts interface. That is stated in
+   * the key's tier rather than papered over: inventing a bench here would put a
+   * request on the ledger that nobody could defend.
+   *
+   * The sync's OWN date is passed, which it was not before — the retry used to
+   * fetch today's list for a row about another day and record the result against
+   * that row.
+   */
+  const result = await fetchCauseList(sql, {
+    tier: 'legacy_court_key',
+    court: row.court,
+    listDate: row.list_date,
+  });
   const updated = await recordSync(sql, row.court, row.list_date, result);
   const escalated = await escalate(sql, updated);
 

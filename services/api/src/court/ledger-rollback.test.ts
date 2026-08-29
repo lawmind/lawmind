@@ -173,7 +173,11 @@ describe('the fetch ledger is not optional', () => {
         };
 
         try {
-          returned = await fetchCauseList(tx as unknown as typeof sql, 'delhi_hc', { fetchImpl });
+          returned = await fetchCauseList(
+            tx as unknown as typeof sql,
+            { tier: 'legacy_court_key', court: 'ZZ_LEDGER_DRILL', listDate: '2026-08-29' },
+            { fetchImpl },
+          );
         } catch {
           outcome = 'threw';
         }

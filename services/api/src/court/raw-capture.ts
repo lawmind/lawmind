@@ -51,6 +51,15 @@ export type RawCapture = {
   court: string;
   /** The cause-list date requested, ISO date. */
   listDate?: string | undefined;
+  /**
+   * The canonical identity of the source-and-date, from
+   * `cause-list-source-key.ts`. Stored as `source_document_key`.
+   *
+   * Optional only so the older two-dimensional callers keep working; when it is
+   * absent the key falls back to `court/listDate`, which is what this column
+   * held before a source key existed and is honestly weaker.
+   */
+  sourceKeyId?: string | undefined;
   /** The eCourts ledger row that spent the quota for this response. */
   ecourtsFetchLedgerId: string;
   observedAt: Date;
@@ -120,7 +129,7 @@ export async function captureRawArtifact(
       'ecourts', 'cause_list', ${capture.outcome},
       ${capture.observedAt.toISOString()}::timestamptz,
       ${capture.sourceUrl},
-      ${capture.listDate ? `${capture.court}/${capture.listDate}` : capture.court},
+      ${capture.sourceKeyId ?? (capture.listDate ? `${capture.court}/${capture.listDate}` : capture.court)},
       ${capture.contentType ?? null},
       ${payloadSha256}, ${payloadBytes},
       ${inline ? capture.body : null},

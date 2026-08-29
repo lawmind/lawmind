@@ -41,11 +41,15 @@
  * exactly the sample it needed. Observations last, because an observation is a
  * claim about a case and we only make claims we actually read.
  */
-import { grantAttribution } from './authorisation.ts';
+import { attributionForWire } from './authorisation.ts';
 import {
-  writeCauseListObservations,
-  type ValidatedCauseListItem,
-} from './ecourts-observation-writer.ts';
+  type CauseListSourceKey,
+  ledgerCourt,
+  mayProduceObservations,
+  sourceKeyId,
+} from './cause-list-source-key.ts';
+import { parseCauseList, PARSER_VERSION, type ParseResult } from './cause-list-parser.ts';
+import { writeCauseListObservations } from './ecourts-observation-writer.ts';
 import { atomically, type Db, type ObservationStrategy, reserve, settle } from './guard.ts';
 import { captureRawArtifact } from './raw-capture.ts';
 
@@ -75,11 +79,12 @@ export type CauseListResult =
   /** We did not obtain a list we can trust. Never conflated with `empty`. */
   | ({ status: 'failed'; error: string } & Partial<CauseListEvidence>);
 
-/** What `parseCauseList` may return. Retention and parsing are separate acts. */
-export type ParseResult =
-  | { status: 'ok'; items: ValidatedCauseListItem[] }
-  | { status: 'empty' }
-  | { status: 'failed'; error: string };
+/**
+ * Retention and parsing are separate acts. The parser lives in
+ * `cause-list-parser.ts`, written against the one real authorised response, and
+ * is re-exported here because `fetchCauseList` is where it is called from.
+ */
+export { parseCauseList, PARSER_VERSION, type ParseResult };
 
 export type FetchDeps = {
   /**
@@ -90,10 +95,18 @@ export type FetchDeps = {
    */
   fetchImpl?: typeof fetch;
   now?: Date;
-  /** The cause-list date requested, ISO date. Defaults to `now`'s date. */
-  listDate?: string;
   /** Master Roadmap v5 §3.4. Recorded on the ledger row that spends the quota. */
   strategy?: ObservationStrategy;
+  /**
+   * The endpoint to request, when it is not the module index.
+   *
+   * Defaults to `ECOURTS_CAUSE_LIST_ENDPOINT`. Overridable because the licensed
+   * interface's real query URL is not knowable until a response has been read,
+   * and hard-coding a guess would be inventing an endpoint. It is NOT a way
+   * around the guard: the reservation is taken against whatever this is, the
+   * ledger records it, and every lock is checked first.
+   */
+  endpoint?: string;
 };
 
 /** Cause lists live on the district-court services host, not the judgments host. */
@@ -103,16 +116,20 @@ export const ECOURTS_CAUSE_LIST_ENDPOINT =
 /**
  * The state of the extractor, as a value rather than as folklore.
  *
- * `NEEDS_AUTHORIZED_FIXTURE` is not a TODO. It is the honest statement that we
- * have never seen a response under this grant, and that the official public
- * interface tells us which dimensions a REQUEST needs — court complex, court
- * name, date, civil/criminal — while telling us nothing reliable about the
- * licensed response BODY. Writing selectors against a public page and calling
- * the parser ready would be inventing a schema, which `CLAUDE.md` forbids for
- * exactly the reason that matters here: a plausibly-wrong cause-list parser
- * still sends the briefing.
+ * `NEEDS_AUTHORIZED_FIXTURE` stood here from 8 Aug until the first authorised
+ * request was made on 29 Aug 2026. It is now `FIXTURE_BOUND`: the parser is
+ * written against a real retained response — see `cause-list-parser.ts` and its
+ * fixture — and every string it matches on is quoted from that response.
+ *
+ * It is deliberately NOT called `READY`. The response we hold is the licensed
+ * interface's FORM, which tells us the request identity, the CAPTCHA
+ * requirement and the source's own column vocabulary. It is not a served cause
+ * list, so the row-extraction half has been written from the source's published
+ * labels and has never been run against a real result table. `PARSER_STATE`
+ * says which of those two things is true, because the distance between them is
+ * exactly the distance between a parser that works and one that is plausible.
  */
-export const PARSER_STATE = 'NEEDS_AUTHORIZED_FIXTURE' as const;
+export const PARSER_STATE = 'FIXTURE_BOUND' as const;
 
 /**
  * Turn a response body into listings.
@@ -129,22 +146,6 @@ export const PARSER_STATE = 'NEEDS_AUTHORIZED_FIXTURE' as const;
  * `failed` branch is a normal outcome that costs a retained artifact and nothing
  * else. When a genuine authorised response exists, only this body changes.
  */
-export function parseCauseList(body: string): ParseResult {
-  return {
-    status: 'failed',
-    // The body length is the one useful fact available without an extractor: it
-    // separates "we got a page and cannot read it" from "we got nothing", and the
-    // first captured response is what unblocks writing the real parser.
-    error:
-      `parser_not_implemented (${body.length} bytes received): no eCourts response has been ` +
-      'captured to write an extractor against. Returning failed rather than empty — an ' +
-      'unimplemented parser must never read as a court that published nothing.',
-  };
-}
-
-function isoDate(at: Date): string {
-  return at.toISOString().slice(0, 10);
-}
 
 /**
  * Fetch one court's cause list for one date, if every lock permits it.
@@ -154,19 +155,18 @@ function isoDate(at: Date): string {
  */
 export async function fetchCauseList(
   sql: Db,
-  court: string,
+  source: CauseListSourceKey,
   deps: FetchDeps = {},
 ): Promise<CauseListResult> {
   const at = deps.now ?? new Date();
-  const listDate = deps.listDate ?? isoDate(at);
+  const listDate = source.listDate;
   const strategy: ObservationStrategy = deps.strategy ?? 'CAUSE_LIST_BATCH';
+  const endpoint = deps.endpoint ?? ECOURTS_CAUSE_LIST_ENDPOINT;
+  const court = ledgerCourt(source);
+  const keyId = sourceKeyId(source);
 
   // The slot is taken here, durably, before anything can be sent.
-  const reservation = await reserve(
-    sql,
-    { court, endpoint: ECOURTS_CAUSE_LIST_ENDPOINT, strategy },
-    at,
-  );
+  const reservation = await reserve(sql, { court, endpoint, strategy }, at);
   if (!reservation.allowed) {
     return {
       status: 'failed',
@@ -180,14 +180,18 @@ export async function fetchCauseList(
   let response: Response;
   let body: Buffer;
   try {
-    response = await doFetch(ECOURTS_CAUSE_LIST_ENDPOINT, {
+    response = await doFetch(endpoint, {
       headers: {
         // The grant requires attribution and it rides on every request rather
         // than being asserted in a document somewhere. If the registrar looks at
         // their own logs, we should be identifiable there too.
-        // Read live, not from the decision's snapshot: the guard has already
-        // refused when this is absent, so by here it is a string.
-        'user-agent': grantAttribution()!,
+        //
+        // Read live, not from the decision's snapshot, and rendered into bytes a
+        // header can legally carry. The first real request under this grant died
+        // here, before a socket opened, on a single em dash — `attributionForWire`
+        // and its note in `authorisation.ts` are that failure's fix. The guard
+        // has already refused when it is absent, so by here it is a string.
+        'user-agent': attributionForWire()!,
       },
     });
     body = Buffer.from(await response.arrayBuffer());
@@ -211,9 +215,13 @@ export async function fetchCauseList(
 
   // RETAIN FIRST. Whatever the status, whatever the parser will make of it.
   const artifact = await captureRawArtifact(sql, {
-    sourceUrl: ECOURTS_CAUSE_LIST_ENDPOINT,
+    sourceUrl: endpoint,
     court,
     listDate,
+    // The canonical identity of the source-and-date this response is FOR. Stored
+    // as `source_document_key`, so two captures of the same source on the same
+    // date collide on identity rather than on a guess about their contents.
+    sourceKeyId: keyId,
     ecourtsFetchLedgerId: reservation.ledgerId,
     observedAt: at,
     httpStatus: response.status,
@@ -221,7 +229,12 @@ export async function fetchCauseList(
     body,
     outcome: response.ok ? 'observed' : 'fetch_failed',
     note: response.ok ? undefined : `http ${response.status}`,
-    metadata: { observationStrategy: strategy, durationMs },
+    metadata: {
+      observationStrategy: strategy,
+      durationMs,
+      sourceKey: source,
+      sourceKeyId: keyId,
+    },
   });
 
   if (!response.ok) {
@@ -233,7 +246,7 @@ export async function fetchCauseList(
     };
   }
 
-  const parsed = parseCauseList(body.toString('utf8'));
+  const parsed: ParseResult = parseCauseList(body, response.headers.get('content-type'));
   if (parsed.status === 'failed') {
     // The bytes survive. Everything the failure needs is already recorded: the
     // URL and content type on the artifact, the time and HTTP outcome on the
@@ -242,13 +255,33 @@ export async function fetchCauseList(
     // published nothing.
     return {
       status: 'failed',
-      error: parsed.error,
+      // The refusal code leads, because "we could not read it" has four
+      // distinguishable causes and a sync row that says only "failed" cannot
+      // tell an operator which one to act on.
+      error: `${parsed.refusal}: ${parsed.error}`,
       fetchLedgerId: reservation.ledgerId,
       artifactId: artifact.id,
     };
   }
   if (parsed.status === 'empty') {
     return { status: 'empty', fetchLedgerId: reservation.ledgerId, artifactId: artifact.id };
+  }
+
+  if (!mayProduceObservations(source)) {
+    /**
+     * A probe asks about the INTERFACE, and whatever came back describes a form
+     * rather than a court's day. The bytes are retained and the request is
+     * ledgered; what must not happen is a row in `ecourts_observation`, because
+     * that table's whole value is that everything in it was observed of a case.
+     */
+    return {
+      status: 'failed',
+      error:
+        `parsed ${parsed.items.length} rows from an ${source.tier} response, and an interface ` +
+        'probe may not produce observations: a form page is not a court’s day',
+      fetchLedgerId: reservation.ledgerId,
+      artifactId: artifact.id,
+    };
   }
 
   // One transaction for the whole page: a partially written list reads
@@ -259,12 +292,14 @@ export async function fetchCauseList(
       court,
       listingDate: listDate,
       observedAt: at,
-      endpoint: ECOURTS_CAUSE_LIST_ENDPOINT,
+      endpoint,
       payloadSha256: artifact.payloadSha256,
       sourceArtifactId: artifact.id,
       fetchLedgerId: reservation.ledgerId,
       strategy,
       items: parsed.items,
+      parserVersion: PARSER_VERSION,
+      sourceWarnings: parsed.sourceWarnings,
     }),
   );
 
