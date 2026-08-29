@@ -146,7 +146,17 @@ if exist "%REPO%\services\ingest\.checkpoints\STOP" (
 )
 echo [%DATE% %TIME%] starting %NAME% >> "%LOG%"
 call npx tsx --env-file=.env %1 %2 %3 %4 %5 %6 %7 >> "%LOG%" 2>&1
-echo [%DATE% %TIME%] %NAME% exited ^(%ERRORLEVEL%^), restarting in %WAIT%s >> "%LOG%"
+set WORKER_RC=%ERRORLEVEL%
+REM The resolver's adjudicated replay vouches for one exact citation-key
+REM frontier.  Advancing the frontier without refreshing the replay makes the
+REM resolver fail closed until a human happens to run NEW2's script.  Keep the
+REM two steps in one cycle: only a successful key walk may publish a replay,
+REM and a replay failure is visible as the cycle's failure rather than hidden.
+if /I "%NAME%"=="citation-keys" if "%WORKER_RC%"=="0" (
+  call npx tsx --env-file=.env scripts/n2-resolver-risk-replay.mts --write >> "%LOG%" 2>&1
+  call set WORKER_RC=%%ERRORLEVEL%%
+)
+echo [%DATE% %TIME%] %NAME% exited ^(%WORKER_RC%^), restarting in %WAIT%s >> "%LOG%"
 REM A crash-loop must not spin the CPU or hammer the shared proxy. 30s keeps a
 REM persistent failure obvious in the log rather than buried under retry noise.
 timeout /t %WAIT% /nobreak > nul

@@ -58,6 +58,7 @@
  *        [--restart-policy resume-from-checkpoint|never-auto-restart|continuous] \
  *        [--startup SCHEDULED_TASK|LOGON_LAUNCHER|WINDOWS_SERVICE|agent-launched] \
  *        [--output-sql "select count(*) from t"] [--output-label name] \
+ *        [--caught-up-sql "select backlog from ..."] [--caught-up-equals 0] \
  *        [--output-lines <path>] [--critical] [--reason "why the handover"]
  *
  *   node scripts/job-register.mjs retire <job_id> --reason "..." [--state STOPPED|FINISHED|FAILED]
@@ -179,6 +180,21 @@ function claim(argv) {
   if (outputSql) outputProbe = { kind: 'sql', label: outputLabel, query: outputSql };
   if (outputLines) outputProbe = { kind: 'lines', label: outputLabel, path: outputLines };
 
+  const caughtUpSql = flag(argv, 'caught-up-sql');
+  const caughtUpLabel = flag(argv, 'caught-up-label', prev?.caught_up_probe?.label ?? 'backlog');
+  const caughtUpEqualsRaw = flag(argv, 'caught-up-equals', prev?.caught_up_probe?.equals ?? 0);
+  const caughtUpEquals = Number(caughtUpEqualsRaw);
+  if (!Number.isFinite(caughtUpEquals)) die('--caught-up-equals must be numeric');
+  let caughtUpProbe = prev?.caught_up_probe ?? null;
+  if (caughtUpSql) {
+    caughtUpProbe = {
+      kind: 'sql',
+      label: caughtUpLabel,
+      query: caughtUpSql,
+      equals: caughtUpEquals,
+    };
+  }
+
   const now = new Date().toISOString();
 
   // The handover, in one field. `restart_count` deliberately carries forward and
@@ -216,6 +232,7 @@ function claim(argv) {
     resource_class: resource,
     progress_invariant: flag(argv, 'progress-invariant', prev?.progress_invariant ?? null),
     output_probe: outputProbe,
+    caught_up_probe: caughtUpProbe,
     last_verified_progress: prev?.last_verified_progress ?? null,
     restart_count: sameInstance ? (prev?.restart_count ?? 0) : (prev?.restart_count ?? 0) + (prev ? 1 : 0),
     critical: argv.includes('--critical') ? true : (prev?.critical ?? undefined),

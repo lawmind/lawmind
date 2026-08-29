@@ -595,6 +595,54 @@ async function outputProbe(job, prev, now, enabled) {
   return { declared: true, measured: false, label, value: null, delta: null, why: 'unknown probe kind' };
 }
 
+/**
+ * A polling worker may be healthy precisely because there is no work left.
+ * Flat output is not enough to prove that state, so a lane may declare a
+ * separate bounded SQL predicate whose exact expected value means caught up.
+ * This is intentionally independent of the monotonic output probe: one proves
+ * work happened; the other proves there is currently no work to do.
+ */
+async function caughtUpProbe(job, enabled) {
+  const spec = job.caught_up_probe ?? null;
+  if (!spec) return { declared: false, measured: false, label: null, value: null, satisfied: false };
+  const label = spec.label || 'backlog';
+  if (!enabled) {
+    return {
+      declared: true,
+      measured: false,
+      label,
+      value: null,
+      satisfied: false,
+      why: 'NOT_MEASURED — SQL caught-up probe skipped; pass --with-output to run it',
+    };
+  }
+  try {
+    if (spec.kind !== 'sql') throw new Error(`unknown caught-up probe kind ${spec.kind}`);
+    const value = await runSqlProbe(spec.query);
+    if (value === null || value === undefined) {
+      return { declared: true, measured: false, label, value: null, satisfied: false, why: 'probe returned nothing' };
+    }
+    const expected = Number(spec.equals ?? 0);
+    return {
+      declared: true,
+      measured: true,
+      label,
+      value: Number(value),
+      satisfied: Number(value) === expected,
+      expected,
+    };
+  } catch (err) {
+    return {
+      declared: true,
+      measured: false,
+      label,
+      value: null,
+      satisfied: false,
+      why: 'probe failed: ' + err.message.split('\n')[0],
+    };
+  }
+}
+
 let sqlHandle = null;
 async function runSqlProbe(query) {
   if (!sqlHandle) {
@@ -735,11 +783,33 @@ function identify(job, sweep, live) {
     );
     if (candidates.length === 1) return shape(candidates[0], 'REDISCOVERED');
     if (candidates.length > 1) {
-      const newest = candidates
+      /**
+       * `npx/tsx` is one logical worker expressed as a parent node launcher and
+       * a child node runtime. Both command lines contain the script name, so a
+       * flat signature count called one chain a duplicate worker. Collapse
+       * matching ancestors and keep only terminal matching descendants; two
+       * disjoint leaves are the actual duplicate condition.
+       */
+      const isAncestor = (ancestor, descendant) => {
+        const ancestorPid = Number(ancestor.ProcessId);
+        let parent = Number(descendant.ParentProcessId);
+        for (let depth = 0; depth < 8 && parent; depth += 1) {
+          if (parent === ancestorPid) return true;
+          parent = Number(sweep.byPid.get(parent)?.ParentProcessId ?? 0);
+        }
+        return false;
+      };
+      const leaves = candidates.filter(
+        (candidate) => !candidates.some(
+          (other) => other !== candidate && isAncestor(candidate, other),
+        ),
+      );
+      if (leaves.length === 1) return shape(leaves[0], 'REDISCOVERED');
+      const newest = leaves
         .slice()
         .sort((a, b) => Date.parse(b.Created || 0) - Date.parse(a.Created || 0))[0];
       const out = shape(newest, 'REDISCOVERED');
-      out.duplicates = candidates.map((p) => Number(p.ProcessId));
+      out.duplicates = leaves.map((p) => Number(p.ProcessId));
       return out;
     }
   }
@@ -776,7 +846,7 @@ function isEmptyShell(proc, sweep) {
 // the state machine
 // ───────────────────────────────────────────────────────────────────────────
 
-function classify(job, proc, fp, prev, now, out, sweep, startup) {
+function classify(job, proc, fp, prev, now, out, caughtUp, sweep, startup) {
   const declared = String(job.status || 'UNKNOWN').toUpperCase();
 
   if (proc.probeFailed) {
@@ -812,6 +882,25 @@ function classify(job, proc, fp, prev, now, out, sweep, startup) {
       why:
         `console shell alive with no worker child — the batch exited and \`cmd /K\` held the window open. ` +
         'processAlive=true, outputDelta=0, and the honest state is finished, not stalled.',
+    };
+  }
+
+  // A declared durable-output probe outranks checkpoint or anomaly-log silence.
+  // This must happen before the first-reading/stall branches: a stateless
+  // sidecar and a watchdog intentionally have no moving checkpoint, and both
+  // were falsely marked UNKNOWN/STALLED while their consumer added 128,204
+  // rows. Positive durable growth is direct evidence of useful progress.
+  if (out && out.measured && out.delta !== null && out.delta > 0) {
+    return {
+      state: 'RUNNING_PROGRESSING',
+      why: `durable output moved: ${out.label} +${out.delta} (now ${out.value})`,
+    };
+  }
+
+  if (caughtUp && caughtUp.measured && caughtUp.satisfied) {
+    return {
+      state: 'IDLE_CAUGHT_UP',
+      why: `${caughtUp.label}=${caughtUp.value} (expected ${caughtUp.expected}); flat output is an empty frontier, not replay`,
     };
   }
 
@@ -936,8 +1025,13 @@ function classify(job, proc, fp, prev, now, out, sweep, startup) {
  * receipt movement is reported as firing-but-not-producing, not as healthy.
  */
 function classifyCadence(job, prev, now, out, startup) {
+  // Either form identifies the task: the bare `TaskName` for a root-path task,
+  // or the full `\Folder\TaskName` for one registered into a subfolder. A job
+  // that spells out the full path is the unambiguous declaration and is the one
+  // to prefer for anything created by `schtasks /Create`.
   const task = (startup || []).find(
-    (s) => s.kind === 'SCHEDULED_TASK' && s.name === job.scheduler_task,
+    (s) =>
+      s.kind === 'SCHEDULED_TASK' && (s.name === job.scheduler_task || s.fullName === job.scheduler_task),
   );
 
   if (!task) {
@@ -1080,19 +1174,35 @@ function startupMechanisms() {
   // unattended". A task with a time trigger LOOKS like a boot mechanism; if its
   // principal is `Interactive` it does not fire until somebody logs in, and R7
   // §4 forbids calling that unattended recovery.
+  //
+  // THE FILTER MATCHES THE PATH AS WELL AS THE NAME, AND IT HAD TO.
+  //
+  // `TaskName -match 'awmind'` alone was blind to `\Lawmind\new2-daily-delta` —
+  // the NEW2 daily delta cycle, verified running unattended, whose TaskName is
+  // `new2-daily-delta` and whose Lawmind identity is entirely in its TaskPath.
+  // That is not an accident of naming: `Register-ScheduledTask` at the root path
+  // returns `Access is denied` without elevation and `schtasks /Create` into a
+  // `Lawmind\` subfolder does not, so the unelevated route puts the project name
+  // in the FOLDER. Every future unelevated registration lands the same way.
+  //
+  // `fullName` is carried alongside `name` so a registry line may declare either
+  // form. Two tasks in different folders can share a TaskName, and matching on
+  // the bare name alone would let one answer for the other.
   const fmt =
-    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult + '|' + $_.Principal.LogonType) }";
+    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' -or $_.TaskPath -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult + '|' + $_.Principal.LogonType + '|' + $_.TaskPath) }";
   try {
     const out = execFileSync('powershell', ['-NoProfile', '-Command', fmt], {
       encoding: 'utf8',
       timeout: 40000,
     }).trim();
     for (const line of out.split('\n')) {
-      const [name, state, lastRun, result, logonType] = line.trim().split('|');
+      const [name, state, lastRun, result, logonType, taskPath] = line.trim().split('|');
       if (!name) continue;
       found.push({
         kind: 'SCHEDULED_TASK',
         name,
+        fullName: `${(taskPath || '\\').replace(/\\+$/, '')}\\${name}`,
+        taskPath: taskPath || '\\',
         state,
         lastRun,
         result,
@@ -1370,7 +1480,8 @@ async function main() {
     const fp = fingerprint(job);
     const prev = prevObs.get(job.job_id);
     const out = await outputProbe(job, prev, now, withOutput);
-    const verdict = classify(job, proc, fp, prev, now, out, sweep, startup);
+    const caughtUp = await caughtUpProbe(job, withOutput);
+    const verdict = classify(job, proc, fp, prev, now, out, caughtUp, sweep, startup);
     const lastProgressAt = progressSince(fp, prev, now);
 
     const declaredProgressAt = job.last_verified_progress?.at
@@ -1400,6 +1511,12 @@ async function main() {
       output_delta: out.measured ? out.delta : null,
       output_state: out.declared ? (out.measured ? 'MEASURED' : 'NOT_MEASURED') : 'NOT_DECLARED',
       output_why: out.why ?? null,
+      caught_up_label: caughtUp.label,
+      caught_up_value: caughtUp.measured ? caughtUp.value : null,
+      caught_up_state: caughtUp.declared
+        ? (caughtUp.measured ? (caughtUp.satisfied ? 'SATISFIED' : 'NOT_SATISFIED') : 'NOT_MEASURED')
+        : 'NOT_DECLARED',
+      caught_up_why: caughtUp.why ?? null,
       last_output_change_at: out.lastOutputAt ? new Date(out.lastOutputAt).toISOString() : null,
       metric: job.progress_invariant ?? null,
       checkpoint: job.checkpoint ?? null,
@@ -1619,6 +1736,15 @@ async function main() {
 
   if (strict && attention.some((r) => r.state === 'FAILED' || r.state === 'RUNNING_STALLED')) {
     process.exitCode = 1;
+  }
+
+  // SQL output/caught-up probes share one bounded connection. Close it so a
+  // one-shot health command actually terminates after printing its verdict;
+  // otherwise postgres.js keeps the event loop alive and automation has to
+  // kill a successful monitor by timeout.
+  if (sqlHandle) {
+    await sqlHandle.end({ timeout: 5 });
+    sqlHandle = null;
   }
 }
 
