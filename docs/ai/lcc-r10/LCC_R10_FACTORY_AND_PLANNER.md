@@ -1,4 +1,4 @@
-# LCC R10 — THE FACTORY, THE PLANNER, AND ONE HYPOTHESIS THAT DID NOT SURVIVE
+# LCC R10 — THE FACTORY, THE PLANNER, AND TWO HYPOTHESES THAT WERE BOTH JUDGED TOO EARLY
 
 **28–29 August 2026.** Lane LCC. Leases used: `MIGRATION_SLOT` (0092, 0093),
 `GIT_COMMIT`. **`HEAVY_BOX` was NOT taken** — see §2.4.
@@ -79,7 +79,7 @@ record; this is the R10 observation.
 
 ---
 
-## 2. THE PLANNER: A HYPOTHESIS, ITS TEST, AND ITS REFUTATION
+## 2. THE PLANNER: TWO HYPOTHESES, AND A CORRECTION TO MY OWN VERDICT ON THE SECOND
 
 ### 2.1 The premise was wrong, and the conclusion was right for another reason
 
@@ -141,8 +141,12 @@ visibility map, the heap fetches collapse, the query gets fast.
 | **Execution Time** | **25,025 ms** | **26,156 ms** | **+4.5% — WORSE** |
 
 Thirty-six percent fewer heap fetches, sixty-one percent fewer disk reads, and
-the query did not get faster. **The hypothesis is refuted by its own
-measurement.** Heap fetches were never the bottleneck.
+the query did not get faster.
+
+**That reading was wrong, and §2.5 below corrects it.** The honest statement at
+this point in the round was "heap fetches are not the bottleneck". The honest
+statement after the plan was fixed is different: the visibility map's benefit
+was **masked** by the serial plan, not absent. Both changes were necessary.
 
 Both after-numbers were taken on a box confirmed empty of client backends and of
 active background workers, and the vacuum's own WAL flush was allowed to settle
@@ -202,6 +206,36 @@ on to the index half of its round, where its own durable metric does not move.
 **A flat durable-output metric is not evidence of a dead job when the job's
 current phase does not write that output.**
 
+
+### 2.5 THE CORRECTION: THE TWO FIXES ARE MULTIPLICATIVE
+
+After migration 0093 made the thresholds reachable, autovacuum took its own
+first-ever pass on `judgments` — completing at 05:48, `n_dead_tup` 700,172 → 0,
+`relallvisible` **2,822,669 / 2,822,704 = 100.00%**. Re-measured on a box
+confirmed empty:
+
+| plan | visibility map | heap fetches | execution |
+| --- | ---: | ---: | ---: |
+| correlated, serial | 75.14% | 5,379,222 | 25,025 ms |
+| correlated, serial | 83.52% | 3,447,267 | 26,156 ms |
+| `GROUP BY`, parallel | 83.52% | 3,450,457 | 2,764 ms |
+| **`GROUP BY`, parallel** | **100%** | **256** | **435 ms** |
+
+**57× end to end**, and neither change alone explains it. On the serial plan a
+36% cut in heap fetches was worth nothing measurable — which is exactly what
+made §2.2 read as a refutation. It was not a refutation; the signal was
+**confounded** by a plan whose cost was dominated by running 25 scans in
+sequence. Once the plan was parallel, taking the map from 83.52% to 100% drove
+heap fetches from 3,450,457 to **256** and the query from 2,764 ms to 435 ms.
+
+The lesson is narrower than "measure": **a change that shows no effect under one
+plan has not been shown to have no effect.** §2.2's conclusion was drawn from a
+single arm and should have been held open until the other arm existed.
+
+`0093`'s header still states that the vacuum "did not" help. That was true of
+every measurement in existence when it was written. Migrations are forward-only
+and it is not edited; this section is the correction of record.
+
 ---
 
 ## 3. AUTOVACUUM: THE CAUSE, NOT THE SYMPTOM
@@ -251,8 +285,9 @@ never had one, and autovacuum's cost throttle
 
 ## 4. WHAT THIS ROUND DOES NOT CLAIM
 
-- The vacuum did **not** speed up `/corpus/coverage`. It is worth having on its
-  own terms and is recorded as maintenance, never as the fix.
+- §2.2's "the vacuum did not help" is **superseded by §2.5**. It was true of the
+  serial plan and false of the parallel one; the two fixes are multiplicative and
+  the end-to-end figure is 25,025 ms → 435 ms, 57×.
 - `latestUpstreamDecisionDate` is **NOT_MEASURED** and is not substituted.
 - `upstreamLocalCompleteness` uses a **parquet-row** denominator, not deduped
   unique records. The specified denominator is not held anywhere today.

@@ -70,10 +70,25 @@ export async function getCorpusCoverage(c: Context, sql: Sql): Promise<Response>
     -- same index ONCE and in parallel. A correlated subquery cannot be
     -- parallelised, which is the whole difference.
     --
-    -- Worth stating what did NOT fix it: VACUUM took the visibility map from
-    -- 75.14% to 83.52% and cut heap fetches 36% and disk reads 61%, and the
-    -- correlated query still took 26,156 ms against 25,025 ms before. Fewer
-    -- heap fetches were not the bottleneck; the serial plan was.
+    -- The vacuum and the plan turned out to be MULTIPLICATIVE, and the first
+    -- measurement said the opposite because the two were confounded.
+    --
+    --   correlated, VM 75.14%   5,379,222 heap fetches   25,025 ms
+    --   correlated, VM 83.52%   3,447,267 heap fetches   26,156 ms  <- no gain
+    --   GROUP BY,   VM 83.52%   3,450,457 heap fetches    2,764 ms
+    --   GROUP BY,   VM 100%             256 heap fetches     435 ms
+    --
+    -- 57x end to end. On the SERIAL plan a 36% cut in heap fetches bought
+    -- nothing measurable, which is what made "the visibility map is the
+    -- bottleneck" look refuted. It was not refuted, it was MASKED: once the
+    -- plan was parallel, taking the map from 83.52% to 100% took the query
+    -- 2,764 ms -> 435 ms by driving heap fetches to 256. Neither change alone
+    -- explains the result and the honest statement needs both.
+    --
+    -- The 100% came from autovacuum's own first pass on this table, which
+    -- migration 0093 made reachable. 0093's header still says the vacuum "did
+    -- not" help, which was true of the only measurement that existed when it
+    -- was written; migrations are forward-only and it is not edited.
     WITH held AS (
       SELECT court, count(*)::int AS n FROM judgments GROUP BY court
     )
