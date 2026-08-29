@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/migration/encrypt-pack.mjs",
+  "algorithm": "AES-256-GCM",
+  "envelope": "MAGIC(8) || VERSION(1) || IV(12) || ciphertext || TAG(16)",
+  "keySource": "R2_BACKUP_ENCRYPTION_KEY (32 bytes hex, never uploaded)",
+  "createdAt": "2026-08-29T23:04:07.538Z",
+  "files": [
+    {
+      "file": "CHECKSUMS.json",
+      "plainBytes": 891,
+      "plainSha256": "fd9838a3c2f8448a3be8120eb14950c2a495b0ea088a4227dc340ca888ce3d0e",
+      "cipherFile": "CHECKSUMS.json.enc",
+      "cipherBytes": 928,
+      "cipherSha256": "582449119590907227a9af0f177d0ce9b53ecb56d27fdd70ba420ed0c8593945"
+    },
+    {
+      "file": "judgment-verdicts.csv.gz",
+      "plainBytes": 369048921,
+      "plainSha256": "b57e3678a1b09d3b4b8a2d78a133795605c5f1310425706338353eefe62da881",
+      "cipherFile": "judgment-verdicts.csv.gz.enc",
+      "cipherBytes": 369048958,
+      "cipherSha256": "d4efdb80e2ddc6701529b4ceb0becab8799c261341dd7e32a8021ccd15e2a6b5"
+    },
+    {
+      "file": "MANIFEST.json",
+      "plainBytes": 5719,
+      "plainSha256": "781ddb2f72db4428cb6d7cc46b2da2645a782e31ad43515fb8248831fa9cf726",
+      "cipherFile": "MANIFEST.json.enc",
+      "cipherBytes": 5756,
+      "cipherSha256": "6c99d91e2902171980d7de04ce5f6a01d9e86b202e915b1ca83cf53d6b087db8"
+    },
+    {
+      "file": "moat.dump",
+      "plainBytes": 1217596614,
+      "plainSha256": "0ff8bd226c8bed9ecfe38aab9c1037f427c1002665fb908faa8a63c4ae566f9e",
+      "cipherFile": "moat.dump.enc",
+      "cipherBytes": 1217596651,
+      "cipherSha256": "cf4d3099a2caaf9879308a43be263ecdc3c3c08c5e847a463b8be52b82bacfd5"
+    },
+    {
+      "file": "schema.sql",
+      "plainBytes": 211643,
+      "plainSha256": "f4e9e9f4b494eac5a0d281203e18117bbf98cbdba029b3dd8be2e463bb8a1933",
+      "cipherFile": "schema.sql.enc",
+      "cipherBytes": 211680,
+      "cipherSha256": "d8a4b1adbd992d301dbd19cd6cedd14841576092f3fa2ff186431fa38de6ac3f"
+    }
+  ]
+}

@@ -33,6 +33,7 @@ import {
   isBodyTextSafe,
 } from '../search/body-text-safety.ts';
 import { generationEvidenceEligible, textOriginOf } from './text-origin.ts';
+import { isoColumn } from '../iso-time.ts';
 import { logger } from '../logger.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 
@@ -76,7 +77,18 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
            -- so they are NULL for almost every judgment and are published as
            -- NULL rather than defaulted — see the provenance block below.
            source_id, source_edition, authorization_basis,
-           provenance_recorded_at::text AS provenance_recorded_at,
+           -- A ::text cast here shipped in R12 (f2a14b5) and put Postgres text
+           -- -- 2026-08-29 21:23:53.634+00 -- on the wire. Hermes cannot parse
+           -- that, so the mobile client renders "Invalid Date": the exact
+           -- failure iso-time.ts exists to prevent, and the exact reason its
+           -- guard test names the verification sheet. It survived because R12
+           -- recorded the full API suite as NOT RUN at breadth; running it is
+           -- what found this.
+           --
+           -- judgment_date above keeps its cast deliberately and is a different
+           -- case: it is a DATE, not a timestamptz, and hydrating it would
+           -- invent a midnight the judgment never had.
+           ${sql.unsafe(isoColumn('provenance_recorded_at'))} AS provenance_recorded_at,
            -- The body-text verdict, read LIVE on this request, exactly as
            -- retrieval reads it. Never from a staged table: a document
            -- convicted one second ago must be refused by the next read.

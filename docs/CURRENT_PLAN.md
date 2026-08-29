@@ -103,6 +103,65 @@ the countersigned DPA were both already recorded, and searching first is why.
 Added **FQ-CLAIMS-V1**, explicitly not a blocker: the 11 banned v1 claims to read
 before any outward-facing copy exists.
 
+### 30 August 2026 (R12b, ECOURTS CLOSE-OUT) — LCC: THE HEADER PAIR ROTATES, SO NO CONSTANT WAS EVER GOING TO WORK
+
+**Round:** finish the eCourts half of R12. Lease: `GIT_COMMIT` twice, released
+both times. No migration written. **No data worker stopped** — NEW1's workers
+ran throughout against `HEAVY_BOX`.
+
+**Full record: `docs/ai/lcc-r12b/ECOURTS_AJAX_BLOCKER.md` (the stop report),
+`ECOURTS_REQUEST_DIFF_V2.md` (the blueprint, every row now BYTES), and
+`LCC_R12B_TODO.md` (the checklist).**
+
+**The one thing to carry forward.** The two `ajaxCall` headers **rotate** — three
+distinct pairs in 5.4 hours, one rotation inside five minutes, in otherwise
+byte-identical files. R11 hardcoded a pair and blamed the User-Agent when it
+failed; R12 credited that pair with a fix it did not cause; R12b's own first
+commit called it "wrong". All three were mistaken: it was **correct when written
+and went stale**. The pair is now read live from `components.js` per session, and
+both captures are checked in so the rotation is a fact in the repository.
+
+**The blocker is real, bounded and named.** `casestatus/fillDistrict` answers
+`Invalid Request` and discards the session — but a **GET navigation on that same
+session is accepted** and does not rotate `SERVICES_SESSID`, which proves cookies,
+`app_token` and session continuity are correct. Eight hypotheses were tested
+against the licensed client's own retained scripts and all eight refuted,
+including R11's User-Agent theory (tested directly for the first time). Stopped
+under the three-failure bound. `FQ-ECOURTS-HAR` asks for thirty seconds in Chrome,
+which settles it.
+
+**What is now real.** The request blueprint has **zero `TRANSCRIBED` rows**: the
+licensed client's own scripts are retained and EXECUTED offline in a sandbox with
+no `fetch` and no transport but a recorder, and 14 tests assert our builders emit
+what it emits. Three genuine defects fixed — submit `est_code` (the establishment
+SELECT, empty unless the complex flag is `Y`, not the complex's 2nd `@` segment),
+`selprevdays` (derived, was hardcoded `0`), and the `fillCauseList` reply key
+(`cause_list`, was `court_list`). Two properties bound into the network-safety
+matrix so deleting the test reports `NOT_COVERED`.
+
+**Still zero.** `REAL_OBSERVATIONS = 0`, `servedCauseListsSeen = 0`,
+`PARSER_STATE = FIXTURE_BOUND`, retention `UNMEASURED`, daily pilot `DISABLED`.
+The retention probe was **deliberately not attempted**: the interface's own date
+picker offers +1 month forward and only 7 days back, so R12's T-30/T-90/T-365
+plan asks for dates it never offers.
+
+**Off-machine protection is done and proven.** The curated moat pack is now
+encrypted **client-side** (AES-256-GCM) before it leaves this machine — it holds
+`matters`, `documents` and `users`, and R2's own encryption is a control
+Cloudflare holds the key to. 1.48 GB uploaded, read back byte for byte with
+`0 differences`, and one object pulled fresh from R2 and decrypted to a
+byte-identical plaintext. **The key is escrow-pending — `FQ-BACKUP-KEY-ESCROW`.**
+
+**Founder queue:** `FQ-ECOURTS-HAR` (thirty seconds in Chrome; unblocks the wedge)
+and `FQ-BACKUP-KEY-ESCROW` (five minutes; the backup is not yet recoverable).
+
+**Method note worth keeping.** The handoff said `searchByCauselist.js` "was never
+retained" and called it the one thing blocking the round. The fetch ledger says it
+was retained at 17:35:04Z the same day, with four other scripts, all sitting in
+`official_source_artifact`. True of `__fixtures__/`, false of the database, and it
+cost seven avoidable requests under a bounded permission. **Query the artifact
+table before spending a request.**
+
 ### 29 August 2026 (R11, POST-GATE-A ECOURTS) — LCC: THE GRANT PERMITS THE CAPTCHA BYPASS AND DOES NOT SAY HOW
 
 **Round:** post-Gate-A eCourts data-moat continuation, founder-directed. Gate A

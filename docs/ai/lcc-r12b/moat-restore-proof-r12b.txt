@@ -1,0 +1,59 @@
+restoring the EXISTING pack at C:\lawmind\dump\moat-pack-r12b — no dump taken
+
+comparing against the counts recorded at dump time (2026-08-29T22:58:38.490Z)
+
+
+PACK
+  tables            35 packed, 0 absent
+  compressed bytes  1,586,858,069  (1.587 GB)
+  dump time         0.0s
+
+restoring into a disposable database: lawmind_moat_restore_test
+
+VERIFY  table                          source     restored   match
+        users                                529        529   ok
+        auth_user                            283        283   ok
+        auth_account                           3          3   ok
+        matters                                3          3   ok
+        matter_events                          1          1   ok
+        matter_authorities                     0          0   ok
+        matter_shares                          1          1   ok
+        judgment_annotations                   2          2   ok
+        saved_searches                         1          1   ok
+        documents                              1          1   ok
+        briefings                              0          0   ok
+        alerts                                 1          1   ok
+        citation_copies                        1          1   ok
+        data_requests                          0          0   ok
+        training_consent_events                1          1   ok
+        verification_cache                     0          0   ok
+        citation_disputes                      0          0   ok
+        audit_log                            813        813   ok
+        platform_config                        2          2   ok
+        judgment_citations              22406483   22406483   ok
+        judgment_citation_aliases           4394       4394   ok
+        judgment_citation_keys           1431353    1431353   ok
+        judgment_date_quality             713136     713136   ok
+        judgment_recovery_queue               73         73   ok
+        judgment_text_recovery                73         73   ok
+        judgment_statute_refs             905156     905156   ok
+        statute_mappings                     226        226   ok
+        statute_sections                   36663      36663   ok
+        coverage_cell                        966        966   ok
+        hc_ingest_ledger                  221319     221319   ok
+        ecourts_observation                    0          0   ok
+        ecourts_transition                     0          0   ok
+        ecourts_fetch_ledger                 189        189   ok
+        official_source_artifact           14244      14244   ok
+        lexeme_document_frequency         128243     128243   ok
+
+  content checksum (judgment_citations, 100k rows)  MATCH
+    source   5388aa9b9490fbb63a650d45b4f80085
+    restored 5388aa9b9490fbb63a650d45b4f80085
+
+  restore time      685.2s
+  total elapsed     724.6s
+
+dropping lawmind_moat_restore_test
+
+RESTORE PROVEN — every row count and the content checksum matched.

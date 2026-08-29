@@ -1,0 +1,13 @@
+{
+  "tool": "scripts/migration/backup-r2.mjs",
+  "archive": "C:\\lawmind\\dump\\moat-r12b-enc",
+  "remote": "lawmind-corpus/backups/postgres/2026-08-29T23-04-23-326Z-moat-r12b-enc",
+  "endpoint": "https://d2580ac2894e62b1fe04a46f6c54f18c.r2.cloudflarestorage.com",
+  "fileCount": 6,
+  "totalBytes": 1586865876,
+  "rollupSha256": "308daef48b2c2f54884391be8574609012df4a74ab531bf7c29d750b5de03f1e",
+  "uploadSeconds": 140,
+  "verifySeconds": 93,
+  "verified": true,
+  "at": "2026-08-29T23:08:16.448Z"
+}

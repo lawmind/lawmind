@@ -112,7 +112,9 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 - [x] **End-to-end proof**: one object pulled fresh from R2 and decrypted to a
       byte-identical plaintext (`f4e9e9f4…a1933`)
 - [x] Rotation held at 3 backups; 1 old backup deleted
-- [~] Restore proof of THIS pack running (`--skip-dump`, the honest exercise)
+- [x] **Restore PROVEN for this exact pack** — `--skip-dump`, so it restored the
+      pack already on disk rather than one taken seconds earlier. 35 tables,
+      every row count `ok`, content checksum `5388aa9b…` MATCH, 685.2 s.
 - [!] **The key exists only in `.env` on this workstation.** Confidentiality is
       up, recoverability is DOWN until it is escrowed. `FQ-BACKUP-KEY-ESCROW`.
 
@@ -129,7 +131,21 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 - [x] job health · lane bus 15/15 · resource gate 14/14 · query-log privacy 4/4
 - [x] **`platform_config` fingerprint BEFORE and AFTER** — digest identical, no
       test-created production mutation survived
-- [~] Full API suite from final HEAD, bounded concurrency, NEW1 never stopped
+- [x] **Full API suite from final HEAD, bounded concurrency, NEW1 never stopped**
+      — **948 tests, 944 pass, 2 skipped, 2 fail**, both run down:
+  - [x] `casts no _at column to text anywhere in the service, unmarked` — a
+        **REAL regression, shipped by R12 (`f2a14b5`)**. `judgments/route.ts:79`
+        cast `provenance_recorded_at::text`, putting Postgres text on the wire
+        where Hermes renders `Invalid Date`. It survived precisely because R12
+        recorded this suite as NOT RUN at breadth. Fixed with `isoColumn()`;
+        iso-time 11/11, judgments route 11/11, data-trust 7/7.
+  - [x] `admits a globally common term inside a NARROW court+date population` —
+        a LATENCY assertion (6,161 ms). It ran while the 685 s `pg_restore` was
+        on the same database. Re-measured on a quiet box: **243 ms, 5/5 pass.**
+        Contention, not a regression — verified, not assumed.
+- [x] Moat pack RESTORE PROVEN — 35 tables, every row count `ok`, content
+      checksum `5388aa9b…` MATCH, 685.2 s, run with `--skip-dump` against the
+      pack already on disk
 - [-] **`pnpm lint` FAILS — 6,121 errors, none mine.** All in NEW2's
       `services/ingest/.n2c-*.mjs` scratch files plus `decision-identity.ts` and
       `semantic-role.ts`. My 7 (`Buffer` undefined in the new script) are fixed;
@@ -147,3 +163,25 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 - [x] **A refusal by our own limiter looks like a fetch that worked.** The live
       delimeter read was silently refused for `min_interval` and fell back to the
       committed constant, and nothing said so until the wire bytes were printed.
+
+## A residue this round did not create but did measure
+
+The API suite leaves rows in `users` on every run against the live database.
+Measured after this round: **542 rows = 278 erasure shells + 263
+`@example.test` + the founder actor.** My run added 13 of them.
+
+- The **278 `erased+<uuid>@invalid` shells are DELIBERATE and undeletable.**
+  `erasure-fixture.test.ts` explains it in a comment written so nobody "fixes"
+  the leak: `audit_log` refuses DELETE at the database (`audit_log_append_only()`
+  raises 23001), and `audit_log.actor_user_id` is a plain FK with no
+  `ON DELETE`, so the shell cannot go without breaking the audit row that must
+  survive. The residue per run is exactly what production leaves for a real
+  erased advocate, and carries nothing about a person by construction.
+- The **263 `@example.test` rows are ordinary cleanup that some tests do and
+  others do not.** They have accumulated since 22 August across every lane's
+  runs, not this round.
+
+Nothing was deleted. It is another lane's tests as much as mine, `platform_config`
+was untouched (digest identical), and quietly tidying 263 rows out of a shared
+database on the strength of a name pattern is exactly the kind of change that
+should be proposed rather than performed.
