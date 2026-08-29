@@ -9,19 +9,23 @@
  * R12 published a field-by-field reconciliation of our cause-list request
  * against the licensed client. Most rows were marked `TRANSCRIBED` — read from
  * the client's source at some point, not held here. When the scripts were
- * finally retained (30 Aug 2026), FIVE of those transcriptions were wrong:
+ * retained (30 Aug 2026), THREE of those transcriptions proved wrong:
  *
- *   1. the `ajaxCall` header VALUE  — `jkhfkjhkjert33`, actually `764r6hry7ffds`
- *   2. the second header's NAME     — `Kjweuru253`,     actually `G73hdfdsh`
- *   3. `est_code` on submit         — the complex's 2nd segment, actually the
- *                                     establishment SELECT (empty unless flag Y)
- *   4. `selprevdays`                — hardcoded `'0'`, actually derived from the
- *                                     requested date
- *   5. the `fillCauseList` reply key — `court_list`,    actually `cause_list`
+ *   1. `est_code` on submit          — the complex's 2nd segment, actually the
+ *                                      establishment SELECT (empty unless flag Y)
+ *   2. `selprevdays`                 — hardcoded `'0'`, actually derived from
+ *                                      the requested date
+ *   3. the `fillCauseList` reply key — `court_list`, actually `cause_list`
  *
- * Any one of them makes a request the court answers differently from the one the
- * licensed interface makes. None was detectable by reading our own code, and a
- * document cannot fail. This test can: it executes the RETAINED client scripts
+ * A fourth apparent defect — the `ajaxCall` header pair — turned out to be
+ * something else entirely, and the difference matters: **that pair ROTATES**,
+ * so the old transcription was correct when it was made and had merely gone
+ * stale. See the rotation test below; it is why the pair is now read live from
+ * the source per session instead of being committed at all.
+ *
+ * Any of the three makes a request the court answers differently from the one
+ * the licensed interface makes. None was detectable by reading our own code, and
+ * a document cannot fail. This test can: it executes the RETAINED client scripts
  * offline and asserts our builders emit what the client emits, so the next drift
  * — in either direction — is a red test rather than an `Invalid Request`.
  *
@@ -30,7 +34,10 @@
  * is safe on every commit. It needs no database either.
  */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
   ajaxBody,
@@ -41,6 +48,7 @@ import {
   fillComplexFields,
   fillCourtEstablishmentFields,
   fillDistrictFields,
+  parseAjaxDelimeter,
   selPrevDays,
   splitComplexValue,
   submitCauseListFields,
@@ -139,17 +147,61 @@ describe('our eCourts request equals the licensed client’s', () => {
     assert.deepEqual(flagN.substitutedGlobals, ['alerts_array', 'bootstrap']);
   });
 
-  it('the two ajaxCall headers match the client, name and value', () => {
+  it('the two ajaxCall headers match the client at the moment it was captured', () => {
     const sent = official(flagN.requests, 'cause_list/submitCauseList').headers;
+    // The recorder runs the CURRENT fixture, so the committed fallback matches
+    // it. That is a statement about this fixture, not about the live source.
     assert.equal(sent['delimeter'], ECOURTS_AJAX_DELIMETER);
     assert.equal(sent[ECOURTS_AJAX_DELIMETER_HEADER_2], ECOURTS_AJAX_DELIMETER);
+  });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE PAIR ROTATES — the finding that retires two rounds of misdiagnosis
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * R11 read the pair, hardcoded it, got `Invalid Request`, and blamed the
+   * User-Agent. R12 called the hardcoded pair "transcribed from the licensed
+   * client's source" and credited it with the fix. R12b read fresh bytes, found
+   * different values, and concluded the earlier transcription had been WRONG.
+   *
+   * All three were mistaken in the same way. Two captures of `components.js`
+   * five hours apart are checked in and differ in exactly these two lines — and
+   * a third capture five MINUTES after the second had rotated again. The
+   * earlier transcription was correct when it was made. It went stale.
+   *
+   * So the test is not "is the constant right". It is "does the parser read
+   * whatever the source currently says", because that is the only property that
+   * survives a rotation.
+   */
+  it('reads the pair out of BOTH retained captures, which disagree', () => {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), '__fixtures__');
+    const earlier = parseAjaxDelimeter(
+      readFileSync(join(dir, 'ecourts-components-2026-08-29T1735Z.js'), 'utf8'),
+    );
+    const later = parseAjaxDelimeter(
+      readFileSync(join(dir, 'ecourts-components-2026-08-29.js'), 'utf8'),
+    );
+    assert.ok(earlier, 'the parser failed on the 17:35Z capture');
+    assert.ok(later, 'the parser failed on the 22:27Z capture');
+
+    // Read from bytes, both of them, five hours apart on the same day.
+    assert.deepEqual(earlier, { headerName: 'Kjweuru253', value: 'jkhfkjhkjert33' });
+    assert.deepEqual(later, { headerName: 'G73hdfdsh', value: '764r6hry7ffds' });
+
     /**
-     * The pair that stood in this repository until 30 Aug 2026, credited with
-     * fixing an `Invalid Request`. Both halves were wrong. Named here so a
-     * future re-transcription cannot quietly reintroduce them.
+     * The property that matters: they DISAGREE. If a future capture ever made
+     * these equal, the rotation would have stopped and the reasoning above
+     * would need revisiting — so this asserts the disagreement explicitly
+     * rather than leaving it implied by two literals.
      */
-    assert.notEqual(ECOURTS_AJAX_DELIMETER, 'jkhfkjhkjert33');
-    assert.notEqual(ECOURTS_AJAX_DELIMETER_HEADER_2, 'Kjweuru253');
+    assert.notEqual(earlier.value, later.value);
+    assert.notEqual(earlier.headerName, later.headerName);
+  });
+
+  it('the parser refuses rather than inventing a pair', () => {
+    assert.equal(parseAjaxDelimeter('function ajaxCall(){}'), null);
+    assert.equal(parseAjaxDelimeter('var delimeter="abc";'), null, 'a value with no header name');
   });
 
   it('fillDistrict', () => {

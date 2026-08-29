@@ -106,7 +106,7 @@ const sql = postgres(url, {
 try {
   const preflight = await decide(sql, `PROBE_interface_asset_${asset}`);
   console.log(`asset           ${asset}`);
-  console.log(`endpoint        ${ECOURTS_INTERFACE_ASSETS[asset]}`);
+  console.log(`endpoint        ${ECOURTS_INTERFACE_ASSETS[asset]}${arg('query') ? `?${arg('query')}` : ''}`);
   console.log(`grant expires   ${AUTHORISATION?.expiresAt ?? '(no grant on file)'}`);
   console.log(
     `guard preflight ${preflight.allowed ? 'ALLOWED' : `REFUSED (${preflight.reason}: ${preflight.detail})`}`,
@@ -117,7 +117,8 @@ try {
     process.exit(0);
   }
 
-  const result = await retainInterfaceAsset(sql, asset);
+  const query = arg('query');
+  const result = await retainInterfaceAsset(sql, asset, query ? { query } : {});
   if (result.refused) {
     // The refusal is already on the ledger. Reporting it as a failure rather
     // than as "nothing to do" is the whole point of ledgering refusals.

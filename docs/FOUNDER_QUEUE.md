@@ -6543,3 +6543,81 @@ Not committed because `apps/**` is RCC's `CLIENT_APPS` scope and RCC's lease has
 been stale-HELD since 25 Aug. Flagging so a good fix is not lost to a dead lease.
 
 ---
+
+---
+
+## FQ-ECOURTS-HAR — thirty seconds in Chrome settles a blocker eight hypotheses could not  ·  LCC, 30 Aug 2026 · **the cheapest item in this file**
+
+**What is needed:** one HAR capture, or one "Copy as cURL", of a real browser
+doing a cause-list lookup on eCourts.
+
+1. Open `https://services.ecourts.gov.in/ecourtindia_v6/?p=cause_list/index`
+2. DevTools (F12) → **Network** tab
+3. Pick any State from the dropdown — that alone fires the request we need
+4. Right-click the `fillDistrict` request → **Copy → Copy as cURL**, or use
+   *Save all as HAR with content*
+5. Paste it into `docs/ai/lcc-r12b/ecourts-browser-capture.txt`
+
+**Why it is needed.** `POST /ecourtindia_v6/?p=casestatus/fillDistrict` answers
+`{"errormsg":"…Invalid Request…!"}` on every attempt and discards our session.
+A **GET navigation on that same session is accepted** — the server keeps the
+session and issues a fresh `app_token` — so our cookies, token handling and
+session continuity are provably correct. The refusal is specific to the AJAX POST.
+
+Eight hypotheses were tested against the licensed client's own retained source
+and every one was refuted, including R11's long-standing User-Agent theory
+(tested directly for the first time this round: a browser-conventional UA changes
+nothing). Full record: `docs/ai/lcc-r12b/ECOURTS_AJAX_BLOCKER.md`.
+
+Our request now matches the licensed client at every layer JavaScript can reach —
+asserted by executing the client's own scripts offline, 14 tests. The remaining
+difference must be something scripts cannot see: TLS/HTTP2 fingerprint, header
+ordering, or the `sec-fetch-*` headers a browser adds by itself. **A HAR shows
+exactly that, and nothing else can.**
+
+**What was built anyway.** The whole chain — quota reservation, ledger, raw
+retention, CAPTCHA solve, parser, observation writer, idempotent replay — is
+built, tested and runs end to end. It stops at one refused request. When that
+request is understood, the canary is one command.
+
+**What stays broken without it.** No served cause list has ever been seen, so:
+`REAL_OBSERVATIONS = 0`, `PARSER_STATE = FIXTURE_BOUND`, retention `UNMEASURED`,
+daily pilot `DISABLED`, and the 24-hour hearing briefing — the wedge — has no
+live source. Everything downstream of it waits on this one capture.
+
+**A decision may follow, and it is yours, not mine.** If the HAR shows our
+request is identical in everything a script can see, then the only way through is
+to present a browser's *network* fingerprint. That is a different act from
+sending an honest header, and I did not take it. The grant permits the access;
+whether it permits looking like Chrome to obtain it is a judgement call I have
+deliberately left to you.
+
+---
+
+## FQ-BACKUP-KEY-ESCROW — the moat backup is now encrypted, and the key exists in one place  ·  LCC, 30 Aug 2026 · **five minutes, and it is urgent in the way backups are**
+
+**What is needed:** copy `R2_BACKUP_ENCRYPTION_KEY` out of
+`C:\Users\Xerxus\Documents\Lawmind\.env` into a password manager, or anywhere
+that is not this workstation. Then confirm here that it is escrowed.
+
+**What was done.** The curated moat pack — `matters`, `matter_events`,
+`documents`, `users`, and the citation and provenance tables — is now encrypted
+**client-side** with AES-256-GCM before it leaves this machine, uploaded to R2,
+and verified: 1.48 GB read back byte for byte with `0 differences`, plus one
+object pulled fresh from R2 and decrypted to a byte-identical plaintext.
+
+**Why client-side and not just R2's own encryption.** That pack holds client
+names, party names and hearing notes — sensitive-class under `CLAUDE.md` §5.
+R2's server-side encryption is a control **Cloudflare holds the key to**; it
+protects against a stolen disk, not against a misconfigured bucket policy or a
+leaked object-scoped key. So the key never goes to Cloudflare.
+
+**The trade, stated plainly, because it is yours to accept.** An encrypted backup
+whose key exists only on this workstation is a backup that **dies with this
+workstation** — which is the exact disaster it was made to survive. Right now
+confidentiality is up and **recoverability is down**. Until the key is escrowed,
+this is not yet a backup in the sense that matters.
+
+The key is 32 bytes of hex on the `R2_BACKUP_ENCRYPTION_KEY` line of `.env`.
+`.env` is gitignored and the key is not in any commit, artifact or log.
+

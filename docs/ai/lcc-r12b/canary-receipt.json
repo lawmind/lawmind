@@ -1,0 +1,21 @@
+{
+  "artifact": "LCC_R12B_ECOURTS_CANARY",
+  "startedAt": "2026-08-29T22:47:31.656Z",
+  "apply": true,
+  "request": {
+    "stateCode": "26",
+    "listDate": "30-08-2026",
+    "cicri": "0",
+    "attempts": 3
+  },
+  "steps": [
+    {
+      "at": "2026-08-29T22:47:32.202Z",
+      "name": "session_opened",
+      "fetchLedgerId": "178a172f-aa1f-468a-a027-0346ee8829f7",
+      "captchaUrl": "https://services.ecourts.gov.in/ecourtindia_v6/vendor/securimage/securimage_show.php?6773a167c93afda2f21140b9477b21b6"
+    }
+  ],
+  "captchaSolves": [],
+  "verdict": "INCOMPLETE — the run did not reach its own conclusion"
+}

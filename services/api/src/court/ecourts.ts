@@ -41,7 +41,7 @@
  * exactly the sample it needed. Observations last, because an observation is a
  * claim about a case and we only make claims we actually read.
  */
-import { attributionForWire } from './authorisation.ts';
+import { attributionForWire, AUTHORISATION } from './authorisation.ts';
 import {
   type CauseListSourceKey,
   ledgerCourt,
@@ -407,6 +407,52 @@ export const ECOURTS_AJAX_DELIMETER = '764r6hry7ffds';
 /** The second header `ajaxCall` sends, carrying the same value. */
 export const ECOURTS_AJAX_DELIMETER_HEADER_2 = 'G73hdfdsh';
 
+/** The pair `ajaxCall` sends on every AJAX request: one value, two headers. */
+export type AjaxDelimeter = { headerName: string; value: string };
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * READ THE PAIR FROM THE LIVE SCRIPT. IT ROTATES, AND A CONSTANT CANNOT.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Two captures of the licensed client's own `components.js`, taken five hours
+ * apart on the SAME DAY, differ in exactly two lines and nothing else:
+ *
+ *     17:35Z   var delimeter="jkhfkjhkjert33";     "Kjweuru253":delimeter
+ *     22:27Z   var delimeter="764r6hry7ffds";      "G73hdfdsh":delimeter
+ *
+ * Both fixtures are checked in, which is what makes that a fact rather than a
+ * story: `official-client-recorder.test.ts` parses both.
+ *
+ * **This retires a two-round-old misdiagnosis, in both directions.** R11 read
+ * the pair, hardcoded it, got `Invalid Request`, and blamed the User-Agent. R12
+ * called the hardcoded pair "transcribed from the licensed client's source" and
+ * credited it with the fix. R12b then read fresh bytes, found different values,
+ * and concluded the earlier transcription had been WRONG. All three were
+ * mistaken the same way: the transcription was CORRECT WHEN MADE and had gone
+ * stale, because the value rotates roughly hourly. No committed constant can
+ * ever be right for long — including the one above, which is now only a
+ * last-resort fallback and is expected to be stale.
+ *
+ * The browser has no such problem: it re-fetches `components.js` on every page
+ * load and always runs the current pair. So do we, once per session.
+ */
+export function parseAjaxDelimeter(componentsJs: string): AjaxDelimeter | null {
+  const value = /var\s+delimeter\s*=\s*"([^"]+)"/.exec(componentsJs)?.[1];
+  if (!value) return null;
+  /**
+   * The second header is named in the object literal beside the constant one.
+   * Matched relative to `"delimeter": delimeter` rather than by a list of known
+   * names, because the NAME rotates too — a list would need editing every time
+   * the thing it exists to track changes.
+   */
+  const headerName = /"delimeter"\s*:\s*delimeter\s*,\s*"([^"]+)"\s*:\s*delimeter/.exec(
+    componentsJs,
+  )?.[1];
+  if (!headerName) return null;
+  return { headerName, value };
+}
+
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  * USER-AGENT AND ATTRIBUTION ARE TWO DIFFERENT THINGS, AND ONE HEADER WAS DOING
@@ -462,6 +508,12 @@ export type EcourtsSession = {
   appToken: string;
   /** The CAPTCHA image for THIS session, absolute. */
   captchaUrl: string;
+  /**
+   * The `ajaxCall` header pair, read from the live script for THIS session.
+   * Absent only if the script could not be read, in which case the committed
+   * fallback is used and is probably stale — see {@link parseAjaxDelimeter}.
+   */
+  ajaxDelimeter?: AjaxDelimeter | undefined;
 };
 
 /** One guarded request's outcome, with its evidence attached. */
@@ -553,8 +605,12 @@ async function guardedRequest(
        * as what they are — constants the licensed client sends — so nobody later
        * mistakes them for a secret of ours.
        */
-      headers['delimeter'] = ECOURTS_AJAX_DELIMETER;
-      headers[ECOURTS_AJAX_DELIMETER_HEADER_2] = ECOURTS_AJAX_DELIMETER;
+      const pair = request.session?.ajaxDelimeter ?? {
+        headerName: ECOURTS_AJAX_DELIMETER_HEADER_2,
+        value: ECOURTS_AJAX_DELIMETER,
+      };
+      headers['delimeter'] = pair.value;
+      headers[pair.headerName] = pair.value;
     }
     response = await doFetch(request.endpoint, {
       method: request.method ?? 'GET',
@@ -661,6 +717,16 @@ export async function openCauseListSession(
      * goes through `guardedRequest` like every other.
      */
     entryPath?: string;
+    /**
+     * Continue an existing session rather than starting a cold one.
+     *
+     * The licensed client never opens a module cold: every in-app link is built
+     * by `requestUri()` as `?p=<module>&app_token=<token>` and is followed with
+     * the session's cookies. A bare first visit and a navigation are therefore
+     * different requests to the server, and only the second is what the AJAX
+     * endpoints see in normal use.
+     */
+    session?: EcourtsSession | undefined;
   } = {},
 ): Promise<{ session: EcourtsSession; artifactId?: string | undefined; fetchLedgerId: string }> {
   const at = deps.now ?? new Date();
@@ -678,6 +744,7 @@ export async function openCauseListSession(
     listDate,
     accept: 'text/html,application/xhtml+xml',
     at,
+    ...(deps.session === undefined ? {} : { session: deps.session }),
     ...(deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl }),
   });
 
@@ -695,12 +762,64 @@ export async function openCauseListSession(
   const captchaSrc = /id="captcha_image"[^>]*src="([^"]+)"/i.exec(html)?.[1];
   if (!captchaSrc) throw new EcourtsSessionRefused('the module index carried no captcha image url');
 
+  const session: EcourtsSession = {
+    // Merge onto the previous jar when continuing a session: the AJAX host
+    // sets `SERVICES_SESSID` on `/ecourtindia_v6` and an affinity cookie on
+    // `/`, and a navigation that returned only one of them must not drop the
+    // other.
+    cookieHeader: cookieHeaderFrom(result.setCookie, deps.session?.cookieHeader ?? ''),
+    appToken,
+    captchaUrl: absoluteCaptchaUrl(captchaSrc),
+    ...(deps.session?.ajaxDelimeter === undefined
+      ? {}
+      : { ajaxDelimeter: deps.session.ajaxDelimeter }),
+  };
+
+  /**
+   * Read the rotating `ajaxCall` header pair for this session.
+   *
+   * One extra request per session, and it buys the difference between working
+   * and `Invalid Request`. The page the browser loads pulls
+   * `components.js?v=<build>` every time and therefore always runs the current
+   * pair; a server-side client that hardcodes it is correct only until the next
+   * rotation, which measured at roughly five hours on 29 Aug 2026.
+   *
+   * The version query is taken from the page we just received, so this asks for
+   * the exact asset the interface itself asked for rather than a URL we made up.
+   *
+   * It is skipped when the caller already has a pair (a continued session), and
+   * a failure here is NOT fatal: the committed fallback is used, the request is
+   * probably refused, and that refusal is visible rather than silent.
+   */
+  if (!session.ajaxDelimeter) {
+    /**
+     * Wait out our own minimum spacing first.
+     *
+     * The first version of this fetched the script immediately after the page
+     * and was refused by `reserve()` for `min_interval` — so the fallback pair
+     * was used and nothing said so. The refusal was correct; the caller was
+     * wrong to ask that soon. Spacing here rather than in the caller keeps the
+     * guarantee where the requests are made.
+     */
+    await new Promise((resolve) =>
+      setTimeout(resolve, (AUTHORISATION?.minIntervalMs ?? 2000) + 400),
+    );
+    const versioned = /js\/components\.js(\?[^"']*)?/.exec(html)?.[1] ?? '';
+    const asset = await retainInterfaceAsset(sql, 'components', {
+      ...(versioned ? { query: versioned.replace(/^\?/, '') } : {}),
+      ...(deps.now === undefined ? {} : { now: deps.now }),
+      ...(deps.strategy === undefined ? {} : { strategy: deps.strategy }),
+      session,
+      ...(deps.fetchImpl === undefined ? {} : { fetchImpl: deps.fetchImpl }),
+    });
+    if (!asset.refused && asset.ok) {
+      const pair = parseAjaxDelimeter(asset.bytes.toString('utf8'));
+      if (pair) session.ajaxDelimeter = pair;
+    }
+  }
+
   return {
-    session: {
-      cookieHeader: cookieHeaderFrom(result.setCookie),
-      appToken,
-      captchaUrl: absoluteCaptchaUrl(captchaSrc),
-    },
+    session,
     artifactId: result.artifactId,
     fetchLedgerId: result.fetchLedgerId,
   };
@@ -779,6 +898,29 @@ export const ECOURTS_INTERFACE_ASSETS = {
   components: `${ECOURTS_BASE}/js/components.js`,
   /** The cascading `fillDistrict` / `fillcomplex` chain, shared across modules. */
   common_header: `${ECOURTS_BASE}/js/common_header.js`,
+  /**
+   * `csrf-magic`, and the reason the first correct-looking request still failed.
+   *
+   * The module page loads it alongside the others. It is Edward Z. Yang's PHP
+   * CSRF library, whose javascript half **monkey-patches
+   * `XMLHttpRequest.prototype.send`** to append a token to every POST body. So
+   * the field it adds appears in NO application script: not in `ajaxCall`, not
+   * in `submit_causelist`, nowhere a reader of the client's own code would look.
+   *
+   * That is why `casestatus/fillDistrict` answered `Invalid Request` even after
+   * the `delimeter` pair was corrected from bytes — R11 and R12 both blamed
+   * those headers, and the header fix alone changed nothing. A recorder that
+   * shims `$.ajax` cannot see this either: the patch is one layer BELOW jQuery.
+   */
+  csrf_magic: `${ECOURTS_BASE}/csrf-magic.js`,
+  /**
+   * Both load AFTER `components.js` on the module page, so either can redefine
+   * `ajaxCall` — and the last definition is the one that runs. Retained because
+   * "the constant is in `components.js`" is only true if nothing later replaces
+   * the function that reads it, and that was an assumption, not a finding.
+   */
+  myscript: `${ECOURTS_BASE}/js/myscript.js`,
+  home: `${ECOURTS_BASE}/js/home.js`,
 } as const;
 
 export type InterfaceAssetName = keyof typeof ECOURTS_INTERFACE_ASSETS;
@@ -793,7 +935,17 @@ export type InterfaceAssetName = keyof typeof ECOURTS_INTERFACE_ASSETS;
 export async function retainInterfaceAsset(
   sql: Db,
   asset: InterfaceAssetName,
-  deps: FetchDeps & { session?: EcourtsSession | undefined } = {},
+  deps: FetchDeps & {
+    session?: EcourtsSession | undefined;
+    /**
+     * The cache-busting query the page actually requests the asset with, e.g.
+     * `v=1787920566` for `components.js`. Worth being able to send: a versioned
+     * URL is the one the browser fetches, and "the unversioned path serves the
+     * same bytes" is an assumption about the server's static handler, not a
+     * fact about this one.
+     */
+    query?: string | undefined;
+  } = {},
 ): Promise<
   | {
       refused: false;
@@ -809,7 +961,9 @@ export async function retainInterfaceAsset(
 > {
   const at = deps.now ?? new Date();
   const listDate = at.toISOString().slice(0, 10);
-  const endpoint = ECOURTS_INTERFACE_ASSETS[asset];
+  const endpoint = deps.query
+    ? `${ECOURTS_INTERFACE_ASSETS[asset]}?${deps.query}`
+    : ECOURTS_INTERFACE_ASSETS[asset];
   const source: CauseListSourceKey = {
     tier: 'interface_probe',
     probe: `interface_asset_${asset}`,
