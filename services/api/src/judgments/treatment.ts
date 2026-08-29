@@ -25,6 +25,7 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { dateQualityFor, dateQualityState, isDateContradicted } from './date-quality.ts';
+import { graphCoverage } from './graph-coverage.ts';
 import { attributionOf, type TreatmentProvenance } from './precedential-effect.ts';
 
 export const treatmentQuery = z.object({
@@ -295,5 +296,14 @@ export async function getGraph(
     totalNodes,
     returned: nodes.length,
     truncated: totalNodes > nodes.length,
+    /**
+     * G-3. `truncated` says "this PAGE is short". It has never said "this GRAPH
+     * is 0.56% complete", and without that an empty graph is indistinguishable
+     * from a judgment that cites nothing — opposite facts about an authority.
+     *
+     * Additive: a client that ignores it behaves exactly as before, and NEW3's
+     * contract names this as the one blocking gap that adds a field.
+     */
+    coverage: graphCoverage(),
   });
 }

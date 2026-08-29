@@ -40,6 +40,7 @@ import { z } from 'zod';
 
 import { ok } from '../envelope.ts';
 import { decide } from './guard.ts';
+import { disabledMonitoringFields, USER_MONITORING_PRODUCT } from './monitoring-fields.ts';
 
 /**
  * A CNR is 16 characters: 4-letter state/district code, 2-digit establishment,
@@ -98,6 +99,13 @@ export async function handleCourtLookup(
           'Enter the next date from your file. Dates given in open court are the ' +
           'normal source and are treated exactly the same as one we looked up.',
       },
+      /**
+       * The six monitoring fields, frozen by the RCC contract and carrying
+       * nothing. **`null` here means WE ARE NOT WATCHING THIS.** It never means
+       * "nothing has changed" — `monitoring-fields.ts` argues the distinction.
+       */
+      monitoring: disabledMonitoringFields(),
+      userMonitoringProduct: USER_MONITORING_PRODUCT,
     });
   }
 
@@ -119,5 +127,9 @@ export async function handleCourtLookup(
         'Enter the next date from your file. Dates given in open court are the ' +
         'normal source and are treated exactly the same as one we looked up.',
     },
+    // Same six fields on both branches. A client must not have to discover that
+    // the shape depends on WHY monitoring is unavailable.
+    monitoring: disabledMonitoringFields(),
+    userMonitoringProduct: USER_MONITORING_PRODUCT,
   });
 }

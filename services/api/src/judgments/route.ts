@@ -50,6 +50,10 @@ type JudgmentRow = {
   case_type: string | null;
   language: string;
   source_url: string;
+  source_id: string | null;
+  source_edition: string | null;
+  authorization_basis: string | null;
+  provenance_recorded_at: string | null;
   full_text: string;
   script_quality: string | null;
   script_quality_method: string | null;
@@ -67,6 +71,12 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
            -- timestamp, so the client would show a time a judgment never had.
            judgment_date::text AS judgment_date,
            case_number, case_type, language, source_url, full_text,
+           -- The four provenance columns migration 0092 added and nothing ever
+           -- put on the wire. Populated for 5,830 of 18,758,460 rows (0.031%),
+           -- so they are NULL for almost every judgment and are published as
+           -- NULL rather than defaulted — see the provenance block below.
+           source_id, source_edition, authorization_basis,
+           provenance_recorded_at::text AS provenance_recorded_at,
            -- The body-text verdict, read LIVE on this request, exactly as
            -- retrieval reads it. Never from a staged table: a document
            -- convicted one second ago must be refused by the next read.
@@ -276,6 +286,48 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
     caseType: row.case_type,
     language: row.language,
     sourceUrl: row.source_url,
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * WHERE THIS DOCUMENT CAME FROM — additive, and mostly NULL on purpose
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * NEW3's data-trust contract asks a judgment to say its source, its source
+     * EDITION and the basis on which we hold it. Migration `0092` added all four
+     * columns and nothing ever put them on the wire.
+     *
+     * **Measured 30 August 2026: 5,830 of 18,758,460 rows carry them — 0.031%.**
+     * The two populated shapes are `aws_hc / court_raw / aws_open_data` (5,828)
+     * and `sci_pdf / court_raw / public_official` (2). Every other judgment
+     * answers NULL here, and NULL is published rather than defaulted.
+     *
+     * **The temptation this refuses.** Every judgment we hold is in fact raw
+     * court text — `CLAUDE.md` forbids a reporter's edition and the corpus is
+     * built from AWS Open Data — so defaulting `sourceEdition` to `court_raw`
+     * would be true of the corpus and unevidenced of the ROW. That is the
+     * `is_bail_order` failure this repository has already measured twice: a NULL
+     * meaning "nobody looked" rendered as a positive claim. `textOrigin` beside
+     * this field is the EVIDENCED answer to the edition question and is derived
+     * per row; `sourceEdition` is the recorded one, and it is recorded for
+     * almost nothing.
+     *
+     * `basis` is an ingest-provenance note, NOT a rights determination. §8.2
+     * keeps retain / index / display / generation-evidence / training separate
+     * and the content-use decision is not the server's to make.
+     */
+    provenance: {
+      source: row.source_id,
+      sourceEdition: row.source_edition,
+      basis: row.authorization_basis,
+      recordedAt: row.provenance_recorded_at,
+      /**
+       * TRUE only when this ROW carries recorded provenance. A client must not
+       * infer absence of provenance from absence of the object, and must not
+       * render "source unknown" as a quality claim about the judgment — we can
+       * always say where a document came from, because `sourceUrl` is present
+       * for 100% of the corpus. What is missing here is the STRUCTURED record.
+       */
+      recorded: row.source_id !== null,
+    },
     /**
      * Empty string, never `null`, when `bodyText.evidenceWithheld` is true —
      * the field keeps its type so a client that ignores the envelope renders an

@@ -1,0 +1,25 @@
+{
+  "artifact": "LCC_CITATION_GRAPH_COVERAGE_V1",
+  "measuredAt": "2026-08-30T00:00:00.000Z",
+  "lane": "LCC",
+  "round": "R12",
+  "basis": "resolved_edges_only",
+  "method": "Exact counts over judgment_citations and judgments on the live corpus. A row is a BLANK SENTINEL when relationship = 'cites' and citation_text is empty — it records that the extractor looked and found nothing, and it is not a citation. Coverage is defined on RESOLVED EDGES (cited_judgment_id IS NOT NULL) and on nothing else.",
+  "totalCitationRows": 22406483,
+  "blankSentinelRows": 16127190,
+  "realReferenceStrings": 6279293,
+  "resolvedRows": 227517,
+  "resolvedEdgesInCorpus": 200761,
+  "judgmentsWithAnyResolvedOutgoing": 105024,
+  "judgmentsCitedByAnyResolvedEdge": 35153,
+  "corpusDenominator": 18758460,
+  "shares": {
+    "blankSentinelShareOfRows": 0.7197,
+    "resolvedShareOfRealReferences": 0.036233,
+    "outgoingCoverageShareOfCorpus": 0.0055987,
+    "citedCoverageShareOfCorpus": 0.001874
+  },
+  "bannedClaim": "'Every judgment has its citations mapped' is arithmetically TRUE of row presence — every judgment has at least one judgment_citations row — and completely false in meaning, because 71.97% of those rows are the blank sentinel.",
+  "stalenessDirection": "SAFE. NEW2's resolver only adds edges, so a figure measured here understates later coverage. An understated partiality declaration is conservative; declaring MORE coverage than exists is the failure that matters and monotonic growth makes it unreachable without a deletion.",
+  "crossCheck": "Matches docs/product/V1_CAPABILITY_REGISTRY_R12.json capability citation.graph_partial, measured independently by NEW3 on 2026-08-29: 22,406,483 / 16,127,190 / 6,279,293 / 227,517 / 200,761 / 105,024 / 35,153."
+}
