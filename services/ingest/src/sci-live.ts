@@ -43,12 +43,6 @@ function decodeHtml(value: string): string {
     .trim();
 }
 
-function dateFromDmy(value: string): string {
-  const match = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
-  if (!match) throw new Error(`invalid SCI date ${value}`);
-  return `${match[3]}-${match[2]}-${match[1]}`;
-}
-
 function uploadedIso(body: string): string | null {
   const match = /Uploaded On\s+(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/i.exec(body);
   if (!match) return null;
@@ -80,7 +74,10 @@ export function parseSciJudgmentFeed(html: string): SciLiveCandidate[] {
     if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !diaryNumber) continue;
 
     const label = decodeHtml(body);
-    const identity = /^(.*?)\s+-\s+(.+?\bNo\.\s*.+?\/\d{4})\s+-\s+Diary Number\s+\d+\s*\/\s*\d{4}\s+-\s+\d{2}-[A-Za-z]{3}-\d{4}/i.exec(label);
+    const identity =
+      /^(.*?)\s+-\s+(.+?\bNo\.\s*.+?\/\d{4})\s+-\s+Diary Number\s+\d+\s*\/\s*\d{4}\s+-\s+\d{2}-[A-Za-z]{3}-\d{4}/i.exec(
+        label,
+      );
     const caseTitle = (identity?.[1] ?? label.split(/\s+-\s+Diary Number/i)[0] ?? label).trim();
     const caseNumber = identity?.[2]?.trim() ?? null;
     const pdfUrl = new URL(url.toString());
@@ -98,11 +95,10 @@ export function parseSciJudgmentFeed(html: string): SciLiveCandidate[] {
   return [...new Map(candidates.map((candidate) => [candidate.pdfUrl, candidate])).values()];
 }
 
-export function officialSciRole(url: string, label = ''):
-  | 'judgment_pdf'
-  | 'order_pdf'
-  | 'editorial_summary'
-  | 'unrelated' {
+export function officialSciRole(
+  url: string,
+  label = '',
+): 'judgment_pdf' | 'order_pdf' | 'editorial_summary' | 'unrelated' {
   const lower = `${url} ${label}`.toLowerCase();
   if (lower.includes('landmark-judgment-summaries') || lower.includes('judgment summary')) {
     return 'editorial_summary';
@@ -133,7 +129,10 @@ export function neutralCitation(text: string): string | null {
   // official judgments are 920 and 922. That string cannot be split truthfully
   // without another official identity source, so abstain instead of publishing
   // the invented citation 9191 (or guessing 919).
-  const tail = text.slice((match.index ?? 0) + match[0].length, (match.index ?? 0) + match[0].length + 40);
+  const tail = text.slice(
+    (match.index ?? 0) + match[0].length,
+    (match.index ?? 0) + match[0].length + 40,
+  );
   if (match[2].length >= 4 && match[2].endsWith('1') && /^\s*(?:NON-)?REPORTABLE\b/i.test(tail)) {
     return null;
   }
@@ -177,13 +176,20 @@ async function artifact(
   input: {
     source: 'sci_homepage' | 'sci_pdf';
     role: 'judgment_index' | 'judgment_pdf';
-    state: 'observed' | 'verified_judgment' | 'duplicate_linked' | 'refused_nonjudgment' | 'fetch_failed' | 'identity_ambiguous';
+    state:
+      | 'observed'
+      | 'verified_judgment'
+      | 'duplicate_linked'
+      | 'refused_nonjudgment'
+      | 'fetch_failed'
+      | 'identity_ambiguous';
     sourceUrl: string;
     sourceDocumentKey?: string | undefined;
     contentType?: string | undefined;
     bytes: Uint8Array;
     metadata: unknown;
     extractionNote?: string | undefined;
+    textState?: 'TEXT_AVAILABLE' | 'IMAGE_ONLY_OCR_PENDING' | undefined;
     fetchLedgerId: string;
     judgmentId?: string | undefined;
     sourceAssertedAt?: string | null | undefined;
@@ -193,20 +199,26 @@ async function artifact(
     INSERT INTO official_source_artifact
       (source, artifact_role, observation_state, source_asserted_at, source_url,
        source_document_key, content_type, payload_sha256, payload_bytes, raw_bytes,
-       metadata, extraction_note, authorization_basis, conditions_version,
+       metadata, extraction_note, text_state, authorization_basis, conditions_version,
        fetch_ledger_id, judgment_id)
     VALUES
       (${input.source}, ${input.role}, ${input.state}, ${input.sourceAssertedAt ?? null},
        ${input.sourceUrl}, ${input.sourceDocumentKey ?? null}, ${input.contentType ?? null},
        ${sha256(input.bytes)}, ${input.bytes.byteLength}, ${Buffer.from(input.bytes)},
-       ${sql.json(input.metadata as Parameters<typeof sql.json>[0])}, ${input.extractionNote ?? null}, 'public_official',
+       ${sql.json(input.metadata as Parameters<typeof sql.json>[0])}, ${input.extractionNote ?? null},
+       ${input.textState ?? null}, 'public_official',
        ${SCI_PUBLIC_CONDITIONS}, ${input.fetchLedgerId}, ${input.judgmentId ?? null})
   `;
 }
 
 async function identityMatches(
   sql: Sql,
-  identity: { neutralCitation: string | null; caseNumber: string | null; judgmentDate: string; hash: string },
+  identity: {
+    neutralCitation: string | null;
+    caseNumber: string | null;
+    judgmentDate: string;
+    hash: string;
+  },
 ): Promise<string[]> {
   const rows = await sql<{ id: string }[]>`
     SELECT DISTINCT id
@@ -240,9 +252,17 @@ export async function runSciLive(input: {
     const started = Date.now();
     let response: Response;
     try {
-      response = await fetchImpl(SCI_HOME, { headers: { 'user-agent': 'Lawmind/1.0 official-source canary' } });
+      response = await fetchImpl(SCI_HOME, {
+        headers: { 'user-agent': 'Lawmind/1.0 official-source canary' },
+      });
     } catch (error) {
-      await fetchLedger(sql, { source: 'sci_homepage', endpoint: SCI_HOME, outcome: 'error', durationMs: Date.now() - started, refusalReason: String(error) });
+      await fetchLedger(sql, {
+        source: 'sci_homepage',
+        endpoint: SCI_HOME,
+        outcome: 'error',
+        durationMs: Date.now() - started,
+        refusalReason: String(error),
+      });
       throw error;
     }
     const homepageBytes = new Uint8Array(await response.arrayBuffer());
@@ -279,20 +299,41 @@ export async function runSciLive(input: {
       const pdfStarted = Date.now();
       let pdfResponse: Response;
       try {
-        pdfResponse = await fetchImpl(candidate.pdfUrl, { headers: { 'user-agent': 'Lawmind/1.0 official-source canary' } });
+        pdfResponse = await fetchImpl(candidate.pdfUrl, {
+          headers: { 'user-agent': 'Lawmind/1.0 official-source canary' },
+        });
       } catch (error) {
-        await fetchLedger(sql, { source: 'sci_pdf', endpoint: candidate.pdfUrl, outcome: 'error', durationMs: Date.now() - pdfStarted, refusalReason: String(error) });
+        await fetchLedger(sql, {
+          source: 'sci_pdf',
+          endpoint: candidate.pdfUrl,
+          outcome: 'error',
+          durationMs: Date.now() - pdfStarted,
+          refusalReason: String(error),
+        });
         continue;
       }
       const bytes = new Uint8Array(await pdfResponse.arrayBuffer());
       const pdfLedger = await fetchLedger(sql, {
-        source: 'sci_pdf', endpoint: candidate.pdfUrl,
-        outcome: pdfResponse.ok ? 'ok' : 'error', httpStatus: pdfResponse.status,
+        source: 'sci_pdf',
+        endpoint: candidate.pdfUrl,
+        outcome: pdfResponse.ok ? 'ok' : 'error',
+        httpStatus: pdfResponse.status,
         durationMs: Date.now() - pdfStarted,
         refusalReason: pdfResponse.ok ? undefined : `HTTP ${pdfResponse.status}`,
       });
       if (!pdfResponse.ok) {
-        await artifact(sql, { source: 'sci_pdf', role: 'judgment_pdf', state: 'fetch_failed', sourceUrl: candidate.pdfUrl, sourceDocumentKey: candidate.diaryNumber, contentType: pdfResponse.headers.get('content-type') ?? undefined, bytes, metadata: candidate, fetchLedgerId: pdfLedger, sourceAssertedAt: candidate.uploadedAt });
+        await artifact(sql, {
+          source: 'sci_pdf',
+          role: 'judgment_pdf',
+          state: 'fetch_failed',
+          sourceUrl: candidate.pdfUrl,
+          sourceDocumentKey: candidate.diaryNumber,
+          contentType: pdfResponse.headers.get('content-type') ?? undefined,
+          bytes,
+          metadata: candidate,
+          fetchLedgerId: pdfLedger,
+          sourceAssertedAt: candidate.uploadedAt,
+        });
         continue;
       }
 
@@ -303,22 +344,63 @@ export async function runSciLive(input: {
         // evidence row, so extraction receives its own copy.
         extracted = await extractPdfBytes(bytes.slice(), candidate.pdfUrl);
       } catch (error) {
-        await artifact(sql, { source: 'sci_pdf', role: 'judgment_pdf', state: 'fetch_failed', sourceUrl: candidate.pdfUrl, sourceDocumentKey: candidate.diaryNumber, contentType: pdfResponse.headers.get('content-type') ?? undefined, bytes, metadata: candidate, extractionNote: String(error), fetchLedgerId: pdfLedger, sourceAssertedAt: candidate.uploadedAt });
+        await artifact(sql, {
+          source: 'sci_pdf',
+          role: 'judgment_pdf',
+          state: 'fetch_failed',
+          sourceUrl: candidate.pdfUrl,
+          sourceDocumentKey: candidate.diaryNumber,
+          contentType: pdfResponse.headers.get('content-type') ?? undefined,
+          bytes,
+          metadata: candidate,
+          extractionNote: String(error),
+          fetchLedgerId: pdfLedger,
+          sourceAssertedAt: candidate.uploadedAt,
+        });
         continue;
       }
       if (!isJudgmentText(extracted.text)) {
         result.refused++;
-        await artifact(sql, { source: 'sci_pdf', role: 'judgment_pdf', state: 'refused_nonjudgment', sourceUrl: candidate.pdfUrl, sourceDocumentKey: candidate.diaryNumber, contentType: pdfResponse.headers.get('content-type') ?? undefined, bytes, metadata: candidate, extractionNote: 'PDF did not satisfy official judgment text controls', fetchLedgerId: pdfLedger, sourceAssertedAt: candidate.uploadedAt });
+        await artifact(sql, {
+          source: 'sci_pdf',
+          role: 'judgment_pdf',
+          state: 'refused_nonjudgment',
+          sourceUrl: candidate.pdfUrl,
+          sourceDocumentKey: candidate.diaryNumber,
+          contentType: pdfResponse.headers.get('content-type') ?? undefined,
+          bytes,
+          metadata: candidate,
+          extractionNote: 'PDF did not satisfy official judgment text controls',
+          fetchLedgerId: pdfLedger,
+          sourceAssertedAt: candidate.uploadedAt,
+        });
         continue;
       }
 
       result.verified++;
       const citation = neutralCitation(extracted.text);
       const hash = contentHash(extracted.text);
-      const matches = await identityMatches(sql, { neutralCitation: citation, caseNumber: candidate.caseNumber, judgmentDate: candidate.judgmentDate, hash });
+      const matches = await identityMatches(sql, {
+        neutralCitation: citation,
+        caseNumber: candidate.caseNumber,
+        judgmentDate: candidate.judgmentDate,
+        hash,
+      });
       if (matches.length > 1) {
         result.ambiguous++;
-        await artifact(sql, { source: 'sci_pdf', role: 'judgment_pdf', state: 'identity_ambiguous', sourceUrl: candidate.pdfUrl, sourceDocumentKey: candidate.diaryNumber, contentType: pdfResponse.headers.get('content-type') ?? undefined, bytes, metadata: { ...candidate, neutralCitation: citation, candidateJudgmentIds: matches }, extractionNote: 'multiple canonical identity matches; no write', fetchLedgerId: pdfLedger, sourceAssertedAt: candidate.uploadedAt });
+        await artifact(sql, {
+          source: 'sci_pdf',
+          role: 'judgment_pdf',
+          state: 'identity_ambiguous',
+          sourceUrl: candidate.pdfUrl,
+          sourceDocumentKey: candidate.diaryNumber,
+          contentType: pdfResponse.headers.get('content-type') ?? undefined,
+          bytes,
+          metadata: { ...candidate, neutralCitation: citation, candidateJudgmentIds: matches },
+          extractionNote: 'multiple canonical identity matches; no write',
+          fetchLedgerId: pdfLedger,
+          sourceAssertedAt: candidate.uploadedAt,
+        });
         continue;
       }
 
@@ -335,6 +417,9 @@ export async function runSciLive(input: {
           fullText: extracted.text,
           language: 'en',
           sourceUrl: candidate.pdfUrl,
+          sourceId: 'sci_pdf',
+          sourceEdition: 'court_raw',
+          authorizationBasis: 'public_official',
           caseNumber: candidate.caseNumber,
           caseType: caseType(candidate.caseNumber),
           sourceDocumentType: 'JUDGMENT',
@@ -343,12 +428,32 @@ export async function runSciLive(input: {
         };
         const load = await upsertJudgments(sql, [record]);
         result.inserted += load.inserted;
-        judgmentId = (await sql<{ id: string }[]>`SELECT id FROM judgments WHERE source_url = ${candidate.pdfUrl}`)[0]?.id;
+        judgmentId = (
+          await sql<
+            { id: string }[]
+          >`SELECT id FROM judgments WHERE source_url = ${candidate.pdfUrl}`
+        )[0]?.id;
         state = 'verified_judgment';
       } else if (judgmentId) {
         result.linked++;
       }
-      await artifact(sql, { source: 'sci_pdf', role: 'judgment_pdf', state: judgmentId ? state : 'verified_judgment', sourceUrl: candidate.pdfUrl, sourceDocumentKey: candidate.diaryNumber, contentType: pdfResponse.headers.get('content-type') ?? undefined, bytes, metadata: { ...candidate, neutralCitation: citation, apply: input.apply }, extractionNote: judgmentId ? `canonical judgment ${judgmentId}` : 'verified observation; canonical apply disabled', fetchLedgerId: pdfLedger, judgmentId, sourceAssertedAt: candidate.uploadedAt });
+      await artifact(sql, {
+        source: 'sci_pdf',
+        role: 'judgment_pdf',
+        state: judgmentId ? state : 'verified_judgment',
+        sourceUrl: candidate.pdfUrl,
+        sourceDocumentKey: candidate.diaryNumber,
+        contentType: pdfResponse.headers.get('content-type') ?? undefined,
+        bytes,
+        metadata: { ...candidate, neutralCitation: citation, apply: input.apply },
+        extractionNote: judgmentId
+          ? `canonical judgment ${judgmentId}`
+          : 'verified observation; canonical apply disabled',
+        textState: 'TEXT_AVAILABLE',
+        fetchLedgerId: pdfLedger,
+        judgmentId,
+        sourceAssertedAt: candidate.uploadedAt,
+      });
     }
     return result;
   } finally {
