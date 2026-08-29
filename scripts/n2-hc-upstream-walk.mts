@@ -94,6 +94,8 @@ function arg(name: string, dflt?: string): string | undefined {
 }
 const OUT = arg('out') ?? '.tmp-new2/upstream';
 const ONLY_YEAR = arg('year');
+const ONLY_COURTS = new Set((arg('court', '') ?? '').split(',').filter(Boolean));
+const REFRESH = process.argv.includes('--refresh');
 mkdirSync(join(OUT, 'partitions'), { recursive: true });
 const PROGRESS = join(OUT, 'progress.jsonl');
 
@@ -160,19 +162,34 @@ function monthOf(v: unknown): string {
 
 const done = new Set<string>();
 if (existsSync(PROGRESS)) {
+  const retained: string[] = [];
   for (const line of readFileSync(PROGRESS, 'utf8').split('\n')) {
     if (!line.trim()) continue;
     try {
       const o = JSON.parse(line) as { key?: string; error?: string };
-      if (o.key && !o.error) done.add(o.key);
+      const parts = o.key ? partsOf(o.key) : null;
+      const refreshThis = REFRESH && parts !== null &&
+        (ONLY_COURTS.size === 0 || ONLY_COURTS.has(parts.courtCode)) &&
+        (!ONLY_YEAR || parts.year === Number(ONLY_YEAR));
+      if (!refreshThis) {
+        retained.push(line);
+        if (o.key && !o.error) done.add(o.key);
+      }
     } catch {
       /* a torn final line is re-walked, which is idempotent */
     }
   }
+  if (REFRESH) writeFileSync(PROGRESS, retained.length ? `${retained.join('\n')}\n` : '');
 }
 
 const all = (await listAll('metadata/parquet/')).filter((o) => !/\/bench=testcase\//.test(o.key));
-const targets = all.filter((o) => (ONLY_YEAR ? o.key.includes(`year=${ONLY_YEAR}/`) : true));
+const targets = all.filter((o) => {
+  const parts = partsOf(o.key);
+  if (!parts) return false;
+  if (ONLY_YEAR && parts.year !== Number(ONLY_YEAR)) return false;
+  if (ONLY_COURTS.size > 0 && !ONLY_COURTS.has(parts.courtCode)) return false;
+  return true;
+});
 writeFileSync(join(OUT, 'objects.json'), JSON.stringify(all));
 console.log(`[walk] ${targets.length} partitions in scope, ${done.size} already done`);
 

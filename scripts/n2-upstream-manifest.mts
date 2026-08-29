@@ -23,8 +23,9 @@
  *   The publisher appended rows we have not seen.
  * - SHRUNK — upstream is smaller than what we recorded. A republished partition;
  *   the offset we hold may no longer mean what it meant.
- * - UNCHANGED — same size. ETag is recorded but a multipart ETag is not an MD5,
- *   so ETag equality is corroboration, never the sole test.
+ * - CHANGED — same size but a different ETag from the prior daily observation.
+ *   This is a revalidation trigger, not a claim that a multipart ETag is an MD5.
+ * - UNCHANGED — same size and no observed version change.
  *
  * It CANNOT say how many judgments are inside a grown file — bytes are not rows,
  * and `source-count-is-parquet-rows-not-documents` is the standing correction on
@@ -34,7 +35,7 @@
  *
  * Usage: services/ingest/node_modules/.bin/tsx scripts/n2-upstream-manifest.mts
  */
-import { readdirSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -117,6 +118,11 @@ function partitionOf(key: string) {
 async function main() {
   const takenAt = new Date().toISOString();
   const local = localWalkManifest();
+  const prior = existsSync(OUT)
+    ? JSON.parse(readFileSync(OUT, 'utf8')) as {
+        buckets?: Record<string, { objectVersions?: S3Obj[] }>;
+      }
+    : null;
   process.stderr.write(`local checkpoint keys: ${local.size}\n`);
 
   const report: Record<string, unknown> = { takenAt, localCheckpointKeys: local.size, buckets: {} };
@@ -132,6 +138,7 @@ async function main() {
       NEW: [] as Record<string, unknown>[],
       GROWN: [] as Record<string, unknown>[],
       SHRUNK: [] as Record<string, unknown>[],
+      CHANGED: [] as Record<string, unknown>[],
       UNCHANGED: 0,
       /**
        * `bench=testcase` — the publisher's own fixture partition, which
@@ -151,6 +158,9 @@ async function main() {
     };
     let bytesWaiting = 0;
     let fixtureBytes = 0;
+    const priorVersions = new Map(
+      (prior?.buckets?.[b.adapter]?.objectVersions ?? []).map((object) => [object.key, object]),
+    );
 
     for (const o of metadataObjs) {
       const l = local.get(o.key);
@@ -167,6 +177,11 @@ async function main() {
         bytesWaiting += o.size - l.size;
       } else if (o.size < l.size) {
         classes.SHRUNK.push({ ...row, recordedSize: l.size, offset: l.offset });
+      } else if (priorVersions.has(o.key) && priorVersions.get(o.key)!.etag !== o.etag) {
+        // Same-size rewrites are invisible to a byte frontier. ETag is used as
+        // a change trigger only because the prior observed object has a
+        // different ETag; no multipart-MD5 meaning is inferred from its value.
+        classes.CHANGED.push({ ...row, recordedSize: l.size, offset: l.offset, added: 0 });
       } else {
         classes.UNCHANGED++;
       }
@@ -192,6 +207,7 @@ async function main() {
         NEW: classes.NEW.length,
         GROWN: classes.GROWN.length,
         SHRUNK: classes.SHRUNK.length,
+        CHANGED: classes.CHANGED.length,
         UNCHANGED: classes.UNCHANGED,
         FIXTURE: classes.FIXTURE.length,
       },
@@ -201,10 +217,12 @@ async function main() {
       newKeys: classes.NEW,
       grown: classes.GROWN.sort((a, b2) => (b2['added'] as number) - (a['added'] as number)),
       shrunk: classes.SHRUNK,
+      changed: classes.CHANGED,
+      objectVersions: metadataObjs,
       fixture: classes.FIXTURE,
     };
     process.stderr.write(
-      `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · UNCHANGED ${classes.UNCHANGED} · FIXTURE ${classes.FIXTURE.length} (${fixtureBytes} bytes, never ingested) · ${bytesWaiting} bytes waiting\n`,
+      `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · CHANGED ${classes.CHANGED.length} · UNCHANGED ${classes.UNCHANGED} · FIXTURE ${classes.FIXTURE.length} (${fixtureBytes} bytes, never ingested) · ${bytesWaiting} bytes waiting\n`,
     );
   }
 
