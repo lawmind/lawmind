@@ -98,13 +98,31 @@ rewrite (15 files) is held for the founder — `FOUNDER_QUEUE.md` **FQ-LCC-R10-1
 **Update 29 Aug 2026:** the founder settled the eCourts scope half of
 FQ-LCC-R10-1 (and all of FQ-ECOURTS-ACTOR). `CLAUDE.md` §6/§6a,
 `docs/ECOURTS_AUTHORISATION.md` and the FQ/plan files were moved and committed;
-`platform_config.ecourts_harvest` is ON via the audited path. The SCI half
+authorization remains settled, but `platform_config.ecourts_harvest` is now
+**OFF** via the audited path. The current audit row records that an interrupted
+LCC no-network raw-capture test temporarily enabled it, no eCourts request
+occurred as a result, and the original prior reason text is unrecoverable. The
+live ledger has **0 real network requests** and `ecourts_observation` has **0 real
+observations**. The SCI half
 (`docs/SCI_AUTHORISATION.md` et al.) and the remaining held docs stay dirty.
 `DOMAIN_TRUTH.md` and `STATUTE_MAPPING_SOURCES.md` are held pending an advocate's
 sign-off — **FQ-LCC-R10-2**. `apps/admin/lib/api.ts` is RCC's scope — **FQ-LCC-R10-3**.
 NEW2 was asked twice on the bus (1493, 1498) to ACK its paths and is DEAD; the
 decision to proceed without the ACK, and exactly what was committed of theirs, is
 recorded in bus 1499. Every commit is separable and revertible on its own.
+
+**R10 eCourts hygiene proof.** One append-only `official_source_artifact` remains
+from the interrupted test, identified by `metadata.court = ZZ_RAW_CAPTURE_TEST`.
+It is a `cause_list`, not a `judgment_pdf`; `judgment_id` is NULL; it has no
+`ecourts_observation` child; and no production reader queries this artifact table.
+Judgments, search, legal-corpus/freshness counts, and legal authority all read the
+separate `judgments` path, while monitoring events derive only from
+`ecourts_observation` -> `ecourts_transition`. Its paired ledger row is equally
+explicit: court `ZZ_RAW_CAPTURE_TEST`, endpoint
+`test://lcc-aborted-raw-capture-draft/no-request-was-made`, outcome `error`, HTTP
+status NULL. `guard.ts` excludes `test://` identities from interval/hour/day grant
+quota, with a rollback-only regression test. The artifact remains because the
+database append-only trigger refuses UPDATE and DELETE; no history was rewritten.
 
 ### 29 August 2026 (R10) — LCC: THE 25-SECOND SCAN WAS A SERIAL PLAN, NOT A COLD PLANNER, AND AUTOVACUUM HAD NEVER BEEN TOLD THE TABLE EXISTED
 

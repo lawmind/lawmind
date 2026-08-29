@@ -26,7 +26,12 @@
  */
 import type { Sql, TransactionSql } from 'postgres';
 
-import { AUTHORISATION, type EcourtsAuthorisation, grantAttribution, istHour } from './authorisation.ts';
+import {
+  AUTHORISATION,
+  type EcourtsAuthorisation,
+  grantAttribution,
+  istHour,
+} from './authorisation.ts';
 
 /**
  * Every function here takes either the pool or an open transaction, because
@@ -46,16 +51,16 @@ export type Db = Sql | TransactionSql;
  * they were handed, and a test that wraps the world in a rolled-back
  * transaction should not silently lose that guarantee.
  */
-export async function atomically<T>(
-  sql: Db,
-  fn: (tx: TransactionSql) => Promise<T>,
-): Promise<T> {
+export async function atomically<T>(sql: Db, fn: (tx: TransactionSql) => Promise<T>): Promise<T> {
   const run = 'begin' in sql ? sql.begin.bind(sql) : sql.savepoint.bind(sql);
   return (await run((tx: TransactionSql) => fn(tx))) as unknown as T;
 }
 
 /** The kill-switch key. Fixed set — `docs/SCHEMA_TRUTH.md` §platform_config. */
 export const ECOURTS_KILL_SWITCH_KEY = 'ecourts_harvest';
+
+/** Injected responses use a non-network URI and never spend the registrar's quota. */
+export const NON_NETWORK_TEST_ENDPOINT_PREFIX = 'test://';
 
 export type RefusalReason =
   | 'terms_not_on_file'
@@ -184,7 +189,10 @@ export async function decide(
 
   // Counted from the ledger and only over rows that REACHED THE NETWORK. A
   // refusal must not consume the quota it just protected — otherwise a burst of
-  // refusals would lock out the requests the grant actually allows.
+  // refusals would lock out the requests the grant actually allows. The explicit
+  // test:// identity is equally non-network: one interrupted raw-capture test
+  // left such a row append-only, and treating it as grant traffic invents a
+  // request that never happened.
   const [counts] = await sql<{ last_at: string | null; in_hour: number; in_day: number }[]>`
     SELECT
       -- iso-time-exempt: consumed by Date.parse three lines below for the min-interval arithmetic and never returned; nothing in the decision this function makes reaches a client as a timestamp.
@@ -193,6 +201,7 @@ export async function decide(
       count(*) FILTER (WHERE requested_at > ${at.toISOString()}::timestamptz - interval '1 day')  AS in_day
     FROM ecourts_fetch_ledger
     WHERE outcome <> 'refused'
+      AND endpoint NOT LIKE ${`${NON_NETWORK_TEST_ENDPOINT_PREFIX}%`}
   `;
 
   const lastAt = counts?.last_at ? Date.parse(counts.last_at) : null;
@@ -236,10 +245,7 @@ export async function decide(
  * wildly different amounts of product.
  */
 export type ObservationStrategy =
-  | 'CAUSE_LIST_BATCH'
-  | 'CASE_STATUS'
-  | 'ORDER_CHECK'
-  | 'USER_REFRESH';
+  'CAUSE_LIST_BATCH' | 'CASE_STATUS' | 'ORDER_CHECK' | 'USER_REFRESH';
 
 export type LedgerEntry = {
   court: string | null;
@@ -411,11 +417,7 @@ export type Settlement = {
  * the ledger's whole job is that the count of rows is the count of requests.
  * The row already exists; this fills in the outcome the network supplied.
  */
-export async function settle(
-  sql: Db,
-  ledgerId: string,
-  settlement: Settlement,
-): Promise<void> {
+export async function settle(sql: Db, ledgerId: string, settlement: Settlement): Promise<void> {
   await sql`
     UPDATE ecourts_fetch_ledger
        SET outcome           = ${settlement.outcome},

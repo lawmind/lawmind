@@ -43,7 +43,13 @@ import postgres, { type Sql, type TransactionSql } from 'postgres';
 import { AUTHORISATION } from './authorisation.ts';
 import { writeCauseListObservations } from './ecourts-observation-writer.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, fetchCauseList, PARSER_STATE } from './ecourts.ts';
-import { ECOURTS_KILL_SWITCH_KEY, reserve } from './guard.ts';
+import {
+  decide,
+  ECOURTS_KILL_SWITCH_KEY,
+  NON_NETWORK_TEST_ENDPOINT_PREFIX,
+  record,
+  reserve,
+} from './guard.ts';
 import { assertPilotRunnable, ECOURTS_PILOT, pilotBlockers, PilotRefused } from './pilot.ts';
 
 const url = process.env['DATABASE_URL'];
@@ -94,9 +100,7 @@ suite('an authorised response is retained before it is understood', () => {
    * test cannot leave harvesting on. The attribution env var is restored in a
    * `finally` for the same reason.
    */
-  async function inRolledBackHarvest(
-    body: (tx: TransactionSql) => Promise<void>,
-  ): Promise<void> {
+  async function inRolledBackHarvest(body: (tx: TransactionSql) => Promise<void>): Promise<void> {
     const priorAttribution = process.env['ECOURTS_GRANT_ATTRIBUTION'];
     process.env['ECOURTS_GRANT_ATTRIBUTION'] = 'LawMind raw-capture test (no network)';
     try {
@@ -248,6 +252,26 @@ suite('an authorised response is retained before it is understood', () => {
       assert.match(result.status === 'failed' ? result.error : '', /refused: min_interval/);
       assert.ok(result.fetchLedgerId, 'a refusal is evidence and gets a ledger row');
       assert.equal(result.artifactId, undefined);
+    });
+  });
+
+  it('never counts an explicitly non-network test ledger row against the grant', async () => {
+    await inRolledBackHarvest(async (tx) => {
+      const at = new Date();
+      await record(tx, {
+        court: TEST_COURT,
+        endpoint: `${NON_NETWORK_TEST_ENDPOINT_PREFIX}injected-response`,
+        outcome: 'error',
+        observationStrategy: 'CAUSE_LIST_BATCH',
+        requestedAt: at,
+      });
+
+      const decision = await decide(tx, TEST_COURT, new Date(at.getTime() + 1));
+      assert.equal(
+        decision.allowed,
+        true,
+        'test:// rows never reached eCourts and must not consume interval/hour/day quota',
+      );
     });
   });
 
