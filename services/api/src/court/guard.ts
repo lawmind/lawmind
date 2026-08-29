@@ -24,9 +24,35 @@
  * If the registrar ever asks whether we stayed inside the grant, the answer is a
  * query against `ecourts_fetch_ledger`, not a promise.
  */
-import type { Sql } from 'postgres';
+import type { Sql, TransactionSql } from 'postgres';
 
 import { AUTHORISATION, type EcourtsAuthorisation, grantAttribution, istHour } from './authorisation.ts';
+
+/**
+ * Every function here takes either the pool or an open transaction, because
+ * quota admission is only safe INSIDE one. Widening the parameter is what lets
+ * `decide` be reused under the reservation lock instead of being reimplemented
+ * beside it — two copies of the limiter is two limiters, and the second one
+ * always drifts.
+ */
+export type Db = Sql | TransactionSql;
+
+/**
+ * Run `fn` in its own atomic unit, whether or not one is already open.
+ *
+ * A pool gives a transaction; inside a transaction the only nested atomic unit
+ * Postgres offers is a savepoint. Callers that must be all-or-nothing —
+ * reservation, and a whole page of listings — should not have to know which
+ * they were handed, and a test that wraps the world in a rolled-back
+ * transaction should not silently lose that guarantee.
+ */
+export async function atomically<T>(
+  sql: Db,
+  fn: (tx: TransactionSql) => Promise<T>,
+): Promise<T> {
+  const run = 'begin' in sql ? sql.begin.bind(sql) : sql.savepoint.bind(sql);
+  return (await run((tx: TransactionSql) => fn(tx))) as unknown as T;
+}
 
 /** The kill-switch key. Fixed set — `docs/SCHEMA_TRUTH.md` §platform_config. */
 export const ECOURTS_KILL_SWITCH_KEY = 'ecourts_harvest';
@@ -54,7 +80,7 @@ export type FetchDecision =
  * is how a gated feature ships ungated. Same shape as the rule that a
  * never-enumerated count is null rather than zero.
  */
-export async function killSwitchEnabled(sql: Sql): Promise<boolean> {
+export async function killSwitchEnabled(sql: Db): Promise<boolean> {
   const [row] = await sql<{ enabled: boolean }[]>`
     SELECT enabled FROM platform_config
     WHERE key = ${ECOURTS_KILL_SWITCH_KEY} AND kind = 'kill_switch'
@@ -63,7 +89,7 @@ export async function killSwitchEnabled(sql: Sql): Promise<boolean> {
 }
 
 export async function decide(
-  sql: Sql,
+  sql: Db,
   court: string,
   at: Date = new Date(),
 ): Promise<FetchDecision> {
@@ -202,6 +228,19 @@ export async function decide(
   return { allowed: true, authorisation: grant };
 }
 
+/**
+ * Master Roadmap v5 §3.4. Quota is the binding constraint on the premium
+ * business, and "how many matters can we monitor" is only answerable if each
+ * request records which strategy spent it. A cause list covering forty listed
+ * matters and a single case-status poll cost the same one request and buy
+ * wildly different amounts of product.
+ */
+export type ObservationStrategy =
+  | 'CAUSE_LIST_BATCH'
+  | 'CASE_STATUS'
+  | 'ORDER_CHECK'
+  | 'USER_REFRESH';
+
 export type LedgerEntry = {
   court: string | null;
   endpoint: string;
@@ -210,18 +249,29 @@ export type LedgerEntry = {
   durationMs?: number | undefined;
   refusalReason?: string | undefined;
   causeListSyncId?: string | undefined;
+  observationStrategy?: ObservationStrategy | undefined;
+  /** The instant the decision was made. Defaults to the row's own `now()`. */
+  requestedAt?: Date | undefined;
 };
 
 /**
  * Write one row. Called on every decision — allowed or refused, succeeded or
  * errored — because a ledger with gaps proves nothing about the gaps.
  */
-export async function record(sql: Sql, entry: LedgerEntry): Promise<void> {
-  await sql`
+export async function record(sql: Db, entry: LedgerEntry): Promise<void> {
+  await insertLedgerRow(sql, entry);
+}
+
+/** The single INSERT. `record` and `reserve` must never write different rows. */
+async function insertLedgerRow(sql: Db, entry: LedgerEntry): Promise<string> {
+  const [row] = await sql<{ id: string }[]>`
     INSERT INTO ecourts_fetch_ledger
-      (court, endpoint, outcome, http_status, duration_ms, authorisation_reference,
-       refusal_reason, cause_list_sync_id)
+      (requested_at, court, endpoint, outcome, http_status, duration_ms,
+       authorisation_reference, refusal_reason, cause_list_sync_id, observation_strategy)
     VALUES (
+      -- The instant the DECISION was made, so the min-interval arithmetic the
+      -- next caller does is against the same clock the limiter just used.
+      coalesce(${entry.requestedAt?.toISOString() ?? null}::timestamptz, now()),
       ${entry.court}, ${entry.endpoint}, ${entry.outcome},
       ${entry.httpStatus ?? null}, ${entry.durationMs ?? null},
       -- The CONDITIONS fingerprint, not the letter's reference. It answers
@@ -234,7 +284,145 @@ export async function record(sql: Sql, entry: LedgerEntry): Promise<void> {
       -- future grant has no conditions to fingerprint.
       ${AUTHORISATION?.conditionsVersion ?? AUTHORISATION?.reference ?? null},
       ${entry.refusalReason ?? null},
-      ${entry.causeListSyncId ?? null}
+      ${entry.causeListSyncId ?? null},
+      ${entry.observationStrategy ?? null}
     )
+    RETURNING id
+  `;
+  return row!.id;
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ATOMIC QUOTA RESERVATION
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `decide` reads the ledger and returns a verdict. That verdict is true at the
+ * instant it is computed and stops being true the moment anyone else asks,
+ * because nothing between the read and the request records that a slot was
+ * taken. With one caller and no scheduler this never mattered. The adaptive
+ * observation planner in Master Roadmap v5 §3.4 introduces several, and then it
+ * is the classic read-then-act race: two workers each read "99 requests this
+ * hour, limit 100", each conclude they may proceed, and the grant is breached
+ * by a system whose ledger will faithfully record both requests as permitted.
+ *
+ * So admission and reservation happen together, under a transaction-scoped
+ * Postgres advisory lock, and the reservation is a COMMITTED LEDGER ROW before
+ * the network is touched:
+ *
+ *   BEGIN
+ *     pg_advisory_xact_lock(ECOURTS_QUOTA_LOCK_KEY)   -- global, one at a time
+ *     decide()                                        -- the same limiter, no copy
+ *     INSERT the row that spends the slot
+ *   COMMIT                                            -- lock released here
+ *   ... only now may the caller make the request ...
+ *
+ * The row is inserted as `error`, not as a fourth outcome, and it is the honest
+ * state: an attempt whose result we do not yet know is not a success. A process
+ * that dies mid-flight therefore leaves a row that still counts against the
+ * quota, which is the direction a bounded permission must fail in. `settle`
+ * corrects it to `ok` when the response actually arrives.
+ *
+ * Refusals are inserted too, still without consuming quota — `decide` counts
+ * only rows whose outcome is not `refused`, so a burst of refusals cannot lock
+ * out the requests the grant does allow.
+ */
+
+/**
+ * One global lock for the whole grant. Not per court: the limits are 2,000 ms
+ * apart, 100/hour and 1,000/day ACROSS everything we do under this permission,
+ * so a per-court lock would let 26 courts each spend the same budget.
+ *
+ * The value is the date the registrar granted permission. Nothing else in this
+ * codebase takes an advisory lock, and a constant that names the grant is
+ * easier to recognise in `pg_locks` than a hash would be.
+ */
+export const ECOURTS_QUOTA_LOCK_KEY = 20_260_807;
+
+export type Reservation =
+  | { allowed: true; ledgerId: string; authorisation: EcourtsAuthorisation }
+  | { allowed: false; ledgerId: string; reason: RefusalReason; detail: string };
+
+export type ReservationRequest = {
+  court: string;
+  endpoint: string;
+  strategy: ObservationStrategy;
+  causeListSyncId?: string | undefined;
+};
+
+/**
+ * Ask for one request's worth of quota, and have the answer be durable.
+ *
+ * Returns a ledger row id either way — a refusal is evidence and gets an id
+ * exactly as an allowance does. The caller may contact eCourts if and only if
+ * `allowed` is true, and must call `settle` with what happened.
+ */
+export async function reserve(
+  sql: Db,
+  request: ReservationRequest,
+  at: Date = new Date(),
+): Promise<Reservation> {
+  const result = await atomically(sql, async (tx) => {
+    // Transaction-scoped: released by COMMIT or ROLLBACK, including a crash.
+    // There is no unlock to forget and no lock to leak.
+    await tx`SELECT pg_advisory_xact_lock(${ECOURTS_QUOTA_LOCK_KEY})`;
+
+    const decision = await decide(tx, request.court, at);
+    if (!decision.allowed) {
+      const ledgerId = await insertLedgerRow(tx, {
+        court: request.court,
+        endpoint: request.endpoint,
+        outcome: 'refused',
+        refusalReason: decision.reason,
+        observationStrategy: request.strategy,
+        causeListSyncId: request.causeListSyncId,
+        requestedAt: at,
+      });
+      return { allowed: false, ledgerId, reason: decision.reason, detail: decision.detail };
+    }
+
+    const ledgerId = await insertLedgerRow(tx, {
+      court: request.court,
+      endpoint: request.endpoint,
+      // Not yet a success, and deliberately so — see the header. The row is
+      // committed before the request is made, so a crash cannot hand the next
+      // caller a slot that was already spent.
+      outcome: 'error',
+      observationStrategy: request.strategy,
+      causeListSyncId: request.causeListSyncId,
+      requestedAt: at,
+    });
+    return { allowed: true, ledgerId, authorisation: decision.authorisation };
+  });
+  return result as unknown as Reservation;
+}
+
+export type Settlement = {
+  outcome: 'ok' | 'error';
+  httpStatus?: number | undefined;
+  durationMs?: number | undefined;
+  causeListSyncId?: string | undefined;
+};
+
+/**
+ * Record what became of a reserved request.
+ *
+ * Never inserts. A second row would spend a second slot for one request, and
+ * the ledger's whole job is that the count of rows is the count of requests.
+ * The row already exists; this fills in the outcome the network supplied.
+ */
+export async function settle(
+  sql: Db,
+  ledgerId: string,
+  settlement: Settlement,
+): Promise<void> {
+  await sql`
+    UPDATE ecourts_fetch_ledger
+       SET outcome           = ${settlement.outcome},
+           http_status       = ${settlement.httpStatus ?? null},
+           duration_ms       = ${settlement.durationMs ?? null},
+           cause_list_sync_id = coalesce(${settlement.causeListSyncId ?? null}, cause_list_sync_id)
+     WHERE id = ${ledgerId}
+       AND outcome <> 'refused'
   `;
 }

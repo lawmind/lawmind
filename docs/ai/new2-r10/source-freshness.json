@@ -2,7 +2,7 @@
  "artifact": "NEW2_SOURCE_FRESHNESS_R10",
  "definitionVersion": "HC_PARITY_V2_2026-08-29",
  "lane": "NEW2",
- "takenAt": "2026-08-29T08:15:44.911Z",
+ "takenAt": "2026-08-29T10:30:50.983Z",
  "contract": {
   "note": "per source, never a single headline number. Recency and completeness are reported together or not at all.",
   "fields": [
@@ -16,7 +16,7 @@
   ],
   "denominator": "top-level upstreamLocalCompleteness and sourceUnavailableCount use the newest 12 decisionMonth buckets under HC_PARITY_V2. Identity is distinct pdfUrlFor(partition, basename(pdf_link)) per court, resolved to one month with fixtures excluded. All-time values remain nested. Defined in the parity artifact and consumed without recomputation.",
   "denominatorSource": "docs/ai/new2-r10/parity-matrix.json",
-  "denominatorTakenAt": "2026-08-29T08:08:52.955Z",
+  "denominatorTakenAt": "2026-08-29T10:24:14.563Z",
   "measuredWindowMonths": 12,
   "unavailableIsAccounting": "sourceUnavailableCount closes accounting, never completeness, and is never netted out of upstreamLocalCompleteness."
  },
@@ -28,14 +28,14 @@
     "state": "AUTHORIZED",
     "basis": "AWS Open Data, CC-BY-4.0; Copyright Act s.52(1)(q)(iv)"
    },
-   "latestUpstreamDecisionDate": "2026-08-27",
-   "latestUpstreamMeasuredAt": "2026-08-29T05:35:52.659Z",
+   "latestUpstreamDecisionDate": "2026-08-28",
+   "latestUpstreamMeasuredAt": "2026-08-29T10:19:28.784Z",
    "latestLocalDecisionDate": "2026-08-27",
    "lastSuccessfulIngestAt": "2026-08-29T07:49:03+00",
-   "sourceLagDays": 0,
+   "sourceLagDays": 1,
    "sourceLagRefusedBecause": null,
-   "upstreamLocalCompleteness": 0.9696,
-   "sourceUnavailableCount": 46748,
+   "upstreamLocalCompleteness": 0.9685,
+   "sourceUnavailableCount": 46745,
    "measuredWindow": {
     "months": [
      "2025-09",
@@ -51,23 +51,23 @@
      "2026-07",
      "2026-08"
     ],
-    "upstreamRecords": 1539083,
-    "upstreamCases": 1420421,
-    "held": 1492335,
-    "upstreamLocalCompleteness": 0.9696,
-    "sourceUnavailableCount": 46748,
+    "upstreamRecords": 1540902,
+    "upstreamCases": 1422241,
+    "held": 1492323,
+    "upstreamLocalCompleteness": 0.9685,
+    "sourceUnavailableCount": 46745,
     "policyRefused": 0,
     "retryExhaustedOurs": 0,
-    "neverAttempted": 0
+    "neverAttempted": 1834
    },
    "allTime": {
-    "upstreamRecords": 18945988,
-    "held": 18724704,
-    "sourceUnavailableCount": 221284,
+    "upstreamRecords": 18947807,
+    "held": 18724692,
+    "sourceUnavailableCount": 221281,
     "retryExhaustedOurs": 0,
-    "neverAttempted": 0,
-    "upstreamLocalCompleteness": 0.9883,
-    "accountedUpstream": 1,
+    "neverAttempted": 1834,
+    "upstreamLocalCompleteness": 0.9882,
+    "accountedUpstream": 0.9999,
     "heldRowsInCorpus": 18714426
    },
    "courtMonthDetail": [
@@ -134,26 +134,26 @@
     {
      "court": "18_6",
      "month": "2026-08",
-     "upstreamRecords": 1706,
-     "upstreamCases": 1707,
-     "held": 1471,
+     "upstreamRecords": 2147,
+     "upstreamCases": 2149,
+     "held": 1470,
      "sourceUnavailableCount": 235,
      "retryExhaustedOurs": 0,
-     "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8623,
-     "accountedUpstream": 1
+     "neverAttempted": 442,
+     "upstreamLocalCompleteness": 0.6847,
+     "accountedUpstream": 0.7941
     },
     {
      "court": "19_16",
      "month": "2026-08",
-     "upstreamRecords": 4674,
-     "upstreamCases": 4674,
-     "held": 4673,
+     "upstreamRecords": 5298,
+     "upstreamCases": 5298,
+     "held": 4667,
      "sourceUnavailableCount": 1,
      "retryExhaustedOurs": 0,
-     "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.9998,
-     "accountedUpstream": 1
+     "neverAttempted": 630,
+     "upstreamLocalCompleteness": 0.8809,
+     "accountedUpstream": 0.8811
     },
     {
      "court": "2_5",
@@ -230,14 +230,14 @@
     {
      "court": "27_1",
      "month": "2026-08",
-     "upstreamRecords": 3313,
-     "upstreamCases": 3313,
-     "held": 2124,
-     "sourceUnavailableCount": 1189,
+     "upstreamRecords": 3987,
+     "upstreamCases": 3987,
+     "held": 2121,
+     "sourceUnavailableCount": 1186,
      "retryExhaustedOurs": 0,
-     "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.6411,
-     "accountedUpstream": 1
+     "neverAttempted": 680,
+     "upstreamLocalCompleteness": 0.532,
+     "accountedUpstream": 0.8294
     },
     {
      "court": "28_2",
@@ -302,14 +302,14 @@
     {
      "court": "36_29",
      "month": "2026-08",
-     "upstreamRecords": 598,
-     "upstreamCases": 601,
-     "held": 598,
+     "upstreamRecords": 678,
+     "upstreamCases": 681,
+     "held": 596,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
-     "neverAttempted": 0,
-     "upstreamLocalCompleteness": 1,
-     "accountedUpstream": 1
+     "neverAttempted": 82,
+     "upstreamLocalCompleteness": 0.8791,
+     "accountedUpstream": 0.8791
     },
     {
      "court": "5_15",
@@ -3672,7 +3672,7 @@
     {
      "outcome": "refused",
      "refusalReason": "attribution_not_on_file",
-     "count": 28
+     "count": 30
     }
    ],
    "courtMonthDetail": [],

@@ -1148,6 +1148,13 @@ export const ecourtsFetchLedger = pgTable(
     authorisationReference: text('authorisation_reference'),
     /** Set on `refused`, null otherwise: which lock stopped it. */
     refusalReason: text('refusal_reason'),
+    /**
+     * Which strategy spent the request. Master Roadmap v5 §3.4 — the grant's
+     * budget is the binding constraint on the premium business, and it is only
+     * analysable per strategy. Migration 0096. NULL means the row predates the
+     * planner, never that no strategy was used.
+     */
+    observationStrategy: text('observation_strategy'),
     causeListSyncId: uuid('cause_list_sync_id').references(() => causeListSyncs.id, {
       onDelete: 'set null',
     }),
@@ -1223,6 +1230,13 @@ export const ecourtsObservation = pgTable(
      */
     extractionState: text('extraction_state').notNull().default('parsed'),
     extractionNote: text('extraction_note'),
+    /**
+     * The retained raw response this row was parsed out of. Migration 0096.
+     * `payloadSha256` proves the bytes were hashed; only this proves they were
+     * kept, which is what lets a later parser re-read them without spending
+     * another request from a bounded grant.
+     */
+    sourceArtifactId: uuid('source_artifact_id').references(() => officialSourceArtifacts.id),
   },
   (t) => [
     index('ecourts_observation_observed_at_idx').on(t.observedAt.desc()),
@@ -1329,6 +1343,13 @@ export const officialSourceArtifacts = pgTable(
     authorizationBasis: text('authorization_basis').notNull(),
     conditionsVersion: text('conditions_version'),
     fetchLedgerId: uuid('fetch_ledger_id').references(() => officialSourceFetchLedger.id),
+    /**
+     * The eCourts request that obtained these bytes. Migration 0096. Distinct
+     * from `fetchLedgerId`, which names the official-source ledger — an eCourts
+     * fetch is audited against `ecourts_fetch_ledger` because that is the table
+     * the registrar's grant is answered from.
+     */
+    ecourtsFetchLedgerId: uuid('ecourts_fetch_ledger_id').references(() => ecourtsFetchLedger.id),
     judgmentId: uuid('judgment_id').references(() => judgments.id, { onDelete: 'set null' }),
   },
   (t) => [

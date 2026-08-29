@@ -1,5 +1,14 @@
 # CURRENT PLAN — the single ordered queue
 
+> **Master Roadmap v5 governs roadmap and gate interpretation.**
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V5.md` — supplied by the founder, prepared
+> 28 August 2026, committed byte-for-byte. It **supersedes v4, v3, v2 and
+> `LAWMIND_ROADMAP_TO_STORE_SUBMISSION.md`**, and where an older sprint document in
+> this repository conflicts with it, the roadmap wins. It does not change
+> `CLAUDE.md` authorization truth, SCI authorization policy, the eCourts grant
+> interpretation, or `DOMAIN_TRUTH.md` — those are separate founder and legal
+> decisions. This queue remains the ordered list of what to pick up next.
+
 **Read this file at session start, after the mandatory set in `CLAUDE.md` §0.**
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**

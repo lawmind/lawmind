@@ -1,26 +1,21 @@
 /**
- * Bounded freshness projection of NEW2's versioned upstream-parity artifact.
+ * Bounded freshness projection of the PUBLISHED upstream-parity observation.
  *
  * The HTTP request never scans judgments or parquet coverage. NEW2 performs the
- * expensive upstream walk once and publishes a source-scale artifact; LCC
- * verifies the definition version and projects that measurement without
- * changing its denominator or court/month assignments.
+ * expensive upstream walk once; LCC validates and publishes the result as one
+ * coherent observation (`freshness-publication.ts`), and this module projects
+ * that publication without changing its denominator or court/month assignments.
+ *
+ * It reads exactly ONE file. That is the point: this route used to open the
+ * definition, the parity matrix and the measurement separately, which meant a
+ * republish could hand a reader a new measurement against an old denominator —
+ * and, in the R10 gate, meant the newest measurement simply never reached the
+ * route at all. Projection is now downstream of publication, and there is no
+ * path from here to a loose artifact.
  */
-import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-
 import type { Sql } from 'postgres';
 
-const DEFINITION_PATH = fileURLToPath(
-  new URL('../../../../docs/ai/new2-r10/hc-parity-definition-v2.json', import.meta.url),
-);
-const MEASUREMENT_PATH = fileURLToPath(
-  new URL('../../../../docs/ai/new2-r10/source-freshness.json', import.meta.url),
-);
-const PARITY_PATH = fileURLToPath(
-  new URL('../../../../docs/ai/new2-r10/parity-matrix.json', import.meta.url),
-);
+import { PROJECTED_SOURCE, readPublishedObservation } from './freshness-publication.ts';
 
 export type CourtMonthFreshness = {
   court: string;
@@ -38,6 +33,9 @@ export type CourtMonthFreshness = {
 export type FreshnessObject = {
   definitionVersion: string;
   definitionArtifactSha256: string;
+  /** Which published observation this response came from. Additive, R10. */
+  publicationGeneration: string;
+  publishedAt: string;
   latestUpstreamDecisionDate: string | null;
   latestLocalDecisionDate: string | null;
   lastSuccessfulIngestAt: string | null;
@@ -46,10 +44,6 @@ export type FreshnessObject = {
   sourceUnavailableCount: number;
   upstreamMeasuredAt: string;
   courtMonthDetail: CourtMonthFreshness[];
-};
-
-type DefinitionArtifact = {
-  definitionVersion?: unknown;
 };
 
 type New2CourtMonth = Omit<CourtMonthFreshness, 'sourceUnavailableCount'> & {
@@ -68,17 +62,6 @@ type New2Source = {
   sourceUnavailableCount?: number;
   unavailableSourceCount?: number;
   courtMonthDetail?: New2CourtMonth[];
-};
-
-type New2Measurement = {
-  definitionVersion?: unknown;
-  contract?: { definitionVersion?: unknown };
-  sources?: New2Source[];
-};
-
-type New2Parity = {
-  definitionVersion?: unknown;
-  definitionSha256?: unknown;
 };
 
 function requiredNumber(value: unknown, field: string): number {
@@ -113,45 +96,13 @@ function sourceUnavailable(source: New2Source | New2CourtMonth, field: string): 
  */
 export async function buildFreshnessObject(
   _sql: Sql,
-  paths: { definition?: string; measurement?: string; parity?: string } = {},
+  paths: { observation?: string } = {},
 ): Promise<FreshnessObject> {
-  const [definitionBytes, measurementBytes, parityBytes] = await Promise.all([
-    readFile(paths.definition ?? DEFINITION_PATH),
-    readFile(paths.measurement ?? MEASUREMENT_PATH),
-    readFile(paths.parity ?? PARITY_PATH),
-  ]);
+  const published = await readPublishedObservation(paths.observation);
+  const measurement = published.body.measurement as { sources?: New2Source[] };
 
-  const definition = JSON.parse(definitionBytes.toString('utf8')) as DefinitionArtifact;
-  const measurement = JSON.parse(measurementBytes.toString('utf8')) as New2Measurement;
-  const parity = JSON.parse(parityBytes.toString('utf8')) as New2Parity;
-  if (
-    typeof definition.definitionVersion !== 'string' ||
-    definition.definitionVersion.length === 0
-  ) {
-    throw new Error('NEW2 parity definition has no definitionVersion');
-  }
-  const measurementVersion =
-    measurement.definitionVersion ?? measurement.contract?.definitionVersion;
-  if (measurementVersion !== definition.definitionVersion) {
-    throw new Error(
-      `NEW2 freshness definition mismatch: measurement=${String(measurementVersion)} ` +
-        `definition=${definition.definitionVersion}`,
-    );
-  }
-  const definitionSha256 = createHash('sha256').update(definitionBytes).digest('hex');
-  if (
-    parity.definitionVersion !== definition.definitionVersion ||
-    parity.definitionSha256 !== definitionSha256
-  ) {
-    throw new Error(
-      `NEW2 parity artifact definition mismatch: parityVersion=${String(parity.definitionVersion)} ` +
-        `paritySha256=${String(parity.definitionSha256)} definitionVersion=${definition.definitionVersion} ` +
-        `definitionSha256=${definitionSha256}`,
-    );
-  }
-
-  const source = measurement.sources?.find((candidate) => candidate.source === 'aws_open_data_hc');
-  if (!source) throw new Error('NEW2 freshness artifact has no aws_open_data_hc source');
+  const source = measurement.sources?.find((candidate) => candidate.source === PROJECTED_SOURCE);
+  if (!source) throw new Error(`NEW2 freshness artifact has no ${PROJECTED_SOURCE} source`);
   if (!Array.isArray(source.courtMonthDetail)) {
     throw new Error('NEW2 freshness artifact has no courtMonthDetail');
   }
@@ -188,8 +139,10 @@ export async function buildFreshnessObject(
   }));
 
   return {
-    definitionVersion: definition.definitionVersion,
-    definitionArtifactSha256: definitionSha256,
+    definitionVersion: published.definitionVersion,
+    definitionArtifactSha256: published.definitionSha256,
+    publicationGeneration: published.generation,
+    publishedAt: published.publishedAt,
     latestUpstreamDecisionDate: nullableString(
       source.latestUpstreamDecisionDate,
       'latestUpstreamDecisionDate',

@@ -26,6 +26,23 @@
  * never gets the parsed cause list.
  *
  * ─────────────────────────────────────────────────────────────────────────────
+ * STRENGTHENED 29 AUG 2026 — THE REQUEST IS NO LONGER MADE AT ALL
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * When this file was written, the ledger row was inserted AFTER the response
+ * came back, so the honest guarantee stopped at "the data is not usable" and the
+ * test recorded, deliberately, that the request itself had gone out and could
+ * not be recalled.
+ *
+ * Atomic quota reservation moved the ledger write in front of the network:
+ * `reserve()` commits the row that spends the slot, and only then may the caller
+ * fetch. A ledger that has stopped accepting writes therefore stops the request
+ * instead of merely invalidating its result — which is strictly the better
+ * guarantee, and the one the grant actually wants. `fetchAttempted` is now
+ * asserted FALSE for that reason, and it is still the vacuity guard: if a future
+ * change puts the request back in front of the ledger, this line goes red.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
  * HOW THE WRITE IS KILLED
  * ─────────────────────────────────────────────────────────────────────────────
  *
@@ -156,19 +173,27 @@ describe('the fetch ledger is not optional', () => {
       if (!(error instanceof Rollback)) throw error;
     }
 
-    /**
-     * Recorded, not asserted away. The request DID go out — that is the part
-     * that cannot be rolled back, and pretending otherwise is what this test
-     * refuses to do. It is here so the honest shape of the guarantee is visible
-     * in the test itself.
-     */
     assert.equal(
       ledgerIsDown,
       true,
       'the ledger accepted a write during the drill — the failure was never simulated, ' +
         'so everything below this line would have passed vacuously',
     );
-    assert.equal(fetchAttempted, true, 'the drill did not reach the fetch, so it tested nothing');
+
+    /**
+     * The strengthened guarantee. Reservation commits the ledger row before the
+     * network is touched, so a ledger that cannot accept writes cannot be
+     * followed by a request. This is not a relaxation of the old assertion — it
+     * is the same vacuity guard pointed at the better outcome: if the request
+     * ever moves back in front of the ledger write, this fails.
+     */
+    assert.equal(
+      fetchAttempted,
+      false,
+      'a request was made while the ledger could not record it — quota reservation is ' +
+        'supposed to make that impossible, and an unrecordable harvest is exactly what ' +
+        'the grant cannot survive',
+    );
 
     /**
      * Two acceptable outcomes and one forbidden one, asserted as a disjunction
