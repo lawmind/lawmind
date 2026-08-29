@@ -152,6 +152,7 @@ import {
 } from './search/saved.ts';
 import { getCorpusCoverage } from './corpus/coverage.ts';
 import { getCorpusFreshness } from './corpus/freshness.ts';
+import { buildFreshnessObject } from './corpus/freshness-object.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
 import { validate } from './validate.ts';
 
@@ -803,6 +804,16 @@ export function createApp(deps: AppDeps) {
     // for themselves and the only way to stop it being believed is to show it
     // losing: 8 days against a real 56.
     app.get('/corpus/freshness', (c) => getCorpusFreshness(c, sql));
+    /**
+     * The STRUCTURED freshness object. An ADDITION beside `/corpus/freshness`,
+     * not a change to it — that endpoint's shape is consumed already.
+     *
+     * It exists because `/corpus/freshness` reports our side only, and NEW2's
+     * decomposition inverted the diagnosis: upstream wrote the same day, so the
+     * gap is OUR ingest and not unpublished law. Recency and completeness are
+     * separate fields and there is no combined score, deliberately.
+     */
+    app.get('/corpus/freshness/object', async (c) => ok(c, await buildFreshnessObject(sql)));
 
     app.get('/statutes', (c) => listStatutes(c, sql));
     app.get('/statutes/sections', validate('query', sectionQuery), (c) =>

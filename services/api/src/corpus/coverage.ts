@@ -53,16 +53,42 @@ type CoverageRow = {
 
 export async function getCorpusCoverage(c: Context, sql: Sql): Promise<Response> {
   const rows = await sql<CoverageRow[]>`
+    -- Still derived live, never stored. A cached count drifts the moment an
+    -- ingest writes a row, and a coverage figure that is stale in the
+    -- REASSURING direction is worse than no figure at all.
+    --
+    -- ONE aggregate, not one per court. This was a correlated subquery
+    -- --  (SELECT count(*) FROM judgments j WHERE j.court = cov.court_name)
+    -- and the planner turned it into 25 SERIAL index-only scans, one per court
+    -- group. Measured 28 Aug 2026 on a settled box, EXPLAIN (ANALYZE, BUFFERS):
+    --
+    --   correlated     26,156 ms   25 loops x 1,002 ms, no parallelism
+    --   GROUP BY once   2,764 ms   Parallel Index Only Scan, 5 workers
+    --
+    -- 9.5x, and the buffer counts are nearly identical (1.43M vs 1.44M pages,
+    -- 3.45M heap fetches either way). It is not reading less; it is reading the
+    -- same index ONCE and in parallel. A correlated subquery cannot be
+    -- parallelised, which is the whole difference.
+    --
+    -- Worth stating what did NOT fix it: VACUUM took the visibility map from
+    -- 75.14% to 83.52% and cut heap fetches 36% and disk reads 61%, and the
+    -- correlated query still took 26,156 ms against 25,025 ms before. Fewer
+    -- heap fetches were not the bottleneck; the serial plan was.
+    WITH held AS (
+      SELECT court, count(*)::int AS n FROM judgments GROUP BY court
+    )
     SELECT cov.court_name,
            min(cov.court_code)          AS court_code,
            sum(cov.source_documents)::text AS source_documents,
            min(cov.year)::int           AS first_year,
            max(cov.year)::int           AS last_year,
-           -- Derived live, never stored. A cached count drifts the moment an
-           -- ingest writes a row, and a coverage figure that is stale in the
-           -- REASSURING direction is worse than no figure at all.
-           (SELECT count(*)::int FROM judgments j WHERE j.court = cov.court_name) AS held
+           -- LEFT JOIN + COALESCE, because a court we hold NOTHING for has no
+           -- row in the aggregate at all, and the correlated form returned 0
+           -- for it. A NULL here would render as a missing figure rather than
+           -- as the honest zero, on exactly the courts where the gap is total.
+           coalesce(max(held.n), 0)     AS held
     FROM judgment_coverage cov
+    LEFT JOIN held ON held.court = cov.court_name
     WHERE cov.source = ${HIGH_COURT_SOURCE}
     GROUP BY cov.court_name
     ORDER BY sum(cov.source_documents) DESC

@@ -1,0 +1,41 @@
+{
+  "table": "judgments",
+  "startedAt": "2026-08-29T05:11:24.754Z",
+  "before": {
+    "at": "2026-08-28T05:56:35Z",
+    "visibility": {
+      "relpages": 2822704,
+      "relallvisible": 2120913,
+      "pct": 75.14
+    },
+    "coverage": {
+      "executionMs": 25025.193,
+      "heapFetches": 5379222,
+      "sharedRead": 1932349,
+      "concurrentBackends": []
+    }
+  },
+  "visibilityAtStart": {
+    "relpages": 2822704,
+    "relallvisible": 2120913,
+    "pct": "75.14"
+  },
+  "vacuumMs": 165588,
+  "after": {
+    "visibility": {
+      "relpages": 2822704,
+      "relallvisible": 2357620,
+      "pct": "83.52"
+    },
+    "coverage": {
+      "wallMs": 41118,
+      "executionMs": 41105.9,
+      "heapFetches": 3447355,
+      "sharedRead": 775762,
+      "concurrentBackends": [],
+      "quiet": true,
+      "waitedPolls": 1
+    }
+  },
+  "finishedAt": "2026-08-29T05:15:21.522Z"
+}
