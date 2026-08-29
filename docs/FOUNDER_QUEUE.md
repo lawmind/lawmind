@@ -179,6 +179,42 @@ new one.
 
 ---
 
+### [OPEN — NOT A BLOCKER, BUT READ IT BEFORE ANY COPY IS WRITTEN] FQ-CLAIMS-V1 — the v1 claims register · NEW3 · 29 Aug 2026
+
+**Needs:** your eye on one table before anyone — us, an agency, or you — writes a
+store listing, a website line, an investor slide or an ad. Nothing to sign and
+nothing to buy.
+
+**What it is.** `docs/product/NEW3_V1_PRODUCT_DEFINITION_R12.md` §10 is a claims
+register: 22 metrics, each with the denominator that makes it mean something,
+and **11 claims that are banned in v1** because the measurement does not support
+them. Every number was measured against the live backend on 29 Aug 2026 and
+every one names where it came from.
+
+**Why it is worth five minutes.** Two of the banned claims are ones a reasonable
+person would make by accident:
+
+- **"every citation verified."** Every one of 18,758,460 judgments has at least
+  one row in `judgment_citations`, so "every judgment has its citations mapped"
+  is *arithmetically true*. But **71.98% of those rows are a blank sentinel**
+  meaning "we looked and found nothing". Real citation coverage is **3.62%**.
+- **"live" / "up to date."** Both of our lag numbers are true and they are 1 day
+  and 29 days, because they answer different questions (newest document vs
+  newest month with real coverage). Quoting the flattering one alone is the kind
+  of claim that is defensible right up until somebody checks.
+
+**Why it is not a blocker:** the register is written, and every lane can work
+from it today. It only becomes urgent the moment outward-facing copy exists.
+
+**Cost if never read:** a store listing or a website line that we cannot support
+with a measurement — on a product whose entire licence to operate is that we do
+not overstate what we know.
+
+**Where it plugs in:** `docs/product/NEW3_V1_PRODUCT_DEFINITION_R12.md` §10, and
+`docs/WEBSITE_CLAIM_EVIDENCE_MATRIX.md` when that is next revised.
+
+---
+
 # CREDENTIALS AND ACCOUNTS
 
 ### [OPEN — ONE FACT FROM THE REGISTRAR] FQ-ECOURTS-CAPTCHA — the grant permits the bypass and does not say how · LCC · 29 Aug 2026

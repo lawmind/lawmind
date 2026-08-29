@@ -1,0 +1,69 @@
+{
+  "takenAt": "2026-08-29T17:54:10.381Z",
+  "measured": {
+    "overruledDistribution": {
+      "value": {
+        "none": 18758362,
+        "set_aside": 73,
+        "doubted": 17,
+        "partly_set_aside": 8
+      },
+      "elapsedMs": 15801
+    },
+    "citationCheckStates": {
+      "value": [
+        {
+          "verificationState": "verified",
+          "verifiedBySource": "corpus",
+          "count": 16199
+        }
+      ],
+      "elapsedMs": 10
+    },
+    "distinctResolvedEdges": {
+      "value": 200761,
+      "elapsedMs": 3060
+    },
+    "judgmentsWithOutgoingResolvedCitation": {
+      "value": 105024,
+      "elapsedMs": 153
+    },
+    "judgmentsWithIncomingResolvedCitation": {
+      "value": 35153,
+      "elapsedMs": 67
+    },
+    "judgmentsWithAnyCitationRow": {
+      "value": 18758460,
+      "elapsedMs": 35898
+    },
+    "judgmentsWithStatuteRef": {
+      "value": 446483,
+      "elapsedMs": 2388
+    },
+    "retainedSourceArtifacts": {
+      "value": {
+        "IMAGE_ONLY_OCR_PENDING": 10498,
+        "null": 3057,
+        "TEXT_AVAILABLE": 655
+      },
+      "elapsedMs": 44
+    },
+    "courtsHeld": {
+      "value": 27,
+      "elapsedMs": 5631
+    }
+  },
+  "unmeasured": [],
+  "concurrentActivity": [
+    {
+      "state": "active",
+      "n": 2,
+      "longest": "02:31:34.407233"
+    },
+    {
+      "state": "idle",
+      "n": 6,
+      "longest": "00:12:11.516784"
+    }
+  ]
+}

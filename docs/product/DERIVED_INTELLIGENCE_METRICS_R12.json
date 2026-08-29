@@ -1,0 +1,161 @@
+{
+  "takenAt": "2026-08-29T17:45:13.275Z",
+  "estimates": {
+    "reltuples": [
+      {
+        "relname": "ecourts_fetch_ledger",
+        "reltuples": "127",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-29T17:19:50.688Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T16:19:48.419Z"
+      },
+      {
+        "relname": "ecourts_observation",
+        "reltuples": "-1",
+        "last_vacuum": null,
+        "last_autovacuum": null,
+        "last_analyze": null,
+        "last_autoanalyze": null
+      },
+      {
+        "relname": "judgment_chunks",
+        "reltuples": "620928",
+        "last_vacuum": "2026-08-29T05:52:23.085Z",
+        "last_autovacuum": null,
+        "last_analyze": "2026-08-29T05:52:58.256Z",
+        "last_autoanalyze": null
+      },
+      {
+        "relname": "judgment_citations",
+        "reltuples": "22322064",
+        "last_vacuum": null,
+        "last_autovacuum": null,
+        "last_analyze": null,
+        "last_autoanalyze": null
+      },
+      {
+        "relname": "judgment_statute_refs",
+        "reltuples": "900034",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-26T15:11:36.436Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T05:42:05.185Z"
+      },
+      {
+        "relname": "judgments",
+        "reltuples": "18752608",
+        "last_vacuum": "2026-08-29T05:12:28.211Z",
+        "last_autovacuum": "2026-08-29T05:48:20.401Z",
+        "last_analyze": "2026-08-29T05:14:10.375Z",
+        "last_autoanalyze": null
+      },
+      {
+        "relname": "matters",
+        "reltuples": "3",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-29T17:14:50.592Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T17:14:50.595Z"
+      },
+      {
+        "relname": "new1_doc_vector_stage",
+        "reltuples": "2729751",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-28T02:35:13.262Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T17:02:51.266Z"
+      },
+      {
+        "relname": "search_events",
+        "reltuples": "3037",
+        "last_vacuum": null,
+        "last_autovacuum": null,
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T17:08:50.228Z"
+      },
+      {
+        "relname": "searches",
+        "reltuples": "1",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-29T10:33:23.401Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T10:35:23.605Z"
+      },
+      {
+        "relname": "statute_sections",
+        "reltuples": "36663",
+        "last_vacuum": null,
+        "last_autovacuum": null,
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-27T10:04:48.612Z"
+      },
+      {
+        "relname": "statutes",
+        "reltuples": "846",
+        "last_vacuum": null,
+        "last_autovacuum": null,
+        "last_analyze": null,
+        "last_autoanalyze": null
+      },
+      {
+        "relname": "users",
+        "reltuples": "529",
+        "last_vacuum": null,
+        "last_autovacuum": "2026-08-29T17:44:51.417Z",
+        "last_analyze": null,
+        "last_autoanalyze": "2026-08-29T17:13:50.538Z"
+      }
+    ]
+  },
+  "exact": {
+    "smallTables": {
+      "ecourts_observation": 0,
+      "ecourts_fetch_ledger": 131,
+      "ecourts_transition": 0,
+      "cause_list_syncs": 0,
+      "matters": 3,
+      "matter_authorities": 0,
+      "users": 529,
+      "statutes": 849,
+      "saved_searches": 1,
+      "searches": 1,
+      "search_events": 3123,
+      "activation_events": 1,
+      "entitlements": 1,
+      "alerts": 1,
+      "citation_disputes": 0
+    },
+    "statuteSections": 36663,
+    "coarseStaged": 2738744,
+    "judgmentChunks": 620300,
+    "tranchePassages": 418116,
+    "documentsWithChunks": 40161,
+    "citationReferenceStrings": 22406483,
+    "citationResolvedRows": 227517,
+    "statuteRefs": 905156,
+    "statuteRefsLinked": 703768,
+    "judgmentsIdentity": {
+      "total": 18758460,
+      "withNeutralCitation": 1389048,
+      "withCnr": 18758433,
+      "withCaseNumber": 18758457,
+      "withJudgmentDate": 18758460,
+      "withSourceUrl": 18758460,
+      "elapsedMs": 17247
+    }
+  },
+  "notes": [],
+  "concurrentActivity": [
+    {
+      "state": "active",
+      "n": 7,
+      "longest": "02:21:54.947824"
+    },
+    {
+      "state": "idle",
+      "n": 6,
+      "longest": "00:02:32.057375"
+    }
+  ]
+}

@@ -25,6 +25,84 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 29 August 2026 (SPRINT 2, NEW3) — v1 IS DEFINED, AND THE TWO THINGS BLOCKING IT ARE QUERY SHAPE, NOT DATA
+
+**Round:** Sprint 2 product definition against versioned data capabilities,
+founder-directed. Lease: `GIT_COMMIT`, for the commit only. **No data worker stopped** — NEW1's coarse
+walk, doc-vector embed and GPU sidecar, NEW2's ingest and LCC's jobs all ran
+throughout, and every latency below was measured with seven Postgres backends
+active. **No code changed in `services/`. No UI, no deploy, no billing.**
+
+**Full record: `docs/product/NEW3_V1_PRODUCT_DEFINITION_R12.md`.**
+Frozen contract: `docs/product/RCC_V1_API_CONTRACT_R12.md`.
+Registry: `docs/product/V1_CAPABILITY_REGISTRY_R12.json`.
+Evidence: `docs/product/TEN_MATTER_ACCEPTANCE_R12.json`,
+`DERIVED_INTELLIGENCE_METRICS_R12.json`, `..._R12_GRAPH.json`.
+
+**TEN-MATTER ACCEPTANCE: 9 PASS · 2 PASS_WITH_LIMIT · 0 HOLD**, eleven cases run
+against the live local backend at `8795ba8` with fixtures picked from the corpus
+at run time. Reproducible:
+`AUTH_SECRET=<local> BASE=<url> node scripts/new3-ten-matter-acceptance.mjs`.
+It creates one fixture user, one matter and one authority and deletes all of them
+**by owner** rather than by the ids the responses exposed — verified after:
+`usersLeft 0`, `mattersLeft 0`, `mattersTotal 3`, the same 3 as before.
+
+**The one thing to carry forward.** The corpus is not the constraint. **Query
+shape is.** Two blockers, both read out of `search/retrieve.ts` rather than
+guessed, and both are a change to a BOUND, not to the ladder or to any shape:
+
+1. **AB-1 — a party name alone returns zero.** `SATENDER KUMAR ANTIL` — held, and
+   the most-cited node in the sampled citation graph at 7,418 inbound edges —
+   returns **0 results** with `sparse_timeout`. The full cause title resolves at
+   rank 1 in 8.3 ms. The trigram party path exists and the request never reaches
+   it.
+2. **AB-2 — filters do not bound the admission gate.** `bail` inside one court and
+   one month — **45,660 judgments, measured** — is still refused as
+   `query_too_broad_to_rank` at `rarestDf 0.2577`, because the df comes from
+   `lexeme_document_frequency`, which is corpus-wide, and `filters` is a parameter
+   of the same function that is **not consulted before the refusal**.
+
+Both fail honestly today (`emptyBecause` names a reason and a remedy; nothing is
+silently dropped), which is why they are shipping blockers and not correctness
+ones.
+
+**Numbers worth other lanes' attention, all with denominators.** judgments
+**18,758,460** exact. Citation rows 22,406,483, of which **16,127,190 (71.98%)
+are blank sentinels** — so "every judgment has its citations mapped" is
+arithmetically true and meaningless, and citation coverage is **227,517 /
+6,279,293 real reference strings = 3.6233%**. Judgments with a resolved outgoing
+citation: **0.55987%**. Retained source artifacts: **14,210 / 18,758,460 =
+0.07575%**, which is why no surface may say "verified from the retained official
+PDF". Coarse embedding **35.780% of the v2 snapshot, 14.600% of corpus**; passage
+**40,161 documents = 0.21409%**. `ecourts_observation` = **0**.
+
+**What was frozen.** The search ladder (exact → structured → lexical → honest
+refinement, no semantic router); the data-trust contract, with two additive gaps
+named (`sourceEdition`, and `coverage{declaredPartial}` on the graph response —
+`truncated` says "this page is short", not "this graph is 0.56% complete"); the
+firm-ready domain model, where **ownership resolves through Workspace and court
+observations are never user-owned**; the six monitoring fields, served null while
+the capability stays off; eleven analytics events; eleven derived-intelligence
+metric definitions, two of them `UNMEASURED` and staying that way.
+
+**`RCC_START_RECOMMENDATION = AUTHORIZED`.** Three blocking API gaps and **none of
+them is a new endpoint** — G-1 and G-2 are AB-1/AB-2 behind unchanged shapes, and
+only G-3 (graph coverage) adds a field. RCC can build every v1 screen now.
+
+**Next, in order.** (1) LCC: bound the sparse gate by the FILTERED population —
+the single highest-value change in the product. (2) LCC: route party-name queries
+to the existing trigram path. (3) LCC: `coverage{declaredPartial}` on the graph.
+(4) LCC: build the `ecourts_observation` writer — it is **ours**, and it gates the
+pilot even if the registrar answers tomorrow. (5) NEW3 did **not** run
+`briefing.daily_loop` through acceptance; the routes are mounted and that is a gap
+in this round's coverage, named rather than hidden, and it matters because
+`PRODUCT_BRIEF.md` sequences Tier B before Tier A.
+
+**Founder queue:** nothing new was queued as a blocker — FQ-ECOURTS-CAPTCHA and
+the countersigned DPA were both already recorded, and searching first is why.
+Added **FQ-CLAIMS-V1**, explicitly not a blocker: the 11 banned v1 claims to read
+before any outward-facing copy exists.
+
 ### 29 August 2026 (R11, POST-GATE-A ECOURTS) — LCC: THE GRANT PERMITS THE CAPTCHA BYPASS AND DOES NOT SAY HOW
 
 **Round:** post-Gate-A eCourts data-moat continuation, founder-directed. Gate A
