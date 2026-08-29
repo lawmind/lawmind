@@ -1,0 +1,523 @@
+{
+ "artifact": "NEW2_NO_TEXT_DIAGNOSIS_R10",
+ "lane": "NEW2",
+ "takenAt": "2026-08-29T05:21:32.506Z",
+ "question": "the ledger holds no_text rows, 3,709 of them marked permanent, and every sampled object is a live real PDF. Is our extractor failing, or are these scans?",
+ "extractor": "unpdf — the same library services/ingest uses, because the question is whether OURS can read it, not whether some tool can",
+ "population": {
+  "total": 10308,
+  "permanent": 3709,
+  "open": 6599
+ },
+ "strata": [
+  {
+   "court": "3_22",
+   "permanent": false,
+   "population": 6579,
+   "sampled": 40,
+   "IMAGE_ONLY": 40,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1.4,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC010854792024_1_2026-07-20.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 552243,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011161212014_1_2025-02-25.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 1598112,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010680012016_1_2025-03-21.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 316056,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC011009182026_1_2026-06-12.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 1170967,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010101422024_1_2025-05-26.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 658432,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011153632016_1_2025-03-10.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 1031177,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "3_22",
+   "permanent": true,
+   "population": 3524,
+   "sampled": 40,
+   "IMAGE_ONLY": 40,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1.8,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011629152024_1_2025-08-05.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 2,
+     "chars": 0,
+     "bytes": 226979,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010807792024_1_2025-05-27.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 235358,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011098192013_1_2025-02-25.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 1598934,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC011009202023_1_2025-08-07.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 386280,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=3_22/bench=phhc/PHHC010937532025_1_2025-06-16.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 2,
+     "chars": 0,
+     "bytes": 634086,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=3_22/bench=phhc/PHHC011049292026_1_2026-07-08.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 12,
+     "chars": 0,
+     "bytes": 2407808,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "32_4",
+   "permanent": true,
+   "population": 101,
+   "sampled": 40,
+   "IMAGE_ONLY": 40,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=32_4/bench=highcourtofkerala/KLHC010417732020_1_2021-01-11.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=32_4/bench=highcourtofkerala/KLHC010821572019_1_2021-01-06.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2020/court=32_4/bench=highcourtofkerala/KLHC010888012019_1_2020-12-22.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=32_4/bench=highcourtofkerala/KLHC010556682020_1_2021-01-11.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=32_4/bench=highcourtofkerala/KLHC010805022019_1_2021-01-06.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2021/court=32_4/bench=highcourtofkerala/KLHC010442012020_1_2021-01-11.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "27_1",
+   "permanent": true,
+   "population": 69,
+   "sampled": 40,
+   "IMAGE_ONLY": 40,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 29.3,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=27_1/bench=newos/orders_2025_250400001442025_5.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 8,
+     "chars": 0,
+     "bytes": 14923570,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=27_1/bench=newos/orders_2023_290700005212025_16.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 9,
+     "chars": 0,
+     "bytes": 953079,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=27_1/bench=newos/orders_2025_250400001092026_5.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 5,
+     "chars": 0,
+     "bytes": 3168846,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=27_1/bench=newos/orders_2024_275900000752024_2.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 21,
+     "chars": 0,
+     "bytes": 1649305,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=27_1/bench=hcbgoa/orders_2025_203300000632025_5.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 11,
+     "chars": 0,
+     "bytes": 8533217,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=27_1/bench=newos/orders_2025_273800003962025_4.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 18,
+     "chars": 0,
+     "bytes": 22700048,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "22_18",
+   "permanent": false,
+   "population": 7,
+   "sampled": 7,
+   "IMAGE_ONLY": 7,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1.1,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2008/court=22_18/bench=cghccisdb/CGHC010096122007_1_2008-03-13.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 49053,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2006/court=22_18/bench=cghccisdb/CGHC010029142006_1_2006-11-07.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 49053,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2006/court=22_18/bench=cghccisdb/CGHC010025182006_1_2006-08-01.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 107634,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2006/court=22_18/bench=cghccisdb/CGHC010154492006_1_2006-03-23.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 133092,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2006/court=22_18/bench=cghccisdb/CGHC010123582006_1_2006-11-15.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 62259,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2006/court=22_18/bench=cghccisdb/CGHC010021862006_1_2006-03-10.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 2,
+     "chars": 0,
+     "bytes": 95580,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "29_3",
+   "permanent": true,
+   "population": 6,
+   "sampled": 6,
+   "IMAGE_ONLY": 6,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 15.2,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=29_3/bench=karhcdharwad/KAHC020128082017_1_2024-01-10.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 13,
+     "chars": 0,
+     "bytes": 147020,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2017/court=29_3/bench=karhckalaburagi/KAHC030035362017_1_2017-04-28.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 36,
+     "chars": 0,
+     "bytes": 172095,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=29_3/bench=karhckalaburagi/KAHC030017982016_1_2024-05-29.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 16,
+     "chars": 0,
+     "bytes": 156130,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhckalaburagi/KAHC030062792019_1_2023-03-27.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 11,
+     "chars": 0,
+     "bytes": 123601,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhckalaburagi/KAHC030011762017_1_2023-07-06.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 9,
+     "chars": 0,
+     "bytes": 236378,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2022/court=29_3/bench=karhcdharwad/KAHC020178782022_1_2022-11-30.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 6,
+     "chars": 0,
+     "bytes": 98791,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "24_17",
+   "permanent": false,
+   "population": 6,
+   "sampled": 6,
+   "IMAGE_ONLY": 6,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=24_17/bench=gujarathc/GJHC240270992004_1_2014-09-02.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2012/court=24_17/bench=gujarathc/GJHC240249302011_1_2012-06-26.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=24_17/bench=gujarathc/GJHC240125982002_1_2014-10-08.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=24_17/bench=gujarathc/GJHC240055612012_1_2013-01-09.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2012/court=24_17/bench=gujarathc/GJHC240054832012_1_2012-12-18.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2013/court=24_17/bench=gujarathc/GJHC240055622012_1_2013-01-09.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 2179,
+     "error": null
+    }
+   ]
+  },
+  {
+   "court": "22_18",
+   "permanent": true,
+   "population": 6,
+   "sampled": 6,
+   "IMAGE_ONLY": 6,
+   "TEXT_PRESENT": 0,
+   "ENCRYPTED": 0,
+   "MALFORMED": 0,
+   "FETCH_FAILED": 0,
+   "meanPages": 1.3,
+   "extractionDefectRate": 0,
+   "examples": [
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2009/court=22_18/bench=cghccisdb/CGHC010172552006_1_2009-07-14.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 68365,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2007/court=22_18/bench=cghccisdb/CGHC010062322006_1_2007-02-08.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 2,
+     "chars": 0,
+     "bytes": 56586,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2009/court=22_18/bench=cghccisdb/CGHC010073852006_1_2009-04-22.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 56645,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2014/court=22_18/bench=cghccisdb/CGHC010087012007_1_2014-07-07.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 2,
+     "chars": 0,
+     "bytes": 80241,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2009/court=22_18/bench=cghccisdb/CGHC010073862006_1_2009-06-23.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 60010,
+     "error": null
+    },
+    {
+     "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2007/court=22_18/bench=cghccisdb/CGHC010119452007_1_2007-03-29.pdf",
+     "diagnosis": "IMAGE_ONLY",
+     "pages": 1,
+     "chars": 0,
+     "bytes": 49828,
+     "error": null
+    }
+   ]
+  }
+ ],
+ "consequence": {
+  "note": "a no_text row can never be terminal: the artifact was fetched, so the source supplied it. Whatever the split below, all 3,709 permanent no_text marks are counted OUT of accounted_upstream.",
+  "imageOnlyIsACost": "IMAGE_ONLY records are recoverable only by OCR and are a known cost, not a pipeline defect",
+  "textPresentIsADefect": "TEXT_PRESENT records are recoverable today by re-running the loader and are a real extraction defect"
+ }
+}

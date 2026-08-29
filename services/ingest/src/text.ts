@@ -163,6 +163,20 @@ export async function fetchPdfText(
   const res = await fetchWithRetry(url, signal);
   if (!res.ok) throw new Error(`GET ${url} → ${res.status}`);
   const bytes = new Uint8Array(await res.arrayBuffer());
+  return extractPdfBytes(bytes, url);
+}
+
+/**
+ * Extract a PDF that the caller already fetched. Official-source canaries keep
+ * the exact response bytes in the observation ledger, so fetching a second
+ * time for text would make the stored evidence and derived text different
+ * network observations. The same magic-byte and corruption-repair rules as
+ * `fetchPdfText` apply.
+ */
+export async function extractPdfBytes(
+  bytes: Uint8Array,
+  source = 'in-memory PDF',
+): Promise<{ text: string; pages: number; method: TextExtractionMethod }> {
   /**
    * THE SOFT 404, WHICH IS INDISTINGUISHABLE FROM A DOCUMENT UNTIL YOU READ IT.
    *
@@ -192,7 +206,7 @@ export async function fetchPdfText(
    * next GET reads the same error page.
    */
   if (bytes.length < 5 || String.fromCharCode(...bytes.subarray(0, 5)) !== '%PDF-') {
-    throw new Error(`GET ${url} → 404`);
+    throw new Error(`${source} is not a PDF`);
   }
   const pdf = await getDocumentProxy(bytes);
   const { text, totalPages } = await extractText(pdf, { mergePages: true });

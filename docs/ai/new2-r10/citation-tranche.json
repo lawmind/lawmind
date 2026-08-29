@@ -1,0 +1,87 @@
+{
+ "artifact": "NEW2_CITATION_TRANCHE_R10",
+ "lane": "NEW2",
+ "startedAt": "2026-08-29T05:22:55.596Z",
+ "finishedAt": "2026-08-29T05:23:19.955Z",
+ "resolverVersion": "citation-resolver-v0.1",
+ "indexFreshness": {
+  "state": "CURRENT",
+  "mayAssertUnique": true
+ },
+ "draw": {
+  "predicate": "cited_judgment_id IS NULL AND coalesce(citation_text,'') <> ''",
+  "sentinelExcluded": true,
+  "ordering": "ORDER BY id over a v4 uuid pk — random with respect to content, not contiguous in time",
+  "requested": 50000,
+  "returned": 50000,
+  "populationUnresolved": 6046161
+ },
+ "throughput": {
+  "resolveMs": 4332,
+  "rowsPerSecond": 11542,
+  "msPerThousand": 86.6,
+  "modelCalls": 0,
+  "tokens": 0,
+  "dbLabel": "LOCAL_CONTENDED",
+  "activeQueriesAtReport": 12
+ },
+ "states": {
+  "n": 50000,
+  "formed": 49990,
+  "refused": 10,
+  "unique": 21252,
+  "ambiguous": 2939,
+  "targetNotHeld": 25799,
+  "uniqueRate": 0.425125025005001,
+  "ambiguousRate": 0.05879175835167033,
+  "targetNotHeldRate": 0.5160832166433287,
+  "uniqueUnconfirmedStaleIndex": 0
+ },
+ "precisionSample": {
+  "note": "Independent of the resolver: chronology and year come from judgments.judgment_date, court from judgments.court. None of the three is derived from judgment_citation_keys, which is the only evidence the resolver consulted.",
+  "positives": {
+   "audited": 500,
+   "chronology": {
+    "CONSISTENT": 500,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "year": {
+    "CONSISTENT": 500,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "court": {
+    "CONSISTENT": 148,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 352
+   },
+   "overall": {
+    "CONSISTENT": 500,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "yearGapHistogram": {
+    "0": 441,
+    "1": 59
+   },
+   "contradicted": []
+  },
+  "negatives": {
+   "audited": 500,
+   "recallMisses": 0,
+   "probeNonVacuous": true,
+   "probeControl": {
+    "keysProbed": 25,
+    "judgmentsFound": 118,
+    "note": "keys taken from judgments.neutral_citation on rows we hold — the probe MUST find these"
+   },
+   "byVerdict": {
+    "CONFIRMED_NOT_HELD": 500
+   },
+   "misses": []
+  }
+ },
+ "perRowState": ".tmp-new2/citation-tranche-rows.ndjson",
+ "wroteToDatabase": false
+}

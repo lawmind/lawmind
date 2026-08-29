@@ -127,19 +127,55 @@ export function pdfUrl(year: number, path: string): string {
 }
 
 /**
- * The single definition of a judgment's identity and provenance.
+ * The single definition of a judgment's IDENTITY and provenance.
  *
  * It keys off `row.year`, NOT the year partition the row was read from. The two
  * differ often — 694 of 1,804 rows across 1950–1960 — because the same judgment
  * is listed in two adjacent partitions, and `(row.year, path)` is what actually
- * identifies it. The bucket serves the PDF under both years, so both URLs
- * resolve, but fetching under one and recording the other would make provenance
- * a coin flip and would break `--resume`, which matches on the stored value.
+ * identifies it. Fetching under one year and recording the other would make
+ * provenance a coin flip and would break `--resume`, which matches on the stored
+ * value.
  *
- * Fetch and storage must use this same function. That is the whole point of it.
+ * **CORRECTION, 28 Aug 2026 (R10).** This comment used to continue "The bucket
+ * serves the PDF under both years, so both URLs resolve." **That is false**, and
+ * one real judgment was unreachable because of it. Verified by two HEAD requests:
+ *
+ *   year=2009/english/2009_9_810_820_EN.pdf   404
+ *   year=2006/english/2009_9_810_820_EN.pdf   200, 403,918 bytes
+ *
+ * The object is published ONLY under the partition it was listed in, and that
+ * partition is not always `row.year`.
+ *
+ * Identity is still this function and is deliberately unchanged — rewriting it
+ * would rewrite `source_url` for 38,351 stored rows to fix one document, which
+ * is not a trade worth making. What was wrong was never the identity: it was
+ * using identity as the RETRIEVAL address. Those are now two functions, and
+ * `fetchUrlCandidatesFor` is the retrieval one.
  */
 export function sourceUrlFor(row: SciMetadataRow): string {
   return pdfUrl(Number(row.year), row.path);
+}
+
+/**
+ * Where to actually GO to get the bytes, in order of preference.
+ *
+ * The identity URL is always first, so the overwhelmingly common case makes one
+ * request and behaves exactly as before. The partition URL is appended only when
+ * the row's own `year` disagrees with the partition it was read from — the
+ * 694-in-1,804 case — and only as a FALLBACK, so a 200 on the identity URL never
+ * consults it.
+ *
+ * What this deliberately does NOT do is change what gets stored. A row fetched
+ * from the partition address is still recorded under `sourceUrlFor`, because the
+ * stored value is the row's identity and `--resume` matches on it. The retrieval
+ * address is not provenance and must never be persisted as if it were; if the
+ * two ever need to both be recorded, that is a schema change and a migration,
+ * not a quiet swap here.
+ */
+export function fetchUrlCandidatesFor(row: SciMetadataRow, partitionYear?: number): string[] {
+  const identity = sourceUrlFor(row);
+  if (partitionYear === undefined || Number(row.year) === partitionYear) return [identity];
+  return [identity, pdfUrl(partitionYear, row.path)];
 }
 
 /**

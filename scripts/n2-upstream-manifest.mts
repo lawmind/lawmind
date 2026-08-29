@@ -133,14 +133,33 @@ async function main() {
       GROWN: [] as Record<string, unknown>[],
       SHRUNK: [] as Record<string, unknown>[],
       UNCHANGED: 0,
+      /**
+       * `bench=testcase` — the publisher's own fixture partition, which
+       * `isTestFixture` refuses at ingest and which therefore can never have a
+       * checkpoint. Before this class existed all 56 of them sat in NEW for
+       * ever, and their 71 MB sat in `bytesWaiting` for ever, so the delta
+       * trigger's headline number could never reach zero and "NEW 56" meant
+       * "nothing to do" on every single cycle. `fixture-partition-inflates-the-
+       * denominator`, this time in the trigger rather than the denominator —
+       * the same partition already produced one false 94-day coverage gap on
+       * Bombay.
+       *
+       * They are counted and listed, never dropped: an upstream object we
+       * deliberately do not ingest must be visible as a decision, not absent.
+       */
+      FIXTURE: [] as Record<string, unknown>[],
     };
     let bytesWaiting = 0;
+    let fixtureBytes = 0;
 
     for (const o of metadataObjs) {
       const l = local.get(o.key);
       const part = partitionOf(o.key);
       const row = { key: o.key, upstreamSize: o.size, lastModified: o.lastModified, etag: o.etag, ...(part ?? {}) };
-      if (!l) {
+      if (/\/bench=testcase\//.test(o.key)) {
+        classes.FIXTURE.push({ ...row, refusedBy: 'isTestFixture — publisher fixture partition, never ingested' });
+        fixtureBytes += o.size;
+      } else if (!l) {
         classes.NEW.push({ ...row, recordedSize: null, offset: null });
         bytesWaiting += o.size;
       } else if (o.size > l.size) {
@@ -174,15 +193,18 @@ async function main() {
         GROWN: classes.GROWN.length,
         SHRUNK: classes.SHRUNK.length,
         UNCHANGED: classes.UNCHANGED,
+        FIXTURE: classes.FIXTURE.length,
       },
       bytesWaiting,
+      fixtureBytes,
       byYear,
       newKeys: classes.NEW,
       grown: classes.GROWN.sort((a, b2) => (b2['added'] as number) - (a['added'] as number)),
       shrunk: classes.SHRUNK,
+      fixture: classes.FIXTURE,
     };
     process.stderr.write(
-      `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · UNCHANGED ${classes.UNCHANGED} · ${bytesWaiting} bytes waiting\n`,
+      `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · UNCHANGED ${classes.UNCHANGED} · FIXTURE ${classes.FIXTURE.length} (${fixtureBytes} bytes, never ingested) · ${bytesWaiting} bytes waiting\n`,
     );
   }
 

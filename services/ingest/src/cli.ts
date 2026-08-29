@@ -10,7 +10,13 @@
 import postgres from 'postgres';
 
 import { existingSourceUrls, upsertJudgments } from './load.ts';
-import { readYearMetadata, sourceUrlFor, toJudgment, type JudgmentRecord } from './sci.ts';
+import {
+  fetchUrlCandidatesFor,
+  readYearMetadata,
+  sourceUrlFor,
+  toJudgment,
+  type JudgmentRecord,
+} from './sci.ts';
 import { fetchPdfText, isNativeText } from './text.ts';
 
 type Args = { from: number; to: number; limit: number; resume: boolean; concurrency: number };
@@ -101,8 +107,31 @@ async function main(): Promise<void> {
       }
 
       const settled = await mapPool(pending, args.concurrency, async (row) => {
-        // Same URL for fetch and for provenance, by construction.
-        const { text, pages, method } = await fetchPdfText(sourceUrlFor(row));
+        /*
+         * Provenance is `sourceUrlFor(row)` and only that — `toJudgment` records
+         * it and `--resume` matches on it. The FETCH may have to look somewhere
+         * else: the bucket publishes an object under the partition it was listed
+         * in, which is not always `row.year`, and `year=2009/.../2009_9_810_820_EN.pdf`
+         * 404s while the same file under `year=2006/` serves 403,918 bytes.
+         *
+         * The fallback is tried only when the two years disagree, and only after
+         * the identity URL has actually failed, so nothing about the common path
+         * changes. A row that fails at every candidate throws the LAST error,
+         * because reporting the first one would name a URL we did not end on.
+         */
+        const candidates = fetchUrlCandidatesFor(row, year);
+        let got: Awaited<ReturnType<typeof fetchPdfText>> | undefined;
+        let lastError: unknown;
+        for (const url of candidates) {
+          try {
+            got = await fetchPdfText(url);
+            break;
+          } catch (error) {
+            lastError = error;
+          }
+        }
+        if (!got) throw lastError;
+        const { text, pages, method } = got;
         return toJudgment(row, text, isNativeText(text.length, pages), method);
       });
 

@@ -5985,6 +5985,48 @@ more we could hold afterwards.
 **What it would cost to answer properly.** Two measurements, both cheap and
 neither of them mine to run alone: a `pgbench`-style random-read comparison of C:
 and D:, and LCC confirming the restore path tolerates a second tablespace.
+### UPDATE 29 Aug 2026 (NEW1, R10) — **DE-ESCALATED, not withdrawn. The coarse half of this question is answered and it is a no.**
+
+The entry above bundled two storage decisions together. They have now separated,
+and only one of them still needs the founder.
+
+**The coarse document index does NOT need D:.** Measured this round rather than
+estimated — four real HNSW builds at two sizes, `docs/ai/new1-r10/hnsw-build-measurements.json`:
+
+```
+index bytes per vector      2,730 B   (2,730 at 1M and 2,731 at 250k — stable across 4x)
+full coarse halfvec index    20.9 GB   (7,654,179 representatives)
+the same index as fp32      ~59.8 GB
+C: free                     269.1 GB
+```
+
+20.9 GB against 269 GB free leaves ~235 GB of headroom, so the coarse index — the
+one that takes production dense retrieval from 40,161 documents to the whole
+eligible corpus — fits on C: with no tablespace, no layout change, no new restore
+surface and no new backup surface. **Nothing about the coarse walk is waiting on
+this decision, and nothing about it should be.**
+
+That is a direct result of the halfvec verdict: as fp32 the same index is
+~59.8 GB, which would have made the question much closer.
+
+**What still needs the founder is exactly the passage question and nothing else.**
+The 935 GB figure above is unchanged and so is the 60 GB / 568,000-document cap on
+C:. Tranche V2 remains frozen at `idsHash 3592efcbc5165a9f`.
+
+**And this round produced evidence that weakens the case for spending on it.**
+The reach measurement over NEW3's gold (`docs/ai/new1-r10/tranche-reach-delta.json`)
+found that of 228 gold authorities, **1** is reachable by the existing passage
+tranche and **186 (81.58%)** are in the coarse snapshot. On that evidence the next
+marginal storage pound buys far more in the coarse layer than in more passages.
+
+**Recommendation, for whenever this is picked up:** leave D: unattached, finish
+the coarse walk and build its index on C:, and re-ask the passage/tablespace
+question afterwards with a real measurement of what the coarse layer retrieves.
+The two cheap measurements named above (C:/D: random-read comparison, LCC's
+restore path) are still the right way to answer it and are still not one lane's
+to run alone.
+
+
 
 ---
 
@@ -6067,14 +6109,29 @@ recovery from our own header text (a hypothesis I can test without any source).
 wevtutil sl Microsoft-Windows-TaskScheduler/Operational /e:true
 ```
 
-**Why it blocks something concrete.** At **05:23:56 on 28 Aug** the
-`\Lawmind\new2-daily-delta` task — the daily changed-object cycle, the thing that
-stops the ingest fleet going eight days without noticing again — returned
-**0x800710E0**, *"the operator or administrator has refused the request."* The
-task was Ready, the box has no battery, and it ran perfectly when triggered again
-forty minutes later. **The reason that run was refused is not recoverable**,
-because the only place Windows records it is the operational log, and that log is
-off. Every future refusal will be equally undiagnosable.
+**DOWNGRADED 29 Aug 2026 — the mechanism was reproduced without the log.** This
+is a diagnostic convenience now, not a blocker. Recorded in full because the
+original entry claimed the cause was unrecoverable, and that was too pessimistic.
+
+At **05:23:56 on 28 Aug** the `Lawmind
+ew2-daily-delta` task — the daily
+changed-object cycle, the thing that stops the ingest fleet going eight days
+without noticing again — returned **0x800710E0**, *"the operator or administrator
+has refused the request."* The task was Ready, the box has no battery, and it ran
+perfectly when triggered again forty minutes later.
+
+**Reproduced deliberately on 29 Aug.** The task's `MultipleInstances` setting is
+`IgnoreNew`. Starting it at 09:51:38 while the 09:50:25 instance was still running
+returned **exactly 0x800710E0**, with two `powershell.exe` children of the earlier
+run still in the process table. So the code means *"an instance is already
+running"* — and that is the correct, desirable behaviour: the alternative is two
+cycles ingesting the same delta at once.
+
+**What the elevated command is still worth.** I can reproduce the mechanism; I
+cannot prove it caused the 05:23 refusal specifically, because the operational log
+is off and nothing else records it. Enabling it makes the next refusal answerable
+rather than inferred.
+
 
 **What was built anyway.** Everything that does not need elevation. The task now
 has `StartWhenAvailable = True`, so a missed daily run catches up instead of

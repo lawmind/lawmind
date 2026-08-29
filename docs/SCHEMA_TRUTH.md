@@ -1707,6 +1707,51 @@ document finally loads — `services/ingest/src/harvest/ingest-ledger.ts`.
 Dry runs record nothing: a rehearsal that condemned documents to `permanent`
 would change what a real run does.
 
+### `permanent` IS A RETRY BUDGET, NOT A CLAIM ABOUT THE SOURCE — added 29 Aug 2026
+
+**Never divide by this column to say what the publisher does or does not have.**
+NEW2 did exactly that in the first version of the R10 parity matrix and published
+`accounted_upstream 99.963%` off it.
+
+The table above already says why, and it is easy to read past: a `pdf_failed` or
+`no_text` row becomes `permanent` because **our** three attempts ran out, not
+because the artifact is gone. Measured 29 Aug 2026 against the live bucket, per
+court and per outcome, with a bounded GET and a **magic-byte** verdict rather
+than a HEAD:
+
+| stratum | sampled | live real PDF today |
+| --- | ---: | ---: |
+| `no_text`, every court, permanent and open | **410** | **410** |
+| `pdf_absent`, Madhya Pradesh / Allahabad / Rajasthan | 360 | 0 |
+| `pdf_absent`, Bombay | 120 | 1 |
+
+Every `no_text` row marked permanent is a live PDF. `n2-no-text-diagnose.mts`
+then opened 185 of them with the same `unpdf` the loader uses: **185 of 185
+IMAGE_ONLY** — 316 KB to 1.6 MB of scan with a zero-character text layer, and
+zero extraction defects. Those 3,709 rows are an OCR backlog filed under the
+publisher's name.
+
+So a consumer asking *"what does the source not have"* must split by **outcome**,
+never by the flag:
+
+| class | outcomes | meaning |
+| --- | --- | --- |
+| SOURCE_UNAVAILABLE | `pdf_absent` (404/403/410), `no_title`, `no_decision_date`, `unparseable_date`, `no_pdf_link`, `test_fixture_bench` | the publisher's own object or metadata row is not there. **Closes accounting.** |
+| RETRY_EXHAUSTED | `no_text`, `pdf_failed`, `pdf_timeout`, `pdf_unavailable`, `pdf_missing` — permanent or not | the artifact is upstream and we do not hold it. **Ours.** Never counted as accounted. |
+
+`scripts/n2-hc-parity-matrix.mts` implements exactly that split and publishes
+`method.terminal` / `method.retryExhausted` so the definition travels with the
+number.
+
+**A third thing the table cannot express, recorded rather than invented.** The
+one never-attempted object in the entire High Court corpus —
+`TRHC010015072016_1_2017-11-17.pdf`, Tripura, 2017-11 — serves 200 with `%PDF-1.5`
+and 23,998 bytes, and `unpdf` returns `Invalid PDF structure`. The publisher
+supplied a **malformed** file. That is neither SOURCE_UNAVAILABLE nor ours, and
+it currently lands in `pdf_failed`. One row, so no schema change is proposed;
+noted so the next person who finds a `pdf_failed` that fetches fine knows this
+class exists.
+
 ## lexeme_document_frequency
 
 Migration `0055`. **Sampled document frequency per lexeme, so the sparse arm can

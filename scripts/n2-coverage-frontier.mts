@@ -46,7 +46,16 @@ import { asyncBufferFromUrl, parquetMetadataAsync, parquetReadObjects } from '..
 import postgres from '../services/ingest/node_modules/postgres/src/index.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = 'docs/ai/new2-r9/coverage-frontier.json';
+/**
+ * The artifact path is a flag rather than a constant so a later round can
+ * re-measure without overwriting the round that published the number. An
+ * artifact whose filename encodes no round is an artifact you cannot diff
+ * against itself, and this one is quoted in a founder report.
+ */
+const OUT = ((): string => {
+  const i = process.argv.indexOf('--out');
+  return i === -1 ? 'docs/ai/new2-r9/coverage-frontier.json' : (process.argv[i + 1] ?? 'docs/ai/new2-r9/coverage-frontier.json');
+})();
 const HC = 'https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com';
 
 function arg(name: string, dflt: string): string {

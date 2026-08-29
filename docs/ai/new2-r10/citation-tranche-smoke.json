@@ -1,0 +1,77 @@
+{
+ "artifact": "NEW2_CITATION_TRANCHE_R10",
+ "lane": "NEW2",
+ "startedAt": "2026-08-28T02:34:28.986Z",
+ "finishedAt": "2026-08-28T02:34:30.141Z",
+ "resolverVersion": "citation-resolver-v0.1",
+ "indexFreshness": {
+  "state": "CURRENT",
+  "mayAssertUnique": true
+ },
+ "draw": {
+  "predicate": "cited_judgment_id IS NULL AND coalesce(citation_text,'') <> ''",
+  "sentinelExcluded": true,
+  "ordering": "ORDER BY id over a v4 uuid pk — random with respect to content, not contiguous in time",
+  "requested": 2000,
+  "returned": 2000,
+  "populationUnresolved": 6045787
+ },
+ "throughput": {
+  "resolveMs": 152,
+  "rowsPerSecond": 13158,
+  "msPerThousand": 76,
+  "modelCalls": 0,
+  "tokens": 0,
+  "dbLabel": "LOCAL_QUIET",
+  "activeQueriesAtReport": 2
+ },
+ "states": {
+  "n": 2000,
+  "formed": 2000,
+  "refused": 0,
+  "unique": 847,
+  "ambiguous": 103,
+  "targetNotHeld": 1050,
+  "uniqueRate": 0.4235,
+  "ambiguousRate": 0.0515,
+  "targetNotHeldRate": 0.525,
+  "uniqueUnconfirmedStaleIndex": 0
+ },
+ "precisionSample": {
+  "note": "Independent of the resolver: chronology and year come from judgments.judgment_date, court from judgments.court. None of the three is derived from judgment_citation_keys, which is the only evidence the resolver consulted.",
+  "positives": {
+   "audited": 60,
+   "chronology": {
+    "CONSISTENT": 60,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "year": {
+    "CONSISTENT": 60,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "court": {
+    "CONSISTENT": 10,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 50
+   },
+   "overall": {
+    "CONSISTENT": 60,
+    "CONTRADICTED": 0,
+    "UNTESTABLE": 0
+   },
+   "contradicted": []
+  },
+  "negatives": {
+   "audited": 60,
+   "recallMisses": 0,
+   "byVerdict": {
+    "CONFIRMED_NOT_HELD": 60
+   },
+   "misses": []
+  }
+ },
+ "perRowState": ".tmp-new2/citation-tranche-smoke.ndjson",
+ "wroteToDatabase": false
+}

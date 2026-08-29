@@ -1,0 +1,40 @@
+{
+ "artifact": "NEW2_CITATION_EXPANSION_R10",
+ "lane": "NEW2",
+ "mode": "DECIDE_ONLY",
+ "resolverVersion": "citation-resolver-v0.1",
+ "indexFreshness": "CURRENT",
+ "gate": {
+  "note": "decide-only run; the apply gate was not evaluated"
+ },
+ "sweep": {
+  "startedAt": "2026-08-29T05:24:41.964Z",
+  "cursor": "ffffff75-833d-46ef-a9fb-1b4837381fb1",
+  "decidedThisRun": 6046161,
+  "decidedTotal": 6046161,
+  "appliedThisRun": 0,
+  "appliedTotal": 0,
+  "elapsedSeconds": 483,
+  "rowsPerSecond": 12519,
+  "journal": "C:\\Users\\Xerxus\\Documents\\Lawmind\\.tmp-new2\\citation-expand-journal.ndjson",
+  "cursorCaveat": "the id cursor sweeps a snapshot taken at sweepStartedAt; rows created after it are the catch-up selection below, never something a random-uuid watermark is trusted to reach",
+  "rowsCreatedAfterSweepStart": 0
+ },
+ "states": {
+  "TARGET_NOT_HELD": 3135296,
+  "UNIQUE": 2556146,
+  "AMBIGUOUS": 353892,
+  "REFUSED": 827
+ },
+ "corpus": {
+  "resolvedRows": 227372,
+  "unresolvedRows": 6046161,
+  "distinctResolvedEdges": 200616
+ },
+ "neverWritten": [
+  "relationship",
+  "evidence",
+  "overruled_status",
+  "verification_state"
+ ]
+}

@@ -105,6 +105,92 @@ refuses. Host-loss rehearsal at real scale still not run.
 
 ---
 
+### 29 August 2026 (R10) — NEW1: THE SNAPSHOT RE-CUT EVERY BATCH BOUNDARY, 512 MB WAS PROVABLY TOO SMALL, AND THE DELTA QUEUE WAS BUILT AND NEVER STARTED
+
+**Round:** R10 coverage production, founder-directed. Leases: `NEW1`, `HEAVY_BOX`.
+**Evidence:** `docs/ai/new1-r10/NEW1_R10_ROUND.md` and the four artifacts beside it.
+
+| what | number |
+| --- | ---: |
+| coarse snapshot (`document-vectors-v2`, definition `5b5d02384b46c96c`) | **7,654,179** |
+| staged and in that snapshot | **1,898,295 — 24.80%** |
+| remaining | 5,755,884 |
+| permanently-refused rows inside that remainder | **0, measured — not 1,200 a batch** |
+| orphans excluded by predicate | 486,955 · 1,904 MB · ~2.68 GB all-in |
+| coarse ETA | ~174 h continuous ≈ **8.1 days calendar** at the box's real duty cycle |
+| NEW2 delta backlog cleared | **930 of 930 in 87 s**, watermark on NEW2's exact frontier |
+
+**The v2 snapshot re-cut every batch boundary and 0 of 766 files read complete.**
+Not a regression — v2 cuts 7.65M rows into 766 batches where v1 cut 8.86M into
+886, so no v2 file is any v1 file. The R9 tolerance of 2,000 was raised to hide a
+permanent ~1,200-row refusal residue per batch and **that residue is now gone,
+measured rather than predicted**: of all 5,780,887 unstaged snapshot rows, 0 are
+outside the eligibility view, 0 are `UNSAFE_VERIFIED`, 0 are refused-class-and-
+not-cited, 0 lack text. Tolerance is back to **25**. The walk confirmed it
+independently within the hour — v1's last batch reported `ineligible 340 ·
+textUnsafe 825`, v2's first reported `0 · 0 · 0 · 0`.
+
+**Three production defects, each found by measuring rather than by reading.**
+
+| defect | measurement | fix |
+| --- | --- | --- |
+| a corpus-wide norm scan after **every** batch | `EXPLAIN ANALYZE` **63,575 ms**, 20.6M buffers, growing linearly → ~19 h of GPU idle across the run | scoped to the ids that run inserted — stricter per vector, not weaker; corpus sweep now `FULL_NORM_CHECK=1` |
+| every restart re-walked finished batches | ~64 min of guaranteed zero output per restart at batch 55, growing | `stage-runner.sh` re-censuses when coverage is >45 min old; a census failure walks the stale file anyway — slow beats stopped |
+| `\| tail -3` hid the only diagnostic | a postgres.js NOTICE dump is >3 lines, so `fetch failed` was pushed out and the log recorded `routine: 'transformCreateStmt'` | `tail -20` |
+
+**`maintenance_work_mem = 512 MB` is provably inadequate, and one size point
+would have understated it by half.** pgvector says it itself, twice, 12 tuples
+apart across a 4x size change: *"hnsw graph no longer fits after 195,122 tuples"*
+— a hard constant of **2,752 bytes per tuple**.
+
+| rows | 512 MB | 4 GB |
+| ---: | ---: | ---: |
+| 250,000 | 188.3 s (1,328 rows/s, **spilled**) | 94.4 s (2,648 rows/s) |
+| 1,000,000 | 1,367.4 s (731 rows/s, **spilled**) | 317.2 s (3,153 rows/s) |
+
+At 512 MB the rate **degrades** with size; at 4 GB it improves. The penalty is
+2.0x at 250k and **4.3x at 1M**. **Decision: halfvec, as an expression index over
+the fp32 column** — `VERDICT_250K.md` found no quality difference on any family
+at production `ef_search = 200`, with the index 3.0x smaller; the expression form
+keeps the stage table fp32 while an 8-day walk is still writing it. Full index
+projects to **20.9 GB** at a stable 2,730 B/vec, against ~59.8 GB as fp32.
+**Recommend 8 GB session-local; a no-spill full build needs 21.07 GB and this host
+cannot give it.** No index built — the snapshot is 24.80% complete.
+
+**`FQ-N1-R9-1` (D: tablespace) is DE-ESCALATED, not withdrawn.** The coarse
+halfvec index fits on C: (269 GB free) with ~235 GB to spare. The question stands
+only for the 935 GB full passage build, which is a later decision.
+
+**LCC's tranche wiring moves the NEW3 gold benchmark by ONE authority of 228 —
+and that is a null result, reported as one.** The 2.786x corpus reach
+(40,161 + 81,720 → 111,874) is real; 0 and 1 are exactly what a random draw
+predicts against indexes covering 0.214% and 0.436% of the corpus. The gold is
+not in either passage index, so any rank delta on it would be noise and none is
+published. **186 of 228 (81.58%) are in the coarse snapshot** — the benchmark is
+movable by the coarse layer, not by the tranche. That is also **Tranche V2's
+decision basis and it argues against V2**, which stays frozen.
+
+**The walk had no scheduled task and the GPU sidecar did.** The box was
+deliberately powered off at 22:49:57Z (nightly, `Id 1074`, same on 26 and 25 Aug)
+and back at 01:16:25Z. The sidecar returned at logon; the walk stayed dead a
+further hour. Three jobs are now durable, STOP-file guarded,
+`MultipleInstances=IgnoreNew` — `Lawmind-new1-coarse-walk`,
+`-coarse-telemetry`, `-delta-queue` — and the snapshot identity lives in
+`docs/ai/new1-tier-a/.snapshot.env`, read on every restart, because a scheduled
+task's argument list is not where anyone looks.
+
+**Two writers on one 8 GB GPU.** `server.py` is a `ThreadingHTTPServer` and VRAM
+peaks at 7,514 MiB of 8,188 with one consumer, so the walk and the delta queue
+now share a token in `doc-vector-embed.mjs` — the choke point both reach the GPU
+through, because a lock one of two callers honours is not a lock.
+
+**Open:** the 2 GB probe arm that would turn the build projection from an
+interpolation into a curve; query-time RAM for a 20.9 GB index UNMEASURED;
+`script_quality` NULL on everything being embedded (NEW2's column — admission by
+absence of evidence, and every coverage number here carries it).
+
+---
+
 ### 27 August 2026 (R9) — LCC: THE RESTORE NEVER HUNG, THE RESOLVER GATE WAS PERMANENTLY CLOSED, AND THE FACTORY IS RESTARTED WITH ONE OWNER PER JOB
 
 **Round:** R9 operational, founder-directed. Leases: `LCC`, `MIGRATION_SLOT`.

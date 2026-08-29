@@ -77,10 +77,27 @@ async function main(): Promise<number> {
      * and on a contended box that alone exceeded a two-minute budget. `--after`
      * takes an id and seeks, which is an index scan whatever the depth.
      */
+    /**
+     * **THE SENTINEL ROW IS EXCLUDED, AND LEAVING IT IN WAS COSTING 73% OF EVERY
+     * WINDOW.** `citations-cli.ts` writes one row with an empty `citation_text`
+     * for every judgment that cites nothing, so that a resumable pass does not
+     * re-scan it forever. That row also has `cited_judgment_id IS NULL`, and
+     * `SCHEMA_TRUTH.md` §judgment_citations says in as many words that the
+     * obvious predicate conflates the two.
+     *
+     * Measured on this database, 28 Aug 2026: 16,123,211 sentinels against
+     * 6,045,787 real unresolved edges, and **3,658 of the first 5,000 rows this
+     * window returned were sentinels.** The published rates survived it — they
+     * are computed over `formed`, and an empty string forms no key — but
+     * `refused%` was meaningless and roughly three of every four references
+     * carried into `resolveBatch` were the empty string. A tranche that is 73%
+     * blank is not a representative tranche of anything.
+     */
     const rows = await sql<{ raw: string }[]>`
       SELECT COALESCE(NULLIF(btrim(normalised_citation), ''), citation_text) AS raw
         FROM judgment_citations
        WHERE cited_judgment_id IS NULL
+         AND COALESCE(citation_text, '') <> ''
          ${AFTER ? sql`AND id > ${AFTER}::uuid` : sql``}
        ORDER BY id
        OFFSET ${OFFSET} LIMIT ${SAMPLE}`;

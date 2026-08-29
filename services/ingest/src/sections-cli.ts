@@ -60,11 +60,38 @@ try {
    * it the walk covers everything, which is what a changed extractor needs.
    */
   const RESUME = process.argv.includes('--resume');
+
+  /**
+   * `--since <iso>` — the DELTA bound, added 29 Aug 2026 (NEW2 R10).
+   *
+   * LCC measured (bus 1446) that `judgment_statute_refs` had **no new row in
+   * sixteen days** and 0 of the 1,334 judgments from the overnight cycle had
+   * reached it. This CLI was the reason: `--resume` skips documents that already
+   * carry a ref, which still walks the 95.7% that do not — the whole corpus,
+   * every run. That is a shape nothing can put in a daily cycle, so nobody did,
+   * and the arm quietly stopped being part of the factory.
+   *
+   * `--since` bounds the walk to judgments ingested after a timestamp, which is
+   * the delta shape the cycle needs. It composes with `--resume`: the cycle
+   * passes both, so a re-run over the same window is cheap and idempotent.
+   *
+   * It bounds on `created_at` — when WE ingested — not on `judgment_date`, which
+   * is when the court decided. A 1974 judgment ingested this morning is delta
+   * work; a judgment decided this morning that we ingested last week is not.
+   */
+  const sinceIdx = process.argv.indexOf('--since');
+  const SINCE = sinceIdx === -1 ? null : (process.argv[sinceIdx + 1] ?? null);
+  if (SINCE && Number.isNaN(Date.parse(SINCE))) {
+    console.error(`--since ${JSON.stringify(SINCE)} is not a parseable timestamp. Refusing rather than walking everything.`);
+    process.exit(2);
+  }
+
   let cursor = '00000000-0000-0000-0000-000000000000';
   for (;;) {
     const page = await sql<{ id: string; full_text: string }[]>`
       SELECT id, full_text FROM judgments
       WHERE id > ${cursor}::uuid
+        ${SINCE ? sql`AND created_at >= ${SINCE}::timestamptz` : sql``}
         ${RESUME ? sql`AND NOT EXISTS (SELECT 1 FROM judgment_statute_refs r WHERE r.judgment_id = judgments.id)` : sql``}
       ORDER BY id LIMIT ${PAGE}`;
     if (page.length === 0) break;

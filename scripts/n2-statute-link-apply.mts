@@ -17,8 +17,9 @@
  *   truth sample   `--sample N` prints N random (judgment, act as printed, act linked)
  *                  triples before and after, so the link can be read by a human.
  *   no model       nothing here calls one.
- *   chronological  a ref is refused if the target Act's `act_year` is LATER than the
- *                  year of the judgment. Added R9 — see below.
+ *   chronological  a ref is refused when the judgment predates the target's
+ *                  official enactment or commencement date. Missing dates stay
+ *                  unknown; a year is never substituted for an exact date.
  *
  * ## THE CHRONOLOGY GUARD, added R9 on FIFTH's bus 1357
  *
@@ -155,7 +156,9 @@ async function main() {
             select 1 from judgments j, statutes s
              where j.id = r.judgment_id and s.id = ${l.statute_id}::uuid
                and j.judgment_date is not null
-               and s.act_year > extract(year from j.judgment_date)
+               and s.enactment_date is not null
+               and (j.judgment_date < s.enactment_date
+                 or (s.enforcement_date is not null and j.judgment_date < s.enforcement_date))
           )
       `;
       updated += n;
@@ -170,7 +173,9 @@ async function main() {
              select 1 from judgments j, statutes s
               where j.id = r.judgment_id and s.id = ${l.statute_id}::uuid
                 and j.judgment_date is not null
-                and s.act_year > extract(year from j.judgment_date)
+                and s.enactment_date is not null
+                and (j.judgment_date < s.enactment_date
+                  or (s.enforcement_date is not null and j.judgment_date < s.enforcement_date))
            )
       `;
       updated += res.count;
