@@ -27,8 +27,8 @@
       "freshnessDefinition": "Bounded by ingest, not by an index. A judgment is searchable by its citation from the moment its row exists. GET /corpus/freshness/object publishedAt 2026-08-29T14:40:46.848Z: latestLocalDecisionDate 2026-08-28, sourceLagDays 0.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M1,M2]",
       "measuredLatencyMs": {
-        "M1": 6.0,
-        "M2": 4.0
+        "M1": 77.1,
+        "M2": 29.9
       },
       "minimumBackendVersion": 1,
       "uncertaintyRendered": "UNIQUE_UNCONFIRMED_STALE_INDEX where any of three freshness checks implicate the citation; shared-neutral identity returns every candidate and never a rank-1 pin."
@@ -42,7 +42,7 @@
       "freshnessDefinition": "Same as the judgment row. There is no separate CNR refresh and none is claimed.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M3]",
       "measuredLatencyMs": {
-        "M3": 2.0
+        "M3": 2.2
       },
       "minimumBackendVersion": 1,
       "uncertaintyRendered": "None needed — a CNR either resolves to a held judgment or does not."
@@ -56,7 +56,7 @@
       "freshnessDefinition": "Same as the judgment row.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M4]",
       "measuredLatencyMs": {
-        "M4": 537.0
+        "M4": 468.9
       },
       "minimumBackendVersion": 1,
       "uncertaintyRendered": "Candidate list, never a pin, when more than one court printed the same number."
@@ -70,7 +70,7 @@
       "freshnessDefinition": "Same as the judgment row.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M5]",
       "measuredLatencyMs": {
-        "M5_full_title": 8.3
+        "M5_full_title": 29.2
       },
       "minimumBackendVersion": 1,
       "uncertaintyRendered": "exactTitleCandidates when several titles match."
@@ -95,7 +95,7 @@
       "freshnessDefinition": "GET /corpus/freshness/object, definition HC_PARITY_V2_2026-08-29, sha 1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M7]",
       "measuredLatencyMs": {
-        "M7_narrow_query": 179.7
+        "M7_narrow_query": 103.6
       },
       "minimumBackendVersion": 1,
       "knownLimit": "FILTERS DO NOT BOUND THE LEXICAL ADMISSION GATE. See capability search.filtered_broad_query."
@@ -105,7 +105,7 @@
       "state": "DISABLED_NOT_READY",
       "runtimeRow": "no row — the behaviour is a refusal inside search.lexical",
       "dataDependency": "lexeme_document_frequency (corpus-wide), judgments filters",
-      "coverageDefinition": "MEASURED. 'bail' restricted to courts=[hc] over 2026-08-01..2026-08-29 — a window holding 45,660 judgments (measured) — is still refused with degraded=[sparse_unbounded], emptyBecause=query_too_broad_to_rank, rarestDf 0.2577. The same window with 'anticipatory bail cheque dishonour' returns 5 results in 179.7 ms.",
+      "coverageDefinition": "MEASURED. 'bail' restricted to courts=[hc] over 2026-08-01..2026-08-29 — a window holding 45,660 judgments (measured) — is still refused with degraded=[sparse_unbounded], emptyBecause=query_too_broad_to_rank, rarestDf 0.2577. The same window with 'anticipatory bail cheque dishonour' returns 5 results in 103.6 ms.",
       "freshnessDefinition": "N/A — not shipped.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M7].result.broadQuery",
       "minimumBackendVersion": 2,
@@ -120,7 +120,7 @@
       "freshnessDefinition": "Identical to ingest. No separate index freshness exists.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M11]",
       "measuredLatencyMs": {
-        "M11_natural_sentence": 2107.2
+        "M11_natural_sentence": 917.5
       },
       "minimumBackendVersion": 1,
       "uncertaintyRendered": "degraded[] carries sparse_timeout / sparse_unbounded / dense_timeout / pin_timeout; retrievalOutcome.state carries coverage_unknown; emptyBecause carries a reason and a remedy. A degraded search never renders as a complete one."
@@ -144,7 +144,7 @@
       "freshnessDefinition": "asOf is on the response. overruledStatus is read live at render and overruledStatusStored is carried beside it, so a stale stored value is visible rather than served.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M8]",
       "measuredLatencyMs": {
-        "M8": 4.4
+        "M8": 13.0
       },
       "minimumBackendVersion": 1,
       "knownLimit": "The reader refuses body-derived evidence for a judgment whose body text is convicted damaged, and says so as bodyText.evidenceWithheld. It does not render an empty page."
@@ -182,7 +182,7 @@
       "freshnessDefinition": "UNMEASURED. No statute freshness probe exists and none is claimed.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M6]",
       "measuredLatencyMs": {
-        "M6": 10.2
+        "M6": 14.5
       },
       "minimumBackendVersion": 1
     },
@@ -217,7 +217,7 @@
       "freshnessDefinition": "The resolver frontier is NEW2's daily cycle. Bulk apply is on HOLD with rowsApplied 0.",
       "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12_GRAPH.json#measured.distinctResolvedEdges",
       "measuredLatencyMs": {
-        "M9": 1138.3
+        "M9": 550.5
       },
       "minimumBackendVersion": 1,
       "bannedClaim": "'Every judgment has its citations mapped' would be arithmetically TRUE of judgment_citations row presence (18,758,460 of 18,758,460 judgments have at least one row) and completely false in meaning, because 71.98% of those rows are the blank sentinel. Citation coverage is defined on RESOLVED EDGES and on nothing else.",
@@ -243,7 +243,7 @@
       "freshnessDefinition": "N/A.",
       "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M10]",
       "measuredLatencyMs": {
-        "M10_create_plus_save": 7.8
+        "M10_create_plus_save": 16.9
       },
       "minimumBackendVersion": 1
     },
@@ -382,5 +382,6 @@
       "minimumBackendVersion": 2,
       "whyExternallyBlocked": "The countersigned DPA is still owed. The admin surface refuses to route sensitive traffic without one and there is no founder override. This is a signature, not code."
     }
-  ]
+  ],
+  "latencySource": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json, run takenAt 2026-08-29T18:19:23.116Z. Latencies were measured on a box running the GPU sidecar, the coarse walk, doc-vector embed and ingest, with seven Postgres backends active; they vary run to run by roughly an order of magnitude at the fast end and must be quoted with their run, never alone."
 }

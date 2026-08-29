@@ -52,19 +52,25 @@ evidence with raw payloads: **`docs/product/TEN_MATTER_ACCEPTANCE_R12.json`**.
 Fixtures were selected **from the live corpus at run time**, never hardcoded, so a stale
 fixture cannot make a dead path look alive.
 
+**Every number in this table is from the committed artifact, run `takenAt`
+`2026-08-29T18:19:23.116Z`.** An earlier draft quoted latencies from a 17:42Z run that a
+later re-run had already overwritten — same eleven verdicts, different milliseconds.
+Corrected against the artifact that is actually committed, because a document citing an
+artifact it does not match is worse than a document with no artifact at all.
+
 | # | Query / action | Capability | Data source | Freshness evidence | Result | Uncertainty / degraded | Latency | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| M1 | `POST /search` `2026:JHHC:25953` | `search.exact_identity` | `judgments.neutral_citation` (AWS Open Data HC) | object route, `latestLocalDecisionDate 2026-08-28`, `sourceLagDays 0`; fixture decided 2026-08-28 | rank 1 = fixture | none | **6.0 ms** | PASS |
-| M2 | `POST /search` `[2024] 10 S.C.R. 673` | `search.exact_identity` | `judgments.reporter_citations` (SCR) | fixture decided 2024-10-15 | rank 1 = fixture | none | **4.0 ms** | PASS |
-| M3 | `POST /search` `BRHC011177572024` | `search.exact_identity` (CNR) | `judgments.cnr`, backfilled from AWS HC metadata — **not** from eCourts | fixture decided 2025-01-08 | rank 1 = fixture | none | **2.0 ms** | PASS |
-| M4 | `POST /search` `WPA/24211/2023` | `search.exact_identity` (case number) | `judgments.case_number` as printed | fixture decided 2024-01-02 | fixture present in candidates | candidate list, not a pin | **537.0 ms** | PASS |
-| M5 | `POST /search` at three widths — party only · full title · famous party name | case-title arm + lexical fallback | `judgments.case_title` | fixture decided 2026-08-28 | **full title → rank 1**; party only → **0**; `SATENDER KUMAR ANTIL` → **0** | `sparse_unbounded` (df 0.0654) / `sparse_timeout` (df 0.0055); `emptyBecause = query_too_broad_to_rank` | 8.3 ms (full title) | **PASS_WITH_LIMIT** |
-| M6 | `GET /statutes`, `/statutes/sections?q=murder`, `?sectionNumber=103` | `statute.lookup` | 849 Acts, 36,663 sections | statute freshness **UNMEASURED** and reported as such | 200 · 5 sections · 5 sections | none | **10.2 ms** | PASS |
-| M7 | `POST /search` over `courts=[hc]`, 2026-08-01..2026-08-29, two query widths | `search.structured_filters` + pagination | `judgments.court`, `judgment_date` | object route; **45,660 judgments in the window (measured)** | narrow query → 5 results, all in window, `hasMore true`; **`bail` → 0** | narrow: none. broad: `sparse_unbounded`, df 0.2577 | 179.7 ms | **PASS_WITH_LIMIT** |
-| M8 | `GET /judgments/:id` | reader + exact span + provenance | body text + 0092 provenance columns | `asOf` on response; `dateQualityState` carried | 200. Payload carries `sourceUrl`, `textOrigin`, `generationEvidenceEligible`, `numberedShare`, all three citation fields, `overruledStatus` **and** `overruledStatusStored`, `precedentialEffect`, `canAddToMatter` | `bodyText.evidenceWithheld` where body text is convicted damaged | **4.4 ms** | PASS |
-| M9 | `GET /judgments/:id/graph`, `/treatment`, `/authorities` | `treatment.resolved_signals` | `judgment_citations` | `asOf` on response; fixture has 7,418 inbound edges | 200/200/200; 15 nodes, 20 edges, `truncated` present | **no partiality declaration** — see §6 | **1,138.3 ms** | PASS |
-| M10 | `POST /matters` → `POST /matters/:id/authorities` → `GET /matters/:id/authorities` | `matter.workspace` + `matter.saved_authorities` | `matters`, `matter_authorities` joined to `judgments` at read | `asOf 2026-08-29T17:42:17.803Z` | 201 · 201 · 200, 1 authority listed. Saved authority carries **`verificationState`, `verifiedBySource`, `overruledStatus` as three separate fields** | none | **7.8 ms** | PASS |
-| M11 | `POST /search` natural sentence + 600-char probe + high-df term | lexical + honest refusal | `judgments.full_text_tsv` (`GENERATED ALWAYS`) | lexical coverage **equals ingest, by construction** | sentence → results; 600 chars → **400, "nothing has been shortened"**; `section 302` → 0 with `sparse_timeout` | `degraded[]`, `retrievalOutcome.state = coverage_unknown`, `safeForGeneration false` | 2,107.2 ms | PASS |
+| M1 | `POST /search` `2026:JHHC:25953` | `search.exact_identity` | `judgments.neutral_citation` (AWS Open Data HC) | object route, `latestLocalDecisionDate 2026-08-28`, `sourceLagDays 0`; fixture decided 2026-08-28 | rank 1 = fixture | none | **77.1 ms** | PASS |
+| M2 | `POST /search` `[2024] 10 S.C.R. 673` | `search.exact_identity` | `judgments.reporter_citations` (SCR) | fixture decided 2024-10-15 | rank 1 = fixture | none | **29.9 ms** | PASS |
+| M3 | `POST /search` `BRHC011177572024` | `search.exact_identity` (CNR) | `judgments.cnr`, backfilled from AWS HC metadata — **not** from eCourts | fixture decided 2025-01-08 | rank 1 = fixture | none | **2.2 ms** | PASS |
+| M4 | `POST /search` `WPA/24211/2023` | `search.exact_identity` (case number) | `judgments.case_number` as printed | fixture decided 2024-01-02 | fixture present in candidates | candidate list, not a pin | **468.9 ms** | PASS |
+| M5 | `POST /search` at three widths — party only · full title · famous party name | case-title arm + lexical fallback | `judgments.case_title` | fixture decided 2026-08-28 | **full title → rank 1**; party only → **0**; `SATENDER KUMAR ANTIL` → **0** | `sparse_unbounded` (df 0.0654) / `sparse_timeout` (df 0.0055); `emptyBecause = query_too_broad_to_rank` | 29.2 ms (full title) | **PASS_WITH_LIMIT** |
+| M6 | `GET /statutes`, `/statutes/sections?q=murder`, `?sectionNumber=103` | `statute.lookup` | 849 Acts, 36,663 sections — counted by direct query and by the live `/statutes` payload, **not** from the artifact, whose `actsReturned` reads null because the harness looked for `data.acts` where the route returns `data.statutes` | statute freshness **UNMEASURED** and reported as such | 200 · 5 sections · 5 sections | none | **14.5 ms** | PASS |
+| M7 | `POST /search` over `courts=[hc]`, 2026-08-01..2026-08-29, two query widths | `search.structured_filters` + pagination | `judgments.court`, `judgment_date` | object route; **45,660 judgments in the window (measured)** | narrow query → 5 results, all in window, `hasMore true`; **`bail` → 0** | narrow: none. broad: `sparse_unbounded`, df 0.2577 | 103.6 ms | **PASS_WITH_LIMIT** |
+| M8 | `GET /judgments/:id` | reader + exact span + provenance | body text + 0092 provenance columns | `asOf` on response; `dateQualityState` carried | 200. Payload carries `sourceUrl`, `textOrigin`, `generationEvidenceEligible`, `numberedShare`, all three citation fields, `overruledStatus` **and** `overruledStatusStored`, `precedentialEffect`, `canAddToMatter` | `bodyText.evidenceWithheld` where body text is convicted damaged | **13.0 ms** | PASS |
+| M9 | `GET /judgments/:id/graph`, `/treatment`, `/authorities` | `treatment.resolved_signals` | `judgment_citations` | `asOf` on response; fixture has 7,418 inbound edges | 200/200/200; 15 nodes, 20 edges, `truncated` present | **no partiality declaration** — see §6 | **550.5 ms** | PASS |
+| M10 | `POST /matters` → `POST /matters/:id/authorities` → `GET /matters/:id/authorities` | `matter.workspace` + `matter.saved_authorities` | `matters`, `matter_authorities` joined to `judgments` at read | `asOf 2026-08-29T18:19:07.054Z` | 201 · 201 · 200, 1 authority listed. Saved authority carries **`verificationState`, `verifiedBySource`, `overruledStatus` as three separate fields** | none | **16.9 ms** | PASS |
+| M11 | `POST /search` natural sentence + 600-char probe + high-df term | lexical + honest refusal | `judgments.full_text_tsv` (`GENERATED ALWAYS`) | lexical coverage **equals ingest, by construction** | sentence → results; 600 chars → **400, "nothing has been shortened"**; `section 302` → 0 with `sparse_timeout` | `degraded[]`, `retrievalOutcome.state = coverage_unknown`, `safeForGeneration false` | 917.5 ms | PASS |
 
 **Score: 9 PASS · 2 PASS_WITH_LIMIT · 0 HOLD.**
 
@@ -89,7 +95,7 @@ probes written along the way were deleted.
 Two, both in search, both bounded, neither a data problem.
 
 **AB-1 — Party-name search returns nothing.** An advocate names a case by its parties.
-A full cause title resolves at rank 1 in 8.3 ms; the party name alone returns zero. The
+A full cause title resolves at rank 1 in 29.2 ms; the party name alone returns zero. The
 party-name path *exists* in `retrieve.ts` (`rarestToken` + trigram narrowing) but the
 request never reaches it — the query is treated as ordinary text and decided by the
 document-frequency gate first. **Severity: high.** This is the most common real query
