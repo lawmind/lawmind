@@ -149,6 +149,7 @@ const FILES_ALLOWED_EXEMPTIONS = [
   'citations/old-row-backfill-falsifier.test.ts',
   'court/guard.ts',
   'release/candidate.ts',
+  'testing/isolated-schema.test.ts',
 ];
 
 describe('no timestamptz reaches the client as Postgres text', () => {

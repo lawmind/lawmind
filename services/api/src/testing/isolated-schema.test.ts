@@ -74,7 +74,10 @@ suite('a test cannot reach the production kill switches', () => {
       connection: { search_path: 'public' },
     });
     const [row] = await production<ConfigRow[]>`
-      SELECT key, enabled, reason, updated_at::text AS updated_at, updated_by_user_id
+      SELECT key, enabled, reason,
+             -- iso-time-exempt: compared for IDENTITY between a before and after snapshot and never rendered; the falsifier's whole question is whether the row moved, and ::text is the strictest form of "did not move" available — a Date round-trip could mask a sub-millisecond change.
+             updated_at::text AS updated_at,
+             updated_by_user_id
         FROM public.platform_config WHERE key = ${key}
     `;
     return row;
