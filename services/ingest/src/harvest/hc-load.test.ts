@@ -126,8 +126,14 @@ describe('caseTypeFrom', () => {
 
 describe('neutralCitationFrom', () => {
   it('takes the document’s own neutral citation from the header', () => {
-    assert.equal(neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023), '2023:DHC:2720');
-    assert.equal(neutralCitationFrom('2023:DHC:2073-DB before the bench', 2023), '2023:DHC:2073-DB');
+    assert.equal(
+      neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023),
+      '2023:DHC:2720',
+    );
+    assert.equal(
+      neutralCitationFrom('2023:DHC:2073-DB before the bench', 2023),
+      '2023:DHC:2073-DB',
+    );
     assert.equal(neutralCitationFrom('Neutral Citation 2023:KHC-D:1', 2023), '2023:KHC-D:1');
   });
 
@@ -152,7 +158,8 @@ describe('neutralCitationFrom', () => {
 });
 
 describe('toJudgmentRecord', () => {
-  const text = 'IN THE HIGH COURT OF JUDICATURE AT PATNA\nCRIMINAL MISCELLANEOUS No.83783 of 2023\n…';
+  const text =
+    'IN THE HIGH COURT OF JUDICATURE AT PATNA\nCRIMINAL MISCELLANEOUS No.83783 of 2023\n…';
 
   it('maps the real Patna row', () => {
     const out = toJudgmentRecord(PATNA, PARTS, text, URL);
@@ -174,6 +181,9 @@ describe('toJudgmentRecord', () => {
     assert.equal(r.sourceUrl, URL);
     assert.equal(r.language, 'en');
     assert.equal(r.cnr, 'BRHC011164592023');
+    assert.equal(r.sourceId, 'aws_hc');
+    assert.equal(r.sourceEdition, 'court_raw');
+    assert.equal(r.authorizationBasis, 'aws_open_data');
     // nativeText omitted here — defaults to null, asserted below.
     assert.equal(r.nativeText, null);
   });
@@ -230,7 +240,12 @@ describe('toJudgmentRecord', () => {
   });
 
   it('passes order_type through verbatim — mobile variant only, never classified', () => {
-    const out = toJudgmentRecord({ ...PATNA, order_type: 'View Judgement/Order' }, PARTS, text, URL);
+    const out = toJudgmentRecord(
+      { ...PATNA, order_type: 'View Judgement/Order' },
+      PARTS,
+      text,
+      URL,
+    );
     assert.ok(out.ok);
     // Stored exactly as the source wrote it, including the ambiguous form —
     // resolving "judgment or order" needs the PDF text, which this function

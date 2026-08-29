@@ -64,6 +64,14 @@ export type JudgmentRecord = {
   fullText: string;
   language: 'en';
   sourceUrl: string;
+  /**
+   * Per-row acquisition provenance (migration 0092). Optional only for source
+   * adapters that genuinely do not know the answer; the two AWS adapters set
+   * all three fields on every new write.
+   */
+  sourceId?: string | null;
+  sourceEdition?: 'court_raw' | 'reporter_edited' | 'mixed_unseparated' | null;
+  authorizationBasis?: string | null;
   /** The official case number as printed, e.g. `CRIMINAL APPEAL No. 19/1955`. */
   caseNumber: string | null;
   /** Derived from `caseNumber` only. Null where it states no side. */
@@ -241,6 +249,9 @@ export function toJudgment(
     // Flagged in the S1 report; not decided here.
     language: 'en',
     sourceUrl: sourceUrlFor(row),
+    sourceId: 'aws_sc',
+    sourceEdition: 'court_raw',
+    authorizationBasis: 'aws_open_data',
     caseNumber,
     caseType: toCaseType(caseNumber),
     cnr: blank(row.cnr) ? null : row.cnr.trim(),

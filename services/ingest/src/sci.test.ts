@@ -106,6 +106,9 @@ describe('toJudgment', () => {
     assert.equal(j.fullText, 'FULL TEXT');
     assert.equal(j.language, 'en');
     assert.equal(j.cnr, 'ESCR010000301950');
+    assert.equal(j.sourceId, 'aws_sc');
+    assert.equal(j.sourceEdition, 'court_raw');
+    assert.equal(j.authorizationBasis, 'aws_open_data');
     // nativeText omitted here — defaults to null, asserted below.
     assert.equal(j.nativeText, null);
   });

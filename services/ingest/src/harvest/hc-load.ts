@@ -67,9 +67,7 @@ export type SkipReason =
   | 'no_text'
   | 'no_title';
 
-export type MapOutcome =
-  | { ok: true; record: JudgmentRecord }
-  | { ok: false; reason: SkipReason };
+export type MapOutcome = { ok: true; record: JudgmentRecord } | { ok: false; reason: SkipReason };
 
 /**
  * `bench=testcase` publishes ~16,000 rows a year at Bombay and is a **test
@@ -287,6 +285,9 @@ export function toJudgmentRecord(
       fullText: text,
       language: 'en',
       sourceUrl,
+      sourceId: 'aws_hc',
+      sourceEdition: 'court_raw',
+      authorizationBasis: 'aws_open_data',
       caseNumber,
       caseType: caseTypeFrom(caseNumber),
       sourceDocumentType: row.order_type?.trim() || null,

@@ -59,61 +59,71 @@ export async function upsertJudgments(sql: Sql, records: JudgmentRecord[]): Prom
   return { inserted, updated };
 }
 
-async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadResult> {
-  const rows = records.map((r) => {
-    // Migration 0037. Computed here, not by the caller — source metadata
-    // first (Supreme Court only, per parties.ts), case_title parsing second,
-    // so every loader gets the best available method without deciding which
-    // one applies itself.
-    const parties = extractParties({
-      caseTitle: r.caseTitle,
-      sourcePetitioner: r.sourcePetitioner,
-      sourceRespondent: r.sourceRespondent,
-    });
-    return {
-      case_title: r.caseTitle,
-      neutral_citation: r.neutralCitation,
-      reporter_citations: r.reporterCitations,
-      court: r.court,
-      bench: r.bench,
-      // Migration 0040. The source's court-establishment code, kept as what it
-      // is rather than written into `bench` — which is what put a database slug
-      // in front of advocates on 40,705 rows. undefined/null both land as NULL.
-      source_bench_code: r.sourceBenchCode ?? null,
-      judgment_date: r.judgmentDate,
-      full_text: r.fullText,
-      language: r.language,
-      source_url: r.sourceUrl,
-      case_number: r.caseNumber,
-      case_type: r.caseType,
-      // Migration 0031. Computed here, not by the caller — every loader gets it
-      // for free, and a loader that forgets to pass it cannot ship a null by
-      // accident the way an optional field on JudgmentRecord could.
-      content_hash: contentHash(r.fullText),
-      text_quality: textQuality(r.fullText),
-      // Never invented — undefined on `JudgmentRecord` (SC has no such field)
-      // resolves to `null` here rather than an empty string.
-      source_document_type: r.sourceDocumentType ?? null,
-      // Migration 0034. Verbatim from source; undefined/null both resolve to a
-      // database NULL, never guessed.
-      cnr: r.cnr ?? null,
-      // Migration 0035. Computed by the caller from the source PDF's own page
-      // count (text.ts's isNativeText) — undefined/null means not computed,
-      // never a guess at scan-vs-native.
-      native_text: r.nativeText ?? null,
-      // Migration 0037. See `parties` above.
-      petitioner: parties.petitioner,
-      respondent: parties.respondent,
-      parties_extraction_method: parties.method,
-      // Migration 0038. Verbatim from source; undefined/null both resolve to
-      // a database NULL, never guessed. Never classified — `docs/ai/
-      // HC_CORPUS_CHARACTERIZATION.md` §11.
-      disposal_nature: r.disposalNature ?? null,
-      // Migration 0048. From `text.ts`'s `fetchPdfText`; undefined/null means
-      // not recorded, never guessed at 'unpdf' by default.
-      text_extraction_method: r.textExtractionMethod ?? null,
-    };
+export function judgmentInsertRow(r: JudgmentRecord) {
+  const provenanceComplete = Boolean(r.sourceId && r.sourceEdition && r.authorizationBasis);
+  // Migration 0037. Computed here, not by the caller — source metadata
+  // first (Supreme Court only, per parties.ts), case_title parsing second,
+  // so every loader gets the best available method without deciding which
+  // one applies itself.
+  const parties = extractParties({
+    caseTitle: r.caseTitle,
+    sourcePetitioner: r.sourcePetitioner,
+    sourceRespondent: r.sourceRespondent,
   });
+  return {
+    case_title: r.caseTitle,
+    neutral_citation: r.neutralCitation,
+    reporter_citations: r.reporterCitations,
+    court: r.court,
+    bench: r.bench,
+    // Migration 0040. The source's court-establishment code, kept as what it
+    // is rather than written into `bench` — which is what put a database slug
+    // in front of advocates on 40,705 rows. undefined/null both land as NULL.
+    source_bench_code: r.sourceBenchCode ?? null,
+    judgment_date: r.judgmentDate,
+    full_text: r.fullText,
+    language: r.language,
+    source_url: r.sourceUrl,
+    // Migration 0092. These facts come from the source adapter, never from
+    // the URL at write time. A future adapter that does not know them leaves
+    // all four fields NULL rather than inheriting an AWS assertion.
+    source_id: provenanceComplete ? r.sourceId! : null,
+    source_edition: provenanceComplete ? r.sourceEdition! : null,
+    authorization_basis: provenanceComplete ? r.authorizationBasis! : null,
+    provenance_recorded_at: provenanceComplete ? new Date() : null,
+    case_number: r.caseNumber,
+    case_type: r.caseType,
+    // Migration 0031. Computed here, not by the caller — every loader gets it
+    // for free, and a loader that forgets to pass it cannot ship a null by
+    // accident the way an optional field on JudgmentRecord could.
+    content_hash: contentHash(r.fullText),
+    text_quality: textQuality(r.fullText),
+    // Never invented — undefined on `JudgmentRecord` (SC has no such field)
+    // resolves to `null` here rather than an empty string.
+    source_document_type: r.sourceDocumentType ?? null,
+    // Migration 0034. Verbatim from source; undefined/null both resolve to a
+    // database NULL, never guessed.
+    cnr: r.cnr ?? null,
+    // Migration 0035. Computed by the caller from the source PDF's own page
+    // count (text.ts's isNativeText) — undefined/null means not computed,
+    // never a guess at scan-vs-native.
+    native_text: r.nativeText ?? null,
+    // Migration 0037. See `parties` above.
+    petitioner: parties.petitioner,
+    respondent: parties.respondent,
+    parties_extraction_method: parties.method,
+    // Migration 0038. Verbatim from source; undefined/null both resolve to
+    // a database NULL, never guessed. Never classified — `docs/ai/
+    // HC_CORPUS_CHARACTERIZATION.md` §11.
+    disposal_nature: r.disposalNature ?? null,
+    // Migration 0048. From `text.ts`'s `fetchPdfText`; undefined/null means
+    // not recorded, never guessed at 'unpdf' by default.
+    text_extraction_method: r.textExtractionMethod ?? null,
+  };
+}
+
+async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadResult> {
+  const rows = records.map(judgmentInsertRow);
 
   // Columns are inferred from the object keys — every row is built by the same
   // mapper, so the key set is uniform by construction.
@@ -129,6 +139,16 @@ async function upsertBatch(sql: Sql, records: JudgmentRecord[]): Promise<LoadRes
       judgment_date         = EXCLUDED.judgment_date,
       full_text             = EXCLUDED.full_text,
       language              = EXCLUDED.language,
+      source_id             = COALESCE(EXCLUDED.source_id, judgments.source_id),
+      source_edition        = COALESCE(EXCLUDED.source_edition, judgments.source_edition),
+      authorization_basis   = COALESCE(EXCLUDED.authorization_basis, judgments.authorization_basis),
+      provenance_recorded_at = CASE
+        WHEN EXCLUDED.source_id IS NOT NULL
+         AND EXCLUDED.source_edition IS NOT NULL
+         AND EXCLUDED.authorization_basis IS NOT NULL
+        THEN EXCLUDED.provenance_recorded_at
+        ELSE judgments.provenance_recorded_at
+      END,
       case_number           = EXCLUDED.case_number,
       case_type             = EXCLUDED.case_type,
       content_hash          = EXCLUDED.content_hash,
