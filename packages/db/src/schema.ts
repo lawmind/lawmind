@@ -369,6 +369,11 @@ export const judgments = pgTable(
     fullText: text('full_text').notNull(),
     language: languageEnum('language').notNull(),
     sourceUrl: text('source_url').notNull(),
+    /** Migration 0092. NULL means UNRECORDED, never authorized or court-raw. */
+    sourceId: text('source_id'),
+    sourceEdition: text('source_edition'),
+    authorizationBasis: text('authorization_basis'),
+    provenanceRecordedAt: timestamp('provenance_recorded_at', { withTimezone: true }),
     overruledStatus: overruledStatusEnum('overruled_status').notNull().default('none'),
     // Set in the same write as any overruled_status change, including inside
     // applyOverruledChange. Without it the stale-overruled rate cannot separate a
@@ -1319,6 +1324,8 @@ export const officialSourceArtifacts = pgTable(
     storageKey: text('storage_key'),
     metadata: jsonb('metadata').notNull().default({}),
     extractionNote: text('extraction_note'),
+    /** Migration 0095. NULL means not classified, never text available. */
+    textState: text('text_state'),
     authorizationBasis: text('authorization_basis').notNull(),
     conditionsVersion: text('conditions_version'),
     fetchLedgerId: uuid('fetch_ledger_id').references(() => officialSourceFetchLedger.id),

@@ -1175,6 +1175,18 @@ there for the moment real values exist.
 The precondition this satisfies: the SCR counsel outcome, and any future licensed
 ingest, are remediable **by WHERE clause and not by re-ingest**.
 
+## official source artifact text state
+
+Migration `0095` adds nullable `official_source_artifact.text_state` with exactly
+two positive values: `TEXT_AVAILABLE` and `IMAGE_ONLY_OCR_PENDING`. `NULL` means
+not classified, never text available.
+
+The source artifact is held only when 0090's `raw_bytes` or `storage_key` is
+present. An artifact in `IMAGE_ONLY_OCR_PENDING` may count toward source-data
+holdings, but supplies no full-text, paragraph, lexical, semantic or generation
+evidence. It is not inserted into `judgments` with fabricated empty text. No OCR
+worker or queue is implied by this state.
+
 ## platform_config
 
 Maintenance mode, the five kill switches, and feature flags. One row per key —
