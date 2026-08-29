@@ -111,6 +111,25 @@ const MOAT = [
   { table: 'ecourts_observation', why: 'RAW eCourts observations; the grant is spent, the observation is not repeatable' },
   { table: 'ecourts_transition', why: 'derived case-state transitions' },
   { table: 'ecourts_fetch_ledger', why: 'the only proof we stayed inside the registrar grant -- losing it loses the answer to "did you"' },
+  /**
+   * THE RAW BYTES THEMSELVES, which this pack did not carry.
+   *
+   * `ecourts_observation` is the NORMALISED reading of a response.
+   * `official_source_artifact` is the response — the actual bytes an authorised
+   * request obtained, retained before anything parsed them. Backing up the
+   * interpretation and not the evidence gets the direction exactly wrong: a
+   * parser can be rewritten against retained bytes, and no parser can
+   * reconstruct bytes that were thrown away.
+   *
+   * It is also the only copy. Each artifact cost a slot out of 1,000 daily
+   * against a grant that expires January 2029, and the eCourts cause-list
+   * interface serves the CURRENT day — a response from 29 August 2026 is not
+   * re-fetchable at any price.
+   *
+   * 53 MB whole, across all sources. That is not bulk and it is not excluded for
+   * being large; the bulk corpus and the vector tables stay out, deliberately.
+   */
+  { table: 'official_source_artifact', why: 'the RAW retained response bytes -- a parser can be rewritten, discarded bytes cannot; each eCourts row cost a slot of a grant that expires' },
   { table: 'lexeme_document_frequency', why: 'the measured corpus sample the sparse ranker ranks with' },
 ];
 

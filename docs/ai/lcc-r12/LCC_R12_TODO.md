@@ -47,10 +47,10 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 
 ## 3. Embedding stage / snapshot_hash ownership
 
-- [ ] `VECTOR_STAGE_ROLE` determined from evidence (FACTORY_SCRATCH vs CANONICAL_SERVING)
-- [ ] `SNAPSHOT_IDENTITY_FIX_REQUIRED` answered
-- [ ] Explicit generation/snapshot identity contract for future vector inserts
-- [ ] Coordinated with NEW1 on the bus; live coarse batch NOT interrupted
+- [x] `VECTOR_STAGE_ROLE` determined from evidence (FACTORY_SCRATCH vs CANONICAL_SERVING)
+- [x] `SNAPSHOT_IDENTITY_FIX_REQUIRED` answered
+- [x] Explicit generation/snapshot identity contract for future vector inserts
+- [x] Coordinated with NEW1 on the bus; live coarse batch NOT interrupted
 
 ## 4. AB-1 — party / title routing
 
@@ -80,42 +80,42 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 
 ## 6. NEW3 data-trust API gaps (frozen contract — additive only)
 
-- [ ] judgment: `source`, `sourceEdition`, provenance basis, decision date,
+- [x] judgment: `source`, `sourceEdition`, provenance basis, decision date,
       freshness/currentness, source URL/action
-- [ ] citation graph: partiality declaration (`coverage{...}`) — G-3
-- [ ] monitoring: six fields frozen with semantics, legitimately null while disabled
-- [ ] No AI fields added
-- [ ] `DATA_TRUST_API` verdict
+- [x] citation graph: partiality declaration (`coverage{...}`) — G-3
+- [x] monitoring: six fields frozen with semantics, legitimately null while disabled
+- [x] No AI fields added
+- [x] `DATA_TRUST_API` = **PASS** (provenance block, graph coverage, six monitoring fields)
 
 ## 7. Firm-ready domain model — implementation, not design
 
-- [ ] Actual schema inspected (do NOT infer from NEW3's freeze)
-- [ ] Personal Workspace auto-exists for every v1 account
-- [ ] Matters migrated to personal Workspace
-- [ ] Saved authorities migrated
-- [ ] Single-user API behaviour unchanged for the mobile app
-- [ ] Tenant isolation tests
-- [ ] Rollback / reconciliation proof
-- [ ] `FIRM_READY_SCHEMA` verdict
+- [x] Actual schema inspected (do NOT infer from NEW3's freeze)
+- [x] Personal Workspace auto-exists for every v1 account
+- [x] Matters migrated to personal Workspace
+- [x] Saved authorities migrated
+- [x] Single-user API behaviour unchanged for the mobile app
+- [x] Tenant isolation tests
+- [x] Rollback / reconciliation proof
+- [x] `FIRM_READY_SCHEMA` = **PASS** (0097-0099, 529 workspaces, tenant isolation 23503)
 
 ## 8. eCourts — offline request blueprint BEFORE any live request
 
-- [ ] Official JS located in the RETAINED page: `fillDistrict`, `fillcomplex`,
+- [x] Official JS located in the RETAINED page: `fillDistrict`, `fillcomplex`,
       `fillCauseList`, `submitCauseList`, token rotation
 - [ ] Executed OFFLINE with a recording transport that opens NO socket
 - [ ] Captured: method, URL, query, content type, field names/order, headers,
       cookies, `app_token`, `ajax_req`, Origin/Referer/X-Requested-With,
       state/district/complex/establishment, civil/criminal encoding
-- [ ] `FIELD | OFFICIAL JS | LAWMIND | MATCH/MISMATCH` table published
-- [ ] `ECOURTS_OFFLINE_REQUEST_DIFF` verdict
+- [x] `FIELD | OFFICIAL JS | LAWMIND | MATCH/MISMATCH` table published
+- [x] `ECOURTS_OFFLINE_REQUEST_DIFF` = **RECONCILED / BLUEPRINT_PARTIAL** (searchByCauselist.js not retained)
 
 ## 9. User-Agent / attribution — settle from the binding contract
 
-- [ ] Binding attribution requirement read LITERALLY
-- [ ] User-Agent vs attribution separated only if the record permits
-- [ ] Test proving attribution on EVERY permitted network request
-- [ ] Secret / full grant string never logged
-- [ ] `ATTRIBUTION_TRANSPORT` verdict (HOLD if the record forbids the change)
+- [x] Binding attribution requirement read LITERALLY
+- [x] User-Agent vs attribution separated only if the record permits
+- [x] Test proving attribution on EVERY permitted network request
+- [x] Secret / full grant string never logged
+- [x] `ATTRIBUTION_TRANSPORT` = **SEPARATED** (User-Agent | x-lawmind-attribution)
 
 ## 10. Bounded live canary — MAX THREE diagnostic requests
 
@@ -144,11 +144,11 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 
 ## 13. Observation writer — resolve the contradiction from HEAD
 
-- [ ] Actual INSERT path searched for in the tree
+- [x] Actual INSERT path searched for in the tree
 - [ ] Existing then tested with the real fixture; absent then implemented
 - [ ] append-only, raw linkage, source key, observedAt, strategy,
       normalized payload, parser version, uncertainty, idempotency
-- [ ] `OBSERVATION_WRITER` verdict
+- [x] `OBSERVATION_WRITER` = **EXISTS AND PASSES** (ecourts-observation-writer.ts, 5 tests)
 
 ## 14. Canary to retention to daily pilot
 
@@ -160,23 +160,23 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 
 ## 15. Internal eCourts coverage ledger
 
-- [ ] All internal metrics maintained; no marketing surface
-- [ ] `USER_MONITORING_PRODUCT = DISABLED_NOT_READY` held
+- [x] All internal metrics maintained; no marketing surface
+- [x] `USER_MONITORING_PRODUCT = DISABLED_NOT_READY` held
 
 ## 16. Selective off-machine protection
 
-- [ ] eCourts raw artifacts + observation state confirmed in the CURATED manifest
-- [ ] Bulk corpus / whole vector table NOT included merely for being large
+- [x] eCourts raw artifacts + observation state confirmed in the CURATED manifest
+- [x] Bulk corpus / whole vector table NOT included merely for being large
 - [ ] Encrypted upload + readback IF an authorized destination exists
 - [ ] Otherwise: exact size/checksum + founder action, no invented destination
 
 ## 17. Sprint-2 hosting bakeoff (Gate B)
 
-- [ ] Real v1 EXPORT footprint measured (not a clone of the factory DB)
-- [ ] Reduced serving release defined; user/matter DB separate
-- [ ] Providers evaluated on CURRENT official pricing + actual measurement
-- [ ] `HOSTING_SELECTED` or `HOSTING_BAKEOFF_BLOCKED_BY`
-- [ ] No production cutover this round
+- [x] Real v1 EXPORT footprint measured (not a clone of the factory DB)
+- [x] Reduced serving release defined; user/matter DB separate
+- [x] Providers evaluated on CURRENT official pricing + actual measurement
+- [x] `HOSTING_BAKEOFF_BLOCKED_BY` = no provisioned in-region instance (~$250-300/mo, tearable down)
+- [x] No production cutover this round
 
 ## 18. Full verification
 

@@ -1,0 +1,75 @@
+{
+  "artifact": "LCC_R12_ECOURTS_COVERAGE_LEDGER",
+  "takenAt": "2026-08-29T21:34:08.042Z",
+  "surface": "INTERNAL ONLY. No marketing surface. Not a product metric.",
+  "userMonitoringProduct": "DISABLED_NOT_READY",
+  "exclusions": {
+    "note": "Stated, never silently dropped.",
+    "nonNetworkTestEndpoints": "6",
+    "suiteCourts": "5"
+  },
+  "requests": {
+    "attemptsReal": "158",
+    "http200": "37",
+    "httpOther": "0",
+    "errors": "1",
+    "refusals": "120",
+    "newestRequest": "2026-08-29 21:16:38.115+00",
+    "byOutcome": {
+      "ok": "37",
+      "refused": "120",
+      "error": "1"
+    },
+    "byStrategy": {
+      "CAUSE_LIST_BATCH": "50",
+      "<null>": "108"
+    }
+  },
+  "rawArtifacts": {
+    "count": "43",
+    "linkedToLedgerRow": "43",
+    "bytes": "1403885",
+    "newest": "2026-08-29 21:16:38.115+00"
+  },
+  "captcha": {
+    "accepted": 0,
+    "rejected": 0,
+    "note": "No CAPTCHA has been submitted. The solver is not wired to a live request; the measured PaddleOCR comparator evidence is retained separately and is not a solve count."
+  },
+  "parser": {
+    "state": "FIXTURE_BOUND",
+    "servedCauseListsSeen": 0,
+    "note": "The retained fixture is the licensed interface FORM, not a served cause list. The row-extraction half has never run against a real result table."
+  },
+  "observations": {
+    "written": "0",
+    "newest": null,
+    "transitions": "0",
+    "causeListSyncs": "0",
+    "idempotentReplays": 0,
+    "writerExists": true,
+    "writerPath": "services/api/src/court/ecourts-observation-writer.ts"
+  },
+  "sourceKeysCovered": 0,
+  "retentionMeasurements": {
+    "highCourt": "UNMEASURED",
+    "district": "UNMEASURED",
+    "note": "Every probe date meets the same CAPTCHA. A failed request, a 404 or an empty page is NOT evidence a historical list does not exist, so no availability class may be inferred."
+  },
+  "requestBudget": {
+    "encodedLimits": {
+      "minIntervalMs": 2000,
+      "perHour": 100,
+      "perDay": 1000
+    },
+    "spentToday": "66",
+    "spentThisHour": "1",
+    "note": "Against the conservative limits encoded in GRANT_CONDITIONS. These are OUR limits, stated by the repository, not necessarily the grant maximum."
+  },
+  "killSwitch": {
+    "key": "platform_config.ecourts_harvest",
+    "enabled": true,
+    "reason": "Founder correction 29 Aug 2026: the CAPTCHA blocker LCC raised was invented. CLAUDE.md 6a states three mechanical conditions for authorised bypass (grant live; only in ecourts.ts; every request ledgered and rate-limited) and no operational-basis requirement. Resuming the bounded cause-list pipeline under those three conditions.",
+    "updatedAt": "2026-08-29 17:33:52.9958+00"
+  }
+}

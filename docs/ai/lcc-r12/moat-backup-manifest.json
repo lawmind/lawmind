@@ -1,0 +1,211 @@
+{
+  "createdAt": "2026-08-29T21:23:53.634Z",
+  "database": "lawmind",
+  "tool": "scripts/lcc-moat-backup.mjs",
+  "dumpSeconds": 140.916,
+  "tables": [
+    {
+      "table": "users",
+      "why": "the advocates themselves"
+    },
+    {
+      "table": "auth_user",
+      "why": "sign-in identity"
+    },
+    {
+      "table": "auth_account",
+      "why": "sign-in identity"
+    },
+    {
+      "table": "matters",
+      "why": "client names, notes, hearing detail — the retention moat"
+    },
+    {
+      "table": "matter_events",
+      "why": "matter history"
+    },
+    {
+      "table": "matter_authorities",
+      "why": "what an advocate saved to a matter"
+    },
+    {
+      "table": "matter_shares",
+      "why": "who was given sight of a matter, and when — a conflicts record"
+    },
+    {
+      "table": "judgment_annotations",
+      "why": "an advocate's own highlights"
+    },
+    {
+      "table": "saved_searches",
+      "why": "a saved search is content the advocate asked us to keep"
+    },
+    {
+      "table": "documents",
+      "why": "metadata for uploads; the objects themselves are in R2"
+    },
+    {
+      "table": "briefings",
+      "why": "generated wedge content tied to a matter"
+    },
+    {
+      "table": "alerts",
+      "why": "what an advocate has and has not been told"
+    },
+    {
+      "table": "citation_copies",
+      "why": "the ONLY way to warn someone who filed a citation that later moved"
+    },
+    {
+      "table": "data_requests",
+      "why": "DPDP obligations with a clock on them"
+    },
+    {
+      "table": "training_consent_events",
+      "why": "consent history — DPDP s.6 evidence"
+    },
+    {
+      "table": "verification_cache",
+      "why": "a HUMAN solved a CAPTCHA and vouched — Tier 3"
+    },
+    {
+      "table": "citation_disputes",
+      "why": "trust feedback, and what an admin did about it"
+    },
+    {
+      "table": "audit_log",
+      "why": "append-only by design; re-deriving it is a contradiction in terms"
+    },
+    {
+      "table": "platform_config",
+      "why": "kill switches and flags, with their reasons"
+    },
+    {
+      "table": "judgment_citations",
+      "why": "resolved citation edges — the citator itself"
+    },
+    {
+      "table": "judgment_citation_aliases",
+      "why": "the concordance exact search depends on"
+    },
+    {
+      "table": "judgment_citation_keys",
+      "why": "citation identity keys"
+    },
+    {
+      "table": "judgment_date_quality",
+      "why": "date verdicts with their witnesses"
+    },
+    {
+      "table": "judgment_recovery_queue",
+      "why": "what is queued for OCR recovery and why"
+    },
+    {
+      "table": "judgment_text_recovery",
+      "why": "recovered text with digit_trust provenance"
+    },
+    {
+      "table": "judgment_statute_refs",
+      "why": "statute references, re-derived once already at cost"
+    },
+    {
+      "table": "statute_mappings",
+      "why": "BNS/BNSS/BSA transition evidence"
+    },
+    {
+      "table": "statute_sections",
+      "why": "statute text"
+    },
+    {
+      "table": "coverage_cell",
+      "why": "coverage truth per court-year"
+    },
+    {
+      "table": "hc_ingest_ledger",
+      "why": "the FAILURE side of ingest; source_url only records successes"
+    },
+    {
+      "table": "ecourts_observation",
+      "why": "RAW eCourts observations; the grant is spent, the observation is not repeatable"
+    },
+    {
+      "table": "ecourts_transition",
+      "why": "derived case-state transitions"
+    },
+    {
+      "table": "ecourts_fetch_ledger",
+      "why": "the only proof we stayed inside the registrar grant -- losing it loses the answer to \"did you\""
+    },
+    {
+      "table": "official_source_artifact",
+      "why": "the RAW retained response bytes -- a parser can be rewritten, discarded bytes cannot; each eCourts row cost a slot of a grant that expires"
+    },
+    {
+      "table": "lexeme_document_frequency",
+      "why": "the measured corpus sample the sparse ranker ranks with"
+    }
+  ],
+  "missingTables": [],
+  "rowCounts": {
+    "users": 529,
+    "auth_user": 283,
+    "auth_account": 3,
+    "matters": 3,
+    "matter_events": 1,
+    "matter_authorities": 0,
+    "matter_shares": 1,
+    "judgment_annotations": 2,
+    "saved_searches": 1,
+    "documents": 1,
+    "briefings": 0,
+    "alerts": 1,
+    "citation_copies": 1,
+    "data_requests": 0,
+    "training_consent_events": 1,
+    "verification_cache": 0,
+    "citation_disputes": 0,
+    "audit_log": 813,
+    "platform_config": 2,
+    "judgment_citations": 22406483,
+    "judgment_citation_aliases": 4394,
+    "judgment_citation_keys": 1431353,
+    "judgment_date_quality": 713136,
+    "judgment_recovery_queue": 73,
+    "judgment_text_recovery": 73,
+    "judgment_statute_refs": 905156,
+    "statute_mappings": 226,
+    "statute_sections": 36663,
+    "coverage_cell": 966,
+    "hc_ingest_ledger": 221319,
+    "ecourts_observation": 0,
+    "ecourts_transition": 0,
+    "ecourts_fetch_ledger": 168,
+    "official_source_artifact": 14223,
+    "lexeme_document_frequency": 128243
+  },
+  "files": {
+    "judgment-verdicts.csv.gz": {
+      "bytes": 369050164,
+      "sha256": "44925847b22ce8da15b68cbbf8d2f4ac560e11905a35b13fcd99c47e185e5664"
+    },
+    "moat.dump": {
+      "bytes": 1217421880,
+      "sha256": "fc00f98a4575648c4bc43d4f020491130784e54ffae01a519f1ea73d75477e64"
+    },
+    "schema.sql": {
+      "bytes": 211643,
+      "sha256": "658e6d05d1e29d73ba3cb8fb6902367bc70454e513a6777073ed5b6bdb79819d"
+    }
+  },
+  "excluded": {
+    "judgments": "rebuildable from the AWS Open Data buckets — 151 GB, deliberately not packed",
+    "judgment_paragraphs": "derived from judgments — 92 GB",
+    "judgment_chunks": "rebuildable at GPU cost — 9.4 GB"
+  },
+  "restore": {
+    "at": "2026-08-29T21:33:57.421Z",
+    "seconds": 567.205,
+    "verified": true,
+    "checksumMatch": true
+  }
+}
