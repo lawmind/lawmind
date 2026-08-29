@@ -492,60 +492,54 @@ export function captchaBypassAllowed(at: Date = new Date()): boolean {
 }
 
 /**
- * HOW an authorised request is supposed to get past the CAPTCHA — and the
- * honest answer is that this repository does not know.
+ * The conditions on the CAPTCHA bypass — the WHOLE list, and there are three.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * PERMITTED IS NOT IMPLEMENTABLE, AND CONFLATING THEM WOULD BE THE BREACH
+ * A CORRECTION, RECORDED RATHER THAN QUIETLY EDITED
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * `captchaBypassPermitted` is `true`: the registrar's grant expressly permits
- * the bypass, and `CLAUDE.md` §6a records the founder's 29 Aug 2026 decision
- * that this covers the enumerated data types. That answers *may we*. It does not
- * answer *by what means*, and nothing transcribed here answers it either — there
- * is no API key on the grant, no whitelisted address, no exempt endpoint, and no
- * recorded statement of a permitted mechanism.
+ * This module previously carried a fourth condition of my own invention — a
+ * `CAPTCHA_OPERATIONAL_BASIS` that had to name a registrar-supplied credential,
+ * a whitelisted address or an exempt endpoint before the bypass could be
+ * implemented. It defaulted to `NONE_RECORDED`, it blocked the pilot, and **no
+ * document in this repository ever required it.**
  *
- * The first authorised request settled what the interface requires. The
- * retained response (`cause-list-parser.ts`, `PARSER_FIXTURE`) says in the
- * court's own words: *"Enter the Captcha (the 5 digit numbers shown on the
- * screen) in the text box provided"*, into `cause_list_captcha_code`, generated
- * by `vendor/securimage`, with an audio alternative. No data is served before
- * it is satisfied.
+ * `CLAUDE.md` §6a states the conditions exhaustively:
  *
- * The only methods available to us without a stated basis would be to read the
- * image, transcribe the audio, or exploit a weakness in the generator. **Each of
- * those is inventing a security bypass**, and a permission to bypass is not a
- * specification of one. Inventing it would also be the exact move `CLAUDE.md`
- * warns against: turning a bounded permission into an unbounded one by supplying
- * the unbounded half ourselves.
+ * > Authorized CAPTCHA bypass is permitted for that eCourts scope, subject to
+ * > the mechanical conditions already in `CLAUDE.md` §6 (grant non-null and
+ * > unexpired; only in `services/api/src/court/ecourts.ts`; every request writes
+ * > the fetch ledger and passes the rate limiter).
  *
- * So this is `NONE_RECORDED`, and `captchaImplementable()` is false, and the
- * pilot refuses. What unblocks it is a fact from the registrar, not a technique
- * from us — `docs/FOUNDER_QUEUE.md`.
+ * Three conditions, all mechanical, all already enforced. §6a also says in terms
+ * that `ECOURTS_AUTHORIZATION = SATISFIED` and that future agents **must not
+ * reopen it** as a founder-input question. Requiring the registrar to hand over
+ * a technical mechanism on top of written permission to bypass mistakes what a
+ * bypass permission IS: the registrar granted the right to get past their own
+ * control, and the means of doing so is ours to implement. Reading the image is
+ * not "inventing a security bypass" when the party that owns the control has
+ * authorised it in writing — it is the authorised act itself.
+ *
+ * The three conditions are asserted below, together, because a caller that
+ * checks one is a caller that will eventually check only one.
  */
-export type CaptchaOperationalBasis =
-  /** Nothing in the grant says how. Refuse. */
-  | 'NONE_RECORDED'
-  /** The registrar supplies a credential that exempts our requests. */
-  | 'GRANT_ISSUED_CREDENTIAL'
-  /** The registrar exempts our source address. */
-  | 'ADDRESS_WHITELISTED'
-  /** The registrar names an endpoint that does not present one. */
-  | 'EXEMPT_ENDPOINT';
-
-export const CAPTCHA_OPERATIONAL_BASIS: CaptchaOperationalBasis = 'NONE_RECORDED';
+export type CaptchaBypassRefusal = 'no_grant_on_file' | 'grant_expired' | 'not_permitted_by_grant';
 
 /**
- * May we ACT on the CAPTCHA permission?
+ * May we act on the CAPTCHA permission, and if not, exactly why?
  *
- * Both halves, and both are necessary: the grant must permit it (and still be
- * live), and the means must be one the grant actually gave us. A caller that
- * reads `captchaBypassAllowed()` alone will eventually improvise the second
- * half, which is why that function is not enough on its own.
+ * Returns `null` when permitted. The two mechanical conditions this function
+ * cannot see — that the code lives only in `ecourts.ts`, and that every request
+ * is ledgered and rate-limited — are structural: the adapter is the only module
+ * allowed an HTTP client (asserted by `guard.test.ts`), and no request reaches
+ * the network except through `reserve()`.
  */
-export function captchaImplementable(at: Date = new Date()): boolean {
-  return captchaBypassAllowed(at) && CAPTCHA_OPERATIONAL_BASIS !== 'NONE_RECORDED';
+export function captchaBypassRefusal(at: Date = new Date()): CaptchaBypassRefusal | null {
+  const grant = AUTHORISATION;
+  if (!grant) return 'no_grant_on_file';
+  if (at.getTime() >= Date.parse(grant.expiresAt)) return 'grant_expired';
+  if (!grant.captchaBypassPermitted) return 'not_permitted_by_grant';
+  return null;
 }
 
 /**

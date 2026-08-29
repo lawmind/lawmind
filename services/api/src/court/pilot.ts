@@ -12,14 +12,15 @@
  * available — there is no actor row, no attribution in the runtime environment,
  * the kill switch is off, and the parser has never seen a response.
  *
- * **Updated 29 Aug 2026, after the first authorised request.** Two of those four
- * are now false: there IS an actor row, there IS attribution in the runtime
- * environment, the switch is ON through the audited path, and the parser has
- * seen a response. What replaced them is narrower and worse for the pilot: the
- * licensed cause-list interface serves no data until a CAPTCHA is satisfied, and
- * the grant permits the bypass without saying by what means
- * (`CAPTCHA_OPERATIONAL_BASIS`). So the pilot still refuses, and now refuses for
- * a reason only the registrar can clear.
+ * **Updated 29 Aug 2026, after the first authorised request.** All four are now
+ * false: there IS an actor row, there IS attribution in the runtime environment,
+ * the switch is ON through the audited path, and the parser has seen a response.
+ *
+ * A `captcha_implementation_blocked` blocker briefly stood here and has been
+ * removed. It required the registrar to supply a technical mechanism on top of
+ * written permission to bypass, which no document in this repository asks for —
+ * `CLAUDE.md` §6a lists three mechanical conditions and that is the whole list.
+ * See `authorisation.captchaBypassRefusal`.
  *
  * So the pilot exists as a value that can be read, tested and reviewed, and it
  * is **not** registered as a runnable task. A disabled job in a scheduler is one
@@ -37,7 +38,7 @@
  * their real costs are known, and implementing a second strategy before the
  * first has ever returned a byte would be building on an assumed cost model.
  */
-import { AUTHORISATION, CAPTCHA_OPERATIONAL_BASIS, captchaImplementable } from './authorisation.ts';
+import { AUTHORISATION, captchaBypassRefusal } from './authorisation.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, PARSER_STATE } from './ecourts.ts';
 import { type Db, killSwitchEnabled, type ObservationStrategy } from './guard.ts';
 
@@ -97,15 +98,13 @@ export type PilotBlocker =
   | 'pilot_disabled'
   | 'parser_needs_authorized_fixture'
   /**
-   * The grant permits the bypass and does not say how.
+   * The GRANT does not permit the bypass — expired, absent, or silent on it.
    *
-   * Separate from `parser_needs_authorized_fixture` on purpose: the parser is
-   * now written against a real retained response, so that blocker is cleared and
-   * this one is not. Collapsing them would make a solved problem and an
-   * unsolved one indistinguishable, and would hide which of the two the founder
-   * can actually do something about.
+   * This is the grant's own state, not a judgement about technique. It replaces
+   * a `captcha_implementation_blocked` blocker that demanded the registrar hand
+   * us a mechanism; `CLAUDE.md` §6a asks for no such thing.
    */
-  | 'captcha_implementation_blocked'
+  | 'captcha_bypass_not_permitted'
   | 'source_key_unresolved'
   | 'terms_not_on_file'
   | 'attribution_not_on_file'
@@ -124,7 +123,7 @@ export async function pilotBlockers(sql: Db): Promise<PilotBlocker[]> {
   if (PARSER_STATE !== 'FIXTURE_BOUND') {
     blockers.push('parser_needs_authorized_fixture');
   }
-  if (!captchaImplementable()) blockers.push('captcha_implementation_blocked');
+  if (captchaBypassRefusal() !== null) blockers.push('captcha_bypass_not_permitted');
   if (
     ECOURTS_PILOT.sourceKey.court === 'PENDING_ACTIVATION' ||
     ECOURTS_PILOT.sourceKey.establishment === null
@@ -143,12 +142,10 @@ export class PilotRefused extends Error {
   constructor(blockers: PilotBlocker[]) {
     super(
       `the eCourts pilot is not runnable: ${blockers.join(', ')}` +
-        // Named in the message because this is the one blocker nobody here can
-        // clear by writing code, and an operator reading "captcha_implementation
-        // _blocked" deserves to be told immediately that the missing thing is a
-        // fact from the registrar rather than an unfinished function.
-        (blockers.includes('captcha_implementation_blocked')
-          ? ` (captcha operational basis on the grant: ${CAPTCHA_OPERATIONAL_BASIS})`
+        // The grant's own reason, because "not permitted" has three causes and
+        // only one of them (expiry) is something anyone can act on.
+        (blockers.includes('captcha_bypass_not_permitted')
+          ? ` (grant says: ${captchaBypassRefusal() ?? 'permitted'})`
           : ''),
     );
     this.blockers = blockers;

@@ -43,9 +43,8 @@ import postgres from 'postgres';
 import {
   AUTHORISATION,
   attributionWireSafety,
-  CAPTCHA_OPERATIONAL_BASIS,
   captchaBypassAllowed,
-  captchaImplementable,
+  captchaBypassRefusal,
   CONDITIONS_VERSION,
 } from '../services/api/src/court/authorisation.ts';
 import {
@@ -240,14 +239,14 @@ try {
       attribution: attributionWireSafety(),
       captcha: {
         bypassPermittedByGrant: captchaBypassAllowed(),
-        operationalBasis: CAPTCHA_OPERATIONAL_BASIS,
-        implementable: captchaImplementable(),
+        grantRefusal: captchaBypassRefusal(),
         note:
-          'The grant permits the bypass and does not say by what means. The licensed cause-list ' +
-          'interface serves no data until cause_list_captcha_code is satisfied (securimage, with ' +
-          'an audio alternative), observed directly in the retained response. Reading the image, ' +
-          'transcribing the audio or exploiting the generator would each be inventing a security ' +
-          'bypass, so this is CAPTCHA_IMPLEMENTATION_BLOCKED and only the registrar can clear it.',
+          'CLAUDE.md 6a permits authorised bypass for the enumerated eCourts scope under three ' +
+          'mechanical conditions: the grant is non-null and unexpired, the code lives only in ' +
+          'court/ecourts.ts, and every request writes the fetch ledger and passes the rate ' +
+          'limiter. That is the whole list. An earlier version of this artifact reported a ' +
+          'fourth condition of its own invention (a registrar-supplied "operational basis") and ' +
+          'blocked the pilot on it; no document in this repository requires one.',
       },
     },
 

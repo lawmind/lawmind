@@ -44,7 +44,9 @@
     "measure:round": "tsx src/search/round-measure-cli.ts",
     "resolver:dryrun": "tsx src/citations/resolver-dryrun-cli.ts",
     "release:candidate": "tsx src/release/candidate-cli.ts",
-    "ecourts:capture": "tsx src/court/raw-capture-cli.ts"
+    "ecourts:capture": "tsx src/court/raw-capture-cli.ts",
+    "ecourts:captcha-sample": "tsx src/court/captcha-sample-cli.ts",
+    "ecourts:canary": "tsx src/court/cause-list-canary-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

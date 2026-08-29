@@ -308,7 +308,7 @@ suite('an authorised response is retained before it is understood', () => {
    * retained artifact, parser, observation writer, all in one transaction - and
    * it proves nothing about what a served eCourts cause list looks like, because
    * no served cause list has been seen: the CAPTCHA stands in front of one
-   * (`authorisation.CAPTCHA_OPERATIONAL_BASIS`). Its headers are the labels the
+   * until a CAPTCHA is satisfied. Its headers are the labels the
    * real retained response publishes in its own translation dictionary, which is
    * the closest thing to evidence available without satisfying the CAPTCHA.
    */
@@ -548,7 +548,11 @@ suite('the eCourts pilot is defined and disabled', () => {
      * the new one and not the old one is the point — they are different
      * problems, and only one of them is ours to solve.
      */
-    assert.ok(blockers.includes('captcha_implementation_blocked'));
+    // The grant permits the bypass, so this blocker must be ABSENT. It briefly
+    // existed as `captcha_implementation_blocked`, which demanded the registrar
+    // supply a mechanism on top of written permission; CLAUDE.md 6a asks for no
+    // such thing, and asserting its absence is what keeps it from coming back.
+    assert.ok(!blockers.includes('captcha_bypass_not_permitted'));
     assert.ok(!blockers.includes('parser_needs_authorized_fixture'));
     await assert.rejects(assertPilotRunnable(sql), (error: unknown) => {
       assert.ok(error instanceof PilotRefused);
