@@ -283,6 +283,52 @@ never had one, and autovacuum's cost throttle
 
 ---
 
+## 3b. THE FRESHNESS OBJECT SHIPPED AT 53 SECONDS, AND THAT WAS CAUGHT BY DRIVING THE ROUTE
+
+The unit tests called `buildFreshnessObject()` directly and passed in
+milliseconds. Driving `GET /corpus/freshness/object` through the real app
+reported `computeMs` **53,314**. A test that exercises the function and not the
+route cannot see that, which is the same shape as `built-but-unreachable` from
+the other direction: reachable, and unusable.
+
+The cause was the court x month query, and it was a missing composite:
+
+```
+Index Scan using judgments_judgment_date_idx
+  rows 846,963
+  Buffers: shared hit=215,721 read=613,220     -- 4.8 GB, random
+Execution Time: 42,353 ms
+```
+
+`judgments` carried `(court)` and `(judgment_date)` separately and nothing over
+the pair, so a query needing both took the date index and went to the heap for
+every match — three quarters of a page per row.
+
+**Migration 0094**, built `CONCURRENTLY` on production and plainly in the
+migration for fresh installs:
+
+| | before | after |
+| --- | ---: | ---: |
+| plan | Index Scan + heap | **Index Only Scan** |
+| Heap Fetches | ~846,963 | **141** |
+| buffers | 828,941 | **104,955** |
+| query | 42,353 ms | **363 ms** (117×) |
+| **endpoint `computeMs`** | **53,314 ms** | **1,297 ms** (41×) |
+
+135 MB, not the ~750 MB estimated — btree deduplication compresses
+`(judgment_date, court)` heavily because the pair repeats enormously.
+
+**It is not a one-endpoint index.** `search/retrieve.ts` filters on `j.court` and
+`j.judgment_date` together on every filtered search — `courtWhere()` plus
+`dateFrom`/`dateTo`, in both arms. That is a PD-10 product shape, and it had been
+paying the same heap cost unmeasured.
+
+The leading column is `judgment_date` because the date is the RANGE predicate and
+the court is the equality/grouping one. The reverse order would serve
+`court = ? AND date BETWEEN ?` but not `date >= ?` alone.
+
+---
+
 ## 4. WHAT THIS ROUND DOES NOT CLAIM
 
 - §2.2's "the vacuum did not help" is **superseded by §2.5**. It was true of the

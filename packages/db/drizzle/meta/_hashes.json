@@ -95,6 +95,7 @@
     "0090_official_source_artifacts": "5451f047737171f9ba737a666811c93934e324a751622955184b5f5580629812",
     "0091_statute_ref_resolution": "0c9f640b70fdca110592e2dcf0adc89438e321b8c2b42358feb30a4e6823e70b",
     "0092_judgment_row_provenance": "88b2d59b99bf7d6d9e59d6d76b2917adb5d2bf8fcedae8bb2569688bbaaf91e9",
-    "0093_reachable_autovacuum_thresholds": "f64dee0e628fbed00f4af42b7f804e18b035b98ef42166c7a1e8b27cab13e3d5"
+    "0093_reachable_autovacuum_thresholds": "f64dee0e628fbed00f4af42b7f804e18b035b98ef42166c7a1e8b27cab13e3d5",
+    "0094_judgments_date_court_index": "0d753770ddb577e002ed16a7ac6b9483b7c99eda6cd8e6515ecd767027c71964"
   }
 }
