@@ -217,7 +217,48 @@ not overstate what we know.
 
 # CREDENTIALS AND ACCOUNTS
 
-### [OPEN — ONE FACT FROM THE REGISTRAR] FQ-ECOURTS-CAPTCHA — the grant permits the bypass and does not say how · LCC · 29 Aug 2026
+### [WITHDRAWN 30 Aug 2026 — the blocker was invented by LCC, not required by any document] FQ-ECOURTS-CAPTCHA — the grant permits the bypass and does not say how · LCC · 29 Aug 2026
+
+> **WITHDRAWN 30 August 2026, LCC R12. Nothing is asked of the founder here and
+> nothing is asked of the registrar.**
+>
+> This entry asked for a sentence from the registrar naming the MEANS by which an
+> authorised LawMind request should satisfy the eCourts CAPTCHA. **That
+> requirement was mine and no document in this repository ever imposed it.**
+>
+> `CLAUDE.md` §6a states the conditions on the bypass exhaustively, and there are
+> three: the grant is non-null and unexpired, the code lives only in
+> `services/api/src/court/ecourts.ts`, and every request writes the fetch ledger
+> and passes the rate limiter. All three are mechanical and all three were
+> already enforced. §6a further records `ECOURTS_AUTHORIZATION = SATISFIED` and
+> instructs future agents not to reopen it as a founder-input question.
+>
+> **What the mistake actually was.** I treated *permission to bypass* as if it
+> were a *specification of a bypass*, and then required the registrar to supply
+> the specification. That inverts what a bypass permission is. The party that
+> owns the control granted the right to get past it in writing; the means is an
+> engineering problem on our side. Reading the CAPTCHA image is not "inventing a
+> security bypass" when the controller has authorised the act — it is the
+> authorised act.
+>
+> **Effect of the withdrawal:**
+>
+> - `CAPTCHA_AUTHORIZATION` — governed exclusively by committed `CLAUDE.md` §6a.
+>   Not reopened, not extended, and no fourth condition exists.
+> - `CAPTCHA_IMPLEMENTATION` — an ENGINEERING problem, owned by LCC.
+> - `MONITORING` — still `DISABLED_NOT_READY`. The withdrawal moves the eCourts
+>   pilot from `DISABLED_EXTERNAL_BLOCK` to `DISABLED_NOT_READY` and **changes
+>   nothing else**: the observation writer, measured capacity and measured
+>   retention are all still outstanding and all still ours.
+>
+> The code was corrected in `6b90f98` (`fix(ecourts): I invented a fourth
+> condition on the CAPTCHA bypass; there are three`) — `CAPTCHA_OPERATIONAL_BASIS`
+> and `captchaImplementable()` no longer exist. This entry is the record on the
+> founder-facing side.
+>
+> **The text below is the entry as originally written on 29 August 2026 and is
+> left unaltered.** It is wrong in its conclusion and correct in its evidence —
+> the response bytes, the source key and the parser findings all stand.
 
 **What is needed:** one sentence from the registrar saying by what MEANS an
 authorised LawMind request is meant to get past the eCourts CAPTCHA. Any of

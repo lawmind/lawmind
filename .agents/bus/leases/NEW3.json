@@ -1,0 +1,14 @@
+{
+  "lane": "NEW3",
+  "sessionId": "cf361883-3d84-4030-b33f-279e36e666ad",
+  "pid": 23320,
+  "pidName": "claude.exe",
+  "pidCreatedAt": "2026-08-29T20:08:54.8540880+04:00",
+  "host": "XC",
+  "acquiredAt": "2026-08-29T18:30:36.982Z",
+  "heartbeatAt": "2026-08-29T18:30:36.982Z",
+  "task": "NEW3 Sprint 2: commit docs/product v1 definition, registry, acceptance evidence, plan + founder queue entries. Docs and scripts only, no services/ code.",
+  "progress": null,
+  "state": "RELEASED",
+  "releasedAt": "2026-08-29T18:30:51.522Z"
+}

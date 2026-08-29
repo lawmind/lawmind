@@ -15,28 +15,35 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 - [x] `LCC_R11_PRESENT` — `6b90f98` is an ancestor of HEAD
 - [x] `NEW1_R11_PRESENT` — `edac0de` is an ancestor of HEAD
 - [x] `NEW3_R12_PRESENT` — `831c6c2` is HEAD itself
-- [ ] Stale leases cleaned ONLY after proving the owning process/session is dead
+- [x] Lease audit: **nothing stale, nothing cleaned.** All five resource leases
+      are RELEASED except `HEAVY_BOX`, HELD by NEW1 and `HEALTHY_BY_PROGRESS`
+      (heartbeat 4m, metric `count(*) FROM new1_doc_vector_stage` rising
+      2,818,114 -> 2,820,502). The trap worth recording: NEW1's LANE lease reads
+      DEAD while its WORKERS are alive, because a lane lease tracks the agent
+      session and the workers run under Task Scheduler against the resource
+      lease. Deleting another lane's dead session marker buys nothing and would
+      read as "NEW1 is not running", so none were touched.
 - [x] NEW1 coarse walk + doc-vector embed + NEW2 citations-cli confirmed RUNNING, untouched
 
 ## 1. Retract the false CAPTCHA blocker
 
-- [ ] `FQ-ECOURTS-CAPTCHA` corrected by APPENDED record (history not rewritten)
-- [ ] `docs/CURRENT_PLAN.md` R11 false-blocker wording corrected
-- [ ] `docs/ai/lcc-r11/LCC_R11_ECOURTS_CONTINUATION.md` carries a correction notice
-- [ ] Capability registry / status files relying on the blocker corrected
-- [ ] NEW corrective bus messages issued (1521-1525 remain immutable)
-- [ ] `AUTHORIZATION_REOPENED = no` held throughout
+- [x] `FQ-ECOURTS-CAPTCHA` corrected by APPENDED record (history not rewritten)
+- [x] `docs/CURRENT_PLAN.md` R11 false-blocker wording corrected
+- [x] `docs/ai/lcc-r11/LCC_R11_ECOURTS_CONTINUATION.md` carries a correction notice
+- [x] Capability registry / status files relying on the blocker corrected
+- [x] NEW corrective bus messages issued (1521-1525 remain immutable)
+- [x] `AUTHORIZATION_REOPENED = no` held throughout
 
 ## 2. Fix the wrong M0 evidence receipt
 
-- [ ] Older `18,947,807` receipt PRESERVED and RELABELLED as a pre-gate snapshot
-- [ ] New durable receipt created for the actual Gate-A M0
-- [ ] `upstreamUnique = 18,951,606` re-derived FROM SCRATCH, not copied from NEW2
-- [ ] manifest SHA `a72d9868...5ac50` cross-checked
-- [ ] 1,438 non-fixture partitions; per-partition identity/ETag/size/rows
-- [ ] canonical per-partition + overall identity-set digests
-- [ ] parity result SHA, freshness generation/body SHA, definition version/SHA
-- [ ] `SOURCE_BYTES_RETAINED` / `SOURCE_REFETCH_REQUIRED` stated honestly
+- [x] Older `18,947,807` receipt PRESERVED and RELABELLED as a pre-gate snapshot
+- [x] New durable receipt created for the actual Gate-A M0
+- [x] `upstreamUnique = 18,951,606` re-derived FROM SCRATCH, not copied from NEW2
+- [x] manifest SHA `a72d9868...5ac50` cross-checked
+- [x] 1,438 non-fixture partitions; per-partition identity/ETag/size/rows
+- [x] canonical per-partition + overall identity-set digests
+- [x] parity result SHA, freshness generation/body SHA, definition version/SHA
+- [x] `SOURCE_BYTES_RETAINED` / `SOURCE_REFETCH_REQUIRED` stated honestly
 
 ## 3. Embedding stage / snapshot_hash ownership
 
@@ -49,27 +56,27 @@ Legend: `[ ]` not started · `[~]` in progress · `[x]` done and verified ·
 
 - [x] Root cause READ FROM CODE, not inferred
 - [x] NEW3's fixture reproduced DYNAMICALLY from current data, spread across courts
-- [ ] Test set: full title, one party, two-party abbrev, punctuation variant,
+- [x] Test set: full title, one party, two-party abbrev, punctuation variant,
       common-name control, negative control
-- [ ] BEFORE measurement recorded (precision + latency)
-- [ ] Fix implemented — exact identifiers still win; case-FIRST; no person dossier
-- [ ] AFTER measurement recorded
-- [ ] Arbitrary concept queries proven NOT routed into the party path
-- [ ] `PARTY_SEARCH_AB1` verdict
+- [x] BEFORE measurement recorded (precision + latency)
+- [x] Fix implemented — exact identifiers still win; case-FIRST; no person dossier
+- [x] AFTER measurement recorded
+- [x] Arbitrary concept queries proven NOT routed into the party path
+- [x] `PARTY_SEARCH_AB1` verdict = **PASS** (party-only recall 3/6 -> 6/6, ranks 1-3)
 
 ## 5. AB-2 — filter-aware admission
 
-- [ ] Battery measured on CURRENT PostgreSQL first (no new engine, no router)
-- [ ] Queries: bail, anticipatory bail, quashing FIR, interim injunction, statute concept
-- [ ] Scopes: unfiltered, 1 court, court+month, court+year, court+statute, SC, small HC, large HC
-- [ ] Per query: eligible population, planner, index usage, rows scanned,
+- [x] Battery measured on CURRENT PostgreSQL first (no new engine, no router)
+- [x] Queries: bail, anticipatory bail, quashing FIR, interim injunction, statute concept
+- [x] Scopes: unfiltered, 1 court, court+month, court+year, court+statute, SC, small HC, large HC
+- [x] Per query: eligible population, planner, index usage, rows scanned,
       candidates, p50/p95, state
-- [ ] Smallest safe design chosen from the four candidates, with the losers' reasons
-- [ ] No `date_part(year, ...)`; sargable range predicates; no ILIKE where an index exists
-- [ ] `EXPLAIN (ANALYZE, BUFFERS)` on bounded fixtures only
-- [ ] Honest broad-query guard NOT deleted
-- [ ] Acceptance minimum met
-- [ ] `FILTERED_ADMISSION_AB2` verdict
+- [x] Smallest safe design chosen from the four candidates, with the losers' reasons
+- [x] No `date_part(year, ...)`; sargable range predicates; no ILIKE where an index exists
+- [x] `EXPLAIN (ANALYZE, BUFFERS)` on bounded fixtures only
+- [x] Honest broad-query guard NOT deleted
+- [x] Acceptance minimum met
+- [x] `FILTERED_ADMISSION_AB2` verdict = **PASS** (court-month `bail` refused -> 4.1 ms)
 
 ## 6. NEW3 data-trust API gaps (frozen contract — additive only)
 

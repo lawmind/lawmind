@@ -122,6 +122,22 @@ the generator would each be inventing a security bypass, so none was done.
 `CAPTCHA_OPERATIONAL_BASIS = NONE_RECORDED`; `FOUNDER_QUEUE.md`
 **FQ-ECOURTS-CAPTCHA** needs one sentence from the registrar.
 
+> **CORRECTED 30 August 2026, LCC R12. The paragraph above is wrong and is left
+> standing because rewriting it would hide the error.**
+>
+> There was no blocker. `CLAUDE.md` §6a states the conditions on the CAPTCHA
+> bypass exhaustively and there are three — grant non-null and unexpired, code
+> only in `services/api/src/court/ecourts.ts`, every request ledgered and rate
+> limited. A fourth condition requiring the registrar to name a MECHANISM was my
+> invention and appears in no document. `CAPTCHA_OPERATIONAL_BASIS` and
+> `captchaImplementable()` were removed in `6b90f98`; **FQ-ECOURTS-CAPTCHA is
+> WITHDRAWN** and asks nothing of the founder.
+>
+> Authorization is settled and is not reopened. What remains is engineering:
+> the request shape, the CAPTCHA solver, an observation writer, and the two
+> measurements — capacity and retention — that monitoring waits on.
+> `USER_MONITORING_PRODUCT` stays `DISABLED_NOT_READY` regardless.
+
 **Switch is OFF again**, through the audited path, reason recorded: canary NOT
 PASS (0 parsed observations), pilot not registered, nothing scheduled to use it.
 Quota spent 2/1000 day, 2/100 hour.

@@ -1,4 +1,26 @@
 {
+  "role": "PRE_GATE_SNAPSHOT",
+  "supersededBy": {
+    "artifact": "docs/ai/lcc-r12/m0-gate-a-receipt.json",
+    "relabelledAt": "2026-08-29T20:39:50.261Z",
+    "relabelledBy": "LCC R12, 30 August 2026",
+    "why": "THIS RECEIPT IS CORRECT AND IT IS NOT THE GATE-A M0. It was derived from the walk in .tmp-new2/upstream3, whose manifest sha256 is d5ae427c7f4a1786037e710969a178f33ea48611d105f9c8baa2d33c966dc0e5. The authoritative final Gate-A M0 used by NEW2 and FIFTH was derived from a LATER walk, .tmp-new2/m0-upstream, manifest sha256 a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50, observed 2026-08-29T13:47:48.008Z to 13:59:21.946Z. Two different walks of a bucket that writes daily give two different denominators, and both are true of their own moment: 18,947,807 here, 18,951,606 at the gate. Nothing here was miscomputed; it was mislabelled as the gate figure, and that is what is corrected.",
+    "thisSnapshot": {
+      "upstreamUnique": 18947807,
+      "manifestSha256": "d5ae427c7f4a1786037e710969a178f33ea48611d105f9c8baa2d33c966dc0e5",
+      "rowsRead": 20295796
+    },
+    "gateA": {
+      "upstreamUnique": 18951606,
+      "manifestSha256": "a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50",
+      "rowsRead": 20299598,
+      "canonicalIdentitySetDigest": "d746088bb736bf3f53da54c3a334fd45828749fac205628866d6ca58fd1f2afd",
+      "partitionDigestFold": "b9f414b52292794567d81961ec94096b6c5128ecaf6c4680c29f09c48a9a5653",
+      "nonFixturePartitionCount": 1438,
+      "definitionVersion": "HC_PARITY_V2_2026-08-29",
+      "definitionSha256": "1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7"
+    }
+  },
   "artifact": "LCC_M0_IDENTITY_RECEIPT",
   "version": "M0_IDENTITY_V1",
   "observedAt": "2026-08-29T16:30:10.229Z",

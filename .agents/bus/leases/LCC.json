@@ -1,20 +1,20 @@
 {
   "lane": "LCC",
-  "sessionId": "76b6b72f-c322-4563-8d8b-5544a5312a69",
-  "pid": 3848,
+  "sessionId": "65292fca-75ff-4662-9b1a-05623f6673a1",
+  "pid": 30480,
   "pidName": "claude.exe",
-  "pidCreatedAt": "2026-08-25T07:00:23.7945820+04:00",
+  "pidCreatedAt": "2026-08-29T23:49:35.4183570+04:00",
   "host": "XC",
-  "acquiredAt": "2026-08-25T03:14:23.769Z",
-  "heartbeatAt": "2026-08-25T03:14:23.769Z",
-  "task": "convergence sprint V2 §6 (LCC-0..LCC-9)",
+  "acquiredAt": "2026-08-29T20:40:41.980Z",
+  "heartbeatAt": "2026-08-29T20:40:41.980Z",
+  "task": "LCC R12: backend intelligence + eCourts + Sprint-2 serving foundation",
   "progress": null,
   "state": "HELD",
   "supersededOwner": {
-    "sessionId": "fa117007-d94c-4084-9cd9-8d72662ed80c",
-    "pid": 25036,
-    "health": "PID_RECYCLED",
-    "heartbeatAt": "2026-08-24T19:07:14.519Z",
+    "sessionId": "f94ab142-4aa8-404c-9128-d91953dd851c",
+    "pid": 22344,
+    "health": "DEAD",
+    "heartbeatAt": "2026-08-27T17:13:00.974Z",
     "takeoverReason": null
   }
 }

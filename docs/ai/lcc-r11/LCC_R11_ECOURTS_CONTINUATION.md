@@ -1,5 +1,43 @@
 # LCC R11 — post-Gate-A eCourts continuation
 
+> ## CORRECTION — 30 August 2026, LCC R12
+>
+> **The finding this document is built around is wrong, and the document is left
+> unaltered below so the error stays visible.**
+>
+> The section headed *"The finding this round exists to hand over"* concludes
+> that the grant permits a CAPTCHA bypass without specifying one, and therefore
+> that `CAPTCHA_OPERATIONAL_BASIS = NONE_RECORDED` blocks implementation. **No
+> document in this repository ever required an operational basis.** `CLAUDE.md`
+> §6a states the conditions exhaustively and there are three, all mechanical and
+> all already enforced: the grant is non-null and unexpired, the code lives only
+> in `services/api/src/court/ecourts.ts`, and every request writes the fetch
+> ledger and passes the rate limiter.
+>
+> The error was to read *permission to bypass* as requiring a *specification of a
+> bypass*, and then to ask the registrar for the specification. The controller of
+> the CAPTCHA authorised the act in writing; the means is ours to build.
+>
+> Corrected in `6b90f98` — `CAPTCHA_OPERATIONAL_BASIS` and
+> `captchaImplementable()` no longer exist. `FOUNDER_QUEUE.md`
+> **FQ-ECOURTS-CAPTCHA is WITHDRAWN**.
+>
+> **What in this document still stands, unchanged:** the retained response bytes
+> and their sha256; the five-dimension request identity read off the form; the
+> parser defect the fixture caught; the network-safety matrix; the isolated
+> schema fix for `platform_config`; and the quota accounting. Every measurement
+> here is good. One inference from them was not.
+>
+> **What does NOT follow from the withdrawal:** monitoring does not become ready.
+> The eCourts pilot moves from `DISABLED_EXTERNAL_BLOCK` to
+> `DISABLED_NOT_READY`, and the observation writer, measured capacity and
+> measured retention are all still outstanding.
+>
+> The M0 receipt recorded below is also superseded — see
+> `docs/ai/lcc-r12/m0-gate-a-receipt.json`. The `18,947,807` figure here is a
+> real, correctly derived PRE-GATE snapshot; the final Gate-A M0 is
+> `18,951,606`.
+
 **29 August 2026.** Founder-directed. Gate A had passed and was not reopened.
 The instruction was to continue eCourts engineering inside the committed
 written-authorisation controls, aiming at a durable, auditable longitudinal

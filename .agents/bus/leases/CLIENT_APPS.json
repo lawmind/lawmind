@@ -1,0 +1,15 @@
+{
+  "domain": "CLIENT_APPS",
+  "holder": "RCC",
+  "sessionId": "01a036ea-b1bc-7730-8322-b4b0fd6c7f30",
+  "pid": 11568,
+  "pidName": "codex.exe",
+  "pidCreatedAt": "2026-08-25T13:46:34.2417970+04:00",
+  "host": "XC",
+  "acquiredAt": "2026-08-25T03:19:00.921Z",
+  "heartbeatAt": "2026-08-25T10:56:30.000Z",
+  "task": "R7 RCC parking commit",
+  "scope": "apps/**",
+  "state": "RELEASED",
+  "releasedAt": "2026-08-25T10:57:16.7238521Z"
+}

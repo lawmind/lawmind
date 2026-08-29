@@ -1,0 +1,20 @@
+{
+  "lane": "NEW2",
+  "sessionId": "5a2ea479-2985-4cb6-8ebe-500cd0cd5c26",
+  "pid": 12396,
+  "pidName": "claude.exe",
+  "pidCreatedAt": "2026-08-29T17:45:37.7228690+04:00",
+  "host": "XC",
+  "acquiredAt": "2026-08-29T13:47:22.539Z",
+  "heartbeatAt": "2026-08-29T13:47:22.539Z",
+  "task": "Gate-A narrow: frozen-manifest M0 HC closure, provenance proof on new rows, canonical freshness publication + API equality, M1 post-snapshot delta",
+  "progress": null,
+  "state": "HELD",
+  "supersededOwner": {
+    "sessionId": "51b4c14c-40ee-4f01-8674-5128cd6f2937",
+    "pid": 30400,
+    "health": "DEAD",
+    "heartbeatAt": "2026-08-27T09:16:29.379Z",
+    "takeoverReason": "prior NEW2 holder session 51b4c14c pid 30400 last heartbeat 2026-08-27T09:16Z; session is gone"
+  }
+}

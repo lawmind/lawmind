@@ -1,0 +1,22 @@
+{
+  "domain": "DB_MIGRATION",
+  "holder": "LCC",
+  "sessionId": "0f864777-1ade-47ae-9840-dcc028e05c1e",
+  "pid": 28584,
+  "pidName": "claude.exe",
+  "pidCreatedAt": "2026-08-25T14:19:03.6704860+04:00",
+  "host": "XC",
+  "acquiredAt": "2026-08-25T11:27:20.592Z",
+  "heartbeatAt": "2026-08-25T11:27:20.592Z",
+  "task": "R7 LCC-P0 canonical migration truth: MIGRATION_TRUTH_MANIFEST_V1 + fresh-install proof on a disposable database",
+  "scope": "packages/db/drizzle/**, packages/db/src/migrate.ts, scripts/check-migration-journal.mjs",
+  "constraints": [
+    "no migration ordinal is chosen while this lease is held for the manifest phase",
+    "no migrate() run against the live lawmind database",
+    "all proving happens on a disposable database that is dropped afterwards"
+  ],
+  "state": "RELEASED",
+  "releasedAt": "2026-08-25T16:58:26.640Z",
+  "releasedBy": "LCC",
+  "releaseReason": "prior holder pid 28584 is DEAD; R7 file-scope lease superseded by MIGRATION_SLOT per R8.1 §4"
+}

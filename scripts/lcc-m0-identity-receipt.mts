@@ -90,6 +90,8 @@ type ProgressRow = {
   numRows?: number;
   rowsWritten?: number;
   error?: string;
+  /** When this partition finished. The receipt's observation window is built from these. */
+  at?: string;
 };
 
 const progress: ProgressRow[] = readFileSync(join(WALK, 'progress.jsonl'), 'utf8')
@@ -258,14 +260,44 @@ const partitionDigestFold = sha256(
 const definitionPath = 'docs/ai/new2-r10/hc-parity-definition-v2.json';
 const definition = JSON.parse(readFileSync(definitionPath, 'utf8')) as { definitionVersion: string };
 
+/** The walk's own observation window, read off its rows rather than asserted. */
+const walkWindow = ((): { first: string | null; last: string | null } => {
+  const times = walked.map((p) => p.at).filter((a): a is string => typeof a === 'string').sort();
+  return { first: times[0] ?? null, last: times[times.length - 1] ?? null };
+})();
+
 const receipt = {
   artifact: 'LCC_M0_IDENTITY_RECEIPT',
   version: 'M0_IDENTITY_V1',
   observedAt: new Date().toISOString(),
   measurement: {
-    /** When the publisher's object list was taken. Bound to the walk, not to now. */
-    upstreamManifestObservedAt: '2026-08-29T10:11:42.965Z',
-    walkStartedAt: ordered.length ? '2026-08-29T10:12:26Z' : null,
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * THESE WERE HARDCODED, AND A RECEIPT WITH A CONSTANT TIMESTAMP IS NOT A
+     * RECEIPT
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Both of these were string literals naming the R11 walk. Pointed at a
+     * different walk — which is exactly what `--walk` exists for — the script
+     * produced a receipt for the M0 that Gate A actually used, stamped with the
+     * observation window of a walk taken three and a half hours earlier. The
+     * digests would have been right and the provenance wrong, which is the more
+     * dangerous of the two failures because nothing looks broken.
+     *
+     * They are now read off the walk's own rows. `walkStartedAt` and
+     * `walkCompletedAt` are the min and max of the per-partition completion
+     * times, so the window is the walk's and cannot describe another one.
+     */
+    walkStartedAt: walkWindow.first,
+    walkCompletedAt: walkWindow.last,
+    /**
+     * **Null, honestly.** The publisher's object listing carries no observation
+     * timestamp of its own — `objects.json` is a bare array — so there is
+     * nothing here to record and inventing one from a file mtime would be a
+     * guess wearing a receipt's clothes. The walk window above bounds it: the
+     * manifest was taken at or before `walkStartedAt`.
+     */
+    upstreamManifestObservedAt: null,
     definitionVersion: definition.definitionVersion,
     definitionSha256: shaFile(definitionPath),
     definitionPath,
@@ -340,15 +372,35 @@ const receipt = {
   },
   reproducibility: {
     MEASUREMENT_REPRODUCIBLE: true,
+    /**
+     * **About the UPSTREAM PARQUET, and it is still false.** The publisher's
+     * bytes are not retained anywhere, by policy and by size.
+     */
     SOURCE_BYTES_RETAINED: false,
     SOURCE_REFETCH_REQUIRED: true,
+    /**
+     * The derived walk output is a THIRD state the two flags above could not
+     * express, and conflating it with either would be a false claim in one
+     * direction or the other.
+     *
+     * It is what this receipt was actually re-derived from — so the measurement
+     * was reproduced without touching the publisher — but it lives in a
+     * gitignored temp directory and is one `rm -rf` from gone. It is evidence
+     * today and it is not durable evidence.
+     */
+    DERIVED_WALK_RETAINED: existsSync(join(WALK, 'partitions')),
+    DERIVED_WALK_PATH: WALK,
+    DERIVED_WALK_DURABLE: false,
     note:
       'The per-partition ETags, row counts and identity digests let a re-derivation be compared ' +
-      'partition by partition. Neither the upstream parquet nor the derived NDJSON is retained — ' +
-      'both are gitignored bulk — so re-deriving means refetching from the publisher. A partition ' +
-      'whose ETag has moved since the recorded value CANNOT reproduce its digest, and that is a ' +
-      'change upstream, not a defect in this receipt. A hash alone would not have been full ' +
-      'reproducibility and this does not claim to be.',
+      'partition by partition. The UPSTREAM PARQUET is not retained — it is gitignored bulk — so ' +
+      'reproducing this measurement from the publisher means refetching, and a partition whose ' +
+      'ETag has moved since the recorded value CANNOT reproduce its digest, which is a change ' +
+      'upstream and not a defect in this receipt. The DERIVED walk output may still be on the box ' +
+      '(see DERIVED_WALK_RETAINED); where it is, the measurement can be re-derived locally without ' +
+      'any network at all, which is how this receipt was produced. That directory is not durable ' +
+      'and must not be treated as retention. A hash alone would not have been full reproducibility ' +
+      'and this does not claim to be.',
   },
   partitions,
   groups: groupReceipts,
