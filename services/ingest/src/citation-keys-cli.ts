@@ -97,6 +97,8 @@ const ONE_JUDGMENT = (() => {
   return i === -1 ? null : (process.argv[i + 1] ?? null);
 })();
 const PAGE = Number(process.env['CITATION_KEYS_PAGE'] ?? 20_000);
+const DIRTY_REBUILD_PAGE = Number(process.env['CITATION_KEYS_DIRTY_PAGE'] ?? 1_000);
+const DIRTY_REBUILD_MAX = Number(process.env['CITATION_KEYS_DIRTY_MAX'] ?? 10_000);
 
 /**
  * `--recheck <fromISO> <toISO>` — re-walk a bounded `created_at` range WITHOUT
@@ -362,14 +364,25 @@ const YEAR_RE = '(1[89][0-9][0-9]|20[0-9][0-9])';
  * 1406). Blocking a key whose judgment is gone is conservative under either
  * reading, so discharging only the provably-complete ones is safe under both.
  *
- * **NOT fixed here, and it is the larger half:** nothing in production clears a
- * dirty mark for ANY other reason either. `clearDirtyWork()` exists in
- * `services/api/src/citations/citation-key-dirty.ts`, documented as "called
- * INSIDE the transaction that rebuilds them", and its only callers are tests. The
- * intended design was never wired. That needs the rebuild path to name the
- * judgments it rebuilt and is a change to the citation pipeline, which
- * `CLAUDE.md` exempts from simplification — so it is reported with numbers rather
- * than half-wired by a round whose brief is plumbing.
+ * **CLOSED, and this paragraph used to say the opposite.** It read "nothing in
+ * production clears a dirty mark for ANY other reason either... the intended
+ * design was never wired", and `rebuildDirtyPage()` — which does exactly that
+ * — now sits a few lines below it. The rebuild was wired after this was
+ * written and this was not updated, so for a while the file's own documentation
+ * contradicted its own code. Corrected 29 Aug 2026.
+ *
+ * The general case is discharged by `rebuildDirtyPage()`: it selects dirty rows
+ * `FOR UPDATE SKIP LOCKED`, re-derives their keys, and DELETEs the marks in the
+ * SAME transaction, asserting `cleared === selected` so a partial clear raises
+ * rather than passing quietly. FIFTH drove it on the live path (bus 1429) and
+ * `citation_key_dirty` returned to 0.
+ *
+ * `clearDirtyWork()` in `services/api/src/citations/citation-key-dirty.ts` was
+ * REMOVED on 29 Aug 2026 rather than wired. It could never have been this step,
+ * for the reason stated immediately below: the two services do not import each
+ * other's `src/`, so the copy over there was unreachable from the only place
+ * that rebuilds keys. It had no callers at all by then, not even tests. The
+ * exact statement it ran is recorded where it used to live.
  *
  * Written here rather than imported from `services/api`: `services/ingest` and
  * `services/api` are separate deployables and do not import each other's `src/`
@@ -387,6 +400,61 @@ async function dischargeCompletedDeletions(): Promise<number> {
        )
     RETURNING judgment_id`;
   return rows.length;
+}
+
+/**
+ * Rebuild old-row INSERT/UPDATE identities and clear their dirty marks in the
+ * SAME transaction. A forward keyset cursor cannot revisit these rows, and a
+ * separate clear could outrun the work it claims completed.
+ */
+async function rebuildDirtyPage(): Promise<number> {
+  return sql.begin(async (tx) => {
+    const rows = await tx<{ judgment_id: string }[]>`
+      SELECT d.judgment_id::text
+        FROM citation_key_dirty d
+        JOIN judgments j ON j.id = d.judgment_id
+       ORDER BY d.noticed_at, d.judgment_id
+       LIMIT ${DIRTY_REBUILD_PAGE}
+       FOR UPDATE OF d SKIP LOCKED
+    `;
+    const ids = rows.map((row) => row.judgment_id);
+    if (ids.length === 0) return 0;
+
+    await tx`
+      DELETE FROM judgment_citation_keys
+       WHERE judgment_id = ANY(${ids}::uuid[])
+         AND source <> 'alias'
+    `;
+    await tx`
+      INSERT INTO judgment_citation_keys (citation_key, judgment_id, source, source_text, years)
+      SELECT upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g')), j.id, s, t,
+             coalesce(
+               (SELECT array_agg(DISTINCT m[1]) FROM regexp_matches(t, ${YEAR_RE}, 'g') AS m),
+               '{}'::text[]
+             )
+        FROM judgments j,
+             LATERAL (
+               SELECT 'neutral'::text AS s, j.neutral_citation AS t
+               WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> ''
+               UNION ALL
+               SELECT 'reporter'::text, rc
+                 FROM unnest(j.reporter_citations) rc WHERE rc <> ''
+             ) f(s, t)
+       WHERE j.id = ANY(${ids}::uuid[])
+         AND length(t) <= 512
+         AND length(upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g'))) BETWEEN 1 AND 512
+      ON CONFLICT (citation_key, judgment_id, source, source_text) DO NOTHING
+    `;
+    const cleared = await tx<{ judgment_id: string }[]>`
+      DELETE FROM citation_key_dirty
+       WHERE judgment_id = ANY(${ids}::uuid[])
+      RETURNING judgment_id::text
+    `;
+    if (cleared.length !== ids.length) {
+      throw new Error(`dirty rebuild selected ${ids.length} but cleared ${cleared.length}`);
+    }
+    return cleared.length;
+  });
 }
 
 async function derivePage(cursorAt: string, cursorId: string, upperBound: string) {
@@ -525,33 +593,39 @@ async function main() {
     // The UPDATE path. Delete-then-derive, because an edited judgment's OLD keys
     // are exactly the rows that must not survive — a stale key that still
     // resolves is the failure nobody sees.
-    await sql`DELETE FROM judgment_citation_keys WHERE judgment_id = ${ONE_JUDGMENT}::uuid AND source <> 'alias'`;
-    const [row] = await sql<{ created_at: string; id: string }[]>`
-      SELECT (created_at - interval '1 microsecond')::text AS created_at, id::text
-      FROM judgments WHERE id = ${ONE_JUDGMENT}::uuid`;
-    if (!row) {
-      console.error(`no judgment ${ONE_JUDGMENT}`);
-      process.exit(1);
-    }
-    // A one-row page: the cursor sits one microsecond before it, and PAGE is
-    // irrelevant because the id tuple bounds it.
-    const before = row.created_at;
-    const r = await sql`
-      INSERT INTO judgment_citation_keys (citation_key, judgment_id, source, source_text, years)
-      SELECT upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g')), j.id, s, t,
-             coalesce((SELECT array_agg(DISTINCT m[1]) FROM regexp_matches(t, ${YEAR_RE}, 'g') AS m), '{}'::text[])
-      FROM judgments j,
-           LATERAL (
-             SELECT 'neutral'::text AS s, j.neutral_citation AS t
-             WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> ''
-             UNION ALL
-             SELECT 'reporter'::text, rc FROM unnest(j.reporter_citations) rc WHERE rc <> ''
-           ) f(s, t)
-      WHERE j.id = ${ONE_JUDGMENT}::uuid
-        AND length(t) <= 512
-        AND length(upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g'))) BETWEEN 1 AND 512
-      ON CONFLICT (citation_key, judgment_id, source, source_text) DO NOTHING`;
-    console.log(`judgment ${ONE_JUDGMENT} (created_at ${before}): ${r.count} key(s) re-derived`);
+    const result = await sql.begin(async (tx) => {
+      const [row] = await tx<{ created_at: string; id: string }[]>`
+        SELECT (created_at - interval '1 microsecond')::text AS created_at, id::text
+          FROM judgments WHERE id = ${ONE_JUDGMENT}::uuid
+          FOR UPDATE`;
+      if (!row) return null;
+      await tx`
+        DELETE FROM judgment_citation_keys
+         WHERE judgment_id = ${ONE_JUDGMENT}::uuid AND source <> 'alias'`;
+      const inserted = await tx`
+        INSERT INTO judgment_citation_keys (citation_key, judgment_id, source, source_text, years)
+        SELECT upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g')), j.id, s, t,
+               coalesce((SELECT array_agg(DISTINCT m[1]) FROM regexp_matches(t, ${YEAR_RE}, 'g') AS m), '{}'::text[])
+        FROM judgments j,
+             LATERAL (
+               SELECT 'neutral'::text AS s, j.neutral_citation AS t
+               WHERE j.neutral_citation IS NOT NULL AND j.neutral_citation <> ''
+               UNION ALL
+               SELECT 'reporter'::text, rc FROM unnest(j.reporter_citations) rc WHERE rc <> ''
+             ) f(s, t)
+        WHERE j.id = ${ONE_JUDGMENT}::uuid
+          AND length(t) <= 512
+          AND length(upper(regexp_replace(t, '[^A-Za-z0-9]', '', 'g'))) BETWEEN 1 AND 512
+        ON CONFLICT (citation_key, judgment_id, source, source_text) DO NOTHING`;
+      const cleared = await tx`
+        DELETE FROM citation_key_dirty WHERE judgment_id = ${ONE_JUDGMENT}::uuid`;
+      return { before: row.created_at, keys: inserted.count, dirtyCleared: cleared.count };
+    });
+    if (!result) throw new Error(`no judgment ${ONE_JUDGMENT}`);
+    console.log(
+      `judgment ${ONE_JUDGMENT} (created_at ${result.before}): ${result.keys} key(s) re-derived; ` +
+        `${result.dirtyCleared} dirty mark(s) cleared in the same transaction`,
+    );
     return;
   }
 
@@ -612,6 +686,25 @@ async function main() {
     console.log(
       `discharged ${discharged.toLocaleString()} JUDGMENT_DELETED dirty mark(s) — ` +
         'their key rows were already removed by the foreign key',
+    );
+  }
+
+  let dirtyRebuilt = 0;
+  while (dirtyRebuilt < DIRTY_REBUILD_MAX) {
+    const rebuilt = await rebuildDirtyPage();
+    dirtyRebuilt += rebuilt;
+    if (rebuilt < DIRTY_REBUILD_PAGE) break;
+  }
+  if (dirtyRebuilt > 0) {
+    console.log(
+      `rebuilt ${dirtyRebuilt.toLocaleString()} dirty old-row judgment(s) and cleared their marks ` +
+        'inside the key transactions',
+    );
+  }
+  if (dirtyRebuilt >= DIRTY_REBUILD_MAX) {
+    console.log(
+      `dirty rebuild reached its ${DIRTY_REBUILD_MAX.toLocaleString()}-judgment bound; ` +
+        'the remaining marks stay fail-closed for the next scheduled pass',
     );
   }
 

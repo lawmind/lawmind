@@ -187,19 +187,52 @@ export async function readDirtyWork(sql: Sql): Promise<DirtyWorkSummary> {
   return { open, oldestNoticedAt: oldest, byReason, overCap: open > DIRTY_WINDOW_CAP };
 }
 
-/**
- * Clear the mark for judgments whose keys have actually been rebuilt.
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `clearDirtyWork()` WAS HERE. IT WAS SUPERSEDED, NOT FORGOTTEN.
+ * ─────────────────────────────────────────────────────────────────────────────
  *
- * **Called INSIDE the transaction that rebuilds them, never after it.** A clear
- * that commits separately can outrun the work it is vouching for, and the whole
- * point of this table is that nothing here expires on its own: a dirty row goes
- * away because something was done, not because time passed.
+ * It cleared the mark for judgments whose keys had been rebuilt, and its own
+ * doc comment said the load-bearing part: **called INSIDE the transaction that
+ * rebuilds them, never after it** — a clear that commits separately can outrun
+ * the work it is vouching for.
+ *
+ * Removed 29 Aug 2026 after inspecting the production lifecycle rather than the
+ * function. That lifecycle exists and is wired, in
+ * `services/ingest/src/citation-keys-cli.ts`:
+ *
+ *   `rebuildDirtyPage()`          selects dirty rows FOR UPDATE SKIP LOCKED,
+ *                                 re-derives the keys, and DELETEs the marks in
+ *                                 the SAME transaction — with an assertion that
+ *                                 cleared === selected, so a partial clear
+ *                                 raises instead of passing quietly.
+ *   `dischargeCompletedDeletions()` clears JUDGMENT_DELETED marks, and only
+ *                                 where no key row and no judgment survive.
+ *
+ * FIFTH exercised it on the live path (bus 1429): the SCI neutral-citation
+ * correction drove it and `citation_key_dirty` returned to 0, then the resolver
+ * risk replay re-ran clean — 406 adjudicated records, false_unique 0,
+ * materially_unsafe 0.
+ *
+ * **This function could never have been that step.** `services/ingest` and
+ * `services/api` are separate deployables and do not import each other's `src/`
+ * — `services/ingest/src/inferx.ts` states the rule and `citation-keys-cli.ts`
+ * says explicitly that it writes its own copy for that reason. So the version
+ * living here was unreachable from the only place that rebuilds keys.
+ *
+ * It had **no callers at all** at the point of removal — not production, and
+ * not tests either. `readDirtyWork()` and `dirtyKeysBlockingUnique()` above are
+ * both live (the admin monitor, the release manifest, and the resolver gate)
+ * and are untouched.
+ *
+ * **If a citation background-expansion job in `services/api` needs to discharge
+ * dirty work, this is the shape it wants**, and it is one revert away:
+ *
+ *     DELETE FROM citation_key_dirty
+ *      WHERE judgment_id = ANY($1::uuid[])
+ *     RETURNING judgment_id
+ *
+ * with the same non-negotiable condition — inside the rebuilding transaction,
+ * never after it. It is written out here rather than left dead in the file,
+ * because code with no caller is a claim nobody is checking.
  */
-export async function clearDirtyWork(sql: Sql, judgmentIds: readonly string[]): Promise<number> {
-  if (judgmentIds.length === 0) return 0;
-  const rows = await sql<{ judgment_id: string }[]>`
-    DELETE FROM citation_key_dirty
-     WHERE judgment_id = ANY(${[...judgmentIds]}::uuid[])
-    RETURNING judgment_id`;
-  return rows.length;
-}
