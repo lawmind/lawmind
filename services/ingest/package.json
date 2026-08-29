@@ -6,6 +6,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "sci": "tsx src/cli.ts",
+    "sci:recent": "tsx src/sci-live-cli.ts",
+    "verify:criminal-codes": "tsx src/verify-criminal-code-artifacts-cli.ts",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts src/**/*.test.ts",
     "statutes": "tsx src/statutes-cli.ts",
     "citations": "tsx src/citations-cli.ts",
