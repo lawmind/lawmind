@@ -743,9 +743,62 @@ overstate the gap. That is how it fell from 960 to 596.
 
 Seeded from indiacode.nic.in. Never model-generated. See `DOMAIN_TRUTH.md`.
 
+## workspaces
+
+**Added migration `0097`, 30 Aug 2026.** The owning container for a firm's work.
+NEW3 froze this model in `docs/product/NEW3_V1_PRODUCT_DEFINITION_R12.md` §8.
+
+`id` uuid pk · `owner_user_id` uuid fk→users cascade ·
+`kind` text check (personal|firm) default `personal` ·
+`display_name` text null · `created_at` timestamptz
+
+Unique partial: one row per `owner_user_id` where `kind = 'personal'`. A user
+with two personal workspaces has their matters split across two containers with
+nothing reporting it, so it is made unrepresentable rather than checked.
+
+**In v1 exactly one exists per account and it is invisible in the UI.** There is
+no enterprise surface, no invite flow and no role picker. `kind` exists so that a
+firm workspace is a new VALUE rather than a new table.
+
+Created automatically by the `users_personal_workspace` trigger (migration
+`0098`), not by the signup handler — two code paths insert into `users` today and
+a third could be added tomorrow.
+
+## workspace_members
+
+**Added migration `0097`.** The seam, present from day one so that adding a
+second member later is a ROW rather than a migration of every ownership check in
+the product.
+
+`workspace_id` uuid fk→workspaces cascade · `user_id` uuid fk→users cascade ·
+`role` text check (owner|member) default `owner` · `added_at` timestamptz ·
+pk (`workspace_id`, `user_id`)
+
+Index: btree on (`user_id`).
+
+**v1 never creates a second member.** Every row is the personal workspace's own
+owner.
+
+## monitoring_entitlements
+
+**Added migration `0097`. Frozen, and zero rows are written by v1.**
+
+`id` uuid pk · `workspace_id` uuid fk→workspaces cascade ·
+`matter_id` uuid null fk→matters cascade · `policy` text null ·
+`state` text check (never_attempted|active|suspended|degraded) default
+`never_attempted` · `created_at` timestamptz · unique (`workspace_id`,
+`matter_id`)
+
+It exists now so that when monitoring becomes real the entitlement is a row
+against a workspace rather than a column bolted onto a matter, and so the shape
+is fixed while nothing depends on it. `USER_MONITORING_PRODUCT` is
+`DISABLED_NOT_READY`; `state` defaults to the same `never_attempted` vocabulary
+the frozen wire contract already publishes for `lastObservationOutcome`.
+
 ## matters
 
-`id` uuid pk · `user_id` uuid fk→users · `case_title` text · `cnr_number` text null ·
+`id` uuid pk · `user_id` uuid fk→users · `workspace_id` uuid fk→workspaces ·
+`case_title` text · `cnr_number` text null ·
 `court` text · `case_type` enum (criminal|civil) · `parties` jsonb ·
 `client_name` text · `our_side` enum
 (petitioner|respondent|accused|complainant|other) ·
@@ -753,6 +806,31 @@ Seeded from indiacode.nic.in. Never model-generated. See `DOMAIN_TRUTH.md`.
 `source` enum (manual|vendor) · `created_at` timestamptz
 
 Index: btree on (user_id, next_hearing_date) — the nightly sweep reads this.
+Index: btree on (workspace_id), migration `0097`.
+
+### Two ownership columns that cannot disagree
+
+`(workspace_id, user_id)` is a **composite foreign key into
+`workspace_members (workspace_id, user_id)`**, added by migration `0097`. A
+matter's user is therefore a member of that matter's workspace by database
+constraint, not by convention.
+
+That is what makes two columns safe. Ownership has exactly one answer — the
+workspace's members — and `user_id` degrades to *which member created it*.
+Pointing a matter at another tenant's workspace raises `23503`, asserted in
+`services/api/src/matters/workspace-isolation.test.ts`.
+
+The twelve ownership checks in `services/api/src` still read `user_id` and are
+correct while every workspace has one member. They move onto membership when the
+first two-partner firm signs up, and the constraint above is what guarantees the
+move cannot change who owns what.
+
+**`workspace_id` is filled by the database**, by the `matters_default_workspace`
+BEFORE INSERT trigger (migration `0099`), from the user's personal workspace when
+it is null. No caller supplies it — not `matters/route.ts`, not the admin CLI,
+not the fixtures — and **RCC's frozen contract does not gain a field**. An
+explicit value always wins, so the day a firm workspace is real this is a default
+and not a policy.
 
 ## matter_shares
 

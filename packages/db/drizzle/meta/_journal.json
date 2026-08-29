@@ -680,6 +680,27 @@
       "when": 1788004500000,
       "tag": "0096_ecourts_quota_reservation",
       "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "7",
+      "when": 1788036423424,
+      "tag": "0097_firm_ready_workspace_ownership",
+      "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1788036533676,
+      "tag": "0098_personal_workspace_is_automatic",
+      "breakpoints": true
+    },
+    {
+      "idx": 99,
+      "version": "7",
+      "when": 1788037236331,
+      "tag": "0099_matter_workspace_defaults_from_user",
+      "breakpoints": true
     }
   ]
 }

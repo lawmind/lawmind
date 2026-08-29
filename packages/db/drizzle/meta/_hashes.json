@@ -98,6 +98,9 @@
     "0093_reachable_autovacuum_thresholds": "f64dee0e628fbed00f4af42b7f804e18b035b98ef42166c7a1e8b27cab13e3d5",
     "0094_judgments_date_court_index": "0d753770ddb577e002ed16a7ac6b9483b7c99eda6cd8e6515ecd767027c71964",
     "0095_official_artifact_text_state": "d36f52a9a74ce35a4f4a495e3e4f00f47389bf85ff26a1527836fdbbc5e62e20",
-    "0096_ecourts_quota_reservation": "68e941e3c098855a6938cae4432906b6ebe75576e04fe7847b95adc13ebfffcd"
+    "0096_ecourts_quota_reservation": "68e941e3c098855a6938cae4432906b6ebe75576e04fe7847b95adc13ebfffcd",
+    "0097_firm_ready_workspace_ownership": "d673aa79f692ed5d2ea42e1799d70c5400b7c2034911db0705c9ea8fcc40ef5b",
+    "0098_personal_workspace_is_automatic": "7574971b150b95a136c6eee95d380a1923af29c8f6065bd4f0b3c7fde44140f1",
+    "0099_matter_workspace_defaults_from_user": "ca006c9977b937a37a90b97c18b859223fe97d686979aea9a5eb4a7f54bdc616"
   }
 }
