@@ -164,11 +164,17 @@ suite('a test cannot reach the production kill switches', () => {
         [...DEFAULT_KILL_SWITCHES].sort(),
         'the fixture seeds exactly the six keys the database CHECK constraint allows',
       );
-      assert.ok(rows.every((r) => r.enabled === false), 'every seeded switch starts OFF');
+      assert.ok(
+        rows.every((r) => r.enabled === false),
+        'every seeded switch starts OFF',
+      );
       // The CHECK `platform_config_kill_switch_reason` requires it, and copying
       // the constraint is the reason the fixture uses LIKE INCLUDING ALL rather
       // than a hand-written CREATE TABLE that would drift from the real one.
-      assert.ok(rows.every((r) => r.reason !== null), 'a kill switch always carries a reason');
+      assert.ok(
+        rows.every((r) => r.reason !== null),
+        'a kill switch always carries a reason',
+      );
     } finally {
       await isolation.drop();
     }

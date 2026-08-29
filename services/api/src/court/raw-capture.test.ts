@@ -166,10 +166,7 @@ suite('an authorised response is retained before it is understood', () => {
       // The refusal CODE, not a prose match. Four causes are distinguishable now
       // and an operator has to be told which one applies; `BODY` is a scrap of
       // HTML that is not a cause-list surface at all.
-      assert.match(
-        result.status === 'failed' ? result.error : '',
-        /^not_a_cause_list_response:/,
-      );
+      assert.match(result.status === 'failed' ? result.error : '', /^not_a_cause_list_response:/);
       assert.ok(result.artifactId, 'the response must be retained even though it was unreadable');
 
       const [artifact] = await tx<
@@ -362,7 +359,9 @@ suite('an authorised response is retained before it is understood', () => {
       assert.ok(rows.every((r) => r.source_artifact_id === result.artifactId));
       // The court's uncertainty survived the write, on every row.
       assert.ok(
-        rows.every((r) => (r.extraction_note ?? '').includes('may differ from the actual cause list')),
+        rows.every((r) =>
+          (r.extraction_note ?? '').includes('may differ from the actual cause list'),
+        ),
         'the source’s own warning must reach the record, not just the log',
       );
       assert.ok(

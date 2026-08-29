@@ -128,7 +128,10 @@ describe('representation is decided from bytes, not from the header', () => {
     // A soft 404 serving HTML under `application/pdf` has already cost this
     // corpus once. The header is advisory; the first five bytes are not.
     assert.equal(detectRepresentation(Buffer.from('%PDF-1.4\n...'), 'text/html'), 'pdf');
-    assert.equal(detectRepresentation(Buffer.from('<html><body>no</body></html>'), 'application/pdf'), 'html');
+    assert.equal(
+      detectRepresentation(Buffer.from('<html><body>no</body></html>'), 'application/pdf'),
+      'html',
+    );
     assert.equal(detectRepresentation(Buffer.from('{"rows":[]}'), 'text/html'), 'json');
   });
 
@@ -182,14 +185,20 @@ describe('the parser’s contract on shapes it has not met in the wild', () => {
     );
     assert.equal(result.status, 'ok');
     if (result.status !== 'ok') return;
-    assert.equal(result.items.length, 1, 'a silent drop is indistinguishable from an unlisted case');
+    assert.equal(
+      result.items.length,
+      1,
+      'a silent drop is indistinguishable from an unlisted case',
+    );
     assert.equal(result.items[0]!.extractionState, 'partial');
     assert.match(result.items[0]!.extractionNote ?? '', /item number/);
   });
 
   it('refuses a results table that identifies no case', () => {
     const result = parseCauseList(
-      page('<table><tr><th>Sr No</th><th>Case Stage</th></tr><tr><td>1</td><td>Arguments</td></tr></table>'),
+      page(
+        '<table><tr><th>Sr No</th><th>Case Stage</th></tr><tr><td>1</td><td>Arguments</td></tr></table>',
+      ),
       'text/html',
     );
     assert.equal(result.status, 'failed');

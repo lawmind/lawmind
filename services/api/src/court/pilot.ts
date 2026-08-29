@@ -37,11 +37,7 @@
  * their real costs are known, and implementing a second strategy before the
  * first has ever returned a byte would be building on an assumed cost model.
  */
-import {
-  AUTHORISATION,
-  CAPTCHA_OPERATIONAL_BASIS,
-  captchaImplementable,
-} from './authorisation.ts';
+import { AUTHORISATION, CAPTCHA_OPERATIONAL_BASIS, captchaImplementable } from './authorisation.ts';
 import { ECOURTS_CAUSE_LIST_ENDPOINT, PARSER_STATE } from './ecourts.ts';
 import { type Db, killSwitchEnabled, type ObservationStrategy } from './guard.ts';
 

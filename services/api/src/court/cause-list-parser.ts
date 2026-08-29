@@ -164,7 +164,9 @@ function decodeEntities(v: string): string {
 }
 
 function text(html: string): string {
-  return decodeEntities(html.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
+  return decodeEntities(html.replace(/<[^>]*>/g, ' '))
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
@@ -461,13 +463,11 @@ export function parseCauseList(body: Buffer, contentType: string | null = null):
     });
 
     const itemNumberText = at(columns.itemNumber);
-    const itemNumber = itemNumberText !== null && /^\d+$/.test(itemNumberText)
-      ? Number(itemNumberText)
-      : null;
+    const itemNumber =
+      itemNumberText !== null && /^\d+$/.test(itemNumberText) ? Number(itemNumberText) : null;
     const caseYearText = at(columns.caseYear);
-    const caseYear = caseYearText !== null && /^\d{4}$/.test(caseYearText)
-      ? Number(caseYearText)
-      : null;
+    const caseYear =
+      caseYearText !== null && /^\d{4}$/.test(caseYearText) ? Number(caseYearText) : null;
 
     /**
      * A row we could only half-read is written `partial` with the reason,

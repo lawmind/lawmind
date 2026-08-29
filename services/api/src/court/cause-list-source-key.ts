@@ -93,10 +93,7 @@ export type LegacyCourtSourceKey = {
 };
 
 export type CauseListSourceKey =
-  | HighCourtSourceKey
-  | DistrictSourceKey
-  | InterfaceProbeSourceKey
-  | LegacyCourtSourceKey;
+  HighCourtSourceKey | DistrictSourceKey | InterfaceProbeSourceKey | LegacyCourtSourceKey;
 
 /**
  * The value that goes in the ledger's `court` column.

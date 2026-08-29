@@ -128,7 +128,9 @@ try {
   console.log(`grant expires   ${AUTHORISATION?.expiresAt ?? '(no grant on file)'}`);
   console.log(`conditions      ${AUTHORISATION?.conditionsVersion ?? '(none)'}`);
   console.log(`attribution     ${grantAttribution() ? 'PRESENT (not printed)' : 'ABSENT'}`);
-  console.log(`captcha bypass  ${captchaBypassAllowed() ? 'permitted by the grant' : 'not permitted'}`);
+  console.log(
+    `captcha bypass  ${captchaBypassAllowed() ? 'permitted by the grant' : 'not permitted'}`,
+  );
   console.log(`kill switch     ${switchOn ? 'ON' : 'OFF'}`);
   console.log(
     `guard preflight ${decision.allowed ? 'ALLOWED' : `REFUSED (${decision.reason}) — ${decision.detail}`}`,
