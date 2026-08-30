@@ -46,7 +46,13 @@ const RCLONE = process.env['LAWMIND_RCLONE'] ?? 'C:\\lawmind\\bin\\rclone.exe';
 const PG_BIN = process.env['LAWMIND_PG_BIN'] ?? 'C:\\lawmind\\pgsql\\pgsql\\bin';
 const SCRATCH_ROOT = process.env['LAWMIND_RESTORE_SCRATCH'] ?? 'C:\\lawmind\\dump\\offsite-restore-proof';
 const PROBE_DB = `lawmind_offsite_restore_${process.pid}`;
-const REPORT = join(ROOT, 'docs', 'ai', 'lcc-r13', 'offsite-restore-proof.json');
+/**
+ * R14, not r13: the R13 proof is committed Gate-B evidence for the pack that
+ * existed then, and overwriting it would delete the record that a restore was
+ * proven BEFORE the identity map and the protected files were added. The two
+ * are meant to be comparable, not merged.
+ */
+const REPORT = process.env['LAWMIND_RESTORE_REPORT'] ?? join(ROOT, 'docs', 'ai', 'lcc-r14', 'offsite-restore-proof.json');
 
 function env() {
   const file = readFileSync(join(ROOT, '.env'), 'utf8');
@@ -447,6 +453,68 @@ async function main() {
     console.log('files     ABSENT from this pack — gold/manifest/worklist coverage is NOT proven');
   }
 
+
+  // ── 6c. THE EMBEDDING MODEL, FROM ITS OWN ENCRYPTED PREFIX ────────────────
+  /**
+   * Gate B asks for a restore that includes the current embedding model
+   * artifacts while their upstream revision remains unpinned. That is not a
+   * hypothetical: `onnx/model.onnx_data` matches NO published revision — 42,988
+   * bytes differ from the only blob of that size upstream has ever had — so the
+   * local weights ARE the canonical artifact and a copy of them is the only
+   * copy. `MODEL_REVISION = UNKNOWN` is an acceptable Gate-B state precisely
+   * BECAUSE the files are protected, which makes the protection the load-bearing
+   * half.
+   *
+   * So it is downloaded, decrypted and re-hashed against the committed identity
+   * manifest — never against `ENCRYPTION.json`, which was written by the tool
+   * that made the pack and would only prove that tool self-consistent.
+   */
+  const modelPrefix = val('--model-prefix');
+  const model = { checked: Boolean(modelPrefix) };
+  if (modelPrefix) {
+    const mCipher = join(work, 'model-cipher');
+    const mPlain = join(work, 'model-plain');
+    mkdirSync(mCipher, { recursive: true });
+    console.log(`model     R2:${bucket}/backups/postgres/${modelPrefix}/ -> ${mCipher}`);
+    const tModel = Date.now();
+    rclone(['copy', `R2:${bucket}/backups/postgres/${modelPrefix}/`, mCipher, '--transfers', '2', '--multi-thread-streams', '0'], { stdio: 'inherit' });
+    execFileSync(
+      process.execPath,
+      [join(ROOT, 'scripts', 'migration', 'encrypt-pack.mjs'), '--decrypt', '--in', mCipher, '--out', mPlain],
+      { cwd: ROOT, env: { ...process.env, R2_BACKUP_ENCRYPTION_KEY: key }, stdio: 'inherit' },
+    );
+    model.seconds = (Date.now() - tModel) / 1000;
+
+    const identityManifest = JSON.parse(
+      readFileSync(join(ROOT, 'docs', 'ai', 'lcc-r13', 'model-artifact-manifest.json'), 'utf8'),
+    );
+    model.identitySource = 'docs/ai/lcc-r13/model-artifact-manifest.json';
+    model.MODEL_REVISION = identityManifest.MODEL_REVISION ?? 'UNKNOWN';
+    const map = existsSync(join(mPlain, 'MODEL_MAP.json'))
+      ? JSON.parse(readFileSync(join(mPlain, 'MODEL_MAP.json'), 'utf8'))
+      : null;
+    model.mapPresent = Boolean(map);
+    model.files = [];
+    for (const f of identityManifest.artifacts?.files ?? []) {
+      const flat = map?.files?.find((m) => m.path === f.path)?.flatName ?? f.path.split('/').pop();
+      const at = join(mPlain, flat);
+      if (!existsSync(at)) {
+        model.files.push({ path: f.path, restored: false, why: 'MISSING_FROM_PACK' });
+        continue;
+      }
+      const bytes = statSync(at).size;
+      const sha256 = await sha256File(at);
+      const match = bytes === f.bytes && sha256 === f.sha256;
+      model.files.push({ path: f.path, restored: true, bytesExpected: f.bytes, bytesFound: bytes, sha256Expected: f.sha256, sha256Found: sha256, match });
+      console.log(`model     ${f.path.padEnd(46)} ${match ? 'MATCH' : 'MISMATCH'}`);
+    }
+    model.allMatch = model.files.length > 0 && model.files.every((f) => f.match === true);
+    if (!flag('--keep')) rmSync(mCipher, { recursive: true, force: true });
+    if (!flag('--keep')) rmSync(mPlain, { recursive: true, force: true });
+  } else {
+    console.log('model     NOT CHECKED — pass --model-prefix to include the weights in this proof');
+  }
+
   await probe.end();
   if (!flag('--keep')) {
     const a2 = adminSql();
@@ -462,7 +530,16 @@ async function main() {
     prefix,
     bucket,
     source: 'CLOUDFLARE_R2_FRESH_DOWNLOAD',
-    verdict: mismatchedRows.length === 0 ? 'RESTORE_PROVEN_FROM_OFFSITE' : 'HOLD_ROW_COUNT_MISMATCH',
+    verdict:
+      mismatchedRows.length > 0
+        ? 'HOLD_ROW_COUNT_MISMATCH'
+        : identity.present !== true || identity.canonicalIdentityReconstructible !== true
+          ? 'HOLD_CANONICAL_IDENTITY_NOT_RECONSTRUCTIBLE'
+          : protectedFiles.present !== true || protectedFiles.allVerified !== true
+            ? 'HOLD_PROTECTED_FILES_NOT_VERIFIED'
+            : model.checked && model.allMatch !== true
+              ? 'HOLD_MODEL_ARTIFACTS_NOT_RESTORED'
+              : 'RESTORE_PROVEN_FROM_OFFSITE',
     packCreatedAt: manifest.createdAt ?? null,
     encryption: { algorithm: encMeta.algorithm, keySource: encMeta.keySource },
     timings: {
@@ -476,6 +553,9 @@ async function main() {
     rowChecks,
     mismatchedRows,
     contentChecksum,
+    identity,
+    protectedFiles,
+    model,
     restore: {
       procedure: 'psql -f schema.sql, then pg_restore --data-only --disable-triggers',
       schemaExitCode: schemaRun.status,
