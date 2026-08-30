@@ -15,7 +15,13 @@ const states = (
   over: Partial<Record<ReleaseCapabilityName, ReleaseCapabilityState>> = {},
 ): Partial<Record<ReleaseCapabilityName, ReleaseCapabilityState>> => over;
 
-const CORE: SurfaceName[] = ['search', 'reader', 'savedAuthorities', 'matters'];
+const CORE: SurfaceName[] = [
+  'search',
+  'partyNameSearch',
+  'reader',
+  'savedAuthorities',
+  'matters',
+];
 const HELD: SurfaceName[] = [
   'drafting',
   'briefing',
@@ -57,6 +63,59 @@ describe('the v1 surface gate', () => {
     );
     expect(surfaceEnabled('reader', states({ 'judgment.reader': 'DISABLED' }))).toBe(false);
     expect(surfaceEnabled('matters', states({ 'matter.workspace': 'DISABLED' }))).toBe(false);
+  });
+
+  /**
+   * THE PLATFORM KILL SWITCH, R14 A4.9 — the one capability the server narrows
+   * per platform today, and the reason the resolved-per-platform view exists.
+   *
+   * Since R14 these states arrive ALREADY RESOLVED for the platform that asked
+   * (`api/client.ts` sends `X-Lawmind-Platform`), so narrowing needs no new rule
+   * here: it is the same server-may-close AND product-may-close gate, fed a
+   * value the server resolved. Flipping the switch is a served config change,
+   * not an App Store release, which is exactly why it must be tested rather than
+   * assumed unreachable.
+   */
+  it('party-name search closes when the server narrows it for this platform', () => {
+    expect(surfaceEnabled('partyNameSearch', states({ 'search.party_name': 'DISABLED' }))).toBe(
+      false,
+    );
+  });
+
+  it('party-name search is open when the server serves it, and before it answers', () => {
+    expect(surfaceEnabled('partyNameSearch', states({ 'search.party_name': 'ENABLED' }))).toBe(true);
+    // Cold start: hiding part of search because a metadata request has not
+    // returned would break search on a bad connection, and the SERVER enforces
+    // the switch regardless — it says so on the response.
+    expect(surfaceEnabled('partyNameSearch', states())).toBe(true);
+  });
+
+  /**
+   * NARROWING ONE ARM MAY NEVER NARROW ANOTHER. Exact identity is a separate
+   * row, and it is what the disabled-party degrade points the advocate at — a
+   * degrade that pointed at a path the same switch had closed would be worse
+   * than silence.
+   */
+  it('the party switch does not touch exact identity, the reader, or matters', () => {
+    const partyOff = states({ 'search.party_name': 'DISABLED' });
+    expect(surfaceEnabled('search', partyOff)).toBe(true);
+    expect(surfaceEnabled('reader', partyOff)).toBe(true);
+    expect(surfaceEnabled('savedAuthorities', partyOff)).toBe(true);
+    expect(surfaceEnabled('matters', partyOff)).toBe(true);
+  });
+
+  /**
+   * THE DIRECTION IS FIXED IN BOTH FILES. A platform override may take a
+   * capability DOWN and never UP (R14 A4.8), and independently the product
+   * decision closes first — so a server that started reporting ENABLED for a
+   * held surface still ships nothing.
+   */
+  it('a server ENABLED cannot open what the product closed, party row included', () => {
+    expect(
+      surfaceEnabled('semanticSearch', states({ 'search.semantic.broad': 'ENABLED' })),
+    ).toBe(false);
+    expect(V1_SURFACE.partyNameSearch.runtime).toBe('search.party_name');
+    expect(V1_SURFACE.partyNameSearch.v1).toBe('ENABLED_V1');
   });
 
   it('LIMITED is reachable — it is how most of this corpus honestly ships', () => {

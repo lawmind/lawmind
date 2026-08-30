@@ -26,6 +26,16 @@ export function treatmentRelationshipCopy(
       return `Doubted in ${laterJudgmentTitle}`;
     case 'none':
     case 'review_required':
+    /**
+     * R14 A5. `evidence_defect` was already safe here — it arrived as a value
+     * this client did not know and took the `default` arm, which is exactly the
+     * open-ended rule working. It is named now because the contract names it,
+     * and naming it records WHY it belongs in this group rather than leaving
+     * that to a future reader of the fallback: it means our own parser recorded
+     * something that was never a change of status. A defect in our parsing must
+     * subtract a warning, never add a prohibition, so it may never select a verb.
+     */
+    case 'evidence_defect':
     default:
       return `Later judgment: ${laterJudgmentTitle}`;
   }

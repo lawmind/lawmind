@@ -30,7 +30,12 @@ import { MatterPicker } from '../judgment/MatterPicker';
 import { Toast } from '../../components/Toast';
 import { haptics } from '../../theme/haptics';
 import { FiltersSheet } from './FiltersSheet';
-import { classifySearch, looksLikeBarePartyName, type SearchTruth } from './searchTruth';
+import {
+  classifySearch,
+  looksLikeBarePartyName,
+  partyArmDisabled,
+  type SearchTruth,
+} from './searchTruth';
 
 /**
  * Search — the first of the four core features.
@@ -213,26 +218,32 @@ export function SearchScreen({
   const [unpopulatedCourtCategories, setUnpopulatedCourtCategories] = useState<CourtCategory[]>([]);
 
   /**
-   * WHICH OF THE FIVE THINGS THE SERVER ACTUALLY SAID — `searchTruth.ts`.
+   * WHICH OF THE SIX THINGS THE SERVER ACTUALLY SAID — `searchTruth.ts`.
    *
    * Derived from the response, never from `results.length`, because a
-   * zero-length list is the one thing all five have in common. `refused` and
-   * `unknown` in particular may NEVER render as "no judgments matched": in
-   * neither case did we look.
+   * zero-length list is the one thing all six have in common. `refused`,
+   * `party_disabled` and `unknown` in particular may NEVER render as "no
+   * judgments matched": in none of the three did we look.
    */
   const [truth, setTruth] = useState<SearchTruth>('answered');
   /**
    * THE SERVER'S OWN REASON AND REMEDY for a refusal. `remedy` is
-   * `add_more_terms` — MORE SPECIFIC, never a filter, because `filters` is not
-   * consulted before the refusal (gap G-2). Offering a court or date filter
-   * here would be advice that cannot work.
+   * `add_more_terms`, and that is the server's word for it — the copy below
+   * also offers ONE NAMED COURT and a shorter date range, which R14 A7 confirms
+   * is a real second lever rather than advice that cannot work.
    */
   const [emptyBecause, setEmptyBecause] = useState<SearchEmptyBecause | null>(null);
 
   /**
-   * CASE-FIRST. True when the query reads as a bare party name — the highest-
-   * value gap in v1 search (`search.party_name_only`, measured zero twice).
-   * Used ONLY to ask for the cause title. Never to offer a person.
+   * WAS THE PARTY ARM SWITCHED OFF FOR THIS PLATFORM? — R14 A4.9. Read from the
+   * response, never from a local flag: the switch lives in the served capability
+   * registry, so a build cannot know its own state until the server answers.
+   */
+  const partyDisabled = partyArmDisabled(degraded);
+
+  /**
+   * CASE-FIRST. True when the query reads as a bare party name. Used ONLY to ask
+   * for the cause title. Never to offer a person.
    */
   const partyNameHint = useMemo(() => looksLikeBarePartyName(query), [query]);
 
@@ -499,12 +510,22 @@ export function SearchScreen({
           deliberately: a retried timeout is a second full-cost query, not a
           cheap correction — `Try again` in the failed/empty states below is
           the advocate's own choice to pay that cost again.
+
+          AND A SWITCHED-OFF ARM IS NOT A SLOW ONE. `party_name_disabled` is a
+          capability narrowed for this platform, not a budget that ran out, so
+          it gets its own sentence: R14 A4.9 requires the degrade to be VISIBLE
+          and truthful, and "could not complete in time" would be a plain
+          falsehood about why. Same neutral ink, same no-retry rule — here the
+          rule is absolute rather than a cost judgement, because retrying an
+          arm that is switched off can never succeed.
         */}
         {phase === 'done' && degraded.length > 0 ? (
           <View style={styles.degradedBanner}>
             <CircleAlert color={color.ink} size={16} strokeWidth={1.5} />
             <Text variant="ui" style={styles.degradedText}>
-              Showing partial results — one search method could not complete in time.
+              {partyDisabled
+                ? 'Searching by party name alone is turned off in this app right now. Case number, CNR, citation and the full cause title all still work.'
+                : 'Showing partial results — one search method could not complete in time.'}
             </Text>
           </View>
         ) : null}
@@ -531,6 +552,42 @@ export function SearchScreen({
             title="Search the corpus"
           />
         </View>
+      ) : truth === 'party_disabled' && results.length === 0 ? (
+        /**
+         * THE ARM WAS SWITCHED OFF, NOT OVERWHELMED — R14 A4.9.
+         *
+         * `search.party_name` is narrowed for this platform in the served
+         * capability registry, so a bare party name was never routed to the
+         * case-title probe. Four things this may never say, and each of them is
+         * a sentence some other empty state on this screen says truthfully:
+         *
+         *   · not "could not finish in time" — nothing timed out;
+         *   · not "could not complete" — nothing failed;
+         *   · not "no judgments matched" — nobody looked;
+         *   · and NO `Try again`, because a retry cannot ever change the answer.
+         *     Offering one would spend a full-cost query to reproduce the same
+         *     screen, which is worse than useless: it reads as flakiness.
+         *
+         * WHAT IT DOES SAY IS WHAT STILL WORKS. Exact identity is a separate
+         * capability, untouched by this switch and asserted so by committed
+         * server tests, so the alternatives named here are real paths and not
+         * consolation. And it stays CASE-FIRST: every alternative names a CASE.
+         * There is no person profile, no history and no dossier in this product,
+         * and nothing here offers to look one up.
+         */
+        <View style={styles.list}>
+          <EmptyState
+            actions={[
+              {
+                label: 'See what we hold',
+                onPress: () => router.push('/coverage' as never),
+                variant: 'secondary' as const,
+              },
+            ]}
+            body="Searching by a party's name alone is turned off in this app right now. You can still find the case by its case number, its CNR, its citation, or by typing the full cause title — “Satender Kumar Antil v. CBI”."
+            title="Party-name search is unavailable here"
+          />
+        </View>
       ) : truth === 'refused' ? (
         /**
          * WE DID NOT LOOK. The lexical arm refused to rank because the match
@@ -540,11 +597,21 @@ export function SearchScreen({
          * point; it holds nothing we RANKED, which is a different sentence and
          * the only true one.
          *
-         * THE REMEDY IS MORE TERMS AND IT IS NEVER A FILTER. Measured: 'bail'
-         * restricted to the High Courts over a single month — a window holding
-         * 45,660 judgments — is still refused, because `filters` is not
-         * consulted before the gate (gap G-2). Offering "clear the filters" or
-         * "add a court" here would be advice that cannot work.
+         * THERE ARE TWO REMEDIES, AND THE SECOND ONE IS A CORRECTION — R14 A7.
+         * R12 said `filters` is not consulted before the gate and this screen
+         * repeated it; that is mechanically false at HEAD. When the corpus-wide
+         * gate refuses, the server checks for a narrowing filter, COUNTS the
+         * eligible population and admits the query if it is small enough to rank
+         * inside its budget. So more terms works, and so does narrowing.
+         *
+         * WHICH NARROWING, THOUGH. ONE NAMED COURT and a SHORTER DATE RANGE —
+         * never a court CATEGORY, which narrows and is counted but leaves every
+         * High Court in the population, far above the bound. Measured: one named
+         * court plus a month answers; `courts: ['hc']` plus a month is refused.
+         * Nothing here promises admission and nothing here names a threshold:
+         * the bound is an operational measurement on one box, it may move
+         * without a contract revision, and predicting it client-side would be
+         * inventing a promise the server never made.
          */
         <View style={styles.list}>
           <EmptyState
@@ -568,7 +635,7 @@ export function SearchScreen({
                    * sentence is a judgment.
                    */
                   'This search matched too much of the corpus to rank, so nothing was compared against it. If you are looking for a case by the names in it, type the full cause title — “Satender Kumar Antil v. CBI” — which finds it directly.'
-                : 'This search matched too much of the corpus to rank, so nothing was compared against it. Adding more of the words you expect in the judgment narrows it — a court or date filter does not.'
+                : 'This search matched too much of the corpus to rank, so nothing was compared against it. Adding more of the words you expect in the judgment narrows it, and so can picking one named court and a shorter range of dates.'
             }
             title="This search was too broad to run"
           />

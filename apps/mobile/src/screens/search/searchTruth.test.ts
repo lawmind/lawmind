@@ -1,4 +1,4 @@
-import { classifySearch, looksLikeBarePartyName } from './searchTruth';
+import { classifySearch, looksLikeBarePartyName, partyArmDisabled } from './searchTruth';
 import type { SearchResponse, SearchResult } from '../../api/contract';
 
 const row = { judgmentId: 'j1' } as unknown as SearchResult;
@@ -34,6 +34,52 @@ describe('classifySearch', () => {
   it('a timeout with zero rows is partial, not empty and not refused', () => {
     expect(classifySearch(response({ degraded: ['sparse_timeout'] }))).toBe('partial');
     expect(classifySearch(response({ degraded: ['pin_timeout'] }))).toBe('partial');
+  });
+
+  /**
+   * A SWITCHED-OFF ARM IS NOT A SLOW ONE — R14 A4.9.
+   *
+   * Before the fifth arm was typed, an unknown arm fell through to `partial`,
+   * which the screen renders as "one search method could not complete in time"
+   * over a `Try again`. Nothing timed out, and the retry could never work.
+   */
+  it('the disabled party arm is its own state, never partial', () => {
+    const off = response({ degraded: ['party_name_disabled'] });
+    expect(classifySearch(off)).toBe('party_disabled');
+    expect(classifySearch(off)).not.toBe('partial');
+    expect(classifySearch(off)).not.toBe('empty');
+  });
+
+  /**
+   * BOTH ARMS ARRIVE TOGETHER AND THE DISABLED ONE WINS. A bare party name whose
+   * arm is off falls through to the generic lexical path, which then refuses it
+   * as too broad. Reading the refusal first would tell an advocate who typed a
+   * person's full name to add more words to it — advice that cannot work,
+   * because the arm that would have answered was turned off, not overwhelmed.
+   */
+  it('the disabled arm outranks a refusal that came with it', () => {
+    expect(
+      classifySearch(
+        response({
+          degraded: ['party_name_disabled', 'sparse_unbounded'],
+          emptyBecause: { reason: 'query_too_broad_to_rank', remedy: 'add_more_terms' },
+        }),
+      ),
+    ).toBe('party_disabled');
+  });
+
+  it('the disabled arm is named honestly even when other arms returned rows', () => {
+    expect(
+      classifySearch(response({ results: [row], degraded: ['party_name_disabled'] })),
+    ).toBe('party_disabled');
+  });
+
+  it('partyArmDisabled reads the arm and nothing else', () => {
+    expect(partyArmDisabled(['party_name_disabled'])).toBe(true);
+    expect(partyArmDisabled(['sparse_timeout', 'party_name_disabled'])).toBe(true);
+    expect(partyArmDisabled(['sparse_unbounded'])).toBe(false);
+    expect(partyArmDisabled([])).toBe(false);
+    expect(partyArmDisabled(undefined)).toBe(false);
   });
 
   it('a timeout WITH rows is still partial — the set is incomplete', () => {

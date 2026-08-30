@@ -40,11 +40,18 @@ export type VerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bul
 export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubted';
 /**
  * OD-14, resolved 21 Aug 2026 — `services/api/src/judgments/precedential-effect.ts`.
- * The finer fact underneath `overruledStatus`: SEVEN values against the wire
+ * The finer fact underneath `overruledStatus`: EIGHT values against the wire
  * enum's four, because `set_aside` alone cannot distinguish "this decision was
  * undone" from "a later bench overruled the proposition; this decision stands".
  * `overruledStatus` is unchanged and still the only value a client that has
  * never seen this may render as a banner — this rides alongside it, additive.
+ *
+ * THE VALUE SET IS OPEN-ENDED AND WIDENS HERE OR NOT AT ALL. `precedentialEffect`
+ * is a string field the server may grow, so every consumer must keep a safe path
+ * for a value it does not know — `citation/treatmentRelationship.ts` does, and
+ * its `default` arm is what made the eighth value safe before it was declared.
+ * Widening this union from server source alone stays forbidden; it widens when
+ * the CONTRACT widens it.
  */
 export type PrecedentialEffect =
   | 'none'
@@ -53,7 +60,20 @@ export type PrecedentialEffect =
   | 'set_aside'
   | 'partly_set_aside'
   | 'doubted'
-  | 'review_required';
+  | 'review_required'
+  /**
+   * R14 A5, the eighth value, served today. The stored adverse status has NO
+   * USABLE EVIDENCE behind it — every adverse edge is a modality defect, which
+   * NEW2 adjudicated as not a treatment at all.
+   *
+   * DISTINCT FROM `review_required`, and the distinction decides the direction.
+   * `review_required` is genuine ambiguity about what a later court did, and
+   * refusing is the cautious side. `evidence_defect` is a fact about OUR PARSER
+   * and not about the law, so it must SUBTRACT a warning and never ADD a
+   * prohibition: no relationship verb, no banner, no statement about what any
+   * court did. Neutral later-judgment copy only.
+   */
+  | 'evidence_defect';
 
 export type SearchResult = {
   judgmentId: string;
@@ -1467,24 +1487,55 @@ export type SearchResponse = {
 export const SEARCH_QUERY_MAX_CHARS = 500;
 
 /**
- * THE FOUR WAYS AN ARM CAN FAIL TO ANSWER — `services/api/src/search/retrieve.ts`
+ * THE FIVE WAYS AN ARM CAN FAIL TO ANSWER — `services/api/src/search/retrieve.ts`
  * (`DegradeReason`). None of them means the corpus was searched to completion,
- * and TWO OF THEM ARE NOT TIMEOUTS AT ALL, which is why the union grew from two
- * to four in R12: a client that typed only the timeouts described a refusal as
- * a slow query, and then told the advocate to narrow a search that narrowing
- * cannot fix.
+ * and THREE OF THEM ARE NOT TIMEOUTS AT ALL, which is why the union grew from
+ * two to four in R12 and to five in R14: a client that types only the timeouts
+ * describes a refusal as a slow query, and then tells the advocate to retry
+ * something retrying cannot fix.
  *
  *   · `sparse_timeout` / `dense_timeout` — an arm exceeded its statement budget.
  *     Retrying is a second full-cost query and may work.
  *   · `sparse_unbounded` — THE LEXICAL ARM REFUSED. The match set was unbounded
  *     at the corpus-wide document-frequency gate, so nothing was ranked. This is
- *     a REFUSAL, not a failure, and its remedy is MORE terms, never a filter:
- *     `filters` is not consulted before the refusal (capability
- *     `search.filtered_broad_query`, DISABLED_NOT_READY, gap G-2).
+ *     a REFUSAL, not a failure.
+ *
+ *     ITS REMEDY IS MORE TERMS **OR** A NARROWER FILTER — R14 A7, and the second
+ *     half is a correction. R12 said `filters` is not consulted before the gate;
+ *     R13 corrected the direction; R14 states the mechanism. When the
+ *     corpus-wide gate refuses, the server checks for a narrowing filter
+ *     (`court`, `courts`, `dateFrom`, `dateTo`, `caseType`), COUNTS the eligible
+ *     population, and admits the query if that population is small enough to
+ *     rank inside its budget (`narrowsPopulation` / `eligiblePopulation` in
+ *     `services/api/src/search/retrieve.ts`).
+ *
+ *     TWO THINGS FOLLOW AND BOTH ARE BINDING. A court CATEGORY narrows and is
+ *     counted, but every High Court together is a population far above the
+ *     bound, so a category chip is a filter and never THE remedy for a refusal —
+ *     offer ONE NAMED COURT and a SHORTER DATE RANGE. And the bound itself is an
+ *     operational measurement on one box, not a product promise: never display
+ *     it, never describe a threshold to an advocate, never predict admission
+ *     client-side.
  *   · `pin_timeout` — the strongest. The answer an INDEX should have held was
  *     not computed in time.
+ *   · `party_name_disabled` — NOT A FAILURE OF ANY KIND. The bare-party-name arm
+ *     was switched off for this platform through the served capability registry
+ *     (`search.party_name`), so the query was never routed to the case-title
+ *     probe. Exact identity — case number, CNR, citation, full cause title — is a
+ *     separate arm and is untouched, asserted by committed server tests.
+ *
+ *     THE ONE RULE FOR RENDERING IT: it may never be described as a timeout, a
+ *     failure, or an empty corpus, and Retry may never be the remedy, because
+ *     retrying an administratively disabled arm cannot ever succeed. R14 A4.9
+ *     requires a VISIBLE degrade to the paths that still work. See
+ *     `screens/search/searchTruth.ts`.
  */
-export type DegradedArm = 'sparse_timeout' | 'dense_timeout' | 'sparse_unbounded' | 'pin_timeout';
+export type DegradedArm =
+  | 'sparse_timeout'
+  | 'dense_timeout'
+  | 'sparse_unbounded'
+  | 'pin_timeout'
+  | 'party_name_disabled';
 
 /**
  * WHY ZERO RESULTS CAME BACK, WHEN THE SERVER KNOWS — additive,
@@ -2278,6 +2329,14 @@ export type ReleaseCapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPER
 export type ReleaseCapabilityName =
   | 'search.exact_identity'
   | 'search.structured_filters'
+  /**
+   * R14 A4.9. The bare-party-name arm, a DEDICATED row rather than a facet of
+   * another capability — which is what makes the iOS kill switch a served
+   * config change instead of an App Store release. When it is narrowed for a
+   * platform, `/search` says so with `degraded: ['party_name_disabled']`; the
+   * exact-identity paths are separate rows and stay untouched.
+   */
+  | 'search.party_name'
   | 'search.pagination'
   | 'judgment.reader'
   | 'judgment.exact_span'
@@ -2311,12 +2370,45 @@ export type ReleaseCapability = {
 };
 
 /**
+ * WHICH CLIENT IS ASKING — R14 A4.2/A4.3, the optional platform selector.
+ *
+ * Sent as `X-Lawmind-Platform`. The server also accepts `?platform=`, and the
+ * HEADER WINS when both are present, but the query parameter exists for
+ * operators and diagnostics and this client does not use it.
+ *
+ * `unknown` is a RESOLVED RESULT, never a value to send: anything the server
+ * does not recognise — including the literal string `unknown` — resolves to
+ * `unknown` and yields the release-wide states, which is the widest honest
+ * answer rather than an error. Nothing here fails closed on it.
+ */
+export type ClientPlatform = 'ios' | 'android' | 'web';
+
+/**
  * `capabilities` is typed as a partial record rather than a full one: the server
  * may add a name before this client knows it, and an unknown key must read as
  * "nothing said" rather than crash a launch.
+ *
+ * THE STATES ARE ALREADY RESOLVED FOR THE PLATFORM THAT ASKED — R14 A4.6. There
+ * is no `platforms` object to walk and no fallback to compute; R13 A3 specified
+ * one and was WITHDRAWN precisely so two representations could not ship on one
+ * route. Read `state` directly.
+ *
+ * `platform` and `platformOverrides` are ABSENT — not null, absent — from a
+ * request that sent no selector, which is the compatibility guarantee that keeps
+ * the wire integer at 1. Both are therefore optional here.
  */
 export type ReleaseCapabilities = {
   registryVersion: string;
   asOf: string;
   capabilities: Partial<Record<ReleaseCapabilityName, ReleaseCapability>>;
+  /** The platform the server RESOLVED, which may be `unknown`. Absent with no selector. */
+  platform?: ClientPlatform | 'unknown';
+  /**
+   * The capability names narrowed for this platform, so the resolution is
+   * auditable instead of implicit. R14 A4.7 is binding: this is a DIAGNOSTIC
+   * and an AUDIT LIST. Never render it to an advocate and never derive a
+   * user-facing message from a name appearing in it — the user-facing
+   * consequence is the `state` and `reason` of the row itself.
+   */
+  platformOverrides?: string[];
 };

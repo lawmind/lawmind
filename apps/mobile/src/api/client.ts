@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import type {
   Alert,
   AlertSettings,
@@ -10,6 +12,7 @@ import type {
   MatterBundleBriefing,
   CitationCheck,
   CitationCopy,
+  ClientPlatform,
   CorpusCoverage,
   CounterArgumentsResponse,
   CourtLookupResult,
@@ -233,6 +236,39 @@ type RequestOptions = RequestInit & {
   isRefresh?: boolean;
 };
 
+/**
+ * WHICH PLATFORM IS ASKING — R14 A4.2, sent on EVERY request.
+ *
+ * The server resolves each capability for the platform that asked and returns
+ * the answer already resolved (`ReleaseCapabilities.platform`). A build that
+ * sends nothing gets the release-wide set and therefore CANNOT SEE ITS OWN
+ * NARROWING — it would offer a surface the server has switched off for it. That
+ * is the whole reason this is not scoped to one endpoint: `/search` reports the
+ * consequence (`degraded: ['party_name_disabled']`) and `/release/capabilities`
+ * reports the cause, and a client that identified itself to only one of them
+ * would hold two different beliefs about the same switch.
+ *
+ * IT IS NOT A SECURITY BOUNDARY AND THIS CLIENT DOES NOT TREAT IT AS ONE. A
+ * platform override may take a capability DOWN and never UP (R14 A4.8, asserted
+ * by committed server tests), so lying about the platform gains nothing and
+ * nothing here defends against one.
+ *
+ * ONLY A NAME THE CONTRACT DEFINES IS EVER SENT. `Platform.OS` can in principle
+ * be a target we do not ship (`windows`, `macos`); rather than invent a platform
+ * name, the header is OMITTED, which is exactly the no-selector case the server
+ * already answers with the release-wide set. Adding a value here means adding it
+ * to the contract first.
+ *
+ * The OS is an ARGUMENT with a default, for the same reason `resolveBaseUrl`
+ * takes its inputs: the mapping can then be tested for every target without
+ * mutating a module-level global or re-importing the client per case.
+ */
+export function clientPlatformHeader(os: string = Platform.OS): Record<string, string> {
+  return os === 'ios' || os === 'android' || os === 'web'
+    ? { 'x-lawmind-platform': os satisfies ClientPlatform }
+    : {};
+}
+
 async function once<T>(path: string, options?: RequestOptions): Promise<ApiResponse<T>> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -244,6 +280,7 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
       ...options,
       headers: {
         accept: 'application/json',
+        ...clientPlatformHeader(),
         ...(token ? { authorization: `Bearer ${token}` } : {}),
         ...options?.headers,
       },

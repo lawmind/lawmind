@@ -1,35 +1,57 @@
 import type { DegradedArm, SearchResponse } from '../../api/contract';
 
 /**
- * WHAT THE SERVER ACTUALLY SAID ABOUT THIS SEARCH — R12 §4.
+ * WHAT THE SERVER ACTUALLY SAID ABOUT THIS SEARCH — R12 §4, R14 A4.9.
  *
- * A search response can come back in five shapes and only one of them is "we
- * looked and there is nothing". Collapsing the other four into that sentence is
+ * A search response can come back in six shapes and only one of them is "we
+ * looked and there is nothing". Collapsing the other five into that sentence is
  * the single most damaging false statement this product can make: it tells an
  * advocate the corpus holds no authority on their point, and they stop looking.
  *
- * The five, in the order the screen must distinguish them:
+ * The six, in the order the screen must distinguish them:
  *
- *   · `answered`   — results, nothing withheld.
- *   · `partial`    — an ARM TIMED OUT. Results (if any) are incomplete, not
- *                    proven empty. Retrying may work; it costs a full query.
- *   · `refused`    — THE LEXICAL ARM NEVER RANKED. The match set was unbounded
- *                    at the corpus-wide document-frequency gate, so nothing was
- *                    looked at. The remedy is MORE TERMS and it is never a
- *                    filter: `filters` is not consulted before the refusal
- *                    (capability `search.filtered_broad_query`, gap G-2).
- *   · `unknown`    — `retrievalOutcome.state === 'coverage_unknown'`. We did not
- *                    look, or could not look properly. This result set is not a
- *                    statement about the corpus.
- *   · `empty`      — the honest empty. We looked. Nothing matched.
+ *   · `answered`       — results, nothing withheld.
+ *   · `partial`        — an ARM TIMED OUT. Results (if any) are incomplete, not
+ *                        proven empty. Retrying may work; it costs a full query.
+ *   · `refused`        — THE LEXICAL ARM NEVER RANKED. The match set was
+ *                        unbounded at the corpus-wide document-frequency gate,
+ *                        so nothing was looked at. The remedy is more terms, or
+ *                        ONE NAMED COURT and a shorter date range — R14 A7, and
+ *                        the filter half is a correction to what R12 said.
+ *   · `party_disabled` — THE BARE-PARTY-NAME ARM WAS SWITCHED OFF for this
+ *                        platform. Nothing timed out and nothing failed; a
+ *                        capability was narrowed by the served registry, and the
+ *                        exact-identity paths still work.
+ *   · `unknown`        — `retrievalOutcome.state === 'coverage_unknown'`. We did
+ *                        not look, or could not look properly. This result set
+ *                        is not a statement about the corpus.
+ *   · `empty`          — the honest empty. We looked. Nothing matched.
  *
  * Derived from the response, never from `results.length`. A zero-length list is
- * the one thing all five have in common and it distinguishes none of them.
+ * the one thing all six have in common and it distinguishes none of them.
  */
-export type SearchTruth = 'answered' | 'partial' | 'refused' | 'unknown' | 'empty';
+export type SearchTruth =
+  | 'answered'
+  | 'partial'
+  | 'refused'
+  | 'party_disabled'
+  | 'unknown'
+  | 'empty';
 
 /** The arms that mean "we refused to rank", as opposed to "we ran out of time". */
 const REFUSAL_ARMS: readonly DegradedArm[] = ['sparse_unbounded'];
+
+/**
+ * WAS THE PARTY ARM SWITCHED OFF FOR THIS PLATFORM? — R14 A4.9.
+ *
+ * Separate from {@link classifySearch} because the two questions have different
+ * scopes: the classification decides which EMPTY STATE renders, and this decides
+ * which BANNER renders, which must be the truthful one whether or not the
+ * response also carried results.
+ */
+export function partyArmDisabled(degraded: readonly DegradedArm[] | undefined): boolean {
+  return (degraded ?? []).includes('party_name_disabled');
+}
 
 export function classifySearch(data: Pick<
   SearchResponse,
@@ -39,8 +61,27 @@ export function classifySearch(data: Pick<
   const refused =
     data.emptyBecause !== undefined || degraded.some((arm) => REFUSAL_ARMS.includes(arm));
 
-  // A refusal outranks everything: nothing was ranked, so nothing that follows
-  // from a ranking can be said.
+  /**
+   * THE DISABLED ARM OUTRANKS BOTH THE REFUSAL AND THE TIMEOUTS, and the reason
+   * is what the advocate would do next.
+   *
+   * A bare party name whose own arm is switched off falls through to the generic
+   * lexical path, which then refuses it as too broad — so the SAME response can
+   * carry `party_name_disabled` and `sparse_unbounded` together. Reading the
+   * refusal first would tell an advocate who typed a person's name to add more
+   * terms to it, which cannot work: the arm that would have answered was turned
+   * off, not overwhelmed. And reading the timeout branch first would promise
+   * that a retry might succeed, when retrying an administratively disabled arm
+   * can never succeed.
+   *
+   * Checked BEFORE `results.length`, so a response that carried some results
+   * from other arms is still classified honestly; the screen decides separately
+   * whether it has a list to show.
+   */
+  if (partyArmDisabled(degraded)) return 'party_disabled';
+
+  // A refusal outranks everything else: nothing was ranked, so nothing that
+  // follows from a ranking can be said.
   if (refused && data.results.length === 0) return 'refused';
 
   if (degraded.length > 0) return 'partial';
@@ -57,8 +98,10 @@ export function classifySearch(data: Pick<
 }
 
 /**
- * DOES THIS QUERY LOOK LIKE A PARTY NAME AND NOTHING ELSE? — the highest-value
- * gap in v1 search (`search.party_name_only`, DISABLED_NOT_READY, gap G-1).
+ * DOES THIS QUERY LOOK LIKE A PARTY NAME AND NOTHING ELSE? — the case-first
+ * hint. The server now has a dedicated `search.party_name` capability, ENABLED
+ * release-wide (R14 A4.9), so this no longer describes a missing path; it
+ * describes the queries for which the CAUSE TITLE is the better thing to type.
  *
  * MEASURED ZERO, twice. "SANJAY KUMAR MISHRA @ SANJAY MISHRA" returns 0 results;
  * so does "SATENDER KUMAR ANTIL", an authority we hold and the most-cited node

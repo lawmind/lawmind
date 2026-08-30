@@ -8,17 +8,23 @@ import type { SearchResponse } from '../../api/contract';
  * THE RULE UNDER TEST — R12 §4: a degraded or refused response may NEVER be
  * presented as zero results.
  *
- * The refusal is not hypothetical and it is not rare. Measured this round:
- * "bail" restricted to the High Courts over a single month — a window holding
- * 45,660 judgments — comes back with `degraded: ['sparse_unbounded']`,
- * `emptyBecause: { query_too_broad_to_rank, add_more_terms }` and zero rows,
- * because the admission gate is computed corpus-wide and never sees the filters
- * (gap G-2). That is the daily-loop query. Rendering "No judgments matched" for
- * it tells an advocate the corpus holds no bail authority from their own High
- * Court last month.
+ * The refusal is not hypothetical and it is not rare. "bail" restricted to the
+ * High Courts over a single month comes back with `degraded: ['sparse_unbounded']`,
+ * `emptyBecause: { query_too_broad_to_rank, add_more_terms }` and zero rows.
+ * That is the daily-loop query. Rendering "No judgments matched" for it tells an
+ * advocate the corpus holds no bail authority from their own High Court last
+ * month.
  *
- * The second rule: the remedy is MORE TERMS, never a filter. A screen that
- * offers "clear the filters" here is offering advice that provably cannot work.
+ * THE SECOND RULE, AND R14 A7 CORRECTED HALF OF IT. This file used to say the
+ * remedy is more terms and NEVER a filter, because the gate was computed
+ * corpus-wide and never saw them. That is false at HEAD: when the corpus-wide
+ * gate refuses, the server checks for a narrowing filter, counts the eligible
+ * population and admits the query if it is small enough to rank. What survives
+ * the correction is WHICH narrowing — ONE NAMED COURT and a SHORTER DATE RANGE,
+ * never a court CATEGORY, which leaves every High Court in the population.
+ * Measured: one named court plus a month answers; `courts: ['hc']` plus a month
+ * is refused. So "clear the filters" is still advice that cannot work, and the
+ * screen must never name a threshold or predict admission.
  */
 
 const mockPush = jest.fn();
@@ -81,9 +87,39 @@ describe('SearchScreen — a refusal is not an empty result', () => {
       expect(screen.getByText('This search was too broad to run')).toBeTruthy();
     });
     expect(screen.queryByText('No judgments matched')).toBeNull();
-    // The remedy is more terms. A filter is never offered here.
+    // Both remedies, and the narrowing one names a COURT and a DATE RANGE.
     expect(screen.getByText(/Adding more of the words/)).toBeTruthy();
+    expect(screen.getByText(/one named court and a shorter range of dates/)).toBeTruthy();
     expect(screen.queryByText('Clear the filters')).toBeNull();
+  });
+
+  /**
+   * THE SENTENCE THIS ROUND DELETED, ASSERTED AS AN ABSENCE.
+   *
+   * "a court or date filter does not" was true under R12's stated mechanism and
+   * is mechanically false at HEAD — it told an advocate that the second of the
+   * two levers the server actually has does nothing. An absence is the only way
+   * to catch it coming back, the same reason the citation harness asserts the
+   * absence of a badge rather than the presence of one.
+   */
+  it('never tells the advocate that a court or date filter cannot help', async () => {
+    search.mockResolvedValue({
+      ok: true,
+      data: response({
+        degraded: ['sparse_unbounded'],
+        emptyBecause: { reason: 'query_too_broad_to_rank', remedy: 'add_more_terms' },
+      }),
+    });
+    await render(<SearchScreen />);
+    await runSearch('bail');
+
+    await screen.findByText('This search was too broad to run');
+    expect(screen.queryByText(/a court or date filter does not/)).toBeNull();
+    // And it must not have swung the other way into a promise or a number.
+    expect(screen.queryByText(/20,000/)).toBeNull();
+    expect(screen.queryByText(/will be admitted|guarantee/i)).toBeNull();
+    // A category chip is a filter, never THE remedy for a refusal.
+    expect(screen.queryByText(/All High Courts/i)).toBeNull();
   });
 
   /**

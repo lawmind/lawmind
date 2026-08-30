@@ -13,7 +13,17 @@ import type { ReleaseCapabilityName, ReleaseCapabilityState } from '../api/contr
  *      `docs/product/V1_CAPABILITY_REGISTRY_R12.json` and compiled into the
  *      binary. It can only ever CLOSE a surface.
  *   2. `GET /release/capabilities` — the SERVER's statement about itself
- *      (`RELEASE_CAPABILITIES_R8_3.3`). It can only ever CLOSE a surface too.
+ *      (`RELEASE_CAPABILITIES_R8_3.4` at the time of writing; the version is
+ *      read from the response, never asserted from here). It can only ever
+ *      CLOSE a surface too.
+ *
+ * SINCE R14 THAT SECOND AUTHORITY IS PER PLATFORM. `api/client.ts` sends
+ * `X-Lawmind-Platform` on every request, so the states arriving here are
+ * ALREADY RESOLVED for this build's platform — there is nothing to walk and
+ * nothing to fall back through. A platform override may only ever narrow a
+ * capability (R14 A4.8), which is why consuming the resolved view cannot open
+ * anything: it feeds the same `serverStates` map this rule has always ANDed
+ * against the product decision, and the product decision still closes first.
  *
  * So a surface renders when the product shipped it AND the server still serves
  * it. A server that starts reporting `ENABLED` for drafting does not turn
@@ -46,6 +56,7 @@ export type V1CapabilityState =
 export type SurfaceName =
   /* the v1 core: search - reader - saved authorities - matters */
   | 'search'
+  | 'partyNameSearch'
   | 'reader'
   | 'savedAuthorities'
   | 'matters'
@@ -88,6 +99,30 @@ export const V1_SURFACE: Readonly<Record<SurfaceName, Surface>> = {
     runtime: 'search.structured_filters',
     openWhenUnknown: true,
     note: 'Exact identity, structured filters and the lexical arm. The v1 spine.',
+  },
+  /**
+   * THE ONE SURFACE THE SERVER CAN NARROW PER PLATFORM — R14 A4.9.
+   *
+   * A dedicated runtime row, so the kill switch is a served config change rather
+   * than an App Store release. Two things about the way it is wired:
+   *
+   * `openWhenUnknown` is TRUE, with the rest of the v1 core. Before the registry
+   * has been read — a cold start, a court corridor with no signal — hiding the
+   * party path would be hiding part of search itself, and nothing is lost by
+   * waiting: the SERVER enforces the switch whatever this build believes, and
+   * says so on the response with `degraded: ['party_name_disabled']`, which
+   * `screens/search/searchTruth.ts` renders truthfully. This flag decides what we
+   * OFFER, never what we claim happened.
+   *
+   * And it narrows nothing else. Exact identity — case number, CNR, citation,
+   * full cause title — is `search.exact_identity`, a separate row the switch does
+   * not touch, which is exactly why the degrade has somewhere honest to point.
+   */
+  partyNameSearch: {
+    v1: 'ENABLED_V1',
+    runtime: 'search.party_name',
+    openWhenUnknown: true,
+    note: 'A bare party name reaches the case-title probe and the CASE is pinned above the judgments citing it.',
   },
   reader: {
     v1: 'ENABLED_V1',
