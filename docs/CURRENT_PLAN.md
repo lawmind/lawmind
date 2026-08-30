@@ -15271,3 +15271,93 @@ Artifacts in `docs/ai/new2-r83/`. Commits `b1bd5ff`, `24b8c73`, `65a3f2a`.
 Bench/coram exists only for the 38,326 Supreme Court documents. 92.77% of our
 Supreme Court corpus is the SCR reporter edition (`FQ-N2-2`, counsel). eCourts
 has never run: authorised since 7 Aug, built, **0 observations**.
+
+
+---
+
+# NEW3 R13 — 30 August 2026 · Sprint-2 light product/contract round · `4baca74`
+
+Built on LCC's sealed Day-0 HEAD `f3b31c9` (bus 1567). No client code, no backend
+code, no migration, no eCourts request, no worker touched.
+
+## Landed
+
+- **Contract change control is operational.** `docs/product/CONTRACT_CHANGE_CONTROL.md`
+  (process) + `CONTRACT_CHANGE_LEDGER.json` (decisions). 5 CCRs · 3 AMEND ·
+  1 DEFER · 1 REJECT_WITH_ALTERNATIVE · **0 undecided · 0 P0**. Two are
+  retrospective and self-filed, because they are the failure modes the process
+  exists to route.
+- **Capability registry is per platform.** `V1_CAPABILITY_REGISTRY_R13.json`,
+  30 rows each carrying `{ios, android, web}`, `evidenceState` and
+  `currentContractVersion`. 18 enabled on ≥1 platform; **0 enabled without named
+  evidence that exists on disk.**
+- **Claims register is per platform.** `V1_CLAIMS_REGISTER_R13.md`. **0 unsupported
+  claims.** Two new `QUALIFIED` claims (A9 party search, A10 filtered broad), one
+  new restriction: nothing may imply a desktop/browser advocate surface.
+- **`ECOURTS_DAILY_PILOT = DISABLED_NOT_READY`.** The block is ours.
+  `CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT`.
+  **`AUTHORIZATION_REOPENED = no`**, monitoring unmoved, SCI untouched. Corrected
+  append-only in the frozen R12 definition, **+68 / −0**, prefix byte-identical.
+- **Acceptance delta, not a repeat.** AB-1 `PASS_WITH_LIMIT` · AB-2
+  `PASS_WITH_LIMIT` · exact-citation control `PASS` · core-loop smoke `PASS`.
+  The other eight ten-matter cases were **not** rerun; their R12 verdicts stand.
+  Cleanup by owner: residual `usersLeft 0, mattersLeft 0`.
+- **Trust-state product contract**, launch shapes A/B, the 12-condition monitoring
+  matrix, the correction workflow, analytics definitions with denominators, and
+  the 50-task research set (threshold deliberately **unset** until 18 Sep).
+- **Gate-B product preflight** for FIFTH: `GATE_B_PRODUCT_PREFLIGHT.md`.
+
+## What the reruns actually showed
+
+```
+AB-1  SATENDER KUMAR ANTIL             0 -> 3 results, RANK 1, 295.6 ms
+      SANJAY KUMAR MISHRA @ SANJAY...  still 0, and pays 1,239.2 ms
+AB-2  one named court + 3 days         refused -> 5 results, 154.6 ms
+      one named court + 1 month        refused -> 5 results, 418.1 ms
+      one named court + 8 months       still refused
+      courts:["hc"] + 1 month          STILL REFUSED, 262.6 ms
+      unfiltered                       still refused, 2.9 ms
+```
+
+**A court category is not narrowing.** `courts:["hc"]` is every High Court.
+
+**`retrievalOutcome.rarestDf` is `0.25773984261292154` in all six scopes** —
+seventeen significant figures, identical in the four that refuse **and** in the
+two that answer. Corpus-wide, and not the bound that governed the request.
+`CCR-2026-08-30-02`, AMENDed semantically, `contract` stays 1.
+
+## Two numbers in my own R12 were stale
+
+| | R12 | measured 30 Aug |
+|---|---|---|
+| `ecourts_fetch_ledger` | 131 | **198** |
+| `platform_config.ecourts_harvest` | **OFF** | **ON**, since 29 Aug 17:33Z |
+| `ecourts_observation` | 0 | **0** — unchanged, and still the only one that matters |
+
+## Open, and it is not ours
+
+**`FQ-WEB-SURFACE`.** Every `web` row reads `UNKNOWN_PENDING_FOUNDER`. PD-15 was
+**reversed by the founder on 12 August** — *"this is only an app, we do not plan
+for a desktop, or a website login for users"* — and **Master Roadmap v7.1, dated
+30 August**, says *"Desktop = research workstation"* and schedules *"Desktop
+usable by 9 Oct"*. Two binding documents; no measurement separates them.
+
+**Nothing in this round is blocked on it. Sprint 5's 9 October desktop
+deliverable is.**
+
+## Monitoring
+
+**0 of 12 conditions pass**, one root cause wearing twelve hats:
+`ecourts_observation = 0`. On present evidence **8 September selects Shape B**,
+and **the launch date does not move**.
+
+## Next for NEW3
+
+1. **8 September** — read `MONITORING_12_CONDITION_MATRIX.json` and count. Do not
+   grade evidence on the day.
+2. **Shadow beta 12–18 September** — 3–5 advocates against the 50-task set.
+   **Freeze the threshold by 18 September and never move it.**
+3. Condition 7 of the monitoring gate (**manual correctness review**) is NEW3's
+   outright, if a pilot ever produces observations. Zero misbindings is zero.
+4. Watch `CCR-2026-08-30-04` (LCC, `capabilities[].platforms`) and flip
+   `releasedToRCC` only when a backend actually serves it.
