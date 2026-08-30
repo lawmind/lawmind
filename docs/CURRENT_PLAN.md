@@ -1,19 +1,68 @@
 # CURRENT PLAN — the single ordered queue
 
-> **Master Roadmap v5 governs roadmap and gate interpretation.**
-> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V5.md` — supplied by the founder, prepared
-> 28 August 2026, committed byte-for-byte. It **supersedes v4, v3, v2 and
-> `LAWMIND_ROADMAP_TO_STORE_SUBMISSION.md`**, and where an older sprint document in
-> this repository conflicts with it, the roadmap wins. It does not change
-> `CLAUDE.md` authorization truth, SCI authorization policy, the eCourts grant
-> interpretation, or `DOMAIN_TRUTH.md` — those are separate founder and legal
-> decisions. This queue remains the ordered list of what to pick up next.
+> **Master Roadmap v7.1 governs roadmap and gate interpretation.**
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.md` — supplied by the founder,
+> prepared 30 August 2026. It **supersedes v7, v5, v4, v3, v2 and
+> `LAWMIND_ROADMAP_TO_STORE_SUBMISSION.md`**, and where an older sprint document
+> in this repository conflicts with it, the roadmap wins. v5 stays in
+> `docs/roadmaps/` as the historical record and is no longer authority.
+>
+> **It does not change** `CLAUDE.md` authorization truth, SCI authorization
+> policy, the eCourts grant interpretation, `DOMAIN_TRUTH.md`, or
+> `PRODUCT_DECISIONS.md` — those are separate founder and legal decisions, and a
+> roadmap is not the instrument that reopens one. This queue remains the ordered
+> list of what to pick up next.
+>
+> **Four things in v7.1 are already overridden. A roadmap dated 30 August is not
+> automatically newer than a measurement taken on 30 August.**
+>
+> 1. **§4 and Sprint 5 plan a desktop the founder cancelled.** v7.1 says
+>    "Desktop = research workstation" and schedules "Desktop usable by 9 Oct".
+>    **PD-15 was REVERSED by the founder on 12 August 2026** — *"this is only an
+>    app, we do not plan for a desktop, or a website login for users."* Two
+>    binding documents, no measurement between them, so **only the founder can
+>    settle it**: `FOUNDER_QUEUE.md` **FQ-WEB-SURFACE**, raised by NEW3 R13.
+>    Until then every web row in the capability registry reads
+>    `UNKNOWN_PENDING_FOUNDER`, and **nothing is built against the desktop
+>    surface**. Sprint 5's 9 October deliverable is what is blocked, not the
+>    lanes.
+> 2. **§1's eCourts position was stale before the document was published.**
+>    `fillDistrict` was solved 2026-08-29T22:58:44Z, the parser defect was a
+>    lookup returning zero from a populated response, and the CAPTCHA is now
+>    ACCEPTED 3 of 3. Evidence:
+>    `docs/ai/lcc-r13/ECOURTS_BOUNDED_STOP_REPORT.md`. Only
+>    `ecourts_observation = 0` still stands, and it stands with the bounded stop
+>    report Gate B requires.
+> 3. **§5.3 B's bounded User-Agent experiment must NOT be run.** It is refuted
+>    by retained bytes — the UA/attribution split was already live for requests
+>    that still failed, and the real cause was a rotating header pair.
+>    `attribution-transport.test.ts` now asserts the client never impersonates a
+>    browser: claiming to be Chrome would misrepresent us to the party that
+>    authorised the access. `UA_EXPERIMENT_STATE = TESTED_REFUTED`.
+> 4. **Two of the three reproducibility debts in §1 are closed.**
+>    `REPRO_DEBT_3` closed in `110bc7f` (M0 reconciled, never relabelled; all
+>    seven Gate-A bindings re-verified at HEAD 30 Aug). `REPRO_DEBT_1` closed in
+>    LCC R13 — `SNAPSHOT_HASH_DURABILITY = PASS`, the constant default is gone
+>    and the writer binds snapshot identity explicitly. `REPRO_DEBT_2` is
+>    **half open**: files hashed, protected off-machine and licence-checked
+>    (MIT), `MODEL_REVISION = UNKNOWN`, which §10.1 makes an acceptable Gate B
+>    state.
+>
+> **Transcription note.** v5 was committed byte-for-byte. v7.1 could not be: it
+> reached the repository through a channel that mangled its non-ASCII
+> characters. Every rule, date, number, identifier and path is exactly as
+> supplied, every mathematical operator was recovered from a surviving byte, and
+> 128 dashes and arrows were reconstructed from context. What is certain and
+> what is not is itemised in
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.PROVENANCE.md`. If the founder's
+> original file appears, overwrite the roadmap with it and delete that note.
 
 **Read this file at session start, after the mandatory set in `CLAUDE.md` §0.**
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
-Last updated **9 August 2026**, annotated through **21 August 2026**. **Read
+Last updated **30 August 2026**, when roadmap authority moved to v7.1. The queue
+body below is annotated continuously, newest round entry first. **Read
 §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's
 plan is `docs/RCC_MASTER_PLAN.md` and is not duplicated here.
 
