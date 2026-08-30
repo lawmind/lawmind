@@ -26,8 +26,12 @@
  * documents already staged are skipped by the same key.
  */
 import postgres from 'postgres';
-import { readFileSync, appendFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { readFileSync, appendFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import {
+  acquireGpuLock as acquireFileGpuLock,
+  releaseGpuLock as releaseFileGpuLock,
+} from './gpu-embed-lock.mjs';
 
 const url = readFileSync(new URL('../../../.env', import.meta.url), 'utf8')
   .match(/^DATABASE_URL=(.*)$/m)[1]
@@ -161,61 +165,23 @@ const RECONCILED_VIEW_HASH = process.env.EXPECTED_VIEW_HASH ?? '5b5d02384b46c96c
  * then runs. A refusal would starve the queue permanently, because the walk is
  * always running.
  *
- * A stale lock is one whose pid is gone, and that is CHECKED rather than
- * assumed: `pgrep` does not exist on this box, `process.kill(pid, 0)` does.
+ * A stale lock is one whose pid is confirmed gone, and that is CHECKED rather
+ * than assumed: only `ESRCH` authorizes reclamation. `EPERM`/`EACCES` mean the
+ * holder's liveness is unknown and fail safe against token stealing.
  */
 const GPU_LOCK = new URL('../../../.agents/logs/new1-gpu-embed.lock', import.meta.url);
 const GPU_LOCK_WAIT_MS = Number(process.env.GPU_LOCK_WAIT_MS ?? 30 * 60 * 1000);
 
-function lockHolder() {
-  try {
-    return JSON.parse(readFileSync(GPU_LOCK, 'utf8'));
-  } catch {
-    return null;
-  }
-}
-function holderAlive(h) {
-  if (!h?.pid) return false;
-  try {
-    process.kill(h.pid, 0);
-    return true;
-  } catch {
-    return false;
-  }
-}
 async function acquireGpuLock() {
-  const deadline = Date.now() + GPU_LOCK_WAIT_MS;
-  for (;;) {
-    try {
-      writeFileSync(
-        GPU_LOCK,
-        JSON.stringify({ pid: process.pid, batchFile: BATCH_FILE, at: new Date().toISOString() }) + '\n',
-        { flag: 'wx' },
-      );
-      return true;
-    } catch (e) {
-      if (e.code !== 'EEXIST') throw e;
-      const h = lockHolder();
-      if (!holderAlive(h)) {
-        log('GPU lock held by dead pid ' + (h?.pid ?? '?') + ' — clearing');
-        try { unlinkSync(GPU_LOCK); } catch {}
-        continue;
-      }
-      if (Date.now() >= deadline) {
-        throw new Error(
-          'GPU embed lock held by live pid ' + h.pid + ' (' + h.batchFile + ' since ' + h.at + ') for longer than ' +
-            Math.round(GPU_LOCK_WAIT_MS / 1000) + 's. Refusing to run two embedders against one 8 GB GPU.',
-        );
-      }
-      await new Promise((r) => setTimeout(r, 5000));
-    }
-  }
+  return acquireFileGpuLock({
+    lockPath: GPU_LOCK,
+    batchFile: BATCH_FILE,
+    waitMs: GPU_LOCK_WAIT_MS,
+    log,
+  });
 }
 function releaseGpuLock() {
-  const h = lockHolder();
-  if (h?.pid === process.pid) {
-    try { unlinkSync(GPU_LOCK); } catch {}
-  }
+  releaseFileGpuLock({ lockPath: GPU_LOCK });
 }
 
 const log = (m) => {

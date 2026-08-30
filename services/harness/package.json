@@ -20,6 +20,7 @@
     "reach:docvec": "tsx src/document-vector-reachability-cli.ts",
     "dense:decompose": "tsx --env-file=../../.env src/dense-failure-decompose-cli.ts",
     "test": "tsx --test --test-concurrency=1 src/*.test.ts",
+    "test:gpu-lock": "node --test src/gpu-embed-lock.test.mjs",
     "harness": "tsx src/run-cli.ts",
     "corpus": "tsx src/corpus-cli.ts",
     "build:queries": "tsx src/build-queries.ts",
