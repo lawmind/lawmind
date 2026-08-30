@@ -1,0 +1,147 @@
+{
+  "artifact": "MONITORING_12_CONDITION_MATRIX",
+  "owner": "NEW3",
+  "authority": "Master Roadmap v7.1 §5.3.1",
+  "openedAt": "2026-08-30",
+  "decisionDate": "2026-09-08",
+  "purpose": "Filled in continuously, as evidence arrives, by the lane that produced it. The 8 September decision READS this file and counts. It does not grade evidence on the day, because a decision that also grades its own evidence can cherry-pick.",
+  "rule": "SHAPE_A_SCOPE_CANDIDATE = yes only if all TWELVE are PASS. Anything else selects Shape B. An UNMEASURED condition is a FAIL, never a 'probably fine'.",
+  "notPermission": "SHAPE_A_SCOPE_CANDIDATE = yes is NOT permission to market, price, or promise coverage. Monitoring stays capability-gated until remote scheduling passes Gate C.",
+  "currentTally": { "pass": 0, "fail": 0, "unmeasured": 12, "of": 12 },
+  "rootCause": "ecourts_observation = 0 rows. Nine of the twelve conditions are questions ABOUT observations, so they cannot be answered before the first one exists. This is a single blocker wearing twelve hats, and saying so is more useful than twelve identical UNMEASURED rows.",
+  "blockingChain": [
+    "LCC R12b: the eCourts casestatus/fillDistrict AJAX POST returns Invalid Request. Eight hypotheses refuted, including R11's User-Agent theory tested directly. LCC stopped under the three-failure bound. docs/ai/lcc-r12b/ECOURTS_AJAX_BLOCKER.md",
+    "-> no REAL_CAUSE_LIST_FIXTURE",
+    "-> parser stays FIXTURE_BOUND",
+    "-> no canary",
+    "-> no pilot",
+    "-> conditions 1-10 unanswerable",
+    "FQ-ECOURTS-HAR asks the founder for thirty seconds in Chrome, which settles it. It is the cheapest item in the founder queue."
+  ],
+  "conditions": [
+    {
+      "n": 1,
+      "condition": "At least one complete raw -> parsed -> ecourts_observation path exists.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "NEW3 measured directly against the live database 2026-08-30: ecourts_observation = 0 rows. ecourts_fetch_ledger = 198 rows. The instrumentation exists; the path has never completed once.",
+      "owner": "LCC",
+      "whyNotYet": "The AJAX endpoint refuses the request, so no cause-list representation has ever been retained. A session page, a CAPTCHA image and lookup metadata are NOT cause-list fixtures.",
+      "note": "This is the gate on the other nine. It is not one of twelve independent questions."
+    },
+    {
+      "n": 2,
+      "condition": "The pilot has produced usable observations on >= 2 consecutive calendar days.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "No pilot has run. 0 observations on 0 days.",
+      "owner": "LCC",
+      "gatedBy": 1,
+      "note": "Two days is a floor deliberately set low enough to be honest and high enough that a single lucky fetch cannot qualify a legal monitoring product."
+    },
+    {
+      "n": 3,
+      "condition": "Request success rate has a stated numerator AND denominator.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "The denominator exists and is auditable: ecourts_fetch_ledger = 198 rows, every request timestamped with endpoint and court. The numerator - requests that produced a usable observation - is 0. A rate of 0/198 is not the same object as a measured success rate on a working pipeline, and reporting it as one would flatter a pipeline that has never run.",
+      "owner": "LCC",
+      "gatedBy": 1,
+      "denominatorRule": "A metric must always state its denominator. 'Success rate' with no denominator is refused at this gate."
+    },
+    {
+      "n": 4,
+      "condition": "Parser failure rate has a stated numerator AND denominator.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "PARSER_STATE = FIXTURE_BOUND. The parser has been run only against fixtures, where it caught one real defect on its first run: the page's inline translation dictionary contains the string 'Record not found', and a document-wide match read a CAPTCHA form as an empty court day.",
+      "owner": "LCC",
+      "gatedBy": 1,
+      "hardRule": "Never document-wide match 'Record not found'. Result state is interpreted ONLY from the actual result container the application returns. CAPTCHA rejection != empty cause list. HTTP 200 != successful observation. PARSE_EMPTY != NO_CASES."
+    },
+    {
+      "n": 5,
+      "condition": "Every pilot observation traces to its immutable raw artifact.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "36 retained raw responses exist with sha256 recorded, and official_source_artifact holds the licensed client's scripts. The trace has never been exercised because the observation end of it does not exist.",
+      "owner": "LCC",
+      "gatedBy": 1,
+      "note": "The raw side is the half that is genuinely ready. That is worth recording so the remaining work is not overstated."
+    },
+    {
+      "n": 6,
+      "condition": "Duplicate / replay idempotency passes.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "Raw reprocessing is REQUIRED to be idempotent by design. Never exercised - there is nothing to reprocess.",
+      "owner": "LCC",
+      "gatedBy": 1
+    },
+    {
+      "n": 7,
+      "condition": "Manual correctness review: every observation if <= 50 exist, otherwise a stratified sample of 50. ZERO material case-identity, list-date or list-type misbindings.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "Nothing to review.",
+      "owner": "NEW3",
+      "gatedBy": 1,
+      "new3Commitment": "NEW3 performs this review and it is the one condition NEW3 owns outright. Zero is zero: one misbound case identity fails the gate, because a monitoring product that attaches the right date to the wrong case is worse than no monitoring product.",
+      "method": "Read each observation against its raw artifact by hand. Stratify by court, list type and date if a sample is needed. Record the sample frame, not just the result."
+    },
+    {
+      "n": 8,
+      "condition": "No unclassified failure mode is being silently counted as 'no change'.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "Cannot be checked without failures to classify. The rule is already encoded in the product contract: a failed observation means 'could not observe', never 'nothing changed'.",
+      "owner": "LCC + NEW3",
+      "gatedBy": 1,
+      "knownTrap": "In this repo an unclassified state has twice turned out to be two populations wearing one label - refused-by-a-rule and never-looked-at both read as NULL and want opposite work. Expect the same here."
+    },
+    {
+      "n": 9,
+      "condition": "Retention state for the pilot source is known, or explicitly UNMEASURED.",
+      "state": "UNMEASURED",
+      "measuredBy": "NEW3, 2026-08-30, and this is the one condition that can legitimately PASS while unmeasured",
+      "evidence": "Retention is UNMEASURED for both High Court and district, and is recorded as UNMEASURED rather than estimated: every probe date meets the same wall, so twelve requests would buy twelve identical refusals.",
+      "owner": "LCC",
+      "readingRule": "The condition permits 'explicitly UNMEASURED'. It is nonetheless scored UNMEASURED and not PASS here, because passing a condition on the strength of admitting we did not measure it would let this gate be satisfied by paperwork. It flips to PASS only when the retention probe has run at T, T-1, T-7, T-30, T-90, T-365 and classified the source, OR when a bounded stop report explains why it could not.",
+      "classification": ["EPHEMERAL", "SHORT_RETENTION", "HISTORICAL_RETRIEVABLE", "SOURCE_DEPENDENT", "UNMEASURED"],
+      "hardRule": "Only successful interpretable responses inform classification. A failed request NEVER proves absence."
+    },
+    {
+      "n": 10,
+      "condition": "The encoded hourly/daily request budget supports the PROPOSED product cadence, from measured pilot economics.",
+      "state": "UNMEASURED",
+      "measuredBy": "NEW3 arithmetic on the encoded limits, 2026-08-30 - which is a bound, not the measurement this condition asks for",
+      "evidence": "Encoded limits (GRANT_CONDITIONS, services/api/src/court/authorisation.ts): minimum 2,000 ms between requests, maximum 100/hour, maximum 1,000/day. Naive per-matter-per-day polling therefore caps the product at under ~1,000 monitored matters ACROSS ALL USERS, forever. Quota spent to date: 198 ledger rows.",
+      "owner": "NEW3 (product cadence) + LCC (measured economics)",
+      "gatedBy": 1,
+      "note": "This is the condition most likely to fail even after a working pilot, and it is the one a commercial plan depends on. The adaptive planner (roadmap 5.3.H) is what makes the arithmetic survivable - grouping monitored matters by source key so several matters share one cause-list fetch. It is explicitly NOT to be built before the pilot produces real economics.",
+      "monetizationRule": "FORBIDDEN until 10 and 9 are measured. No SLA, no published polling frequency, no price."
+    },
+    {
+      "n": 11,
+      "condition": "User-facing state says LISTED_OBSERVED, never HEARING_OCCURRED.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "The semantics are specified in the product definition and in TRUST_STATE_PRODUCT_CONTRACT_V1.md. No monitoring surface exists to render them, so the specification has never been exercised against a real observation.",
+      "owner": "NEW3 (semantics) + RCC (render)",
+      "gatedBy": 1,
+      "note": "The distinction is not pedantry. A cause list records that a case appeared on a list. Whether the hearing happened, was adjourned, or was passed over is not something the list knows, and an advocate who reads 'heard' where we observed 'listed' misses a hearing.",
+      "alsoPreserve": "The official interface itself warns that a displayed cause list may differ from the actual list. That uncertainty is preserved in the observation model, not smoothed away."
+    },
+    {
+      "n": 12,
+      "condition": "Monitoring remains capability-gated until remote scheduling is proven at Gate C.",
+      "state": "UNMEASURED",
+      "measuredBy": null,
+      "evidence": "monitoring.user_product = DISABLED_NOT_READY on every platform in V1_CAPABILITY_REGISTRY_R13.json. POST /court/lookup returns {available:false, reason:no_adapter_implemented}. The gate itself is not reached until Gate C, 18 September - after the 8 September decision.",
+      "owner": "NEW3 (capability gate) + LCC (remote scheduling)",
+      "note": "This condition is structurally unpassable ON 8 September, because the thing it requires is proven ten days later. It is scored honestly rather than waived: a Shape-A candidate on 8 September is a CANDIDATE, and Gate C is where the candidacy is tested. Roadmap 4.1 and 5.3.1 both say so."
+    }
+  ],
+  "honestSummary": "Twelve conditions, zero passing, one root cause. Nine of the twelve are questions about observations that do not exist; one (12) cannot pass on the decision date by construction; two (9, 10) are partially answerable today and are recorded with what IS known rather than left blank. On present evidence the 8 September decision selects SHAPE B, and the launch date does not move.",
+  "whatWouldChangeThis": "One retained authorized response containing an actual cause-list result representation - or a successful empty-result response whose semantics are unambiguous from the returned status. That single artifact unblocks the parser, the canary, the pilot, and conditions 1 through 8. FQ-ECOURTS-HAR is thirty seconds of founder time and is the shortest path to it."
+}

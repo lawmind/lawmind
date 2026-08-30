@@ -1,0 +1,703 @@
+{
+  "registryVersion": "NEW3_V1_CAPABILITY_REGISTRY_R13_2026-08-30",
+  "supersedes": "NEW3_V1_CAPABILITY_REGISTRY_R12_2026-08-29",
+  "supersedesFile": "docs/product/V1_CAPABILITY_REGISTRY_R12.json",
+  "whatChangedFromR12": [
+    "PER PLATFORM. Every row now carries `platforms: {ios, android, web}`. R12 had no platform dimension at all, which made roadmap v7.1 rule 15 - no claim on any surface the registry does not mark ENABLED PER PLATFORM - unenforceable.",
+    "search.party_name_only DISABLED_NOT_READY -> ENABLED_V1 (ios ENABLED_V1_KILLABLE), on measured evidence.",
+    "search.filtered_broad_query DISABLED_NOT_READY -> ENABLED_V1, on measured evidence.",
+    "ecourts.daily_pilot DISABLED_EXTERNAL_BLOCK -> DISABLED_NOT_READY, ratifying LCC bus 1544 and re-issuing it under NEW3 ownership (CCR-2026-08-30-03).",
+    "Every row carries `evidenceState` and `currentContractVersion`.",
+    "The other 27 rows carry R12 forward unchanged and are marked `carriedForwardFromR12: true`. A per-platform re-issue is not a licence to re-adjudicate rows nobody measured."
+  ],
+  "takenAt": "2026-08-30",
+  "backend": {
+    "gitSha": "f3b31c963dd19741b7a849d8a007d42aa1b9bfb1",
+    "contract": 1,
+    "minSupportedContract": 1,
+    "observedVia": "GET /version on the live local backend, http://127.0.0.1:3011",
+    "note": "This is the sealed Sprint-2 Day-0 HEAD (LCC seal, bus 1567)."
+  },
+  "relationshipToReleaseCapabilities": "ADDITIVE. GET /release/capabilities serves RELEASE_CAPABILITIES_R8_3.3 (asOf 2026-08-26) with a four-state vocabulary (ENABLED / LIMITED / DISABLED / EXPERIMENTAL_INTERNAL). That registry is the SERVER's statement about itself and is not replaced. This registry is the PRODUCT's statement about what v1 ships, in the five-state vocabulary NEW3 was asked for, and every row names the runtime row it derives from. Where the two disagree, the runtime registry wins on fact and this one wins on shipping decision. R13 NOTE: GET /release/capabilities still serves NO platform dimension - observed 30 Aug, the string \"platform\" appears nowhere in its 24-row payload. The per-platform truth therefore lives HERE and is enforced at review time, not at runtime, until CCR-2026-08-30-04 lands.",
+  "stateVocabulary": {
+    "ENABLED_V1": "Ships in v1, to every user, with the stated coverage and the stated uncertainty rendered.",
+    "INTERNAL_EXPERIMENTAL": "Runs, is measured, is never reachable by a user in v1. No public surface, no marketing claim.",
+    "DISABLED_NOT_READY": "The gap is OURS — code, coverage, or an unmeasured property. Closing it is our work.",
+    "DISABLED_EXTERNAL_BLOCK": "The gap is NOT ours — an authorization, a credential, a registrar's answer. No amount of our work closes it.",
+    "POST_V1": "Deliberately out of v1 scope. Not a gap.",
+    "ENABLED_V1_KILLABLE": "Ships in v1 on this platform, AND carries a capability kill switch that can disable it on this platform alone without disabling the capabilities named in `mustNotDisable`. Used where a platform policy risk is real but unproven.",
+    "UNKNOWN_PENDING_FOUNDER": "The platform itself is contested between two binding documents. Not ENABLED, not DISABLED, not POST_V1. No claim may be made about this capability on this platform in either direction, and no work is scheduled against it, until the founder settles the surface. See `platformStatus.web`."
+  },
+  "platformStatus": {
+    "ios": {
+      "state": "IN_SCOPE_V1",
+      "basis": "CLAUDE.md section 1: native iOS + Android (Expo). Roadmap v7.1 section 4: mobile = advocate companion."
+    },
+    "android": {
+      "state": "IN_SCOPE_V1",
+      "basis": "as above"
+    },
+    "web": {
+      "state": "CONTESTED_FOUNDER_INPUT_REQUIRED",
+      "conflict": "PRODUCT_DECISIONS.md PD-15 was SETTLED 11 Aug 2026 (web is no longer admin only) and then REVERSED 12 Aug 2026 by direct founder direction, quoted verbatim: \"This is only an app, we do not plan for a desktop, or a website login for users. The website login is only for the admin panel.\" CLAUDE.md section 1 carries that reversal. Master Roadmap v7.1, dated 30 Aug 2026, nonetheless states in section 4 \"Desktop = research workstation\", schedules \"desktop shell on the same API\" for 14 Sep, and \"Desktop usable by 9 Oct\" in Sprint 5.",
+      "whyNEW3DidNotDecide": "This is a product-surface reversal by the founder against a later roadmap that appears not to have noticed it. It is not a NEW3 call and it is not evidence-settleable - both documents are authoritative statements of intent, not measurements. Raised in docs/FOUNDER_QUEUE.md as FQ-WEB-SURFACE.",
+      "consequenceIfUnresolved": "Sprint 5 carries \"Desktop usable by 9 Oct\" against a surface the founder cancelled. That is schedule risk on the launch path, not a documentation tidy-up.",
+      "meanwhile": "Every row reads UNKNOWN_PENDING_FOUNDER for web. Nothing is claimed on a web surface in either direction, and the admin console (apps/admin) is untouched by this - it was never in question."
+    }
+  },
+  "enabledRequiresAllFive": {
+    "rule": "A capability may read ENABLED on a platform only if all five are present on its row.",
+    "fields": [
+      "id (CAPABILITY)",
+      "platforms.<platform> (PLATFORM)",
+      "evidenceArtifact (NAMED_EVIDENCE_ARTIFACT)",
+      "evidenceState (EVIDENCE_STATE)",
+      "currentContractVersion (CURRENT_CONTRACT_VERSION)"
+    ],
+    "audit": {
+      "enabledOnAtLeastOnePlatform": 18,
+      "enabledWithoutNamedEvidence": 0,
+      "offenders": [],
+      "method": "Every `docs/**` path in every evidenceArtifact was checked for existence on disk. Rows whose evidence is a live route observation rather than a file are marked NAMED_ROUTE_OBSERVATION and the route is quoted in the row."
+    },
+    "noCapabilityEnabledMerelyBecauseClientCodeExists": "Asserted. search.semantic.broad has a working client-reachable implementation and stays INTERNAL_EXPERIMENTAL on every platform. The desktop workspace files (ResearchWorkspace.tsx, MatterWorkspace.tsx, DraftWorkspace.tsx) exist in the tree, are inert below 900px, and enable no web row."
+  },
+  "minimumBackendVersionMeaning": "The lowest `contract` integer (GET /version) at which a client may rely on this capability's response shape. Contract 1 is the only version that exists; a capability marked 2 is one whose shape is expected to change and which a v1 client must not depend on.",
+  "capabilities": [
+    {
+      "id": "search.exact_citation",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.exact_identity (LIMITED)",
+      "dataDependency": "judgments.neutral_citation, judgments.reporter_citations",
+      "coverageDefinition": "judgments carrying a neutral citation / 18,758,460 judgments = 1,389,048 = 7.4049%. This is NOT the hit rate: a citation the advocate types is a citation that was printed, and the population of printed citations is not the population of judgments. The honest statement is 'every neutral citation we hold resolves', never 'we resolve every citation'.",
+      "freshnessDefinition": "Bounded by ingest, not by an index. A judgment is searchable by its citation from the moment its row exists. GET /corpus/freshness/object publishedAt 2026-08-29T14:40:46.848Z: latestLocalDecisionDate 2026-08-28, sourceLagDays 0.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M1,M2]",
+      "measuredLatencyMs": {
+        "M1": 77.1,
+        "M2": 29.9
+      },
+      "minimumBackendVersion": 1,
+      "uncertaintyRendered": "UNIQUE_UNCONFIRMED_STALE_INDEX where any of three freshness checks implicate the citation; shared-neutral identity returns every candidate and never a rank-1 pin.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.cnr",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.exact_identity (CNR arm)",
+      "dataDependency": "judgments.cnr",
+      "coverageDefinition": "18,758,433 / 18,758,460 = 99.99986% of held judgments carry a CNR. DENOMINATOR WARNING: this is coverage over judgments WE HOLD, and it is not a statement about eCourts. The CNR was backfilled from the same AWS High Court metadata the judgment came from. A CNR lookup answers 'do we hold this judgment', never 'what is happening in this case'.",
+      "freshnessDefinition": "Same as the judgment row. There is no separate CNR refresh and none is claimed.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M3]",
+      "measuredLatencyMs": {
+        "M3": 2.2
+      },
+      "minimumBackendVersion": 1,
+      "uncertaintyRendered": "None needed — a CNR either resolves to a held judgment or does not.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.case_number",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.exact_identity (case-number arm)",
+      "dataDependency": "judgments.case_number, printed exactly as the court printed it",
+      "coverageDefinition": "18,758,457 / 18,758,460 = 99.99998%. Case numbers are NOT unique across courts, so this arm returns candidates and the response says how many.",
+      "freshnessDefinition": "Same as the judgment row.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M4]",
+      "measuredLatencyMs": {
+        "M4": 468.9
+      },
+      "minimumBackendVersion": 1,
+      "uncertaintyRendered": "Candidate list, never a pin, when more than one court printed the same number.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.case_title_full",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.exact_identity (case-title arm)",
+      "dataDependency": "judgments.case_title",
+      "coverageDefinition": "Every held judgment has a title. The capability is bounded by QUERY SHAPE, not by coverage: a full or near-full title resolves at rank 1; a party name alone does not.",
+      "freshnessDefinition": "Same as the judgment row.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M5]",
+      "measuredLatencyMs": {
+        "M5_full_title": 29.2
+      },
+      "minimumBackendVersion": 1,
+      "uncertaintyRendered": "exactTitleCandidates when several titles match.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.party_name_only",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1_KILLABLE",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "no dedicated row - CASE_NAME_RE in query-shape.ts now classifies a bare run of party names structurally instead of sending it to the body-text ranker",
+      "dataDependency": "judgments.case_title trigram index; judgments.full_text_tsv",
+      "coverageDefinition": "MEASURED, and it is two populations. A party name carrying a distinguishing token resolves: 'SATENDER KUMAR ANTIL' returns 3 results with the authority at RANK 1 in 295.6 ms, degraded absent. A party name built only of corpus-common tokens still refuses: 'SANJAY KUMAR MISHRA @ SANJAY MISHRA' returns 0 with degraded=[sparse_unbounded], emptyBecause=query_too_broad_to_rank, rarestDf 0.0654, and pays 1,239.2 ms to get there.",
+      "freshnessDefinition": "N/A — not shipped.",
+      "evidenceArtifact": "docs/product/NEW3_ACCEPTANCE_DELTA_R13.json#cases[AB-1]",
+      "minimumBackendVersion": 1,
+      "whyNotReady": "The party-name path exists in retrieve.ts (rarestToken + trigram narrowing) but the request never reaches it: the query is classified as ordinary text and admitted or refused by the corpus-wide document-frequency gate first. This is the highest-value single gap in v1 search — an advocate names a case by its parties, not by its full cause title.",
+      "carriedForwardFromR12": false,
+      "stateChangedBy": "NEW3 R13, 30 August 2026, on backend d96147e. R12 recorded MEASURED ZERO on both probes; both were rerun verbatim.",
+      "knownLimit": "Indian personal names are frequent BECAUSE they are party names, so the refusing half is not a rare edge. The case-first hint stays wired and now fires on the common-name case instead of on every party-name case.",
+      "evidenceState": "MEASURED_30_AUG_2026",
+      "measuredLatencyMs": {
+        "rareNameAnswered": 295.6,
+        "commonNameRefusal": 1239.2
+      },
+      "currentContractVersion": "R13",
+      "uncertaintyRendered": "The refusing half renders emptyBecause + remedy, never \"no judgments matched\".",
+      "iosKillSwitch": {
+        "required": true,
+        "reason": "Apple guideline 5.1.1(viii): an app compiling personal information from any source not obtained directly from the user - public databases included - can be rejected. Case-first design is the correct mitigation and is NOT a guarantee.",
+        "mustNotDisable": [
+          "search.exact_citation",
+          "search.cnr",
+          "search.case_number",
+          "search.case_title_full"
+        ],
+        "degradeBehaviour": "VISIBLE. When the switch is active, party-name input degrades to case-number / citation / CNR search with a stated message. It never silently vanishes - a silent disappearance produces support load and a feature-parity claim problem.",
+        "servedOrBuildTime": "BUILD_TIME today. The served form is CCR-2026-08-30-04: AMENDed, backendOwner LCC, NOT YET RELEASED."
+      }
+    },
+    {
+      "id": "search.structured_filters",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.structured_filters (ENABLED)",
+      "dataDependency": "judgments.court, judgments.judgment_date, statute link tables",
+      "coverageDefinition": "27 courts held. district and tribunal are reported as unpopulatedCourtCategories on EVERY search response — the filter exists, the data behind it does not, and the response says so rather than returning a silent empty.",
+      "freshnessDefinition": "GET /corpus/freshness/object, definition HC_PARITY_V2_2026-08-29, sha 1e5bdd9060d527116b2ca0c9a013d30d3dfe7e687d2c503755bd7fd989dbc0e7.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M7]",
+      "measuredLatencyMs": {
+        "M7_narrow_query": 103.6
+      },
+      "minimumBackendVersion": 1,
+      "knownLimit": "FILTERS DO NOT BOUND THE LEXICAL ADMISSION GATE. See capability search.filtered_broad_query.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.filtered_broad_query",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "no row - the behaviour is admission or refusal inside search.lexical",
+      "dataDependency": "lexeme_document_frequency (corpus-wide), judgments filters",
+      "coverageDefinition": "MEASURED across six narrowing scopes of one query ('bail'). ADMITTED: one named court + 3 days -> 5 results in 154.6 ms; one named court + 1 month -> 5 results in 418.1 ms. REFUSED: one named court + 8 months; courts:[hc] category + 1 month at 262.6 ms; courts:[hc] + 29 days at 207.4 ms; unfiltered at 2.9 ms. Narrow control 'anticipatory bail cheque dishonour' + courts:[hc] + 29 days -> 5 results in 78.8 ms.",
+      "freshnessDefinition": "N/A — not shipped.",
+      "evidenceArtifact": "docs/product/NEW3_ACCEPTANCE_DELTA_R13.json#cases[AB-2]",
+      "minimumBackendVersion": 1,
+      "whyNotReady": "READ FROM THE CODE, not inferred: services/api/src/search/retrieve.ts computes rarestDf from lexeme_document_frequency and refuses when rarestDf > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY (0.05, ~935,000 documents). `filters` is a parameter of that same function and is NOT consulted before the refusal. The bound is therefore corpus-wide while the query is not. An advocate who has already narrowed to one court and one month is told their query is too broad — which is the daily-loop case, and the one where narrowing is exactly what they did.",
+      "carriedForwardFromR12": false,
+      "stateChangedBy": "NEW3 R13, 30 August 2026, on backend d96147e (rankWithinBoundedPopulation).",
+      "knownLimit": "A court CATEGORY is not narrowing. courts:[hc] expands to every High Court - a population of millions - and is still refused. filters.court with one name is narrowing. The refusal screen must therefore offer a single court and a shorter date range, and must NOT present a category chip as the remedy.",
+      "evidenceState": "MEASURED_30_AUG_2026",
+      "measuredLatencyMs": {
+        "admittedOneCourt3d": 154.6,
+        "admittedOneCourt1mo": 418.1,
+        "refusedCategory1mo": 262.6,
+        "refusedUnfiltered": 2.9
+      },
+      "currentContractVersion": "R13",
+      "knownDefect": "retrievalOutcome.rarestDf is reported as the corpus-wide 0.25773984261292154 in ALL SIX scopes, including the two that returned results. It is not the bound that governed the decision. CCR-2026-08-30-02, AMENDed as a semantic clarification; RCC may not derive a user-facing narrowing hint from it."
+    },
+    {
+      "id": "search.lexical",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "search.structured_filters / the sparse arm",
+      "dataDependency": "judgments.full_text_tsv",
+      "coverageDefinition": "full_text_tsv is GENERATED ALWAYS. Lexical coverage equals ingest coverage exactly, at every instant, with no backfill job and no lag. This is the ONLY coverage number in this registry that is 100% by construction rather than by measurement.",
+      "freshnessDefinition": "Identical to ingest. No separate index freshness exists.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M11]",
+      "measuredLatencyMs": {
+        "M11_natural_sentence": 917.5
+      },
+      "minimumBackendVersion": 1,
+      "uncertaintyRendered": "degraded[] carries sparse_timeout / sparse_unbounded / dense_timeout / pin_timeout; retrievalOutcome.state carries coverage_unknown; emptyBecause carries a reason and a remedy. A degraded search never renders as a complete one.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.honest_refusal",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "the 500-character validator and emptyBecause",
+      "dataDependency": "none",
+      "coverageDefinition": "A query over 500 characters is REFUSED with 400 and a message that says nothing was shortened. Verified: a 600-character query returns 400 with 'This search is longer than we can currently run safely'. Nothing is silently truncated.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M11].result.overLimitRefusesHonestly",
+      "minimumBackendVersion": 1,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "judgment.reader",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "judgment.reader (LIMITED)",
+      "dataDependency": "judgments.full_text, judgment_paragraphs, judgment_body_text_evidence",
+      "coverageDefinition": "Observed response carries: fullText, bodyText, textOrigin, paragraphs, numberedShare, dateQuality, dateQualityState, sourceUrl, plus all three citation fields and precedentialEffect / canAddToMatter / citableForUntouchedPropositions.",
+      "freshnessDefinition": "asOf is on the response. overruledStatus is read live at render and overruledStatusStored is carried beside it, so a stale stored value is visible rather than served.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M8]",
+      "measuredLatencyMs": {
+        "M8": 13.0
+      },
+      "minimumBackendVersion": 1,
+      "knownLimit": "The reader refuses body-derived evidence for a judgment whose body text is convicted damaged, and says so as bodyText.evidenceWithheld. It does not render an empty page.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "judgment.source_evidence",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "judgment.reader provenance fields",
+      "dataDependency": "judgments.source_url; official_source_artifact; the four 0092 provenance columns",
+      "coverageDefinition": "TWO DIFFERENT NUMBERS, AND CONFLATING THEM WOULD BE THE WORST CLAIM IN THIS REGISTRY. (a) source_url present: 18,758,460 / 18,758,460 = 100.0000% — we can always say where the document came from. (b) RETAINED SOURCE ARTIFACT: official_source_artifact holds 14,210 rows against 18,758,460 judgments = 0.07575%, of which 655 are TEXT_AVAILABLE, 10,498 IMAGE_ONLY_OCR_PENDING and 3,057 have a null text_state. We retain the original bytes for well under a tenth of one percent of the corpus.",
+      "freshnessDefinition": "source_url is as-ingested. Retained artifacts carry their own fetch ledger.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12_GRAPH.json#measured.retainedSourceArtifacts",
+      "minimumBackendVersion": 1,
+      "bannedClaim": "'Verified from the retained official PDF' is FALSE for 99.92% of the corpus and must never appear on a judgment surface. 'Source: <court>, <url>' is true everywhere.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "corpus.freshness_provenance",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "GET /corpus/freshness, GET /corpus/freshness/object, GET /corpus/coverage",
+      "dataDependency": "committed measurement artifacts read at request time; the definition sha is checked and the route throws on a mismatch",
+      "coverageDefinition": "TWO LAG NUMBERS EXIST AND BOTH ARE TRUE. naive lagDays 1 (max(judgment_date) = 2026-08-28). legalCurrency lagDays 29 (dataAsOf 2026-07-31, honestFrontierMonth 2026-07-01, the newest month at >=60% of a 134,810/month baseline). Quote both or neither. The object route additionally reports upstreamLocalCompleteness 0.9697 and sourceUnavailableCount 46,754.",
+      "freshnessDefinition": "Self-describing. publishedAt 2026-08-29T14:40:46.848Z, publicationGeneration 2026-08-29T14:38:58.523Z#a47d446ffc51.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#freshnessEvidence",
+      "measuredLatencyMs": {
+        "object_route_p50_per_LCC_R10": 7.5
+      },
+      "minimumBackendVersion": 1,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "statute.lookup",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "statute.lookup (ENABLED)",
+      "dataDependency": "statutes, statute_sections",
+      "coverageDefinition": "849 Acts, 36,663 sections held. This is a count of what we hold and is NOT a completeness claim about Indian statute law, which has no denominator we have measured.",
+      "freshnessDefinition": "UNMEASURED. No statute freshness probe exists and none is claimed.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M6]",
+      "measuredLatencyMs": {
+        "M6": 14.5
+      },
+      "minimumBackendVersion": 1,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "statute.linked_judgments",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "statute.linked_judgments (LIMITED)",
+      "dataDependency": "judgment_statute_refs",
+      "coverageDefinition": "THREE DENOMINATORS, ALL DIFFERENT. (a) references linked to a held Act: 703,768 / 905,156 = 77.7509%. (b) judgments carrying at least one statute reference: 446,483 / 18,758,460 = 2.3801%. (c) references per judgment is not a coverage number at all. (a) is about our Act table; (b) is about our extractor's reach; only (b) answers 'if I look up a section, how much of the corpus can be behind it'.",
+      "freshnessDefinition": "Extraction is a step in NEW2's daily cycle, bounded on created_at. Last observed population 905,156 at 2026-08-29T17:45Z.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12.json#exact.statuteRefs",
+      "minimumBackendVersion": 1,
+      "knownPrecisionDefect": "A link is a CANDIDATE CORRESPONDENCE, not evidence the cited section says what the judgment says it says. FIFTH measured 1,723 links whose statute was enacted AFTER the judgment citing it, 1,117 of them pre-1974 CrPC references pinned to the 1973 Code.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "statute.old_new_correspondence",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "runtimeRow": "statute.old_new_correspondence (DISABLED)",
+      "dataDependency": "statute_mappings",
+      "coverageDefinition": "N/A — disabled.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "DOMAIN_TRUTH.md; docs/OPEN_DECISIONS.md",
+      "minimumBackendVersion": 2,
+      "whyNotReady": "IPC/CrPC/Evidence -> BNS/BNSS/BSA transition rules await advocate sign-off. Showing a wrong correspondence is a wrong section number, which is the second-worst thing this product can do.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "citation.graph_partial",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "treatment.resolved_signals (LIMITED)",
+      "dataDependency": "judgment_citations",
+      "coverageDefinition": "FOUR NUMBERS, AND ONLY ONE OF THEM IS COVERAGE. judgment_citations holds 22,406,483 rows, of which 16,127,190 (71.98%) are BLANK SENTINELS — relationship 'cites' with an empty citation_text, meaning 'we looked and found nothing'. Real reference strings: 6,279,293. Resolved rows: 227,517 = 3.6233% of real reference strings. Distinct resolved edges: 200,761. Judgments with at least one resolved outgoing citation: 105,024 = 0.55987% of the corpus. Judgments cited at least once by a resolved edge: 35,153 = 0.18740%.",
+      "freshnessDefinition": "The resolver frontier is NEW2's daily cycle. Bulk apply is on HOLD with rowsApplied 0.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12_GRAPH.json#measured.distinctResolvedEdges",
+      "measuredLatencyMs": {
+        "M9": 550.5
+      },
+      "minimumBackendVersion": 1,
+      "bannedClaim": "'Every judgment has its citations mapped' would be arithmetically TRUE of judgment_citations row presence (18,758,460 of 18,758,460 judgments have at least one row) and completely false in meaning, because 71.98% of those rows are the blank sentinel. Citation coverage is defined on RESOLVED EDGES and on nothing else.",
+      "contractGap": "GET /judgments/:id/graph returns rootId, asOf, nodes, edges, totalNodes, returned, truncated. It does NOT declare that the graph is partial. `truncated` says 'this page is short', not 'this graph is 0.56% complete'. A partiality declaration is required before a graph reaches a user. See DATA_TRUST_CONTRACT.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "citation.verification_three_field",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "GET /citations/:id, and the three fields on every judgment and authority payload",
+      "dataDependency": "citation_checks, judgments.overruled_status",
+      "coverageDefinition": "citation_checks holds 16,199 rows and every one is verificationState=verified, verifiedBySource=corpus. There are currently ZERO unverified and ZERO failed rows, which means the unverified render path has no production traffic behind it and its correctness rests on tests, not on observation. Overruled distribution across 18,758,460 judgments: none 18,758,362, set_aside 73, doubted 17, partly_set_aside 8 — 98 non-none, 0.00052%.",
+      "freshnessDefinition": "overruled_status is read live at render on every surface and is never cached. overruledStatusStored is carried beside overruledStatus so a divergence is visible.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12_GRAPH.json#measured.citationCheckStates and .overruledDistribution",
+      "minimumBackendVersion": 1,
+      "note": "Three independent fields, never one enum. The five badge states are derived at render.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "matter.workspace",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "matter.workspace (ENABLED)",
+      "dataDependency": "matters, matter_events, matter_shares",
+      "coverageDefinition": "N/A — user-owned state, not corpus coverage. 3 matters exist on this database, all pre-existing.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M10]",
+      "measuredLatencyMs": {
+        "M10_create_plus_save": 16.9
+      },
+      "minimumBackendVersion": 1,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "matter.saved_authorities",
+      "state": "ENABLED_V1",
+      "platforms": {
+        "ios": "ENABLED_V1",
+        "android": "ENABLED_V1",
+        "web": "UNKNOWN_PENDING_FOUNDER"
+      },
+      "runtimeRow": "matter.saved_authorities (ENABLED)",
+      "dataDependency": "matter_authorities joined to judgments at read time",
+      "coverageDefinition": "N/A — user-owned state.",
+      "freshnessDefinition": "The join is at READ time, so a saved authority that is later marked set_aside shows it on the next read. asOf is on the response (observed 2026-08-29T17:42:17.803Z).",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M10].result.savedAuthorityCitationFields",
+      "minimumBackendVersion": 1,
+      "note": "OBSERVED: the saved authority carries verificationState, verifiedBySource and overruledStatus as three separate fields. set_aside disables add-to-matter.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.semantic.broad",
+      "state": "INTERNAL_EXPERIMENTAL",
+      "platforms": {
+        "ios": "INTERNAL_EXPERIMENTAL",
+        "android": "INTERNAL_EXPERIMENTAL",
+        "web": "INTERNAL_EXPERIMENTAL"
+      },
+      "runtimeRow": "search.semantic.broad (EXPERIMENTAL_INTERNAL)",
+      "dataDependency": "judgment_chunks, new1_tranche_passages, new1_doc_vector_stage",
+      "coverageDefinition": "See EMBEDDING_INTERNAL_STATE. Public reach is 40,161 documents = 0.21409% of 18,758,460.",
+      "freshnessDefinition": "Snapshot-versioned. document-vectors-v2, definition 5b5d02384b46c96c, manifestHash 524ece8a4254.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12.json#exact.documentsWithChunks",
+      "minimumBackendVersion": 2,
+      "publicState": "DISABLED",
+      "whyNotEnabled": "Coverage is rising and that is not the gate. Every search response already carries semanticAvailable:false and semanticIndexSufficient, and the outcome object reports semantic_index_insufficient as a reason. A semantic arm that reaches 0.21% of the corpus and returns nothing looks identical to a corpus that holds nothing on the point.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.semantic.supporting_authority",
+      "state": "POST_V1",
+      "platforms": {
+        "ios": "POST_V1",
+        "android": "POST_V1",
+        "web": "POST_V1"
+      },
+      "runtimeRow": "search.semantic.supporting_authority (DISABLED)",
+      "dataDependency": "passage embeddings + a role classifier",
+      "coverageDefinition": "N/A.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/ai/new1-r10/NEW1_R10_ROUND.md",
+      "minimumBackendVersion": 2,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "search.semantic.adverse_authority",
+      "state": "POST_V1",
+      "platforms": {
+        "ios": "POST_V1",
+        "android": "POST_V1",
+        "web": "POST_V1"
+      },
+      "runtimeRow": "search.semantic.adverse_authority (DISABLED)",
+      "dataDependency": "passage embeddings + a role classifier",
+      "coverageDefinition": "N/A.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/ai/new1-r10/NEW1_R10_ROUND.md",
+      "minimumBackendVersion": 2,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "generation.evidence_from_passages",
+      "state": "POST_V1",
+      "platforms": {
+        "ios": "POST_V1",
+        "android": "POST_V1",
+        "web": "POST_V1"
+      },
+      "runtimeRow": "generation.evidence_from_passages (DISABLED)",
+      "dataDependency": "passage coverage + safeForGeneration",
+      "coverageDefinition": "N/A. Every observed search response carries retrievalOutcome.safeForGeneration=false.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json#cases[M1].result.retrievalOutcome",
+      "minimumBackendVersion": 2,
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "language.hindi",
+      "state": "POST_V1",
+      "platforms": {
+        "ios": "POST_V1",
+        "android": "POST_V1",
+        "web": "POST_V1"
+      },
+      "runtimeRow": "language.hindi (DISABLED)",
+      "dataDependency": "Devanagari-safe extraction; Noto Sans Devanagari rendering",
+      "coverageDefinition": "N/A. The search API accepts language:'hi' as an input value; that is a request field, not a capability.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/DEVANAGARI_EXTRACTION_DEFECTS.md",
+      "minimumBackendVersion": 2,
+      "bannedClaim": "Any claim of Hindi support, including 'Hindi coming soon' on a store listing.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "ecourts.raw_observation_pipeline",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "runtimeRow": "court.cause_list_harvest (DISABLED)",
+      "dataDependency": "ecourts_observation",
+      "coverageDefinition": "ecourts_observation holds 0 rows. ecourts_transition holds 0. cause_list_syncs holds 0. ecourts_fetch_ledger holds 131 rows.",
+      "freshnessDefinition": "No observation has ever been written, so every freshness field is null and is reported as null rather than as zero.",
+      "evidenceArtifact": "docs/product/DERIVED_INTELLIGENCE_METRICS_R12.json#exact.smallTables",
+      "minimumBackendVersion": 2,
+      "whyNotReady": "NOTHING IN THE TREE INSERTS INTO ecourts_observation. Every reference is a count(*) or the schema definition. rawObservationCount can only ever be 0 until that writer is built. This is OURS, not a permission gap.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "ecourts.parser",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "runtimeRow": "none",
+      "dataDependency": "the eCourts cause-list HTML",
+      "coverageDefinition": "N/A.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/ai/lcc-r11/LCC_R11_ECOURTS_CONTINUATION.md",
+      "minimumBackendVersion": 2,
+      "whyNotReady": "parseCauseList is fixture-bound and caught a real defect on its first run — the page ships an inline translation dictionary containing 'Record not found', and matching it document-wide made a CAPTCHA form parse as a court that had published nothing. It is not yet bound to a live page because no live page can be fetched.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "ecourts.daily_pilot",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "stateChangedBy": "LCC bus 1544 (29 Aug) applied the change to the R12 file directly; NEW3 R13 RATIFIES it and re-issues it under NEW3 ownership - CCR-2026-08-30-03. The route was wrong, the content was right, and reverting a correct correction to make a process point would leave a false state in the registry.",
+      "whyNotReady": "OURS, not a permission gap. CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT. CLAUDE.md 6a states three mechanical conditions on the authorised bypass and all three are already enforced. AUTHORIZATION IS NOT REOPENED AND IS NOT A GATE. What is outstanding is engineering: the AJAX request shape (eight hypotheses refuted, LCC R12b), an observation writer, and the two measurements monitoring waits on.",
+      "runtimeRow": "court.ecourts_live (DISABLED)",
+      "dataDependency": "an operational basis for cause_list_captcha_code",
+      "coverageDefinition": "N/A. Retention is UNMEASURED for both High Court and district, and is recorded as UNMEASURED rather than estimated: every probe date meets the same wall, so twelve requests would buy twelve identical refusals.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/ai/lcc-r12b/ECOURTS_AJAX_BLOCKER.md; docs/product/NEW3_R13_PRODUCT_AMENDMENTS.md",
+      "minimumBackendVersion": 2,
+      "whyExternallyBlocked_SUPERSEDED_2026-08-30": "The first authorised eCourts request ever made under the registrar's grant returned the court's own answer: the cause list serves NO DATA until cause_list_captcha_code is satisfied. captchaBypassPermitted is true on the grant and the grant records NO operational basis — no credential, no whitelisted address, no exempt endpoint. Reading the image, transcribing the audio or exploiting the generator would each be inventing a security bypass. CAPTCHA_OPERATIONAL_BASIS = NONE_RECORDED. One sentence from the registrar closes this and nothing we build does.",
+      "switchState": "platform_config.ecourts_harvest = ON as of 2026-08-29T17:33:52Z. The R12 record of OFF is superseded.",
+      "claimStatus": "CONTESTED AND IN MOTION. The CAPTCHA finding below is LCC bus 1524, not a NEW3 measurement. At 17:29Z on 2026-08-29 LCC took the GIT_COMMIT lease with the task \"R11b: correct the invented CAPTCHA blocker and complete the cause-list pipeline\", and no correction had reached the bus (newest 1525) when this registry was written. If the CAPTCHA blocker is withdrawn, this row becomes DISABLED_NOT_READY and NO OTHER ROW CHANGES: monitoring.user_product still fails gates 2, 3 and 4.",
+      "new3MeasuredDirectly": "Re-measured by NEW3 against the live database 30 Aug 2026: ecourts_observation = 0 rows (UNCHANGED, and the only number that matters); ecourts_fetch_ledger = 198 rows (R12 recorded 131); platform_config.ecourts_harvest enabled = TRUE, flipped 2026-08-29T17:33:52Z by the durable eCourts actor 3d37f77f-23f3-4eb0-b34f-d1700ec652a5 with a reason recorded. R12 recorded this switch as OFF; it is now ON.",
+      "carriedForwardFromR12": false,
+      "evidenceState": "MEASURED_30_AUG_2026",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "monitoring.user_product",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "runtimeRow": "POST /court/lookup returns available:false, reason:no_adapter_implemented",
+      "dataDependency": "ecourts.raw_observation_pipeline AND ecourts.daily_pilot AND measured capacity AND measured retention",
+      "coverageDefinition": "N/A. Zero observations exist, so there is no coverage to define.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "observed live: POST /court/lookup -> {available:false, reason:no_adapter_implemented, manualEntry:{expected:true}}",
+      "minimumBackendVersion": 2,
+      "whyNotReady": "FOUR separate gates, and the pilot passing closes only one. (1) the CAPTCHA basis; (2) an observation writer; (3) MEASURED capacity — the encoded limits are 2,000 ms minimum interval, 100/hour, 1,000/day, and naive per-matter-per-day polling caps the entire product at under ~1,000 monitored matters across all users, forever; (4) MEASURED retention. Pilot data existing is NOT one of the four.",
+      "monetization": "FORBIDDEN until (3) and (4) are measured. No SLA, no published polling frequency, no price.",
+      "honestBehaviourToday": "The manual path works and says so: 'Enter the next date from your file. Dates given in open court are the normal source and are treated exactly the same as one we looked up.'",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ROUTE_OBSERVATION",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "briefing.daily_loop",
+      "state": "DISABLED_NOT_READY",
+      "platforms": {
+        "ios": "DISABLED_NOT_READY",
+        "android": "DISABLED_NOT_READY",
+        "web": "DISABLED_NOT_READY"
+      },
+      "runtimeRow": "matter.briefing (LIMITED)",
+      "dataDependency": "matter.nextHearingDate (manual) + corpus deltas; NOT eCourts",
+      "coverageDefinition": "The briefing assembles from matter state and corpus movement. It does not and must not require a court observation.",
+      "freshnessDefinition": "Bounded by the corpus delta, which is measured; not by a court feed, which does not exist.",
+      "evidenceArtifact": "GET /matters/:id/briefings, GET /briefings/:id — both BUILT",
+      "minimumBackendVersion": 1,
+      "note": "This is Tier B, which PRODUCT_BRIEF.md says ships BEFORE Tier A. It is DISABLED_NOT_READY here only because NEW3 did not run a briefing through acceptance this round — the routes are mounted. Naming it as a v1 candidate rather than silently omitting it.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ROUTE_OBSERVATION",
+      "currentContractVersion": "R13"
+    },
+    {
+      "id": "documents.upload_and_ocr",
+      "state": "DISABLED_EXTERNAL_BLOCK",
+      "platforms": {
+        "ios": "DISABLED_EXTERNAL_BLOCK",
+        "android": "DISABLED_EXTERNAL_BLOCK",
+        "web": "DISABLED_EXTERNAL_BLOCK"
+      },
+      "runtimeRow": "POST /documents, POST /ocr/jobs — SPECCED, not built",
+      "dataDependency": "a countersigned DPA before any sensitive-class routing",
+      "coverageDefinition": "N/A.",
+      "freshnessDefinition": "N/A.",
+      "evidenceArtifact": "docs/PRIVACY_PII.md; OD-6 resolved 2 Aug 2026",
+      "minimumBackendVersion": 2,
+      "whyExternallyBlocked": "The countersigned DPA is still owed. The admin surface refuses to route sensitive traffic without one and there is no founder override. This is a signature, not code.",
+      "carriedForwardFromR12": true,
+      "evidenceState": "NAMED_ARTIFACT_PRESENT",
+      "currentContractVersion": "R13"
+    }
+  ],
+  "latencySource": "docs/product/TEN_MATTER_ACCEPTANCE_R12.json, run takenAt 2026-08-29T18:19:23.116Z. Latencies were measured on a box running the GPU sidecar, the coarse walk, doc-vector embed and ingest, with seven Postgres backends active; they vary run to run by roughly an order of magnitude at the fast end and must be quoted with their run, never alone."
+}

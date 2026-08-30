@@ -6776,3 +6776,58 @@ reason. The backup removes the actual risk; the rest is tidiness.
 say encrypt before anything leaves the machine. These are public model weights
 with no client data in them, so the reason behind that rule does not apply — but
 the rule was not followed, and you should hear that from us rather than notice it.
+
+
+---
+
+## FQ-WEB-SURFACE — the roadmap plans a desktop you cancelled on 12 August  ·  NEW3, 30 Aug 2026 · **one sentence, and it takes a week of Sprint 5 off the table either way**
+
+**What is needed from you:** one sentence saying whether advocates get a
+web/desktop surface in v1. Nothing else. No account, no money, no credential.
+
+**Why NEW3 will not decide it.** Two documents that both bind us say opposite
+things, and no measurement can separate them — they are statements of intent, not
+facts about the world. That is what makes it yours rather than ours.
+
+- **`PRODUCT_DECISIONS.md` PD-15 was settled on 11 August and REVERSED by you on
+  12 August**, quoted verbatim in that file: *"This is only an app, we do not plan
+  for a desktop, or a website login for users. The website login is only for the
+  admin panel."* `CLAUDE.md` §1 carries the reversal. The desktop code was frozen
+  rather than deleted, on your explicit call.
+- **Master Roadmap v7.1, dated 30 August**, says in §4 *"Desktop = research
+  workstation"*, schedules *"desktop shell on the same API"* for 14 September, and
+  *"Desktop usable by 9 Oct"* in Sprint 5. It reads as though the 12 August
+  reversal had not happened.
+
+**What it costs to leave open.** Sprint 5 currently carries a desktop deliverable
+due 9 October — eight days before candidate freeze — against a surface you
+cancelled. That is a week of the last build sprint pointed at something that may
+not exist. It is also the reason the capability registry cannot say anything true
+about a web surface: every one of its 30 rows reads `UNKNOWN_PENDING_FOUNDER` for
+`web`, because guessing in *either* direction would put a false state in the one
+file that governs what we are allowed to claim.
+
+**What was built anyway, so nothing is waiting on you.** `V1_CAPABILITY_REGISTRY_R13.json`
+is complete and enforceable for iOS and Android — 18 capabilities enabled on at
+least one platform, none without named evidence. The claims register is per
+platform. The iOS party-search kill switch is specified. **Nothing in this round is
+blocked**; only the web column is empty, and it is empty on purpose.
+
+**What stays broken without an answer.** Sprint 5's desktop line stays in the plan
+unchallenged, and any web claim — a screenshot, a "works on your laptop", a
+pricing page that implies a desktop app — has no registry row to authorise it, so
+under roadmap rule 15 it cannot be made at all.
+
+**Either answer is cheap right now and expensive on 9 October:**
+
+1. **The reversal stands.** The desktop line comes out of Sprint 5, that week goes
+   to the phone, and every `web` row becomes `POST_V1`. The inert workspace files
+   stay inert. *(NEW3's read of your 12 August direction — but it is a read, and it
+   is not ours to apply.)*
+2. **v7.1 supersedes it.** PD-15 is re-settled going the other way, `web` becomes a
+   third real platform, and its rows need their own evidence before anything is
+   claimed on it.
+
+**Where it plugs in:** `V1_CAPABILITY_REGISTRY_R13.json` → `platformStatus.web`;
+`docs/product/NEW3_R13_PRODUCT_AMENDMENTS.md` Amendment 3; Master Roadmap v7.1 §4
+and §10 Sprint 5.

@@ -1,0 +1,497 @@
+{
+  "artifact": "NEW3_RESEARCH_TASK_SET_V1",
+  "owner": "NEW3",
+  "takenAt": "2026-08-30",
+  "purpose": "The 50 curated realistic advocate research tasks behind the product North Star: LawMind Research Task Completion Rate - the advocate finds the authority, verifies the source, reads enough context to use it, saves it to the matter, and finishes without another legal database.",
+  "thresholdPolicy": {
+    "setNow": false,
+    "why": "A threshold set before any advocate has attempted the set is a number invented to be met. The 3-5 advocate shadow beta in Sprint 3 (12-18 September) establishes the baseline.",
+    "frozenBy": "2026-09-18",
+    "neverMovedAfter": "Moving a threshold once results arrive is self-deception, and an investor can tell."
+  },
+  "scopeGuard": "This task set is NOT permission to revive broad semantic search, build Gold V3, or turn NEW3 into a retrieval-evaluation lane. It measures whether an advocate finishes a task. It does not measure recall@k, and no task in it requires the semantic arm.",
+  "construction": {
+    "legalContentRule": "No task asserts a section number, a holding, or a court-hierarchy fact. Every task is a description of what an advocate is TRYING TO DO. Where a statute or section is needed, the advocate supplies it from their own brief - which is also how it happens in practice.",
+    "expectedFailures": "4 tasks are included that are EXPECTED TO FAIL on current capability, and each says so and why. They are in the set deliberately: a task set containing only things that work measures nothing, and it would hide from the shadow beta exactly the gaps a beta exists to find.",
+    "bands": [
+      "identity",
+      "filtered",
+      "reading",
+      "trust",
+      "statute",
+      "workflow"
+    ],
+    "enabledIsNotTheSameAsCompletable": "Worth reading carefully: 48 of the 50 tasks point at a capability the registry marks ENABLED_V1, yet FOUR are expected to fail. Only ONE of those four (RT-44, old/new code correspondence) points at a DISABLED row. The other three fail INSIDE an enabled capability - currentness coverage is five judgments, treatment provenance is not on the wire, statute freshness is UNMEASURED. A capability being ENABLED means the product does the thing; it does not mean an advocate can finish the task. That gap is exactly what a task-completion metric measures and a capability registry cannot."
+  },
+  "progress": {
+    "tasksDrafted": 50,
+    "target": 50,
+    "reviewedByAnAdvocate": false,
+    "baselineRun": false,
+    "thresholdFrozen": false,
+    "nextStep": "Shadow beta, 12-18 September, 3-5 practising advocates, observed sessions. Score each task attempted / completed-without-leaving / completed-with-help / failed.",
+    "expectedFailures": 4,
+    "tasksAgainstEnabledCapabilities": 49
+  },
+  "tasks": [
+    {
+      "id": "RT-01",
+      "band": "identity",
+      "task": "Open the judgment for a neutral citation written on a brief.",
+      "primaryCapability": "search.exact_citation",
+      "completeWhen": "The judgment opens and its citation matches the one typed, character for character.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-02",
+      "band": "identity",
+      "task": "Open a judgment from a reporter citation an opponent cited in writing.",
+      "primaryCapability": "search.exact_citation",
+      "completeWhen": "The judgment opens, or the product says plainly that it does not hold that reporter citation.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-03",
+      "band": "identity",
+      "task": "Find a case when only the CNR number is known, from a client file.",
+      "primaryCapability": "search.cnr",
+      "completeWhen": "The judgment or its record opens from the CNR alone.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-04",
+      "band": "identity",
+      "task": "Find a case from a case number and year written in a cause list.",
+      "primaryCapability": "search.case_number",
+      "completeWhen": "Every judgment matching that case number is shown, without one being guessed as the right one.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-05",
+      "band": "identity",
+      "task": "Find a case from its full cause title as printed on an order.",
+      "primaryCapability": "search.case_title_full",
+      "completeWhen": "The judgment resolves at rank 1, or every candidate sharing that title is offered.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-06",
+      "band": "identity",
+      "task": "Find a case remembered only by the parties' names.",
+      "primaryCapability": "search.party_name_only",
+      "completeWhen": "The authority is reachable from the party names alone, or the product says the name is too common and asks for one more detail.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "note": "Measured 30 Aug: works for a name with a distinguishing token; refuses at 1,239 ms for a name of only common tokens."
+    },
+    {
+      "id": "RT-07",
+      "band": "identity",
+      "task": "Distinguish two judgments that share a cause title.",
+      "primaryCapability": "search.case_title_full",
+      "completeWhen": "Both are shown with enough on the row - court, date, case number - to tell them apart without opening either.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-08",
+      "band": "identity",
+      "task": "Confirm that a citation an opponent gave actually exists.",
+      "primaryCapability": "search.exact_citation",
+      "completeWhen": "The product either produces the judgment or states that it cannot confirm it exists. It never implies the citation is fake, and never implies it is real.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-09",
+      "band": "identity",
+      "task": "Find the later order in a matter when only the earlier judgment is held.",
+      "primaryCapability": "search.case_number",
+      "completeWhen": "Other records sharing the case number are reachable from the one in hand.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-10",
+      "band": "identity",
+      "task": "Check whether a judgment cited in a textbook is one we hold at all.",
+      "primaryCapability": "search.exact_citation",
+      "completeWhen": "A clear held / not-held answer. \"Not held\" is a complete answer and is not a failure of the task.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-11",
+      "band": "filtered",
+      "task": "Read what one High Court decided on a broad subject in the last month.",
+      "primaryCapability": "search.filtered_broad_query",
+      "completeWhen": "Results return for one named court and a short window.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "note": "Measured: one court + one month returns results in 418 ms; a court CATEGORY does not."
+    },
+    {
+      "id": "RT-12",
+      "band": "filtered",
+      "task": "Restrict a search to a single named High Court.",
+      "primaryCapability": "search.structured_filters",
+      "completeWhen": "Only that court appears in the results and the filter is visibly applied.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-13",
+      "band": "filtered",
+      "task": "Restrict a search to a date range around a known hearing.",
+      "primaryCapability": "search.structured_filters",
+      "completeWhen": "The range is honoured and an empty range says so rather than returning neighbours.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-14",
+      "band": "filtered",
+      "task": "Search a term that turns out to be too common, and recover.",
+      "primaryCapability": "search.filtered_broad_query",
+      "completeWhen": "The refusal names a remedy that actually works - a single court, a shorter range - and following it returns results.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "note": "The refusal must NOT offer a court category as the remedy. Measured: categories are still refused."
+    },
+    {
+      "id": "RT-15",
+      "band": "filtered",
+      "task": "Search only Supreme Court authority on a point.",
+      "primaryCapability": "search.structured_filters",
+      "completeWhen": "The court filter is applied and the results are visibly Supreme Court only.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-16",
+      "band": "filtered",
+      "task": "Find recent authority in a court where we hold little.",
+      "primaryCapability": "search.structured_filters",
+      "completeWhen": "The product says the filter has no data behind it, rather than returning zero results as if none exist.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-17",
+      "band": "filtered",
+      "task": "Combine a court filter and a case-type filter.",
+      "primaryCapability": "search.structured_filters",
+      "completeWhen": "Both apply, and a combination with no data says so.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-18",
+      "band": "filtered",
+      "task": "Search with a phrase from a judgment already in hand.",
+      "primaryCapability": "search.lexical",
+      "completeWhen": "The source judgment is reachable from its own words.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-19",
+      "band": "filtered",
+      "task": "Ask something the product cannot answer, and find out quickly.",
+      "primaryCapability": "search.honest_refusal",
+      "completeWhen": "A refusal arrives fast and states why. Never \"no judgments matched\" where nothing was searched.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-20",
+      "band": "filtered",
+      "task": "Understand whether an empty result means nothing exists or nothing was searched.",
+      "primaryCapability": "search.honest_refusal",
+      "completeWhen": "The two are visibly different states. This is the single most important task in the set.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-21",
+      "band": "reading",
+      "task": "Read enough of a judgment to decide whether to cite it.",
+      "primaryCapability": "judgment.reader",
+      "completeWhen": "The operative reasoning is readable without leaving the product.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-22",
+      "band": "reading",
+      "task": "See where a judgment came from before relying on it.",
+      "primaryCapability": "judgment.source_evidence",
+      "completeWhen": "The source is named and its currentness shown, on the same screen as the text.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-23",
+      "band": "reading",
+      "task": "Tell a document we hold from a link to a document we do not.",
+      "primaryCapability": "judgment.source_evidence",
+      "completeWhen": "The two render differently and the difference is legible without explanation.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-24",
+      "band": "reading",
+      "task": "Notice that a judgment is image-only before quoting it.",
+      "primaryCapability": "judgment.source_evidence",
+      "completeWhen": "The image-only state announces itself and is never presented as text evidence.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-25",
+      "band": "reading",
+      "task": "Find out how current the corpus is for the court being researched.",
+      "primaryCapability": "corpus.freshness_provenance",
+      "completeWhen": "A per-court freshness answer, not a single corpus-wide date.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-26",
+      "band": "reading",
+      "task": "Copy a passage accurately for a written submission.",
+      "primaryCapability": "judgment.reader",
+      "completeWhen": "The passage copies as the court wrote it, with no silent normalisation.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-27",
+      "band": "reading",
+      "task": "Read a Hindi-script judgment without the script breaking.",
+      "primaryCapability": "judgment.reader",
+      "completeWhen": "Devanagari renders correctly. This is a rendering task, not a translation task.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "note": "Hindi SEMANTIC capability is POST_V1 and no task here tests it."
+    },
+    {
+      "id": "RT-28",
+      "band": "reading",
+      "task": "Decide not to rely on a judgment because the evidence is withheld.",
+      "primaryCapability": "judgment.reader",
+      "completeWhen": "The withheld state is explicit and the advocate stops, correctly, rather than quoting a truncated document.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-29",
+      "band": "trust",
+      "task": "Check whether an authority is still good law before filing.",
+      "primaryCapability": "citation.verification_three_field",
+      "completeWhen": "The LAW MOVED state is shown where it applies, read live. Where nothing is recorded, the product does not imply the authority is safe.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "expectedToFail": "Canonical-safe currentness coverage is FIVE judgments. This task is expected to reveal how little we can say, and that is the finding."
+    },
+    {
+      "id": "RT-30",
+      "band": "trust",
+      "task": "See that an authority has been overruled before citing it.",
+      "primaryCapability": "citation.verification_three_field",
+      "completeWhen": "The mark appears on every surface the authority appears on, including inside a matter.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-31",
+      "band": "trust",
+      "task": "Learn who recorded that an authority was overruled - a court or a law reporter.",
+      "primaryCapability": "citation.graph_partial",
+      "completeWhen": "The source of the treatment is visible.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "expectedToFail": "treatment_provenance is not on the wire. CCR-2026-08-30-05, DEFERRED to Gate C. This task is expected to FAIL in the shadow beta and is included so the failure is measured rather than assumed."
+    },
+    {
+      "id": "RT-32",
+      "band": "trust",
+      "task": "Notice a citation the product could not confirm.",
+      "primaryCapability": "citation.verification_three_field",
+      "completeWhen": "The unverified mark is unmissable and offers the eCourts path. It is never silently dropped.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-33",
+      "band": "trust",
+      "task": "Understand that a verified citation carries no badge.",
+      "primaryCapability": "citation.verification_three_field",
+      "completeWhen": "Silence reads as confidence, not as omission. If a beta advocate reads silence as \"not checked\", that is a P0 finding about the design.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-34",
+      "band": "trust",
+      "task": "See which cases cite an authority in hand.",
+      "primaryCapability": "citation.graph_partial",
+      "completeWhen": "Inbound citations are shown WITH their coverage block, so partial reads as partial.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-35",
+      "band": "trust",
+      "task": "Avoid treating a partial citation graph as a complete one.",
+      "primaryCapability": "citation.graph_partial",
+      "completeWhen": "No count is presented as a total.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-36",
+      "band": "trust",
+      "task": "Refrain from adding a set-aside authority to a matter.",
+      "primaryCapability": "citation.verification_three_field",
+      "completeWhen": "add-to-matter is disabled for set_aside, and the reason is stated.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-37",
+      "band": "trust",
+      "task": "Find out that we hold no citation data for a judgment.",
+      "primaryCapability": "citation.graph_partial",
+      "completeWhen": "Absence reads as absence of data, never as an invalid judgment.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-38",
+      "band": "trust",
+      "task": "Decide whether a reported treatment is strong enough to act on.",
+      "primaryCapability": "citation.graph_partial",
+      "completeWhen": "The advocate can see the basis and reach their own view. The product does not conclude for them.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-39",
+      "band": "statute",
+      "task": "Open a section of an Act by name and number from a brief.",
+      "primaryCapability": "statute.lookup",
+      "completeWhen": "The section opens with its temporal state visible.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-40",
+      "band": "statute",
+      "task": "Find judgments that reference a specific section.",
+      "primaryCapability": "statute.linked_judgments",
+      "completeWhen": "Linked judgments are listed, with the known precision defect stated rather than hidden.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-41",
+      "band": "statute",
+      "task": "Check whether a section was in force on the date of the offence.",
+      "primaryCapability": "statute.lookup",
+      "completeWhen": "Commencement and amendment state are readable.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "note": "ENGINEERING STORES TEMPORAL FACTS. A legal applicability conclusion requires legal sign-off and the product must not draw one."
+    },
+    {
+      "id": "RT-42",
+      "band": "statute",
+      "task": "Work out the new-code counterpart of an old-code section.",
+      "primaryCapability": "statute.old_new_correspondence",
+      "completeWhen": "Either a correspondence is shown with its basis, or the product says it cannot answer.",
+      "capabilityStateOn30Aug": "DISABLED_NOT_READY",
+      "baselineScore": null,
+      "expectedToFail": "statute.old_new_correspondence is DISABLED_NOT_READY. Expected to fail. BNS/BNSS/BSA replaced IPC/CrPC/Evidence in July 2024 and no automatic applicability conclusion may be drawn without legal sign-off."
+    },
+    {
+      "id": "RT-43",
+      "band": "statute",
+      "task": "Find how current our statute data is.",
+      "primaryCapability": "corpus.freshness_provenance",
+      "completeWhen": "A freshness answer, or an explicit UNMEASURED.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null,
+      "expectedToFail": "Statute freshness is UNMEASURED. NEW2 Sprint-3 bounded measurement."
+    },
+    {
+      "id": "RT-44",
+      "band": "workflow",
+      "task": "Create a matter for a live case.",
+      "primaryCapability": "matter.workspace",
+      "completeWhen": "The matter is created and reopens with its details intact.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-45",
+      "band": "workflow",
+      "task": "Save an authority found in research into that matter.",
+      "primaryCapability": "matter.saved_authorities",
+      "completeWhen": "The authority is saved and listed with its three citation fields read live.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-46",
+      "band": "workflow",
+      "task": "Return the next day and find the saved authority still current.",
+      "primaryCapability": "matter.saved_authorities",
+      "completeWhen": "overruled_status is read at render, so an authority that moved overnight shows it. It is never cached.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-47",
+      "band": "workflow",
+      "task": "Keep authorities for two different clients from mixing.",
+      "primaryCapability": "matter.workspace",
+      "completeWhen": "Matters are isolated. A confidentiality failure here is the most serious defect in the set.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-48",
+      "band": "workflow",
+      "task": "Record the next hearing date from the advocate's own file.",
+      "primaryCapability": "matter.workspace",
+      "completeWhen": "The manual path is first-class and does not read as a second-best substitute for a lookup we cannot do.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-49",
+      "band": "workflow",
+      "task": "Complete a whole research task without leaving LawMind.",
+      "primaryCapability": "search + reader + matter",
+      "completeWhen": "Search to reader to saved authority to matter, with no other legal database opened. THIS IS THE NORTH STAR TASK.",
+      "capabilityStateOn30Aug": "COMPOSITE_ENABLED_V1",
+      "baselineScore": null
+    },
+    {
+      "id": "RT-50",
+      "band": "workflow",
+      "task": "Find the authority saved last week without remembering its name.",
+      "primaryCapability": "matter.saved_authorities",
+      "completeWhen": "Saved authorities are browsable inside the matter.",
+      "capabilityStateOn30Aug": "ENABLED_V1",
+      "baselineScore": null
+    }
+  ]
+}

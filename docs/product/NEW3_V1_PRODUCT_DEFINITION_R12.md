@@ -838,3 +838,71 @@ diagnostics; B-5 is the licence to operate.
 - Every latency was measured on a box running the GPU sidecar, the coarse walk, the
   doc-vector embed and ingest, with 7 active Postgres backends. They are honest production-
   shaped numbers, not best-case ones.
+
+---
+
+# APPENDED 30 AUGUST 2026 — NEW3 R13. NOTHING ABOVE THIS LINE WAS EDITED.
+
+**This document is FROZEN as the 29 August product baseline and stays readable as
+written.** Two of its statements are now false. They are corrected here, append-only,
+so that the correction and the error are both visible — the same discipline LCC used
+for the CAPTCHA retraction, `+N/-0` on every file.
+
+**Full record:** `docs/product/NEW3_R13_PRODUCT_AMENDMENTS.md`.
+**Current registry:** `docs/product/V1_CAPABILITY_REGISTRY_R13.json` (supersedes R12).
+**Measured against** `gitSha f3b31c963dd19741b7a849d8a007d42aa1b9bfb1`, the sealed Day-0 HEAD.
+
+## 1. Line 271 — `ECOURTS_DAILY_PILOT`
+
+The row above reads `DISABLED_EXTERNAL_BLOCK` on the ground that
+`CAPTCHA_OPERATIONAL_BASIS = NONE_RECORDED`. **That requirement was invented and has
+been withdrawn** (LCC bus 1544, correcting its own 1521–1525).
+
+```
+ECOURTS_DAILY_PILOT       = DISABLED_NOT_READY
+CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT
+AUTHORIZATION_REOPENED    = no
+USER_MONITORING_PRODUCT   = DISABLED_NOT_READY   (unchanged; still fails gates 2, 3, 4)
+SCI_AUTHORISATION_STATE   = UNCHANGED
+```
+
+The block is **ours**, not external. `CLAUDE.md` §6a states the three conditions on
+the authorised bypass exhaustively and all three are already enforced. This is the
+exact transformation the paragraph above line 271 pre-authorised — *"and no other row
+in this document changes"* — and no other row does.
+
+## 2. The eCourts numbers in §"Switch state" are stale
+
+Re-measured against the live database on 30 August 2026:
+
+| | recorded above (29 Aug) | measured 30 Aug |
+|---|---|---|
+| `ecourts_observation` | 0 rows | **0 rows** — unchanged, and the only number that matters |
+| `ecourts_fetch_ledger` | 131 rows | **198 rows** |
+| `platform_config.ecourts_harvest` | **OFF** | **ON**, `enabled = true` |
+
+The switch was flipped to ON at `2026-08-29T17:33:52Z` through the audited
+kill-switch path, by the durable eCourts actor
+`3d37f77f-23f3-4eb0-b34f-d1700ec652a5`, with a reason recorded. **A product
+document that records a live harvest switch as OFF is the kind of error that makes
+a registrar audit go badly**, which is why it is corrected here rather than left to
+the amendment file alone.
+
+## 3. Two capability states in §7 have moved on measured evidence
+
+`search.party_name_only` and `search.filtered_broad_query` were both
+`DISABLED_NOT_READY` with coverage `MEASURED ZERO`. Backend `d96147e` landed. Both
+are now `ENABLED_V1` **with named limits**, on a rerun of the two probes this
+document itself cites: `docs/product/NEW3_ACCEPTANCE_DELTA_R13.json`.
+
+Neither closed cleanly, and the limits are part of the state rather than a footnote:
+a party name built only of corpus-common tokens still refuses (1,239.2 ms), and a
+court **category** is not narrowing — `courts:["hc"]` is still refused where one
+named court plus a month returns results in 418.1 ms.
+
+## 4. §8 firm-ready Workspace model — `VERIFIED_UNCHANGED`
+
+Frozen, and now implemented to the frozen model by LCC `7b570b7` with no semantic
+redefinition. Verified live: 542 workspaces, 542 members, **0** matters with a null
+`workspace_id`, `monitoring_entitlements` **0 rows**, and **0** workspace columns on
+`ecourts_observation`.
