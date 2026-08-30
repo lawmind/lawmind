@@ -1,0 +1,116 @@
+{
+ "artifact": "NEW2_R14_ALIAS_CONCENTRATION",
+ "lane": "NEW2",
+ "generatedAt": "2026-08-30T21:44:26.253Z",
+ "method": "One pass over every unresolved edge carrying text, keying each with the same pure normalisation the resolver uses, counting how many edges each alias row would carry. No resolver output is read.",
+ "finding": "4,394 derived alias rows carry 1,548,529 of the 2,913,749 pinnable edges. One alias row carries 66,171 of them. The alias path cannot produce AMBIGUOUS — judgment_citation_aliases_key is a UNIQUE index — so a wrong alias is a confident wrong pin that no resolver gate can fire on, multiplied by its edge count.",
+ "scannedEdges": 6051882,
+ "aliasRows": 4394,
+ "aliasRowsCarryingEdges": 4379,
+ "edgesViaAlias": 1548529,
+ "meanEdgesPerAlias": 352.4,
+ "maxEdgesForOneAlias": 66171,
+ "top20": [
+  {
+   "alias": "(2012) 10 SCC 303",
+   "title": "GIAN SINGH versus STATE OF PUNJAB & ANOTHER",
+   "edges": 66171
+  },
+  {
+   "alias": "(2018) 3 SCC 22",
+   "title": "DATARAM SINGH versus STATE OF UTTAR PRADESH & ANR.",
+   "edges": 43613
+  },
+  {
+   "alias": "(2014) 6 SCC 466",
+   "title": "NARINDER SINGH & ORS. versus STATE OF PUNJAB & ANR.",
+   "edges": 38254
+  },
+  {
+   "alias": "(2014) 8 SCC 273",
+   "title": "ARNESH KUMAR versus STATE OF BIHAR & ANR.",
+   "edges": 35965
+  },
+  {
+   "alias": "(2003) 4 SCC 675",
+   "title": "B.S. JOSHI AND ORS. versus STATE OF HARYANA AND ANR.",
+   "edges": 24742
+  },
+  {
+   "alias": "(2012) 1 SCC 40",
+   "title": "SANJAY CHANDRA versus CBI",
+   "edges": 20678
+  },
+  {
+   "alias": "(2009) 6 SCC 121",
+   "title": "SMT. SARLA VERMA & ORS. versus DELHI TRANSPORT CORPORAT",
+   "edges": 19734
+  },
+  {
+   "alias": "(2017) 16 SCC 680",
+   "title": "NATIONAL INSURANCE COMPANY LIMITED versus PRANAY SETHI ",
+   "edges": 18825
+  },
+  {
+   "alias": "(2011) 6 SCC 396",
+   "title": "BHAGWAN DASS versus STATE(NCT) OF DELHI",
+   "edges": 17634
+  },
+  {
+   "alias": "(2019) 5 SCC 688",
+   "title": "THE STATE OF MADHYA PRADESH versus LAXMI NARAYAN AND OT",
+   "edges": 17399
+  },
+  {
+   "alias": "(2011) 1 SCC 694",
+   "title": "SIDDHARAM SATLINGAPPA MHETRE versus STATE OF MAHARASHTR",
+   "edges": 15150
+  },
+  {
+   "alias": "(2020) 5 SCC 1",
+   "title": "SUSHILA AGGARWAL AND OTHERS versus STATE (NCT OF DELHI)",
+   "edges": 12945
+  },
+  {
+   "alias": "AIR 1992 SC 604",
+   "title": "STATE OF HARYANA AND ORS. ETC. ETC. versus CH. BHAJAN L",
+   "edges": 11958
+  },
+  {
+   "alias": "(2008) 8 SCC 648",
+   "title": "UNION OF INDIA & ORS. versus TARSEM SINGH",
+   "edges": 10729
+  },
+  {
+   "alias": "(1980) 2 SCC 565",
+   "title": "GURBAKSH SINGH SIBBIA ETC . versus STATE OF PUNJAB",
+   "edges": 10586
+  },
+  {
+   "alias": "(2015) 4 SCC 334",
+   "title": "STATE OF PUNJAB AND OTHERS ETC. versus RAFIQ MASIH (WHI",
+   "edges": 10010
+  },
+  {
+   "alias": "(2011) 5 SCC 244",
+   "title": "REKHA versus STATE OF T NADU TR.SEC.TO GOVT. & ANR.",
+   "edges": 10007
+  },
+  {
+   "alias": "(2008) 4 SCC 582",
+   "title": "MADAN MOHAN ABBOT versus STATE OF PUNJAB",
+   "edges": 9787
+  },
+  {
+   "alias": "(2008) 2 SCC 409",
+   "title": "SAKIRI VASU versus STATE OF U.P. AND ORS.",
+   "edges": 8897
+  },
+  {
+   "alias": "(2008) 16 SCC 1",
+   "title": "MANOJ SHARMA versus STATE & ORS.",
+   "edges": 8118
+  }
+ ],
+ "shareCarriedByTop10": 0.1957
+}

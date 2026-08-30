@@ -1,0 +1,302 @@
+{
+ "artifact": "NEW2_R14_CITATION_FALSIFIER",
+ "lane": "NEW2",
+ "generatedAt": "2026-08-30T21:43:38.204Z",
+ "resolverVersion": "citation-resolver-v0.1",
+ "rootCause": "A neutral citation is not a unique key in this corpus — the registry stamps one on every connected matter disposed of by a common order, and our ingest additionally lands the same judgment twice — so the resolver's UNIQUE reports how much of the corpus has landed, not how many judgments bear the citation, and a pin made before the second bearer lands is a false unique all three freshness gates are structurally unable to see.",
+ "applyCandidate": {
+  "applyPopulationId": "NEW2-R14-APPLY-4a1a8f4838d8804b",
+  "applyPopulationHash": "4a1a8f4838d8804bd356ca5dce396edf7a892873ce7778afff0e80c7213a4371",
+  "applyPopulationCount": 2559529,
+  "snapshotAt": "2026-08-30 21:32:48.762506+00",
+  "frontier": {
+   "keyFreshnessState": "CURRENT",
+   "mayAssertUnique": true,
+   "maxJudgmentCreatedAt": "2026-08-30 14:05:19.255799+00",
+   "maxKeyCreatedAt": "2026-08-30 14:40:51.259401+00",
+   "judgmentRows": 18759022,
+   "keyIndexRows": 1431403
+  },
+  "createdAt": "2026-08-30T21:34:09.540Z"
+ },
+ "blindPackage": {
+  "packageSha256": "0383988c26d87df06f1b6a3c4b895c8e5bdbd7f76f3f0cd54f4fd924dd46b736",
+  "builtAt": "2026-08-30T21:32:34.850Z",
+  "resolverConsulted": false,
+  "sampled": 3600,
+  "strata": [
+   {
+    "name": "I_REFUSED_FORM",
+    "why": "difficult negative: the pure gate refuses the string before any lookup",
+    "populationEdges": 827,
+    "sampled": 400
+   },
+   {
+    "name": "H_TARGET_NOT_HELD",
+    "why": "difficult negative: a well-formed citation the corpus does not hold at all",
+    "populationEdges": 3137306,
+    "sampled": 400
+   },
+   {
+    "name": "F_CROSS_COURT_COLLISION",
+    "why": "the class FIFTH named as outside the earlier replay",
+    "populationEdges": 3717,
+    "sampled": 400
+   },
+   {
+    "name": "E_MULTI_DISTINCT_CASE",
+    "why": "one citation string naming two DIFFERENT cases — the false-unique generator",
+    "populationEdges": 106323,
+    "sampled": 400
+   },
+   {
+    "name": "D_MULTI_SAME_CASE",
+    "why": "the same judgment ingested twice — a recall loss, not a false pin",
+    "populationEdges": 244180,
+    "sampled": 400
+   },
+   {
+    "name": "A_ALIAS_PATH",
+    "why": "the dominant pin path, and the one the DB unique index makes incapable of AMBIGUOUS",
+    "populationEdges": 1548529,
+    "sampled": 400
+   },
+   {
+    "name": "G_LATE_LEARNED_KEY",
+    "why": "the index learned this key only after T0 — a proxy for the target that had not landed",
+    "populationEdges": 129265,
+    "sampled": 400
+   },
+   {
+    "name": "B_REPORTER_PATH",
+    "why": "a reporter series names a publisher, not a court — the untestable-court class",
+    "populationEdges": 17399,
+    "sampled": 400
+   },
+   {
+    "name": "C_NEUTRAL_SINGLE_CLAIM",
+    "why": "the ordinary case, and the bulk of any apply",
+    "populationEdges": 864336,
+    "sampled": 400
+   }
+  ]
+ },
+ "results": {
+  "adversarialPositives": 1600,
+  "adversarialNegatives": 2000,
+  "falsePin": 0,
+  "falseUnique": 0,
+  "ambiguous": 1200,
+  "untestable": 0,
+  "correctRefusal": 2000,
+  "consistent": 454,
+  "selfEdge": 1146,
+  "selfPin": 1146,
+  "titleContradicted": 41,
+  "titleCorroborated": 1388,
+  "implausibleLag": 1,
+  "courtUntestable": 2646,
+  "byStratum": {
+   "I_REFUSED_FORM": {
+    "CORRECT_REFUSAL": 400
+   },
+   "H_TARGET_NOT_HELD": {
+    "CORRECT_REFUSAL": 400
+   },
+   "F_CROSS_COURT_COLLISION": {
+    "CORRECT_REFUSAL": 400
+   },
+   "E_MULTI_DISTINCT_CASE": {
+    "CORRECT_REFUSAL": 400
+   },
+   "D_MULTI_SAME_CASE": {
+    "CORRECT_REFUSAL": 400
+   },
+   "A_ALIAS_PATH": {
+    "CONSISTENT": 400
+   },
+   "G_LATE_LEARNED_KEY": {
+    "SELF_EDGE": 400
+   },
+   "B_REPORTER_PATH": {
+    "SELF_EDGE": 347,
+    "CONSISTENT": 53
+   },
+   "C_NEUTRAL_SINGLE_CLAIM": {
+    "SELF_EDGE": 399,
+    "CONSISTENT": 1
+   }
+  }
+ },
+ "selfEdgesInCandidate": {
+  "population": 2559529,
+  "selfEdges": 1003733,
+  "share": 0.3921553535826318,
+  "note": "A judgment prints its own neutral citation in its own header and the extractor makes an edge of it. The resolver pins it correctly; the edge should not exist. This is an EXTRACTOR defect and applying the candidate would write every one of these as a self-loop in the citation graph."
+ },
+ "aliasEnumeration": {
+  "tally": {
+   "total": 4394,
+   "courtDisagrees": 0,
+   "yearPrecedesDecision": 0,
+   "implausibleLag": 0,
+   "belowCorroborationFloor": 0,
+   "evidenceDoesNotContainAlias": 0,
+   "keyCollidesWithOtherJudgment": 0,
+   "consistent": 4394,
+   "untestable": 0
+  },
+  "failures": [],
+  "failureCount": 0
+ },
+ "temporalHoldout": {
+  "primary": {
+   "t0": "2026-08-18",
+   "keysSingleClaimAtT0": 971879,
+   "keysMultiClaimNow": 33344,
+   "duplicateIdentity": 33118,
+   "materialFalseUnique": 226,
+   "materialFalseUniqueRate": 0.00023253923585137657,
+   "crossCourt": 3,
+   "breakdown": [
+    {
+     "distinct_cases": false,
+     "distinct_text": false,
+     "cross_court": false,
+     "keys": 14369
+    },
+    {
+     "distinct_cases": false,
+     "distinct_text": true,
+     "cross_court": false,
+     "keys": 18749
+    },
+    {
+     "distinct_cases": true,
+     "distinct_text": false,
+     "cross_court": false,
+     "keys": 107
+    },
+    {
+     "distinct_cases": true,
+     "distinct_text": true,
+     "cross_court": false,
+     "keys": 116
+    },
+    {
+     "distinct_cases": true,
+     "distinct_text": true,
+     "cross_court": true,
+     "keys": 3
+    }
+   ]
+  },
+  "secondary": [
+   {
+    "t0": "2026-08-25",
+    "keysSingleClaimAtT0": 1052217,
+    "keysMultiClaimNow": 434,
+    "duplicateIdentity": 414,
+    "materialFalseUnique": 20,
+    "materialFalseUniqueRate": 0.000019007486098399854,
+    "crossCourt": 0,
+    "breakdown": [
+     {
+      "distinct_cases": false,
+      "distinct_text": false,
+      "cross_court": false,
+      "keys": 158
+     },
+     {
+      "distinct_cases": false,
+      "distinct_text": true,
+      "cross_court": false,
+      "keys": 256
+     },
+     {
+      "distinct_cases": true,
+      "distinct_text": false,
+      "cross_court": false,
+      "keys": 14
+     },
+     {
+      "distinct_cases": true,
+      "distinct_text": true,
+      "cross_court": false,
+      "keys": 6
+     }
+    ]
+   },
+   {
+    "t0": "2026-08-28",
+    "keysSingleClaimAtT0": 1065317,
+    "keysMultiClaimNow": 7,
+    "duplicateIdentity": 3,
+    "materialFalseUnique": 4,
+    "materialFalseUniqueRate": 0.000003754750933290279,
+    "crossCourt": 0,
+    "breakdown": [
+     {
+      "distinct_cases": false,
+      "distinct_text": false,
+      "cross_court": false,
+      "keys": 3
+     },
+     {
+      "distinct_cases": true,
+      "distinct_text": false,
+      "cross_court": false,
+      "keys": 3
+     },
+     {
+      "distinct_cases": true,
+      "distinct_text": true,
+      "cross_court": false,
+      "keys": 1
+     }
+    ]
+   }
+  ]
+ },
+ "structuralCensus": {
+  "distinctKeys": 1224070,
+  "singleClaimKeys": 1067700,
+  "multiClaimKeys": 156370,
+  "rows": [
+   {
+    "all_neutral": true,
+    "cross_court": false,
+    "distinct_cases": true,
+    "keys": 26601
+   },
+   {
+    "all_neutral": true,
+    "cross_court": true,
+    "distinct_cases": true,
+    "keys": 12
+   },
+   {
+    "all_neutral": true,
+    "cross_court": false,
+    "distinct_cases": false,
+    "keys": 129757
+   }
+  ]
+ },
+ "gate": {
+  "threshold": "zero false pins — docs/CITATION_HARNESS.md",
+  "sampleFalsePin": 0,
+  "sampleFalseUnique": 0,
+  "populationMaterialFalseUnique": 226,
+  "populationSelfEdges": 1003733,
+  "falsePinGate": "FAIL",
+  "citationBulkApply": "HOLD",
+  "boundTo": null
+ },
+ "caveats": [
+  "The sample is a sample. An in-sample zero on 3,000 rows bounds the false-pin rate at roughly 1e-3, not at zero, and the population instruments are what decide the gate.",
+  "The two secondary holdouts (25 and 28 August) span a period in which almost no corpus landed, so their near-zero rates measure a quiet fleet, not resolver precision, and must not be quoted as safety.",
+  "Title corroboration reads the citing judgment's own text and is reported separately. It never creates or confirms an edge on its own.",
+  "The court-code map is derived from our own corpus, so a code we hold only from one court reads unanimous whether or not it is."
+ ]
+}

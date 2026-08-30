@@ -1,0 +1,32 @@
+{
+ "artifact": "NEW2_R14_CITATION_APPLY_CANDIDATE",
+ "lane": "NEW2",
+ "state": "FROZEN_UNAPPLIED",
+ "createdAt": "2026-08-30T21:50:08.494Z",
+ "definition": "Excludes any pin whose target is the citing judgment itself. judgment_citations rows with cited_judgment_id IS NULL and non-empty citation_text, created at or before snapshotAt, whose COALESCE(NULLIF(btrim(normalised_citation),''), citation_text) resolves to state UNIQUE with exactly one candidate under the named resolver at the named frontier.",
+ "applyPopulationId": "NEW2-R14-APPLY-6a24a6fec752d0fe",
+ "applyPopulationCount": 1555796,
+ "applyPopulationSha256": "6a24a6fec752d0fe84fc2ba60a996a58a006543a4c98e63e7d6507a2acd785c1",
+ "journalPath": "docs/ai/new2-r14/apply-candidate-v2-no-self.sha256",
+ "journalLocalPath": ".tmp-new2/r14/apply-candidate-v2-no-self.jsonl",
+ "resolverVersion": "citation-resolver-v0.1",
+ "snapshotAt": "2026-08-30 21:48:45.626959+00",
+ "frontier": {
+  "keyFreshnessState": "CURRENT",
+  "mayAssertUnique": true,
+  "maxJudgmentCreatedAt": "2026-08-30 14:05:19.255799+00",
+  "maxKeyCreatedAt": "2026-08-30 14:40:51.259401+00",
+  "judgmentRows": 18759022,
+  "keyIndexRows": 1431403
+ },
+ "decidedTotal": 6051882,
+ "states": {
+  "TARGET_NOT_HELD": 3137306,
+  "UNIQUE": 2559529,
+  "AMBIGUOUS": 354220,
+  "REFUSED": 827
+ },
+ "excludesSelfEdges": true,
+ "selfEdgesExcluded": 1003733,
+ "binding": "Any write authorised by this candidate must re-read the journal, verify applyPopulationSha256, and refuse if the frontier has moved past snapshotAt. A newer population is a different population and needs its own evidence."
+}

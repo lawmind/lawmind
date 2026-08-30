@@ -1,0 +1,2905 @@
+{
+ "artifact": "NEW2_R14_STATUTE_FRESHNESS_V1",
+ "lane": "NEW2",
+ "generatedAt": "2026-08-30T21:52:13.735Z",
+ "source": {
+  "name": "India Code (Government of India)",
+  "api": "https://indiacode.gov.in/server/api",
+  "note": "India Code migrated hosts: every www.indiacode.nic.in/handle/… URL we stored now 404s. Acts reached by search rather than by handle are marked how=SEARCH and carry a weaker identity."
+ },
+ "method": "Per-dimension comparison of held metadata against the source item's own fields. Dimensions are counted separately and the per-Act verdict is the worst of them; nothing is averaged and nothing untestable is folded into a match rate.",
+ "denominator": {
+  "acts": 49,
+  "dimensionsPerAct": 5,
+  "dimensionChecks": 245
+ },
+ "dimensionTally": {
+  "EXACT_MATCH": 46,
+  "STALE": 0,
+  "UNKNOWN": 74,
+  "SOURCE_UNAVAILABLE": 125
+ },
+ "actTally": {
+  "UNKNOWN": 24,
+  "SOURCE_UNAVAILABLE": 25
+ },
+ "materialTemporalErrors": {
+  "count": 0,
+  "detail": []
+ },
+ "clusters": {
+  "note": "A cluster is escalated as a cluster. No statute row is updated on the strength of this sample, and none was touched by this run.",
+  "counts": {
+   "SOURCED_FROM_STATE_REPOSITORY::Chhattisgarh": 3,
+   "SOURCED_FROM_STATE_REPOSITORY::Maharashtra": 1,
+   "SOURCED_FROM_STATE_REPOSITORY::Chandigarh": 4,
+   "SOURCED_FROM_STATE_REPOSITORY::Uttar Pradesh": 1,
+   "HANDLE_404_AND_NO_SEARCH_MATCH::www.indiacode.nic.in": 25,
+   "SOURCED_FROM_STATE_REPOSITORY::Punjab": 1
+  }
+ },
+ "statuteMappings": {
+  "rows": 226,
+  "pairs": [
+   {
+    "oldAct": "crpc",
+    "newAct": "bnss",
+    "rows": 95
+   },
+   {
+    "oldAct": "ipc",
+    "newAct": "bns",
+    "rows": 14
+   },
+   {
+    "oldAct": "evidence",
+    "newAct": "bsa",
+    "rows": 117
+   }
+  ],
+  "note": "Coverage only. A mapping row records that the source pairs two provisions; it states nothing about which applies to any offence on any date, and nothing here infers an IPC to BNS applicability."
+ },
+ "acts": [
+  {
+   "act": "The Code of Criminal Procedure, 1973",
+   "actNumber": "2",
+   "actYear": 1974,
+   "strata": [
+    "NAMED_SIX",
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 532,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 278018,
+   "sourceUrl": "https://indiacode.gov.in/handle/123456789/549163",
+   "upstream": {
+    "how": "HANDLE",
+    "handle": "123456789/549163",
+    "title": "THE CODE OF CRIMINAL PROCEDURE, 1973",
+    "stateName": "Chhattisgarh",
+    "ministryName": "State Government",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "2",
+      "actYear": 1974
+     },
+     "theirs": {
+      "actNumber": "2",
+      "actYear": "1974"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1974-01-25",
+      "enforcementDate": "1974-04-01"
+     },
+     "theirs": {
+      "enactDate": "1974-01-25",
+      "issued": "1974-01-25"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 532,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Bharatiya Nyaya Sanhita, 2023",
+   "actNumber": "45",
+   "actYear": 2023,
+   "strata": [
+    "NAMED_SIX",
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 358,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 21152,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/20062",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/568022",
+    "title": "The Bharatiya Nyaya Sanhita, 2023",
+    "stateName": "Maharashtra",
+    "ministryName": "Govt of Maharashtra",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "45",
+      "actYear": 2023
+     },
+     "theirs": {
+      "actNumber": "45",
+      "actYear": "2023"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2023-12-25",
+      "enforcementDate": "2024-07-01"
+     },
+     "theirs": {
+      "enactDate": "2023-12-25",
+      "issued": "2023-12-25"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 358,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Indian Penal Code, 1860",
+   "actNumber": "45",
+   "actYear": 1860,
+   "strata": [
+    "NAMED_SIX",
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 552,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 93623,
+   "sourceUrl": "https://indiacode.gov.in/handle/123456789/547812",
+   "upstream": {
+    "how": "HANDLE",
+    "handle": "123456789/547812",
+    "title": "THE INDIAN PENAL CODE",
+    "stateName": "Chandigarh",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "45",
+      "actYear": 1860
+     },
+     "theirs": {
+      "actNumber": "45",
+      "actYear": "1860"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1860-10-06",
+      "enforcementDate": "1862-01-01"
+     },
+     "theirs": {
+      "enactDate": "1860-10-06",
+      "issued": "1860-10-06"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 552,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+   "actNumber": "46",
+   "actYear": 2023,
+   "strata": [
+    "NAMED_SIX",
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 531,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 129239,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/20099",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/601739",
+    "title": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+    "stateName": "Uttar Pradesh",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "46",
+      "actYear": 2023
+     },
+     "theirs": {
+      "actNumber": "46",
+      "actYear": "2023"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2023-12-25",
+      "enforcementDate": "2024-07-01"
+     },
+     "theirs": {
+      "enactDate": "2023-12-25",
+      "issued": "2023-12-25"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 531,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Indian Evidence Act, 1872",
+   "actNumber": "1",
+   "actYear": 1872,
+   "strata": [
+    "NAMED_SIX",
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 184,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 17459,
+   "sourceUrl": "https://indiacode.gov.in/handle/123456789/547533",
+   "upstream": {
+    "how": "HANDLE",
+    "handle": "123456789/547533",
+    "title": "INDIAN BARE ACTS Indian Evidence Act, 1872",
+    "stateName": "Chandigarh",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "1",
+      "actYear": 1872
+     },
+     "theirs": {
+      "actNumber": "1",
+      "actYear": "1872"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1872-03-15",
+      "enforcementDate": "1872-09-01"
+     },
+     "theirs": {
+      "enactDate": "1872-03-15",
+      "issued": "1872-03-15"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 184,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Bharatiya Sakshya Adhiniyam, 2023",
+   "actNumber": "47",
+   "actYear": 2023,
+   "strata": [
+    "NAMED_SIX"
+   ],
+   "ourSections": 170,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 495,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/20063",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/20063 404 and no search candidate agreed on act number 47 and year 2023"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Code of Civil Procedure, 1908",
+   "actNumber": "5",
+   "actYear": 1908,
+   "strata": [
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 171,
+   "ourAmendmentEvents": 209,
+   "judgmentReferences": 52125,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2191",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2191 404 and no search candidate agreed on act number 5 and year 1908"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Negotiable Instruments Act, 1881",
+   "actNumber": "26",
+   "actYear": 1881,
+   "strata": [
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 155,
+   "ourAmendmentEvents": 60,
+   "judgmentReferences": 18062,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2189",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/547601",
+    "title": "NEGOTIABLE INSTRUMENTS ACT, 1881",
+    "stateName": "Chandigarh",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "26",
+      "actYear": 1881
+     },
+     "theirs": {
+      "actNumber": "26",
+      "actYear": "1881"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1881-12-09",
+      "enforcementDate": "1882-03-01"
+     },
+     "theirs": {
+      "enactDate": "1881-12-09",
+      "issued": "1881-12-09"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2018,
+      "amendmentEvents": 60
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 155,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Motor Vehicles Act, 1988",
+   "actNumber": "59",
+   "actYear": 1988,
+   "strata": [
+    "HEAVILY_JUDGMENT_REFERENCED",
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 257,
+   "ourAmendmentEvents": 301,
+   "judgmentReferences": 13438,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1798",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1798 404 and no search candidate agreed on act number 59 and year 1988"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+   "actNumber": "61",
+   "actYear": 1985,
+   "strata": [
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 129,
+   "ourAmendmentEvents": 138,
+   "judgmentReferences": 12602,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1791",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/549147",
+    "title": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+    "stateName": "Chhattisgarh",
+    "ministryName": "State Government",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "61",
+      "actYear": 1985
+     },
+     "theirs": {
+      "actNumber": "61",
+      "actYear": "1985"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1985-09-16",
+      "enforcementDate": "1985-11-14"
+     },
+     "theirs": {
+      "enactDate": "1985-09-16",
+      "issued": "1985-09-16"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2021,
+      "amendmentEvents": 138
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 129,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Limitation Act, 1963",
+   "actNumber": "36",
+   "actYear": 1963,
+   "strata": [
+    "HEAVILY_JUDGMENT_REFERENCED"
+   ],
+   "ourSections": 32,
+   "ourAmendmentEvents": 5,
+   "judgmentReferences": 11211,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1565",
+   "upstream": {
+    "how": "HANDLE",
+    "handle": "123456789/1565",
+    "title": "Rule",
+    "stateName": null,
+    "ministryName": null,
+    "repealed": null
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "actNumber": "36",
+      "actYear": 1963
+     },
+     "theirs": {
+      "actNumber": null,
+      "actYear": null
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": null,
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "enactmentDate": "1963-10-05",
+      "enforcementDate": "1964-01-01"
+     },
+     "theirs": {
+      "enactDate": null,
+      "issued": null
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2019,
+      "amendmentEvents": 5
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 32,
+     "theirs": null
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Delhi Municipal Corporation Act, 1957",
+   "actNumber": "66",
+   "actYear": 1957,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 581,
+   "ourAmendmentEvents": 824,
+   "judgmentReferences": 188,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1410",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1410 404 and no search candidate agreed on act number 66 and year 1957"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Customs Act,1962",
+   "actNumber": "52",
+   "actYear": 1962,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 285,
+   "ourAmendmentEvents": 629,
+   "judgmentReferences": 2688,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2475",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2475 404 and no search candidate agreed on act number 52 and year 1962"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Insurance Act, 1938",
+   "actNumber": "04",
+   "actYear": 1938,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 254,
+   "ourAmendmentEvents": 470,
+   "judgmentReferences": 214,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2304",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2304 404 and no search candidate agreed on act number 04 and year 1938"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Banking Regulation Act, 1949",
+   "actNumber": "10",
+   "actYear": 1949,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 133,
+   "ourAmendmentEvents": 453,
+   "judgmentReferences": 237,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1885",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1885 404 and no search candidate agreed on act number 10 and year 1949"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Reserve Bank of India Act, 1934",
+   "actNumber": "02",
+   "actYear": 1934,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 140,
+   "ourAmendmentEvents": 449,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2398",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2398 404 and no search candidate agreed on act number 02 and year 1934"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Companies Act, 2013",
+   "actNumber": "18",
+   "actYear": 2013,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 526,
+   "ourAmendmentEvents": 448,
+   "judgmentReferences": 4,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2114",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/549094",
+    "title": "The Companies Act, 2013",
+    "stateName": "Chhattisgarh",
+    "ministryName": "State Government",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "18",
+      "actYear": 2013
+     },
+     "theirs": {
+      "actNumber": "18",
+      "actYear": "2013"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2013-08-29",
+      "enforcementDate": "2014-04-01"
+     },
+     "theirs": {
+      "enactDate": "2013-08-29",
+      "issued": "2013-08-29"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2020,
+      "amendmentEvents": 448
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 526,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Central Excise Act, 1944",
+   "actNumber": "01",
+   "actYear": 1944,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 129,
+   "ourAmendmentEvents": 382,
+   "judgmentReferences": 995,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/19238",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19238 404 and no search candidate agreed on act number 01 and year 1944"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Representation of the People Act, 1951",
+   "actNumber": "43",
+   "actYear": 1951,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 205,
+   "ourAmendmentEvents": 337,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2096",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2096 404 and no search candidate agreed on act number 43 and year 1951"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Wild Life (Protection) Act, 1972",
+   "actNumber": "53",
+   "actYear": 1972,
+   "strata": [
+    "WITH_KNOWN_AMENDMENTS"
+   ],
+   "ourSections": 166,
+   "ourAmendmentEvents": 297,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1726",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1726 404 and no search candidate agreed on act number 53 and year 1972"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+   "actNumber": "49",
+   "actYear": 2023,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 21,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/19721",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496462",
+    "title": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Law and Justice",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "49",
+      "actYear": 2023
+     },
+     "theirs": {
+      "actNumber": "49",
+      "actYear": "2023"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2023-12-28",
+      "enforcementDate": "2024-02-02"
+     },
+     "theirs": {
+      "enactDate": "2023-12-28",
+      "issued": "2023-12-28"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 21,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Merchant Shipping Act, 2025",
+   "actNumber": "24",
+   "actYear": 2025,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 325,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/22147",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/22147 404 and no search candidate agreed on act number 24 and year 2025"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Indian Institute of Petroleum and Energy Act, 2017",
+   "actNumber": "03",
+   "actYear": 2018,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 45,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2433",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2433 404 and no search candidate agreed on act number 03 and year 2018"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Consumer Protection Act, 2019",
+   "actNumber": "35",
+   "actYear": 2019,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 107,
+   "ourAmendmentEvents": 2,
+   "judgmentReferences": 195,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/15256",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/15256 404 and no search candidate agreed on act number 35 and year 2019"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+   "actNumber": "30",
+   "actYear": 2020,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 11,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/15618",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496254",
+    "title": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Finance",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "30",
+      "actYear": 2020
+     },
+     "theirs": {
+      "actNumber": "30",
+      "actYear": "2020"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2020-09-28",
+      "enforcementDate": "2020-09-28"
+     },
+     "theirs": {
+      "enactDate": "2020-09-28",
+      "issued": "2020-09-28"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 11,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Digital Personal Data Protection Act, 2023.",
+   "actNumber": "22",
+   "actYear": 2023,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 44,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/22037",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496508",
+    "title": "The Digital Personal Data Protection Act, 2023.",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Electronics and Information Technology",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "22",
+      "actYear": 2023
+     },
+     "theirs": {
+      "actNumber": "22",
+      "actYear": "2023"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2023-08-11",
+      "enforcementDate": null
+     },
+     "theirs": {
+      "enactDate": "2023-08-11",
+      "issued": "2023-08-11"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 44,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The National Bank for Financing Infrastructure and Development Act, 2021",
+   "actNumber": "17",
+   "actYear": 2021,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 48,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/16802",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496323",
+    "title": "The National Bank for Financing Infrastructure and Development Act, 2021",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Finance",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "17",
+      "actYear": 2021
+     },
+     "theirs": {
+      "actNumber": "17",
+      "actYear": "2021"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2021-03-28",
+      "enforcementDate": null
+     },
+     "theirs": {
+      "enactDate": "2021-03-28",
+      "issued": "2021-03-28"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 48,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Repealing and Amending Act, 2017",
+   "actNumber": "02",
+   "actYear": 2018,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT",
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 4,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2432",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2432 404 and no search candidate agreed on act number 02 and year 2018"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Anti-Hijacking Act, 2016.",
+   "actNumber": "30",
+   "actYear": 2016,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 21,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2149",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496371",
+    "title": "The Anti-Hijacking Act, 2016.",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Civil Aviation",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "30",
+      "actYear": 2016
+     },
+     "theirs": {
+      "actNumber": "30",
+      "actYear": "2016"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2016-05-13",
+      "enforcementDate": null
+     },
+     "theirs": {
+      "enactDate": "2016-05-13",
+      "issued": "2016-05-13"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 21,
+     "theirs": null
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Health Security Se National Security Cess Act, 2025",
+   "actNumber": "35",
+   "actYear": 2025,
+   "strata": [
+    "CURRENT_CENTRAL_RECENT"
+   ],
+   "ourSections": 39,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/22084",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496299",
+    "title": "The Health Security Se National Security Cess Act, 2025",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Finance",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "35",
+      "actYear": 2025
+     },
+     "theirs": {
+      "actNumber": "35",
+      "actYear": "2025"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2025-12-15",
+      "enforcementDate": "2026-02-01"
+     },
+     "theirs": {
+      "enactDate": "2025-12-15",
+      "issued": "2025-12-15"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 39,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Repealing and Amending (Second) Act, 2015",
+   "actNumber": "19",
+   "actYear": 2015,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 4,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/12143",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/12143 404 and no search candidate agreed on act number 19 and year 2015"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Repealing and Amending Act, 2015",
+   "actNumber": "17",
+   "actYear": 2015,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 4,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/12142",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496449",
+    "title": "The Repealing and Amending Act, 2015",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Law and Justice",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "17",
+      "actYear": 2015
+     },
+     "theirs": {
+      "actNumber": "17",
+      "actYear": "2015"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2015-05-13",
+      "enforcementDate": "2015-05-13"
+     },
+     "theirs": {
+      "enactDate": "2015-05-13",
+      "issued": "2015-05-13"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 4,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Farm Laws Repeal Act, 2021",
+   "actNumber": "40",
+   "actYear": 2021,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 3,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/16976",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496136",
+    "title": "The Farm Laws Repeal Act, 2021",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Agriculture and Farmers Welfare",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "40",
+      "actYear": 2021
+     },
+     "theirs": {
+      "actNumber": "40",
+      "actYear": "2021"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2021-11-30",
+      "enforcementDate": "2021-11-30"
+     },
+     "theirs": {
+      "enactDate": "2021-11-30",
+      "issued": "2021-11-30"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 3,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Sick Industrial Companies (Special Provisions) Repeal Act, 2003",
+   "actNumber": "01",
+   "actYear": 2004,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 6,
+   "ourAmendmentEvents": 2,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1414",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/1414 404 and no search candidate agreed on act number 01 and year 2004"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+   "actNumber": "27",
+   "actYear": 1986,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 8,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1859",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496018",
+    "title": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Coal",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "27",
+      "actYear": 1986
+     },
+     "theirs": {
+      "actNumber": "27",
+      "actYear": "1986"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1986-05-23",
+      "enforcementDate": "1986-10-01"
+     },
+     "theirs": {
+      "enactDate": "1986-05-23",
+      "issued": "1986-05-23"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 8,
+     "theirs": null
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Mussalman Wakf (Repeal) Act, 2025",
+   "actNumber": "15",
+   "actYear": 2025,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 2,
+   "ourAmendmentEvents": 1,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/21048",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496506",
+    "title": "The Mussalman Wakf (Repeal) Act, 2025",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Minority Affairs",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "15",
+      "actYear": 2025
+     },
+     "theirs": {
+      "actNumber": "15",
+      "actYear": "2025"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2025-04-05",
+      "enforcementDate": "2025-04-09"
+     },
+     "theirs": {
+      "enactDate": "2025-04-05",
+      "issued": "2025-04-05"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 1
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 2,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+   "actNumber": "53",
+   "actYear": 2003,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 15,
+   "ourAmendmentEvents": 3,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2026",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496269",
+    "title": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Finance",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "53",
+      "actYear": 2003
+     },
+     "theirs": {
+      "actNumber": "53",
+      "actYear": "2003"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2003-12-30",
+      "enforcementDate": "2004-07-02"
+     },
+     "theirs": {
+      "enactDate": "2003-12-30",
+      "issued": "2003-12-30"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2021,
+      "amendmentEvents": 3
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 15,
+     "theirs": null
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+   "actNumber": "58",
+   "actYear": 2002,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 25,
+   "ourAmendmentEvents": 5,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/1889",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496231",
+    "title": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Finance",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "58",
+      "actYear": 2002
+     },
+     "theirs": {
+      "actNumber": "58",
+      "actYear": "2002"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "2002-12-17",
+      "enforcementDate": "2002-10-29"
+     },
+     "theirs": {
+      "enactDate": "2002-12-17",
+      "issued": "2002-12-17"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 2025,
+      "amendmentEvents": 5
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 25,
+     "theirs": null
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Repealing and Amending (Second) Act, 2017",
+   "actNumber": "04",
+   "actYear": 2018,
+   "strata": [
+    "REPEAL_TITLED"
+   ],
+   "ourSections": 4,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2434",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2434 404 and no search candidate agreed on act number 04 and year 2018"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Indian Christian Marriage Act, 1872",
+   "actNumber": "15",
+   "actYear": 1872,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 88,
+   "ourAmendmentEvents": 54,
+   "judgmentReferences": 7,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2186",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/586587",
+    "title": "THE INDIAN CHRISTIAN MARRIAGE ACT",
+    "stateName": "Punjab",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "15",
+      "actYear": 1872
+     },
+     "theirs": {
+      "actNumber": "15",
+      "actYear": "1872"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1872-07-18",
+      "enforcementDate": "1872-07-18"
+     },
+     "theirs": {
+      "enactDate": "1872-07-18",
+      "issued": "1872-07-18"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 1983,
+      "amendmentEvents": 54
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 88,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Births, Deaths and Marriages Registration Act, 1886",
+   "actNumber": "06",
+   "actYear": 1886,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 38,
+   "ourAmendmentEvents": 27,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2309",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2309 404 and no search candidate agreed on act number 06 and year 1886"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Northern India Canal and Drainage Act, 1873",
+   "actNumber": "08",
+   "actYear": 1873,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 75,
+   "ourAmendmentEvents": 8,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2282",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2282 404 and no search candidate agreed on act number 08 and year 1873"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Court-Fees Act, 1870",
+   "actNumber": "07",
+   "actYear": 1870,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 48,
+   "ourAmendmentEvents": 36,
+   "judgmentReferences": 26,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2293",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2293 404 and no search candidate agreed on act number 07 and year 1870"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Bengal Embankment Act, 1855",
+   "actNumber": "32",
+   "actYear": 1855,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 0,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/19037",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/496663",
+    "title": "The Bengal Embankment Act, 1855",
+    "stateName": "CENTRAL",
+    "ministryName": "Ministry of Home Affairs",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "32",
+      "actYear": 1855
+     },
+     "theirs": {
+      "actNumber": "32",
+      "actYear": "1855"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1855-11-30",
+      "enforcementDate": "1855-11-30"
+     },
+     "theirs": {
+      "enactDate": "1855-11-30",
+      "issued": "1855-11-30"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": null,
+      "amendmentEvents": 0
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 0,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Bengal Military Police Act, 1892.",
+   "actNumber": "05",
+   "actYear": 1892,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 13,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/19221",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19221 404 and no search candidate agreed on act number 05 and year 1892"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Destructive Insects and Pests Act, 1914",
+   "actNumber": "02",
+   "actYear": 1914,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 11,
+   "ourAmendmentEvents": 21,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2354",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2354 404 and no search candidate agreed on act number 02 and year 1914"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Cattle-Trespass Act, 1871",
+   "actNumber": "1",
+   "actYear": 1871,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 31,
+   "ourAmendmentEvents": 11,
+   "judgmentReferences": 5,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2294",
+   "upstream": {
+    "how": "SEARCH",
+    "handle": "123456789/547557",
+    "title": "CATTLE-TRESPASS ACT, 1871",
+    "stateName": "Chandigarh",
+    "ministryName": "NO MINISTRY",
+    "repealed": "false"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "actNumber": "1",
+      "actYear": 1871
+     },
+     "theirs": {
+      "actNumber": "1",
+      "actYear": "1871"
+     }
+    },
+    "currentRepealedState": {
+     "verdict": "UNKNOWN",
+     "ours": null,
+     "theirs": "false",
+     "note": "statutes carries no repeal column; the source flag is recorded, never interpreted"
+    },
+    "commencement": {
+     "verdict": "EXACT_MATCH",
+     "ours": {
+      "enactmentDate": "1871-01-13",
+      "enforcementDate": "1871-01-13"
+     },
+     "theirs": {
+      "enactDate": "1871-01-13",
+      "issued": "1871-01-13"
+     },
+     "note": "the source carries no enforcement/commencement field, so our enforcement_date has nothing to be checked against"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "UNKNOWN",
+     "ours": {
+      "latestAmendingActYear": 1921,
+      "amendmentEvents": 11
+     },
+     "theirs": null,
+     "note": "the source item metadata carries no amendment history; ours is parsed from footnotes and has nothing upstream to be compared against"
+    },
+    "sectionExistence": {
+     "verdict": "UNKNOWN",
+     "ours": 31,
+     "theirs": 0,
+     "note": "the source publishes no_of_section = 0 for this item"
+    }
+   },
+   "actVerdict": "UNKNOWN"
+  },
+  {
+   "act": "The Indian Forest Act, 1927",
+   "actNumber": "16",
+   "actYear": 1927,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 88,
+   "ourAmendmentEvents": 95,
+   "judgmentReferences": 641,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/2388",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/2388 404 and no search candidate agreed on act number 16 and year 1927"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  },
+  {
+   "act": "The Madras Rent and Revenue Sales Act, 1839",
+   "actNumber": "07",
+   "actYear": 1839,
+   "strata": [
+    "PRE_INDEPENDENCE"
+   ],
+   "ourSections": 6,
+   "ourAmendmentEvents": 0,
+   "judgmentReferences": 0,
+   "sourceUrl": "https://www.indiacode.nic.in/handle/123456789/19545",
+   "upstream": {
+    "how": "HANDLE_404_AND_NO_SEARCH_MATCH",
+    "detail": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+   },
+   "dimensions": {
+    "actIdentity": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+    },
+    "currentRepealedState": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+    },
+    "commencement": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+    },
+    "latestRepresentedAmendment": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+    },
+    "sectionExistence": {
+     "verdict": "SOURCE_UNAVAILABLE",
+     "ours": null,
+     "theirs": null,
+     "note": "hdl:123456789/19545 404 and no search candidate agreed on act number 07 and year 1839"
+    }
+   },
+   "actVerdict": "SOURCE_UNAVAILABLE"
+  }
+ ],
+ "caveats": [
+  "The source publishes no commencement/enforcement field, so our enforcement_date — including the 2024-07-01 dates on BNS, BNSS and BSA — is unchecked by this measurement, not confirmed by it.",
+  "The source publishes no amendment history on the item, so latestRepresentedAmendment is UNKNOWN for every Act rather than matched.",
+  "statutes has no repeal column, so currentRepealedState is UNKNOWN on our side for the whole corpus. The source's own flag is recorded verbatim and is not treated as legally dispositive.",
+  "Acts matched by search are matched on act number and act year agreeing; a title alone was never accepted."
+ ]
+}
