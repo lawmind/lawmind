@@ -438,6 +438,7 @@ if (!SKIP_DUMP) {
    * keys restore into a corpus they can no longer address.
    */
   const identityPath = join(OUT, 'judgment-identity.csv');
+  const identityStarted = Date.now();
   if (done(`${identityPath}.gz`)) {
     console.log(`  reusing ${identityPath}.gz`);
     // The manifest still has to state how many rows a restore should expect,
@@ -447,7 +448,6 @@ if (!SKIP_DUMP) {
       pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', 'SELECT count(*) FROM judgments']).trim(),
     );
   } else {
-    const identityStarted = Date.now();
     pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_IDENTITY}) TO '${identityPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
       stdio: ['ignore', 'inherit', 'inherit'],
     });
