@@ -3,7 +3,7 @@
 
 **Prepared:** 30 August 2026
 **Supersedes:** v7 (patched, not rewritten) and all earlier roadmaps.
-**Planning horizon:** 30 August 2026 – 30 October 2026
+**Planning horizon:** 30 August 2026 → 30 October 2026
 **Target public launch:** **23 October 2026** · **Review buffer:** through 30 October 2026
 **Companion:** `LAWMIND_SPRINT_PROMPTS_V2.md`
 
@@ -25,7 +25,7 @@
 | 8 | Sparse-search gate measures usefulness, not only speed | P1 |
 | 9 | iOS party-search **capability kill switch**; Apple language de-confidenced | P1 |
 | 10 | Trust-state contract gaps scheduled | P1 |
-| 11 | Statute freshness — bounded NEW2 Sprint-3 task | P1 |
+| 11 | Statute freshness → bounded NEW2 Sprint-3 task | P1 |
 | 12 | Off-machine restore has a named owner | P1 |
 | 13 | **Sprint 2 capacity check and an explicit must-land / may-slip split** | new in v7.1 |
 | 14 | Per-platform claims register (consequence of #9) | new in v7.1 |
@@ -59,19 +59,19 @@ REPRO_DEBT_1  snapshot_hash: live column introduced via hand-applied/default
               explicitly bind rows to the active snapshot; the final HNSW
               predicate depends on it. A fresh clone can produce NULL, and a
               future snapshot can be silently mislabelled.
-              — BLOCKS HNSW. Owner LCC (schema/writer), coordinated with NEW1.
+              → BLOCKS HNSW. Owner LCC (schema/writer), coordinated with NEW1.
 
 REPRO_DEBT_2  embedding model revision UNKNOWN: fetched via an unpinned
               resolve/main reference. The local ~2.3 GB weights may be the only
               bit-identical copy of the model that produced millions of vectors.
-              — Local weights are REPRODUCIBILITY_CRITICAL until a bit-identical
+              → Local weights are REPRODUCIBILITY_CRITICAL until a bit-identical
               remote source is proven. Owner LCC.
 
 REPRO_DEBT_3  M0 receipt mismatch: docs/ai/lcc-r11/m0-identity-receipt.json
               records upstreamUnique 18,947,807; the authoritative Gate-A M0 was
               18,951,606 with manifest SHA a72d9868…. Reconcile; never relabel
               one snapshot as another.
-              — Owner LCC, Day-0.
+              → Owner LCC, Day-0.
 ```
 
 **The eCourts position, stated from R11 evidence:**
@@ -179,9 +179,9 @@ AWS mirror for historical; official SCI for current. Judgment and order are diff
 
 **E. Canary.** Real request → raw artifact → successful parse → ≥1 append-only `ecourts_observation` → raw→observation trace → zero unattributed requests.
 
-**F. Retention probe**, only after the canary: T, T–1, T–7, T–30, T–90, T–365. Classify `EPHEMERAL · SHORT_RETENTION · HISTORICAL_RETRIEVABLE · SOURCE_DEPENDENT · UNMEASURED`. **Only successful interpretable responses inform classification; a failed request never proves absence.**
+**F. Retention probe**, only after the canary: T, T−1, T−7, T−30, T−90, T−365. Classify `EPHEMERAL · SHORT_RETENTION · HISTORICAL_RETRIEVABLE · SOURCE_DEPENDENT · UNMEASURED`. **Only successful interpretable responses inform classification; a failed request never proves absence.**
 
-**G. Daily bounded pilot**, one or two source keys. Every ledger row records `OBSERVATION_STRATEGY → {CAUSE_LIST_BATCH, CASE_STATUS, ORDER_CHECK, USER_REFRESH}`.
+**G. Daily bounded pilot**, one or two source keys. Every ledger row records `OBSERVATION_STRATEGY ∈ {CAUSE_LIST_BATCH, CASE_STATUS, ORDER_CHECK, USER_REFRESH}`.
 
 **H. Adaptive planner**, Shape A only, by 18 Sep. Group monitored matters by source key → one cause-list fetch where several share a source → targeted status/order check where cheaper → prioritise near-term listings → obey remaining quota. **Do not optimise request volume before the pilot produces real economics.**
 
@@ -210,7 +210,7 @@ Otherwise **Shape B for v1**; eCourts engineering continues; **the launch date d
 Bulk apply stays **HOLD** until the falsifier/write-time issues are fixed. Goal is not maximum edge count — **every canonical edge must survive adversarial review.** Fix the self-citation/falsifier class · add write-time population/frontier verification · sign a new immutable apply population · bounded precision attack with self-constructed positives and negatives · apply only when the false-pin gate passes. Re-evaluation 10–12 September. **Not a launch blocker.**
 
 ## 5.5 Statutes
-Maintain Acts, repealed Acts, commencement, savings, sections, amendments, predecessor/successor identities, judgment–statute references, temporal state. **Engineering stores temporal facts; legal applicability conclusions require legal sign-off.**
+Maintain Acts, repealed Acts, commencement, savings, sections, amendments, predecessor/successor identities, judgment→statute references, temporal state. **Engineering stores temporal facts; legal applicability conclusions require legal sign-off.**
 
 **New: statute freshness is currently UNMEASURED.** Bounded measurement in NEW2's Sprint-3 round — a stratified sample, not a new ingestion architecture. See the prompt pack.
 
@@ -348,7 +348,7 @@ See the prompt pack for the full FIFTH check. Ten checks, headed by **reproducib
 **NEW1 becomes ACTIVE only when every entry criterion passes** — see the prompt pack. `snapshot_hash` schema reproducible and writer explicit; active snapshot ID immutable; model files hashed with revision pinned or explicitly UNKNOWN plus off-machine copy; four-state identity sums to eligible with zero unnamed residual; zero duplicate identity, invalid dimensions, non-finite or unexpected non-unit vectors; delta oldest-pending age within normal bound; one GPU writer. **Only then `HNSW_BUILD_AUTHORIZED = yes`.**
 
 **8 September:** monitoring scope decision under the twelve conditions.
-**Sep 8** staging API online · **Sep 7–9** coarse snapshot complete · **Sep 9–11** integrity review and HNSW readiness · **Sep 10–12** ANN evaluation and citation bounded re-evaluation · **Sep 11** exact/structured/lexical remote with source/freshness, user/matter DB separated · **Sep 14** RCC on staging, desktop shell on the same API · **Sep 16** physical phone on mobile data completes Search — Reader — Save — Matter · **Sep 18** incremental release proven, corpus rollback proven without user/matter rollback, offsite remote restore proven.
+**Sep 8** staging API online · **Sep 7–9** coarse snapshot complete · **Sep 9–11** integrity review and HNSW readiness · **Sep 10–12** ANN evaluation and citation bounded re-evaluation · **Sep 11** exact/structured/lexical remote with source/freshness, user/matter DB separated · **Sep 14** RCC on staging, desktop shell on the same API · **Sep 16** physical phone on mobile data completes Search → Reader → Save → Matter · **Sep 18** incremental release proven, corpus rollback proven without user/matter rollback, offsite remote restore proven.
 
 **Shadow beta 12–18 September** — 3 to 5 practising advocates, observed sessions. **Thresholds frozen by 18 September.**
 

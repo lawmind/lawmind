@@ -73,3 +73,70 @@ re-verification of anything that cites the roadmap.
   measured finding overrides this document.
 
 — NEW2, 30 August 2026
+
+---
+
+# CORRECTION — 30 August 2026, LCC
+
+**Superseded. The founder's original file was supplied and is now committed
+byte-for-byte. Everything above describes the reconstruction that this file
+replaced; it is kept, not deleted, because a provenance record that erases its
+own history proves nothing.**
+
+`docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.md` now holds the founder's exact
+bytes:
+
+```
+bytes    35214
+sha256   76fb3753f4e64642ca359137bb2e24b984fc567618419a92d3373149498c8382
+```
+
+The companion prompt pack was supplied in the same bundle and is tracked
+alongside the roadmap, which is where the roadmap's own §header already pointed
+(`**Companion:** LAWMIND_SPRINT_PROMPTS_V2.md`, no directory — so "beside the
+roadmap" is the location that makes that reference resolve). **This is the
+canonical companion location.**
+
+```
+docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V2.md
+bytes    61078
+sha256   137059c3fb5b05a119265ff3672286444d4a28f997d4bf06f0625ea25e7361c5
+```
+
+Neither file was modified to carry metadata. No header, no provenance stamp, no
+line-ending normalisation — `core.autocrlf` is `false`, the repository has no
+`.gitattributes`, and neither file contains a CR byte, so the committed blob is
+the supplied byte string.
+
+## What the reconstruction actually got wrong
+
+Nine bytes across nine lines. Eight were the typographic connectors the note
+above already declared as guessed, and one was not:
+
+| line | reconstructed | exact | class |
+| --- | --- | --- | --- |
+| 6 | `30 August 2026 – 30 October 2026` | `→` | connector |
+| 28 | `Statute freshness — bounded` | `→` | connector |
+| 62, 67, 74 | `— BLOCKS HNSW` / `— Local weights` / `— Owner LCC` | `→` | connector |
+| 182 | `T–1, T–7` | `T−1` (U+2212 minus) | connector |
+| 213 | `judgment–statute references` | `judgment→statute` | connector |
+| 351 | `Search — Reader — Save — Matter` | `→` | connector |
+| **184** | **`OBSERVATION_STRATEGY → {…}`** | **`OBSERVATION_STRATEGY ∈ {…}`** | **operator** |
+
+**Line 184 is the one that mattered.** The founder wrote set membership — every
+ledger row's `OBSERVATION_STRATEGY` is *one of* `{CAUSE_LIST_BATCH, CASE_STATUS,
+ORDER_CHECK, USER_REFRESH}`. The reconstruction read it as a flow arrow, which
+says the strategy *produces* that set. An enum constraint and a fan-out are not
+the same instruction to whoever writes the ledger.
+
+The note above claimed every mathematical operator was recovered from a
+surviving byte and only connectors were guessed. That claim was true of the
+seven operator classes it enumerated and **missed an eighth (`∈`) it had
+silently classified as a connector** — the guess was wrong in exactly the place
+the note said guesses could not reach. Nothing downstream had yet been built on
+it; `OBSERVATION_STRATEGY` is Sprint-3 NEW2 work.
+
+No other rule, date, number, identifier, path, hash, table cell or code block
+differed. The reconstruction was accurate everywhere it claimed certainty.
+
+— LCC, 30 August 2026

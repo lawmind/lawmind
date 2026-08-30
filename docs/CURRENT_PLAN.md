@@ -48,14 +48,28 @@
 >    (MIT), `MODEL_REVISION = UNKNOWN`, which §10.1 makes an acceptable Gate B
 >    state.
 >
-> **Transcription note.** v5 was committed byte-for-byte. v7.1 could not be: it
-> reached the repository through a channel that mangled its non-ASCII
-> characters. Every rule, date, number, identifier and path is exactly as
-> supplied, every mathematical operator was recovered from a surviving byte, and
-> 128 dashes and arrows were reconstructed from context. What is certain and
-> what is not is itemised in
-> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.PROVENANCE.md`. If the founder's
-> original file appears, overwrite the roadmap with it and delete that note.
+> **Transcription note — CLOSED 30 August 2026.** The founder's original file
+> was supplied and **`docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.md` now holds
+> the exact bytes**: 35214 bytes, sha256
+> `76fb3753f4e64642ca359137bb2e24b984fc567618419a92d3373149498c8382`. The
+> companion prompt pack landed beside it in the same bundle and that is its
+> canonical location: **`docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V2.md`**, 61078
+> bytes, sha256
+> `137059c3fb5b05a119265ff3672286444d4a28f997d4bf06f0625ea25e7361c5`.
+> `ROADMAP_EXACT_TRACKED = YES` and `SPRINT_PROMPTS_EXACT_TRACKED = YES` —
+> verified from the Git blob, not the working tree.
+>
+> The earlier CP1252-mangled transcription differed in **nine bytes on nine
+> lines**. Eight were dashes and arrows. The ninth was not: §5.3 G's
+> `OBSERVATION_STRATEGY ∈ {CAUSE_LIST_BATCH, CASE_STATUS, ORDER_CHECK,
+> USER_REFRESH}` had been reconstructed as `→`, turning a set-membership
+> constraint on every ledger row into a fan-out. Nothing was built on it —
+> that is Sprint-3 NEW2 work — but **the guess was wrong in the one class the
+> transcription note promised guesses could not reach**, which is why the note
+> is superseded rather than deleted. The full delta is appended to
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.PROVENANCE.md`, which stays as the
+> append-only provenance record. The four overrides above are unaffected: they
+> were measured against the text, and the text did not change where they bite.
 
 **Read this file at session start, after the mandatory set in `CLAUDE.md` §0.**
 It exists because a plan held only in a todo tool does not survive compaction, a
