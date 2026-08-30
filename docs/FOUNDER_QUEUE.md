@@ -6819,9 +6819,50 @@ the rule was not followed, and you should hear that from us rather than notice i
 
 ---
 
-## FQ-WEB-SURFACE — the roadmap plans a desktop you cancelled on 12 August  ·  NEW3, 30 Aug 2026 · **one sentence, and it takes a week of Sprint 5 off the table either way**
+## FQ-WEB-SURFACE — ~~the roadmap plans a desktop you cancelled on 12 August~~  ·  NEW3, 30 Aug 2026 · **CLOSED the same day — nothing is needed from you**
 
-**What is needed from you:** one sentence saying whether advocates get a
+> ### CLOSED · `RESOLVED_BY_CURRENT_FOUNDER_ROADMAP_V7_1` · NEW3, 30 Aug 2026
+>
+> **Nothing is asked of you here. Do not read past this box unless you want the
+> history.**
+>
+> **Master Roadmap v7.1 is the latest governing roadmap and supersedes conflicting
+> earlier product-planning direction.** Under v7.1 the desktop/web advocate research
+> surface is **IN V1 SCOPE**. That answers the question this item existed to ask, so it
+> is closed on the roadmap's authority rather than left waiting for a sentence that has
+> already been written.
+>
+> **IN SCOPE IS NOT ENABLED, and nothing was enabled.** Every advocate-web capability
+> row reads `DISABLED_NOT_READY` — the gap is ours, no advocate web client is built or
+> evidenced, and **no claim may be made about a web surface** until a row says
+> `ENABLED` on named evidence. `platformStatus.web` moved
+> `CONTESTED_FOUNDER_INPUT_REQUIRED → IN_SCOPE_V1_NOT_BUILT`
+> (`V1_CAPABILITY_REGISTRY_R14.json`).
+>
+> **Two corrections to what this item used to say.**
+> 1. **It said 30 rows were waiting on you. Measured, it was 18.** The other 12 already
+>    carried truthful states that never depended on your answer, and they were left
+>    alone.
+> 2. **"web" meant two different things** in these documents — the marketing website and
+>    the advocate web application. They are now named separately
+>    (`WEB_MARKETING_SITE` / `WEB_ADVOCATE_APP`, `V1_CLAIMS_REGISTER_R14.md`) and no
+>    claim's truth value changed when they were split.
+>
+> **One thing you may want to know, though it is not a question.**
+> `PRODUCT_DECISIONS.md` **PD-15** and `CLAUDE.md` §1 still carry your 12 August
+> reversal — *"this is only an app, we do not plan for a desktop, or a website login for
+> users"*. Those files now read **stale against v7.1**. NEW3 owns neither and edited
+> neither. If v7.1 is what you mean, PD-15 wants re-settling by whoever owns it; if the
+> 12 August reversal is what you mean, then v7.1 §4 and Sprint 5 do. **Either way no
+> lane is blocked and nothing is enabled**, so this is a tidy-up rather than a decision
+> we are waiting on.
+
+---
+
+<details>
+<summary>The original item, kept unedited for the record</summary>
+
+**What was needed from you:** one sentence saying whether advocates get a
 web/desktop surface in v1. Nothing else. No account, no money, no credential.
 
 **Why NEW3 will not decide it.** Two documents that both bind us say opposite
@@ -6870,6 +6911,12 @@ under roadmap rule 15 it cannot be made at all.
 **Where it plugs in:** `V1_CAPABILITY_REGISTRY_R13.json` → `platformStatus.web`;
 `docs/product/NEW3_R13_PRODUCT_AMENDMENTS.md` Amendment 3; Master Roadmap v7.1 §4
 and §10 Sprint 5.
+
+**Note on the "30 rows" figure above:** it was wrong. The measured count was **18**;
+the other 12 already carried non-founder-pending states. Corrected in the closure box
+and in `V1_CAPABILITY_REGISTRY_R14.json`.
+
+</details>
 
 ---
 
