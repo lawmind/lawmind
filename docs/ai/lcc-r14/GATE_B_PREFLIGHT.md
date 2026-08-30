@@ -5,6 +5,15 @@
 (35,214 bytes, sha256 `76fb3753…`) and `docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V2.md`
 (61,078 bytes, sha256 `137059c3…`), both now tracked byte-for-byte.
 
+**Reanchored to current HEAD `08237b8a`**, after NEW3's `0643354d` (party
+activation guard, docs only) and NEW1's `1b7d9add` (GPU lock, `services/harness`
+only) landed concurrently. `acc478c3` is an ancestor, verified with
+`git merge-base --is-ancestor`. The only `services/**` or `packages/**` change
+between `acc478c3` and HEAD is this lane's `env.ts` + `env.test.ts`, so the
+932-pass API suite below is current rather than stale — and NEW3's DEFER and the
+empty override map were both re-read at this HEAD, not at the one they were
+first observed on.
+
 **This is a PREFLIGHT, not a receipt.** FIFTH grades Gate B; nothing here is a
 verdict and no gate is declared passed. Every line is either an observation with
 the command behind it, or a statement that something was not observed.
