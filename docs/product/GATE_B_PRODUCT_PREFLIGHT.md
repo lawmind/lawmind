@@ -27,9 +27,9 @@ sealed by LCC's Day-0 integration seal (bus 1567, artifact
 | process operational | **YES** | `CONTRACT_CHANGE_CONTROL.md` (process) + `CONTRACT_CHANGE_LEDGER.json` (decisions) |
 | wire `contract` integer | **1**, unchanged | `CONTRACT_REVISION = R14` and `WIRE_PROTOCOL_VERSION = 1` are **different numbers** — see R14 §0. Every amendment is additive or semantic; nothing removed or narrowed, and **no `services/**` change was made or required by any R14 decision** |
 
-**10 CCRs received · 7 AMEND · 1 DEFER · 1 REJECT_WITH_ALTERNATIVE ·
+**11 CCRs received · 7 AMEND · 2 DEFER · 1 REJECT_WITH_ALTERNATIVE ·
 1 NOT_A_CONTRACT_CHANGE_ENGINEERING_DEFECT · 0 undecided ·
-0 contract-change P0 open · 1 implementation P0 open (a Gate-B blocker, §3).**
+0 contract-change P0 open · 1 implementation P0 open (a RELEASE blocker; `GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED`, §3).**
 
 **The R13 count of 5 was wrong by four.** RCC had filed `CCR-RCC-S2-01…04` in
 `apps/mobile/CONTRACT_CHANGE_REQUESTS.md` and none had reached the ledger, so
@@ -128,11 +128,23 @@ overrides v7.1 for registry purposes.
 carried forward** — they predate the four RCC Sprint-2 CCRs entering the ledger, and a
 count taken over a ledger missing four rows is not a count.
 
+**RECOMPUTED AGAIN 30 August 2026** by the NEW3 Sprint-2 final change-control
+adjudication (`CCR-NEW3-S2F-01`). The block below **replaces** the R14 counters
+(`ACCEPTANCE 0 / CONTRACT_CHANGE 0 / IMPLEMENTATION 1 / NON_GATE_P1 3`). Two things moved
+and nothing else: `NON_GATE_P1_OPEN` gains the deferred retrieval-outcome gap, and the
+magic-link P0's **gate coupling** is corrected on observed acceptance evidence.
+**No severity was downgraded and no P0 was closed.**
+
 ```
 ACCEPTANCE_P0_OPEN       = 0
 CONTRACT_CHANGE_P0_OPEN  = 0
-IMPLEMENTATION_P0_OPEN   = 1     <-- GATE-B BLOCKER
-NON_GATE_P1_OPEN         = 3
+IMPLEMENTATION_P0_OPEN   = 1     <-- OPEN, UPHELD, LCC's. Blocks RELEASE (real email
+                                     sign-in), NOT the Gate-B acceptance run. See below.
+GATE_B_P0_OPEN           = 0     <-- stated separately, because implementation,
+                                     release and consumption are different states
+NON_GATE_P1_OPEN         = 4
+CONDITIONAL_P0_GUARDED   = 1     <-- CCR-NEW3-S2F-01, latent; becomes P0 only on an
+                                     override activation that is now prohibited
 ```
 
 **There is no blanket "P0 = 0" here, because it would not be true.**
@@ -147,6 +159,37 @@ rewrite a URL the server already emitted. **It is an implementation defect under
 already-correct contract, so no fake API amendment was manufactured to close it.**
 Routed to LCC. **Not downgraded to pass this gate.**
 
+**REFINED 30 August 2026 — the severity stands, the gate coupling does not.** The three
+states are separated because this round was required to separate them:
+
+- **`AUTH_BASE_URL_CODE_DEFECT = YES`.** Real, unfixed, LCC's. `services/api/src/env.ts:50`
+  reads `process.env['AUTH_BASE_URL'] ?? 'https://api-production-1c0b4.up.railway.app'`.
+  The sibling secret two lines above it is `required('AUTH_SECRET')` with the reasoning
+  written out — *"a fallback secret is a secret everyone has… failing to start is the
+  cheap outcome."* The identical argument applies here and was not applied.
+- **`REMOTE_API_NOT_DEPLOYED = YES`** — and that on its own is **not** a Gate-B P0. Remote
+  serving is a Sprint-3 milestone. "No running production API" is not a product defect and
+  is not counted as one here.
+- **`GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED`.** The Gate-B acceptance and core-loop
+  smoke authenticated via a **fixture user** — `new3-acceptance-56b2c29a@example.test`,
+  the raw response recorded in `TEN_MATTER_ACCEPTANCE_R12.json` — against
+  `127.0.0.1:3011`, and passed. It never rendered or followed an emailed link, so the
+  fallback cannot have blocked it, and R14's "Gate-B blocker" wording is not supported by
+  the acceptance evidence.
+
+So it is a **release / real-sign-in blocker**, not a Gate-B acceptance blocker.
+**`IMPLEMENTATION_P0_OPEN` stays 1, the severity stays P0, the owner stays LCC, and it
+stays open.** RCC's submitted severity and R14's own wording are preserved verbatim in
+the ledger (`severitySubmittedByRCC`, `historicalGateBEffect_R14`) rather than rewritten.
+
+**One observation, recorded rather than acted on.** `services/api/src/env.ts` is **modified
+in the working tree** — not by NEW3, which does not write `services/**` and did not. The
+uncommitted version replaces the fallback with a `resolveAuthBaseUrl(...)` that **refuses
+to start** when `AUTH_BASE_URL` is unset in production: the fail-closed remedy this CCR
+asked for. **It is not committed, so the P0 is not closed.** This preflight adjudicates
+HEAD `acc478c3`, where the retired-host fallback is still line 50. NEW3 did not review,
+run, or stage that change. **LCC closes the CCR by landing it and saying so.**
+
 **`ACCEPTANCE_P0_OPEN = 0`.** AB-1 and AB-2 `PASS_WITH_LIMIT`, both controls `PASS`.
 **No acceptance case was rerun in R14 and no verdict changed** — R14 mutated product
 governance documents only and touched no `apps/**`, `services/**`, `packages/**` or
@@ -159,7 +202,7 @@ stated fallbacks both surfaces say **less** than the truth rather than something
 than it. **RCC's submitted severities are preserved verbatim in the ledger beside the
 adjudication.** Neither was downgraded to clear a count.
 
-**`NON_GATE_P1_OPEN = 3`** — `CCR-RCC-S2-02` (treatment fields absent from the
+**`NON_GATE_P1_OPEN = 4`** (3 at R14, plus `CCR-NEW3-S2F-01` below) — `CCR-RCC-S2-02` (treatment fields absent from the
 saved-authority read shape, AMENDed, LCC-owned, not released); `CCR-2026-08-30-05`
 (`treatment_provenance` not on the wire, DEFERRED to Gate C, unchanged by R14); and the
 D6 backlog item (the registry enumerates no drafting or Hearing Pack row — absent by
@@ -240,6 +283,71 @@ cannot take exact identity with it.
 
 **Android is not weakened because the iOS switch exists.**
 
+### 5.1 · THE SWITCH IS NOW EXPLICITLY BLOCKED FROM BEING FLIPPED — `CCR-NEW3-S2F-01`
+
+```
+PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT
+```
+
+**Gate B requires the switch to EXIST and the degrade path to be DEFINED. Both are true
+and neither is disturbed.** Gate B does not require the override to be *activated*, and
+this guard does not weaken any row in the table above.
+
+**What was found.** `/search` can emit `degraded: ["party_name_disabled"]`
+(`retrieve.ts:2048-2049`) and that value reaches `deriveRetrievalOutcome` as
+`degradedArms` (`route.ts:946-948`) — which ignores it. Observed by executing the
+derivation at HEAD `acc478c3`:
+
+| input | `state` | `reasons` | `safeForGeneration` |
+|---|---|---|---|
+| suppressed, 5 results | `answered` | `[]` | **`true`** |
+| suppressed, 0 results | `abstained` | `["low_relevance"]` | `false` |
+| **not** suppressed, 0 results | `abstained` | `["low_relevance"]` | `false` |
+
+`answered` is defined in `outcome.ts` as *"the arms we needed ran"*; `low_relevance` as
+*"the rankers ran and nothing cleared the bar"*. With the party arm switched off both
+sentences are false — and the last two rows are **byte-identical**, which is exactly the
+"there is no law on this" / "we could not search" collapse that file exists to prevent.
+**No committed test would catch it:** `outcome.test.ts` contains zero occurrences of
+`party`, and `party-search-platform.test.ts` asserts `degraded[]` visibility only.
+
+**Why this is NOT a current Gate-B P0, and was not promoted into one.** The emitting
+branch is **unreachable at HEAD**: `PLATFORM_CAPABILITY_OVERRIDES` is `{}` and
+`search.party_name` is `ENABLED` release-wide, both observed. Suppression cannot occur on
+any platform including `unknown`. `CONTRACT_CHANGE_CONTROL.md` §3 defines P0 as a surface
+that *states or implies something false* — at HEAD, no surface here can. RCC is truthful
+independently: `searchTruth.ts` classifies from `degraded[]` and returns `party_disabled`
+**before** every other branch (shipped in Part B, `acc478c3`).
+
+**Why it was DEFERRED rather than AMENDed.** `CONTRACT_CHANGE_REQUIRED = YES` — the
+contract genuinely has no vocabulary for an administratively suppressed arm. But AMEND is
+for a change that must land *now*, and nothing released is false. Creating R15 for an
+unreachable branch would increment the revision for a fix NEW3 cannot write
+(`services/**`) and leave the contract ahead of the server with no test holding it.
+**R14 remains latest and its recorded identities are unchanged.**
+
+**The guard is the price of the deferral.** It lifts only when all three land: the
+amendment adding an `arm_administratively_disabled` reason; the derivation fix, which
+must put the suppression into `couldNotLookProperly` and **not** merely into `reasons`
+(otherwise the zero-result branch is reached first and still reports `abstained`); and a
+test that fails on the false states. Under the **existing, unchanged** generation-safety
+rule that yields `degraded` with results and `coverage_unknown` without —
+**`GENERATION_SAFETY_CHANGED = NO`**, no policy is strengthened, and
+`exactIdentityUsable` stays `true`. **`RCC_FOLLOWUP_REQUIRED = NO`:** RCC types
+`reasons` as `string[]`, so the new value parses today.
+
+**NEW3 does not modify backend configuration and did not.** This is a product /
+change-control prohibition, not a code lock.
+
+### 5.2 · SAVED-AUTHORITY OPTIONAL FIELDS — `SAVED_AUTHORITY_GATE_B_STATE = NON_BLOCKING`
+
+Re-tested this round against current evidence and **unchanged**. `precedentialEffect`,
+`canAddToMatter` and `citableForUntouchedPropositions` remain absent from the
+saved-authority read shape, `releasedToRCC: false`, adjudicated **P1** in R14 §A6. No new
+evidence proves a current P0: with RCC's fallback in force the Matter surface says *less*
+than the truth, not something other than it, and Search → Reader → Save → Matter passes
+(`CTRL-CORELOOP`). **No contract revision was created for these.**
+
 ---
 
 ## 6 · WHAT NEW3 IS HANDING FIFTH, BY PATH
@@ -285,7 +393,10 @@ cannot take exact identity with it.
   (17 pass) and observed the route in-process; NEW3 did **not** re-derive LCC's test
   coverage or audit the commits around it.
 - **The magic-link P0 is stated, not fixed.** It is `services/**` and NEW3 does not
-  write there. It is open, it is LCC's, and it is a Gate-B blocker.
+  write there. It is open, it is LCC's, and it blocks **release / real email sign-in**.
+  R14 called it a Gate-B blocker; that coupling is corrected in §3 on observed acceptance
+  evidence (the core-loop smoke authenticated via a fixture user and passed). **The P0
+  itself is not downgraded.**
 - **The eight unrerun acceptance cases.** Their R12 verdicts stand and were not
   re-observed this round.
 - **Latency stability.** The AB-2 scopes were measured twice, ~40 minutes apart,
@@ -301,12 +412,23 @@ cannot take exact identity with it.
 1. **`CCR-2026-08-30-04` is WITHDRAWN — do not build `capabilities[].platforms`.** The
    resolved-per-platform view you already shipped is adopted as canonical in R14 §A4. No
    second representation, no work owed.
-2. **`CCR-RCC-S2-03` — the magic-link origin. OPEN P0, and a Gate-B blocker.**
-   `services/api/src/env.ts` defaults `AUTH_BASE_URL` to the retired
+2. **`CCR-RCC-S2-03` — the magic-link origin. OPEN P0, upheld.**
+   `services/api/src/env.ts:50` defaults `AUTH_BASE_URL` to the retired
    `api-production-1c0b4.up.railway.app`. Fail closed rather than emit a link to a dead
    origin, set it explicitly per deployment, and remove the retired host as a fallback.
    **The contract is not amended for this** — it is an implementation defect under an
-   already-correct contract.
+   already-correct contract. **Scope corrected 30 Aug:** it blocks **release and real
+   email sign-in**; `GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED`, because the Gate-B
+   core-loop smoke authenticated via a fixture user and passed without following an
+   emailed link. Severity unchanged — see §3.
+5. **`CCR-NEW3-S2F-01` — DO NOT FLIP THE PARTY SWITCH.**
+   `PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT`. Adding
+   any narrowing row for `search.party_name` to `PLATFORM_CAPABILITY_OVERRIDES` is
+   prohibited until (1) the contract amendment adding `arm_administratively_disabled`,
+   (2) the `deriveRetrievalOutcome` fix — the suppression must join
+   `couldNotLookProperly`, not just `reasons` — and (3) a test that fails on the false
+   states, **all** land. When party suppression is next scheduled, **file back to NEW3
+   first** so the amendment and the derivation fix land together. Full record in §5.1.
 3. **`CCR-RCC-S2-02` — add `precedentialEffect`, `canAddToMatter` and
    `citableForUntouchedPropositions` to the saved-authority read shape.** Additive, no
    migration, no new endpoint; the write path in `matters/authorities.ts` already
@@ -325,7 +447,11 @@ cannot take exact identity with it.
    `X-Lawmind-Platform` on every build**: a client that sends nothing gets the
    release-wide set and will not see its own narrowing.
 3. `retrievalOutcome.rarestDf` is diagnostic only. Do not derive a user-facing narrowing hint from it. Use `emptyBecause` and `degraded[]`.
-4. The refusal screen must offer **one named court and a shorter date range**. A court *category* chip is not a narrowing remedy — measured, it is still refused.
+4. **Nothing is owed by RCC this round. `RCC_FOLLOWUP_REQUIRED = NO`.** The deferred
+   retrieval-outcome gap (§5.1) needs no client change: `reasons` is typed `string[]`, so
+   the future value parses today, and both target states are already in your union. Your
+   Part-B party-disabled UI is correct and is **not** to be rebuilt.
+5. The refusal screen must offer **one named court and a shorter date range**. A court *category* chip is not a narrowing remedy — measured, it is still refused.
 
 **To the founder:** `FQ-WEB-SURFACE` is **CLOSED** —
 `RESOLVED_BY_CURRENT_FOUNDER_ROADMAP_V7_1`. Master Roadmap v7.1 governs and keeps the

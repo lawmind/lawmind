@@ -222,7 +222,16 @@
         "narrowOnly": "A platform override may take a capability DOWN and never UP - enforced in committed code by a strict narrowness comparison, and covered by committed tests. So the switch can never become a back door that enables something the release-wide registry refuses.",
         "mustNotDisableVerifiedBy": "services/api/src/search/party-search-platform.test.ts, run at HEAD 30 Aug: 17 pass, 0 fail. It asserts that no neutral citation, reporter citation, CNR, case number or 'X v. Y' title classifies as party_name, so flipping the switch cannot take exact identity with it."
       },
-      "webStateBasis": "Desktop advocate surface is in v1 scope under Master Roadmap v7.1, but no advocate web client is built/evidenced yet."
+      "webStateBasis": "Desktop advocate surface is in v1 scope under Master Roadmap v7.1, but no advocate web client is built/evidenced yet.",
+      "activationGuard": {
+        "PARTY_IOS_OVERRIDE_ACTIVATION": "BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT",
+        "recordedAt": "2026-08-30, NEW3 Sprint-2 final change-control adjudication, CCR-NEW3-S2F-01",
+        "whatIsBlocked": "Adding ANY narrowing row for the runtime capability `search.party_name` to PLATFORM_CAPABILITY_OVERRIDES, on any platform. The `ENABLED_V1_KILLABLE` state on iOS above means the switch EXISTS and is unflipped - which is what Roadmap v7.1 section 9.5 requires. It is NOT permission to flip it.",
+        "why": "Flipping it makes `/search` emit `degraded: ['party_name_disabled']`, and the server's one-place verdict cannot represent that. Observed by executing `deriveRetrievalOutcome` at HEAD acc478c3: a suppressed arm with results reports `state: 'answered'`, `reasons: []`, `safeForGeneration: true` - and with zero results reports `abstained`/`low_relevance`, byte-identical to an honest empty. Both sentences are false while the arm is switched off, and no committed test would catch it.",
+        "liftsWhen": "ALL THREE land: (1) the contract amendment adding the `arm_administratively_disabled` reason; (2) the `deriveRetrievalOutcome` correction, which must put the suppression into `couldNotLookProperly` and not merely into `reasons`; (3) a committed test that fails if a suppressed party arm reports `answered` or `abstained`/`low_relevance`.",
+        "notBlockedByThis": "Nothing shipped. `search.party_name` stays ENABLED release-wide, `platformOverrides` stays `[]`, exact identity is untouched, and RCC's truthful party-disabled UI (shipped in Part B, acc478c3) stays as it is.",
+        "owner": "LCC to implement; NEW3 to amend the contract in the same change. NEW3 does not modify backend configuration and did not."
+      }
     },
     {
       "id": "search.structured_filters",

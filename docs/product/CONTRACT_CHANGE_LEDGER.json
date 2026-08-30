@@ -258,9 +258,12 @@
       "backendOwner": "LCC",
       "handoff": "LCC: (1) the AUTH_BASE_URL default must not be a retired host - fail closed like packages/auth/src/mail.ts does rather than emit a link to a dead origin; (2) set AUTH_BASE_URL explicitly in every deployment; (3) the retired host must not appear as a fallback anywhere. NEW3 does not edit services/** and did not.",
       "openAs": "IMPLEMENTATION_P0_OPEN",
-      "gateBEffect": "This is a genuinely unresolved P0 and it stays a Gate-B blocker until LCC lands it. It is not downgraded, and it is not counted as a contract-change P0 or an acceptance P0, because it is neither.",
+      "gateBEffect": "REFINED 30 Aug 2026, NEW3 Sprint-2 final adjudication. THE P0 IS UNCHANGED, UPHELD AND OPEN - only its mis-stated coupling to Gate-B ACCEPTANCE is corrected, and the R14 wording is preserved verbatim in `historicalGateBEffect_R14`. Three states, separated: AUTH_BASE_URL_CODE_DEFECT = YES (real, unfixed, LCC's). REMOTE_API_NOT_DEPLOYED = YES, and that is a Sprint-3 milestone which is NOT by itself a Gate-B P0. GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED - the Gate-B acceptance and core-loop smoke authenticated via a fixture user (`new3-acceptance-56b2c29a@example.test`, TEN_MATTER_ACCEPTANCE_R12.json) against 127.0.0.1:3011 and PASSED; it never rendered or followed an emailed link, so the fallback cannot have blocked it. It is therefore a RELEASE / REAL-SIGN-IN blocker, not a Gate-B acceptance blocker. It is NOT downgraded: severity stays P0, owner stays LCC, IMPLEMENTATION_P0_OPEN stays 1.",
       "releasedToRCC": null,
-      "rccConsumed": false
+      "rccConsumed": false,
+      "historicalGateBEffect_R14": "This is a genuinely unresolved P0 and it stays a Gate-B blocker until LCC lands it. It is not downgraded, and it is not counted as a contract-change P0 or an acceptance P0, because it is neither.",
+      "severityUnchangedBy_S2F": "YES - P0 UPHELD. Only the gate coupling was corrected, on observed acceptance evidence.",
+      "uncommittedWorkObservedInWorktree": "OBSERVED 30 Aug 2026 during the Sprint-2 final adjudication, and recorded rather than acted on. `services/api/src/env.ts` is MODIFIED IN THE WORKING TREE (not by NEW3, which does not write `services/**` and did not). The uncommitted version replaces the retired-host fallback with a `resolveAuthBaseUrl(...)` that REFUSES TO START when AUTH_BASE_URL is unset under NODE_ENV=production - the fail-closed remedy this CCR's handoff asked for. THE P0 STILL STANDS AND IS NOT CLOSED HERE: it is adjudicated at HEAD acc478c3, where `authBaseUrl: () => process.env['AUTH_BASE_URL'] ?? 'https://api-production-1c0b4.up.railway.app'` is still line 50. Uncommitted work is not a landed fix, NEW3 did not review it, did not run it, and did not stage it. LCC closes this CCR by committing and saying so, not NEW3 by noticing."
     },
     {
       "id": "CCR-RCC-S2-04",
@@ -290,17 +293,101 @@
       "releasedToRCC": true,
       "releasedAt": "2026-08-30",
       "rccConsumed": false
+    },
+    {
+      "id": "CCR-NEW3-S2F-01",
+      "new3LedgerId": "CCR-2026-08-30-11",
+      "filedBy": "NEW3",
+      "filedVia": "NEW3 Sprint-2 final change-control adjudication, 30 August 2026. Evidence assembled from the committed LCC retrievalOutcome implementation and from RCC Part B (acc478c3).",
+      "receivedAs": "RECEIVED",
+      "endpoint": "POST /search - `retrievalOutcome`, in relation to `degraded[] = [\"party_name_disabled\"]`",
+      "missing": "`retrievalOutcome` has NO WAY TO SAY that a retrieval arm was ADMINISTRATIVELY SWITCHED OFF. `degraded[]` carries `party_name_disabled` and `deriveRetrievalOutcome()` receives that array as `degradedArms` - and then ignores the value entirely. It is in neither `TIMEOUT_ARMS` nor the `sparse_unbounded` branch, so it contributes to no reason and to `couldNotLookProperly` not at all.",
+      "observedAtHead": {
+        "head": "acc478c3307bc162c8cb1f45454c553c8153ffdb",
+        "emitSite": "services/api/src/search/retrieve.ts:2048-2049 - `const partySuppressed = shape.shape === 'party_name' && !partyArmPermitted; if (partySuppressed) onDegrade?.('party_name_disabled');`",
+        "carrySite": "services/api/src/search/route.ts:946-948 - `deriveRetrievalOutcome({ resultCount, degradedArms: degraded, ... })`. The value reaches the derivation and is dropped there.",
+        "derivation": "services/api/src/search/outcome.ts:215 `deriveRetrievalOutcome`",
+        "probe": "deriveRetrievalOutcome executed directly at HEAD, semanticDependent:false, semantic arms healthy:",
+        "probeResults": [
+          "degradedArms:['party_name_disabled'], resultCount 5  =>  state 'answered', reasons [], safeForGeneration TRUE",
+          "degradedArms:['party_name_disabled'], resultCount 0  =>  state 'abstained', reasons ['low_relevance'], safeForGeneration false",
+          "degradedArms:[],                      resultCount 0  =>  state 'abstained', reasons ['low_relevance'], safeForGeneration false  <-- BYTE-IDENTICAL to the suppressed zero"
+        ],
+        "whyEachIsFalse": [
+          "`answered` is defined in outcome.ts as 'We searched, the arms we needed ran'. With the party arm switched off for a party_name query, that sentence is FALSE, and `safeForGeneration: true` hands that false completeness to counterarguments, briefings and drafting.",
+          "`abstained` + `low_relevance` is defined as 'The rankers ran and nothing cleared the bar'. The party arm did not run. FALSE.",
+          "A suppressed zero and an honest zero are INDISTINGUISHABLE in retrievalOutcome. That is precisely the 'there is no law on this' vs 'we could not search' collapse outcome.ts was written to end (bus 1128/1141)."
+        ],
+        "testCoverage": "NONE. `outcome.test.ts` contains zero occurrences of 'party'. `party-search-platform.test.ts` asserts the degrade is VISIBLE in `degraded[]` and that exact identity is untouched; it asserts nothing about `retrievalOutcome`. No committed test would fail if the override were activated."
+      },
+      "reachabilityAtHead": {
+        "verdict": "UNREACHABLE",
+        "evidence": [
+          "services/api/src/release/capabilities.ts:487 - `PLATFORM_CAPABILITY_OVERRIDES` is `{}`. Observed empty at HEAD.",
+          "services/api/src/release/capabilities.ts:160 - `search.party_name` is `state: 'ENABLED'` release-wide.",
+          "Suppression requires `partyNameArmPermitted(platform) === false`, which requires `isUserReachableOnPlatform` false, which with an empty override map and an ENABLED base cannot occur on any platform including `unknown`.",
+          "Blast radius if activated is `/search` only: `arguments/counter.ts` and `search/saved.ts` build their own `degradedArms` and never pass `partyNameArm`, so `partyArmPermitted` defaults true and they cannot suppress. They would inherit the same defect the moment either is made platform-aware."
+        ]
+      },
+      "rccPosition": "RCC needs nothing. RCC Part B (HEAD acc478c3) reads `degraded[]`, not `retrievalOutcome`: `apps/mobile/src/screens/search/searchTruth.ts:53` exposes `partyArmDisabled()` and `classifySearch()` returns `party_disabled` BEFORE the refusal, timeout, coverage_unknown and empty branches. The phone surface is already truthful and is not asked to rebuild it.",
+      "severitySubmittedByRCC": "n/a - not filed by RCC. RCC reported the client half and shipped it in Part B.",
+      "severityAdjudicatedByNEW3": "P1 LATENT - conditional P0. Not a current P0, and not downgraded: it becomes a P0 the instant the override is activated.",
+      "severityAdjudicationReason": "CONTRACT_CHANGE_CONTROL.md section 3 defines P0 as a surface that STATES OR IMPLIES SOMETHING FALSE about the law, a citation, or coverage. At HEAD no surface can state anything false here, because the code path that emits `party_name_disabled` is unreachable - the override map is empty and the capability is ENABLED release-wide, both observed. Promoting an unreachable branch to a current P0 would be as untrue as denying the defect. The contradiction is real, confirmed by execution, and guarded rather than counted.",
+      "affectedSurface": "Any SERVER-SIDE consumer that honours `retrievalOutcome` as the one-place verdict - counterarguments, briefings, drafting, the saved-search feed. NOT the RCC search screen, which reads `degraded[]` directly and is already truthful.",
+      "userTruthImpact": "None today - unreachable. On activation: a semantic-dependent consumer would be told `safeForGeneration: true` on a party_name query whose case-title probe never ran, and would argue from a result set missing the authority that would have been pinned first.",
+      "CONTRACT_CHANGE_REQUIRED": "YES",
+      "CURRENT_GATE_B_P0": "NO",
+      "SAFE_TO_DEFER_UNTIL_BEFORE_OVERRIDE_ACTIVATION": "YES - and only with the binding activation guard below.",
+      "decision": "DEFER",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-08-30",
+      "rationale": "DEFER, not AMEND, and the reason is mechanical. AMEND is reserved for a change that MUST LAND NOW under the current contract and gate truth. Nothing on any released surface is false: the branch cannot execute at HEAD. Creating R15 for an unreachable branch would increment the contract revision for a change NEW3 cannot implement (the fix is `services/**`), put the contract ahead of the server with no committed test holding it, and manufacture exactly the unnecessary revision this round was told not to create. R14 remains latest and its recorded identities are unchanged. What DEFER buys is paid for by the guard: activation is prohibited until the correction lands, and the correction is specified below precisely enough that the eventual AMEND is mechanical rather than a fresh adjudication.",
+      "activationGuard": {
+        "PARTY_IOS_OVERRIDE_ACTIVATION": "BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT",
+        "scope": "Adding ANY row to `PLATFORM_CAPABILITY_OVERRIDES` that narrows `search.party_name` on any platform.",
+        "liftsWhen": "ALL THREE land: (1) the contract amendment defining the new reason value; (2) the `deriveRetrievalOutcome` correction; (3) a committed test that fails if a suppressed party arm is reported as `answered` or as `abstained`/`low_relevance`.",
+        "note": "NEW3 does not modify backend configuration and did not. This guard is a product/change-control prohibition recorded in NEW3-owned artifacts; it is not a code lock. Until the test in (3) exists, nothing in CI would catch a violation - which is the whole reason the guard is written down rather than assumed."
+      },
+      "requiredCorrectionWhenLifted": {
+        "note": "Specified now so the future AMEND is mechanical. This is NOT a revision and creates none.",
+        "newTopLevelState": "NONE. The existing state model is preserved.",
+        "newReasonValue": "`arm_administratively_disabled` - added to `RetrievalOutcomeReason`. Semantics: a retrieval arm this query needed did not run because a capability was narrowed by the served registry. NOT a failure, NOT a timeout, NOT a relevance judgement, and NOT retryable.",
+        "derivationChange": "The suppression must join `couldNotLookProperly` in `outcome.ts`, not merely push a reason. Pushing a reason alone fixes only the non-empty case: with `resultCount === 0` the zero-result branch is reached BEFORE the reason is weighed, and the response would still read `abstained`/`low_relevance`.",
+        "resultingStates": [
+          "results > 0  =>  `degraded` + `arm_administratively_disabled`  (results real, SET not known complete)",
+          "results == 0 =>  `coverage_unknown` + `arm_administratively_disabled`  (we did not look properly; may never render as 'no results')"
+        ],
+        "invariantSatisfied": "An administratively suppressed arm becomes machine-visible in the one-place retrieval outcome, and is never explained solely as low relevance, as a timeout, or as 'all relevant rankers ran'.",
+        "exactIdentityUsable": "UNCHANGED - stays `true`. R14 A4.9 requires exact identity untouched, and `partySuppressed` is narrow to the `party_name` shape by construction.",
+        "GENERATION_SAFETY_CHANGED": "NO",
+        "generationSafetyDerivation": "DERIVED FROM THE EXISTING DOCUMENTED POLICY, NOT STRENGTHENED BY INTUITION. `outcome.ts` already documents `safeForGeneration` as true ONLY for `answered`, with `degraded` deliberately false because 'a partial set is safe to show and unsafe to argue from - the authority that would have changed the argument is exactly the one that did not get ranked'. A suppressed case-title probe on a party_name query is that sentence exactly. So `safeForGeneration` becomes false via the UNCHANGED existing rule, because the INPUT becomes truthful. No generation-safety policy is rewritten, no new gate is added, and the independent-sufficiency policy for other arms is untouched.",
+        "wireProtocolInteger": "UNCHANGED at 1. Additive within an existing open vocabulary; nothing is removed or narrowed."
+      },
+      "RCC_FOLLOWUP_REQUIRED": "NO",
+      "rccCompatibilityEvidence": "The current committed RCC parser represents the new value TODAY, unchanged. `apps/mobile/src/api/contract.ts:1576` types `RetrievalOutcome.reasons` as `string[]` - an OPEN array, not a closed union - so a new reason parses with no client change. `state` is a closed union but both target values, `degraded` and `coverage_unknown`, are already members. RCC's truthful party-disabled UI already exists and is not to be rebuilt. When the AMEND lands, any RCC work is limited to a test for the new contract value.",
+      "priorVersion": "R14",
+      "newVersion": null,
+      "schemaDelta": "none - no request or response shape moves in this round",
+      "semanticDelta": "none in this round. The semantic change is specified under `requiredCorrectionWhenLifted` and lands with the future amendment.",
+      "capabilityImpact": "`search.party_name` stays ENABLED release-wide on every platform. `platformOverrides` stays `[]`. The switch continues to EXIST unflipped, which is what Roadmap v7.1 section 9.5 requires.",
+      "claimImpact": "none. No claim changes and none is added.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: (1) do NOT add a narrowing row for `search.party_name` to PLATFORM_CAPABILITY_OVERRIDES until the three conditions in `activationGuard.liftsWhen` are met; (2) when party suppression is next scheduled, file back to NEW3 first so the amendment lands in the same change as the derivation fix; (3) the derivation fix must put the suppression into `couldNotLookProperly`, not merely into `reasons`.",
+      "reconsideredAt": "Immediately on any request to activate a party-name platform override, and in any event at Gate C, 18 September 2026.",
+      "openAs": "NON_GATE_P1_OPEN, with CONDITIONAL_P0_GUARDED recorded separately",
+      "releasedToRCC": null,
+      "rccConsumed": false
     }
   ],
   "counts": {
-    "received": 10,
+    "received": 11,
     "amended": 7,
-    "deferred": 1,
+    "deferred": 2,
     "rejectedWithAlternative": 1,
     "engineeringDefectRoutedToLCC": 1,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R13 recorded 5 received / 0 P0 open. Those counts are SUPERSEDED, not carried: the four RCC Sprint-2 CCRs in apps/mobile/CONTRACT_CHANGE_REQUESTS.md had never been ledgered, so the R13 numbers described a ledger that was missing four rows."
+    "note": "R13 recorded 5 received / 0 P0 open. Those counts are SUPERSEDED, not carried: the four RCC Sprint-2 CCRs in apps/mobile/CONTRACT_CHANGE_REQUESTS.md had never been ledgered, so the R13 numbers described a ledger that was missing four rows. R14 recorded 10 received / 1 deferred. Superseded 30 Aug 2026 by the Sprint-2 final adjudication, which added CCR-NEW3-S2F-01 (DEFER)."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "TWO DIFFERENT NUMBERS. CONTRACT_REVISION (R12 -> R13 -> R14) is the NEW3 governance revision of the contract document. WIRE_PROTOCOL_VERSION is the integer served at GET /version as `contract`, defined in services/api/src/contract-version.ts as bumped ONLY by a change a current client cannot ignore, with every within-version change ADDITIVE. R14's amendments are additive or semantic - an optional request selector, optional response fields, one added value on an open-ended string field, and stated meanings - so the wire integer STAYS 1 and minSupportedContract stays 1. No services/** change is required or made by this decision.",
@@ -335,26 +422,36 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-08-30, R14, after all four RCC CCRs were adjudicated and CCR-2026-08-30-06 was decided",
+    "recomputedAt": "2026-08-30, NEW3 Sprint-2 FINAL adjudication, after CCR-NEW3-S2F-01. Supersedes the R14 recompute; the R14 basis strings below are updated, not appended to.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
-    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted and is adjudicated P1 with an honest interim contract; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change.",
+    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted and is adjudicated P1 with an honest interim contract; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0.",
     "ACCEPTANCE_P0_OPEN": 0,
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
     "IMPLEMENTATION_P0_OPEN": 1,
     "IMPLEMENTATION_P0_OPEN_items": [
-      "CCR-RCC-S2-03 - the magic-link email origin defaults to a retired host (AUTH_BASE_URL fallback in services/api/src/env.ts). Owned by LCC. GATE-B BLOCKER until it lands. Not downgraded."
+      "CCR-RCC-S2-03 - the magic-link email origin defaults to a retired host (AUTH_BASE_URL fallback in services/api/src/env.ts). Owned by LCC. P0 UPHELD and OPEN. REFINED 30 Aug 2026: it is a RELEASE / real-sign-in blocker; GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED, because the Gate-B core-loop smoke authenticated via a fixture user and passed without ever following an emailed link. Severity NOT downgraded."
     ],
-    "NON_GATE_P1_OPEN": 3,
+    "NON_GATE_P1_OPEN": 4,
     "NON_GATE_P1_OPEN_items": [
       "CCR-RCC-S2-02 - precedentialEffect / canAddToMatter absent from the saved-authority read shape. AMENDed, LCC-owned, NOT released to RCC. RCC's fallback is honest meanwhile.",
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged by R14.",
-      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight; the schema requires no exhaustive enumeration. No new feature taxonomy was created in this round."
+      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight; the schema requires no exhaustive enumeration. No new feature taxonomy was created in this round.",
+      "CCR-NEW3-S2F-01 - retrievalOutcome cannot represent an administratively suppressed retrieval arm. DEFERRED under the activation guard PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. LCC-owned. Latent, not current: the branch is unreachable at HEAD."
     ],
     "closedInR14": [
       "P1-1 of R13 (rarestDf corpus-wide) - CLOSED as a semantic amendment, restated in R14 A8 and not reopened.",
       "CCR-RCC-S2-01 - CLOSED, the served per-platform capability exists at HEAD.",
       "CCR-RCC-S2-04 - CLOSED, the eighth precedentialEffect value is now in the contract."
-    ]
+    ],
+    "CONDITIONAL_P0_GUARDED": {
+      "count": 1,
+      "items": [
+        "CCR-NEW3-S2F-01 - becomes a P0 the instant any narrowing row for `search.party_name` is added to PLATFORM_CAPABILITY_OVERRIDES. Not counted as a current P0 because the branch cannot execute at HEAD; not dissolved either, because no committed test would catch the activation."
+      ],
+      "why_this_bucket_exists": "So a latent defect is neither falsely promoted into a current P0 nor quietly lost. It is counted where it is true: guarded, and conditional on a configuration change nobody may make until the correction lands."
+    },
+    "GATE_B_P0_OPEN": 0,
+    "GATE_B_P0_OPEN_basis": "Recomputed 30 Aug 2026 and stated separately from the implementation count, because implementation, release and consumption are different states. ACCEPTANCE_P0_OPEN = 0 and CONTRACT_CHANGE_P0_OPEN = 0. The one open IMPLEMENTATION P0 (CCR-RCC-S2-03) does not block the Gate-B acceptance or core-loop smoke on observed evidence - that smoke authenticated via a fixture user and passed. This is NOT a blanket 'P0 = 0': one implementation P0 is open, upheld, and blocks real email sign-in and therefore release."
   }
 }
