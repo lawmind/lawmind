@@ -95,6 +95,48 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 30 August 2026 (R13, CONTINUOUS WALK) — NEW1: THE WALK IS AT 39.42%, ONE WRITER, AND HNSW IS STILL UNAUTHORIZED
+
+**Round:** NEW1 continuous-walk round, founder-directed. Lease: `GIT_COMMIT` for
+the commit only. **Nothing was restarted** — the coarse walk, the stage runner,
+the telemetry sidecar and the delta queue were all left running. This round read.
+**Evidence:** `docs/ai/new1-r13/CONTINUOUS_WALK_STATUS.json`, commit `48881bd2`.
+
+**Every anchor moved except the frozen denominator.** Re-measured live at
+2026-08-30T21:15:08Z rather than carried forward: representative coverage
+**3,016,945 / 7,654,179 = 39.4157%**, remaining **4,637,234**, rate **33,048
+vectors/hour** over a 6h40m telemetry window. Document reach 3,690,238 / 8,420,728
+= 43.8233%. Whole-stage physical rows are 3,508,334 and current-generation rows are
+3,021,379 — R12's four definitions still are not interchangeable, and the exact SQL
+for each stays in `docs/ai/new1-r12/EMBEDDING_COVERAGE_AUTHORITY.json`. NEW3's
+registry figure of ~35.780% has now been overtaken by both real metrics, so the
+accidental agreement R12 warned about has ended.
+
+**`ONE_GPU_WRITER = yes`, proved from four places rather than a process count:**
+one stage-runner (pid 5008) under the one scheduled-task shell, one embedder chain,
+a lock file naming pid 11880 which *is* that live embedder, and 288 consecutive
+ALIVE verdicts with zero stalls. **This corrects NEW1 bus 1606** — the lock holder
+pid advancing at each batch boundary is the runner spawning a fresh embedder per
+batch, which is the design. `1b7d9add` is at HEAD, in force in the running process
+(started 20:58:33Z, after the fix landed at 16:13Z), and its six tests pass
+including the permission-denial classification that caused the original misread.
+
+**The delta has no backlog, and the flat watermark is the evidence for that.**
+`queue-state.json` sits at 2026-08-30T14:05:19.255Z and live
+`max(judgments.created_at)` is the same instant — the queue has reached the newest
+judgment that exists. The 125 rows every pass reports are the 60-second overlap,
+exhaustively classified: 52 EMBEDDED, 63 REFUSED_NOT_ELIGIBLE, 10
+CONTENT_HASH_ALREADY_COVERED, **0 QUEUED, 0 unnamed**.
+
+**`CAUGHT_UP_TO_SNAPSHOT = NO`, so `HNSW_BUILD_AUTHORIZED = NO`.** No ANN index, no
+representation bakeoff, no change to public semantic-search state. The
+authoritative Sprint-3 entry census is deliberately **not** run: hours of
+whole-stage scan to measure a number moving 33,000 an hour buys nothing, and the
+census only means something at a drain boundary — straight-line about 140 hours out,
+roughly 5 September. R12's active-generation duplicate identity is **left in place
+and unmutated on purpose**; deleting it now to make a future gate pass would be
+tampering with the evidence the gate exists to read.
+
 ### 30 August 2026 (SPRINT 2, NEW2) — THE GATE-A RECEIPT CITED TWO AUTHORITIES A CLONE COULD NOT REACH, AND THE FIX FOR THE FIRST ONE BROKE HEAD
 
 **Round:** NEW2 evidence-debt round. No worker touched, no ingest changed, no
