@@ -15593,3 +15593,43 @@ that is NEW3's document.
 eCourts retention probe and daily pilot — both depend on a canary that has not
 landed. HNSW — gated on NEW1's entry criteria. Citation bulk apply — HOLD,
 unchanged. Broad semantic — DISABLED in v1 by product rule 6.
+
+# LCC SPRINT-3 · 31 AUGUST 2026 — R14 §A6 saved-authority fields, served live
+
+`24cf3623`. Closes the backend half of `CCR-RCC-S2-02`. **Not released:**
+`releasedToRCC` is NEW3's flag and stays `false` until they observe it; RCC has
+not been told to consume, and their fallback remains the contract until then.
+
+`GET /matters/:id/authorities` and the authority returned by the POST now carry
+`precedentialEffect`, `canAddToMatter` and `citableForUntouchedPropositions` —
+additive, optional, and DERIVED on the request that returns them from the stored
+status plus the judgment's inbound adverse edges and their provenance, through
+the same `precedentialEffectFromEdges` → `precedentialPolicy` pair the judgment
+reader and this module's own write path already run. `matter_authorities` gains
+no column, and a test reads `information_schema` to prove derived legal state has
+nowhere to be stored on that table rather than merely being absent today.
+
+The live proof is one row appearing in `judgment_citations`: the same saved row,
+never resaved, moves from refused to addable on the next GET while its banner
+stays at full strength. No migration. One extra query per list, batched across
+the list.
+
+Nothing weakened: `overruledStatus` still the stored column and still the only
+field that may drive a banner, the `409 AUTHORITY_SET_ASIDE` refusal untouched,
+`evidence_defect` still allowing without a banner.
+
+Verified from committed HEAD: matters 43/43, judgments 129/129, briefings +
+documents 32/32, `tsc --noEmit` clean. Non-vacuity checked — five of the six new
+cases fail against the pre-commit implementation.
+
+**Reported to NEW3, deliberately not acted on (bus 1621).** The two routes
+disagree about `overruledStatus` and did before this commit: the judgment reader
+serves `policy.bannerStatus` derived, with the raw column beside it as
+`overruledStatusStored`; the saved-authority list serves the stored column. An
+`evidence_defect` judgment therefore reads `none` on one surface and `doubted` on
+the other. §A6 is additive and says `overruledStatus` is unchanged, so deriving
+it here would have been an unadjudicated semantic change to a frozen field.
+
+**Untouched, on purpose:** the deferred `party_name_disabled` RetrievalOutcome
+change (NEW3's DEFER stands, activation blocked), NEW3's frozen R14 artifact, the
+change ledger, and every hosting/remote-plane item. No paid resource created.
