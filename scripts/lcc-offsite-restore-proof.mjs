@@ -33,7 +33,9 @@
  */
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createReadStream, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import { createGunzip } from 'node:zlib';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -270,16 +272,179 @@ async function main() {
   // ── 6. content checksum, not only cardinality ─────────────────────────────
   // The same check the R12b local proof used, so the two are comparable: a row
   // count matches happily over rows whose contents were mangled.
-  let contentChecksum = null;
+  //
+  // The same statement `lcc-moat-backup.mjs` uses for its local proof, so the
+  // two numbers are comparable. Deterministically ordered and capped, so rows
+  // added since the pack was cut cannot move it merely by existing.
+  //
+  // The comparison is against the LIVE database and is reported as a SIGNAL, not
+  // a verdict: the pack carries no checksum of its own, and the live corpus has
+  // moved on since it was cut. A difference here means "look", not "corrupt".
+  // The verdict rests on the file-level SHA-256 of `moat.dump`, which is an
+  // exact match, and on the per-table row counts.
+  const CHECKSUM_SQL = `SELECT md5(string_agg(t, '|' ORDER BY t)) AS h FROM (
+    SELECT coalesce(citing_judgment_id::text,'') || coalesce(cited_judgment_id::text,'') || coalesce(relationship,'') AS t
+      FROM public.judgment_citations
+     ORDER BY citing_judgment_id, cited_judgment_id, relationship
+     LIMIT 100000) x`;
+  let contentChecksum = { restored: null, live: null, match: null };
   try {
-    const [row] = await probe.unsafe(`
-      SELECT md5(string_agg(t, '|' ORDER BY t)) AS h FROM (
-        SELECT citing_id::text || ':' || cited_id::text AS t
-          FROM judgment_citations ORDER BY citing_id, cited_id LIMIT 100000
-      ) s`);
-    contentChecksum = row.h;
+    const [restoredRow] = await probe.unsafe(CHECKSUM_SQL);
+    const live = postgres(E['DATABASE_URL'], { ssl: false, max: 1, onnotice: () => {}, connection: { statement_timeout: 0 } });
+    const [liveRow] = await live.unsafe(CHECKSUM_SQL);
+    await live.end({ timeout: 5 });
+    contentChecksum = {
+      restored: restoredRow.h,
+      live: liveRow.h,
+      match: restoredRow.h === liveRow.h,
+    };
   } catch (e) {
-    contentChecksum = `UNAVAILABLE ${e.message}`;
+    contentChecksum = { restored: null, live: null, match: null, error: e.message };
+  }
+
+
+  // ── 6b. CANONICAL IDENTITY, PROVENANCE, AND THE PROTECTED FILES ───────────
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * ROW COUNTS CANNOT SEE THIS, WHICH IS WHY IT IS A SEPARATE SECTION
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * Everything above proves the packed TABLES came back. It cannot prove what a
+   * recovery actually needs, because the failure has no missing row and no bad
+   * checksum:
+   *
+   *   `judgment_citations` addresses judgments by a `gen_random_uuid()` id, and
+   *   a re-ingest mints new ones. Unless the pack carries a map from those ids
+   *   to something that outlives a re-ingest — the content hash, the source URL
+   *   — 22 million edges restore perfectly and address nothing. Every row
+   *   present, every byte intact, the citator gone.
+   *
+   * So the identity map is COPYed into the probe database and both ends of
+   * every edge are anti-joined against it. Not sampled: a sampled anti-join on
+   * 22M rows can miss an entire court and still read clean.
+   */
+  const identityGz = join(plainDir, 'judgment-identity.csv.gz');
+  const identity = { present: existsSync(identityGz) };
+  if (identity.present) {
+    const csv = join(work, 'judgment-identity.csv');
+    await pipeline(createReadStream(identityGz), createGunzip(), createWriteStream(csv));
+    identity.plainBytes = statSync(csv).size;
+
+    await probe.unsafe(`CREATE TABLE restored_judgment_identity (
+      id uuid, content_hash text, source_url text, source_id text,
+      source_edition text, authorization_basis text, provenance_recorded_at timestamptz)`);
+    // The meta-command's backslash is BUILT, not written: this file has already
+    // lost one escape to a transcription channel and the cost was a silent
+    // UNAVAILABLE in a proof that still printed a verdict.
+    const META = String.fromCharCode(92);
+    const copyRun = pg('psql', ['--dbname', probeUrl, '-v', 'ON_ERROR_STOP=1', '-c',
+      `${META}copy restored_judgment_identity FROM '${csv.split(META).join('/')}' WITH CSV HEADER`]);
+    identity.copyExit = copyRun.status;
+    identity.copyStderrTail = (copyRun.stderr ?? '').split(/\r?\n/).filter(Boolean).slice(-4);
+
+    const [c] = await probe.unsafe('SELECT count(*)::bigint AS n FROM restored_judgment_identity');
+    identity.rows = Number(c.n);
+    identity.manifestRows = manifest.identityRows ?? null;
+    identity.rowsMatchManifest =
+      identity.manifestRows === null ? null : identity.rows === identity.manifestRows;
+
+    const [unmapped] = await probe.unsafe(`
+      SELECT count(*)::bigint AS n FROM (
+        SELECT citing_judgment_id AS id FROM public.judgment_citations WHERE citing_judgment_id IS NOT NULL
+        UNION SELECT cited_judgment_id FROM public.judgment_citations WHERE cited_judgment_id IS NOT NULL
+      ) e LEFT JOIN restored_judgment_identity i ON i.id = e.id WHERE i.id IS NULL`);
+    identity.citationEndpointsWithoutIdentity = Number(unmapped.n);
+    identity.canonicalIdentityReconstructible = identity.citationEndpointsWithoutIdentity === 0;
+
+    const [h] = await probe.unsafe(
+      'SELECT count(*)::bigint AS n FROM restored_judgment_identity WHERE content_hash IS NOT NULL');
+    identity.withContentHash = Number(h.n);
+
+    /**
+     * Provenance is reported as a COUNT and never as a pass. The four columns
+     * are CARRIED for every judgment; they are POPULATED on a small minority,
+     * which is a fact about the corpus rather than about the backup. A proof
+     * that rounded that up to "present" would be the kind of claim this file
+     * exists to refuse.
+     */
+    const [p] = await probe.unsafe(`SELECT
+        count(*) FILTER (WHERE source_id IS NOT NULL)::bigint AS a,
+        count(*) FILTER (WHERE source_edition IS NOT NULL)::bigint AS b,
+        count(*) FILTER (WHERE authorization_basis IS NOT NULL)::bigint AS c,
+        count(*) FILTER (WHERE provenance_recorded_at IS NOT NULL)::bigint AS d
+      FROM restored_judgment_identity`);
+    identity.provenance = {
+      columnsCarried: ['source_id', 'source_edition', 'authorization_basis', 'provenance_recorded_at'],
+      carriedForRows: identity.rows,
+      populatedRows: {
+        source_id: Number(p.a),
+        source_edition: Number(p.b),
+        authorization_basis: Number(p.c),
+        provenance_recorded_at: Number(p.d),
+      },
+    };
+    rmSync(csv, { force: true });
+    console.log(`identity  ${identity.rows.toLocaleString()} rows  ·  unmapped citation endpoints ${identity.citationEndpointsWithoutIdentity}`);
+  } else {
+    console.log('identity  ABSENT from this pack — canonical identity is NOT reconstructible from it');
+  }
+
+  /**
+   * The gold sets, source manifests, checkpoints, migrations and the governing
+   * authority bytes. Extracted and re-hashed against the manifest the pack
+   * carries: a tar that LISTS a file proves nothing about that file's contents,
+   * and "it is in the Git checkout" is not an off-machine copy when the only
+   * clone is on the machine the backup exists to survive.
+   */
+  const filesArchive = join(plainDir, 'protected-files.tar.gz');
+  const filesManifestPath = join(plainDir, 'FILES.json');
+  const protectedFiles = { present: existsSync(filesArchive) && existsSync(filesManifestPath) };
+  if (protectedFiles.present) {
+    const filesManifest = JSON.parse(readFileSync(filesManifestPath, 'utf8'));
+    const extractDir = join(work, 'protected-files');
+    mkdirSync(extractDir, { recursive: true });
+    execFileSync('tar', ['-xzf', filesArchive, '-C', extractDir], { stdio: ['ignore', 'ignore', 'inherit'] });
+    const failures = [];
+    let matched = 0;
+    for (const entry of filesManifest.files ?? []) {
+      const at = join(extractDir, entry.path);
+      if (!existsSync(at)) {
+        failures.push({ path: entry.path, why: 'MISSING_FROM_ARCHIVE' });
+        continue;
+      }
+      const actual = await sha256File(at);
+      if (actual !== entry.sha256) {
+        failures.push({ path: entry.path, why: 'SHA256_DIFFERS', expected: entry.sha256, actual });
+        continue;
+      }
+      matched += 1;
+    }
+    protectedFiles.consistencyRule = filesManifest.consistencyRule ?? null;
+    protectedFiles.declaredRoots = (filesManifest.roots ?? []).length;
+    protectedFiles.absentRoots = filesManifest.absentRoots ?? [];
+    protectedFiles.expected = (filesManifest.files ?? []).length;
+    protectedFiles.verified = matched;
+    protectedFiles.failures = failures;
+    protectedFiles.allVerified = failures.length === 0 && matched > 0;
+    /**
+     * Named CLASSES, not a file count. The gate asks whether the gold sets and
+     * the checkpoints are protected; a count of 3,000 files cannot tell you
+     * which class is the one that went missing.
+     */
+    const paths = (filesManifest.files ?? []).map((f) => f.path).join(' ');
+    protectedFiles.coverage = {
+      governingAuthority:
+        paths.includes('LAWMIND_MASTER_ROADMAP_V7_1.md') && paths.includes('LAWMIND_SPRINT_PROMPTS_V2.md'),
+      goldEval: paths.includes('gold'),
+      sourceManifests: paths.includes('upstream-manifest.json') || paths.includes('source-ledger.json'),
+      worklistsCheckpoints: paths.includes('.checkpoints') && paths.includes('worklist'),
+      migrations: paths.includes('drizzle'),
+      schemaTruth: paths.includes('SCHEMA_TRUTH.md'),
+    };
+    rmSync(extractDir, { recursive: true, force: true });
+    console.log(`files     ${matched}/${protectedFiles.expected} verified by sha256 out of the archive`);
+  } else {
+    console.log('files     ABSENT from this pack — gold/manifest/worklist coverage is NOT proven');
   }
 
   await probe.end();

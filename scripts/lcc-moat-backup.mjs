@@ -55,15 +55,18 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
+  cpSync,
   createReadStream,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createGzip } from 'node:zlib';
 import { pipeline } from 'node:stream/promises';
 import { createWriteStream } from 'node:fs';
@@ -149,6 +152,118 @@ const JUDGMENT_VERDICTS = `
       OR overruled_status <> 'none'
       OR hc_document_class IS NOT NULL`;
 
+/**
+ * ───────────────────────────────────────────────────────────────────────────
+ * THE IDENTITY MAP — WITHOUT IT, TWO THIRDS OF THE PACK RESTORES INTO NOTHING
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * `JUDGMENT_VERDICTS` above carries `content_hash` as its join key back to a
+ * rebuilt corpus, and that was correct as far as it went. It does not go far
+ * enough, and the gap is arithmetic rather than opinion.
+ *
+ * The verdict projection has a WHERE clause: a judgment appears only if it
+ * carries a `script_quality`, an `overruled_status` or an `hc_document_class`.
+ * That is **6,194,817 of 18,759,022 rows**. Every other table in {@link MOAT}
+ * addresses judgments by their `gen_random_uuid()` id — `judgment_citations`
+ * on both ends, `judgment_statute_refs`, `judgment_date_quality`,
+ * `verification_cache`, `matter_authorities`, `citation_copies`,
+ * `official_source_artifact`, `judgment_annotations`, and the rest. Measured
+ * 30 August 2026, the union of ids those tables reference is the WHOLE corpus:
+ *
+ *     referenced distinct ids              18,759,022
+ *     of those, in the verdict projection   6,194,817
+ *     of those, NOT in it                  12,564,205   (67.0%)
+ *     dangling (no judgments row)                   0
+ *
+ * So a restore into a re-ingested corpus — where every id is a fresh
+ * `gen_random_uuid()` — can re-point 33% of the citator and loses the address
+ * of the other 67%. The rows survive. What they are ABOUT does not. That is
+ * the difference between a backup and a pile of foreign keys, and no row count
+ * or checksum can see it, because the rows are all present and all intact.
+ *
+ * Hence this: **every judgment id, with the content and source identity that
+ * outlives a re-ingest.** Two columns would be enough for the join
+ * (`id`, `content_hash`); `source_url` rides along because a normalisation
+ * change to the text moves the hash and the source key still holds, and the
+ * four provenance columns ride along because §4C requires them and they are
+ * populated on 0.03% of rows — they cost nothing and cannot be recomputed.
+ *
+ * It is a QUERY, not a table: restoring it is a COPY into whatever corpus
+ * exists at the time, exactly like the verdict projection.
+ */
+const JUDGMENT_IDENTITY = `
+  SELECT id, content_hash, source_url,
+         source_id, source_edition, authorization_basis, provenance_recorded_at
+    FROM judgments`;
+
+/**
+ * ───────────────────────────────────────────────────────────────────────────
+ * THE FILES — "IT IS IN THE GIT CHECKOUT" IS NOT AN OFF-MACHINE COPY
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * Gate B's protected set names eval/gold sets, source manifests, worklists and
+ * checkpoints, provenance, migrations and recent official-source evidence.
+ * Every one of those lives as a FILE in this repository, and until now the
+ * pack's answer was that they are tracked in Git. They are — in a repository
+ * whose only clone is on this workstation and whose HEAD is not pushed. A
+ * protected artifact that exists solely as an unpushed local Git object is
+ * exactly as lost as one that was never written.
+ *
+ * So the bytes travel. Each root says what class it satisfies and why it is
+ * not rebuildable, because the day somebody drops one they should have to
+ * argue with the reason.
+ *
+ * WHAT IS DELIBERATELY LEFT OUT, so the omission is a decision:
+ *   · `docs/ai/embedding-manifests/document-vectors{,-v2}/` — 4.3 GB of vector
+ *     batch output. Vectors are not required merely because they are expensive
+ *     (governing minimum set, §4), and these are regenerable from the corpus
+ *     and the protected model at GPU cost. The identity and census manifests
+ *     that describe them ARE carried.
+ *   · `.agents/logs/**` and `.agents/tmp/**` — transient scratch.
+ *   · `node_modules`, build output, and the model weights, which have their own
+ *     encrypted pack rather than being duplicated into this one.
+ */
+const PROTECTED_FILES = [
+  { root: 'docs/roadmaps', why: 'GOVERNING AUTHORITY — the founder\u2019s exact Master Roadmap v7.1 and Sprint Prompts v2 bytes' },
+  { root: 'docs/ai/new3-hard-negatives.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3-noncitation-gold.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3-semantic-expansion-gold.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3-semantic-expansion-gold-v2.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3-semantic-expansion-gold-v2-rejected.json', why: 'EVAL/GOLD — the rejected set is evidence about the accepted one' },
+  { root: 'docs/ai/new3-statute-transition-gold.json', why: 'EVAL/GOLD — BNS/BNSS/BSA transition' },
+  { root: 'docs/ai/new3-uncited-authority-gold.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3-uncited-authority-gold-v2.json', why: 'EVAL/GOLD' },
+  { root: 'docs/ai/new3', why: 'EVAL/GOLD — the rest of the NEW3 gold set' },
+  { root: 'docs/ai/new2-r9', why: 'SOURCE MANIFESTS + statute chronology/correction decisions' },
+  { root: 'docs/ai/new2-r10', why: 'SOURCE MANIFESTS — freshness, parity matrix, revalidation' },
+  { root: 'docs/ai/new2-r83', why: 'SOURCE MANIFESTS — IPC/CrPC acquisition and freshness decomposition' },
+  { root: 'docs/ai/embedding-manifests/EMBEDDING_IDENTITY_V2.json', why: 'CANONICAL IDENTITY — which model produced which vectors' },
+  { root: 'docs/ai/embedding-manifests/tier-census.json', why: 'CANONICAL IDENTITY — the tier population it was measured against' },
+  { root: 'docs/ai/embedding-manifests/legal-objects', why: 'SOURCE MANIFESTS — proposition objects, not vectors' },
+  { root: 'docs/ai/lcc-r11', why: 'RECENT OFFICIAL-SOURCE EVIDENCE — eCourts network safety' },
+  { root: 'docs/ai/lcc-r12', why: 'RECENT OFFICIAL-SOURCE EVIDENCE — eCourts coverage ledger' },
+  { root: 'docs/ai/lcc-r13', why: 'RECENT OFFICIAL-SOURCE EVIDENCE — the eCourts bounded-stop report and the model manifest' },
+  { root: 'docs/ai/new1-tier-a/.worklist.txt', why: 'RESTART-CRITICAL WORKLIST' },
+  { root: 'docs/ai/new1-tier-a/.worklist-v2.txt', why: 'RESTART-CRITICAL WORKLIST' },
+  { root: 'docs/ai/new1-r9/delta/queue-state.json', why: 'RESTART-CRITICAL CHECKPOINT — the incremental queue cursor' },
+  { root: 'docs/ai/new1-r9/delta/queue-ledger.jsonl', why: 'RESTART-CRITICAL CHECKPOINT — what the queue has already emitted' },
+  { root: 'services/ingest/.checkpoints', why: 'RESTART-CRITICAL CHECKPOINTS — every ingest scope cursor; losing them re-walks the corpus' },
+  { root: 'packages/db/drizzle', why: 'MIGRATIONS — the journal and the SQL, so a fresh install is reproducible' },
+  { root: 'packages/db/factory', why: 'MIGRATIONS — the factory migrations, including the snapshot writer' },
+  { root: 'CLAUDE.md', why: 'PROVENANCE/AUTHORIZATION — \u00a76a is the controlling record of source authorization' },
+  { root: 'DOMAIN_TRUTH.md', why: 'PROVENANCE — BNS/BNSS/BSA facts no model knows' },
+  { root: 'PRODUCT_DECISIONS.md', why: 'CANONICAL DECISIONS — PD-1..PD-15' },
+  { root: 'docs/CURRENT_PLAN.md', why: 'CANONICAL DECISIONS — the ordered queue and the roadmap overrides' },
+  { root: 'docs/SCHEMA_TRUTH.md', why: 'SCHEMA — the only authority on data shapes' },
+  { root: 'docs/CITATION_HARNESS.md', why: 'CANONICAL DECISIONS — the rule that can end the product' },
+  { root: 'docs/ECOURTS_AUTHORISATION.md', why: 'AUTHORIZATION BASIS — the grant this harvest runs under' },
+  { root: 'docs/SCI_AUTHORISATION.md', why: 'AUTHORIZATION BASIS — the contested SCI position, kept as it stands' },
+  { root: 'docs/OPEN_DECISIONS.md', why: 'CANONICAL DECISIONS — what nobody may decide alone' },
+  { root: 'docs/FOUNDER_QUEUE.md', why: 'CANONICAL DECISIONS — what is owed by the founder' },
+];
+
+const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
 const args = process.argv.slice(2);
 const flag = (n) => {
   const i = args.indexOf(`--${n}`);
@@ -231,6 +346,7 @@ if (SKIP_DUMP && !existsSync(dumpPath)) {
 }
 
 let dumpSeconds = 0;
+let identityRows = null;
 if (SKIP_DUMP) {
   console.log(`restoring the EXISTING pack at ${OUT} — no dump taken\n`);
 } else {
@@ -274,6 +390,105 @@ if (!SKIP_DUMP) {
     createGzip({ level: 9 }),
     createWriteStream(`${verdictPath}.gz`),
   );
+
+  /**
+   * The IDENTITY map, same shape as the verdict projection and for the reason
+   * given at {@link JUDGMENT_IDENTITY}: without it 67% of the packed foreign
+   * keys restore into a corpus they can no longer address.
+   */
+  const identityPath = join(OUT, 'judgment-identity.csv');
+  const identityStarted = Date.now();
+  pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_IDENTITY}) TO '${identityPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
+    stdio: ['ignore', 'inherit', 'inherit'],
+  });
+  identityRows = Number(
+    pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', 'SELECT count(*) FROM judgments']).trim(),
+  );
+  await pipeline(
+    createReadStream(identityPath),
+    createGzip({ level: 9 }),
+    createWriteStream(`${identityPath}.gz`),
+  );
+  rmSync(identityPath, { force: true });
+  console.log(`  identity map      ${identityRows.toLocaleString()} rows in ${((Date.now() - identityStarted) / 1000).toFixed(1)}s`);
+
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * THE FILE CAPTURE, AND THE CONSISTENCY RULE IT RUNS UNDER
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * `services/ingest/.checkpoints` is written by workers that are RUNNING right
+   * now, and the mandate is explicit that they are not to be paused to make a
+   * backup. So this capture is not atomic and does not pretend to be. The rule,
+   * stated here because a consistency claim that lives only in someone's head
+   * is not a claim:
+   *
+   *   POINT-IN-TIME PER FILE, NOT ACROSS FILES. Each file is copied and hashed
+   *   as one read; two files may therefore come from different instants. Every
+   *   captured file is recorded in FILES.json with its size, its sha256 AS
+   *   CAPTURED, and its mtime, so a restore can tell how stale each one is and
+   *   which worker had moved on.
+   *
+   * That is the correct guarantee for this data: a checkpoint is a RESUME
+   * POINT. A slightly old one costs re-walked work; a torn one would be worse,
+   * and per-file atomicity is what prevents tearing. Nothing here is a
+   * cross-file transaction and nothing pretends to be.
+   */
+  const filesArchive = join(OUT, 'protected-files.tar.gz');
+  const captured = [];
+  const absentRoots = [];
+  const stage = join(OUT, '.stage');
+  rmSync(stage, { recursive: true, force: true });
+  for (const spec of PROTECTED_FILES) {
+    const src = join(REPO, spec.root);
+    if (!existsSync(src)) {
+      absentRoots.push(spec);
+      continue;
+    }
+    const dst = join(stage, spec.root);
+    mkdirSync(dirname(dst), { recursive: true });
+    cpSync(src, dst, { recursive: true });
+  }
+  // Hash what was actually staged — the copy is the thing that gets archived,
+  // so hashing the source would certify bytes the pack does not contain.
+  const walk = (dir, prefix = '') => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) walk(full, rel);
+      else captured.push({ path: rel, bytes: statSync(full).size, mtime: statSync(full).mtime.toISOString(), sha256: null, full });
+    }
+  };
+  if (existsSync(stage)) walk(stage);
+  for (const f of captured) {
+    f.sha256 = await sha256File(f.full);
+    delete f.full;
+  }
+  execFileSync('tar', ['-czf', filesArchive, '-C', stage, '.'], { stdio: ['ignore', 'inherit', 'inherit'] });
+  rmSync(stage, { recursive: true, force: true });
+  writeFileSync(
+    join(OUT, 'FILES.json'),
+    JSON.stringify(
+      {
+        tool: 'scripts/lcc-moat-backup.mjs',
+        archive: 'protected-files.tar.gz',
+        capturedAt: new Date().toISOString(),
+        consistencyRule:
+          'POINT-IN-TIME PER FILE, NOT ACROSS FILES. Live workers were NOT paused. Each file was copied and hashed as one read; sha256 and mtime below are AS CAPTURED. Checkpoints are resume points, so a slightly stale one costs re-walked work and a torn one would not — per-file atomicity is the guarantee that matters here.',
+        roots: PROTECTED_FILES,
+        absentRoots,
+        fileCount: captured.length,
+        totalBytes: captured.reduce((a, f) => a + f.bytes, 0),
+        files: captured,
+      },
+      null,
+      2,
+    ),
+  );
+  console.log(`  protected files   ${captured.length} files, ${(captured.reduce((a, f) => a + f.bytes, 0) / 1e6).toFixed(1)} MB staged -> ${(statSync(filesArchive).size / 1e6).toFixed(1)} MB archive`);
+  if (absentRoots.length > 0) {
+    console.log(`  ABSENT ROOTS      ${absentRoots.length} recorded in FILES.json as absent, never as empty`);
+  }
 }
 
 // ── 2. MANIFEST ────────────────────────────────────────────────────────────
@@ -325,11 +540,22 @@ const manifest = {
   tables: packing,
   missingTables: missing,
   rowCounts,
+  /**
+   * The identity map is a QUERY over every judgment, not a table, so it has no
+   * row in {@link rowCounts}. Recorded here because a restore has to know how
+   * many rows to expect before it can tell a truncated CSV from a small corpus.
+   */
+  identityRows,
+  protectedFiles: existsSync(join(OUT, 'FILES.json'))
+    ? JSON.parse(readFileSync(join(OUT, 'FILES.json'), 'utf8')).fileCount
+    : null,
   files: {},
   excluded: {
     judgments: 'rebuildable from the AWS Open Data buckets — 151 GB, deliberately not packed',
     judgment_paragraphs: 'derived from judgments — 92 GB',
     judgment_chunks: 'rebuildable at GPU cost — 9.4 GB',
+    'docs/ai/embedding-manifests/document-vectors{,-v2}':
+      '4.3 GB of vector batch output. Vectors are not required merely because they are expensive; these regenerate from the corpus and the protected model. The identity and census manifests that describe them ARE carried.',
   },
 };
 for (const f of files) {

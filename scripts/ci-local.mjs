@@ -134,6 +134,14 @@ const STEPS = [
   // consecutive tries under fleet load, which is why the default path collects
   // no PowerShell at all. A gate expensive enough to be skipped is not a gate.
   ['resource gate', 'node', ['--test', 'scripts/resource-gate.test.mjs']],
+  // The backup tooling, against the SOURCE rather than a database. Both
+  // defects the Gate-B audit found were one identifier wrong and needed no
+  // Postgres to catch: a restore proof checksumming `judgment_citations`
+  // columns that do not exist and reporting UNAVAILABLE while still printing
+  // a verdict, and an identity export filtered to a third of the corpus while
+  // every protected table addressed the whole of it. A backup tool nobody runs
+  // between disasters is exactly the thing that should be checked in CI.
+  ['backup pack shape', 'node', ['--test', 'scripts/backup-pack-shape.test.mjs']],
   // The contract's BUILT/SPECCED column against the routes actually mounted.
   // A stale column is how RCC came to call an endpoint that does not exist.
   ['contract status', 'node', ['scripts/check-contract-status.mjs']],
