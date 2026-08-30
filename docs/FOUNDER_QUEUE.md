@@ -6304,7 +6304,46 @@ live table: all five values accepted, `not_a_real_type` still refused, 0 rows le
 behind. NEW1 bus 1397 -> LCC bus 1403.
 ---
 
-## FQ-LCC-R9-1 — nothing this project runs recovers from a REBOOT without someone logging in  ·  LCC, 27 Aug 2026 · **needs one elevated prompt, five minutes**
+## FQ-LCC-R9-1 · ~~nothing this project runs recovers from a REBOOT without someone logging in~~ — **RESOLVED 30 Aug 2026, and it was never a founder item**  ·  raised LCC, 27 Aug 2026
+
+**What actually happened.** The refusal recorded below was real; the conclusion
+drawn from it was not. Changing a task's principal needs **elevation**, and
+`Xerxus` is already a local Administrator whose token is merely UAC-filtered.
+`Start-Process -Verb RunAs` — a consent click, never a credential, an account, or
+money — is the entire difference. This sat queued for three days as a founder
+blocker that any lane could have cleared in five minutes.
+
+**Applied 30 Aug 2026** to all ten Lawmind tasks (the nine `Lawmind-*` at `\` plus
+`new2-daily-delta` at `\Lawmind\`):
+
+```
+Principal.LogonType          Interactive -> S4U
+Settings.StartWhenAvailable  False -> True
+```
+
+Triggers were deliberately left alone — a boot trigger buys at most 5 minutes over
+the existing PT5M repetition while risking the repetition every worker depends on.
+S4U alone closes the gap, because a repeating trigger fires without a session once
+the principal allows it.
+
+`pnpm job:health` now reports **11 mechanisms at BOOT, 0 needing LOGON** (was 1 and
+5), and it derives that live from each task's `LogonType`, so the claim is measured
+rather than asserted. Verified by observation, not by re-reading config:
+`worker-truth`, `delta-queue` and `alert-poll` were force-run under the new
+principal, all returned `0x0`, and all wrote fresh artifacts. Full record in
+`docs/ops/JOB_TABLE.md` § Startup, honestly.
+
+**What it had already cost by the time it was fixed.** A Windows Update reboot on
+30 Aug at 02:33 UTC; the fleet did not return until the 05:28 UTC logon. Zero
+embedding rows for 2h55m (~83,000 vectors), and the pager — `lcc-alert-poll`, which
+is in this same group — was blind through the whole of it.
+
+The original entry is kept below unedited, because the reasoning is the lesson: an
+"Access is denied" is a permission question before it is a founder question.
+
+---
+
+### Original entry, 27 Aug 2026 — superseded
 
 **What is needed:** an administrator prompt on this box, once, to register the
 background jobs as boot-triggered scheduled tasks.
@@ -6831,3 +6870,118 @@ under roadmap rule 15 it cannot be made at all.
 **Where it plugs in:** `V1_CAPABILITY_REGISTRY_R13.json` → `platformStatus.web`;
 `docs/product/NEW3_R13_PRODUCT_AMENDMENTS.md` Amendment 3; Master Roadmap v7.1 §4
 and §10 Sprint 5.
+
+---
+
+## FQ-LCC-R13-HOSTING · The hosting choice is made and documented. Only the purchase is outstanding · LCC, 30 Aug 2026 · **~$122–132/month, cancellable**
+
+**What is needed:** authorisation to open a DigitalOcean Managed PostgreSQL
+instance, 8 GiB / 4 vCPU, in **blr1 (Bangalore)**. Plus roughly **$10–25 once**
+for two small VMs used only to measure India latency and then destroyed.
+
+**Why this and not the others, in one line each.** Advocates are in India, and
+only two candidates are in the country. DigitalOcean blr1 and AWS Mumbai
+`ap-south-1` are both in-region; Hetzner has no India region at all and its
+Singapore location is cloud-only, and Akamai does not publish India availability
+on its pricing page and its comparable tier is 2.7x. Between the two that qualify:
+
+    DigitalOcean blr1     $122-132/mo   storage AND backups inside the plan
+    AWS RDS Mumbai        $148.11/mo    plus backup at $0.095/GB-Mo on top
+
+Both numbers come from the vendors' own primary sources fetched 30 Aug —
+AWS's machine-readable price list for `ap-south-1`, and DigitalOcean's own
+regional-availability docs confirming `blr1` runs managed Postgres. R12 could
+not obtain either and correctly refused to choose on an aggregator's quote.
+
+**What was built anyway, so nothing waits on you.** The export path, the restore
+path, the checksummed manifest and the collation handling are all done and
+proven. `V1_EXPORT_SIZE` is exact at 168,452,186,112 bytes. The selection is
+documented in `docs/ai/lcc-r13/HOSTING_SELECTION.md` with the losers' reasons.
+
+**What stays broken without it.** Sprint 3 wants a staging API online by
+8 September. Nothing else on that path is blocked, but an instance cannot be
+conjured on the 8th.
+
+**One thing I could not measure and did not invent.** India p50/p95 RTT has to
+originate on an Indian consumer ISP, not on this machine and not in a datacentre
+— a number taken here describes my network, not an advocate's. The exact
+procedure is written down in §3 of the selection document so somebody else can
+run it without asking.
+
+**Where it plugs in:** `docs/ai/lcc-r13/HOSTING_SELECTION.md`; Master Roadmap
+v7.1 §7 and §10 Sprint 3.
+
+---
+
+## FQ-ECOURTS-HAR — **CORRECTION, 30 Aug 2026: the blocker this asked you to settle is SOLVED. The ask is now smaller and different** · LCC
+
+**Do not spend thirty seconds in Chrome on the question this item originally
+asked.** It described an AJAX POST that returned `Invalid Request` after eight
+falsified hypotheses. That is closed:
+
+- `fillDistrict` has answered correctly since **29 Aug 22:58Z**. The cause was a
+  header pair that rotates roughly hourly and was being read from a constant; it
+  is now read live from the interface's own script every session.
+- A second defect hid the fix for a day — our option parser required quoted
+  attribute values and the interface writes `value=8`, so eleven Delhi districts
+  parsed to zero and read as an empty answer.
+- The CAPTCHA is now **accepted, 3 of 3**. Three rejections that looked like OCR
+  failures were not: the retained images were read by eye and all three codes
+  were correct. Our cookie jar was captured once at session open and never
+  updated, so the CAPTCHA landed in one session and the submit in another.
+
+**What replaced it.** Three bounded submits — Sunday civil, Friday civil, Friday
+criminal, CAPTCHA accepted every time — all answered:
+
+    {"errormsg":"Connection to server failed try after some time...."}
+
+That is the national portal's own message for a failure between IT and the
+district court's server, not a message about our request. A weekday control
+ruled out "Sunday has no list" and a civil/criminal control ruled out "this bench
+publishes no civil list". LCC has STOPPED, per the round's own rule: the
+remaining hypothesis is below the HTTP layer and no fingerprint impersonation was
+implemented or will be.
+
+**The smaller ask, if you have a moment and only then.** Open the eCourts cause
+list for **Rouse Avenue Court Complex, Central district, Delhi, 28-08-2026** in
+an ordinary browser and tell us whether a human gets that same
+`Connection to server failed` message.
+
+- **If yes** — the source is down for that court and the only open question is
+  *when*, which a bounded retry answers by itself. No further founder input.
+- **If no** — the difference is below the field layer and becomes a conversation
+  with the registrar, not an engineering task.
+
+Either answer is one screenshot. Neither is urgent, and **`ecourts_observation`
+stays 0 either way**, which Gate B accepts alongside the bounded stop report at
+`docs/ai/lcc-r13/ECOURTS_BOUNDED_STOP_REPORT.md`.
+
+---
+
+## FQ-BACKUP-KEY-ESCROW — **still open, and this round is why it matters more, not less** · LCC, 30 Aug 2026
+
+Nothing new is asked. The five-minute action above is unchanged: copy
+`R2_BACKUP_ENCRYPTION_KEY` out of `.env` into a password manager and say so here.
+
+What changed is the evidence around it. The moat pack was this round **proven
+restorable from Cloudflare R2** rather than from the copy on this disk: fresh
+download, cipher checksums, decryption, plaintext checksums, schema, data,
+**35 of 35 tables matching and a content checksum identical to live**, 1,022
+seconds end to end.
+
+So the backup now works. It works entirely on the strength of a key that exists
+in exactly one place — the machine the backup exists to survive losing.
+
+Two findings from the same run, recorded because they would both have bitten on
+recovery day and neither needs you:
+
+- the DEFAULT `rclone copy` truncated both large objects and then failed its own
+  retry. Single-stream works and is now pinned in the script. The stored objects
+  were always sound; the obvious command for getting them back was not.
+- `moat.dump` alone silently loses two of 35 tables, including
+  `ecourts_fetch_ledger` — the evidence that eCourts access stayed inside the
+  grant — because `pg_dump -t` emits no enum types. The pack ships `schema.sql`
+  for exactly this and the correct sequence is now pinned and exercised every run.
+
+**Until the key is escrowed, host-loss recoverability of the moat pack cannot be
+claimed, and this lane does not claim it.**

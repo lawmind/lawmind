@@ -216,7 +216,61 @@ function isDeclaredLabObject(signature) {
   });
 }
 
-const isNonProduct = (x) => LANE_SCRATCH.test(x) || isDeclaredLabObject(x);
+/**
+ * THE FACTORY SCHEMA, WHICH IS A THIRD CATEGORY AND NOT SCRATCH.
+ *
+ * `packages/db/factory/` is committed, journalled and sha-pinned, and it has
+ * its own fresh-install proof (`snapshot-identity.test.mjs`, which builds every
+ * object below on a disposable database from the committed file alone). It is
+ * deliberately NOT in `packages/db/drizzle`, because that journal is applied to
+ * the remote serving plane and roadmap v7.1 section 7 excludes dense vectors
+ * from it -- a product migration would push a vector(1024) staging table to
+ * production that nothing there reads and `vectorExportRefusal()` refuses to
+ * export.
+ *
+ * So these objects are correctly absent from a product fresh install, and this
+ * proof must say so rather than reporting DIVERGENT. Without the declaration it
+ * read 52 differences on 30 Aug 2026 and looked exactly like a broken product
+ * schema.
+ *
+ * The claim each entry makes is the same one the lab list makes: **nothing in
+ * the product reads it, so a restore that lacks it is complete.** Checked on
+ * 30 Aug 2026 rather than asserted -- `embedding_snapshot`,
+ * `embedding_snapshot_policy`, `factory_schema_journal`,
+ * `snapshot_index_predicate` and `new1_doc_vector_stage_identity` appear ZERO
+ * times in `services/api/src`, `packages/db/src` and `apps`, apart from one
+ * prose comment in a test. If that stops being true the entry comes out and the
+ * object becomes a product migration.
+ *
+ * Enumerated, never a prefix regex, for the reason the lab list already gives:
+ * an exemption nobody can enumerate is how a real table goes missing from a
+ * restore.
+ */
+const DECLARED_FACTORY_SCHEMA = [
+  { name: 'embedding_snapshot', owner: 'LCC', declared: '2026-08-30', why: 'REPRO_DEBT_1 generation registry; packages/db/factory/0001' },
+  { name: 'embedding_snapshot_policy', owner: 'LCC', declared: '2026-08-30', why: 'identity strictness rollout switch; packages/db/factory/0001' },
+  { name: 'factory_schema_journal', owner: 'LCC', declared: '2026-08-30', why: 'the factory applier journal, the factory equivalent of drizzle.__drizzle_migrations' },
+  { name: 'embedding_snapshot_immutable', owner: 'LCC', declared: '2026-08-30', why: 'registry immutability trigger function' },
+  { name: 'new1_doc_vector_stage_bind_snapshot', owner: 'LCC', declared: '2026-08-30', why: 'identity binding trigger function' },
+  { name: 'new1_doc_vector_stage_freeze_snapshot', owner: 'LCC', declared: '2026-08-30', why: 'relabel refusal trigger function' },
+  { name: 'snapshot_index_predicate', owner: 'LCC', declared: '2026-08-30', why: 'deterministic HNSW population predicate' },
+  { name: 'new1_doc_vector_stage_identity', owner: 'LCC', declared: '2026-08-30', why: 'view naming the legacy residual class' },
+];
+
+/**
+ * Matches a table, its columns, indexes and constraints, and a function by its
+ * signature. Anchored at the start, so a product column that merely MENTIONS a
+ * factory name is not exempt.
+ */
+function isDeclaredFactoryObject(signature) {
+  const s = signature.startsWith('r:') ? signature.slice(2) : signature;
+  return DECLARED_FACTORY_SCHEMA.some(
+    ({ name }) => s === name || s.startsWith(`${name}.`) || s.startsWith(`${name}_`) || s.startsWith(`${name}(`),
+  );
+}
+
+const isNonProduct = (x) =>
+  LANE_SCRATCH.test(x) || isDeclaredLabObject(x) || isDeclaredFactoryObject(x);
 
 function diff(liveArr, freshArr) {
   const live = new Set(liveArr);

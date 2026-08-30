@@ -33749,5 +33749,22 @@
       "distinctIdentities": 82652,
       "identityDigest": "792680767c3c7509ff1aa3b1d2bbe0ea7df99112f9fce485d4c116f52d6ebdf5"
     }
-  ]
+  ],
+  "manifestPathCorrection": {
+    "appendedAt": "2026-08-30T10:35:14.071Z",
+    "appendedBy": "LCC Sprint-2 Gate-B",
+    "rule": "Roadmap v7.1 section 3 rule 16 — a gate receipt is produced at gate time and never reconstructed. This is an APPEND, not a reconstruction: manifest.path, manifest.sha256 and every measured value above are byte-for-byte untouched, and the original scratch path is preserved verbatim so the receipt still says where the walk actually ran.",
+    "raisedBy": "NEW2, bus 1578, 2026-08-30",
+    "theDefect": "manifest.path names .tmp-new2/m0-upstream/objects.json, which .gitignore:128 excludes. It is not merely uncommitted — it is unignorable by construction, so a clone of HEAD could never follow it. That path is the authority for upstreamUnique 18,951,606, nonFixturePartitionCount 1438 and partitionErrors 0, which makes it the quieter and more load-bearing of the two unreachable bindings in this receipt.",
+    "theOtherOne": "docs/ai/new2-r10/freshness-observation.json, raised by LCC in bus 1576 and closed by NEW2 in ee73218 by committing the working-tree bytes unmodified.",
+    "lccCorrectionOfItsOwnClaim": "LCC bus 1576 stated that eight of the nine bound artifacts match both the working tree and HEAD. That was wrong. One of the eight could never match HEAD, and LCC did not notice it; NEW2 did. Recorded here rather than only in prose, because the sentence that was wrong was a sentence about THIS receipt.",
+    "bytesNowReachableAt": {
+      "path": "docs/ai/new2-r10/m0-upstream-objects-gate.json",
+      "sha256": "a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50",
+      "publishedBy": "NEW2, commit b4883716",
+      "equivalence": "docs/ai/new2-r10/M0_MANIFEST_PROVENANCE.json"
+    },
+    "verifiedByLcc": "sha256 recomputed over the published file this session: a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50. It equals manifest.sha256 exactly. LCC did not take the equivalence on NEW2 report alone.",
+    "whatThisDoesNotDo": "It does not make the receipt self-verifying. manifest.path still names the scratch path, deliberately, because that is where the walk ran and rewriting it would be the relabelling rule 16 forbids. A verifier follows manifest.sha256 to the published bytes named here."
+  }
 }

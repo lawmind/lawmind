@@ -15361,3 +15361,59 @@ and **the launch date does not move**.
    outright, if a pilot ever produces observations. Zero misbindings is zero.
 4. Watch `CCR-2026-08-30-04` (LCC, `capabilities[].platforms`) and flip
    `releasedToRCC` only when a backend actually serves it.
+
+---
+
+# LCC SPRINT-2 GATE-B — CLOSED 30 AUGUST 2026
+
+Round document: `docs/ai/lcc-r13/LCC_R13_GATE_B_ROUND.md`. Eight must-land items,
+eight verdicts, no silent slippage.
+
+## Landed
+
+| item | verdict | where |
+|---|---|---|
+| `snapshot_hash` durability (REPRO_DEBT_1) | **PASS** | `packages/db/factory/0001`, 10/10 tests |
+| Model artifacts (REPRO_DEBT_2) | **PASS**, revision UNKNOWN | `lcc-r13/model-artifact-manifest.json` |
+| Off-machine backup **and restore** | **PASS** | `lcc-r13/offsite-restore-proof.json` |
+| eCourts bounded experiment | **PASS**, outcome = bounded stop | `lcc-r13/ECOURTS_BOUNDED_STOP_REPORT.md` |
+| Sparse admission + quality | **PASS_WITH_LIMIT** | `lcc-r13/sparse-quality-battery.json` |
+| Party routing + iOS kill switch | **PASS**, 17/17 tests | `services/api/src/release/capabilities.ts` |
+| Hosting selection | **PASS** — DigitalOcean blr1 | `lcc-r13/HOSTING_SELECTION.md` |
+| Lease liveness + fake RUNNING rows | **FIXED**, 19 tests | `scripts/lib/process-identity.mjs`, `scripts/job-health.mjs` |
+
+**Three claims in this repo that this round proved stale.** Roadmap v7.1 §1 still
+says `fillDistrict` returns `Invalid Request`, that the parser is
+`FIXTURE_BOUND`, and that the live hypothesis is the User-Agent. All three were
+already false when it was published: `fillDistrict` was solved 29 Aug 22:58Z, the
+parser defect was ours and offline, and the UA was refuted by requests that ran
+under the fix and still failed. Corrected in the stop report, not in the roadmap —
+that is NEW3's document.
+
+## Next for LCC, in the order I would take it
+
+1. **Wait for NEW2 bus 1576.** The Gate-A M0 receipt binds a file HEAD does not
+   have. One commit of unmodified bytes closes it and it must happen before Gate
+   B, because a gate receipt is produced at gate time and never reconstructed.
+2. **Trust-state contract exercise** — slipped here deliberately, and it is the
+   first Sprint-3 item. Isolated fixtures for citation `AMBIGUOUS` /
+   `NO_CITATION`, body/source `EVIDENCE_WITHHELD` / `IMAGE_ONLY`, and graph
+   partial coverage. The contract SHAPE is already implemented; what is missing
+   is proof that the rare states can be produced.
+3. **eCourts, only when the founder answers FQ-ECOURTS-HAR or a bounded retry
+   lands.** Do NOT re-run the roadmap's User-Agent experiment; it is refuted.
+   Do NOT implement TLS or fingerprint impersonation. A bounded scheduled retry
+   against the same court is cheap and is the honest next move — "try after some
+   time" is the source asking for exactly that.
+4. **Staging API** once hosting spend is authorised (FQ-LCC-R13-HOSTING). Sprint
+   3 wants it online by 8 September and nothing but the purchase is blocking.
+5. **The Supreme-Court-plus-`bail` refusal** is a real product gap, not a defect:
+   38,379 documents is above the admission threshold and 15,704 is below it. It
+   belongs to NEW3 to decide what the client says, and to LCC to implement
+   whatever that is.
+
+## Not started, and named so the absence is a decision
+
+eCourts retention probe and daily pilot — both depend on a canary that has not
+landed. HNSW — gated on NEW1's entry criteria. Citation bulk apply — HOLD,
+unchanged. Broad semantic — DISABLED in v1 by product rule 6.
