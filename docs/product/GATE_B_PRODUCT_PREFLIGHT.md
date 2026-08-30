@@ -138,14 +138,19 @@ magic-link P0's **gate coupling** is corrected on observed acceptance evidence.
 ```
 ACCEPTANCE_P0_OPEN       = 0
 CONTRACT_CHANGE_P0_OPEN  = 0
-IMPLEMENTATION_P0_OPEN   = 1     <-- OPEN, UPHELD, LCC's. Blocks RELEASE (real email
-                                     sign-in), NOT the Gate-B acceptance run. See below.
+IMPLEMENTATION_P0_OPEN   = 1     <-- SUPERSEDED. CLOSED at the 30 Aug seal, §9.
 GATE_B_P0_OPEN           = 0     <-- stated separately, because implementation,
                                      release and consumption are different states
 NON_GATE_P1_OPEN         = 4
 CONDITIONAL_P0_GUARDED   = 1     <-- CCR-NEW3-S2F-01, latent; becomes P0 only on an
                                      override activation that is now prohibited
 ```
+
+**SUPERSEDED BY §9 (30 August 2026, final governance seal).** `IMPLEMENTATION_P0_OPEN`
+is now **0** — the magic-link defect was fixed by LCC at `a4725682` and NEW3 verified the
+fix against committed source at HEAD `784bab85` rather than accepting the report. The
+block above is kept because the P0 was real and its history is not rewritten. **Read §9
+for the current numbers.**
 
 **There is no blanket "P0 = 0" here, because it would not be true.**
 
@@ -461,3 +466,148 @@ answer** — the surface is unbuilt and every row says so. One thing is handed o
 rather than decided: `PRODUCT_DECISIONS.md` PD-15 and `CLAUDE.md` §1 still carry the
 12 August reversal and now read stale against v7.1. NEW3 owns neither file and edited
 neither.
+
+---
+
+## 9 · FINAL GOVERNANCE SEAL — 30 August 2026, HEAD `784bab85`
+
+**Nothing here was taken on a report.** Every closure below was re-observed from
+committed source at HEAD, and for the files that carry a test the worktree was confirmed
+byte-identical to HEAD before the test was run.
+
+### 9.1 Current counts
+
+```
+ACCEPTANCE_P0_OPEN       = 0
+CONTRACT_P0_OPEN         = 0
+IMPLEMENTATION_P0_OPEN   = 0     <-- was 1; CLOSED because it was FIXED, §9.3
+GATE_B_P0_OPEN           = 0
+CONDITIONAL_P0_GUARDED   = 1     <-- CCR-NEW3-S2F-01, latent and prohibited
+NON_GATE_P1_OPEN         = 4
+```
+
+**This is not a blanket zero.** Four P1s are open, one conditional P0 is guarded, and
+Gate-B check 5 is **waived, not passed**. What is *not* counted as a Gate-B P0, each for a
+stated reason: deferred hosting, unmeasured hosting under the founder waiver, the
+saved-authority optional fields, the SCI evidence-location inconsistency, backup-key
+escrow, and unpushed commits. None is a current user-visible falsehood or a data-safety
+condition.
+
+### 9.2 Founder hosting override — **WAIVED IS NOT PASS**
+
+```
+HOSTING_MEASUREMENT_STATE = UNMEASURED
+HOSTING_SELECTION_STATE   = DEFERRED_BY_FOUNDER
+PAID_HOSTING_AUTHORIZED   = NO
+GATE_B_CHECK_5            = WAIVED_BY_CURRENT_FOUNDER_INSTRUCTION_FOR_THIS_GATE
+SPRINT3_REMOTE_HOSTING    = DEFERRED_BY_FOUNDER_UNTIL_FULL_APPLICATION_BUILT
+```
+
+The founder holds all paid VPS / hosting / managed remote-serving infrastructure until
+**(A)** the full application is built **and (B)** the founder separately authorizes it.
+That instruction is **newer than the Sprint-2 roadmap and prompt-pack hosting schedule**
+and governs the current execution plan.
+
+**`UNMEASURED` remains `UNMEASURED`.** No hosting candidate was measured, none was
+selected, and **no number in any NEW3 artifact is derived from a vendor price page** — a
+comparison assembled from pricing pages is not a measurement, and presenting one as though
+it were is precisely what this line refuses. No roadmap or prompt-pack byte was altered.
+
+Not authorized: VPS · managed database · paid remote API infrastructure · paid hosting
+trials that can convert to billing. **Existing backup infrastructure is not disabled by
+this** — the instruction concerns *new* spend. And it does **not** license skipping
+truthful local development or testing; local verification was done for every closure here.
+
+LCC recorded the same instruction independently as
+`HOSTING_GATE_STATE = HOLD_MEASUREMENT_DEFERRED_BY_FOUNDER`. Two lanes, one founder
+decision, no coordination required to agree.
+
+### 9.3 Magic-link implementation P0 — **CLOSED, verified against committed HEAD**
+
+```
+MAGIC_LINK_CODE_DEFECT = CLOSED_VERIFIED_AGAINST_COMMITTED_HEAD
+MAGIC_LINK_TESTS       = services/api/src/env.test.ts — 7 tests, 7 pass, 0 fail
+IMPLEMENTATION_P0_OPEN = 0
+```
+
+Fixed by LCC at **`a4725682`**. Observed at HEAD, not accepted on the bus message:
+
+- the retired host is **no longer an implicit production fallback** — `resolveAuthBaseUrl`
+  has no production default at all, and the string survives in `services/api` only inside a
+  comment and inside the test that forbids its return;
+- **production missing `AUTH_BASE_URL` fails closed** — it throws rather than minting links
+  against a guessed origin;
+- **an explicit `AUTH_BASE_URL` is still honoured**, in production and outside it;
+- it is **wired, not orphaned**: `env.ts:90` → `index.ts:157`, the value better-auth builds
+  the link from.
+
+**A running remote API was correctly not required for this closure.** This was always an
+implementation defect under an already-correct contract; remote serving is separately
+deferred by the founder. `REMOTE_API_DEPLOYED = NO`, unchanged, not counted here.
+
+**History is not rewritten.** RCC's submitted P0, NEW3's upholding of it, and the 30 Aug
+gate-coupling refinement all stand in the ledger. **It closes because it was fixed, not
+because it was reclassified.**
+
+*Residual, recorded and deliberately not reopened:* two diagnostic CLIs
+(`services/harness/src/deployed-safety-cli.ts`, `deployed-judgment-safety-cli.ts`) still
+carry the retired host as a `DEFAULT_BASE_URL`. They are probe tools on no user-facing
+path. A tidy-up for LCC, **not a P0**.
+
+### 9.4 Party override guard — **INTACT, and now enforced by a test**
+
+```
+PARTY_DEFER_STATE             = INTACT (CCR-NEW3-S2F-01 = DEFER)
+PARTY_OVERRIDE_ACTIVATION     = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT
+CONDITIONAL_P0_GUARDED        = 1
+```
+
+Re-observed at HEAD: `PLATFORM_CAPABILITY_OVERRIDES` is `{}`, `search.party_name` is
+`ENABLED`, and `outcome.ts` is **unmodified** — `party_name_disabled` appears nowhere in
+it. LCC confirms it read the DEFER before touching anything and did not widen the response
+contract. **The override is not activated.** No R15; R14 is still the current revision.
+
+**Correcting this preflight's own earlier statement.** §5.1 said *"no committed test would
+catch a violation."* That is **no longer true**:
+`services/api/src/search/party-search-platform.test.ts:76-80` now asserts
+`deepEqual(PLATFORM_CAPABILITY_OVERRIDES, {})` — 17 tests, 17 pass at HEAD — so an
+activation breaks CI before it can land silently. **What is still missing is the other
+half:** no test asserts that a *suppressed* arm reports something truthful in
+`retrievalOutcome`. So enforcement of the prohibition improved; **the correction is still
+owed and the guard stands unchanged.**
+
+### 9.5 Saved authority — unchanged
+
+`SAVED_AUTHORITY_GATE_STATE = NON_GATE_P1`. Still `releasedToRCC: false`. No contract
+revision created, and **RCC is not told to consume unreleased fields.**
+
+### 9.6 Supreme Court — permission settled, its filing location is not
+
+```
+SCI_PERMISSION_STATE        = SATISFIED
+SCI_EVIDENCE_LOCATION_STATE = OPEN_NON_GATE_CONSISTENCY_ITEM
+```
+
+**Two questions, kept apart.** The permission is settled and is **not reopened, not
+downgraded to `UNKNOWN`, and not broadened.** What is open is only *which document is its
+canonical record*: `docs/SCI_AUTHORISATION.md` is **untracked** — one workstation, no Git
+object, invisible to a clone — while tracked governance still carries the older contested
+wording. The authoritative-looking record is the one that would vanish with the machine.
+
+NEW3 did **not** commit the protected artifact, quote any grant text, broaden any
+permission, or edit `CLAUDE.md` — a forbidden path for this lane. Owned as
+`FQ-SCI-EVIDENCE-LOCATION`. **This is not one of Gate-B checks 0–10 and was not invented as
+one.**
+
+### 9.7 Capability and claims truth
+
+```
+ENABLED_WITHOUT_EVIDENCE = 0     (30 rows; every ENABLED row carries an evidence artifact)
+UNSUPPORTED_CLAIMS       = 0     (11 claims are BLOCKED — forbidden, therefore not made)
+```
+
+Zero rows are ENABLED on web; `monitoring.user_product` stays `DISABLED_NOT_READY`.
+**Nothing was enabled because it appears in future roadmap scope.** The acceptance suite
+was **not** rerun — this check went only as deep as these two numbers need.
+
+**Sprint 3 was not begun.**

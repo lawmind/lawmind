@@ -257,13 +257,31 @@
       "claimImpact": "none",
       "backendOwner": "LCC",
       "handoff": "LCC: (1) the AUTH_BASE_URL default must not be a retired host - fail closed like packages/auth/src/mail.ts does rather than emit a link to a dead origin; (2) set AUTH_BASE_URL explicitly in every deployment; (3) the retired host must not appear as a fallback anywhere. NEW3 does not edit services/** and did not.",
-      "openAs": "IMPLEMENTATION_P0_OPEN",
+      "openAs": "CLOSED - was IMPLEMENTATION_P0_OPEN, closed 30 Aug 2026 on re-observed committed evidence",
       "gateBEffect": "REFINED 30 Aug 2026, NEW3 Sprint-2 final adjudication. THE P0 IS UNCHANGED, UPHELD AND OPEN - only its mis-stated coupling to Gate-B ACCEPTANCE is corrected, and the R14 wording is preserved verbatim in `historicalGateBEffect_R14`. Three states, separated: AUTH_BASE_URL_CODE_DEFECT = YES (real, unfixed, LCC's). REMOTE_API_NOT_DEPLOYED = YES, and that is a Sprint-3 milestone which is NOT by itself a Gate-B P0. GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED - the Gate-B acceptance and core-loop smoke authenticated via a fixture user (`new3-acceptance-56b2c29a@example.test`, TEN_MATTER_ACCEPTANCE_R12.json) against 127.0.0.1:3011 and PASSED; it never rendered or followed an emailed link, so the fallback cannot have blocked it. It is therefore a RELEASE / REAL-SIGN-IN blocker, not a Gate-B acceptance blocker. It is NOT downgraded: severity stays P0, owner stays LCC, IMPLEMENTATION_P0_OPEN stays 1.",
       "releasedToRCC": null,
       "rccConsumed": false,
       "historicalGateBEffect_R14": "This is a genuinely unresolved P0 and it stays a Gate-B blocker until LCC lands it. It is not downgraded, and it is not counted as a contract-change P0 or an acceptance P0, because it is neither.",
       "severityUnchangedBy_S2F": "YES - P0 UPHELD. Only the gate coupling was corrected, on observed acceptance evidence.",
-      "uncommittedWorkObservedInWorktree": "OBSERVED 30 Aug 2026 during the Sprint-2 final adjudication, and recorded rather than acted on. `services/api/src/env.ts` is MODIFIED IN THE WORKING TREE (not by NEW3, which does not write `services/**` and did not). The uncommitted version replaces the retired-host fallback with a `resolveAuthBaseUrl(...)` that REFUSES TO START when AUTH_BASE_URL is unset under NODE_ENV=production - the fail-closed remedy this CCR's handoff asked for. THE P0 STILL STANDS AND IS NOT CLOSED HERE: it is adjudicated at HEAD acc478c3, where `authBaseUrl: () => process.env['AUTH_BASE_URL'] ?? 'https://api-production-1c0b4.up.railway.app'` is still line 50. Uncommitted work is not a landed fix, NEW3 did not review it, did not run it, and did not stage it. LCC closes this CCR by committing and saying so, not NEW3 by noticing."
+      "uncommittedWorkObservedInWorktree": "OBSERVED 30 Aug 2026 during the Sprint-2 final adjudication, and recorded rather than acted on. `services/api/src/env.ts` is MODIFIED IN THE WORKING TREE (not by NEW3, which does not write `services/**` and did not). The uncommitted version replaces the retired-host fallback with a `resolveAuthBaseUrl(...)` that REFUSES TO START when AUTH_BASE_URL is unset under NODE_ENV=production - the fail-closed remedy this CCR's handoff asked for. THE P0 STILL STANDS AND IS NOT CLOSED HERE: it is adjudicated at HEAD acc478c3, where `authBaseUrl: () => process.env['AUTH_BASE_URL'] ?? 'https://api-production-1c0b4.up.railway.app'` is still line 50. Uncommitted work is not a landed fix, NEW3 did not review it, did not run it, and did not stage it. LCC closes this CCR by committing and saying so, not NEW3 by noticing.",
+      "closure": {
+        "MAGIC_LINK_CODE_DEFECT": "CLOSED_VERIFIED_AGAINST_COMMITTED_HEAD",
+        "closedAt": "2026-08-30, NEW3 final governance seal",
+        "fixCommit": "a4725682 - fix(api): a magic link to a dead host is delivered, logged as sent, and goes nowhere (LCC)",
+        "verifiedAtHead": "784bab8582cf75ad6c2ba1471b9ccd9c7473cc66",
+        "notTakenOnReport": "LCC reported the fix on bus 1612. NEW3 did not close on the report. Every line below was re-observed from COMMITTED source at HEAD, and the worktree was confirmed byte-identical to HEAD for both files before the tests were run.",
+        "criteriaObserved": [
+          "Retired host is NO LONGER an implicit production fallback: `resolveAuthBaseUrl` has no production default at all. `git grep` at HEAD finds the string in services/api only inside a comment and inside env.test.ts, never as a value.",
+          "Production missing AUTH_BASE_URL FAILS CLOSED: `throw new Error('AUTH_BASE_URL is not set and NODE_ENV is production. Refusing to start...')`.",
+          "Explicit AUTH_BASE_URL remains supported: `if (config.authBaseUrl) return config.authBaseUrl;` - first branch, wins in production and outside it.",
+          "Outside production it resolves to this process's own origin (`http://localhost:${port}`), documented as deliberate.",
+          "WIRED, not orphaned: env.ts:90-91 `authBaseUrl: () => resolveAuthBaseUrl({...})` and index.ts:157 `baseUrl: env.authBaseUrl()` - the value better-auth builds the link from."
+        ],
+        "MAGIC_LINK_TESTS": "services/api/src/env.test.ts - 7 tests, 7 pass, 0 fail, run at HEAD (duration 80.3ms). Includes 'the retired Railway host can never become an implicit default' and 'an empty AUTH_BASE_URL is a misconfiguration, not a value'.",
+        "remoteApiNotRequiredForThisClosure": "Correct and deliberate. This was always an IMPLEMENTATION defect under an already-correct contract. Remote serving is separately DEFERRED_BY_FOUNDER and is not a precondition for closing a code defect. REMOTE_API_DEPLOYED = NO, unchanged and not counted here.",
+        "historyPreserved": "This WAS a real P0 and is not rewritten as though it never was. `severitySubmittedByRCC` (RCC's P0 launch blocker), `severityAdjudicatedByNEW3` (P0 UPHELD), `historicalGateBEffect_R14` and the 30 Aug gate-coupling refinement all stand unchanged above. It closes because it was FIXED, not because it was reclassified.",
+        "residualObservationNotThisP0": "Two diagnostic CLIs still carry the retired host as a DEFAULT_BASE_URL: services/harness/src/deployed-safety-cli.ts and deployed-judgment-safety-cli.ts. They are probe tools, not the magic-link path, and no user-facing surface reads them. Recorded for LCC as a tidy-up, NOT reopened as a P0 and NOT counted."
+      }
     },
     {
       "id": "CCR-RCC-S2-04",
@@ -376,7 +394,9 @@
       "reconsideredAt": "Immediately on any request to activate a party-name platform override, and in any event at Gate C, 18 September 2026.",
       "openAs": "NON_GATE_P1_OPEN, with CONDITIONAL_P0_GUARDED recorded separately",
       "releasedToRCC": null,
-      "rccConsumed": false
+      "rccConsumed": false,
+      "guardEnforcementUpdate_30Aug": "CORRECTION TO THIS RECORD'S OWN EARLIER STATEMENT. When this CCR was filed it said 'no committed test would catch a violation'. That is NO LONGER TRUE and the record is corrected rather than left to age: `services/api/src/search/party-search-platform.test.ts:76-80` now asserts `assert.deepEqual(PLATFORM_CAPABILITY_OVERRIDES, {}, 'no capability is narrowed on any platform in this release; adding a row IS flipping the switch')`. OBSERVED at HEAD 784bab85, 17 tests, 17 pass. So ACTIVATION now breaks CI before it can land silently - the guard has teeth it did not have. WHAT IS STILL MISSING is condition (3) of `liftsWhen`: no test asserts that a SUPPRESSED party arm reports something truthful in `retrievalOutcome`. The activation guard therefore STANDS UNCHANGED; what improved is enforcement of the prohibition, not satisfaction of the correction.",
+      "reverifiedAtHead_30Aug": "PLATFORM_CAPABILITY_OVERRIDES = {} and search.party_name = ENABLED, both re-observed at HEAD 784bab85. outcome.ts is UNMODIFIED - TIMEOUT_ARMS still holds only sparse/dense/pin timeouts and `party_name_disabled` appears nowhere in it. LCC confirms on bus 1612 that it read the DEFER before touching anything and did not widen the response contract. PARTY_DEFER_STATE = INTACT. The override is NOT activated."
     }
   ],
   "counts": {
@@ -422,22 +442,20 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-08-30, NEW3 Sprint-2 FINAL adjudication, after CCR-NEW3-S2F-01. Supersedes the R14 recompute; the R14 basis strings below are updated, not appended to.",
+    "recomputedAt": "2026-08-30, NEW3 FINAL GOVERNANCE SEAL at HEAD 784bab85. Supersedes the Sprint-2-final recompute. One P0 CLOSED on re-observed committed evidence; nothing was reclassified to reach a number.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
     "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted and is adjudicated P1 with an honest interim contract; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0.",
     "ACCEPTANCE_P0_OPEN": 0,
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
-    "IMPLEMENTATION_P0_OPEN": 1,
-    "IMPLEMENTATION_P0_OPEN_items": [
-      "CCR-RCC-S2-03 - the magic-link email origin defaults to a retired host (AUTH_BASE_URL fallback in services/api/src/env.ts). Owned by LCC. P0 UPHELD and OPEN. REFINED 30 Aug 2026: it is a RELEASE / real-sign-in blocker; GATE_B_ACCEPTANCE_IMPACT = NONE_OBSERVED, because the Gate-B core-loop smoke authenticated via a fixture user and passed without ever following an emailed link. Severity NOT downgraded."
-    ],
+    "IMPLEMENTATION_P0_OPEN": 0,
+    "IMPLEMENTATION_P0_OPEN_items": [],
     "NON_GATE_P1_OPEN": 4,
     "NON_GATE_P1_OPEN_items": [
       "CCR-RCC-S2-02 - precedentialEffect / canAddToMatter absent from the saved-authority read shape. AMENDed, LCC-owned, NOT released to RCC. RCC's fallback is honest meanwhile.",
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged by R14.",
       "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight; the schema requires no exhaustive enumeration. No new feature taxonomy was created in this round.",
-      "CCR-NEW3-S2F-01 - retrievalOutcome cannot represent an administratively suppressed retrieval arm. DEFERRED under the activation guard PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. LCC-owned. Latent, not current: the branch is unreachable at HEAD."
+      "CCR-NEW3-S2F-01 - retrievalOutcome cannot represent an administratively suppressed retrieval arm. DEFERRED under PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. LCC-owned. Latent: the branch is unreachable at HEAD and activation now BREAKS a committed test (party-search-platform.test.ts:76-80). The correction itself is still owed."
     ],
     "closedInR14": [
       "P1-1 of R13 (rarestDf corpus-wide) - CLOSED as a semantic amendment, restated in R14 A8 and not reopened.",
@@ -452,6 +470,52 @@
       "why_this_bucket_exists": "So a latent defect is neither falsely promoted into a current P0 nor quietly lost. It is counted where it is true: guarded, and conditional on a configuration change nobody may make until the correction lands."
     },
     "GATE_B_P0_OPEN": 0,
-    "GATE_B_P0_OPEN_basis": "Recomputed 30 Aug 2026 and stated separately from the implementation count, because implementation, release and consumption are different states. ACCEPTANCE_P0_OPEN = 0 and CONTRACT_CHANGE_P0_OPEN = 0. The one open IMPLEMENTATION P0 (CCR-RCC-S2-03) does not block the Gate-B acceptance or core-loop smoke on observed evidence - that smoke authenticated via a fixture user and passed. This is NOT a blanket 'P0 = 0': one implementation P0 is open, upheld, and blocks real email sign-in and therefore release."
+    "GATE_B_P0_OPEN_basis": "0. ACCEPTANCE 0, CONTRACT_CHANGE 0, IMPLEMENTATION 0 as of the 30 Aug seal. NOT counted as Gate-B P0, each for a stated reason rather than by omission: deferred hosting and unmeasured hosting (a FOUNDER decision, WAIVED != PASS, see hostingOverride); saved-authority optional fields (NON_GATE_P1, RCC's fallback is honest); the SCI evidence-location inconsistency (a documentation-consistency item, the PERMISSION is SATISFIED and untouched); backup-key escrow (FQ-BACKUP-KEY-ESCROW, a founder item); and unpushed commits. None of these is a current user-visible falsehood or a data-safety condition, which is the only thing that would make one a Gate-B P0.",
+    "IMPLEMENTATION_P0_OPEN_basis": "Was 1 (CCR-RCC-S2-03, the magic-link origin). CLOSED 30 Aug 2026 at LCC commit a4725682, verified against COMMITTED source at HEAD 784bab85, not on LCC's report: production now refuses to start without AUTH_BASE_URL, the retired host cannot return as an implicit default, an explicit value is still honoured, and the resolver is wired through env.ts:90 to index.ts:157 where better-auth builds the link. env.test.ts 7/7 pass at HEAD. It closes because it was FIXED. The P0 severity and its full history stand in the record; nothing was downgraded.",
+    "hostingOverride": {
+      "recordedAt": "2026-08-30, NEW3 final governance seal",
+      "HOSTING_MEASUREMENT_STATE": "UNMEASURED",
+      "HOSTING_SELECTION_STATE": "DEFERRED_BY_FOUNDER",
+      "PAID_HOSTING_AUTHORIZED": "NO",
+      "GATE_B_CHECK_5": "WAIVED_BY_CURRENT_FOUNDER_INSTRUCTION_FOR_THIS_GATE",
+      "SPRINT3_REMOTE_HOSTING": "DEFERRED_BY_FOUNDER_UNTIL_FULL_APPLICATION_BUILT",
+      "WAIVED_IS_NOT_PASS": "STATED EXPLICITLY. Check 5 is WAIVED, not PASSED. UNMEASURED REMAINS UNMEASURED. No hosting candidate was measured, none was selected, and no number in NEW3's artifacts is derived from a vendor price page. A comparison assembled from pricing pages is not a measurement, and presenting one as though it were is the failure this line refuses.",
+      "founderInstruction": "Paid VPS / hosting / managed remote-serving infrastructure is HELD until (A) the full application is built AND (B) the founder separately authorizes paid hosting. This instruction is NEWER than the Sprint-2 roadmap/prompt-pack hosting schedule and therefore governs the current execution plan.",
+      "notAuthorized": [
+        "VPS",
+        "managed database",
+        "paid remote API infrastructure",
+        "paid hosting trials that can convert to billing"
+      ],
+      "notDisabledByThis": "Existing backup infrastructure is untouched - the instruction concerns NEW hosting/VPS/remote-serving spend, not prior infrastructure. The existing Cloudflare R2 backup bucket continues.",
+      "doesNotWeaken": "This does NOT authorize skipping truthful local development or testing. Local verification remains mandatory and was performed for every closure in this seal.",
+      "historicalBytesUntouched": "No roadmap or prompt-pack byte was altered. docs/ai/lcc-r13/HOSTING_SELECTION.md is preserved untouched. NEW3 edited no roadmap file.",
+      "agreesWith": "LCC's independent HOSTING_GATE_STATE = HOLD_MEASUREMENT_DEFERRED_BY_FOUNDER (docs/ai/lcc-r14/GATE_B_PREFLIGHT.md section 5). Same founder instruction, recorded separately by both lanes.",
+      "founderQueueEntry": "docs/FOUNDER_QUEUE.md FQ-HOSTING"
+    },
+    "sciState": {
+      "SCI_PERMISSION_STATE": "SATISFIED",
+      "SCI_EVIDENCE_LOCATION_STATE": "OPEN_NON_GATE_CONSISTENCY_ITEM",
+      "keptSeparate": "Two different questions, recorded as two. The PERMISSION is settled and is NOT reopened, NOT downgraded to UNKNOWN, and NOT broadened. What is open is only WHICH DOCUMENT is its canonical record.",
+      "theInconsistency": "docs/SCI_AUTHORISATION.md is UNTRACKED - it exists on one workstation and in no Git object, so a clone cannot see it - while tracked governance still carries the older contested wording. The authoritative-looking record is the one that would vanish with the workstation.",
+      "whatNEW3DidNotDo": [
+        "did not commit the protected authorization artifact",
+        "did not print or quote confidential grant text",
+        "did not broaden any permission",
+        "did not edit CLAUDE.md - a FORBIDDEN PATH for this lane",
+        "did not change SATISFIED to UNKNOWN"
+      ],
+      "owner": "Recorded by LCC as FQ-SCI-EVIDENCE-LOCATION (docs/FOUNDER_QUEUE.md). NEW3 confirms the classification and adds nothing to it.",
+      "notAGateCheck": "NOT one of Gate-B checks 0-10 and not invented as one. A documentation-consistency item, counted in NON_GATE terms only."
+    },
+    "capabilityAndClaimsTruth": {
+      "ENABLED_WITHOUT_EVIDENCE": 0,
+      "basis": "All 30 rows of V1_CAPABILITY_REGISTRY_R14.json enumerated: 18 ENABLED_V1, 6 DISABLED_NOT_READY, 4 POST_V1, 1 INTERNAL_EXPERIMENTAL, 1 DISABLED_EXTERNAL_BLOCK. Every ENABLED row carries an evidenceArtifact and a non-empty evidenceState.",
+      "UNSUPPORTED_CLAIMS": 0,
+      "claimsBasis": "V1_CLAIMS_REGISTER_R14.md carries 11 BLOCKED claims - claims we are forbidden to make, unavailable on every platform. A blocked claim is a claim NOT made; it is not an unsupported one.",
+      "webNotEnabled": "ZERO rows are ENABLED on web. Nothing was enabled because it appears in future roadmap scope.",
+      "monitoringNotEnabled": "monitoring.user_product = DISABLED_NOT_READY. No polling frequency and no SLA appears anywhere.",
+      "scope": "Registry and claims re-verified only to the depth these two numbers need. The acceptance suite was NOT rerun."
+    }
   }
 }

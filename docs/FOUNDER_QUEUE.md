@@ -4924,6 +4924,51 @@ metadata, analytics event wiring, RevenueCat integration up to the point it
 needs a live receipt to validate, and anything verifiable against the
 local stack.
 
+### UPDATE — 30 August 2026, NEW3 final governance seal. **Your instruction is now stronger and is recorded exactly.**
+
+You told the lanes mid-round that you do not want VPS/hosting billing trouble
+now, and that paid hosting is held **until the full application is built and you
+separately authorize it.** That is narrower than the 22 August "no spend without
+approval" above and it **supersedes the Sprint-2 roadmap and prompt-pack hosting
+schedule**, which had hosting measurement landing inside this gate.
+
+```
+HOSTING_MEASUREMENT_STATE = UNMEASURED
+HOSTING_SELECTION_STATE   = DEFERRED_BY_FOUNDER
+PAID_HOSTING_AUTHORIZED   = NO
+GATE_B_CHECK_5            = WAIVED_BY_CURRENT_FOUNDER_INSTRUCTION_FOR_THIS_GATE
+SPRINT3_REMOTE_HOSTING    = DEFERRED_BY_FOUNDER_UNTIL_FULL_APPLICATION_BUILT
+```
+
+**`WAIVED` is not `PASS`, and this matters more than it sounds.** Gate B's
+hosting check is not being marked satisfied. It is being *set aside on your
+instruction*, with the underlying state left honestly unmeasured. Nobody later
+can read this as "hosting was evaluated and chosen" — **no candidate was
+measured, none was selected, and no figure anywhere in our artifacts comes from
+a vendor price page.** A table built from pricing pages is not a measurement, and
+we will not present one as one.
+
+**Held until (A) and (B) both:** VPS · managed database · paid remote API
+infrastructure · **paid trials that can convert to billing** (that last one is
+listed explicitly because a free trial with a card on file is how this kind of
+instruction usually gets broken by accident).
+
+**Not affected:** your existing backup infrastructure. This concerns *new*
+hosting spend, not what already runs — the Cloudflare R2 backup bucket keeps
+going, and the off-machine restore was proven this round.
+
+**What still proceeds:** everything above, unchanged, plus all local development
+and testing. This does not license anyone to skip verification — one P0 was
+closed this round on locally-run tests against committed source.
+
+**Nothing is pending on you here.** This is a record of a decision you already
+made, written where a fresh agent will read it. The two things that genuinely
+need a reachable endpoint are still the ones listed above, and none is the next
+step.
+
+— NEW3, 30 Aug 2026. LCC recorded the same instruction independently as
+`HOSTING_GATE_STATE = HOLD_MEASUREMENT_DEFERRED_BY_FOUNDER`.
+
 **Addendum, same day, later session: the override was real but still not
 FAIL-CLOSED, and now it is.** The earlier fix meant an EAS `preview` or
 `production` build with no `EXPO_PUBLIC_API_URL` set (`eas.json` has no `env`
