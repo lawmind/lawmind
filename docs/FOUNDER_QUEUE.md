@@ -179,6 +179,64 @@ new one.
 
 ---
 
+### [OPEN — NOT A BLOCKER, A ONE-LINE DECISION ON YOUR OWN RULE] FQ-ATTRIBUTION-TEXT — `CLAUDE.md` §6a breaks the rule §6a states · LCC · 30 Aug 2026
+
+**Needs:** your call on which half of one paragraph is right. No credential, no
+account, no money — but it is your document and your rule, so it is not mine to
+resolve.
+
+**What was found.** During the Sprint-2 Day-0 push preflight (30 Aug 2026),
+scanning 289 unpushed commits before they left the workstation. `CLAUDE.md` §6a
+says of `ECOURTS_GRANT_ATTRIBUTION`:
+
+> It is supplied through the runtime environment (`.env` / deployment secret),
+> **never committed to tracked source**, and is not printed in normal logs after
+> configuration.
+
+Four lines above that sentence, the same section quotes the runtime value
+verbatim. `CLAUDE.md` is tracked source. The rule and the file stating it
+disagree.
+
+**Where it came from.** Commit `c7a4c1d`, `docs(ecourts): record the founder's
+29 Aug 2026 eCourts decision as canonical, and activate the switch through the
+audited path`. The value was written into the governance record so agents would
+know what the string is; the prohibition was written in the same edit.
+
+**Why this was not treated as a leak.** Stated so the reasoning is auditable
+rather than assumed:
+
+- It is **not a credential.** It grants no access and unlocks nothing. It is an
+  identifier transmitted in the clear in the User-Agent on every authorised
+  eCourts request, so the registrar and any observer of that traffic already
+  hold it.
+- It appears in **exactly one file** — `CLAUDE.md`. `git grep` across
+  `services/`, `packages/` and `apps/` finds it zero times, so the substantive
+  purpose of the rule (keep it out of the shipped request path, so it stays
+  rotatable from `.env` and cannot ship inside a build) **is satisfied**.
+- The remote is **private** (`gh repo view` → `visibility: PRIVATE`).
+
+On that basis the push proceeded on 30 Aug 2026 with the founder's explicit
+go-ahead, and the string is now on the private remote.
+
+**The decision:** which sentence do you want to be true?
+
+1. **Amend the rule** to say what is actually intended — never in the shipped
+   request path, quotable in governance — which is what the codebase already
+   does. One-line edit to §6a. *(LCC's recommendation.)*
+2. **Redact the value** from §6a, leaving a pointer to the env var. Note this
+   does **not** remove it from history: it stays in `c7a4c1d` and every commit
+   after. Only a `filter-repo` rewrite across 289 commits erases it, which
+   rewrites every sha in the repository and would be done only if you ask.
+
+**Cost if never resolved:** low but real. A future agent reading §6a finds a
+prohibition the repository visibly ignores, which teaches that the rules in that
+file are approximate. That is the actual damage — not the string.
+
+**Where it plugs in:** `CLAUDE.md` §6a, the paragraph beginning
+"**`ECOURTS_GRANT_ATTRIBUTION`** is an internal audited attribution string".
+
+---
+
 ### [OPEN — NOT A BLOCKER, BUT READ IT BEFORE ANY COPY IS WRITTEN] FQ-CLAIMS-V1 — the v1 claims register · NEW3 · 29 Aug 2026
 
 **Needs:** your eye on one table before anyone — us, an agency, or you — writes a
