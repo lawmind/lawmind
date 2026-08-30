@@ -7032,3 +7032,108 @@ recovery day and neither needs you:
 
 **Until the key is escrowed, host-loss recoverability of the moat pack cannot be
 claimed, and this lane does not claim it.**
+
+---
+
+## FQ-LCC-R13-HOSTING — **CORRECTION, 30 Aug 2026: you deferred this yourself and nothing is being asked of you** · LCC
+
+**Superseded, not resolved.** The entry above asks for authorisation to open a
+DigitalOcean instance in `blr1` and roughly $10–25 for two throwaway
+measurement VMs. **You instructed this lane mid-round not to purchase,
+provision, upgrade, retain or trial any paid infrastructure, and to defer
+hosting expenditure until the application is substantially built.** So the ask
+above is withdrawn until you raise it, and no action is outstanding on your
+side.
+
+What that means for the gate, stated exactly rather than softened:
+
+```
+HOSTING_GATE_STATE                 HOLD_MEASUREMENT_DEFERRED_BY_FOUNDER
+HOSTING_MEASUREMENT_AUTHORIZED     NO
+HOSTING_PROVISIONING_AUTHORIZED    NO
+INDIA_RTT_MEASURED                 NO
+STORAGE_THROUGHPUT_MEASURED        NO
+PITR_RESTORE_CHARACTERISED         NO
+HOSTING_CANDIDATES_MEASURED        0
+HOSTING_SELECTION                  NONE
+```
+
+**Nothing was provisioned, before or after your instruction.** No paid resource
+was created at any point in this round; the only external writes were to the
+existing Cloudflare R2 backup bucket, which is prior infrastructure.
+
+**The research above is preserved untouched and is still good.** What it is not
+is a measurement. Gate B asks for a selection from *comparable measured
+configurations*, and prices read off vendor pages are not that — so this lane
+did not convert the research into a fake measured comparison to make a line go
+green. Whoever picks this up when you authorise spend needs two candidates
+actually stood up, an RTT origin that genuinely sits in India (recorded as what
+kind of origin it was), real storage throughput, and the restore/PITR behaviour
+exercised rather than quoted. Temporary hourly resources are enough, and they
+should be destroyed after the evidence is captured.
+
+**Nothing else in this round waited on it.** The deferral is an external
+blocker on one check and was not allowed to stop backend, reproducibility or
+client work.
+
+---
+
+## FQ-SCI-EVIDENCE-LOCATION — the Supreme Court permission is settled and its record is in a file a clone cannot see · LCC, 30 Aug 2026 · **a five-minute decision, not a new question**
+
+**This is NOT asking you to re-confirm the SCI permission.** You settled that.
+It is asking which document is the canonical record of it, because two
+repository records currently disagree and only one of them travels.
+
+| record | what it says | can a clone see it? |
+|---|---|---|
+| `docs/SCI_AUTHORISATION.md` (27 Aug) | Lawmind holds a separate written SCI permission, valid through 2029, permitting automated CAPTCHA handling | **NO — the file is UNTRACKED** |
+| `CLAUDE.md` §6a (tracked) | the SCI question "remains contested and untouched", `SCI_AUTHORISATION_STATE = UNCHANGED` | yes |
+
+So the authoritative-looking statement is the one that would vanish with this
+workstation, and the one every fresh agent actually reads says the opposite.
+That is how a settled decision gets quietly reopened by the next session.
+
+**What this lane did instead of choosing:** the untracked file is now inside the
+encrypted off-machine protected set, so it can no longer be lost. It was **not**
+committed, and no document was edited to assert the wider scope — a lane
+committing a grant statement from a working-tree edit is exactly the failure
+mode `CLAUDE.md` §6 exists to prevent. A dirty hunk in
+`docs/TECHNICAL_INVENTORY.md` that would have asserted the same SCI scope was
+left uncommitted for the same reason.
+
+**The decision:** either `CLAUDE.md` §6a is amended to record the SCI grant the
+way it records the eCourts one, or `docs/SCI_AUTHORISATION.md` is committed and
+§6a points at it. Either is fine. Both being true at once is not.
+
+---
+
+## FQ-BACKUP-KEY-ESCROW — **still open, and this round widened what the key gates** · LCC, 30 Aug 2026
+
+No new ask; the ask above is unchanged and is still five minutes with a password
+manager. What changed is the blast radius.
+
+The embedding model weights were off-machine in **plaintext** —
+`backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2` — which the R13
+manifest recorded as an accepted deviation on sound reasoning: MIT-licensed
+public weights carry no client data, so the confidentiality rule the encryption
+exists for does not bite. This round's terms require client-side encryption for
+the model set, so there is now an **encrypted** copy as well
+(`…T16-28-51-828Z-model-pack-v3-enc`, AES-256-GCM, all five files plus a name
+map, 2.28 GB).
+
+**The plaintext prefix was deliberately NOT deleted, and that is the part you
+may want to overrule.** Reasoning, so you can:
+
+- It leaks nothing — public MIT weights, no client, personal or proprietary data.
+- It is the **only copy recoverable without the key**, and the key currently
+  exists in exactly one place: `.env` on this workstation.
+- Deleting it would trade a confidentiality gain we do not need for a
+  recoverability loss on the one day this matters.
+- Removing a founder-owned object is not a lane's call to make unasked.
+
+So today: `HOST_LOSS_RECOVERABLE = NO` for everything only the key can open —
+the moat pack, which carries matters, client names, hearing notes, the Tier-3
+human verification vouches and the eCourts fetch ledger. Escrow the key and that
+flips. Until then the encryption protects confidentiality **and weakens
+recoverability**, which is the honest description of the trade and the reason
+this item is still here.

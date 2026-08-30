@@ -1,0 +1,462 @@
+{
+  "kind": "lcc_offsite_restore_proof",
+  "writtenAt": "2026-08-30T17:11:09.622Z",
+  "prefix": "2026-08-30T16-46-06-987Z-moat-r14-enc",
+  "bucket": "lawmind-corpus",
+  "source": "CLOUDFLARE_R2_FRESH_DOWNLOAD",
+  "verdict": "RESTORE_PROVEN_FROM_OFFSITE",
+  "packCreatedAt": "2026-08-30T16:46:34.191Z",
+  "encryption": {
+    "algorithm": "AES-256-GCM",
+    "keySource": "R2_BACKUP_ENCRYPTION_KEY (32 bytes hex, never uploaded)"
+  },
+  "timings": {
+    "downloadSeconds": 245.672,
+    "decryptSeconds": 6.508,
+    "restoreSeconds": 509.201,
+    "totalSeconds": 1189.588
+  },
+  "cipherChecks": [
+    {
+      "file": "FILES.json.enc",
+      "bytesExpected": 85992,
+      "bytesFound": 85992,
+      "sha256Expected": "b3e7cf3b18ef872813fd215452210e8b73f486a5f3ac1ad2f325c1732a5d1853",
+      "sha256Found": "b3e7cf3b18ef872813fd215452210e8b73f486a5f3ac1ad2f325c1732a5d1853",
+      "match": true
+    },
+    {
+      "file": "judgment-identity.csv.gz.enc",
+      "bytesExpected": 1317475561,
+      "bytesFound": 1317475561,
+      "sha256Expected": "0004f48056736fa82ea4ac90a77e3a2b8b0f6c233d83b5f157d913be3dadc4f8",
+      "sha256Found": "0004f48056736fa82ea4ac90a77e3a2b8b0f6c233d83b5f157d913be3dadc4f8",
+      "match": true
+    },
+    {
+      "file": "judgment-verdicts.csv.gz.enc",
+      "bytesExpected": 369050661,
+      "bytesFound": 369050661,
+      "sha256Expected": "0dea3f446bff35b4bbbb6c68d65c007a3678125d0e86666b0cbb1f3b7c875a08",
+      "sha256Found": "0dea3f446bff35b4bbbb6c68d65c007a3678125d0e86666b0cbb1f3b7c875a08",
+      "match": true
+    },
+    {
+      "file": "MANIFEST.json.enc",
+      "bytesExpected": 6510,
+      "bytesFound": 6510,
+      "sha256Expected": "73f8e6523362344558304a7de13e7b4af442ccc2b3989be064fec9b5853edf64",
+      "sha256Found": "73f8e6523362344558304a7de13e7b4af442ccc2b3989be064fec9b5853edf64",
+      "match": true
+    },
+    {
+      "file": "moat.dump.enc",
+      "bytesExpected": 1231591263,
+      "bytesFound": 1231591263,
+      "sha256Expected": "078d1236c6908c92628d925d1a273a52302918d443083744a2030d48ce5665b2",
+      "sha256Found": "078d1236c6908c92628d925d1a273a52302918d443083744a2030d48ce5665b2",
+      "match": true
+    },
+    {
+      "file": "protected-files.tar.gz.enc",
+      "bytesExpected": 16658027,
+      "bytesFound": 16658027,
+      "sha256Expected": "d8b7a9e3b2355e3ee00aa49bfad241d7f88edab73e89a6b78ce778cde0de5fdc",
+      "sha256Found": "d8b7a9e3b2355e3ee00aa49bfad241d7f88edab73e89a6b78ce778cde0de5fdc",
+      "match": true
+    },
+    {
+      "file": "schema.sql.enc",
+      "bytesExpected": 221241,
+      "bytesFound": 221241,
+      "sha256Expected": "55a84f6c7cb1ea0b928b2327e1cc54c1bc4aa8a330f2caeb9dbb4816b1751c23",
+      "sha256Found": "55a84f6c7cb1ea0b928b2327e1cc54c1bc4aa8a330f2caeb9dbb4816b1751c23",
+      "match": true
+    }
+  ],
+  "plainChecks": [
+    {
+      "file": "FILES.json",
+      "bytesExpected": 85955,
+      "bytesFound": 85955,
+      "sha256Expected": "bccdb02ebece1f0cacac8f8d8f4134c5c08d324e83650a5c0a0c4d0921b7c2b5",
+      "sha256Found": "bccdb02ebece1f0cacac8f8d8f4134c5c08d324e83650a5c0a0c4d0921b7c2b5",
+      "match": true
+    },
+    {
+      "file": "judgment-identity.csv.gz",
+      "bytesExpected": 1317475524,
+      "bytesFound": 1317475524,
+      "sha256Expected": "5e6a71130a240f73000afd32b17b89f5bfaa2adaa9cb185c865c34e7ad55cfed",
+      "sha256Found": "5e6a71130a240f73000afd32b17b89f5bfaa2adaa9cb185c865c34e7ad55cfed",
+      "match": true
+    },
+    {
+      "file": "judgment-verdicts.csv.gz",
+      "bytesExpected": 369050624,
+      "bytesFound": 369050624,
+      "sha256Expected": "b4d7d179d40450b74b4f453d5a91bef747837aa13487d6c8881e1ac0d3898c21",
+      "sha256Found": "b4d7d179d40450b74b4f453d5a91bef747837aa13487d6c8881e1ac0d3898c21",
+      "match": true
+    },
+    {
+      "file": "MANIFEST.json",
+      "bytesExpected": 6473,
+      "bytesFound": 6473,
+      "sha256Expected": "8fbea11ddde132cca9a9a6e1a9d34914318c6d05dff43bb5cc304a21e3390ddf",
+      "sha256Found": "8fbea11ddde132cca9a9a6e1a9d34914318c6d05dff43bb5cc304a21e3390ddf",
+      "match": true
+    },
+    {
+      "file": "moat.dump",
+      "bytesExpected": 1231591226,
+      "bytesFound": 1231591226,
+      "sha256Expected": "0e69b99e0a76aef64869f6762cc20cc96d92944f7f752efd0815c6cb788052b2",
+      "sha256Found": "0e69b99e0a76aef64869f6762cc20cc96d92944f7f752efd0815c6cb788052b2",
+      "match": true
+    },
+    {
+      "file": "protected-files.tar.gz",
+      "bytesExpected": 16657990,
+      "bytesFound": 16657990,
+      "sha256Expected": "1a1a66bc98f2d1347cf707f1a162b3c7c1ea32836a12d8b8fc0a1deb59f6ce61",
+      "sha256Found": "1a1a66bc98f2d1347cf707f1a162b3c7c1ea32836a12d8b8fc0a1deb59f6ce61",
+      "match": true
+    },
+    {
+      "file": "schema.sql",
+      "bytesExpected": 221204,
+      "bytesFound": 221204,
+      "sha256Expected": "538d499f38c933d21b78f47ee9395461a686bdd34ad83a0c4857aaf6d1f43d48",
+      "sha256Found": "538d499f38c933d21b78f47ee9395461a686bdd34ad83a0c4857aaf6d1f43d48",
+      "match": true
+    }
+  ],
+  "rowChecks": [
+    {
+      "table": "users",
+      "expected": 556,
+      "found": 556,
+      "match": true
+    },
+    {
+      "table": "auth_user",
+      "expected": 297,
+      "found": 297,
+      "match": true
+    },
+    {
+      "table": "auth_account",
+      "expected": 3,
+      "found": 3,
+      "match": true
+    },
+    {
+      "table": "matters",
+      "expected": 4,
+      "found": 4,
+      "match": true
+    },
+    {
+      "table": "matter_events",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "matter_authorities",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "matter_shares",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "judgment_annotations",
+      "expected": 2,
+      "found": 2,
+      "match": true
+    },
+    {
+      "table": "saved_searches",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "documents",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "briefings",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "alerts",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "citation_copies",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "data_requests",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "training_consent_events",
+      "expected": 1,
+      "found": 1,
+      "match": true
+    },
+    {
+      "table": "verification_cache",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "citation_disputes",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "audit_log",
+      "expected": 845,
+      "found": 845,
+      "match": true
+    },
+    {
+      "table": "platform_config",
+      "expected": 2,
+      "found": 2,
+      "match": true
+    },
+    {
+      "table": "judgment_citations",
+      "expected": 22407078,
+      "found": 22407078,
+      "match": true
+    },
+    {
+      "table": "judgment_citation_aliases",
+      "expected": 4394,
+      "found": 4394,
+      "match": true
+    },
+    {
+      "table": "judgment_citation_keys",
+      "expected": 1431403,
+      "found": 1431403,
+      "match": true
+    },
+    {
+      "table": "judgment_date_quality",
+      "expected": 713136,
+      "found": 713136,
+      "match": true
+    },
+    {
+      "table": "judgment_recovery_queue",
+      "expected": 73,
+      "found": 73,
+      "match": true
+    },
+    {
+      "table": "judgment_text_recovery",
+      "expected": 73,
+      "found": 73,
+      "match": true
+    },
+    {
+      "table": "judgment_statute_refs",
+      "expected": 905298,
+      "found": 905298,
+      "match": true
+    },
+    {
+      "table": "statute_mappings",
+      "expected": 226,
+      "found": 226,
+      "match": true
+    },
+    {
+      "table": "statute_sections",
+      "expected": 36663,
+      "found": 36663,
+      "match": true
+    },
+    {
+      "table": "coverage_cell",
+      "expected": 966,
+      "found": 966,
+      "match": true
+    },
+    {
+      "table": "hc_ingest_ledger",
+      "expected": 221278,
+      "found": 221278,
+      "match": true
+    },
+    {
+      "table": "ecourts_observation",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "ecourts_transition",
+      "expected": 0,
+      "found": 0,
+      "match": true
+    },
+    {
+      "table": "ecourts_fetch_ledger",
+      "expected": 237,
+      "found": 237,
+      "match": true
+    },
+    {
+      "table": "official_source_artifact",
+      "expected": 16816,
+      "found": 16816,
+      "match": true
+    },
+    {
+      "table": "lexeme_document_frequency",
+      "expected": 128243,
+      "found": 128243,
+      "match": true
+    }
+  ],
+  "mismatchedRows": [],
+  "contentChecksum": {
+    "restored": "5388aa9b9490fbb63a650d45b4f80085",
+    "live": "5388aa9b9490fbb63a650d45b4f80085",
+    "match": true
+  },
+  "identity": {
+    "present": true,
+    "plainBytes": 4704489842,
+    "copyExit": 0,
+    "copyStderrTail": [],
+    "rows": 18759022,
+    "manifestRows": 18759022,
+    "rowsMatchManifest": true,
+    "citationEndpointsWithoutIdentity": 0,
+    "canonicalIdentityReconstructible": true,
+    "withContentHash": 18759022,
+    "provenance": {
+      "columnsCarried": [
+        "source_id",
+        "source_edition",
+        "authorization_basis",
+        "provenance_recorded_at"
+      ],
+      "carriedForRows": 18759022,
+      "populatedRows": {
+        "source_id": 6392,
+        "source_edition": 6392,
+        "authorization_basis": 6392,
+        "provenance_recorded_at": 6392
+      }
+    }
+  },
+  "protectedFiles": {
+    "present": true,
+    "consistencyRule": "POINT-IN-TIME PER FILE, NOT ACROSS FILES. Live workers were NOT paused. Each file was copied and hashed as one read; sha256 and mtime below are AS CAPTURED. Checkpoints are resume points, so a slightly stale one costs re-walked work and a torn one would not — per-file atomicity is the guarantee that matters here.",
+    "declaredRoots": 36,
+    "absentRoots": [],
+    "expected": 362,
+    "verified": 362,
+    "failures": [],
+    "allVerified": true,
+    "coverage": {
+      "governingAuthority": true,
+      "goldEval": true,
+      "sourceManifests": true,
+      "worklistsCheckpoints": true,
+      "migrations": true,
+      "schemaTruth": true
+    }
+  },
+  "model": {
+    "checked": true,
+    "seconds": 202.367,
+    "identitySource": "docs/ai/lcc-r13/model-artifact-manifest.json",
+    "MODEL_REVISION": "UNKNOWN",
+    "mapPresent": true,
+    "files": [
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx_data",
+        "restored": true,
+        "bytesExpected": 2266820608,
+        "bytesFound": 2266820608,
+        "sha256Expected": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "sha256Found": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "match": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx",
+        "restored": true,
+        "bytesExpected": 607298,
+        "bytesFound": 607298,
+        "sha256Expected": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "sha256Found": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "match": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer.json",
+        "restored": true,
+        "bytesExpected": 17082821,
+        "bytesFound": 17082821,
+        "sha256Expected": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "sha256Found": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "match": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer_config.json",
+        "restored": true,
+        "bytesExpected": 1173,
+        "bytesFound": 1173,
+        "sha256Expected": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "sha256Found": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "match": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/config.json",
+        "restored": true,
+        "bytesExpected": 770,
+        "bytesFound": 770,
+        "sha256Expected": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "sha256Found": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "match": true
+      }
+    ],
+    "allMatch": true
+  },
+  "restore": {
+    "procedure": "psql -f schema.sql, then pg_restore --data-only --disable-triggers",
+    "schemaExitCode": 0,
+    "schemaStderrTail": [],
+    "exitCode": 0,
+    "stderrTail": []
+  },
+  "scratchDatabase": "lawmind_offsite_restore_3104",
+  "kept": false
+}

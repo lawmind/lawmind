@@ -1,0 +1,74 @@
+{
+  "kind": "lcc_model_encrypted_offsite",
+  "writtenAt": "2026-08-30T16:31:59.029Z",
+  "tool": "scripts/lcc-model-protect.mjs",
+  "prefix": "2026-08-30T16-28-51-828Z-model-pack-v3-enc",
+  "bucket": "lawmind-corpus",
+  "uploaded": true,
+  "MODEL_REVISION": "UNKNOWN",
+  "identitySource": "docs/ai/lcc-r13/model-artifact-manifest.json",
+  "filesProtected": 5,
+  "plainBytes": 2284512670,
+  "cipherBytes": 2284514595,
+  "encryption": {
+    "algorithm": "AES-256-GCM",
+    "envelope": "MAGIC(8) || VERSION(1) || IV(12) || ciphertext || TAG(16)",
+    "keySource": "R2_BACKUP_ENCRYPTION_KEY (32 bytes hex, never uploaded)"
+  },
+  "files": [
+    {
+      "file": "config.json",
+      "plainBytes": 770,
+      "plainSha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+      "cipherFile": "config.json.enc",
+      "cipherBytes": 807,
+      "cipherSha256": "cf1029f4129076206698ba3a3298d7563d748ff00333213ce115470b65cf84e9"
+    },
+    {
+      "file": "MODEL_MAP.json",
+      "plainBytes": 1703,
+      "plainSha256": "8a48f0c404823df860c6120bd06d8bc7c6cc3df320b55d0c34e9a49affd2b106",
+      "cipherFile": "MODEL_MAP.json.enc",
+      "cipherBytes": 1740,
+      "cipherSha256": "53dc2656cd5ff7cf579f813ee6ddd885124b1e3890c748bcee23e21d5664191a"
+    },
+    {
+      "file": "onnx__model.onnx",
+      "plainBytes": 607298,
+      "plainSha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+      "cipherFile": "onnx__model.onnx.enc",
+      "cipherBytes": 607335,
+      "cipherSha256": "6004c309b1ac030c443d1a80aa7405f1b71cab0d273247a57a4cd3124bdb0b77"
+    },
+    {
+      "file": "onnx__model.onnx_data",
+      "plainBytes": 2266820608,
+      "plainSha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+      "cipherFile": "onnx__model.onnx_data.enc",
+      "cipherBytes": 2266820645,
+      "cipherSha256": "6703cf3f51dcbbdc751a79be8bd83853b4d49225e2e2d7de4430a275afc25776"
+    },
+    {
+      "file": "tokenizer.json",
+      "plainBytes": 17082821,
+      "plainSha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+      "cipherFile": "tokenizer.json.enc",
+      "cipherBytes": 17082858,
+      "cipherSha256": "db9e9702df34f145f39e50bae4b5b521d7ff0c95e0e5b8c14add1290a0a34588"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "plainBytes": 1173,
+      "plainSha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+      "cipherFile": "tokenizer_config.json.enc",
+      "cipherBytes": 1210,
+      "cipherSha256": "95827a4e45eeb6b84ecc410692c540699370afc61533a527f649e0322cac1939"
+    }
+  ],
+  "plaintextPrefixRetained": {
+    "prefix": "backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2",
+    "deleted": false,
+    "why": "Left in place deliberately. These are MIT-licensed public weights with no client data, so the plaintext copy leaks nothing; it is also the only copy recoverable WITHOUT the encryption key, which currently exists on one workstation. Deleting it would trade a confidentiality gain we do not need for a recoverability loss on the day this matters — and removing a founder-owned object is not this lane’s call to make unasked."
+  },
+  "keyEscrow": "NOT ESCROWED. R2_BACKUP_ENCRYPTION_KEY exists only in .env on this workstation. HOST_LOSS_RECOVERABLE stays NO for anything only this key can open. Founder item."
+}

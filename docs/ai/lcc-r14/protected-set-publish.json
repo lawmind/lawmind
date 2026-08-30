@@ -1,0 +1,54 @@
+{
+  "kind": "lcc_protected_set_publish",
+  "writtenAt": "2026-08-30T16:50:48.199Z",
+  "tool": "scripts/lcc-protected-set-publish.mjs",
+  "prefix": "2026-08-30T16-46-06-987Z-moat-r14-enc",
+  "bucket": "lawmind-corpus",
+  "uploaded": true,
+  "packCreatedAt": "2026-08-30T16:46:34.191Z",
+  "tablesPacked": 35,
+  "tablesAbsent": [],
+  "identityRows": 18759022,
+  "protectedFiles": 362,
+  "cipherBytes": 2935089255,
+  "plainBytes": 2935088996,
+  "files": [
+    {
+      "file": "FILES.json",
+      "plainBytes": 85955,
+      "cipherBytes": 85992
+    },
+    {
+      "file": "judgment-identity.csv.gz",
+      "plainBytes": 1317475524,
+      "cipherBytes": 1317475561
+    },
+    {
+      "file": "judgment-verdicts.csv.gz",
+      "plainBytes": 369050624,
+      "cipherBytes": 369050661
+    },
+    {
+      "file": "MANIFEST.json",
+      "plainBytes": 6473,
+      "cipherBytes": 6510
+    },
+    {
+      "file": "moat.dump",
+      "plainBytes": 1231591226,
+      "cipherBytes": 1231591263
+    },
+    {
+      "file": "protected-files.tar.gz",
+      "plainBytes": 16657990,
+      "cipherBytes": 16658027
+    },
+    {
+      "file": "schema.sql",
+      "plainBytes": 221204,
+      "cipherBytes": 221241
+    }
+  ],
+  "restoreProof": "NOT PROVEN BY THIS TOOL. Run scripts/lcc-offsite-restore-proof.mjs --prefix 2026-08-30T16-46-06-987Z-moat-r14-enc — upload without restore is HOLD.",
+  "keyEscrow": "NOT ESCROWED. R2_BACKUP_ENCRYPTION_KEY exists only in .env on this workstation, so HOST_LOSS_RECOVERABLE is NO until it is escrowed. Founder item; the key is never printed here."
+}

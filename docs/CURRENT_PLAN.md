@@ -75,6 +75,13 @@
 It exists because a plan held only in a todo tool does not survive compaction, a
 new session, or a fresh agent. **This file does.**
 
+**Governance, stated plainly so nobody has to infer it.** Master Roadmap v7.1 is
+governing. `docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V2.md` is the active Sprint-2
+prompt pack and sits beside the roadmap as its canonical companion. **This file
+is an operational journal**: entries are appended, corrections are layered on
+top of what they correct, and **historical entries remain historical** rather
+than being rewritten to match the present.
+
 Last updated **30 August 2026**, when roadmap authority moved to v7.1. The queue
 body below is annotated continuously, newest round entry first. **Read
 §A first — it supersedes §2's ordering.** Owner: **LCC (server lane)**. RCC's
