@@ -167,6 +167,13 @@ Gian Singh v State of Punjab —       66,171 edges
 top 10 aliases carry                    19.6% of all alias-path edges
 ```
 
+**This independently reproduces the R10 headline.** 1,548,529 / 2,559,529 =
+**60.5%**, against R10's 60.6% of UNIQUE pins arriving through aliases, measured
+a different way on a corpus two days older. The figure was accurate as a
+*description of the path mix* — it was never evidence of precision, which is
+what the instruction for this round said and what the enumeration above, not the
+percentage, is for.
+
 `judgment_citation_aliases_key` is a UNIQUE index, so **an alias can never
 resolve AMBIGUOUS**. A wrong alias is a confident wrong pin that no gate in the
 resolver is able to fire on, multiplied by its edge count. Today every one of
