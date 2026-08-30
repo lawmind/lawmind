@@ -41,19 +41,21 @@ function between(source, open, close) {
   return source.slice(start + open.length, end);
 }
 
-/** `root: '...'` occurrences, without a regex, so an escape cannot go missing. */
-function roots(block) {
+/**
+ * One entry per `{ root: '...' ... }`, parsed without a regex so an escape
+ * cannot go missing. `localOnly` is read as a flag: an entry that carries it is
+ * declaring that Git does not have this file, which is a decision rather than a
+ * defect and is exactly why the pack carries it.
+ */
+function entries(block) {
   const out = [];
-  let rest = block;
-  const KEY = "root: '";
-  for (;;) {
-    const i = rest.indexOf(KEY);
-    if (i === -1) break;
-    rest = rest.slice(i + KEY.length);
-    const j = rest.indexOf("'");
-    assert.notEqual(j, -1, 'unterminated root string');
-    out.push(rest.slice(0, j));
-    rest = rest.slice(j);
+  const parts = block.split('{ root: ').slice(1);
+  for (const part of parts) {
+    const line = part.slice(0, part.indexOf('},') === -1 ? part.length : part.indexOf('},'));
+    const q = line.indexOf("'");
+    const end = line.indexOf("'", q + 1);
+    assert.notEqual(end, -1, 'unterminated root string');
+    out.push({ root: line.slice(q + 1, end), localOnly: line.includes('localOnly:') });
   }
   return out;
 }
@@ -94,14 +96,14 @@ describe('the identity map is the whole corpus, not the verdict subset', () => {
 });
 
 describe('every protected-file root exists in this repository', () => {
-  const declared = roots(between(backup, 'const PROTECTED_FILES = [', CLOSE));
+  const declared = entries(between(backup, 'const PROTECTED_FILES = [', CLOSE));
 
   it('declares a non-trivial set', () => {
     assert.ok(declared.length >= 20, `expected a real protected set, got ${declared.length}`);
   });
 
   it('names the governing authority, the gold sets, the checkpoints and the migrations', () => {
-    const joined = declared.join(' ');
+    const joined = declared.map((d) => d.root).join(' ');
     for (const required of [
       'docs/roadmaps',
       'services/ingest/.checkpoints',
@@ -116,8 +118,33 @@ describe('every protected-file root exists in this repository', () => {
   it('points at nothing that has been moved or deleted', () => {
     // A root that has drifted is silently dropped at pack time and recorded as
     // absent -- honest, and still a hole in the protected set. Catch it here.
-    const missing = declared.filter((r) => !existsSync(join(REPO, r)));
-    assert.deepEqual(missing, [], `protected roots that no longer exist: ${missing.join(', ')}`);
+    //
+    // `localOnly` entries are exempt BECAUSE OF WHAT THIS TEST FOUND. Run from
+    // a clean checkout of HEAD rather than from this working tree, it failed on
+    // `docs/SCI_AUTHORISATION.md` and `docs/ai/new1-tier-a/.worklist-v2.txt`:
+    // both are protected roots that exist on one workstation and in NO Git
+    // object, so a clone has neither. That is not drift, it is the hazard the
+    // pack exists for -- but it has to be a DECLARED decision, or the exemption
+    // becomes the hole. Hence the flag, and hence this comment.
+    const missing = declared.filter((d) => !d.localOnly && !existsSync(join(REPO, d.root)));
+    assert.deepEqual(
+      missing.map((d) => d.root),
+      [],
+      `protected roots that no longer exist: ${missing.map((d) => d.root).join(', ')}`,
+    );
+  });
+
+  it('every local-only root says WHY Git does not have it', () => {
+    // An undocumented exemption is indistinguishable from a mistake.
+    const block = between(backup, 'const PROTECTED_FILES = [', CLOSE);
+    for (const d of declared.filter((x) => x.localOnly)) {
+      const at = block.indexOf(d.root);
+      const tail = block.slice(at, at + 900);
+      assert.ok(
+        tail.includes('localOnly:') && tail.split('localOnly:')[1].length > 40,
+        `${d.root} is exempt from the existence check with no stated reason`,
+      );
+    }
   });
 
   it('excludes the vector batch output deliberately, and says so', () => {

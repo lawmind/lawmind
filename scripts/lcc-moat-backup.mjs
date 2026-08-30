@@ -244,7 +244,7 @@ const PROTECTED_FILES = [
   { root: 'docs/ai/lcc-r12', why: 'RECENT OFFICIAL-SOURCE EVIDENCE — eCourts coverage ledger' },
   { root: 'docs/ai/lcc-r13', why: 'RECENT OFFICIAL-SOURCE EVIDENCE — the eCourts bounded-stop report and the model manifest' },
   { root: 'docs/ai/new1-tier-a/.worklist.txt', why: 'RESTART-CRITICAL WORKLIST' },
-  { root: 'docs/ai/new1-tier-a/.worklist-v2.txt', why: 'RESTART-CRITICAL WORKLIST' },
+  { root: 'docs/ai/new1-tier-a/.worklist-v2.txt', why: 'RESTART-CRITICAL WORKLIST', localOnly: 'Not tracked by Git and not this lane’s file. It exists on this workstation and nowhere else, which is precisely why the pack carries it.' },
   { root: 'docs/ai/new1-r9/delta/queue-state.json', why: 'RESTART-CRITICAL CHECKPOINT — the incremental queue cursor' },
   { root: 'docs/ai/new1-r9/delta/queue-ledger.jsonl', why: 'RESTART-CRITICAL CHECKPOINT — what the queue has already emitted' },
   { root: 'services/ingest/.checkpoints', why: 'RESTART-CRITICAL CHECKPOINTS — every ingest scope cursor; losing them re-walks the corpus' },
@@ -257,7 +257,7 @@ const PROTECTED_FILES = [
   { root: 'docs/SCHEMA_TRUTH.md', why: 'SCHEMA — the only authority on data shapes' },
   { root: 'docs/CITATION_HARNESS.md', why: 'CANONICAL DECISIONS — the rule that can end the product' },
   { root: 'docs/ECOURTS_AUTHORISATION.md', why: 'AUTHORIZATION BASIS — the grant this harvest runs under' },
-  { root: 'docs/SCI_AUTHORISATION.md', why: 'AUTHORIZATION BASIS — the contested SCI position, kept as it stands' },
+  { root: 'docs/SCI_AUTHORISATION.md', why: 'AUTHORIZATION BASIS — the contested SCI position, kept as it stands', localOnly: 'UNTRACKED. It records the founder’s SCI confirmation and a clone gets nothing; tracked CLAUDE.md §6a still calls the SCI question contested. Which document is canonical is a founder/NEW2 decision, not a lane’s — so it is protected rather than committed.' },
   { root: 'docs/OPEN_DECISIONS.md', why: 'CANONICAL DECISIONS — what nobody may decide alone' },
   { root: 'docs/FOUNDER_QUEUE.md', why: 'CANONICAL DECISIONS — what is owed by the founder' },
 ];
