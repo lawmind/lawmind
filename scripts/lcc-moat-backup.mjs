@@ -264,6 +264,17 @@ const PROTECTED_FILES = [
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+/**
+ * The tar BINARY, named rather than looked up.
+ *
+ * `tar` on PATH under a Git Bash shell is GNU tar, which reads `C:\lawmind\...`
+ * as a REMOTE HOST SPEC (`host:path`) and exits 2 with nothing on stderr. The
+ * Windows built-in is bsdtar and handles the same arguments correctly. This
+ * cost one 20-minute pack build, at the last step, after the dump and both
+ * exports had already succeeded.
+ */
+const TAR = process.env['LAWMIND_TAR'] ?? (process.platform === 'win32' ? 'C:/Windows/System32/tar.exe' : 'tar');
+
 const args = process.argv.slice(2);
 const flag = (n) => {
   const i = args.indexOf(`--${n}`);
@@ -340,6 +351,17 @@ const schemaPath = join(OUT, 'schema.sql');
  * interruption without paying for the dump twice.
  */
 const SKIP_DUMP = args.includes('--skip-dump');
+/**
+ * `--resume` reuses any pack output already on disk.
+ *
+ * Not a convenience. A pack build is a 20-minute dump plus two multi-gigabyte
+ * exports, and the first run of this version died at the LAST step, the tar,
+ * after all of that had succeeded. Without resume the only way to recover a
+ * one-line failure is to pay for the dump again, which is how a fix gets
+ * skipped rather than made. Each step is skipped only if its OWN output exists.
+ */
+const RESUME = args.includes('--resume');
+const done = (path) => RESUME && existsSync(path);
 if (SKIP_DUMP && !existsSync(dumpPath)) {
   console.error(`--skip-dump given but ${dumpPath} does not exist`);
   process.exit(2);
@@ -353,10 +375,14 @@ if (SKIP_DUMP) {
   console.log(`dumping ${packing.length} tables + the judgments verdict projection\n`);
   const tableArgs = packing.flatMap((m) => ['-t', `public.${m.table}`]);
   const dumpStarted = Date.now();
-  pg('pg_dump', [...conn, '-d', DB, '-Fc', '--no-owner', '--no-acl', '-f', dumpPath, ...tableArgs], {
-    stdio: ['ignore', 'inherit', 'inherit'],
-  });
-  dumpSeconds = (Date.now() - dumpStarted) / 1000;
+  if (done(dumpPath)) {
+    console.log(`  reusing ${dumpPath}`);
+  } else {
+    pg('pg_dump', [...conn, '-d', DB, '-Fc', '--no-owner', '--no-acl', '-f', dumpPath, ...tableArgs], {
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+    dumpSeconds = (Date.now() - dumpStarted) / 1000;
+  }
 }
 
 /**
@@ -374,22 +400,37 @@ if (SKIP_DUMP) {
  * The schema dump is DDL only, so it costs seconds.
  */
 if (!SKIP_DUMP) {
-  pg('pg_dump', [...conn, '-d', DB, '--schema-only', '--no-owner', '--no-acl', '-f', schemaPath], {
-    stdio: ['ignore', 'inherit', 'inherit'],
-  });
+  if (done(schemaPath)) {
+    console.log(`  reusing ${schemaPath}`);
+  } else {
+    pg('pg_dump', [...conn, '-d', DB, '--schema-only', '--no-owner', '--no-acl', '-f', schemaPath], {
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+  }
 
   // The verdict projection, as compressed CSV. Separate from the custom-format
   // dump on purpose: it is a QUERY, not a table, and a restore of it is a COPY
   // into whatever corpus exists at the time rather than a table replacement.
   const verdictPath = join(OUT, 'judgment-verdicts.csv');
-  pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_VERDICTS}) TO '${verdictPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
-    stdio: ['ignore', 'inherit', 'inherit'],
-  });
-  await pipeline(
-    createReadStream(verdictPath),
-    createGzip({ level: 9 }),
-    createWriteStream(`${verdictPath}.gz`),
-  );
+  if (done(`${verdictPath}.gz`)) {
+    console.log(`  reusing ${verdictPath}.gz`);
+  } else {
+    pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_VERDICTS}) TO '${verdictPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+    await pipeline(
+      createReadStream(verdictPath),
+      createGzip({ level: 9 }),
+      createWriteStream(`${verdictPath}.gz`),
+    );
+    // The uncompressed CSV is a build artifact, not part of the pack. It was
+    // excluded from MANIFEST.files and left on disk, so encrypt-pack.mjs — which
+    // encrypts every top-level file — would have carried a redundant 957 MB
+    // plaintext copy off-machine beside its own gzip. Removed for the same reason
+    // the identity CSV is: the pack should contain what a restore needs and
+    // nothing else.
+    rmSync(verdictPath, { force: true });
+  }
 
   /**
    * The IDENTITY map, same shape as the verdict projection and for the reason
@@ -397,19 +438,29 @@ if (!SKIP_DUMP) {
    * keys restore into a corpus they can no longer address.
    */
   const identityPath = join(OUT, 'judgment-identity.csv');
-  const identityStarted = Date.now();
-  pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_IDENTITY}) TO '${identityPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
-    stdio: ['ignore', 'inherit', 'inherit'],
-  });
-  identityRows = Number(
-    pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', 'SELECT count(*) FROM judgments']).trim(),
-  );
-  await pipeline(
-    createReadStream(identityPath),
-    createGzip({ level: 9 }),
-    createWriteStream(`${identityPath}.gz`),
-  );
-  rmSync(identityPath, { force: true });
+  if (done(`${identityPath}.gz`)) {
+    console.log(`  reusing ${identityPath}.gz`);
+    // The manifest still has to state how many rows a restore should expect,
+    // and a reused export that recorded nothing would leave the check with
+    // nothing to check against.
+    identityRows = Number(
+      pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', 'SELECT count(*) FROM judgments']).trim(),
+    );
+  } else {
+    const identityStarted = Date.now();
+    pg('psql', [...conn, '-d', DB, '-v', 'ON_ERROR_STOP=1', '-c', `\\copy (${JUDGMENT_IDENTITY}) TO '${identityPath.replace(/\\/g, '/')}' WITH CSV HEADER`], {
+      stdio: ['ignore', 'inherit', 'inherit'],
+    });
+    identityRows = Number(
+      pg('psql', [...conn, '-d', DB, '-t', '-A', '-c', 'SELECT count(*) FROM judgments']).trim(),
+    );
+    await pipeline(
+      createReadStream(identityPath),
+      createGzip({ level: 9 }),
+      createWriteStream(`${identityPath}.gz`),
+    );
+    rmSync(identityPath, { force: true });
+  }
   console.log(`  identity map      ${identityRows.toLocaleString()} rows in ${((Date.now() - identityStarted) / 1000).toFixed(1)}s`);
 
   /**
@@ -464,7 +515,7 @@ if (!SKIP_DUMP) {
     f.sha256 = await sha256File(f.full);
     delete f.full;
   }
-  execFileSync('tar', ['-czf', filesArchive, '-C', stage, '.'], { stdio: ['ignore', 'inherit', 'inherit'] });
+  execFileSync(TAR, ['-czf', filesArchive, '-C', stage, '.'], { stdio: ['ignore', 'inherit', 'inherit'] });
   rmSync(stage, { recursive: true, force: true });
   writeFileSync(
     join(OUT, 'FILES.json'),

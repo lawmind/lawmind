@@ -59,7 +59,17 @@ if (!has('--skip-dump')) {
   console.log(`pack      -> ${plain}`);
   execFileSync(
     process.execPath,
-    [join(ROOT, 'scripts', 'lcc-moat-backup.mjs'), '--out', plain, '--no-restore'],
+    [
+      join(ROOT, 'scripts', 'lcc-moat-backup.mjs'),
+      '--out',
+      plain,
+      '--no-restore',
+      // Forwarded, not inferred: with `--out` pointing at an existing pack this
+      // reuses the dump and both exports and redoes only what is missing. A
+      // 20-minute build should not have to be repeated because its last step
+      // failed.
+      ...(has('--resume') ? ['--resume'] : []),
+    ],
     { cwd: ROOT, env: { ...process.env, DATABASE_URL: E['DATABASE_URL'] }, stdio: 'inherit' },
   );
 } else {

@@ -41,6 +41,9 @@ import { fileURLToPath } from 'node:url';
 
 import postgres from 'postgres';
 
+/** bsdtar, named explicitly: GNU tar on PATH reads a Windows path as a remote host. */
+const TAR = process.env['LAWMIND_TAR'] ?? (process.platform === 'win32' ? 'C:/Windows/System32/tar.exe' : 'tar');
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const RCLONE = process.env['LAWMIND_RCLONE'] ?? 'C:\\lawmind\\bin\\rclone.exe';
 const PG_BIN = process.env['LAWMIND_PG_BIN'] ?? 'C:\\lawmind\\pgsql\\pgsql\\bin';
@@ -409,7 +412,7 @@ async function main() {
     const filesManifest = JSON.parse(readFileSync(filesManifestPath, 'utf8'));
     const extractDir = join(work, 'protected-files');
     mkdirSync(extractDir, { recursive: true });
-    execFileSync('tar', ['-xzf', filesArchive, '-C', extractDir], { stdio: ['ignore', 'ignore', 'inherit'] });
+    execFileSync(TAR, ['-xzf', filesArchive, '-C', extractDir], { stdio: ['ignore', 'ignore', 'inherit'] });
     const failures = [];
     let matched = 0;
     for (const entry of filesManifest.files ?? []) {
