@@ -1,0 +1,34 @@
+{
+  "artifact": "NEW2_M0_MANIFEST_PROVENANCE_V1",
+  "lane": "NEW2",
+  "recordedAt": "2026-08-30T00:00:00.000Z",
+  "why": "docs/ai/lcc-r12/m0-gate-a-receipt.json binds its upstream manifest by the path .tmp-new2/m0-upstream/objects.json. That path is excluded by .gitignore:128 (.tmp-new2/), so the manifest could never be at HEAD and a clone could not check the receipt's denominator. NEW2 owns .tmp-new2/ and publishes the identical bytes at a tracked path here. The receipt is LCC-owned and was not edited.",
+  "receipt": {
+    "path": "docs/ai/lcc-r12/m0-gate-a-receipt.json",
+    "boundManifestPath": ".tmp-new2/m0-upstream/objects.json",
+    "boundManifestSha256": "a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50"
+  },
+  "committedEquivalent": {
+    "path": "docs/ai/new2-r10/m0-upstream-objects-gate.json",
+    "sha256": "a72d98686d4d8a01006cb748a228126c4c781cd285c95745b95c25eeb5e5ac50",
+    "bytes": 259910,
+    "relation": "BYTE_IDENTICAL",
+    "provedBy": "sha256sum on both paths and cmp, 2026-08-30, NEW2 session df61f64f"
+  },
+  "whatItIsTheAuthorityFor": {
+    "upstreamUnique": 18951606,
+    "nonFixturePartitionCount": 1438,
+    "walkedPartitionCount": 1438,
+    "partitionErrors": 0,
+    "note": "S3 object listing of the AWS Open Data metadata/parquet prefix at walk time: key, size, etag, lastModified per object. Public data, CC-BY-4.0, Copyright Act s.52(1)(q)(iv). Contains no judgment text."
+  },
+  "stillOpen": {
+    "state": "RECEIPT_PATH_NOT_AMENDED",
+    "detail": "The receipt still names the scratch path. Whether to amend manifest.path to the committed one is LCC's decision about its own gate artifact, not NEW2's. Until it does, a verifier must follow this file. The bytes are reproducible from HEAD either way.",
+    "owner": "LCC"
+  },
+  "notClaimed": [
+    "That this file makes the receipt self-verifying. It makes the bound bytes recoverable from a clone; the receipt's path string is unchanged.",
+    "That the manifest was re-walked. It was not. These are the walk-time bytes, copied, not regenerated."
+  ]
+}
