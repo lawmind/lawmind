@@ -1,0 +1,98 @@
+{
+  "kind": "new1_continuous_walk_status",
+  "version": 1,
+  "writtenAt": "2026-08-30T21:15:08.679Z",
+  "writtenBy": "NEW1 continuous walk round",
+  "why": "The compact walk report is the only number anyone should quote between rounds, and a number that lives only in a chat message does not survive compaction. This file is that checkpoint. It re-measures rather than carrying the previous round's anchors forward.",
+
+  "supersedesAnchors": {
+    "note": "The prompt's historical anchors (eligible 7,654,179 / embedded ~2,997,613 / remaining ~4,656,566 / ~31k per hour) were re-measured, not copied. Eligible is unchanged because the denominator is frozen; the other three moved.",
+    "embeddedAnchor": 2997613,
+    "embeddedMeasured": 3016945
+  },
+
+  "snapshot": {
+    "id": "5b5d02384b46c96c",
+    "manifest": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
+    "manifestDir": "document-vectors-v2",
+    "batches": 766,
+    "identityImmutable": "yes — SELECT count(DISTINCT snapshot_hash) over the whole stage table returns exactly ONE non-null value, 5b5d02384b46c96c. The other 486,955 rows carry NULL and are the pre-stamp generation R12 already named; no third label exists.",
+    "writerExplicit": "yes — doc-vector-embed.mjs names snapshot_hash in the insert column list (src line 516) and supplies RECONCILED_VIEW_HASH (line 499). The constant column DEFAULT that used to be the only thing naming a generation was removed by LCC 4ac4cb24."
+  },
+
+  "measurement": {
+    "measuredAt": "2026-08-30T21:15:08.679Z",
+    "elapsedSec": 10.3,
+    "otherActiveBackendsDuringMeasurement": 0,
+    "A_STAGE_PHYSICAL_ROWS": 3508334,
+    "B_CURRENT_GENERATION_VECTOR_ROWS": 3021379,
+    "C_ELIGIBLE_REPRESENTATIVE_COVERAGE": {
+      "numerator": 3016945,
+      "denominator": 7654179,
+      "percent": 39.4157,
+      "remaining": 4637234,
+      "callItThis": "representative coverage"
+    },
+    "D_DOCUMENT_REACH": {
+      "numerator": 3690238,
+      "denominator": 8420728,
+      "percent": 43.8233
+    },
+    "priorGenerationNullStampedRows": 486955,
+    "judgmentsRows": 18759022,
+    "judgmentsNewestCreatedAt": "2026-08-30T14:05:19.255Z",
+    "definitionsWarning": "A/B/C/D are four different true statements. Do not divide a whole-stage row count by the representative denominator. docs/ai/new1-r12/EMBEDDING_COVERAGE_AUTHORITY.json holds the exact SQL for each."
+  },
+
+  "rate": {
+    "vectorsPerHour": 33048,
+    "method": "new1-worker-truth.task.log physical stage rows over a 6h40m window, 2026-08-30T14:30:48Z 3,285,619 -> 2026-08-30T21:10:48Z 3,505,942 = 220,323 rows. Every new row in that window is current-generation, so this is also the current-generation rate.",
+    "projectedHoursToCaughtUp": 140.3,
+    "projectedCaughtUpAt": "2026-09-05T14:00Z (approximate, straight-line, no allowance for batch-boundary gaps or the box being shared)"
+  },
+
+  "delta": {
+    "oldestPendingAge": "none — there is no unembedded delta",
+    "evidence": "queue-state.json watermark is 2026-08-30T14:05:19.255Z and max(judgments.created_at) measured live is the SAME instant, so the queue has reached the newest judgment in the corpus. The 125 rows each pass reports are the 60s overlap re-examination, exhaustively classified: 52 EMBEDDED, 63 REFUSED_NOT_ELIGIBLE, 10 CONTENT_HASH_ALREADY_COVERED, 0 QUEUED, 0 unnamed.",
+    "lastFire": "2026-08-30T20:59:01.469Z",
+    "intervalMinutes": 15,
+    "watermarkFlatIsCorrect": "The watermark has not moved since 14:05Z because NEW2 has ingested no judgment newer than that, not because the queue stalled. queue_nothing_to_embed DOES advance the watermark (delta-queue.mjs) — it advances it to max(created_at), which is already where it sits."
+  },
+
+  "gpuWriter": {
+    "oneLogicalWriter": "yes",
+    "evidence": [
+      "exactly one stage-runner.sh in the process table (pid 5008), descended from the single new1-coarse-walk.cmd (pid 23128) that the scheduled task started",
+      "exactly one doc-vector-embed.mjs process chain, node pid 11880",
+      "the lock file .agents/logs/new1-gpu-embed.lock names pid 11880 — the holder IS the live writer, not a stale token",
+      "288 consecutive ALIVE verdicts in new1-worker-truth.task.log and zero stall verdicts"
+    ],
+    "lockFixInForce": "1b7d9add is at HEAD, the working tree copy is unmodified, and the running writer was started 2026-08-30T20:58:33Z — after the fix landed at 16:13Z. src/gpu-embed-lock.test.mjs: 6 of 6 pass, including 'second live writer cannot reclaim the token' and 'permission or access denial is unknown and cannot reclaim the token', which is the exact misread that produced the second writer on 30 Aug (bus 1606).",
+    "lockHolderPidChangesPerBatch": "expected — stage-runner.sh spawns a fresh embedder per batch, so the holder pid advances at each batch boundary (10740 -> 25684 -> 16444 -> 11880). One at a time is the invariant, not one pid forever."
+  },
+
+  "escalationConditions": {
+    "stallKill": "not met — rows advanced in every one of the last 80 telemetry windows",
+    "diskHeadroom": "not met — C: 229.9 GB free of 930.5 (24.7%), D: 768.3 GB free of 1863 (41.2%)",
+    "secondLogicalGpuWriter": "not met — see gpuWriter above",
+    "snapshotIdentityDefect": "not met — one non-null generation label exists"
+  },
+
+  "sprint3Entry": {
+    "CAUGHT_UP_TO_SNAPSHOT": "NO",
+    "why": "39.4157% of the frozen representative denominator; 4,637,234 representatives remain. The authoritative entry census is deliberately NOT run here — running whole-stage integrity scans while millions of representatives are unwalked spends hours to measure a moving number.",
+    "HNSW_BUILD_AUTHORIZED": "NO",
+    "knownOpenItemForTheFinalCensus": "R12 recorded at least one active-generation duplicate identity. It is deliberately left in place and unmutated: deleting it now to make a future gate pass would be tampering with the evidence the gate exists to read. It is classified and corrected at the boundary, inside NEW1 ownership, or handed to LCC if the schema makes it theirs.",
+    "criteriaAlreadySatisfiedAndCarryable": {
+      "SNAPSHOT_HASH_WRITER_EXPLICIT": "yes",
+      "ACTIVE_SNAPSHOT_ID_IMMUTABLE": "yes",
+      "MODEL_LOCAL_FILES_HASHED": "yes (R12, docs/ai/new1-r12/model-revision-recovery.json)",
+      "MODEL_REVISION": "UNKNOWN — explicitly, with the method that failed to recover it recorded",
+      "MODEL_FILES_OFF_MACHINE": "yes — 2.13 GB pack on R2, every object read back and compared, 0 differences (R12)",
+      "SNAPSHOT_HASH_SCHEMA_REPRODUCIBLE": "yes — packages/db/factory carries the committed, journalled factory migration (LCC 4ac4cb24)",
+      "caveat": "These are carried from their own evidence, not re-proved here. They are re-verified at the final census, which is where they become binding."
+    }
+  },
+
+  "nothingWasRestarted": "The healthy writer, the stage runner, the telemetry sidecar and the delta queue were all left running. This round read; it did not touch them."
+}
