@@ -3,10 +3,10 @@
  *
  * `docs/CITATION_HARNESS.md` step 6: where Tiers 1 and 2 disagree or both miss,
  * open the eCourts search pre-filled and let the advocate solve the CAPTCHA.
- * **Never bypass it.** It is a government system and circumventing it is fragile
- * and legally reckless. Nothing in this module fetches from eCourts, submits a
- * form, or reads a CAPTCHA. It hands the advocate a door and records what they
- * found on the other side.
+ * This module intentionally stays human-only because `verified_by_source =
+ * ecourts` means a named advocate personally vouched for the match. Authorized
+ * bulk CAPTCHA handling exists behind the separate court grant guard and writes
+ * `ecourts_bulk`; it must not manufacture this stronger evidential state.
  *
  * **What "pre-filled" can actually mean, verified against the live site.**
  * `judgments.ecourts.gov.in/pdfsearch/index.php` is a POST form carrying
@@ -56,13 +56,13 @@ export function handleEcourts(c: Context, body: z.infer<typeof ecourtsRequest>):
     prefilledQuery: prefilledQuery(body.citationText),
     /**
      * Stated in the payload, not left to the client to remember. The CAPTCHA is
-     * the advocate's to solve, and any future version of this that "helpfully"
-     * automates it is the thing CLAUDE.md §6 forbids outright.
+     * the advocate's to solve on this human-confirmation route. Automation uses
+     * the separately guarded bulk route and a different source state.
      */
     captchaRequired: true,
     instructions:
       'Open eCourts, paste the citation into the search box and solve the CAPTCHA. ' +
-      'We never solve it for you. Confirm the match here and we will remember it.',
+      'This human-confirmation route does not solve it for you. Confirm the match here and we will remember it.',
   });
 }
 

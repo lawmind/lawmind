@@ -11,7 +11,7 @@
  *
  *   Tier 1  internal corpus       BUILT — resolves an id against `judgments`
  *   Tier 2  IndianKanoon + AWS S3 S2
- *   Tier 3  eCourts, human        S2 — CAPTCHA solved by the advocate, never bypassed
+ *   Tier 3  eCourts, human        S2 — advocate-vouched; distinct from authorized bulk
  *   Tier 4  say so plainly        BUILT — it is the absence of the others
  *
  * In S1 only Tier 1 runs. So this endpoint reports Tier 2 and Tier 3 as
@@ -164,7 +164,7 @@ export async function getCitationCheck(c: Context, sql: Sql, id: string): Promis
         source: 'ecourts',
         status: 'not_implemented' as TierStatus,
         detail:
-          'eCourts confirmation ships in S2. The advocate solves the CAPTCHA; it is never bypassed',
+          'eCourts human confirmation ships in S2. Authorized bulk observations use ecourts_bulk and cannot impersonate this tier',
         at: null,
       },
     ],

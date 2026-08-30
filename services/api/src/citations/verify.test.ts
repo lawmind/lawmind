@@ -1,11 +1,11 @@
 /**
  * Tier 3 — and the two things it must never do.
  *
- * `CLAUDE.md` §6 and `CITATION_HARNESS.md` step 6 both say it outright: never
- * bypass the eCourts CAPTCHA. It is a government system and circumventing it is
- * fragile and legally reckless. That rule is enforced by an ABSENCE — this module
- * makes no request to eCourts at all — and absences rot silently, so it is
- * asserted directly here.
+ * `CITATION_HARNESS.md` step 6 defines this as the human-vouched route. Licensed
+ * automation is allowed through the separate court adapter, but may write only
+ * `ecourts_bulk`. The human boundary here is enforced by an ABSENCE — this
+ * module makes no request to eCourts at all — and absences rot silently, so it
+ * is asserted directly here.
  *
  * The second is subtler. A Tier 3 confirmation is **cached permanently, for
  * everyone**. An anonymous caller able to assert one is a way to poison the
@@ -36,7 +36,7 @@ describe('Tier 3 — eCourts', () => {
     await sql.end();
   });
 
-  it('never solves the CAPTCHA, and never fetches from eCourts', () => {
+  it('keeps the human Tier 3 route manual; licensed bulk eCourts acquisition is a separate guarded path', () => {
     // A source-level assertion on purpose: the runtime cannot prove a negative
     // about a request that was never made, and the rule being protected is
     // "this module never calls eCourts", not "it did not call it this time".
@@ -45,7 +45,7 @@ describe('Tier 3 — eCourts', () => {
       assert.ok(
         !source.includes(forbidden),
         `citations/verify.ts references ${forbidden}. Tier 3 hands the advocate a ` +
-          'door; it must never walk through it. CLAUDE.md §6: never bypass the eCourts CAPTCHA.',
+          'door; it must never walk through it because this route records a human-vouched state.',
       );
     }
   });
