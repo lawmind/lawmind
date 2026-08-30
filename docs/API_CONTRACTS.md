@@ -1159,7 +1159,10 @@ GET    /matters/:id/authorities  → { authorities: [ { authorityId, judgmentId,
                                      verificationState, verifiedBySource,
                                      overruledStatus, overruledByJudgmentId,
                                      overruledByTitle, overruledParas,
-                                     overruledNote           // all added 11 Aug 2026, RCC bus 0048
+                                     overruledNote,          // all added 11 Aug 2026, RCC bus 0048
+                                     precedentialEffect,     // all added 31 Aug 2026,
+                                     canAddToMatter,         // R14 §A6 / CCR-RCC-S2-02
+                                     citableForUntouchedPropositions
                                    } ], asOf }
 POST   /matters/:id/authorities  { judgmentId, citationCheckId? }
                                   → { authority }   // the same shape, same fields
@@ -1187,6 +1190,48 @@ construction**, not columns: `judgments` carries neither field (they live on
 corpus, so the row resolves to itself. Same statement as
 `briefings/route.ts`, `judgments/route.ts`, `search/route.ts` and
 `search/saved.ts`.
+
+**The precedential-policy fields — added 31 Aug 2026, R14 §A6, closing
+`CCR-RCC-S2-02`.** The coarse four-value banner cannot say WHICH act happened,
+and a client that names one from it states something legally different from the
+truth — proposition-level overruling rendered as *"Set aside in"*. Three
+optional fields close that gap, with the same meaning they carry on
+`GET /judgments/:id`:
+
+| field | type | what it answers |
+|---|---|---|
+| `precedentialEffect` | string, **open-ended** — R14 §A5's eight values today | what actually happened |
+| `canAddToMatter` | boolean | whether the product lets this authority be used |
+| `citableForUntouchedPropositions` | boolean | whether it still supports propositions the later court never reached |
+
+**All three are DERIVED on the request that returns them.** The route reads the
+judgment's stored status and its inbound adverse edges from `judgment_citations`
+— including `treatment_provenance` — and runs the same
+`precedentialEffectFromEdges` → `precedentialPolicy` pair the judgment reader and
+the write path run. Nothing is copied onto `matter_authorities`, which has no
+column for any of it; the schema is asserted in `authorities.test.ts`. A
+relationship recorded after an authority was saved is reflected on the next
+`GET`, with no resave, and that is the committed test.
+
+They are **additive and change nothing that existed**. `overruledStatus` still
+carries the stored four-value column and is still the only field that may drive a
+banner; a client reading only it behaves exactly as before. The one refusal in
+the product is unchanged and is still enforced on the write path as
+`409 AUTHORITY_SET_ASIDE`, so the read path's `canAddToMatter: false` and the
+write path's refusal are the same decision from the same table. `evidence_defect`
+allows and shows no banner — a defect in our own parsing subtracts a warning and
+never adds a prohibition — and it must never be rendered as a verb about what a
+court did.
+
+The `POST` response carries the same three fields, computed from the same read
+that enforced the refusal, so the way in and the next list cannot disagree.
+
+**Note for whoever reconciles the two routes.** `GET /judgments/:id` serves
+`overruledStatus: policy.bannerStatus` (derived) alongside `overruledStatusStored`;
+this route still serves the stored column under `overruledStatus`. That
+difference predates R14 §A6, which is additive only and left `overruledStatus`
+explicitly unchanged, so it was NOT altered here. It is reported to NEW3 as an
+observation rather than silently changed.
 
 **`reporterCitations` — added 11 Aug 2026, RCC bus 0049.** The client reads
 citability as `neutralCitation === null AND reporterCitations.length === 0`,

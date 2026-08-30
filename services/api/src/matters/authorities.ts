@@ -73,6 +73,7 @@ import {
   precedentialEffect,
   precedentialPolicy,
   type OverruledStatus,
+  type PrecedentialEffect,
   attributionOf,
   mayStateAsHolding,
   precedentialEffectFromEdges,
@@ -103,7 +104,65 @@ type AuthorityRow = {
   overruled_note: string | null;
 };
 
-const shape = (r: AuthorityRow) => ({
+/**
+ * The three fields R14 §A6 added to this shape, derived from layer 2 HERE, on
+ * this request. `precedentialPolicy` is the one table that decides product
+ * behaviour (`precedential-effect.ts`), and calling it at render time is the
+ * whole point of the amendment: nothing about a judgment's standing may be
+ * copied onto `matter_authorities`, for exactly the reason `overruledStatus`
+ * already is not.
+ */
+const policyFields = (effect: PrecedentialEffect) => {
+  const policy = precedentialPolicy(effect);
+  return {
+    /** Layer 2 — what actually happened. Open-ended value set, R14 §A5. */
+    precedentialEffect: effect,
+    /** Layer 3 — what the product does. The same answer the write path enforces. */
+    canAddToMatter: policy.addToMatter === 'allow',
+    citableForUntouchedPropositions: policy.citableForUntouchedPropositions,
+  };
+};
+
+/**
+ * Every adverse inbound edge for a set of judgments, in ONE query.
+ *
+ * Character-for-character the SELECT `judgments/route.ts` runs for one judgment
+ * and `addAuthority` runs for the one being saved, widened to `= ANY(...)`
+ * because a matter's list is N authorities and N round trips is the wrong
+ * shape. The QUESTION is unchanged, which is what makes the three fields mean
+ * the same thing here as on `GET /judgments/:id`.
+ *
+ * A judgment with no adverse edge simply has no key in the map. That is the
+ * honest reading and it is the same one the single-judgment path takes: no edge
+ * recorded, which is not the same claim as "unknown".
+ */
+async function adverseEdgesByJudgment(
+  sql: Sql,
+  judgmentIds: readonly string[],
+): Promise<Map<string, TreatmentEdge[]>> {
+  const byJudgment = new Map<string, TreatmentEdge[]>();
+  if (judgmentIds.length === 0) return byJudgment;
+
+  const rows = await sql<
+    { cited_judgment_id: string; relationship: string; treatment_provenance: string | null }[]
+  >`
+    SELECT DISTINCT cited_judgment_id, relationship, treatment_provenance
+      FROM judgment_citations
+     WHERE cited_judgment_id = ANY(${judgmentIds as string[]}::uuid[])
+       AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+
+  for (const r of rows) {
+    const edges = byJudgment.get(r.cited_judgment_id) ?? [];
+    edges.push({
+      relationship: r.relationship,
+      provenance: r.treatment_provenance as TreatmentProvenance | null,
+    });
+    byJudgment.set(r.cited_judgment_id, edges);
+  }
+  return byJudgment;
+}
+
+const shape = (r: AuthorityRow, effect: PrecedentialEffect) => ({
   authorityId: r.id,
   judgmentId: r.judgment_id,
   caseTitle: r.case_title,
@@ -131,6 +190,17 @@ const shape = (r: AuthorityRow) => ({
   /** Required to render `partly_set_aside` at its own weight, not as a headline. */
   overruledParas: r.overruled_paras,
   overruledNote: r.overruled_note,
+  /**
+   * R14 §A6, additive and OPTIONAL on the wire — a client that ignores them
+   * behaves exactly as it did before. Derived, never stored: the module note
+   * above says why a status copied at save time is the cached value the harness
+   * forbids, and that reasoning does not stop at `overruledStatus`.
+   *
+   * They do NOT weaken anything. `bannerStatus` is untouched, `overruledStatus`
+   * still carries the stored column, and the one refusal in the product is still
+   * enforced on the write path below.
+   */
+  ...policyFields(effect),
 });
 
 /** Only the OWNER writes. A sharee can read a matter but not add to it — see module note. */
@@ -186,7 +256,26 @@ export async function listAuthorities(
     WHERE a.matter_id = ${matterId}
     ORDER BY a.added_at DESC`;
 
-  return ok(c, { authorities: rows.map(shape), asOf: new Date().toISOString() });
+  /* Read live, this request, for every row — the same rule `overruledStatus`
+   * already follows on this route. A relationship recorded after an authority
+   * was saved is reflected on the NEXT list, without the advocate resaving
+   * anything. */
+  const edgesByJudgment = await adverseEdgesByJudgment(
+    sql,
+    rows.map((r) => r.judgment_id),
+  );
+
+  const authorities = rows.map((r) =>
+    shape(
+      r,
+      precedentialEffectFromEdges({
+        overruledStatus: r.overruled_status as OverruledStatus,
+        edges: edgesByJudgment.get(r.judgment_id) ?? [],
+      }),
+    ),
+  );
+
+  return ok(c, { authorities, asOf: new Date().toISOString() });
 }
 
 export async function addAuthority(
@@ -353,25 +442,31 @@ export async function addAuthority(
     return ok(
       c,
       {
-        authority: shape({
-          id: row.id,
-          judgment_id: judgment.id,
-          case_title: judgment.case_title,
-          neutral_citation: judgment.neutral_citation,
-          reporter_citations: judgment.reporter_citations,
-          added_by_user_id: row.added_by_user_id,
-          added_at: row.added_at,
-          removed_at: row.removed_at,
-          // From the same read that just enforced the `set_aside` refusal —
-          // `doubted` and `partly_set_aside` are ADDABLE and must say so on the
-          // way in, not only on the next list. An authority that arrives
-          // unmarked and grows a mark on refresh reads as a bug, not a warning.
-          overruled_status: judgment.overruled_status,
-          overruled_by_judgment_id: judgment.overruled_by_judgment_id,
-          overruled_by_title: judgment.overruled_by_case_title,
-          overruled_paras: judgment.overruled_paras,
-          overruled_note: judgment.overruled_note,
-        }),
+        authority: shape(
+          {
+            id: row.id,
+            judgment_id: judgment.id,
+            case_title: judgment.case_title,
+            neutral_citation: judgment.neutral_citation,
+            reporter_citations: judgment.reporter_citations,
+            added_by_user_id: row.added_by_user_id,
+            added_at: row.added_at,
+            removed_at: row.removed_at,
+            // From the same read that just enforced the `set_aside` refusal —
+            // `doubted` and `partly_set_aside` are ADDABLE and must say so on the
+            // way in, not only on the next list. An authority that arrives
+            // unmarked and grows a mark on refresh reads as a bug, not a warning.
+            overruled_status: judgment.overruled_status,
+            overruled_by_judgment_id: judgment.overruled_by_judgment_id,
+            overruled_by_title: judgment.overruled_by_case_title,
+            overruled_paras: judgment.overruled_paras,
+            overruled_note: judgment.overruled_note,
+          },
+          /* The effect computed above, from the read that just enforced the
+           * refusal. The write path and the read path cannot disagree because
+           * there is only one derivation. */
+          effect,
+        ),
       },
       201,
     );
@@ -386,7 +481,7 @@ export async function addAuthority(
   // ON CONFLICT DO NOTHING with no existing live row means the unique index
   // did not fire, which should be unreachable — but never guess a response.
   if (!existing) return fail(c, 'INTERNAL_ERROR', 'could not add this authority', 500);
-  return ok(c, { authority: shape(existing) }, 200);
+  return ok(c, { authority: shape(existing, effect) }, 200);
 }
 
 export async function removeAuthority(

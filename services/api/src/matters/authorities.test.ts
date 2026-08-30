@@ -67,6 +67,16 @@ describe('matter authorities', () => {
   let movesJudgmentId: string;
   /** Pre-2013 shape: a reporter citation, no neutral one — RCC bus 0049. */
   let reporterOnlyJudgmentId: string;
+  /**
+   * R14 §A6 fixtures. Three judgments rather than one because the three fields
+   * are decided by a TABLE (`precedential-effect.ts`), and a table is only
+   * tested by the rows that disagree with each other: a set-aside that refuses,
+   * an overruling that ALLOWS despite the strongest banner, and a defect that
+   * must subtract a warning without adding a prohibition.
+   */
+  let policyJudgmentId: string;
+  let partJudgmentId: string;
+  let defectJudgmentId: string;
 
   before(async () => {
     owner = await seedAdvocate('own');
@@ -125,10 +135,44 @@ describe('matter authorities', () => {
               ${`test://authorities/${crypto.randomUUID()}`}, 'none')
       RETURNING id`;
     reporterOnlyJudgmentId = reporterOnly!.id;
+
+    // Good law when saved. Every R14 §A6 fact about it arrives later, which is
+    // the point: none of it may be captured onto `matter_authorities`.
+    const [policy] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Policy Fields Fixture', 'FIX 2022 INSC 4', '{}', 'Test Court',
+              '2022-01-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'none')
+      RETURNING id`;
+    policyJudgmentId = policy!.id;
+
+    const [part] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Partly Overruled Fixture', 'FIX 2021 INSC 5', '{}', 'Test Court',
+              '2021-01-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'partly_set_aside')
+      RETURNING id`;
+    partJudgmentId = part!.id;
+
+    // The Challappan shape: an adverse status whose ONLY evidence is a mood.
+    const [defect] = await sql<{ id: string }[]>`
+      INSERT INTO judgments (case_title, neutral_citation, reporter_citations, court,
+                             judgment_date, full_text, language, source_url, overruled_status)
+      VALUES ('SYNTHETIC — Evidence Defect Fixture', 'FIX 2020 INSC 6', '{}', 'Test Court',
+              '2020-06-01', 'synthetic fixture', 'en',
+              ${`test://authorities/${crypto.randomUUID()}`}, 'doubted')
+      RETURNING id`;
+    defectJudgmentId = defect!.id;
   });
 
   after(async () => {
     await sql`DELETE FROM matter_authorities WHERE matter_id = ${matterId}`;
+    // Every edge this suite wrote is cited FROM the replacement fixture, and
+    // `judgment_citations` is append-only in production — a test that leaves
+    // rows behind leaves a permanent adverse edge on a real judgment id.
+    await sql`DELETE FROM judgment_citations WHERE citing_judgment_id = ${replacementJudgmentId}`;
     await sql`DELETE FROM matters WHERE id = ${matterId}`;
     // Every fixture by PRIMARY KEY. See `replacementJudgmentId` for why the
     // title predicate that used to be here made this a 151 GB scan.
@@ -138,6 +182,9 @@ describe('matter authorities', () => {
       movesJudgmentId,
       reporterOnlyJudgmentId,
       replacementJudgmentId,
+      policyJudgmentId,
+      partJudgmentId,
+      defectJudgmentId,
     ]}::uuid[])`;
     for (const a of [owner, stranger]) {
       await sql`DELETE FROM users WHERE auth_id = ${a.authId}`;
@@ -281,6 +328,7 @@ describe('matter authorities', () => {
   /* ------------------------------------------ RCC bus 0048 — good-law status -- */
 
   type WireAuthority = {
+    authorityId: string;
     judgmentId: string;
     neutralCitation: string | null;
     reporterCitations: string[];
@@ -291,6 +339,10 @@ describe('matter authorities', () => {
     overruledByTitle: string | null;
     overruledParas: number[] | null;
     overruledNote: string | null;
+    /** R14 §A6 — optional on the wire, always served by this implementation. */
+    precedentialEffect: string;
+    canAddToMatter: boolean;
+    citableForUntouchedPropositions: boolean;
   };
 
   const listAuthority = async (wantedJudgmentId: string) => {
@@ -377,5 +429,184 @@ describe('matter authorities', () => {
     const fromList = await listAuthority(reporterOnlyJudgmentId);
     assert.equal(fromList?.neutralCitation, null, 'the fixture has none, by design');
     assert.deepEqual(fromList?.reporterCitations, ['(2001) 3 SCC 111'], 'and on the way back out');
+  });
+
+  /* ------------------------------------- R14 §A6 — precedential policy fields -- */
+
+  /**
+   * `precedentialEffect`, `canAddToMatter` and `citableForUntouchedPropositions`
+   * on the saved-authority shape. RCC filed CCR-RCC-S2-02 because the coarse
+   * four-value banner cannot say WHICH act happened, and rendering a specific
+   * relationship verb from it would state something legally different from the
+   * truth — proposition-level overruling shown as *"Set aside in"*.
+   *
+   * The whole contract is in one word: **live**. Semantics are identical to the
+   * same fields on `GET /judgments/:id`, read on THIS request, never a value
+   * captured when the authority was saved — the rule `overruledStatus` has
+   * followed on this route since RCC bus 0048.
+   */
+  const addAuthorityFor = async (id: string) =>
+    app.request(`/matters/${matterId}/authorities`, {
+      method: 'POST',
+      headers: auth(owner.token),
+      body: JSON.stringify({ judgmentId: id }),
+    });
+
+  it('a current authority says it is usable, on both the write and the read path', async () => {
+    const saved = await listAuthority(judgmentId);
+    assert.equal(saved?.precedentialEffect, 'none', 'no adverse treatment recorded');
+    assert.equal(saved?.canAddToMatter, true);
+    assert.equal(saved?.citableForUntouchedPropositions, true);
+
+    const res = await addAuthorityFor(policyJudgmentId);
+    assert.equal(res.status, 201);
+    const a = ((await res.json()) as { data: { authority: WireAuthority } }).data.authority;
+    // The POST response and the next GET must not disagree — an authority that
+    // arrives unmarked and grows a mark on refresh reads as a bug, not a warning.
+    assert.equal(a.precedentialEffect, 'none');
+    assert.equal(a.canAddToMatter, true);
+    assert.equal(a.citableForUntouchedPropositions, true);
+    assert.equal((await listAuthority(policyJudgmentId))?.precedentialEffect, 'none');
+  });
+
+  it('an authority set aside AFTER it was saved reports canAddToMatter false', async () => {
+    // Nothing on `matter_authorities` moves here. Only the judgment does.
+    await sql`
+      UPDATE judgments
+         SET overruled_status = 'set_aside',
+             overruled_by_judgment_id = ${replacementJudgmentId},
+             overruled_status_changed_at = now()
+       WHERE id = ${policyJudgmentId}`;
+
+    const a = await listAuthority(policyJudgmentId);
+    assert.ok(a, 'a set-aside authority is never silently dropped from the list');
+    assert.equal(a.precedentialEffect, 'set_aside');
+    assert.equal(a.canAddToMatter, false, 'the one refusal in the product, on the READ path');
+    assert.equal(
+      a.citableForUntouchedPropositions,
+      false,
+      'the decision between the parties is gone — there is nothing left to cite',
+    );
+    assert.equal(a.overruledStatus, 'set_aside', 'the banner is unchanged by any of this');
+
+    // Read and write agree: the same policy that reports `false` here is the
+    // one that returns 409 on the way in.
+    assert.equal((await addAuthorityFor(policyJudgmentId)).status, 409);
+  });
+
+  it('a RELATIONSHIP recorded later changes the fields on the next GET, with no resave', async () => {
+    const before = await listAuthority(policyJudgmentId);
+    assert.equal(before?.canAddToMatter, false, 'refused a moment ago, on the stored status alone');
+
+    /**
+     * THE PROOF THAT THE FIELDS ARE DERIVED AND NOT STORED.
+     *
+     * One row in `judgment_citations`, and nothing else in the system changes:
+     * the advocate does not resave, `matter_authorities` is not written, and the
+     * judgment's own `overruled_status` still says `set_aside`. If any part of
+     * the policy had been captured at save time, this GET would still refuse.
+     *
+     * The direction is OD-14's: an overruling leaves the decision between the
+     * original parties standing, so it ALLOWS while keeping the strongest
+     * banner. That is the case the coarse four-value status cannot express, and
+     * the reason CCR-RCC-S2-02 was filed.
+     */
+    await sql`
+      INSERT INTO judgment_citations
+        (citing_judgment_id, cited_judgment_id, citation_text, normalised_citation,
+         relationship, evidence, char_offset, treatment_provenance)
+      VALUES (${replacementJudgmentId}, ${policyJudgmentId}, 'SYNTHETIC — Policy Fields Fixture',
+              ${`test-norm-${crypto.randomUUID()}`}, 'overruled',
+              'we hold that the proposition is no longer good law', 0,
+              'COURT_REASONING_EXPLICIT')`;
+
+    const after = await listAuthority(policyJudgmentId);
+    assert.equal(after?.authorityId, before?.authorityId, 'the SAME saved row, never resaved');
+    assert.equal(after?.precedentialEffect, 'overruled', 'read live from the edge, this request');
+    assert.equal(after?.canAddToMatter, true, 'an overruled decision is still a decision');
+    assert.equal(after?.citableForUntouchedPropositions, true);
+    assert.equal(
+      after?.overruledStatus,
+      'set_aside',
+      'NOTHING here weakens a warning — the banner is untouched by the finer fact',
+    );
+
+    // And the write path now agrees with the read path in the other direction.
+    assert.equal((await addAuthorityFor(policyJudgmentId)).status, 200, 'already live, idempotent');
+  });
+
+  it('a partly-overruled authority is neither a set-aside nor a clean one', async () => {
+    await sql`
+      INSERT INTO judgment_citations
+        (citing_judgment_id, cited_judgment_id, citation_text, normalised_citation,
+         relationship, evidence, char_offset, treatment_provenance)
+      VALUES (${replacementJudgmentId}, ${partJudgmentId}, 'SYNTHETIC — Partly Overruled Fixture',
+              ${`test-norm-${crypto.randomUUID()}`}, 'overruled_in_part',
+              'to that extent the earlier view is no longer good law', 0,
+              'COURT_REASONING_EXPLICIT')`;
+
+    const res = await addAuthorityFor(partJudgmentId);
+    assert.equal(res.status, 201, 'part of a proposition overruled leaves the rest usable');
+    const a = ((await res.json()) as { data: { authority: WireAuthority } }).data.authority;
+    assert.equal(a.precedentialEffect, 'overruled_in_part');
+    assert.equal(a.canAddToMatter, true);
+    assert.equal(a.citableForUntouchedPropositions, true);
+    assert.equal(a.overruledStatus, 'partly_set_aside', 'the banner still says the law moved');
+
+    assert.equal((await listAuthority(partJudgmentId))?.precedentialEffect, 'overruled_in_part');
+  });
+
+  it('evidence_defect subtracts a warning and never adds a prohibition', async () => {
+    /**
+     * The stored `doubted` exists only because our own parser read a
+     * subjunctive as a holding — *"is sought to be overruled"*. A defect in our
+     * reading is a fact about US, not about the law, so it must not select a
+     * relationship verb and must not refuse an advocate good law.
+     */
+    await sql`
+      INSERT INTO judgment_citations
+        (citing_judgment_id, cited_judgment_id, citation_text, normalised_citation,
+         relationship, evidence, char_offset, treatment_provenance)
+      VALUES (${replacementJudgmentId}, ${defectJudgmentId}, 'SYNTHETIC — Evidence Defect Fixture',
+              ${`test-norm-${crypto.randomUUID()}`}, 'doubted',
+              'is sought to be overruled by the judgment proposed to be delivered', 0,
+              'MODALITY_DEFECT')`;
+
+    const res = await addAuthorityFor(defectJudgmentId);
+    assert.equal(res.status, 201, 'a grammatical mood is not grounds to refuse an authority');
+    const a = ((await res.json()) as { data: { authority: WireAuthority } }).data.authority;
+    assert.equal(a.precedentialEffect, 'evidence_defect');
+    assert.equal(a.canAddToMatter, true);
+    assert.equal(a.citableForUntouchedPropositions, true);
+
+    const listed = await listAuthority(defectJudgmentId);
+    assert.equal(listed?.precedentialEffect, 'evidence_defect', 'and on the read path too');
+    assert.notEqual(
+      listed?.precedentialEffect,
+      'doubted',
+      'the eighth value must never collapse into a verb about what a court did',
+    );
+  });
+
+  it('none of it is persisted — `matter_authorities` has no policy column', async () => {
+    // The contract says these fields are read live and never copied onto the
+    // saved row. That is a claim about the SCHEMA, so it is asserted against the
+    // schema rather than against a comment.
+    const columns = await sql<{ column_name: string }[]>`
+      SELECT column_name FROM information_schema.columns
+       WHERE table_name = 'matter_authorities'`;
+    const names = columns.map((c) => c.column_name);
+    for (const forbidden of [
+      'precedential_effect',
+      'can_add_to_matter',
+      'citable_for_untouched_propositions',
+      'overruled_status',
+    ]) {
+      assert.equal(
+        names.includes(forbidden),
+        false,
+        `${forbidden} on matter_authorities would be the cached legal state the harness forbids`,
+      );
+    }
   });
 });
