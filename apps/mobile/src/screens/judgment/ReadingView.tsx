@@ -64,6 +64,22 @@ const CONTROL_BAR_HEIGHT = 60;
  */
 const NUMBERED_SHARE_FLOOR = 0.5;
 
+/** Printed paragraph numbers are citations; array indexes are navigation handles. */
+export function paragraphIndexForNumber(
+  paragraphs: JudgmentParagraph[],
+  paragraphNumber: number,
+): number {
+  return paragraphs.findIndex((paragraph) => paragraph.paragraphNumber === paragraphNumber);
+}
+
+/** Returns no progress value for an unnumbered or missing row. */
+export function paragraphNumberForIndex(
+  paragraphs: JudgmentParagraph[],
+  index: number,
+): number | null {
+  return paragraphs[index]?.paragraphNumber ?? null;
+}
+
 type Props = {
   judgment: JudgmentDetail;
   onBack: () => void;
@@ -113,10 +129,7 @@ export function ReadingView({
    * highlighted too. The index is unique per paragraph and is what the server
    * stores alongside the number for exactly this reason.
    */
-  const highlighted = useMemo(
-    () => new Set(highlights.map((h) => h.paragraphIndex)),
-    [highlights]
-  );
+  const highlighted = useMemo(() => new Set(highlights.map((h) => h.paragraphIndex)), [highlights]);
 
   /**
    * ONE PATH FOR EVERY SAVE, WHETHER OR NOT A MATTER WAS PICKED.
@@ -155,7 +168,7 @@ export function ReadingView({
       const result = await addHighlight(highlight);
       if (!result.ok) setToastMessage(result.message);
     },
-    [addHighlight, judgment.judgmentId]
+    [addHighlight, judgment.judgmentId],
   );
 
   /**
@@ -176,7 +189,7 @@ export function ReadingView({
     knownTextSize.current = textSize;
     dip.value = withSequence(
       withTiming(0.5, { duration: 120, easing: easing.out }),
-      withTiming(1, { duration: 160, easing: easing.out })
+      withTiming(1, { duration: 160, easing: easing.out }),
     );
   }, [textSize, dip]);
 
@@ -202,8 +215,8 @@ export function ReadingView({
    * and a saved highlight.
    */
   const indexOfNumber = useCallback(
-    (n: number) => judgment.paragraphs.findIndex((p) => p.paragraphNumber === n),
-    [judgment.paragraphs]
+    (n: number) => paragraphIndexForNumber(judgment.paragraphs, n),
+    [judgment.paragraphs],
   );
 
   const [current, setCurrent] = useState(() => {
@@ -215,7 +228,9 @@ export function ReadingView({
       if (i >= 0) return i;
     }
     if (progress?.paragraphNumber !== undefined) {
-      const i = judgment.paragraphs.findIndex((p) => p.paragraphNumber === progress.paragraphNumber);
+      const i = judgment.paragraphs.findIndex(
+        (p) => p.paragraphNumber === progress.paragraphNumber,
+      );
       if (i >= 0) return i;
     }
     return 0;
@@ -242,12 +257,14 @@ export function ReadingView({
    *     input, so any future highlight built on those offsets would slice the
    *     wrong characters — and in Devanagari, mid-grapheme.
    */
-  const found = useMemo(() => findInJudgment(judgment.paragraphs, term), [judgment.paragraphs, term]);
+  const found = useMemo(
+    () => findInJudgment(judgment.paragraphs, term),
+    [judgment.paragraphs, term],
+  );
 
   /** Distinct paragraphs containing a match — what the dimming reads. */
   const hitParagraphs = useMemo(() => new Set(found.paragraphIndexes), [found.paragraphIndexes]);
   const currentHitParagraph = found.matches[hitIndex]?.paragraphIndex ?? null;
-
 
   /**
    * An explicit jump OUTRANKS the scroll position it causes.
@@ -335,10 +352,12 @@ export function ReadingView({
       }
 
       setCurrent(index);
-      if (paragraph.paragraphNumber !== null) setProgress(judgment.judgmentId, paragraph.paragraphNumber);
-      if (fromTap && paragraph.paragraphNumber !== null) onParagraphChange(paragraph.paragraphNumber);
+      if (paragraph.paragraphNumber !== null)
+        setProgress(judgment.judgmentId, paragraph.paragraphNumber);
+      if (fromTap && paragraph.paragraphNumber !== null)
+        onParagraphChange(paragraph.paragraphNumber);
     },
-    [judgment.paragraphs, judgment.judgmentId, offsetOf, onParagraphChange, setProgress]
+    [judgment.paragraphs, judgment.judgmentId, offsetOf, onParagraphChange, setProgress],
   );
 
   const jumpTo = useCallback((index: number) => goTo(index, { fromTap: true }), [goTo]);
@@ -366,8 +385,14 @@ export function ReadingView({
   });
 
   /** Keeps the stable callback below pointed at the current judgment. */
-  const setProgressRef = useRef((n: number) => setProgress(judgment.judgmentId, n));
-  setProgressRef.current = (n: number) => setProgress(judgment.judgmentId, n);
+  const setProgressRef = useRef((index: number) => {
+    const number = paragraphNumberForIndex(judgment.paragraphs, index);
+    if (number !== null) setProgress(judgment.judgmentId, number);
+  });
+  setProgressRef.current = (index: number) => {
+    const number = paragraphNumberForIndex(judgment.paragraphs, index);
+    if (number !== null) setProgress(judgment.judgmentId, number);
+  };
 
   /**
    * FlatList captures this callback once, so it must not be recreated between
@@ -377,7 +402,9 @@ export function ReadingView({
     ({ viewableItems }: { viewableItems: { item: JudgmentParagraph }[] }) => {
       // Indices, not printed numbers — an unnumbered header is still a row the
       // reading position has to be able to sit on.
-      const visible = viewableItems.map((v) => v.item?.paragraphIndex).filter((n) => n !== undefined);
+      const visible = viewableItems
+        .map((v) => v.item?.paragraphIndex)
+        .filter((n) => n !== undefined);
       if (!visible.length) return;
 
       const target = jumpTarget.current;
@@ -392,7 +419,7 @@ export function ReadingView({
       if (first === undefined) return;
       setCurrent(first);
       setProgressRef.current(first);
-    }
+    },
   ).current;
 
   /**
@@ -433,8 +460,10 @@ export function ReadingView({
     const saved = useReadingStore.getState().progress[judgment.judgmentId]?.paragraphNumber;
     const target = openParagraph ?? saved;
     const first = judgment.paragraphs[0]?.paragraphNumber;
-    if (target && target !== first) jumpTo(target);
-  }, [hydrated, judgment.judgmentId, judgment.paragraphs, jumpTo, openParagraph]);
+    if (target === undefined || target === first) return;
+    const index = indexOfNumber(target);
+    if (index >= 0) jumpTo(index);
+  }, [hydrated, indexOfNumber, judgment.judgmentId, judgment.paragraphs, jumpTo, openParagraph]);
 
   /**
    * Steps to the next OCCURRENCE and jumps to the PARAGRAPH holding it.
@@ -456,9 +485,7 @@ export function ReadingView({
     jumpTo(match.paragraphIndex);
   };
 
-  const readRatio = judgment.paragraphs.length
-    ? (current + 1) / judgment.paragraphs.length
-    : 0;
+  const readRatio = judgment.paragraphs.length ? (current + 1) / judgment.paragraphs.length : 0;
 
   /**
    * ANCHORS ARE HIDDEN WHOLESALE WHEN THE JUDGMENT IS MOSTLY UNNUMBERED.
@@ -597,161 +624,163 @@ export function ReadingView({
       */}
       <Animated.View style={[styles.listHost, dipStyle]}>
         <FlatList
-        contentContainerStyle={styles.list}
-        data={judgment.paragraphs}
-        /**
-         * KEYED ON THE INDEX, NOT THE PRINTED NUMBER.
-         *
-         * `String(p.paragraphNumber)` was correct while the number was required. It is
-         * not now: every unnumbered row keys to the string "null", so a
-         * judgment with two unnumbered paragraphs hands FlatList duplicate keys
-         * — rows are dropped, reused against the wrong content, and the
-         * measured heights `offsetOf` depends on are recorded against whichever
-         * row won. At `numberedShare` 0.5 that is half the judgment.
-         *
-         * Introduced by the nullable-number change and caught while reworking
-         * the search over the same rows. `index` is always present and unique,
-         * which is the whole reason it exists.
-         */
-        keyExtractor={(p) => String(p.paragraphIndex)}
-        /**
-         * `selected` and `highlighted` live in this component's state, not in
-         * `judgment.paragraphs` — VirtualizedList only re-renders a row when
-         * `data`, `extraData`, or the row's own item changes, so without this
-         * a tap sets `selected` correctly but the row never redraws to show
-         * the action bar. Found live on-device: taps were silently no-ops.
-         */
-        extraData={[selected, highlighted]}
-        onScrollToIndexFailed={({ index, averageItemLength }) => {
+          contentContainerStyle={styles.list}
+          data={judgment.paragraphs}
           /**
-           * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
+           * KEYED ON THE INDEX, NOT THE PRINTED NUMBER.
            *
-           * `scrollToIndex` fails when the row is outside the rendered window,
-           * and a judgment is long enough that most of it always is. Retrying
-           * fails identically, because nothing between the two attempts caused
-           * the row to render — so the jump was silently dropped.
+           * `String(p.paragraphNumber)` was correct while the number was required. It is
+           * not now: every unnumbered row keys to the string "null", so a
+           * judgment with two unnumbered paragraphs hands FlatList duplicate keys
+           * — rows are dropped, reused against the wrong content, and the
+           * measured heights `offsetOf` depends on are recorded against whichever
+           * row won. At `numberedShare` 0.5 that is half the judgment.
            *
-           * Observed with speech, which is where it actually bites: the voice
-           * reached ¶ 10 while the screen sat on ¶ 1, because each unrendered
-           * row failed to scroll, so no further rows rendered, so no further
-           * offsets were ever measured. A closed loop.
-           *
-           * `averageItemLength` is FlatList's own estimate at the moment of
-           * failure. Jumping to it renders rows around the target, which lets
-           * the exact `scrollToIndex` land on the retry — and `measure()` then
-           * records the true offset for next time.
+           * Introduced by the nullable-number change and caught while reworking
+           * the search over the same rows. `index` is always present and unique,
+           * which is the whole reason it exists.
            */
-          listRef.current?.scrollToOffset({
-            offset: index * averageItemLength,
-            animated: false,
-          });
-          setTimeout(() => listRef.current?.scrollToIndex({ index, animated: false }), 80);
-        }}
-        onViewableItemsChanged={onViewableItemsChanged}
-        ref={listRef}
-        renderItem={({ item }) => (
-          <Paragraph
-            dimmed={
-              // Non-matching paragraphs stay at 50% so the eye lands on the hit.
-              // Compared by INDEX, never by object identity: a re-fetch of the
-              // same judgment produces equal rows that are not the same objects,
-              // and identity comparison would silently dim every paragraph.
-              (!found.tooShort && found.matches.length > 0 && !hitParagraphs.has(item.paragraphIndex)) ||
-              (!term && item.paragraphIndex !== current)
-            }
-            // By index, matching the Set above — an unnumbered paragraph can
-            // now be highlighted, so the number is no longer a usable key.
-            highlighted={highlighted.has(item.paragraphIndex)}
-            isCurrentHit={currentHitParagraph === item.paragraphIndex}
-            onMeasure={measure}
-            showAnchor={showAnchors && item.paragraphNumber !== null}
-            onLink={() => {
-              /**
-               * ONLY A NUMBERED PARAGRAPH IS A LINK. An unnumbered header has
-               * no citable location, so tapping it moves the reading position
-               * without writing an anchor nobody could cite back.
-               */
-              haptics.commit();
-              setSelected(item.paragraphIndex);
-              if (item.paragraphNumber !== null) onParagraphChange(item.paragraphNumber);
-            }}
-            onOpenCited={
-              item.citesJudgmentId ? () => onOpenJudgment(item.citesJudgmentId!) : undefined
-            }
-            onCopy={() => {
-              void Clipboard.setStringAsync(item.text);
-              setToastMessage('Copied.');
-            }}
-            onLinkCopy={() => {
-              void Clipboard.setStringAsync(`${judgment.caseTitle} ¶ ${item.paragraphNumber}`);
-              setToastMessage('Copied.');
-            }}
-            onPickMatter={() => setPickerFor(item)}
-            onRemoveHighlight={() => {
-              /*
+          keyExtractor={(p) => String(p.paragraphIndex)}
+          /**
+           * `selected` and `highlighted` live in this component's state, not in
+           * `judgment.paragraphs` — VirtualizedList only re-renders a row when
+           * `data`, `extraData`, or the row's own item changes, so without this
+           * a tap sets `selected` correctly but the row never redraws to show
+           * the action bar. Found live on-device: taps were silently no-ops.
+           */
+          extraData={[selected, highlighted]}
+          onScrollToIndexFailed={({ index, averageItemLength }) => {
+            /**
+             * RETRYING THE SAME CALL CANNOT WORK, AND USED TO BE WHAT THIS DID.
+             *
+             * `scrollToIndex` fails when the row is outside the rendered window,
+             * and a judgment is long enough that most of it always is. Retrying
+             * fails identically, because nothing between the two attempts caused
+             * the row to render — so the jump was silently dropped.
+             *
+             * Observed with speech, which is where it actually bites: the voice
+             * reached ¶ 10 while the screen sat on ¶ 1, because each unrendered
+             * row failed to scroll, so no further rows rendered, so no further
+             * offsets were ever measured. A closed loop.
+             *
+             * `averageItemLength` is FlatList's own estimate at the moment of
+             * failure. Jumping to it renders rows around the target, which lets
+             * the exact `scrollToIndex` land on the retry — and `measure()` then
+             * records the true offset for next time.
+             */
+            listRef.current?.scrollToOffset({
+              offset: index * averageItemLength,
+              animated: false,
+            });
+            setTimeout(() => listRef.current?.scrollToIndex({ index, animated: false }), 80);
+          }}
+          onViewableItemsChanged={onViewableItemsChanged}
+          ref={listRef}
+          renderItem={({ item }) => (
+            <Paragraph
+              dimmed={
+                // Non-matching paragraphs stay at 50% so the eye lands on the hit.
+                // Compared by INDEX, never by object identity: a re-fetch of the
+                // same judgment produces equal rows that are not the same objects,
+                // and identity comparison would silently dim every paragraph.
+                (!found.tooShort &&
+                  found.matches.length > 0 &&
+                  !hitParagraphs.has(item.paragraphIndex)) ||
+                (!term && item.paragraphIndex !== current)
+              }
+              // By index, matching the Set above — an unnumbered paragraph can
+              // now be highlighted, so the number is no longer a usable key.
+              highlighted={highlighted.has(item.paragraphIndex)}
+              isCurrentHit={currentHitParagraph === item.paragraphIndex}
+              onMeasure={measure}
+              showAnchor={showAnchors && item.paragraphNumber !== null}
+              onLink={() => {
+                /**
+                 * ONLY A NUMBERED PARAGRAPH IS A LINK. An unnumbered header has
+                 * no citable location, so tapping it moves the reading position
+                 * without writing an anchor nobody could cite back.
+                 */
+                haptics.commit();
+                setSelected(item.paragraphIndex);
+                if (item.paragraphNumber !== null) onParagraphChange(item.paragraphNumber);
+              }}
+              onOpenCited={
+                item.citesJudgmentId ? () => onOpenJudgment(item.citesJudgmentId!) : undefined
+              }
+              onCopy={() => {
+                void Clipboard.setStringAsync(item.text);
+                setToastMessage('Copied.');
+              }}
+              onLinkCopy={() => {
+                void Clipboard.setStringAsync(`${judgment.caseTitle} ¶ ${item.paragraphNumber}`);
+                setToastMessage('Copied.');
+              }}
+              onPickMatter={() => setPickerFor(item)}
+              onRemoveHighlight={() => {
+                /*
                 The highlight to remove is the one on THIS paragraph, found by
                 index — the same key the highlighted Set uses, and the only one
                 that is unique on an unnumbered judgment.
               */
-              const mark = highlights.find((h) => h.paragraphIndex === item.paragraphIndex);
-              if (!mark) return;
-              haptics.commit();
-              void removeHighlight(mark);
-            }}
-            onSaveToMatter={
-              /**
-               * ─────────────────────────────────────────────────────────────
-               * BOTH SAVES ARE OFFERED ON AN UNNUMBERED PARAGRAPH TOO —
-               * corrected 11 Aug 2026, and this replaces a considered comment
-               * rather than an oversight, so the reasoning is set out in full.
-               * ─────────────────────────────────────────────────────────────
-               *
-               * WHAT STOOD HERE: *"A highlight is a citation, so it needs a
-               * citable paragraph. PD-9 item 3 saves a passage to a matter,
-               * where it is quoted with '¶ n'. An unnumbered row has no n, and
-               * saving it under an index would put a fabricated paragraph
-               * reference into a matter file."* Both actions were therefore
-               * `undefined`, so nothing happened when either was used.
-               *
-               * WHAT PD-9 ACTUALLY SAYS: *"highlight and save a passage to a
-               * matter."* It requires no printed number and mandates no "¶ n"
-               * quotation format. The requirement was an inference layered on
-               * the decision in this comment, not the decision itself — so
-               * removing it is not reopening PD-9.
-               *
-               * WHAT THE SERVER SAYS: `annotationBody` types `paragraphNumber`
-               * `.nullable()` — *"Null on an unnumbered judgment"* — on BOTH
-               * paths, with and without `matterId`. The module note goes
-               * further: *"an advocate has every reason to highlight the
-               * paragraph that was set aside, and blocking that would teach
-               * them the product is broken rather than careful."* The same
-               * sentence answers this case.
-               *
-               * AND NOTHING FABRICATES A NUMBER. `judgment_annotations` stores
-               * `paragraph_number` nullable, `assemble.ts` carries the null
-               * through to the briefing, and no surface interpolates it — the
-               * reader's own copy label was the last one that did, fixed the
-               * same day. The risk the old comment guarded against is real; it
-               * is simply not present.
-               *
-               * WHO THIS AFFECTED: every headnote, and every pre-1990s scan
-               * whose numbering did not survive OCR. The same judgments that
-               * carry no citation — so the population the corpus serves worst
-               * was also the one that could not keep a passage from it, and
-               * the button gave no reason at all.
-               *
-               * NO MATTER ID HERE — this is the long-press shortcut, "save the
-               * passage on its own." The action row's own "Save to matter"
-               * button opens the picker (`onPickMatter`) instead.
-               */
-              () => void saveHighlight(item)
-            }
-            paragraph={item}
-            selected={selected === item.paragraphIndex}
-            textSize={textSize}
-          />
-        )}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
+                const mark = highlights.find((h) => h.paragraphIndex === item.paragraphIndex);
+                if (!mark) return;
+                haptics.commit();
+                void removeHighlight(mark);
+              }}
+              onSaveToMatter={
+                /**
+                 * ─────────────────────────────────────────────────────────────
+                 * BOTH SAVES ARE OFFERED ON AN UNNUMBERED PARAGRAPH TOO —
+                 * corrected 11 Aug 2026, and this replaces a considered comment
+                 * rather than an oversight, so the reasoning is set out in full.
+                 * ─────────────────────────────────────────────────────────────
+                 *
+                 * WHAT STOOD HERE: *"A highlight is a citation, so it needs a
+                 * citable paragraph. PD-9 item 3 saves a passage to a matter,
+                 * where it is quoted with '¶ n'. An unnumbered row has no n, and
+                 * saving it under an index would put a fabricated paragraph
+                 * reference into a matter file."* Both actions were therefore
+                 * `undefined`, so nothing happened when either was used.
+                 *
+                 * WHAT PD-9 ACTUALLY SAYS: *"highlight and save a passage to a
+                 * matter."* It requires no printed number and mandates no "¶ n"
+                 * quotation format. The requirement was an inference layered on
+                 * the decision in this comment, not the decision itself — so
+                 * removing it is not reopening PD-9.
+                 *
+                 * WHAT THE SERVER SAYS: `annotationBody` types `paragraphNumber`
+                 * `.nullable()` — *"Null on an unnumbered judgment"* — on BOTH
+                 * paths, with and without `matterId`. The module note goes
+                 * further: *"an advocate has every reason to highlight the
+                 * paragraph that was set aside, and blocking that would teach
+                 * them the product is broken rather than careful."* The same
+                 * sentence answers this case.
+                 *
+                 * AND NOTHING FABRICATES A NUMBER. `judgment_annotations` stores
+                 * `paragraph_number` nullable, `assemble.ts` carries the null
+                 * through to the briefing, and no surface interpolates it — the
+                 * reader's own copy label was the last one that did, fixed the
+                 * same day. The risk the old comment guarded against is real; it
+                 * is simply not present.
+                 *
+                 * WHO THIS AFFECTED: every headnote, and every pre-1990s scan
+                 * whose numbering did not survive OCR. The same judgments that
+                 * carry no citation — so the population the corpus serves worst
+                 * was also the one that could not keep a passage from it, and
+                 * the button gave no reason at all.
+                 *
+                 * NO MATTER ID HERE — this is the long-press shortcut, "save the
+                 * passage on its own." The action row's own "Save to matter"
+                 * button opens the picker (`onPickMatter`) instead.
+                 */
+                () => void saveHighlight(item)
+              }
+              paragraph={item}
+              selected={selected === item.paragraphIndex}
+              textSize={textSize}
+            />
+          )}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
         />
       </Animated.View>
 
@@ -837,7 +866,7 @@ export function ReadingView({
           highlights.length > 0
             ? () => {
                 const first = [...highlights].sort(
-                  (a, b) => a.paragraphIndex - b.paragraphIndex
+                  (a, b) => a.paragraphIndex - b.paragraphIndex,
                 )[0];
                 if (!first) return;
                 setSheetOpen(false);
@@ -913,7 +942,9 @@ function Paragraph({
       */}
       <Pressable
         accessibilityLabel={
-          paragraph.paragraphNumber === null ? 'Paragraph' : `Paragraph ${paragraph.paragraphNumber}`
+          paragraph.paragraphNumber === null
+            ? 'Paragraph'
+            : `Paragraph ${paragraph.paragraphNumber}`
         }
         accessibilityRole="button"
         onPress={onLink}

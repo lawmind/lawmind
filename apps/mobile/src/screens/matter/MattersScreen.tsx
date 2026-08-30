@@ -76,7 +76,7 @@ export function MattersScreen({
         <EmptyState
           icon={FolderOpen}
           title="Sign in to see your matters"
-          body="Six months of research, drafts and hearing history live behind your account."
+          body="Your research and hearing history live behind your account."
           actions={[{ label: 'Sign in', onPress: () => router.push('/sign-in' as never) }]}
         />
       </Screen>
@@ -107,8 +107,10 @@ export function MattersScreen({
           <EmptyState
             icon={FolderOpen}
             title="No matters yet"
-            body="Add a case and Lawmind prepares you the night before every hearing."
-            actions={[{ label: 'Add a matter', onPress: () => router.push('/matter/new' as never) }]}
+            body="Add a case to keep its hearing dates and authorities together."
+            actions={[
+              { label: 'Add a matter', onPress: () => router.push('/matter/new' as never) },
+            ]}
           />
         ) : null}
 

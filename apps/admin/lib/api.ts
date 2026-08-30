@@ -15,11 +15,27 @@
  * `NEXT_PUBLIC_API_URL` is inlined at build time by Next.js (the
  * `NEXT_PUBLIC_` prefix is what makes an env var reach browser code at all).
  * Set it per environment in Railway/hosting config or a local `.env.local`.
- * The fallback below is today's only known deployment and stays wrong until
- * FQ-HOSTING (docs/FOUNDER_QUEUE.md) lands a real one — it is a fallback, not
- * an endorsement.
+ *
+ * FAIL CLOSED, NOT SILENTLY WRONG — same defect and same fix as
+ * `apps/mobile/src/api/client.ts`. Until 22 Aug 2026 a missing var fell back
+ * to `api-production-1c0b4.up.railway.app`, 0 active deployments since 11 Aug,
+ * in every environment including a real production build. `next dev` alone
+ * gets a local default; any other build throws at import time rather than
+ * guessing a URL nobody chose. FQ-HOSTING (docs/FOUNDER_QUEUE.md) still owns
+ * the real per-environment URL.
  */
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api-production-1c0b4.up.railway.app';
+function resolveBaseUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_API_URL;
+  if (configured) return configured;
+  if (process.env.NODE_ENV !== 'production') return 'http://localhost:3000';
+  throw new Error(
+    'NEXT_PUBLIC_API_URL is not set on a production build. Refusing to fall back to a ' +
+      'guessed API URL — set it in the hosting environment for this deployment. ' +
+      'See docs/FOUNDER_QUEUE.md FQ-HOSTING.'
+  );
+}
+
+const BASE_URL = resolveBaseUrl();
 
 const TIMEOUT_MS = 15_000;
 

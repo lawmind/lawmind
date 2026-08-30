@@ -309,7 +309,7 @@ describe('good-law status, live from bus 0048/0049 (LCC dd9871b)', () => {
     expect(screen.queryByText(/does not yet show whether an authority/)).toBeNull();
   });
 
-  it('draws the LAW MOVED mark, strikes the title and names the replacement for a set-aside authority', async () => {
+  it('draws the LAW MOVED mark and names the later judgment without inventing its relationship', async () => {
     matterAuthorities.mockResolvedValue({
       ok: true,
       data: {
@@ -327,7 +327,10 @@ describe('good-law status, live from bus 0048/0049 (LCC dd9871b)', () => {
     await draw();
 
     expect(await screen.findByText('Overruled')).toBeTruthy();
-    expect(await screen.findByText(/Set aside in Mock Successor v\. Union of India/)).toBeTruthy();
+    expect(
+      await screen.findByText(/Later judgment: Mock Successor v\. Union of India/),
+    ).toBeTruthy();
+    expect(screen.queryByText(/Set aside in Mock Successor/)).toBeNull();
   });
 
   it('states what still stands on a partly set-aside authority, before what fell', async () => {

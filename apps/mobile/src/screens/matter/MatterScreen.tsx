@@ -21,6 +21,7 @@ import type {
 import { fire } from '../../analytics/track';
 import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
+import { treatmentRelationshipCopy } from '../../citation/treatmentRelationship';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
@@ -572,8 +573,7 @@ export function MatterScreen({
                       {/* Named, not merely flagged — the server joins who displaced it. */}
                       {moved.kind === 'moved' && a.overruledByTitle ? (
                         <Text variant="ui" style={styles.overruledBy}>
-                          {moved.status === 'doubted' ? 'Doubted in' : 'Set aside in'}{' '}
-                          {a.overruledByTitle}
+                          {treatmentRelationshipCopy(a.overruledByTitle)}
                         </Text>
                       ) : null}
 

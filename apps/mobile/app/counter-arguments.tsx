@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { CounterArgumentsScreen } from '../src/screens/draft/CounterArgumentsScreen';
+import { CapabilityBoundary } from '../src/components/CapabilityBoundary';
 
 /**
  * Counter-arguments — `FEATURE_PARITY.md` §2.9.
@@ -14,9 +15,9 @@ export default function Route() {
   const { matterId } = useLocalSearchParams<{ matterId?: string }>();
 
   return (
-    <>
+    <CapabilityBoundary surface="counterArguments">
       <Stack.Screen options={{ title: 'Counter-arguments' }} />
       <CounterArgumentsScreen matterId={matterId} onBack={() => router.back()} />
-    </>
+    </CapabilityBoundary>
   );
 }

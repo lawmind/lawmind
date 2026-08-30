@@ -47,7 +47,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
 
   const submitIdentity = async () => {
     if (fullName.trim().length < 2) {
-      setFailure('We need a name to put on your drafts.');
+      setFailure('We need a name for your account.');
       return;
     }
     if (phone.trim().length < 6) {
@@ -81,7 +81,7 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             How should we address you?
           </Text>
           <Text variant="ui" style={styles.muted}>
-            This is the name that appears on drafts you export.
+            This is the name shown on your account.
           </Text>
 
           <Input
@@ -195,7 +195,7 @@ function ConsentStep({ onAccepted }: { onAccepted: () => void }) {
         </Text>
         <View style={styles.oxbloodRule} />
 
-        <Text variant="uiStrong">Lawmind drafts. You are the advocate.</Text>
+        <Text variant="uiStrong">Lawmind assists. You are the advocate.</Text>
         <Text variant="ui" style={styles.muted}>
           Read these once — they will not be shown again, and nothing you produce will carry a
           disclaimer.

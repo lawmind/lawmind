@@ -139,15 +139,16 @@ export function TodayScreen() {
    */
   const tomorrowIds = useMemo(
     () => week.filter((m) => m.daysAway === 1).map((m) => m.matter.matterId),
-    [week]
+    [week],
   );
   useEffect(() => {
+    if (!briefingEnabled) return;
     for (const id of tomorrowIds) void loadBriefings(id);
-  }, [tomorrowIds, loadBriefings]);
+  }, [briefingEnabled, tomorrowIds, loadBriefings]);
 
   const ready = useMemo(
     () => tomorrowsBriefing(matters, briefings, today),
-    [matters, briefings, today]
+    [matters, briefings, today],
   );
 
   /**
@@ -181,7 +182,7 @@ export function TodayScreen() {
         <EmptyState
           icon={CalendarDays}
           title="Sign in to see your day"
-          body="Your matters, tomorrow's briefing and today's listings live behind your account."
+          body="Your matters and today's listings live behind your account."
           actions={[{ label: 'Sign in', onPress: () => router.push('/sign-in' as never) }]}
         />
       </Screen>
@@ -236,11 +237,23 @@ export function TodayScreen() {
         {/* 1 · listed today */}
         {listed.length > 0 ? (
           <View style={styles.block}>
-            <SectionRule label={listed.length === 1 ? 'Listed today' : `Listed today · ${listed.length}`} accent />
+            <SectionRule
+              label={listed.length === 1 ? 'Listed today' : `Listed today · ${listed.length}`}
+              accent
+            />
             {listed.map((row) => (
-              <HearingRow key={row.matter.matterId} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })} />
+              <HearingRow
+                key={row.matter.matterId}
+                row={row}
+                onPress={() =>
+                  router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })
+                }
+              />
             ))}
-            <Pressable onPress={() => router.push('/cause-list' as never)} style={styles.causeListLink}>
+            <Pressable
+              onPress={() => router.push('/cause-list' as never)}
+              style={styles.causeListLink}
+            >
               <Text variant="ui" style={styles.link}>
                 Open the cause list
               </Text>
@@ -302,7 +315,8 @@ export function TodayScreen() {
               One bug was hiding the other.
             */}
             <Text variant="ui" style={styles.muted}>
-              Prepared {formatGutter(parseCivilDate(ready.briefing.generatedAt.slice(0, 10)) ?? today)}
+              Prepared{' '}
+              {formatGutter(parseCivilDate(ready.briefing.generatedAt.slice(0, 10)) ?? today)}
             </Text>
 
             <Button
@@ -373,7 +387,13 @@ export function TodayScreen() {
           <View style={styles.block}>
             <SectionRule label="Also this week" />
             {week.map((row) => (
-              <HearingRow key={row.matter.matterId} row={row} onPress={() => router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })} />
+              <HearingRow
+                key={row.matter.matterId}
+                row={row}
+                onPress={() =>
+                  router.push({ pathname: '/matter/[id]', params: { id: row.matter.matterId } })
+                }
+              />
             ))}
           </View>
         ) : null}
@@ -385,7 +405,12 @@ export function TodayScreen() {
             {missed.map((row) => (
               <Pressable
                 key={row.matter.matterId}
-                onPress={() => router.push({ pathname: '/adjournment/[id]', params: { id: row.matter.matterId } })}
+                onPress={() =>
+                  router.push({
+                    pathname: '/adjournment/[id]',
+                    params: { id: row.matter.matterId },
+                  })
+                }
                 style={styles.row}
               >
                 <Text variant="record" style={styles.gutter}>
@@ -407,8 +432,10 @@ export function TodayScreen() {
           <EmptyState
             icon={CalendarDays}
             title="No matters yet"
-            body="Add a case and Lawmind prepares you the night before every hearing."
-            actions={[{ label: 'Add a matter', onPress: () => router.push('/matter/new' as never) }]}
+            body="Add a case to keep its hearing dates and authorities together."
+            actions={[
+              { label: 'Add a matter', onPress: () => router.push('/matter/new' as never) },
+            ]}
           />
         ) : null}
 

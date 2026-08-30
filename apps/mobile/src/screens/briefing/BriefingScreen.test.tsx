@@ -95,7 +95,9 @@ const briefing = (over: Partial<Briefing> = {}): Briefing => ({
         { eventId: 'evt_2', eventDate: '2026-07-02', description: 'Application for interim stay' },
       ],
     },
-    authorities: [{ judgmentId: 'jdg_1', addedAt: '2026-07-20T00:00:00.000Z', paragraphNumber: 14 }],
+    authorities: [
+      { judgmentId: 'jdg_1', addedAt: '2026-07-20T00:00:00.000Z', paragraphNumber: 14 },
+    ],
     checklist: [
       { id: 'chk_1', text: 'Carry the certified copy', basis: 'No copy is recorded on the matter' },
     ],
@@ -106,9 +108,7 @@ const briefing = (over: Partial<Briefing> = {}): Briefing => ({
 
 const draw = async (over: Partial<Briefing> = {}) => {
   briefingCall.mockResolvedValue({ ok: true, data: { briefing: briefing(over) } });
-  await render(
-    <BriefingScreen briefingId="brf_1" onClose={() => {}} onOpenJudgment={() => {}} />
-  );
+  await render(<BriefingScreen briefingId="brf_1" onClose={() => {}} onOpenJudgment={() => {}} />);
 };
 
 beforeEach(() => {
@@ -195,7 +195,7 @@ describe('a block with nothing in it', () => {
     await draw({ blocks: null });
 
     expect(
-      await screen.findByText('This briefing could not be read. Nothing has been lost.')
+      await screen.findByText('This briefing could not be read. Nothing has been lost.'),
     ).toBeTruthy();
   });
 });
@@ -260,7 +260,7 @@ describe('whether the hearing date is confirmed', () => {
     });
 
     expect(
-      await screen.findByText(/The cause list for this court was not published\./)
+      await screen.findByText(/The cause list for this court was not published\./),
     ).toBeTruthy();
   });
 });
@@ -301,6 +301,7 @@ describe('an authority whose law has moved', () => {
       authorities: [
         authority({
           overruledStatus: 'set_aside',
+          precedentialEffect: 'set_aside',
           overruledByJudgmentId: 'jdg_9',
           overruledByTitle: 'Mock Later Bench v. Mock Union',
         }),
@@ -308,6 +309,37 @@ describe('an authority whose law has moved', () => {
     });
 
     expect(await screen.findByText('Set aside in Mock Later Bench v. Mock Union')).toBeTruthy();
+  });
+
+  it('names overruling accurately and never calls it set-aside', async () => {
+    await draw({
+      authorities: [
+        authority({
+          overruledStatus: 'set_aside',
+          precedentialEffect: 'overruled',
+          overruledByTitle: 'Mock Constitutional Bench v. Mock Union',
+        }),
+      ],
+    });
+
+    expect(
+      await screen.findByText('Overruled by Mock Constitutional Bench v. Mock Union'),
+    ).toBeTruthy();
+    expect(screen.queryByText(/Set aside in Mock Constitutional Bench/)).toBeNull();
+  });
+
+  it('uses neutral copy when the exact relationship is absent', async () => {
+    await draw({
+      authorities: [
+        authority({
+          overruledStatus: 'set_aside',
+          overruledByTitle: 'Mock Later Bench v. Mock Union',
+        }),
+      ],
+    });
+
+    expect(await screen.findByText('Later judgment: Mock Later Bench v. Mock Union')).toBeTruthy();
+    expect(screen.queryByText(/Set aside in Mock Later Bench/)).toBeNull();
   });
 
   it('draws no moved mark on an authority that is still good law', async () => {
@@ -353,7 +385,7 @@ describe('whether the authority exists', () => {
       await draw({ authorities: [authority({ verificationState })] });
 
       expect(await screen.findByText('Do not file this without checking it')).toBeTruthy();
-    }
+    },
   );
 
   /**
@@ -392,9 +424,7 @@ describe('an authority that could not be read', () => {
     });
 
     expect(await screen.findByText('This authority could not be read just now')).toBeTruthy();
-    expect(
-      screen.getByText(/It has not been removed from your briefing\./)
-    ).toBeTruthy();
+    expect(screen.getByText(/It has not been removed from your briefing\./)).toBeTruthy();
   });
 
   it('counts toward what needs attention before going in', async () => {
@@ -430,6 +460,22 @@ describe('saving an authority from the briefing', () => {
     expect(addAuthority).toHaveBeenCalledWith({ matterId: 'mat_1', judgmentId: 'jdg_1' });
   });
 
+  it('keeps save available when OD-14 says an overruled authority remains addable', async () => {
+    await draw({
+      authorities: [
+        authority({
+          overruledStatus: 'set_aside',
+          precedentialEffect: 'overruled',
+          addToMatterAllowed: true,
+          canAddToMatter: true,
+        }),
+      ],
+    });
+
+    expect(await screen.findByText('Save to this matter')).toBeTruthy();
+    expect(screen.queryByText(/cannot be added to the matter/)).toBeNull();
+  });
+
   it('says so once it has saved, and stops offering the action', async () => {
     await draw();
 
@@ -452,9 +498,7 @@ describe('saving an authority from the briefing', () => {
     await draw();
     await fireEvent.press(await screen.findByText('Save to this matter'));
 
-    expect(
-      await screen.findByText(/Cite Mock Later Bench v. Mock Union instead\./)
-    ).toBeTruthy();
+    expect(await screen.findByText(/Cite Mock Later Bench v. Mock Union instead\./)).toBeTruthy();
   });
 
   /**
@@ -470,8 +514,8 @@ describe('saving an authority from the briefing', () => {
 
     expect(
       await screen.findByText(
-        'This authority has been set aside, so it cannot be added to the matter.'
-      )
+        'This authority has been set aside, so it cannot be added to the matter.',
+      ),
     ).toBeTruthy();
     expect(screen.queryByText('Save to this matter')).toBeNull();
   });

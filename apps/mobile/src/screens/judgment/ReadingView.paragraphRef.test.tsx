@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import * as Clipboard from 'expo-clipboard';
 
-import { ReadingView } from './ReadingView';
+import { paragraphIndexForNumber, paragraphNumberForIndex, ReadingView } from './ReadingView';
 import { MOCK_JUDGMENTS } from '../../api/fixtures';
 import { useReadingStore } from '../../state/reading';
 import type { JudgmentDetail } from '../../api/contract';
@@ -39,9 +39,7 @@ jest.mock('expo-speech', () => ({
   isSpeakingAsync: jest.fn(() => Promise.resolve(false)),
 }));
 
-const setString = Clipboard.setStringAsync as jest.MockedFunction<
-  typeof Clipboard.setStringAsync
->;
+const setString = Clipboard.setStringAsync as jest.MockedFunction<typeof Clipboard.setStringAsync>;
 
 const base = Object.values(MOCK_JUDGMENTS)[0] as JudgmentDetail;
 
@@ -55,14 +53,19 @@ const judgmentWith = (paragraphs: JudgmentDetail['paragraphs']): JudgmentDetail 
 const numbered = { paragraphIndex: 1, paragraphNumber: 7, text: 'A numbered paragraph.' };
 const unnumbered = { paragraphIndex: 0, paragraphNumber: null, text: 'The headnote.' };
 
-const draw = async (judgment: JudgmentDetail, onOpenJudgment = jest.fn()) => {
+const draw = async (
+  judgment: JudgmentDetail,
+  onOpenJudgment = jest.fn(),
+  openParagraph?: number,
+) => {
   const view = await render(
     <ReadingView
       judgment={judgment}
       onBack={() => {}}
       onOpenJudgment={onOpenJudgment}
+      openParagraph={openParagraph}
       onParagraphChange={() => {}}
-    />
+    />,
   );
   return { view, onOpenJudgment };
 };
@@ -126,7 +129,7 @@ describe('citation navigation — live 11 Aug 2026', () => {
 
   it('opens exactly the judgment the server named, never a search', async () => {
     const { onOpenJudgment } = await draw(
-      judgmentWith([{ ...numbered, citesJudgmentId: 'jdg_cited' }])
+      judgmentWith([{ ...numbered, citesJudgmentId: 'jdg_cited' }]),
     );
 
     await fireEvent.press(await screen.findByText('Open the judgment cited here'));
@@ -325,6 +328,30 @@ describe('jumping from the reading sheet', () => {
 
     // The sheet stays open — nothing was jumped to, and nothing crashed.
     expect(screen.getByText('Holding')).toBeTruthy();
+  });
+});
+
+describe('deep links and reading progress keep printed numbers separate from indexes', () => {
+  const offsetJudgment = () => judgmentWith([unnumbered, numbered]);
+
+  beforeEach(() => {
+    useReadingStore.setState({ highlights: [], progress: {}, hydrated: true });
+  });
+
+  it('opens a deep link on the paragraph the printed number names', async () => {
+    await draw(offsetJudgment(), jest.fn(), 7);
+    expect(screen.getByText('¶ 7 of 2')).toBeTruthy();
+  });
+
+  it('converts a printed number to its actual navigation index', () => {
+    expect(paragraphIndexForNumber(offsetJudgment().paragraphs, 7)).toBe(1);
+    expect(paragraphIndexForNumber(offsetJudgment().paragraphs, 999)).toBe(-1);
+  });
+
+  it('persists the printed number for a numbered index and nothing for an unnumbered one', () => {
+    expect(paragraphNumberForIndex(offsetJudgment().paragraphs, 1)).toBe(7);
+    expect(paragraphNumberForIndex(offsetJudgment().paragraphs, 0)).toBeNull();
+    expect(paragraphNumberForIndex(offsetJudgment().paragraphs, 99)).toBeNull();
   });
 });
 

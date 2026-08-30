@@ -6,6 +6,7 @@ import { Text } from '../../components/Text';
 import type { BriefingAuthority } from '../../api/contract';
 import { citationDisplay, NO_CITATION_MARK } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
+import { treatmentRelationshipCopy } from '../../citation/treatmentRelationship';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
@@ -78,6 +79,7 @@ export function BriefingAuthorityRow({
     overruledStatus: authority.overruledStatus,
     overruledNote: authority.overruledNote,
     overruledParas: authority.overruledParas,
+    canAddToMatter: authority.canAddToMatter ?? authority.addToMatterAllowed,
     ...(statusAsOf ? { statusAsOf } : {}),
   });
   const citation = citationDisplay(authority);
@@ -132,7 +134,7 @@ export function BriefingAuthorityRow({
       */}
       {moved.kind === 'moved' && authority.overruledByTitle ? (
         <Text variant="ui" style={styles.overruledBy}>
-          {moved.status === 'doubted' ? 'Doubted in' : 'Set aside in'} {authority.overruledByTitle}
+          {treatmentRelationshipCopy(authority.overruledByTitle, authority.precedentialEffect)}
         </Text>
       ) : null}
 

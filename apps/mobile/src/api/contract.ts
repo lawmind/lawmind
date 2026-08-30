@@ -1484,11 +1484,7 @@ export const SEARCH_QUERY_MAX_CHARS = 500;
  *   · `pin_timeout` — the strongest. The answer an INDEX should have held was
  *     not computed in time.
  */
-export type DegradedArm =
-  | 'sparse_timeout'
-  | 'dense_timeout'
-  | 'sparse_unbounded'
-  | 'pin_timeout';
+export type DegradedArm = 'sparse_timeout' | 'dense_timeout' | 'sparse_unbounded' | 'pin_timeout';
 
 /**
  * WHY ZERO RESULTS CAME BACK, WHEN THE SERVER KNOWS — additive,
@@ -1982,6 +1978,14 @@ export type BriefingAuthority =
       overruledByTitle: string | null;
       overruledParas: number[] | null;
       overruledNote: string | null;
+      /** OD-14's exact relationship. Absent means the client must not infer one. */
+      precedentialEffect?: PrecedentialEffect;
+      /** Additive replacement name; retained beside the original route field. */
+      canAddToMatter?: boolean;
+      /** Raw stored state is diagnostic only and must never drive rendered copy. */
+      overruledStatusStored?: OverruledStatus;
+      /** A verified treatment edge not yet applied to the row's banner. */
+      unappliedTreatment?: string | null;
       /** `set_aside` only. The one refusal in the product, decided server-side. */
       addToMatterAllowed: boolean;
     };

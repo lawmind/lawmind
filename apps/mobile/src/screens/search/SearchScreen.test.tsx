@@ -519,6 +519,27 @@ describe('SearchScreen — a reachability failure reads differently from a serve
     expect(await screen.findByText('This search could not complete')).toBeTruthy();
     expect(screen.queryByText('You appear to be offline')).toBeNull();
   });
+
+  it.each([
+    [
+      'RATE_LIMITED',
+      'Too many searches were started in a short time. Wait a moment and try again.',
+    ],
+    ['SEARCH_BUSY', 'Search is busy completing other research. Wait a moment and try again.'],
+  ])(
+    'renders %s as a retryable server state, never as an empty corpus answer',
+    async (code, message) => {
+      search.mockResolvedValue({ ok: false, error: { code, message } });
+      await render(<SearchScreen />);
+      await runSearch('anticipatory bail');
+
+      expect(await screen.findByText('This search could not complete')).toBeTruthy();
+      const escaped = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      expect(screen.getByText(new RegExp(escaped))).toBeTruthy();
+      expect(screen.getByText('Try again')).toBeTruthy();
+      expect(screen.queryByText(/Nothing matched/)).toBeNull();
+    },
+  );
 });
 
 describe('SearchScreen — pagination: result #6+ is reachable', () => {

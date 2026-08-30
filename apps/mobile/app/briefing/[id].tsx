@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { BriefingScreen } from '../../src/screens/briefing/BriefingScreen';
+import { CapabilityBoundary } from '../../src/components/CapabilityBoundary';
 
 /**
  * The 24-hour hearing briefing — the wedge. Inventory row 8, canvas `8b`.
@@ -14,7 +15,7 @@ export default function Route() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   return (
-    <>
+    <CapabilityBoundary surface="briefing">
       <Stack.Screen options={{ headerShown: false, presentation: 'modal' }} />
       <BriefingScreen
         briefingId={id}
@@ -26,6 +27,6 @@ export default function Route() {
           })
         }
       />
-    </>
+    </CapabilityBoundary>
   );
 }

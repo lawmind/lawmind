@@ -8,7 +8,6 @@ import { Text } from '../../components/Text';
 import { usePractice } from '../../state/practice';
 import { haptics } from '../../theme/haptics';
 import {
-  addDays,
   formatDayMonth,
   formatDayMonthWeekday,
   predictedAdjournmentDates,
@@ -118,11 +117,11 @@ export function AdjournmentScreen({
           </View>
 
           <Text variant="uiStrong" style={styles.confirmTitle}>
-            Listed {savedDate ? formatDayMonth({ ...today, ...isoParts(saved) }) : formatSavedIso(saved)}
+            Listed{' '}
+            {savedDate ? formatDayMonth({ ...today, ...isoParts(saved) }) : formatSavedIso(saved)}
           </Text>
           <Text variant="ui" style={styles.confirmBody}>
-            Your briefing for it will arrive on the evening of{' '}
-            {formatDayMonth(addDays(isoCivil(saved), -1))}.
+            The next hearing date is saved on this matter.
           </Text>
 
           <View style={styles.savedRow}>

@@ -1,4 +1,5 @@
 import { DraftWorkspace } from '../../src/screens/draft/DraftWorkspace';
+import { CapabilityBoundary } from '../../src/components/CapabilityBoundary';
 
 /**
  * Drafts — R4. The advocate's saved documents, newest first.
@@ -6,5 +7,9 @@ import { DraftWorkspace } from '../../src/screens/draft/DraftWorkspace';
  * breakpoint, wired exactly as this route always wired it.
  */
 export default function Route() {
-  return <DraftWorkspace />;
+  return (
+    <CapabilityBoundary surface="drafting">
+      <DraftWorkspace />
+    </CapabilityBoundary>
+  );
 }

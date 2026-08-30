@@ -133,6 +133,23 @@ describe('findInJudgment', () => {
     expect(r.matches).toHaveLength(1);
     expect(r.matches[0]!.paragraphIndex).toBe(0);
   });
+
+  it('searches the 231-paragraph, 732k-character shape measured from a real long judgment', () => {
+    const long = Array.from({ length: 231 }, (_, paragraphIndex): JudgmentParagraph => ({
+      paragraphIndex,
+      paragraphNumber: paragraphIndex + 1,
+      text:
+        `${'constitutional property '.repeat(140)}` +
+        (paragraphIndex === 230 ? 'needle at the end of the judgment' : ''),
+    }));
+
+    expect(long.reduce((total, paragraph) => total + paragraph.text.length, 0)).toBeGreaterThan(
+      732_000,
+    );
+    const r = findInJudgment(long, 'needle at the end');
+    expect(r.matches).toHaveLength(1);
+    expect(r.matches[0]).toMatchObject({ paragraphIndex: 230, paragraphNumber: 231 });
+  });
 });
 
 describe('stepMatch', () => {
