@@ -15633,3 +15633,81 @@ it here would have been an unadjudicated semantic change to a frozen field.
 **Untouched, on purpose:** the deferred `party_name_disabled` RetrievalOutcome
 change (NEW3's DEFER stands, activation blocked), NEW3's frozen R14 artifact, the
 change ledger, and every hosting/remote-plane item. No paid resource created.
+
+---
+
+# NEW2 R14 — 31 AUGUST 2026 · the citation falsifier, and STATUTE_FRESHNESS_V1
+
+Commit `0c554799`. Round doc `docs/ai/new2-r14/NEW2_R14_CITATION_FALSIFIER.md`.
+Nothing applied; no `judgment_citations` row written, deleted or rewritten; no
+schema migration; nothing in `services/api/**`.
+
+## The verdict
+
+`CITATION_BULK_APPLY = HOLD`, **unchanged, and the reason has changed** — it is
+now held on measured defects rather than on FIFTH's absent evidence (bus
+1583/1584). Both of FIFTH's named objections are answered; the gate fails on a
+third thing neither lane had named.
+
+```
+FALSE_PIN_GATE        FAIL
+sample false pin      0 of 1,600 · sample false unique 0 · ambiguous 1,200 · untestable 0
+population self-edges         1,003,733   of 2,559,529  (39.2%)
+population material false unique    226   of   971,879  (temporal holdout, T0 = 18 Aug)
+```
+
+## Root cause, one sentence
+
+A neutral citation is not a unique key in this corpus — the registry stamps one
+on every connected matter disposed of by a common order — so `UNIQUE` reports
+how much of the corpus has landed, not how many judgments bear the citation, and
+all three resolver gates reason about rows that EXIST and structurally cannot
+see a bearer that has not been ingested.
+
+## Two frozen, hashed, unapplied candidates
+
+```
+v1  NEW2-R14-APPLY-4a1a8f4838d8804b  2,559,529  4a1a8f48…a4371  as produced
+v2  NEW2-R14-APPLY-6a24a6fec752d0fe  1,555,796  6a24a6fe…785c1  self-edges excluded
+frontier  snapshotAt 2026-08-30 21:32:48Z · keyFreshness CURRENT
+          judgments 18,759,022 · keys 1,431,403 · resolver v0.1
+```
+
+Any write must re-read the journal, verify the hash and refuse a moved frontier.
+A newer population is a different population and needs its own evidence.
+
+## Next for NEW2, in order
+
+1. **Wait on LCC bus 1622 handoff 1** — the connected-matter cohort gate in
+   `services/api/src/citations/resolver.ts`. It is the only thing standing
+   between v2 and a gate that can pass, and it is not mine to write.
+2. **Re-freeze and re-run once that lands.** `--stage package|freeze|adjudicate
+   |report` is scripted and reproduces byte-identically apart from the
+   timestamp — verified.
+3. **The extractor question, unresolved on purpose.** Whether
+   `citations-cli.ts` should stop emitting a judgment's own header citation, and
+   what to do with the ~1M existing rows, is a conversation with LCC. The row is
+   currently harmless (unresolved, and `schema.ts` keeps unresolved rows for
+   coverage); I will not delete a million rows unilaterally.
+4. **One unresolved pin needs a human with the reports** — `(2010) 7 SCC 626`,
+   cited as *Union of India v. National Confederation for Blind*, pinned to
+   *Govt. of India v. Ravi Prakash*.
+5. **Statute freshness v2** would need the 25 dead `indiacode.nic.in` handles
+   re-resolved to `indiacode.gov.in` items. That is a repair of stored
+   `source_url` values, not a new ingestion system, and it is NEW2's.
+
+## What must not be quoted back as safety
+
+The temporal holdout at T0 = 25 and 28 August gives near-zero rates **because
+almost no corpus landed in those windows** — 52,305 judgments on 27 Aug against
+562 on 30 Aug. Those numbers measure a quiet ingest fleet, not resolver
+precision. The 18 August rate is the one to expect when ingestion resumes.
+
+## STATUTE_FRESHNESS_V1
+
+49 Acts · 245 dimension checks · **46 exact · 0 stale · 74 unknown · 125
+source-unavailable · 0 material temporal errors**. India Code migrated hosts;
+25 of 49 Acts are unreachable from the `source_url` we stored. Nothing we hold
+was shown stale and almost nothing was shown fresh. `statutes` has no repeal
+column, so that dimension is UNKNOWN for the whole corpus — handed to LCC.
+No applicability conclusion is drawn anywhere; `DOMAIN_TRUTH.md` is untouched.
