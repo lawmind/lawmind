@@ -1,0 +1,47 @@
+{
+  "artifact": "NEW2_SC_AUTHORIZATION_REANCHOR_R10",
+  "controllingRecord": {
+    "path": "CLAUDE.md",
+    "section": "6a",
+    "quotedState": "SCI_AUTHORISATION_STATE = UNCHANGED",
+    "why": "CLAUDE.md is committed and is the highest authority in the tree. The 29 Aug 2026 founder decision is ECOURTS ONLY and expressly does not resolve the separate SCI / Supreme Court automated-access question."
+  },
+  "sciWrittenGrant": {
+    "state": "CONTESTED",
+    "citedDocument": "docs/SCI_AUTHORISATION.md",
+    "documentState": "NOT_IN_HEAD",
+    "documentStateProvedBy": "git cat-file -e HEAD:docs/SCI_AUTHORISATION.md, 2026-08-30, NEW2",
+    "correctionOf": "An earlier revision of this artifact named docs/SCI_AUTHORISATION.md as the controlling registry and recorded separateSciWrittenGrant as \"confirmed valid through 2029\". That read an uncommitted document as an established grant. LCC held this file out of the R10 commit for exactly that reason (bus 1510) and was right to.",
+    "openQuestion": "FQ-LCC-R10-1 point 2"
+  },
+  "whatTheRunActuallyRestedOn": {
+    "basis": "public_official",
+    "dependsOnTheContestedGrant": false,
+    "why": "The homepage Judgments feed and the official PDFs it links are public. Fetching them needs no written grant, so nothing in the observed cycle is conditional on the SCI question resolving either way.",
+    "notClaimed": [
+      "That public_official extends to SCI search or any expanded licensed access. It does not, and neither was used.",
+      "That this artifact resolves, narrows or supports the SCI written-grant question. It does not touch it."
+    ]
+  },
+  "runningScope": {
+    "entrypoint": "services/ingest/src/sci-live-cli.ts",
+    "implementation": "services/ingest/src/sci-live.ts",
+    "homepage": "https://www.sci.gov.in/",
+    "feedFilter": "homepage Judgments feed only (type=j)",
+    "pdfRule": "only official PDFs linked by that feed and verified as judgments",
+    "authorizationBasis": "public_official",
+    "dailyCycle": "scripts/n2-daily-delta.ps1",
+    "limitPerCycle": 50
+  },
+  "observedRun": {
+    "homepageFetches": 1,
+    "officialPdfFetches": 25,
+    "sciSearchFetches": 0,
+    "expandedAccessUsed": false
+  },
+  "awsPartitionYearFix": {
+    "state": "retained",
+    "implementation": "services/ingest/src/sci.ts#fetchUrlCandidatesFor",
+    "rule": "when row.year disagrees with its metadata partition year, try the identity URL then the partition-year retrieval URL"
+  }
+}
