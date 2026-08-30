@@ -1,21 +1,66 @@
 {
   "artifact": "LCC_R12B_ECOURTS_CANARY",
-  "startedAt": "2026-08-29T22:47:31.656Z",
+  "startedAt": "2026-08-30T08:46:18.578Z",
   "apply": true,
   "request": {
     "stateCode": "26",
-    "listDate": "30-08-2026",
-    "cicri": "0",
+    "listDate": "28-08-2026",
+    "cicri": "1",
     "attempts": 3
   },
   "steps": [
     {
-      "at": "2026-08-29T22:47:32.202Z",
+      "at": "2026-08-30T08:46:22.319Z",
       "name": "session_opened",
-      "fetchLedgerId": "178a172f-aa1f-468a-a027-0346ee8829f7",
-      "captchaUrl": "https://services.ecourts.gov.in/ecourtindia_v6/vendor/securimage/securimage_show.php?6773a167c93afda2f21140b9477b21b6"
+      "fetchLedgerId": "3792202d-c8ca-49aa-b2d1-258684886d3c",
+      "captchaUrl": "https://services.ecourts.gov.in/ecourtindia_v6/vendor/securimage/securimage_show.php?8ee7475a44a9dec472503d9213a81e9a"
+    },
+    {
+      "at": "2026-08-30T08:46:24.963Z",
+      "name": "districts",
+      "offered": 11,
+      "chosen": "8",
+      "label": "Central"
+    },
+    {
+      "at": "2026-08-30T08:46:27.615Z",
+      "name": "complexes",
+      "offered": 2,
+      "chosenRaw": "1260008@5,6,7@N",
+      "parts": {
+        "complexCode": "1260008",
+        "establishmentCode": "5,6,7",
+        "requiresEstablishment": false
+      },
+      "label": "Rouse Avenue Court Complex"
+    },
+    {
+      "at": "2026-08-30T08:46:30.439Z",
+      "name": "courts",
+      "offered": 61,
+      "chosen": "D",
+      "label": "District and Sessions Judge cum Special Judge PC Act CBI, Rouse Avenue",
+      "establishmentSentToFillCauseList": "5,6,7",
+      "establishmentSentToSubmit": ""
     }
   ],
-  "captchaSolves": [],
-  "verdict": "INCOMPLETE — the run did not reach its own conclusion"
+  "captchaSolves": [
+    {
+      "attempt": 1,
+      "imageBytes": 1986,
+      "imageArtifactId": "3fd87c7c-a22c-4e69-bcd0-6c80eeac9861",
+      "engine": "paddleocr",
+      "rawOcr": "59kkbp",
+      "normalized": "59kkbp",
+      "length": 6,
+      "outcome": "accepted",
+      "submitStatus": "unexpected",
+      "submitArtifactId": "b3ceb0e5-8650-4f9e-9701-a4eb8fc76e8e",
+      "fetchLedgerId": "9640f797-565d-45ea-9170-4df6a4f1ecb7"
+    }
+  ],
+  "verdict": "NOT_PASS",
+  "notPassReason": "unexpected",
+  "unexpectedRaw": "{\"errormsg\":\"Connection to server failed try after some time....\",\"app_token\":\"9bea12fe65ef7fe7de790b048cbb3b0b07adb38d373b91fbaa04afb948f45872\"}",
+  "listingsClaim": "UNKNOWN — a failed submit says nothing about what the court listed"
 }

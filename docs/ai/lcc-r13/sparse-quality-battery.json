@@ -1,0 +1,2787 @@
+{
+  "kind": "lcc_sparse_quality_battery",
+  "writtenAt": "2026-08-30T08:29:25.641Z",
+  "finishedAt": "2026-08-30T08:38:24.123Z",
+  "label": "LOCAL_CONTENDED",
+  "repeats": 6,
+  "limit": 50,
+  "method": {
+    "ranker": "services/api/src/search/retrieve.ts hybridSearch — the function POST /search calls",
+    "queryVector": "null. semanticArmPermitted() is false in v1, so null is what production passes. This measures the LEXICAL system only.",
+    "goldSet": "docs/ai/new3-noncitation-gold.json (1), first 40 cases with a query and an authority",
+    "qualityUnlabeledRule": "A query with no previously adjudicated target is recorded QUALITY_UNLABELED. No relevance judgement is invented for it.",
+    "latencyCaveat": "pg_stat_activity is sampled at the start of every row. A latency without the concurrent load beside it is an anecdote on this box.",
+    "coldWarmRule": "The FIRST run of every row is reported separately as coldFirstRunMs and excluded from p50/p95. It is routinely 5x the settled value with zero other active backends, so it measures cache state rather than the query. p95IsMaxOfSample is true whenever the warm sample is under 20 runs, which is the honest reading of a percentile over a handful of points."
+  },
+  "corpus": {
+    "preFilterPopulation": 18758460
+  },
+  "filterShapes": [
+    "unfiltered",
+    "court:large_hc",
+    "court+month",
+    "court+year",
+    "court+caseType",
+    "court:supreme_court",
+    "court:small_hc"
+  ],
+  "summary": {
+    "operationalRows": 35,
+    "operationalRefused": 15,
+    "operationalAdmitted": 20,
+    "operationalP95Worst": 9163.1,
+    "operationalColdWorst": 48887.5,
+    "adjudicatedScored": 40,
+    "adjudicatedTargetAbsent": 0,
+    "knownTargetPresentAt10": 0.45,
+    "knownTargetPresentAt50": 0.475,
+    "knownTargetPresentAt10Fraction": "18/40",
+    "knownTargetPresentAt50Fraction": "19/40"
+  },
+  "operational": [
+    {
+      "id": "op:bail:unfiltered",
+      "query": "bail",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 21.2,
+      "p50Ms": 0.6,
+      "p95Ms": 1.3,
+      "maxMs": 1.3,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        21.2,
+        1.3,
+        0.7,
+        0.6,
+        0.6,
+        0.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court:large_hc",
+      "query": "bail",
+      "filterShape": "court:large_hc",
+      "filters": {
+        "court": "Allahabad High Court"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2276089,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 3790,
+      "p50Ms": 22.6,
+      "p95Ms": 24.9,
+      "maxMs": 24.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3790,
+        24.9,
+        22.1,
+        22.5,
+        22.6,
+        24.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court+month",
+      "query": "bail",
+      "filterShape": "court+month",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-01-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 15704,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 15697,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [],
+      "coldFirstRunMs": 8205.1,
+      "p50Ms": 224.9,
+      "p95Ms": 315.2,
+      "maxMs": 315.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        8205.1,
+        225.6,
+        315.2,
+        224.9,
+        224.9,
+        221.4
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court+year",
+      "query": "bail",
+      "filterShape": "court+year",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-12-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 261564,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 502.2,
+      "p50Ms": 14.9,
+      "p95Ms": 15.2,
+      "maxMs": 15.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        502.2,
+        14.9,
+        14.7,
+        15.2,
+        14.8,
+        14.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court+caseType",
+      "query": "bail",
+      "filterShape": "court+caseType",
+      "filters": {
+        "court": "Allahabad High Court",
+        "caseType": "criminal"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 315028,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 1309.5,
+      "p50Ms": 900.1,
+      "p95Ms": 922.6,
+      "maxMs": 922.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1309.5,
+        922.6,
+        901.1,
+        889.9,
+        900.1,
+        899.3
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court:supreme_court",
+      "query": "bail",
+      "filterShape": "court:supreme_court",
+      "filters": {
+        "court": "Supreme Court of India"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 38379,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 950.1,
+      "p50Ms": 13.8,
+      "p95Ms": 14.1,
+      "maxMs": 14.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        950.1,
+        13.7,
+        13.6,
+        13.8,
+        13.9,
+        14.1
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:bail:court:small_hc",
+      "query": "bail",
+      "filterShape": "court:small_hc",
+      "filters": {
+        "court": "High Court of Sikkim"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2454,
+      "candidatePopulation": 48,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 2446,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.25773984261292154,
+      "degraded": [],
+      "coldFirstRunMs": 1786.3,
+      "p50Ms": 76.7,
+      "p95Ms": 176.7,
+      "maxMs": 176.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1786.3,
+        77.3,
+        75.2,
+        76.7,
+        76.5,
+        176.7
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:unfiltered",
+      "query": "anticipatory bail",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 1.5,
+      "p50Ms": 0.5,
+      "p95Ms": 0.7,
+      "maxMs": 0.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1.5,
+        0.6,
+        0.7,
+        0.5,
+        0.4,
+        0.4
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court:large_hc",
+      "query": "anticipatory bail",
+      "filterShape": "court:large_hc",
+      "filters": {
+        "court": "Allahabad High Court"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2276089,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 176.3,
+      "p50Ms": 23.8,
+      "p95Ms": 25.1,
+      "maxMs": 25.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        176.3,
+        23.1,
+        25.1,
+        24.9,
+        23.8,
+        23.3
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court+month",
+      "query": "anticipatory bail",
+      "filterShape": "court+month",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-01-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 15704,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 15697,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [],
+      "coldFirstRunMs": 775.9,
+      "p50Ms": 197.5,
+      "p95Ms": 289.5,
+      "maxMs": 289.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        775.9,
+        199.5,
+        194.3,
+        195.9,
+        197.5,
+        289.5
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court+year",
+      "query": "anticipatory bail",
+      "filterShape": "court+year",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-12-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 261564,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 42.9,
+      "p50Ms": 15.2,
+      "p95Ms": 15.9,
+      "maxMs": 15.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        42.9,
+        15.1,
+        15.6,
+        15.9,
+        15.2,
+        14.8
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court+caseType",
+      "query": "anticipatory bail",
+      "filterShape": "court+caseType",
+      "filters": {
+        "court": "Allahabad High Court",
+        "caseType": "criminal"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 315028,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 1304,
+      "p50Ms": 932.6,
+      "p95Ms": 979.9,
+      "maxMs": 979.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1304,
+        868.2,
+        932.6,
+        891.9,
+        979.9,
+        935.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court:supreme_court",
+      "query": "anticipatory bail",
+      "filterShape": "court:supreme_court",
+      "filters": {
+        "court": "Supreme Court of India"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 38379,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 151,
+      "p50Ms": 14.3,
+      "p95Ms": 15.2,
+      "maxMs": 15.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        151,
+        13.8,
+        15.2,
+        15,
+        14.3,
+        14
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:anticipatory bail:court:small_hc",
+      "query": "anticipatory bail",
+      "filterShape": "court:small_hc",
+      "filters": {
+        "court": "High Court of Sikkim"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2454,
+      "candidatePopulation": 8,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 2446,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.06902336137355995,
+      "degraded": [],
+      "coldFirstRunMs": 247.1,
+      "p50Ms": 157,
+      "p95Ms": 170.2,
+      "maxMs": 170.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        247.1,
+        157,
+        156,
+        56.2,
+        162.8,
+        170.2
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:unfiltered",
+      "query": "quashing FIR",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 1.6,
+      "p50Ms": 0.4,
+      "p95Ms": 0.4,
+      "maxMs": 0.4,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1.6,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.3
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court:large_hc",
+      "query": "quashing FIR",
+      "filterShape": "court:large_hc",
+      "filters": {
+        "court": "Allahabad High Court"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2276089,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 150.1,
+      "p50Ms": 27.3,
+      "p95Ms": 28.6,
+      "maxMs": 28.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        150.1,
+        25.8,
+        27.9,
+        27.3,
+        26.7,
+        28.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court+month",
+      "query": "quashing FIR",
+      "filterShape": "court+month",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-01-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 15704,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 15697,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [],
+      "coldFirstRunMs": 724.2,
+      "p50Ms": 196.2,
+      "p95Ms": 199.3,
+      "maxMs": 199.3,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        724.2,
+        199.3,
+        197.9,
+        192.9,
+        189.8,
+        196.2
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court+year",
+      "query": "quashing FIR",
+      "filterShape": "court+year",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-12-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 261564,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 31,
+      "p50Ms": 15.5,
+      "p95Ms": 16.4,
+      "maxMs": 16.4,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        31,
+        13.8,
+        14.2,
+        15.5,
+        16.1,
+        16.4
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court+caseType",
+      "query": "quashing FIR",
+      "filterShape": "court+caseType",
+      "filters": {
+        "court": "Allahabad High Court",
+        "caseType": "criminal"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 315028,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 1242.7,
+      "p50Ms": 896.4,
+      "p95Ms": 931.5,
+      "maxMs": 931.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1242.7,
+        894.2,
+        896,
+        896.4,
+        904.5,
+        931.5
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court:supreme_court",
+      "query": "quashing FIR",
+      "filterShape": "court:supreme_court",
+      "filters": {
+        "court": "Supreme Court of India"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 38379,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": "refused",
+      "filteredPopulationFromRanker": 20001,
+      "filteredPopulationCapped": true,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 146.8,
+      "p50Ms": 14,
+      "p95Ms": 15.1,
+      "maxMs": 15.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        146.8,
+        14.3,
+        15.1,
+        14,
+        13.7,
+        13.4
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:quashing FIR:court:small_hc",
+      "query": "quashing FIR",
+      "filterShape": "court:small_hc",
+      "filters": {
+        "court": "High Court of Sikkim"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2454,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": "admitted",
+      "filteredPopulationFromRanker": 2446,
+      "filteredPopulationCapped": false,
+      "sparseRarestDf": 0.11922441226533784,
+      "degraded": [],
+      "coldFirstRunMs": 275.6,
+      "p50Ms": 98.4,
+      "p95Ms": 174.5,
+      "maxMs": 174.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        275.6,
+        98.4,
+        95,
+        174.5,
+        99.4,
+        94.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:unfiltered",
+      "query": "interim injunction",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 41,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 38832.4,
+      "p50Ms": 5970.9,
+      "p95Ms": 6163.4,
+      "maxMs": 6163.4,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        38832.4,
+        5805.7,
+        5658,
+        6163.4,
+        5970.9,
+        6036
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court:large_hc",
+      "query": "interim injunction",
+      "filterShape": "court:large_hc",
+      "filters": {
+        "court": "Allahabad High Court"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2276089,
+      "candidatePopulation": 49,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 2326.4,
+      "p50Ms": 744.3,
+      "p95Ms": 844.8,
+      "maxMs": 844.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        2326.4,
+        844.8,
+        744.3,
+        741.6,
+        812,
+        739.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court+month",
+      "query": "interim injunction",
+      "filterShape": "court+month",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-01-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 15704,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 218.7,
+      "p50Ms": 105.6,
+      "p95Ms": 110.3,
+      "maxMs": 110.3,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        218.7,
+        110.3,
+        102.2,
+        105.4,
+        106.9,
+        105.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court+year",
+      "query": "interim injunction",
+      "filterShape": "court+year",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-12-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 261564,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 192.2,
+      "p50Ms": 142.8,
+      "p95Ms": 252,
+      "maxMs": 252,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        192.2,
+        142.8,
+        252,
+        142.5,
+        141.6,
+        247.5
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court+caseType",
+      "query": "interim injunction",
+      "filterShape": "court+caseType",
+      "filters": {
+        "court": "Allahabad High Court",
+        "caseType": "criminal"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 315028,
+      "candidatePopulation": 49,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 2171,
+      "p50Ms": 741.8,
+      "p95Ms": 836.1,
+      "maxMs": 836.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        2171,
+        836.1,
+        741.8,
+        673.8,
+        789.4,
+        668.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court:supreme_court",
+      "query": "interim injunction",
+      "filterShape": "court:supreme_court",
+      "filters": {
+        "court": "Supreme Court of India"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 38379,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 455.7,
+      "p50Ms": 276,
+      "p95Ms": 278.9,
+      "maxMs": 278.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        455.7,
+        278.9,
+        276,
+        277.9,
+        272.2,
+        268.7
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:interim injunction:court:small_hc",
+      "query": "interim injunction",
+      "filterShape": "court:small_hc",
+      "filters": {
+        "court": "High Court of Sikkim"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2454,
+      "candidatePopulation": 36,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.016848804795618816,
+      "degraded": [],
+      "coldFirstRunMs": 207.9,
+      "p50Ms": 155.2,
+      "p95Ms": 157.7,
+      "maxMs": 157.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        207.9,
+        155.2,
+        155.2,
+        157.7,
+        155.1,
+        155.1
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:unfiltered",
+      "query": "condonation of delay limitation",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 37,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 48887.5,
+      "p50Ms": 9061.4,
+      "p95Ms": 9163.1,
+      "maxMs": 9163.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        48887.5,
+        9061.4,
+        9163.1,
+        8980.7,
+        9102.2,
+        9002.4
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court:large_hc",
+      "query": "condonation of delay limitation",
+      "filterShape": "court:large_hc",
+      "filters": {
+        "court": "Allahabad High Court"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2276089,
+      "candidatePopulation": 42,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 3086.1,
+      "p50Ms": 1058.2,
+      "p95Ms": 1094,
+      "maxMs": 1094,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3086.1,
+        1058.2,
+        1053.7,
+        1055.7,
+        1094,
+        1085.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court+month",
+      "query": "condonation of delay limitation",
+      "filterShape": "court+month",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-01-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 15704,
+      "candidatePopulation": 48,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 227.8,
+      "p50Ms": 181.8,
+      "p95Ms": 281.7,
+      "maxMs": 281.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        227.8,
+        279.5,
+        281.7,
+        178.3,
+        181.8,
+        173.1
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court+year",
+      "query": "condonation of delay limitation",
+      "filterShape": "court+year",
+      "filters": {
+        "court": "Allahabad High Court",
+        "dateFrom": "2024-01-01",
+        "dateTo": "2024-12-31"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 261564,
+      "candidatePopulation": 45,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 351.4,
+      "p50Ms": 239.5,
+      "p95Ms": 307.8,
+      "maxMs": 307.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        351.4,
+        243.1,
+        307.8,
+        239.1,
+        239.5,
+        196.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court+caseType",
+      "query": "condonation of delay limitation",
+      "filterShape": "court+caseType",
+      "filters": {
+        "court": "Allahabad High Court",
+        "caseType": "criminal"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 315028,
+      "candidatePopulation": 48,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 3059.8,
+      "p50Ms": 911.4,
+      "p95Ms": 999.8,
+      "maxMs": 999.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3059.8,
+        911.4,
+        922,
+        881.6,
+        999.8,
+        908.5
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court:supreme_court",
+      "query": "condonation of delay limitation",
+      "filterShape": "court:supreme_court",
+      "filters": {
+        "court": "Supreme Court of India"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 38379,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 478.5,
+      "p50Ms": 327.8,
+      "p95Ms": 373.6,
+      "maxMs": 373.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        478.5,
+        327.8,
+        327.8,
+        333.5,
+        323.3,
+        373.6
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "op:condonation of delay limitation:court:small_hc",
+      "query": "condonation of delay limitation",
+      "filterShape": "court:small_hc",
+      "filters": {
+        "court": "High Court of Sikkim"
+      },
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 2454,
+      "candidatePopulation": 42,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.031058045735994275,
+      "degraded": [],
+      "coldFirstRunMs": 290.9,
+      "p50Ms": 205.1,
+      "p95Ms": 313.9,
+      "maxMs": 313.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        290.9,
+        205.1,
+        189,
+        197.9,
+        206.2,
+        313.9
+      ],
+      "knownTargetPresentAt10": "QUALITY_UNLABELED",
+      "knownTargetPresentAt50": "QUALITY_UNLABELED",
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    }
+  ],
+  "adjudicated": [
+    {
+      "id": "gold:ISSUE-001",
+      "query": "the impugned order suffers from violation of principles of natural justice and is liable to be aside",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 48,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.04906628512223401,
+      "degraded": [],
+      "coldFirstRunMs": 51996.4,
+      "p50Ms": 8426.5,
+      "p95Ms": 8594.8,
+      "maxMs": 8594.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        51996.4,
+        8426.5,
+        8285.4,
+        8380.2,
+        8514.5,
+        8594.8
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-002",
+      "query": "It is further submitted that in view of the provisions of section 32-F the Maharashtra Revenue Tribunal has erroneously held that the provisions of section 32-P of the Tenancy Act are applicable.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 42,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.003527641414016824,
+      "degraded": [],
+      "coldFirstRunMs": 1907.9,
+      "p50Ms": 378.5,
+      "p95Ms": 432.8,
+      "maxMs": 432.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1907.9,
+        432.8,
+        390.9,
+        378.5,
+        371.5,
+        368.7
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-003",
+      "query": "The issue in the present appeal relates to locus of the deceased Shanti Devi to maintain claim petition under Section 124 of the Railways Act",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 19,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.003947011372326516,
+      "degraded": [],
+      "coldFirstRunMs": 1945.7,
+      "p50Ms": 621.6,
+      "p95Ms": 759.3,
+      "maxMs": 759.3,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1945.7,
+        759.3,
+        621.6,
+        586.8,
+        732.1,
+        611
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-004",
+      "query": "Since the issues arising in all the three petitions are the same, therefore, all the three cases are being disposed of by a common order.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "refused",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.05898315119520438,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "coldFirstRunMs": 3.2,
+      "p50Ms": 0.5,
+      "p95Ms": 0.6,
+      "maxMs": 0.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3.2,
+        0.5,
+        0.5,
+        0.4,
+        0.4,
+        0.6
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-005",
+      "query": "This is an application for condonation of 946 days delay in filing a First Appeal against the judgment and decree dated 30.06.2020, passed by the District Judge I, North Goa, Panaji, in Civil Suit No.51 of 2007.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 2,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.00039470113723265164,
+      "degraded": [],
+      "coldFirstRunMs": 41.9,
+      "p50Ms": 26.4,
+      "p95Ms": 133.5,
+      "maxMs": 133.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        41.9,
+        26.9,
+        133.5,
+        26.4,
+        26,
+        26.1
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-006",
+      "query": "the order impugned dated 18.10.2021 has been passed in violation of the principles of natural justice inasmuch as neither any show cause notice was issued to him nor, he was afforded an opportunity of hearing.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 14,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0005427140636948961,
+      "degraded": [],
+      "coldFirstRunMs": 230.9,
+      "p50Ms": 66.5,
+      "p95Ms": 151.8,
+      "maxMs": 151.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        230.9,
+        151.8,
+        66.3,
+        59.9,
+        66.5,
+        66.5
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 2,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-007",
+      "query": "Whether a Revision lies against an interlocutory order passed by the State Consumer Disputes Redressal Commission, under Section 21(b) of the Consumer Protection Act? If so, whether this Court cannot exercise extraordinary power of judicial review available under Article 226 of the Constitution of India?",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 28,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.010434911315588227,
+      "degraded": [],
+      "coldFirstRunMs": 448.2,
+      "p50Ms": 150.5,
+      "p95Ms": 232.9,
+      "maxMs": 232.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        448.2,
+        203.5,
+        149.9,
+        150.5,
+        232.9,
+        150.1
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 4,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-008",
+      "query": "the impunged order of disciplinary authority dated 27.03.2001, by which the period of suspension from 01.12.1998 to the date of issuance of said order was treated to be not on duty, by itself being a punishment since was not preceded by any prior show-cause notice, the order to that extent would be in violation of principles of natural justice.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 30.6,
+      "p50Ms": 24.8,
+      "p95Ms": 25.7,
+      "maxMs": 25.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        30.6,
+        24.4,
+        24.9,
+        24.4,
+        25.7,
+        24.8
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-009",
+      "query": "whether the notification dated 08 1 I'201 'l and the ancillary notilication dated 10.1 1 .201 1 issued by the respondent - Corporation lor making appointments to the post of Junior Assistanls (P' F & M) by direct recrJitment violate the right of appellants lor promotion to the said",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 31.1,
+      "p50Ms": 25.5,
+      "p95Ms": 138.2,
+      "maxMs": 138.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        31.1,
+        24.6,
+        138.2,
+        25.6,
+        24.6,
+        25.5
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-010",
+      "query": "Only for the reason of being seen in the company of the deceased soon before his death, conviction cannot be sustained, more so, for the reason of the improbability in the case of the prosecution.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 44,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0035029725929397832,
+      "degraded": [],
+      "coldFirstRunMs": 2299,
+      "p50Ms": 312.2,
+      "p95Ms": 351.9,
+      "maxMs": 351.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        2299,
+        312.2,
+        311.8,
+        315.3,
+        310.6,
+        351.9
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 7,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-011",
+      "query": "The question that arises for consideration in this case is whether the injury sustained by the appellant comes under Section 142 of the Act.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 26,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.009300145546044355,
+      "degraded": [],
+      "coldFirstRunMs": 3271.6,
+      "p50Ms": 516.8,
+      "p95Ms": 525.1,
+      "maxMs": 525.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3271.6,
+        525.1,
+        501.7,
+        516.8,
+        476.1,
+        518.7
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-012",
+      "query": "The petitioners seek Anticipatory bail in connection with Shahpur P.S. Case No. 95 of 2018 registered under Sections 406, 420 of the Indian Penal Code and Section 138 of Negotiable Instrument Act.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 4,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0015047980856994845,
+      "degraded": [],
+      "coldFirstRunMs": 220.6,
+      "p50Ms": 145.2,
+      "p95Ms": 155.6,
+      "maxMs": 155.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        220.6,
+        154.1,
+        91,
+        91.6,
+        145.2,
+        155.6
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-013",
+      "query": "The principal grievance of the Petitioner is confined to the requirement of making the mandatory pre-deposit prescribed under Section 129E of the Customs Act, 1962, for maintaining an appeal before the Customs, Excise and Service Tax Appellate Tribunal (\"CESTAT\").",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 28,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 365.5,
+      "p50Ms": 101.3,
+      "p95Ms": 182.9,
+      "maxMs": 182.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        365.5,
+        182.9,
+        108.3,
+        99.6,
+        94.1,
+        101.3
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-014",
+      "query": "Whether the action of the management of Bhowra Area of M/s. B.C.C.L. in dismissing Smt. Hiramoni Manjhian Crusher Kamin from service is justified? If not, to what relief the concerned workman is entitled?",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 31.5,
+      "p50Ms": 25,
+      "p95Ms": 25.8,
+      "maxMs": 25.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        31.5,
+        25,
+        25.2,
+        24.3,
+        23.6,
+        25.8
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-015",
+      "query": "Whether the mandatory injunction issued against the plaintiffs to obtain sale deed from the statutory authority TNSLB to the commercial plot item II of suit schedule property is sustainable?",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 30.4,
+      "p50Ms": 26.6,
+      "p95Ms": 134.1,
+      "maxMs": 134.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        30.4,
+        24.9,
+        26.6,
+        26.4,
+        123.5,
+        134.1
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-016",
+      "query": "There is another issue. There is a delay in filing LA App.Nos.3/2009, 67/2009, 69/2009, 70/2009, 90/2009, 147/2009, 148/2009, 149/2009 and 113/2010",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 136.5,
+      "p50Ms": 24.3,
+      "p95Ms": 124.6,
+      "maxMs": 124.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        136.5,
+        124.6,
+        24.8,
+        23.5,
+        24.3,
+        23.8
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-017",
+      "query": "This petition seeks transfer of the C.C. No.235/IX/2003 pending before the J.M.F.C., Mathura to the Court of 22nd Metropolitan Magistrate, Mumbai where C.C.No.1205/PW/2006 is pending",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 132,
+      "p50Ms": 25.5,
+      "p95Ms": 26.6,
+      "maxMs": 26.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        132,
+        25.5,
+        24.4,
+        26.1,
+        24.7,
+        26.6
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-018",
+      "query": "A mere apprehension cannot be a ground to reject the representation. There is absolutely no material before this Court to hold that there will be a law and order problem in the event of permission being granted.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 22,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.008313392702962726,
+      "degraded": [],
+      "coldFirstRunMs": 819.2,
+      "p50Ms": 576.3,
+      "p95Ms": 708.1,
+      "maxMs": 708.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        819.2,
+        678.2,
+        708.1,
+        544.1,
+        576.3,
+        550.8
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-019",
+      "query": "the appellate Court has delivered the Judgment on the premise that the suit is for injunction simplictor, whereas the plaintiff had claimed the relief of possession.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 49,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 224.4,
+      "p50Ms": 61.5,
+      "p95Ms": 144.9,
+      "maxMs": 144.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        224.4,
+        60.5,
+        144.3,
+        61.5,
+        57.9,
+        144.9
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 25,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-020",
+      "query": "The principal issue raised in this appeal is with regard to the payment of pension with effective date upon commutation of pension.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 11,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0020968497915484618,
+      "degraded": [],
+      "coldFirstRunMs": 7066.4,
+      "p50Ms": 390.1,
+      "p95Ms": 477,
+      "maxMs": 477,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        7066.4,
+        390.1,
+        388.2,
+        377.2,
+        477,
+        395.6
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-021",
+      "query": "Argument of the learned counsel is that courts below did not appreciate the evidence in the proper perspective and the presumption provided under Section 139 of Negotiable Instruments Act should not have been drawn.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 45,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.006956607543725486,
+      "degraded": [],
+      "coldFirstRunMs": 1955.9,
+      "p50Ms": 399.4,
+      "p95Ms": 617.2,
+      "maxMs": 617.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1955.9,
+        617.2,
+        399.4,
+        377.2,
+        406.3,
+        375.1
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-022",
+      "query": "Whether the appellant is entitled to consequential permanent injunction restraining the respondents-defendants 1 to 4 and 7 from using the premises for any school or from establishing press in the schedule premises and to restrain them from alienating the property, further?",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 42,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0001726817475392851,
+      "degraded": [],
+      "coldFirstRunMs": 742.8,
+      "p50Ms": 162.5,
+      "p95Ms": 167.9,
+      "maxMs": 167.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        742.8,
+        167.9,
+        162.6,
+        161.3,
+        162.5,
+        160.7
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-023",
+      "query": "he confined his arguments only to the ground of delay in considering the representation of the detenu.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 45,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.004588400720329576,
+      "degraded": [],
+      "coldFirstRunMs": 3190.5,
+      "p50Ms": 224.3,
+      "p95Ms": 293,
+      "maxMs": 293,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3190.5,
+        220.4,
+        293,
+        280.7,
+        224.3,
+        219.8
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-024",
+      "query": "The only question is just because prior to the registration of the Indenture of Transfer, the registered office was shifted to Tamil Nadu and after ensuring registration, the appellant, again within 45 days shifted back to Maharastra would preclude the appellant from getting the benefit of the policy of the State of Tamil Nadu as contained in G.O.Ms.No.1224, dated 25.04.1964 and the subsequent amendment.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 3,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 39.8,
+      "p50Ms": 29.8,
+      "p95Ms": 139.9,
+      "maxMs": 139.9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        39.8,
+        135.4,
+        139.9,
+        28.4,
+        26,
+        29.8
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-025",
+      "query": "Whether on the facts and in the circumstances of the case the ITAT was right in law in holding that jurisdiction was wrongly assumed by the AO under Chapter XIV-B of the Income Tax Act, 1961.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 19,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 485.1,
+      "p50Ms": 102.8,
+      "p95Ms": 178.5,
+      "maxMs": 178.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        485.1,
+        178.5,
+        102.5,
+        109.5,
+        102.8,
+        101.6
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 4,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-026",
+      "query": "the notice impugned does not satisfy the conditions for exercise of powers under sec 30(4)(i) of the Act and thus the same cannot be sustained.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 20,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.011125638305745368,
+      "degraded": [],
+      "coldFirstRunMs": 5336.9,
+      "p50Ms": 560.8,
+      "p95Ms": 609.4,
+      "maxMs": 609.4,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        5336.9,
+        559.3,
+        577.6,
+        560.8,
+        553,
+        609.4
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-027",
+      "query": "The main ground on which the petitioner has questioned the grant of permission by respondent No.2 to respondent No.4 is lack of his competence to grant such permission.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 9,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.017490194143621875,
+      "degraded": [],
+      "coldFirstRunMs": 8085.9,
+      "p50Ms": 890,
+      "p95Ms": 1456.5,
+      "maxMs": 1456.5,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        8085.9,
+        1456.5,
+        866.4,
+        882.2,
+        916.6,
+        890
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-028",
+      "query": "Insofar as the question of payment of back wages is concerned,a contention is raised that the labour court has committed a serious illegality in awarding 100% back wages.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 9,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.013000468707600464,
+      "degraded": [],
+      "coldFirstRunMs": 3740.1,
+      "p50Ms": 284.7,
+      "p95Ms": 365.7,
+      "maxMs": 365.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3740.1,
+        269.3,
+        262.2,
+        284.7,
+        365.7,
+        361.6
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-029",
+      "query": "Petitioner has challenged the validity of the order dated 08.06.2013 (Annexure P-25) by which he has been ordered to voluntary resigned from the bank w.e.f. 1.06.2013.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 40.6,
+      "p50Ms": 27.1,
+      "p95Ms": 137.7,
+      "maxMs": 137.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        40.6,
+        137.7,
+        29.2,
+        26.7,
+        27.1,
+        26.8
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 0,
+        "longestActiveSeconds": null
+      }
+    },
+    {
+      "id": "gold:ISSUE-030",
+      "query": "It is in the light of the above legal position when the case in hand is examined, this Court finds that the ordering portion of the lower appellate court’s judgment is not happily worded although no such infirmity is noticed in the ultimate decision of the lower appellate court that it is a fit case for setting aside the final decree",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 48,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.001628142191084688,
+      "degraded": [],
+      "coldFirstRunMs": 696.5,
+      "p50Ms": 277.1,
+      "p95Ms": 317.3,
+      "maxMs": 317.3,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        696.5,
+        277.1,
+        273.8,
+        280,
+        317.3,
+        276.5
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 1,
+        "longestActiveSeconds": 0.305616
+      }
+    },
+    {
+      "id": "gold:ISSUE-031",
+      "query": "the learned counsel appearing for the petitioner would submit that there is no factual basis for any such complaint under Section 498A of IPC.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 45,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.007647334533882626,
+      "degraded": [],
+      "coldFirstRunMs": 3284.4,
+      "p50Ms": 403.8,
+      "p95Ms": 475.8,
+      "maxMs": 475.8,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        3284.4,
+        475.8,
+        434.9,
+        372.5,
+        403.8,
+        382.7
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 1.443794
+      }
+    },
+    {
+      "id": "gold:ISSUE-032",
+      "query": "No relief as sought in the present Writ Application can be granted in view of the nature of controversy involved, which are manifold.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 9,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0003453634950785702,
+      "degraded": [],
+      "coldFirstRunMs": 1219.5,
+      "p50Ms": 280.1,
+      "p95Ms": 363.6,
+      "maxMs": 363.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1219.5,
+        270.1,
+        323.1,
+        280.1,
+        363.6,
+        262.8
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 3,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 7.240127
+      }
+    },
+    {
+      "id": "gold:ISSUE-033",
+      "query": "Whether the impugned judgment and decree dated 13.06.2008 passed by the Ld. Lower Appellate Court is vitiated by exclusion of material evidence namely the Public Testament (Will) dated 18.01.1982 and Notorial Deed of Declaration for Succession of Heirs dated 10.11.1992 and the survey records in favour of the Appellant which go to the root of the matter ?",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0,
+      "degraded": [],
+      "coldFirstRunMs": 45.2,
+      "p50Ms": 128.1,
+      "p95Ms": 141.2,
+      "maxMs": 141.2,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        45.2,
+        141.2,
+        138.9,
+        31.6,
+        29.9,
+        128.1
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 10.270168
+      }
+    },
+    {
+      "id": "gold:ISSUE-034",
+      "query": "the only question which has engaged our attention is as to whether the trial Court did not appreciate the evidence available on record in its right perspective nor the contradictions in the prosecution evidence, as noticed, were of such a nature so as to discredit the recovery of charas from the possession of the accused and that the findings of her acquittal from the charge are not legally and factually sustainable.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 29,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0010607593063127513,
+      "degraded": [],
+      "coldFirstRunMs": 1145.7,
+      "p50Ms": 798.6,
+      "p95Ms": 857.1,
+      "maxMs": 857.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        1145.7,
+        798.6,
+        736.2,
+        809.7,
+        857.1,
+        731.6
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 11.055384
+      }
+    },
+    {
+      "id": "gold:ISSUE-035",
+      "query": "illegal activity carried out as alleged cannot have any nexus or bearing with maintenance of public order and at the most it can be said to be breach of law and order",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 42,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.0043417125095591685,
+      "degraded": [],
+      "coldFirstRunMs": 9348.9,
+      "p50Ms": 764.1,
+      "p95Ms": 816.6,
+      "maxMs": 816.6,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        9348.9,
+        805.1,
+        764.1,
+        755.5,
+        757.6,
+        816.6
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 16.405817
+      }
+    },
+    {
+      "id": "gold:ISSUE-036",
+      "query": "present criminal revision has been filed under Section 401 of the Code of Criminal Procedure for quashing of order dated 07.03.2013 passed by learned Judicial Magistrate First Class, Patiala, whereby application of the petitioner for recalling CW1 Kuldeep Singh for further cross-examination has been dismissed.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 1,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.00012334410538520363,
+      "degraded": [],
+      "coldFirstRunMs": 51,
+      "p50Ms": 30.4,
+      "p95Ms": 140,
+      "maxMs": 140,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        51,
+        27.3,
+        135.8,
+        140,
+        28.5,
+        30.4
+      ],
+      "knownTargetPresentAt10": true,
+      "knownTargetPresentAt50": true,
+      "knownTargetRank": 1,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 29.929167
+      }
+    },
+    {
+      "id": "gold:ISSUE-037",
+      "query": "any action, which results in adverse civil consequences, shall be preceded by an opportunity to the person, who is likely to suffer such adverse consequences.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 0,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.020771147346868295,
+      "degraded": [],
+      "coldFirstRunMs": 31.3,
+      "p50Ms": 6.3,
+      "p95Ms": 9,
+      "maxMs": 9,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        31.3,
+        6.3,
+        6.1,
+        9,
+        8.5,
+        6.1
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 30.626375
+      }
+    },
+    {
+      "id": "gold:ISSUE-038",
+      "query": "The lower Appellate Court dismissed the application only on the ground that there is a delay in seeking to set aside the ex parte order, but had not explained as to why the petitioner was set ex parte on the very first date after the notice was served.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 43,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.02607494387843205,
+      "degraded": [],
+      "coldFirstRunMs": 14811.7,
+      "p50Ms": 689.9,
+      "p95Ms": 1124.7,
+      "maxMs": 1124.7,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        14811.7,
+        1124.7,
+        679,
+        722.7,
+        689.9,
+        664.5
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 4,
+        "longestActiveSeconds": 30.964103
+      }
+    },
+    {
+      "id": "gold:ISSUE-039",
+      "query": "By means of present writ petition, the petitioners have prayed for direction in the nature of mandamus directing the respondents not to interfere in their peaceful matrimonial life.",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.01655277894269433,
+      "degraded": [],
+      "coldFirstRunMs": 7509.8,
+      "p50Ms": 402.2,
+      "p95Ms": 1227.1,
+      "maxMs": 1227.1,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        7509.8,
+        1227.1,
+        402.2,
+        380.2,
+        378,
+        462.6
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 1,
+        "longestActiveSeconds": 49.927732
+      }
+    },
+    {
+      "id": "gold:ISSUE-040",
+      "query": "the learned counsel appearing for the petitioner would mainly focus his argument on the ground that there is gross violation of procedural safeguards, which would vitiate the detention",
+      "filterShape": "unfiltered",
+      "filters": {},
+      "preFilterPopulation": 18758460,
+      "postFilterPopulation": 18758460,
+      "candidatePopulation": 50,
+      "admittedOrRefused": "admitted",
+      "filteredAdmission": null,
+      "filteredPopulationFromRanker": null,
+      "filteredPopulationCapped": null,
+      "sparseRarestDf": 0.001973505686163258,
+      "degraded": [],
+      "coldFirstRunMs": 2488,
+      "p50Ms": 116.5,
+      "p95Ms": 218,
+      "maxMs": 218,
+      "p95IsMaxOfSample": true,
+      "runsMs": [
+        2488,
+        218,
+        115.3,
+        116.5,
+        205.5,
+        116.3
+      ],
+      "knownTargetPresentAt10": false,
+      "knownTargetPresentAt50": false,
+      "knownTargetRank": null,
+      "boxLoadAtStart": {
+        "activeBackends": 1,
+        "longestActiveSeconds": 60.621816
+      }
+    }
+  ]
+}

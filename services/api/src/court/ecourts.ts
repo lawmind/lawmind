@@ -539,6 +539,29 @@ type GuardedResponse =
  * it back, and the bytes are kept before anything reads them so a parser failure
  * cannot cost us the sample.
  */
+/**
+ * Flatten an error and its `cause` chain into one line.
+ *
+ * Node wraps transport failures twice: `TypeError: fetch failed` with the real
+ * `Error: read ECONNRESET` underneath, and sometimes a third level below that.
+ * Bounded to four links so a cyclic chain cannot spin.
+ */
+function describeFetchFailure(error: unknown): string {
+  const parts: string[] = [];
+  let current: unknown = error;
+  for (let depth = 0; depth < 4 && current !== undefined && current !== null; depth += 1) {
+    if (current instanceof Error) {
+      const code = (current as Error & { code?: unknown }).code;
+      parts.push(code === undefined ? current.message : `${current.message} [${String(code)}]`);
+      current = (current as Error & { cause?: unknown }).cause;
+    } else {
+      parts.push(String(current));
+      break;
+    }
+  }
+  return parts.join(' <- ');
+}
+
 async function guardedRequest(
   sql: Db,
   request: {
@@ -626,7 +649,21 @@ async function guardedRequest(
     return {
       refused: true,
       fetchLedgerId: reservation.ledgerId,
-      reason: error instanceof Error ? error.message : String(error),
+      /**
+       * THE CAUSE CHAIN, NOT JUST `fetch failed`.
+       *
+       * undici reports every transport failure as the same three words and puts
+       * the actual reason — `ECONNRESET`, `UND_ERR_SOCKET`, a TLS alert, a DNS
+       * failure — in `error.cause`. Discarding it cost a bounded eCourts request
+       * on 30 Aug 2026: the canary died after a successful session page and a
+       * successful `components.js`, in 76 ms, and the receipt could say nothing
+       * more than "fetch failed".
+       *
+       * Under a grant that limits how many requests may be spent, a diagnostic
+       * that requires a second request to say what the first one hit is not a
+       * diagnostic.
+       */
+      reason: describeFetchFailure(error),
     };
   }
 
@@ -655,13 +692,42 @@ async function guardedRequest(
     },
   });
 
+  const setCookie = response.headers.getSetCookie?.() ?? [];
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE JAR UPDATES ON EVERY RESPONSE, NOT ONLY AT SESSION OPEN
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `openCauseListSession` captured cookies once and nothing afterwards ever
+   * looked at `Set-Cookie` again. A browser's jar updates on every response, and
+   * PHP regenerates a session id on state transitions as a matter of routine.
+   *
+   * What that produced, measured 30 August 2026: the CAPTCHA image is fetched,
+   * the server stores the expected code against whatever session that GET landed
+   * in, and the submit — still carrying the cookie from session open — arrives
+   * in a different session with no stored code. The reply is
+   * `{"errormsg":"Invalid Captcha... "}`.
+   *
+   * That reads exactly like a solver failure and is not one. Three consecutive
+   * rejections were checked against the retained images by eye: `y86h6r`,
+   * `ktveGT`, `29mgst` — every one correct, and the bench measures the engine at
+   * 11/12 exact on real eCourts CAPTCHAs. Three correct codes rejected in a row
+   * is not an OCR outcome.
+   *
+   * The update lives HERE rather than in each caller for the same reason the
+   * attribution header does: there must be no request shape that can skip it.
+   */
+  if (request.session && setCookie.length > 0) {
+    request.session.cookieHeader = cookieHeaderFrom(setCookie, request.session.cookieHeader);
+  }
+
   return {
     refused: false,
     ok: response.ok,
     status: response.status,
     contentType: response.headers.get('content-type'),
     body,
-    setCookie: response.headers.getSetCookie?.() ?? [],
+    setCookie,
     fetchLedgerId: reservation.ledgerId,
     artifactId: artifact.id,
   };
@@ -1237,12 +1303,43 @@ async function postAjax(
   return { json, artifactId: result.artifactId, fetchLedgerId: result.fetchLedgerId };
 }
 
-/** `<option value="X">Label</option>` pairs, in document order. */
-function optionsOf(html: string): { value: string; label: string }[] {
-  return [...html.matchAll(/<option[^>]*\svalue=['"]([^'"]*)['"][^>]*>([\s\S]*?)<\/option>/gi)]
+/**
+ * `<option value=X>Label</option>` pairs, in document order.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE QUOTES ARE OPTIONAL, AND ASSUMING THEY WERE NOT COST A CANARY
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This used to require `value=['"]...['"]`. The interface does not write them.
+ * Measured against the retained response of 30 Aug 2026
+ * (`__fixtures__/ecourts-fill-district-delhi-2026-08-30.json`):
+ *
+ *     <option value='' >Select district</option>
+ *     <option value=8  >Central</option>
+ *     <option value=3  >East</option>
+ *
+ * Only the PLACEHOLDER is quoted, and the placeholder is the one entry this
+ * function filters out. So a response carrying eleven Delhi districts parsed to
+ * ZERO, and the canary reported `no district (0 offered)` — which reads exactly
+ * like an empty upstream answer and is not one.
+ *
+ * That is the failure mode this codebase already has a rule about:
+ * `PARSE_EMPTY != NO_CASES`. A parser that silently returns nothing from a
+ * populated document is worse than one that throws, because the caller records
+ * an observation of absence.
+ *
+ * Unquoted values are HTML5-legal and are what the source sends, so all three
+ * forms are accepted and the value is taken from whichever alternative matched.
+ */
+export function optionsOf(html: string): { value: string; label: string }[] {
+  return [
+    ...html.matchAll(
+      /<option[^>]*\svalue=(?:'([^']*)'|"([^"]*)"|([^\s>]*))[^>]*>([\s\S]*?)<\/option>/gi,
+    ),
+  ]
     .map((m) => ({
-      value: m[1]!.trim(),
-      label: m[2]!
+      value: (m[1] ?? m[2] ?? m[3] ?? '').trim(),
+      label: (m[4] ?? '')
         .replace(/<[^>]*>/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&nbsp;/g, ' ')
@@ -1253,6 +1350,12 @@ function optionsOf(html: string): { value: string; label: string }[] {
 }
 
 export type NamedCode = { value: string; label: string };
+
+/**
+ * `optionsOf` under the name the tests use, so a test never reaches for an
+ * unexported symbol and the export exists for a stated reason.
+ */
+export const parseDistrictOptions = optionsOf;
 
 export async function listDistricts(
   sql: Db,
