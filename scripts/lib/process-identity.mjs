@@ -165,7 +165,13 @@ export function findSessionPid() {
 /**
  * Classify a lease record against the OS.
  *
- * `FREE` · `HEALTHY` · `HUNG` · `PID_RECYCLED` · `DEAD` · `UNKNOWN`.
+ * `FREE` · `HEALTHY` · `HUNG` · `PID_RECYCLED` · `DEAD` · `UNKNOWN`, plus
+ * `HEALTHY_BY_PROGRESS` for a lease that opted in to durable-progress liveness.
+ *
+ * A verdict may additionally carry `contested: true` — see the block at the
+ * bottom of this function. `contested` NEVER changes the state; it says the
+ * lease's own durable output disagrees with the process table, and a
+ * destructive path must refuse rather than act on the state alone.
  *
  * `commandFingerprint`, when the lease carries one, is a third identity factor:
  * a session pid can be alive, be the same process, and still be running
@@ -235,11 +241,66 @@ export function health(
     };
   };
 
-  if (proc.alive === null) return byProgress() ?? { state: 'UNKNOWN', proc, age, note: proc.reason };
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * A LEASE THAT NEVER OPTED IN CAN STILL BE CONTRADICTED BY ITS OWN OUTPUT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `byProgress()` above is OPT-IN: it only fires when the record carries
+   * `livenessSource: 'durable-progress'`. That is the right default, because a
+   * lease's state must never become more permissive by accident.
+   *
+   * It leaves a hole, and the hole cost 341 minutes on 29-30 Aug 2026. The
+   * `HEAVY_BOX` resource lease had opted in and read `HEALTHY_BY_PROGRESS`
+   * correctly the whole time. NEW1's LANE lease had not, so the same worker read
+   *
+   *     resource-lease status HEAVY_BOX   HELD (HEALTHY_BY_PROGRESS)
+   *     lane-lease     status NEW1        DEAD
+   *
+   * — while the GPU sat at 99% and the batch cursor moved. Two halves of one
+   * truth, disagreeing, and the dangerous half is the one that invites a lane to
+   * clear the lock and put a second heavy job on one GPU.
+   *
+   * So a non-opted-in lease whose OWN recorded output moved recently is marked
+   * `contested`. The STATE is unchanged — still DEAD, still PID_RECYCLED — so
+   * nothing that reads `state` becomes more permissive. What changes is that a
+   * destructive path can see the contradiction and refuse, and `status` can
+   * print it instead of a flat DEAD that is materially misleading.
+   *
+   * The evidence has to be the lease's own: a fresh `lastProgressAt` AND a
+   * `currentOutput` that differs from `previousOutput`. A timestamp alone would
+   * be satisfied by a heartbeat, and a heartbeat is exactly what a hung worker
+   * keeps producing.
+   */
+  const contested =
+    lease.livenessSource !== 'durable-progress' &&
+    lease.lastProgressAt != null &&
+    Date.now() - new Date(lease.lastProgressAt).getTime() < progressStaleAfterMs &&
+    lease.currentOutput != null &&
+    String(lease.currentOutput) !== String(lease.previousOutput ?? '');
+
+  const contest = (verdict) =>
+    contested
+      ? {
+          ...verdict,
+          contested: true,
+          note:
+            (verdict.note ? verdict.note + '; ' : '') +
+            'CONTESTED: the pid is gone but the durable output this lease itself records moved ' +
+            Math.round((Date.now() - new Date(lease.lastProgressAt).getTime()) / 60000) +
+            'm ago (' +
+            String(lease.previousOutput) +
+            ' -> ' +
+            String(lease.currentOutput) +
+            '). The logical worker is alive; only the session that opened the lease is gone.',
+        }
+      : verdict;
+
+  if (proc.alive === null) return byProgress() ?? contest({ state: 'UNKNOWN', proc, age, note: proc.reason });
   if (proc.alive && sameProcess && !fingerprintOk)
-    return byProgress() ?? { state: 'PID_RECYCLED', proc, age, note: 'command fingerprint does not match' };
+    return byProgress() ?? contest({ state: 'PID_RECYCLED', proc, age, note: 'command fingerprint does not match' });
   if (proc.alive && sameProcess && !heartbeatCold) return { state: 'HEALTHY', proc, age };
   if (proc.alive && sameProcess && heartbeatCold) return { state: 'HUNG', proc, age };
-  if (proc.alive && !sameProcess) return byProgress() ?? { state: 'PID_RECYCLED', proc, age };
-  return byProgress() ?? { state: 'DEAD', proc, age };
+  if (proc.alive && !sameProcess) return byProgress() ?? contest({ state: 'PID_RECYCLED', proc, age });
+  return byProgress() ?? contest({ state: 'DEAD', proc, age });
 }

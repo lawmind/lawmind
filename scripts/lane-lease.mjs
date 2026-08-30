@@ -88,7 +88,11 @@ const fmtAge = (ms) => `${Math.round(ms / 60000)}m`;
 function describe(lane, lease, h) {
   if (!lease) return `${lane}: FREE`;
   return [
-    `${lane}: ${h.state}${lease.state === 'RELEASED' ? ' (released)' : ''}`,
+    // CONTESTED is printed on the headline, not buried three lines down. A flat
+    // `NEW1: DEAD` beside a GPU at 99% is the exact reading that cost 341
+    // minutes on 29-30 Aug 2026, and a reader who stops at the first line must
+    // not be misled by it.
+    `${lane}: ${h.state}${h.contested === true ? ' (CONTESTED — durable output is still moving)' : ''}${lease.state === 'RELEASED' ? ' (released)' : ''}`,
     `  session   ${lease.sessionId}`,
     `  pid       ${lease.pid} (${h.proc?.alive === true ? h.proc.name : (h.proc?.reason ?? 'unknown')})`,
     `  host      ${lease.host}`,
@@ -96,6 +100,12 @@ function describe(lane, lease, h) {
     `  heartbeat ${lease.heartbeatAt}  (${fmtAge(h.age ?? 0)} ago)`,
     `  task      ${lease.task ?? '-'}`,
     `  progress  ${lease.progress ?? '-'}`,
+    ...(h.contested === true || h.state === 'HEALTHY_BY_PROGRESS'
+      ? [
+          `  output    ${lease.previousOutput ?? '-'} -> ${lease.currentOutput ?? '-'}  @ ${lease.lastProgressAt ?? '-'}`,
+          `  note      ${h.note ?? '-'}`,
+        ]
+      : []),
   ].join('\n');
 }
 
@@ -196,7 +206,18 @@ function main() {
     const blocking =
       h.state === 'HEALTHY' ||
       h.state === 'UNKNOWN' || // a failed probe is not evidence of death
-      (h.state === 'HUNG' && !force);
+      (h.state === 'HUNG' && !force) ||
+      /**
+       * CONTESTED: the session pid is gone and the lease's own durable output
+       * moved anyway. That is a live logical worker with a dead launcher, which
+       * is the NORMAL shape of a scheduled task, and taking the lane over on the
+       * strength of the pid alone is how a second heavy job lands on one GPU.
+       *
+       * `--force` still works, and it records the health and the reason in
+       * `supersededOwner`, so a takeover over a live worker is a decision
+       * somebody signed rather than one the tool made quietly.
+       */
+      (h.contested === true && !force);
     if (blocking) {
       console.error(`REFUSED — ${lane} already has an owner. Do not run a second ${lane} session.`);
       console.error(describe(lane, lease, h));
@@ -208,6 +229,14 @@ function main() {
       if (h.state === 'UNKNOWN') {
         console.error(`\n  Could not probe the owner process (${h.note}). A failed probe is not`);
         console.error('  evidence of death — resolve the probe before taking over.');
+      }
+      if (h.contested === true) {
+        console.error('\n  The session that opened this lease is gone, but THE WORK IT LAUNCHED IS');
+        console.error('  NOT. This lease records its own durable output, and that output moved');
+        console.error(`  recently: ${h.note}`);
+        console.error('\n  A scheduled task outliving its launcher is the normal shape, not a fault.');
+        console.error('  Verify by the OUTPUT, never by the pid. If the worker really has stopped,');
+        console.error('  re-run with --force --reason "<the metric you checked, and what it read>".');
       }
       return 1;
     }

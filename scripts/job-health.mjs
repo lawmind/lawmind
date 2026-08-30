@@ -89,7 +89,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { appendFileSync, existsSync, readFileSync, statSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -1063,7 +1063,39 @@ function classifyCadence(job, prev, now, out, startup) {
   }
 
   const rc = String(task.result ?? '');
-  if (rc && rc !== '0' && rc !== '267009') {
+  /**
+   * ---------------------------------------------------------------------------
+   * 0x800710E0 IS THE STEADY STATE OF AN IgnoreNew TASK, NOT A FAILURE
+   * ---------------------------------------------------------------------------
+   *
+   * Measured 30 Aug 2026, from Windows rather than from a manual:
+   *
+   *     Lawmind-paragraphs     State=Running  MultipleInstances=IgnoreNew
+   *                            LastResult=0x800710E0  NumberOfMissedRuns=0
+   *     Lawmind-citations      identical
+   *     Lawmind-citation-keys  identical
+   *
+   * `enrich-worker.cmd` loops forever and the 15-minute trigger exists only to
+   * restart a wrapper that DIED. While one is alive, every trigger is refused by
+   * the task's own `MultipleInstances = IgnoreNew` policy -- which that file's
+   * header calls the real single-owner guarantee -- and the scheduler records the
+   * refusal as 0x800710E0 (2147946720).
+   *
+   * Read as a failure it pages on three healthy workers, forever, which is how a
+   * monitor teaches its reader to ignore it. `267009` (0x41301, task currently
+   * running) was already exempt for the same reason; this is the same fact seen
+   * from the trigger's side instead of the instance's.
+   *
+   * The exemption is NARROW on purpose. 0x800710E0 also means a genuine abort,
+   * so it is forgiven ONLY when the task is actually Running under IgnoreNew --
+   * both conditions read live from the scheduler. A stopped task returning it is
+   * still a failure and still pages.
+   */
+  const refusedBecauseAlreadyRunning =
+    rc === '2147946720' &&
+    /ignorenew/i.test(String(task.multipleInstances ?? '')) &&
+    /running/i.test(String(task.state ?? ''));
+  if (rc && rc !== '0' && rc !== '267009' && !refusedBecauseAlreadyRunning) {
     return {
       state: 'FAILED',
       why: `scheduled task "${task.name}" fired ${Math.round(sinceRun / 60000)}m ago and returned rc=${rc}`,
@@ -1189,14 +1221,14 @@ function startupMechanisms() {
   // form. Two tasks in different folders can share a TaskName, and matching on
   // the bare name alone would let one answer for the other.
   const fmt =
-    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' -or $_.TaskPath -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult + '|' + $_.Principal.LogonType + '|' + $_.TaskPath) }";
+    "Get-ScheduledTask | Where-Object { $_.TaskName -match 'awmind' -or $_.TaskPath -match 'awmind' } | ForEach-Object { $i = $_ | Get-ScheduledTaskInfo; ($_.TaskName + '|' + $_.State + '|' + $i.LastRunTime + '|' + $i.LastTaskResult + '|' + $_.Principal.LogonType + '|' + $_.TaskPath + '|' + $_.Settings.MultipleInstances) }";
   try {
     const out = execFileSync('powershell', ['-NoProfile', '-Command', fmt], {
       encoding: 'utf8',
       timeout: 40000,
     }).trim();
     for (const line of out.split('\n')) {
-      const [name, state, lastRun, result, logonType, taskPath] = line.trim().split('|');
+      const [name, state, lastRun, result, logonType, taskPath, multipleInstances] = line.trim().split('|');
       if (!name) continue;
       found.push({
         kind: 'SCHEDULED_TASK',
@@ -1207,6 +1239,11 @@ function startupMechanisms() {
         lastRun,
         result,
         logonType,
+        /**
+         * Carried because it is half the answer to what a LastTaskResult of
+         * 0x800710E0 means. See `classifyCadence`.
+         */
+        multipleInstances,
         boots: !/interactive/i.test(logonType || ''),
         note: /interactive/i.test(logonType || '')
           ? 'LogonType Interactive — fires only after a human logs in, NOT at boot'
@@ -1246,20 +1283,35 @@ function startupMechanisms() {
     }
   }
 
-  // The single-instance locks the enrich-worker wrapper holds. A lock with no
-  // process behind it is how a launcher fires forever and starts nothing.
+  // The lock files enrich-worker.cmd leaves in %TEMP%. They are BREADCRUMBS, not
+  // locks: the wrapper writes one on start (enrich-worker.cmd line 94) and
+  // nothing anywhere branches on its existence -- there is no `if exist "%LOCK%"`
+  // in that file. It used to be a real guard and was deliberately demoted, because
+  // a lock left behind by a killed worker INVERTED it: every later start read the
+  // file and politely declined while nothing was running. The single-instance
+  // question is now asked of the live process table, and the actual guarantee is
+  // the task's MultipleInstances=IgnoreNew, which Windows enforces.
+  // Surfaced here only so a human reading this output knows who last ran.
+  // Corrected 30 Aug 2026 -- the note below used to claim these blocked a restart,
+  // which would send the next reader hunting a blocker that cannot exist.
+  // MATCHED, not enumerated. The wrapper writes one lock per worker NAME it is
+  // handed, so any fixed list silently omits whatever was registered last --
+  // `lawmind-citation-keys.lock` was absent from this table until 30 Aug 2026
+  // while the file sat in %TEMP% the whole time, and a worker missing from a
+  // health report reads as a worker that never ran.
   const tmp = process.env.TEMP || process.env.TMP;
   if (tmp) {
-    for (const lock of ['lawmind-citations.lock', 'lawmind-paragraphs.lock']) {
-      const p = join(tmp, lock);
-      if (existsSync(p)) {
+    try {
+      for (const name of readdirSync(tmp).filter((f) => /^lawmind-.+\.lock$/i.test(f)).sort()) {
         found.push({
           kind: 'WRAPPER_LOCK',
-          name: lock,
+          name,
           state: 'PRESENT',
-          note: 'blocks a restart while held; stale if no matching process is alive',
+          note: 'breadcrumb only — nothing branches on it; never a stale-lock blocker',
         });
       }
+    } catch {
+      // An unreadable TEMP is not worth failing a health report over.
     }
   }
 

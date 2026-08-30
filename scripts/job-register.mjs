@@ -291,11 +291,42 @@ function cadence(argv) {
 
   const outputLines = flag(argv, 'output-lines', prev?.output_probe?.path);
   const outputLabel = flag(argv, 'output-label', prev?.output_probe?.label ?? 'receipts');
-  if (!outputLines) {
+  const outputSql = flag(argv, 'output-sql', prev?.output_probe?.query);
+  /**
+   * A DECLARED ABSENCE, WHICH IS NOT THE SAME AS AN OMISSION.
+   *
+   * A receipts file is the right probe for a tick job that writes one line per
+   * evaluation. It is the WRONG probe for a resumable worker whose loop backs
+   * off to hourly and logs 'nothing to do' either way: those lines grow at the
+   * same rate whether or not any work happened, so `lines` would report a closed
+   * frontier as healthy progress. That is exactly the shape `job-health.mjs`
+   * exists to refuse.
+   *
+   * The obvious alternative -- an SQL frontier probe -- was MEASURED before it
+   * was dismissed, 30 Aug 2026. `SELECT 1 FROM judgments j WHERE NOT EXISTS
+   * (SELECT 1 FROM judgment_citations c WHERE c.citing_judgment_id = j.id)
+   * LIMIT 1` did not return inside 120 seconds, because a LIMIT 1 anti-join over
+   * an EMPTY frontier must scan all 18.7M rows to prove the emptiness. Even
+   * `max(created_at)` on those tables took 50 s under load. A health probe that
+   * costs a minute of a shared box every run is a probe that gets turned off.
+   *
+   * So `--no-output-probe` exists and it DEMANDS `--why-no-probe`. The point is
+   * that 'this job has no automatic progress signal' becomes a recorded
+   * engineering fact with a reason attached, rather than a field somebody forgot
+   * to fill in. Those two are indistinguishable in a JSON file and completely
+   * different in what they mean.
+   */
+  const noProbe = argv.includes('--no-output-probe');
+  const whyNoProbe = flag(argv, 'why-no-probe', prev?.output_probe_absent_because);
+  if (noProbe && !whyNoProbe) {
+    die('--no-output-probe requires --why-no-probe "<what was measured, and why it is unaffordable>"');
+  }
+  if (!outputLines && !outputSql && !noProbe) {
     die(
-      'cadence needs --output-lines <receipts file>. A tick job with no receipts ' +
-        'can only prove it RAN, never that it evaluated anything — and "the task ' +
-        'fired" is on R7 §2\'s list of things that are not completion.',
+      'cadence needs --output-lines <receipts file>, or --output-sql "<query>", or ' +
+        '--no-output-probe --why-no-probe "...". A tick job with no receipts can ' +
+        'only prove it RAN, never that it evaluated anything, and "the task fired" ' +
+        'is on R7 section 2 list of things that are not completion.',
     );
   }
 
@@ -321,7 +352,12 @@ function cadence(argv) {
       'progress-invariant',
       prev?.progress_invariant ?? 'a scheduled tick that evaluated conditions and recorded a delivery result',
     ),
-    output_probe: { kind: 'lines', label: outputLabel, path: outputLines },
+    output_probe: noProbe
+      ? undefined
+      : outputSql
+        ? { kind: 'sql', label: outputLabel, query: outputSql }
+        : { kind: 'lines', label: outputLabel, path: outputLines },
+    output_probe_absent_because: noProbe ? whyNoProbe : undefined,
     critical: argv.includes('--critical') ? true : (prev?.critical ?? undefined),
     status: 'RUNNING',
     started_at: prev?.started_at ?? now,

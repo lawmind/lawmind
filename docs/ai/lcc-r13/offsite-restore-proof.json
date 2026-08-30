@@ -1,6 +1,6 @@
 {
   "kind": "lcc_offsite_restore_proof",
-  "writtenAt": "2026-08-30T08:47:28.268Z",
+  "writtenAt": "2026-08-30T09:06:46.868Z",
   "prefix": "2026-08-30T00-22-54-395Z-moat-r12b-enc",
   "bucket": "lawmind-corpus",
   "source": "CLOUDFLARE_R2_FRESH_DOWNLOAD",
@@ -11,10 +11,10 @@
     "keySource": "R2_BACKUP_ENCRYPTION_KEY (32 bytes hex, never uploaded)"
   },
   "timings": {
-    "downloadSeconds": 297.942,
-    "decryptSeconds": 3.235,
-    "restoreSeconds": 587.841,
-    "totalSeconds": 917.919
+    "downloadSeconds": 272.308,
+    "decryptSeconds": 3.067,
+    "restoreSeconds": 660.454,
+    "totalSeconds": 1022.334
   },
   "cipherChecks": [
     {
@@ -313,7 +313,11 @@
     }
   ],
   "mismatchedRows": [],
-  "contentChecksum": "UNAVAILABLE column \"citing_id\" does not exist",
+  "contentChecksum": {
+    "restored": "5388aa9b9490fbb63a650d45b4f80085",
+    "live": "5388aa9b9490fbb63a650d45b4f80085",
+    "match": true
+  },
   "restore": {
     "procedure": "psql -f schema.sql, then pg_restore --data-only --disable-triggers",
     "schemaExitCode": 0,
@@ -321,6 +325,6 @@
     "exitCode": 0,
     "stderrTail": []
   },
-  "scratchDatabase": "lawmind_offsite_restore_16048",
+  "scratchDatabase": "lawmind_offsite_restore_26868",
   "kept": false
 }

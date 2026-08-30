@@ -1,0 +1,111 @@
+{
+  "kind": "lcc_model_artifact_manifest",
+  "writtenAt": "2026-08-30T09:00:00Z",
+  "writtenBy": "LCC Sprint-2 Gate-B",
+  "debt": "REPRO_DEBT_2",
+  "authority": "LAWMIND_MASTER_ROADMAP_V7_1.md §5.7 and §8; Sprint-2 prompt §3",
+
+  "headline": "The revision stays UNKNOWN, and that is an acceptable Gate-B state. What was NOT acceptable was the only known-working weights being unhashed and unverified off-machine by this lane. Every hash below was recomputed by LCC from the live files; none was copied from NEW1's artifact.",
+
+  "MODEL_REVISION": "UNKNOWN",
+  "MODEL_FILES_HASHED": "PASS",
+  "MODEL_WEIGHTS_PROTECTED": "PASS",
+  "MODEL_LICENSE_BACKUP_PERMISSION": "PERMITTED",
+  "CLASSIFICATION": "REPRODUCIBILITY_CRITICAL",
+
+  "whyTheRevisionIsUnknown": {
+    "source": "docs/ai/new1-r12/model-revision-recovery.json, NEW1 R12",
+    "finding": "Four of the five files pin cleanly to revision 4de13258303883538bd53b696b452bf8099f0858. The fifth — onnx/model.onnx_data, the weights — matches NO revision the repository has ever had. Across all 17 upstream commits exactly one blob of size 2266820608 has existed, sha256 1eebfb28…; the local file is a02dfa4c…, differing in 42,988 of 2,266,820,608 bytes (0.0019%) starting at offset 1,047,976,779.",
+    "natureOfTheDifference": "NOT rounding. Sign flips and absolute differences up to 1.399 in sampled float32 pairs. Most likely a download defect that preserved length, uncatchable because the only integrity check performed was size against Content-Length.",
+    "verifiedIndependentlyByLcc": false,
+    "verificationNote": "LCC did NOT re-run the byte comparison against upstream — that is a 2.27 GB fetch to re-derive a conclusion NEW1 reached with a method that is stated and checkable. What LCC did verify independently is the part Gate B rests on: that the LOCAL bytes are exactly what the manifest claims, and that an off-machine copy of them exists and reads back identical."
+  },
+
+  "artifacts": {
+    "method": "sha256 streamed over each file from disk by LCC, 2026-08-30, not copied from any prior artifact",
+    "files": [
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx_data",
+        "bytes": 2266820608,
+        "sha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "role": "THE WEIGHTS. Matches no published revision. Irreplaceable.",
+        "matchesNew1Manifest": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx",
+        "bytes": 607298,
+        "sha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "role": "ONNX graph; external data lives in model.onnx_data",
+        "matchesNew1Manifest": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer.json",
+        "bytes": 17082821,
+        "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "role": "tokenizer, loaded by the sidecar",
+        "matchesNew1Manifest": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer_config.json",
+        "bytes": 1173,
+        "sha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "role": "tokenizer settings",
+        "matchesNew1Manifest": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/config.json",
+        "bytes": 770,
+        "sha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "role": "model config",
+        "matchesNew1Manifest": true
+      }
+    ],
+    "totalBytes": 2284512670,
+    "allFiveReproducedNew1Manifest": true,
+    "note": "Five of five hashes and five of five byte counts reproduced NEW1's manifest exactly. That is a genuine independent confirmation and not a restatement: two lanes hashed the same files on different days with different code and agreed."
+  },
+
+  "embeddingIdentity": {
+    "dimensions": 1024,
+    "metric": "cosine",
+    "normalisation": "L2, CLS-pooled, fp32",
+    "recipe": "HEAD:4800",
+    "modelIdentityString": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+    "source": "read from every row of new1_doc_vector_stage — one distinct (recipe, model) pair over 3,083,291 rows — not asserted",
+    "boundToSnapshot": "5b5d02384b46c96c, registered in embedding_snapshot by packages/db/factory/0001"
+  },
+
+  "offMachineProtection": {
+    "destination": "Cloudflare R2, bucket lawmind-corpus, key backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2",
+    "verifiedByLcc": true,
+    "method": "rclone check --download --multi-thread-streams 0, comparing the live .models/Xenova/bge-m3 tree against the remote copy byte for byte, 2026-08-30",
+    "result": "0 differences found, 5 matching files",
+    "whatThisProves": "Not that an upload returned 200. The remote bytes were pulled back down and compared to the local ones, which is the only thing that answers 'if this box dies tonight, do the weights come back'.",
+    "excludedFromTheCheck": [
+      "onnx/model_fp16.onnx and onnx/model_quantized.onnx — present locally, deliberately NOT in the protected set. The GPU sidecar runs fp32 only, quantisation would break cross-machine query/corpus consistency (docs/TECHNICAL_INVENTORY.md), and they are re-derivable from the graph. Naming them here makes the omission a decision rather than an oversight."
+    ]
+  },
+
+  "licence": {
+    "LICENCE": "MIT",
+    "verifiedFrom": "the Hugging Face model API, fetched 2026-08-30: Xenova/bge-m3 cardData.license = 'mit', tags ['license:mit'], base_model BAAI/bge-m3; BAAI/bge-m3 cardData.license = 'mit'. Both the conversion and its base.",
+    "repositoryRecordAgrees": "docs/OSS_STACK.md line 27 and docs/TECHNICAL_INVENTORY.md line 301 both record MIT, under OD-4 resolved 2 Aug 2026.",
+    "retentionInAPrivateEncryptedBackup": "PERMITTED",
+    "reasoning": "MIT permits use, copying and modification without condition; the only obligation attaches to DISTRIBUTION, which is the inclusion of the copyright notice. Retaining a copy in a private backup is not distribution. Nothing in the licence restricts encryption, retention period or storage location."
+  },
+
+  "encryptionDeviation": {
+    "state": "ACCEPTED_DEVIATION",
+    "what": "The model pack was uploaded to R2 UNENCRYPTED, while docs/ops/LOW_COST_BACKUP_ARCHITECTURE.md says to encrypt before off-machine storage.",
+    "declaredBy": "NEW1 R12, in its own artifact, rather than discovered later",
+    "lccPosition": "Accepted, and recorded rather than quietly waived. The rule exists for CONFIDENTIALITY — scripts/migration/encrypt-pack.mjs says so in terms: the moat pack carries matters, notes and client names, and server-side encryption is a control the storage provider holds the key to. These are public MIT model weights containing no client, personal or proprietary data, so the reason the rule exists does not apply to them. The MOAT pack, which does carry that data, IS encrypted (AES-256-GCM) and its restore was proven from ciphertext this round.",
+    "theRealTradeIfItWereEncrypted": "An encrypted pack whose key lives only in .env on this workstation dies with the workstation — the exact failure the backup exists to survive. For the moat pack that trade is accepted and the key escrow is a founder item; for public weights it would be pure downside."
+  },
+
+  "whatWouldCloseREPRO_DEBT_2": [
+    "A bit-identical remote source for onnx/model.onnx_data, at which point the local copy stops being irreplaceable and the classification can drop from REPRODUCIBILITY_CRITICAL.",
+    "Until then the local weights ARE the canonical artifact, and services/embed/src/fetch-model.ts must keep refusing to overwrite them — NEW1 R12 pinned the full 40-character revision, added sha256-after-download, and made a cached file whose hash equals the corpus hash unfetchable-over."
+  ],
+
+  "gateBReading": "MODEL_REVISION = UNKNOWN is explicitly acceptable at Gate B provided the files are protected. They are hashed by two lanes independently, classified REPRODUCIBILITY_CRITICAL, held off-machine, and the off-machine copy has been read back and compared byte for byte by this lane."
+}
