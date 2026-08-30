@@ -1,0 +1,99 @@
+{
+  "kind": "new1_stage_integrity_and_generation",
+  "writtenAt": "2026-08-30T00:27:49.839Z",
+  "writtenBy": "NEW1 R12",
+  "note": "Measured while the walk was running. Nothing was cleaned, deleted or repaired.",
+
+  "CURRENT_STAGE_INTEGRITY": "PASS",
+
+  "integrity": {
+    "method": "Full scan of new1_doc_vector_stage, grouped by generation. Norm computed as sqrt(-(embedding <#> embedding)), the exact fp32 inner product. l2_norm() was not used because two overloads resolve ambiguously on this install and the call errors.",
+    "scanSeconds": 93.3,
+    "generations": [
+      {
+        "generation": "5b5d02384b46c96c",
+        "rows": 2455863,
+        "nullEmbeddings": 0,
+        "wrongDimensions": 0,
+        "zeroVectors": 0,
+        "nonUnitBeyond1e3": 0,
+        "nonUnitBeyond1e2": 0,
+        "minNorm": 0.9999997615813925,
+        "maxNorm": 1.0000002384185507
+      },
+      {
+        "generation": "NULL_OLD_GENERATION",
+        "rows": 486955,
+        "nullEmbeddings": 0,
+        "wrongDimensions": 0,
+        "zeroVectors": 0,
+        "nonUnitBeyond1e3": 0,
+        "nonUnitBeyond1e2": 0,
+        "minNorm": 0.9999998211860497,
+        "maxNorm": 1.0000001788139183
+      }
+    ],
+    "wrongDimensionsNote": "The column is typed vector(1024), so a wrong dimension cannot be stored. The check is kept because a type can be altered and a check that can never fire is worth less than one that could.",
+    "nonFiniteNote": "pgvector rejects NaN and Infinity at input, so non-finite values cannot be present. The norm bounds above are the positive evidence."
+  },
+
+  "duplicates": {
+    "currentGenerationDuplicateContentHashes": 1,
+    "currentGenerationDuplicateDetail": {
+      "content_hash": "e3e5942ab3e23110a6d4aab9b79ede3103a49df47bbd3beb9366c83ee482748f",
+      "rows": 2,
+      "judgment_ids": ["5c181b95-09bc-4be6-a2e3-2a182fff21c6", "17634a6b-212b-468e-bf3c-ae0d3c488ed0"],
+      "reading": "Two judgment rows carry the same content hash and both got a vector. The stage is keyed on judgment_id, so this is legal and it is not a corruption; it is one wasted embed. One occurrence in 2.46 million is not a systemic collapse of the DISTINCT ON in the manifest builder."
+    },
+    "crossGenerationDuplicateContentHashes": 3206,
+    "crossGenerationNote": "Content hashes present in BOTH the old and current generation. Expected: the old generation is a superset-in-time, not a disjoint population. These are the rows that would be double-counted by any whole-stage metric."
+  },
+
+  "oldGeneration": {
+    "rows": 486955,
+    "distinctContentHashes": 486760,
+    "internalDuplicates": 195,
+    "identity": "snapshot_hash IS NULL",
+    "whyItIsNullRatherThanAnOlderHash": "The snapshot stamp is a COLUMN DEFAULT added by hand on 28 Aug 2026. Rows written before that date were never stamped, so the previous generation is identified by the ABSENCE of a value rather than by a value of its own.",
+    "sameModelAndRecipe": "Both generations carry model 'BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar' and recipe 'HEAD:4800'. The generations differ by SNAPSHOT DEFINITION, not by model.",
+    "disposition": "NOT DELETED. Out of scope this round by explicit instruction."
+  },
+
+  "unrepresented": {
+    "eligibleRepresentativesWithoutCurrentVector": 5202497,
+    "currentGenerationRowsOutsideTheSnapshot": 4179,
+    "outsideSnapshotReading": "Vectors for content hashes not in the 27-Aug representative snapshot. These are post-cut deltas. They are the reason metric B exceeds the numerator of metric C, and they are exactly the population that INDEX_CUT_AT exists to make explicit."
+  },
+
+  "GENERATION_IDENTITY": "HOLD",
+
+  "generationIdentity": {
+    "verdict": "HOLD",
+    "whatIsProvenGood": [
+      "Every current-generation row carries the same snapshot_hash 5b5d02384b46c96c. There is no third value and no partial labelling: 2,455,863 stamped, 486,955 NULL, 0 anything else.",
+      "The manifest hash on the HEAVY_BOX lease matches the manifest on disk, and seven sampled batch idsHash values re-hash to their recorded batchHashes.",
+      "So the ACTIVE generation is labelled consistently, and it did not change during this round."
+    ],
+    "whatIsNotGood": [
+      "The stamp is a column DEFAULT with no migration and no writer in git. A grep for snapshot_hash finds no code that sets it. A freshly installed database stamps every row NULL.",
+      "It is a CONSTANT. Pointing the walk at a different snapshot without changing the default mislabels every new row with the old generation, silently.",
+      "The writer knows only model and recipe as free text. It does not know, and cannot stamp, the definition hash, the manifest hash, the model identity or the text recipe identity as separate fields."
+    ],
+    "requiredBeforeAnyFutureGeneration": [
+      "embedding generation id, stamped explicitly by the writer rather than defaulted",
+      "definition hash",
+      "manifest / snapshot identity",
+      "model identity, which after this round must be able to express bytes that are not an upstream revision",
+      "text recipe identity"
+    ],
+    "ownership": "A schema change is needed and it belongs to whoever holds MIGRATION_SLOT. NEW1 did not take that slot and did not alter the table. Raised, not resolved.",
+    "doNotDo": "Do not change the active generation mid-walk. This round did not."
+  },
+
+  "VECTOR_STAGE_ROLE": {
+    "value": "NOT FOUND",
+    "searched": "LCC R12 commits and docs/ai/lcc-r12/ were read for a VECTOR_STAGE_ROLE decision of FACTORY_SCRATCH or CANONICAL_SERVING. No such decision is recorded at HEAD 0e68dd1.",
+    "position": "NEW1 states no value and contradicts nothing. The round was instructed to read LCC's decision and not to contradict it silently; the honest report is that the decision is not in the repository, so nothing was assumed either way.",
+    "whyItMatters": "It decides whether the 486,955 old-generation rows may be dropped and whether the final index is built on this table or on a served copy. Both are downstream of a decision NEW1 does not own."
+  }
+}

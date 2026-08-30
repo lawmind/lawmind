@@ -1,0 +1,103 @@
+{
+  "kind": "new1_coverage_skew",
+  "writtenAt": "2026-08-30T00:27:49.839Z",
+  "generation": "5b5d02384b46c96c",
+  "question": "Does a global coverage percentage hide a court, year, source, language, quality band or length band that is systematically excluded?",
+
+  "SYSTEMATIC_COVERAGE_HOLE": "no",
+
+  "verdict": "Every court and every year has partial coverage. Nothing is at zero. The spread that does exist is fully explained by WHERE THE WALK HAS REACHED, not by any refusal rule, and the explanation is quantitative rather than asserted.",
+
+  "theMechanism": {
+    "finding": "The walk processes 766 batches in ascending judgment_id order, and the id space is NOT uniform with respect to document length.",
+    "howItWasFound": "Bucketing all 7,654,179 manifest rows by the FIRST HEX CHARACTER of judgment_id shows buckets 0-5 holding about 400,000 rows each and buckets 6-f holding about 525,000 each. For uuid v4 every bucket should hold 478,386 with a standard error of about 0.014%; the observed deviation is roughly 10-12%. All sampled ids are v4 (version nibble checked on 64,179 ids across 7 batches), so the ids are random in form but the POPULATION behind them is not uniformly distributed across the id space.",
+    "consequence": "Ascending-id order is therefore NOT a uniform random sample. Buckets 0-5 average 6,600 characters per document; buckets 6-f average 5,600. The walk has done the long-document end of the id space first.",
+    "proof": "Predicting each court's coverage purely from the fraction of its representatives lying in the walked prefix (batches 0..236) reproduces the measured coverage for all 27 courts to within about 1 percentage point, with a uniformly positive residual consistent with the walk advancing during measurement.",
+    "predictionVsMeasured": [
+      { "court": "Madras High Court", "predictedPct": 32.64, "measuredPct": 33.23 },
+      { "court": "Allahabad High Court", "predictedPct": 24.32, "measuredPct": 25.03 },
+      { "court": "Patna High Court", "predictedPct": 18.72, "measuredPct": 19.08 },
+      { "court": "Bombay High Court", "predictedPct": 35.48, "measuredPct": 36.46 },
+      { "court": "High Court of Delhi", "predictedPct": 38.55, "measuredPct": 39.54 },
+      { "court": "Supreme Court of India", "predictedPct": 36.74, "measuredPct": 37.28 },
+      { "court": "High Court of Manipur", "predictedPct": 41.69, "measuredPct": 42.59 }
+    ],
+    "soWhat": "Mid-walk per-stratum coverage is a BIASED estimator of final coverage. A court reading 19% and a court reading 43% today are not a data-moat gap; they are two positions on the same cursor. Do not 'fix' this distribution — it closes on completion by construction."
+  },
+
+  "byCourt": {
+    "unit": "documents (member-weighted), current-generation",
+    "courtsMeasured": 27,
+    "courtsAtZero": 0,
+    "lowest": { "court": "Patna High Court", "docs": 743865, "covered": 164691, "pct": 22.14 },
+    "highest": { "court": "High Court of Manipur", "docs": 7274, "covered": 3757, "pct": 51.65 },
+    "anomaly": {
+      "court": "High Court of Jammu and Kashmir and Ladakh",
+      "reps": 190,
+      "covered": 190,
+      "pct": 100.0,
+      "predictedFromWalkPosition": 37.89,
+      "reading": "The only stratum that does NOT fit the walk-position model, and it fits in the OVER-covered direction. 190 representatives is too small to matter for coverage, but it is evidence that at least one non-walk path wrote current-generation rows. Recorded, not explained."
+    }
+  },
+
+  "byYear": {
+    "unit": "documents (member-weighted)",
+    "yearsMeasured": 77,
+    "range": "1950-2026",
+    "yearsAtZero": 0,
+    "lowestWithN5000Plus": { "year": 2020, "docs": 379380, "covered": 115384, "pct": 30.414 },
+    "highestWithN5000Plus": { "year": 1997, "docs": 6944, "covered": 4401, "pct": 63.378 },
+    "note": "Recent high-volume years (2018-2024) sit at 30-35% and thin older years sit higher. This is the length gradient again — recent judgments are shorter on average — not a recency exclusion."
+  },
+
+  "byLengthBand": {
+    "unit": "representatives (denominator read from the manifest, which is exact)",
+    "bands": [
+      { "band": "standard_2000_4000", "eligible": 4300142, "covered": 1255223, "pct": 29.19 },
+      { "band": "full_4000_8000", "eligible": 2182969, "covered": 719677, "pct": 32.97 },
+      { "band": "substantial_ge8000", "eligible": 1171068, "covered": 454707, "pct": 38.83 }
+    ],
+    "spread": "1.33x, and it is the direct signature of the id-space non-uniformity above. Documents under 2,000 characters are not in the denominator at all: the eligibility view excludes them unless they are a cited authority."
+  },
+
+  "byTextQualityBand": {
+    "unit": "documents (member-weighted)",
+    "bands": [
+      { "band": "ge_0.95", "docs": 7215708, "covered": 2570456, "pct": 35.623 },
+      { "band": "0.90_0.95", "docs": 1107818, "covered": 437555, "pct": 39.497 },
+      { "band": "0.85_0.90", "docs": 97202, "covered": 44746, "pct": 46.034 }
+    ],
+    "note": "Nothing below 0.85 is in the denominator — the eligibility view requires text_quality >= 0.85. Coverage is mildly HIGHER in the lower admitted bands, again a length correlation, not a quality preference."
+  },
+
+  "bySource": {
+    "measurable": false,
+    "reason": "judgments.source_id is non-null on 5,830 rows of 18,758,460, and is NULL for all 8,420,728 documents in the representative snapshot. A source breakdown of this population cannot be computed from source_id.",
+    "doNotConclude": "This is NOT 'source coverage is uniform'. It is 'source is unmeasured'. source_url is populated on 100% of rows and source_bench_code on 99.8%; either could carry a real source dimension in a later round."
+  },
+
+  "byLanguage": {
+    "measurable": false,
+    "reason": "judgments.language is 'en' on 18,758,460 of 18,758,460 rows, with zero exceptions. A column with one value is a default, not a measurement.",
+    "doNotConclude": "This is NOT 'the corpus is entirely English'."
+  },
+
+  "byTextSafety": {
+    "measurable": false,
+    "reason": "judgments.script_quality is non-null on 1,792,868 rows corpus-wide, but NULL for all 8,420,728 documents in the representative snapshot — verified per court, where the NULL count equals the uncovered count exactly for every one of the 27 courts.",
+    "consequence": "The eligibility view's axis_b admits a row when script_quality IS NULL. So the entire representative population was admitted on the ABSENCE of a damage screen, not on passing one, and text_safety reads UNKNOWN for all of it. That is a known standing issue, restated here with an exact denominator; it is not new to this round and was not introduced by it."
+  },
+
+  "refusalLedger": {
+    "table": "new1_doc_vector_stage_refused",
+    "note": "Refused rows are MOVED here, never deleted. A refusal that leaves no row is a silent drop.",
+    "taxonomy": {
+      "text_unsafe:damaged_other": 67071,
+      "procedural_disposal": 5021,
+      "legacy_font_ascii": 5,
+      "damaged_other": 2
+    },
+    "total": 72099
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "kind": "new1_model_revision_recovery",
+  "writtenAt": "2026-08-30T00:30:00Z",
+  "writtenBy": "NEW1 R12",
+  "modelId": "Xenova/bge-m3",
+
+  "MODEL_REVISION_RECOVERED": "UNKNOWN",
+  "MODEL_BYTES_MUST_BE_PROTECTED": "yes",
+  "MODEL_OFF_MACHINE_VERIFIED": "yes",
+
+  "headline": "The upstream revision was not recovered, and the reason is stronger than a missing note. The local weights file matches NO revision this repository has ever had. It is the upstream file with 42,988 bytes changed.",
+
+  "searchPerformed": {
+    "A_huggingFaceCacheMetadata": {
+      "result": "NOTHING",
+      "detail": "The model lives in a flat local_dir at .models/Xenova/bge-m3 with no refs/, no snapshots/, no blobs/ and no .cache/huggingface. The user-level hub cache holds only four PaddlePaddle OCR repos and no bge-m3 entry, so no ETag or commit metadata is retained anywhere on this machine."
+    },
+    "B_downloadLogsOrHttpMetadata": {
+      "result": "NOTHING",
+      "detail": "services/embed/src/fetch-model.ts streamed the response straight to disk and recorded only Content-Length and elapsed seconds to stdout. No response header, ETag or revision was ever persisted."
+    },
+    "C_repositoryHistoryComparison": {
+      "result": "DECISIVE, and negative",
+      "method": "Enumerated all 17 commits of the repo and fetched per-revision blob metadata for each. LFS sha256 is the file content hash, which was CONTROLLED by the fact that two of our three LFS files match it exactly at every revision.",
+      "findings": [
+        "onnx/model.onnx sha256 5d89a001 matches every revision from 044d00ee (2 Feb 2024) onward.",
+        "tokenizer.json sha256 6710678b matches every revision from 1fa62281 (1 Feb 2024) onward.",
+        "config.json and tokenizer_config.json were downloaded fresh from the pinned revision and are byte-identical to the local copies.",
+        "onnx/model.onnx_data does NOT match any revision. Across all 17 commits exactly ONE blob of size 2266820608 has ever existed, sha256 1eebfb28, carried by both onnx/model.onnx_data and onnx/sentence_transformers.onnx_data. The local file is a02dfa4c."
+      ],
+      "conclusion": "Four of the five files used by this pipeline pin cleanly to revision 4de13258303883538bd53b696b452bf8099f0858. The fifth pins to nothing. The requirement that ALL model and tokenizer files match the SAME immutable revision before recovery may be claimed is therefore NOT met, and recovery is not claimed."
+    }
+  },
+
+  "whatTheDifferenceIs": {
+    "differingBytes": 42988,
+    "totalBytes": 2266820608,
+    "fractionOfFile": "0.0019%",
+    "firstDifferingOffset": 1047976779,
+    "contiguousRangeCount": 16437,
+    "method": "The entire 2.27 GB file was streamed from the pinned revision and compared byte-for-byte against the local copy without writing it to disk. The stream sha256 recomputed to 1eebfb28, which independently confirms the Hub API metadata.",
+    "spotChecksFirst": "16 one-megabyte ranges spread evenly across the file were identical, which established that the difference was localised rather than global before the full comparison was spent.",
+    "natureOfTheDifference": "NOT rounding. Sampled float32 pairs at the differing region: upstream -0.162109375 against local 0.0405273438; upstream 0.0877075195 against local -0.115051270. Sign flips and absolute differences up to 1.399. Mean absolute difference over the differing floats in the first 1.2 MB window is 7.1e-2.",
+    "mostLikelyCause": "A download defect in the 2.2 GB file that preserved length. It could not have been caught, because the only integrity check performed was size against Content-Length."
+  },
+
+  "doesItDamageTheCorpus": {
+    "answer": "No, but it permanently binds the corpus to these bytes.",
+    "experiment": "12 documents drawn from the stage were re-embedded on CPU with the LOCAL weights and again with the pinned UPSTREAM weights, using the exact sidecar recipe: Tokenizer.from_file, CLS pooling, L2 normalisation, fp32.",
+    "results": {
+      "cos_localCPU_vs_storedGPU": { "min": 1.0, "mean": 1.0, "max": 1.0 },
+      "cos_localCPU_vs_upstreamCPU": { "min": 0.999568, "mean": 0.99978, "max": 0.999892 },
+      "cos_upstreamCPU_vs_storedGPU": { "min": 0.999568, "mean": 0.99978, "max": 0.999892 }
+    },
+    "readingOne": "The stored vectors reproduce EXACTLY from the local weights: cosine 1.000000 on all twelve, CPU against GPU. The pipeline is self-consistent and the corpus is sound.",
+    "readingTwo": "Upstream weights land 0.999568 to 0.999892 from the corpus. That is BELOW the floor this project already set for itself: the GPU sidecar refuses TF32 because it put 1 chunk in 48 at 0.9988 while true fp32 held every chunk above 0.9999. Here EVERY chunk is at or below 0.9999.",
+    "theRealRisk": "Not corpus damage. Query-corpus divergence. A freshly built container fetching upstream would embed QUERIES into a measurably different space from the corpus they search, and nothing would error."
+  },
+
+  "actionsTaken": [
+    "services/embed/src/fetch-model.ts now pins the full 40-character revision 4de13258303883538bd53b696b452bf8099f0858 instead of the moving ref.",
+    "It verifies sha256 after download and refuses on mismatch, rather than checking Content-Length only.",
+    "A cached file whose hash equals the CORPUS hash is KEPT and never re-fetched, so the fetcher can no longer destroy the only copy of the weights generation v2 was built from.",
+    "EMBED_REQUIRE_CORPUS_BYTES=1 makes a process that must share the corpus vector space refuse upstream bytes outright.",
+    "The live .models directory was NOT touched, re-downloaded or overwritten at any point. The upstream copy was fetched to a scratch directory outside the repository."
+  ],
+
+  "immutableManifest": {
+    "note": "The bytes generation v2 was embedded with. Independently re-hashed in this round, not copied from the R11 artifact.",
+    "files": [
+      { "path": ".models/Xenova/bge-m3/onnx/model.onnx_data", "bytes": 2266820608, "sha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c", "role": "THE WEIGHTS. Matches no upstream revision. Irreplaceable.", "matchesPinnedRevision": false },
+      { "path": ".models/Xenova/bge-m3/onnx/model.onnx", "bytes": 607298, "sha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3", "role": "ONNX graph; external data lives in model.onnx_data", "matchesPinnedRevision": true },
+      { "path": ".models/Xenova/bge-m3/tokenizer.json", "bytes": 17082821, "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790", "role": "tokenizer, loaded by the sidecar", "matchesPinnedRevision": true },
+      { "path": ".models/Xenova/bge-m3/tokenizer_config.json", "bytes": 1173, "sha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4", "role": "tokenizer settings", "matchesPinnedRevision": true },
+      { "path": ".models/Xenova/bge-m3/config.json", "bytes": 770, "sha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95", "role": "model config", "matchesPinnedRevision": true }
+    ],
+    "totalBytes": 2284512670,
+    "totalGiB": 2.128
+  },
+
+  "offMachineProtection": {
+    "destination": "Cloudflare R2, bucket lawmind-corpus, key backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2",
+    "authorisedBy": "docs/ops/LOW_COST_BACKUP_ARCHITECTURE.md names R2 as the off-machine destination; R2_BACKUP_BUCKET and admin credentials were already present in .env",
+    "mechanism": "scripts/migration/backup-r2.mjs, the existing verified-backup path",
+    "verified": true,
+    "verification": "7 files, 2.13 GB, every object downloaded back and compared byte-for-byte. 0 differences found, 7 matching files. Receipt at C:/lawmind/dump/backup-new1-model-pack-v2.receipt.json",
+    "deviationToDeclare": "The pack was uploaded UNENCRYPTED, while the backup architecture says to encrypt before off-machine storage. These are public model weights containing no client or personal data, so the confidentiality reason for that rule does not apply, but the rule was not followed and that is recorded rather than quietly skipped."
+  }
+}

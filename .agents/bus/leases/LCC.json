@@ -9,12 +9,13 @@
   "heartbeatAt": "2026-08-29T20:40:41.980Z",
   "task": "LCC R12: backend intelligence + eCourts + Sprint-2 serving foundation",
   "progress": null,
-  "state": "HELD",
+  "state": "RELEASED",
   "supersededOwner": {
     "sessionId": "f94ab142-4aa8-404c-9128-d91953dd851c",
     "pid": 22344,
     "health": "DEAD",
     "heartbeatAt": "2026-08-27T17:13:00.974Z",
     "takeoverReason": null
-  }
+  },
+  "releasedAt": "2026-08-29T21:37:16.462Z"
 }

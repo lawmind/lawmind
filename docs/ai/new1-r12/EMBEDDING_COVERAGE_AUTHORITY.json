@@ -1,0 +1,73 @@
+{
+  "kind": "new1_embedding_coverage_authority",
+  "version": 1,
+  "writtenAt": "2026-08-30T00:27:49.839Z",
+  "writtenBy": "NEW1 R12",
+  "gitHeadAtRead": "0e68dd14f2c63899938e0bbba224f6df4a289bcc",
+  "supersedes": "every prior figure that divided a WHOLE-STAGE row count by the eligible representative denominator",
+
+  "why": "Four different true statements about this corpus were being quoted as one number. A whole-stage row count includes 486,955 vectors from a generation that predates the snapshot stamp; representative coverage counts DISTINCT CONTENT, not documents; and document reach is larger than representative coverage because one vector can stand for several byte-identical judgments. None of these is 'corpus coverage', and the difference between the largest and smallest of them is currently 4.6 percentage points.",
+
+  "generation": {
+    "id": "5b5d02384b46c96c",
+    "idSource": "sha256(pg_get_viewdef(judgment_embedding_eligibility))[0:16]",
+    "manifestHash": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
+    "manifestIntegrity": "VERIFIED — batches 0, 100, 235, 236, 300, 500, 765 re-hashed from disk; all seven idsHash values equal the manifest's recorded batchHashes",
+    "recipe": "HEAD:4800",
+    "model": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+    "stampMechanism": "COLUMN DEFAULT on new1_doc_vector_stage.snapshot_hash. There is no migration and no writer in git. See generationIdentity below.",
+    "representativeSnapshotBuiltAt": "2026-08-27T13:20:04.407Z .. 2026-08-27T15:41:43.577Z"
+  },
+
+  "metrics": {
+    "A_STAGE_PHYSICAL_ROWS": {
+      "value": 2942818,
+      "means": "every vector row physically present in the stage table, of any generation",
+      "sql": "SELECT count(*) FROM new1_doc_vector_stage",
+      "doNotUseFor": "coverage of anything. This is the number that produced the inflated figures."
+    },
+    "B_CURRENT_GENERATION_VECTOR_ROWS": {
+      "value": 2455863,
+      "means": "vector rows belonging to the active embedding generation",
+      "sql": "SELECT count(*) FROM new1_doc_vector_stage WHERE snapshot_hash = '5b5d02384b46c96c'",
+      "note": "4,179 of these are for content hashes that are NOT in the 27-Aug representative snapshot. They are post-cut deltas, not errors. That is why B is larger than the numerator of C."
+    },
+    "C_ELIGIBLE_REPRESENTATIVE_COVERAGE": {
+      "numerator": 2451682,
+      "denominator": 7654179,
+      "percent": 32.0306,
+      "means": "distinct eligible CONTENT identities that have a current-generation vector, over the frozen representative denominator",
+      "sql": "WITH cur AS (SELECT DISTINCT content_hash FROM new1_doc_vector_stage WHERE snapshot_hash = '5b5d02384b46c96c') SELECT count(*) FILTER (WHERE c.content_hash IS NOT NULL), count(*) FROM embedding_content_representative r LEFT JOIN cur c ON c.content_hash = r.content_hash",
+      "callItThis": "representative coverage",
+      "neverCallItThis": "corpus coverage"
+    },
+    "D_DOCUMENT_REACH": {
+      "numerator": 3085348,
+      "denominator": 8420728,
+      "percent": 36.6399,
+      "means": "JUDGMENTS whose selected content hash is represented by a current-generation vector, over all judgments the representative snapshot admits to document-level semantic representation",
+      "sql": "WITH cur AS (SELECT DISTINCT content_hash FROM new1_doc_vector_stage WHERE snapshot_hash = '5b5d02384b46c96c') SELECT sum(r.member_count) FILTER (WHERE c.content_hash IS NOT NULL), sum(r.member_count) FROM embedding_content_representative r LEFT JOIN cur c ON c.content_hash = r.content_hash",
+      "whyLargerThanC": "member_count > 1 for 260,934 representatives. One common order disposing of forty writ petitions is ONE vector reaching forty judgments.",
+      "note": "8,420,728 is the reach denominator, NOT the corpus. judgments holds 18,758,460 rows; the rest are outside the representative snapshot's eligibility predicate entirely."
+    }
+  },
+
+  "corpusContext": {
+    "judgmentsRows": 18758460,
+    "eligibleForDocumentLevelRepresentation": 8420728,
+    "note": "Document reach is 36.64% of what is ELIGIBLE, which is 16.4% of all judgment rows. Neither is 'the corpus is 36% embedded'."
+  },
+
+  "crossLaneCorrection": {
+    "reportedByNEW3": "coarse embedding coverage approximately 35.780%",
+    "diagnosis": "35.780% of 7,654,179 is 2,738,665 — a WHOLE-STAGE row count (metric A) at an earlier moment, divided by the representative denominator. It double-counts the 486,955 old-generation rows and the post-cut delta rows.",
+    "coincidenceWarning": "That number is now numerically close to metric D (36.64%) by accident, not by derivation. Two different quantities converging for a few days is the most dangerous shape a wrong metric can take: correcting it will look like no change.",
+    "instruction": "Do not use whole-stage row count as v2 coverage. State which of A/B/C/D you mean, every time.",
+    "ownership": "NEW3 owns its registry. NEW1 did not edit it."
+  },
+
+  "systematicCoverageHole": {
+    "verdict": "no",
+    "evidence": "docs/ai/new1-r12/coverage-skew.json"
+  }
+}

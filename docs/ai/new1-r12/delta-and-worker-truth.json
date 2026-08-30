@@ -1,0 +1,91 @@
+{
+  "kind": "new1_delta_and_worker_truth",
+  "writtenAt": "2026-08-30T00:27:49.839Z",
+  "writtenBy": "NEW1 R12",
+
+  "deltaQueue": {
+    "source": "docs/ai/new1-r9/delta/queue-ledger.jsonl and .agents/logs/new1-delta-queue.task.log",
+    "cadence": "every 15 minutes, Windows scheduled task",
+    "lastPassAt": "2026-08-29T23:44:01.540Z",
+    "windowFrom": "2026-08-29T14:30:01.286Z",
+
+    "deltaRowsConsidered": 68,
+    "states": {
+      "EMBEDDED": 46,
+      "QUEUED": 0,
+      "CONTENT_HASH_ALREADY_COVERED": 3,
+      "REFUSED_NOT_ELIGIBLE": 19,
+      "REFUSED_NO_ELIGIBILITY_ROW": 0,
+      "REFUSED_TEXT_UNSAFE": 0,
+      "REFUSED_BAND_EXCLUDED": 0,
+      "FAILED": 0,
+      "DEFERRED_GPU_BUSY": 0
+    },
+    "identity": {
+      "namedTotal": 68,
+      "unnamedResidual": 0,
+      "predicatesAgree": true,
+      "verdict": "PASS — the named states are disjoint and exhaustive over the window, and the queue asserts it itself on every pass rather than leaving it to be recomputed."
+    },
+
+    "DEFERRED_GPU_BUSY": {
+      "observed": 0,
+      "codePathPresent": true,
+      "codeLocation": "services/harness/src/delta-queue.mjs:217, emitted as queue_DEFERRED_GPU_BUSY",
+      "behaviourOnDeferral": "the wait is named, the watermark is NOT advanced, and the same window is retried on the next fire",
+      "status": "NOT EXERCISED. No natural contention event occurred in the observed history — zero occurrences across the whole ledger. Not manufactured, by instruction: a production backlog created to trigger a state is not evidence about production."
+    },
+
+    "watermark": {
+      "value": "2026-08-29T14:31:01.286Z",
+      "maxCorpusCreatedAt": "2026-08-29T14:31:01.286Z",
+      "WATERMARK_VALID": "yes",
+      "detail": "The watermark equals max(judgments.created_at) to millisecond precision. One row compares strictly greater at sub-millisecond precision, which is a rounding artefact of the comparison, not unseen data.",
+      "whyItHasNotMoved": "It has been pinned since 14:31 on 29 Aug because the window holds a permanent residue of 19 rows that are REFUSED_NOT_ELIGIBLE and can never become embeddable. The advance rule only fires when a pass embeds something or finds everything already covered.",
+      "isThatDataLoss": "No. The window is open-ended at the top: each pass rescans from the watermark to now, so rows created after 14:31 are still seen. The cost is a rescan that grows without bound, not a gap.",
+      "butNoteThis": "max(judgments.created_at) has not advanced since 14:31 on 29 Aug either. The delta queue is idle because ingest is idle, not because the queue is stuck. Those are different problems and only the second one would be NEW1's."
+    },
+
+    "oldestEligibleQueuedAge": "0 — QUEUED is 0; there is no eligible row waiting",
+    "maximumObservedQueueLatency": "not measurable from this history: no row has been queued and then embedded within the observed window"
+  },
+
+  "workerTruth": {
+    "GPU_WRITERS": 1,
+    "evidence": "One doc-vector-embed.mjs process chain and one GPU sidecar (services/embed/gpu/server.py --port 8799) in the process table. One single-writer lock at .agents/logs/new1-gpu-embed.lock naming the live pid and the batch file.",
+    "gpuUtilisation": "99%, 5,526 MiB of 8,188 MiB",
+    "walkPosition": "batch 243 of 766 at 2026-08-30T00:25:18Z, advanced from 236 during this round",
+    "heartbeat": "services/harness/src/worker-truth.mjs, every 5 minutes, ALIVE with row count advancing each window",
+    "HEAVY_BOX": "HELD, RUNNING_PROGRESSING, livenessSource durable-progress, lastProgressAt fresh",
+
+    "LEASE_TRUTH": {
+      "beforeThisRound": "BROKEN",
+      "defect": "lane-lease status NEW1 read DEAD for 341 minutes while the walk it supervises was demonstrably progressing — GPU at 99%, batch cursor 236 to 241, rows 2,870,026 to 2,925,714. HEAVY_BOX read RUNNING_PROGRESSING for the same period, about the same worker, on the same box.",
+      "cause": "The NEW1 lane lease recorded only the agent session pid, and that session had exited. HEAVY_BOX had been given livenessSource durable-progress on 29 Aug; the lane lease had not, and worker-truth.mjs heartbeated only HEAVY_BOX even though its own header stated it heartbeats both.",
+      "fix": [
+        "scripts/lane-lease.mjs now accepts --liveness durable-progress and --durable-metric on acquire, and --current-output on heartbeat. The shared health() already understood livenessSource; only the lane lease had no way to set it.",
+        "services/harness/src/worker-truth.mjs now heartbeats the NEW1 lane lease as its RECORDED OWNER, read off the lease itself, the same way it does for HEAVY_BOX."
+      ],
+      "provenInProduction": "The 5-minute keeper now logs 'lane: NEW1: heartbeat ok ... output 2941823 (moved)' alongside the HEAVY_BOX line.",
+      "decayHalfProven": "Two heartbeats with an unchanged output value leave lastProgressAt byte-identical, so a walk that stops still decays the lease to DEAD within one window. Observed, not asserted.",
+      "stillOutstanding": "The lease RECORD does not yet carry livenessSource, because acquiring it needs one command that this session was not permitted to run. Until that command is run the lane lease will still read DEAD when the session ends, even though the heartbeat now arrives. Named in the round report."
+    },
+
+    "HEADLESS_REBOOT_RECOVERY": {
+      "launcher": "Task Scheduler: Lawmind-new1-coarse-walk (PT5M, IgnoreNew) -> walk-launch.sh -> stage-runner.sh",
+      "RESTART_AFTER_LOGON": "explicit, unchanged",
+      "changedThisRound": "nothing. S4U and headless behaviour were not touched during the active multi-day run, by instruction."
+    }
+  },
+
+  "progress": {
+    "at": "2026-08-30T00:27:49.839Z",
+    "embeddedRepresentatives": 2451682,
+    "remainingRepresentatives": 5202497,
+    "measuredRateRowsPerHour": 31878,
+    "rateBasis": "stage row count 2,870,026 at 2026-08-29T22:10:48Z to 2,942,818 at 2026-08-30T00:27:49Z, 72,792 rows over 8,221 seconds",
+    "etaHours": 163.2,
+    "etaDays": 6.8,
+    "etaCaveat": "Straight-line from the current rate. It assumes the box keeps this shape for a week, which no measurement can promise."
+  }
+}

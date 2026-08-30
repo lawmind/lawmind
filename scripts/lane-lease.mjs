@@ -126,6 +126,8 @@ function main() {
     console.error(
       'usage: lane-lease.mjs <acquire|heartbeat|release|status> <LANE> --session <id> [--task "..."] [--force --reason "..."]',
     );
+    console.error('       acquire   [--liveness durable-progress] [--durable-metric "SQL or file"]');
+    console.error('       heartbeat [--current-output <n>]   (advances lastProgressAt only when the value MOVED)');
     return 2;
   }
 
@@ -153,13 +155,32 @@ function main() {
       console.error(describe(lane, lease, h));
       return 1;
     }
+    /**
+     * `--current-output` is what makes `--liveness durable-progress` mean
+     * something. `lastProgressAt` moves ONLY when the durable metric actually
+     * moved, never merely because someone called heartbeat — so a lane whose
+     * worker has stopped still decays to DEAD inside one window, which is the
+     * half of the invariant that keeps the signal honest.
+     */
+    const currentOutput = arg('current-output', rest);
+    const moved = currentOutput != null && currentOutput !== lease.currentOutput;
     writeLease(lane, {
       ...lease,
       heartbeatAt: new Date().toISOString(),
       task: task ?? lease.task,
       progress: progress ?? lease.progress,
+      ...(currentOutput == null
+        ? {}
+        : {
+            previousOutput: lease.currentOutput ?? null,
+            currentOutput,
+            lastProgressAt: moved ? new Date().toISOString() : (lease.lastProgressAt ?? null),
+          }),
     });
-    console.log(`${lane}: heartbeat ok (${sessionId})`);
+    console.log(
+      `${lane}: heartbeat ok (${sessionId})` +
+        (currentOutput == null ? '' : ` output ${currentOutput}${moved ? ' (moved)' : ' (flat)'}`),
+    );
     return 0;
   }
 
@@ -206,6 +227,30 @@ function main() {
     task: task ?? null,
     progress: progress ?? null,
     state: 'HELD',
+    /**
+     * A LANE LEASE MAY OUTLIVE ITS SESSION — 30 Aug 2026.
+     *
+     * For most lanes the recorded session pid is the right witness: the question
+     * is literally "is that agent still running". NEW1 is different, and the bus
+     * has already been wrong about it. The coarse walk is a Windows scheduled
+     * task precisely so it survives the session that launched it, and on
+     * 29-30 Aug the NEW1 session ended while the walk kept producing ~31,000
+     * vectors an hour — for 341 minutes `lane-lease status` reported
+     *
+     *     NEW1: DEAD
+     *
+     * while the GPU sat at 99% and the batch cursor moved 236 -> 241. HEAVY_BOX
+     * had already been given `livenessSource: 'durable-progress'` for exactly
+     * this and read correctly the whole time; the lane lease had not, so the two
+     * halves of the same truth disagreed.
+     *
+     * Opt-in per record, and `health()` only ever lets it move a verdict TOWARDS
+     * alive, so no lane that omits it changes behaviour.
+     */
+    durableOutputMetric: arg('durable-metric', rest) ?? lease?.durableOutputMetric ?? null,
+    livenessSource: arg('liveness', rest) ?? (mine ? (lease?.livenessSource ?? null) : null),
+    currentOutput: mine ? (lease?.currentOutput ?? null) : null,
+    lastProgressAt: mine ? (lease?.lastProgressAt ?? null) : null,
     supersededOwner:
       lease && !mine
         ? {

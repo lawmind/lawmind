@@ -1,13 +1,25 @@
 {
   "lane": "RCC",
-  "sessionId": "01a036ea-b1bc-7730-8322-b4b0fd6c7f30",
-  "pid": 11568,
-  "pidName": "codex.exe",
-  "pidCreatedAt": "2026-08-25T13:46:34.2417970+04:00",
+  "sessionId": "fb9d6fb2-af6c-4623-b960-496c50250ba9",
+  "pid": 15724,
+  "pidName": "claude.exe",
+  "pidCreatedAt": "2026-08-29T23:49:34.8583800+04:00",
   "host": "XC",
-  "acquiredAt": "2026-08-25T03:19:00.921Z",
-  "heartbeatAt": "2026-08-25T10:56:30.000Z",
-  "task": "R7 RCC parking commit and CLIENT_APPS release",
+  "acquiredAt": "2026-08-30T00:03:08.451Z",
+  "heartbeatAt": "2026-08-30T00:03:08.451Z",
+  "task": "RCC R12: v1 client against the frozen contract",
   "progress": null,
-  "state": "HELD"
+  "state": "RELEASED",
+  "durableOutputMetric": null,
+  "livenessSource": null,
+  "currentOutput": null,
+  "lastProgressAt": null,
+  "supersededOwner": {
+    "sessionId": "01a036ea-b1bc-7730-8322-b4b0fd6c7f30",
+    "pid": 11568,
+    "health": "DEAD",
+    "heartbeatAt": "2026-08-25T10:56:30.000Z",
+    "takeoverReason": null
+  },
+  "releasedAt": "2026-08-30T00:03:43.749Z"
 }

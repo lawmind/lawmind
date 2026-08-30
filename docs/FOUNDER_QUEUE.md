@@ -6655,3 +6655,56 @@ this is not yet a backup in the sense that matters.
 The key is 32 bytes of hex on the `R2_BACKUP_ENCRYPTION_KEY` line of `.env`.
 `.env` is gitignored and the key is not in any commit, artifact or log.
 
+
+---
+
+## FQ-NEW1-R12-1 — the embedding model on this box is not a model anyone can re-download
+
+**Raised:** 30 Aug 2026 · **Lane:** NEW1 · **Blocks:** nothing today. Decides
+whether the corpus can ever be rebuilt.
+
+**What was found.** The weights the entire semantic corpus was embedded with do
+not match any version of that model that has ever been published. We fetched the
+model from an unpinned reference over a year ago and kept no record of which
+version it was. Checking every published version of it: four of the five files
+match exactly, and the fifth — the 2.27 GB file that holds the actual weights —
+matches nothing. It differs from the published file in 42,988 bytes out of 2.27
+billion. Almost certainly a download that went wrong in a way nothing checked
+for, because the only check we performed was that the file was the right length.
+
+**Is the corpus damaged?** No. We re-ran twelve documents through those exact
+local weights and they reproduce the stored vectors perfectly — cosine 1.000000.
+The 2.45 million vectors are internally consistent and searchable.
+
+**So what is the problem?** Those bytes now exist in exactly one place. If that
+file is lost, the corpus cannot be reproduced — not approximately, not at all,
+because the file it came from is not available anywhere.
+
+We also measured what happens if a new server fetches the *published* weights
+instead: query vectors land about 0.9998 similarity from our corpus. That sounds
+like nothing. It is below the accuracy bar this project already set for itself
+for exactly this kind of drift, and it would mean searches are asking questions
+in a slightly different language from the one the corpus answers in. Nothing
+would error. Results would just be quietly a little worse.
+
+**What was done anyway, with no decision needed.** The 2.13 GB model pack is now
+backed up to R2 and verified byte for byte on read-back. The downloader is pinned
+to a specific published version, checks file contents rather than length, and can
+no longer overwrite the local weights. A server that must match the corpus can now
+be made to refuse the published weights outright.
+
+**The decision that is yours.** Two options, and there is no rush:
+
+1. **Keep going on these bytes.** Free. Nothing to do. The corpus stays bound to
+   one 2.13 GB file that now has a verified off-machine copy.
+2. **Eventually rebuild on the published version.** Costs a full re-embed of the
+   corpus — GPU time measured in weeks at the current rate — and buys a model
+   identity that anyone can reproduce from scratch.
+
+NEW1's view: **option 1**, and revisit only if we ever re-embed for another
+reason. The backup removes the actual risk; the rest is tidiness.
+
+**Also worth knowing:** the model pack went to R2 unencrypted. Our backup rules
+say encrypt before anything leaves the machine. These are public model weights
+with no client data in them, so the reason behind that rule does not apply — but
+the rule was not followed, and you should hear that from us rather than notice it.

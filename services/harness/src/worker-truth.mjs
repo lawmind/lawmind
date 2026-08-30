@@ -61,6 +61,8 @@ const GPU_LOCK = p('.agents/logs/new1-gpu-embed.lock');
 const RUNNER_LOG = p('docs/ai/new1-tier-a/stage-runner.log');
 const OUT = p('docs/ai/new1-r10/worker-truth.json');
 const LEASE = p('scripts/resource-lease.mjs');
+const LANE = p('scripts/lane-lease.mjs');
+const LANE_LEASE = p('.agents/bus/leases/NEW1.json');
 
 /** A log or a row count that has not moved in this long is not progress. */
 const QUIET_MS = Number(process.env.WORKER_QUIET_MS ?? 20 * 60 * 1000);
@@ -164,6 +166,7 @@ const truth = {
   previousAt: prev?.at ?? null,
   dbError,
   heartbeat: null,
+  laneHeartbeat: null,
 };
 
 /**
@@ -189,7 +192,48 @@ if (verdict === 'ALIVE' && rows != null) {
   truth.heartbeat = { ok: false, said: 'not heartbeated: verdict is ' + verdict };
 }
 
+/**
+ * THE LANE LEASE IS THE OTHER HALF OF THE SAME TRUTH — 30 Aug 2026.
+ *
+ * The header of this file has said since it was written that `HEAVY_BOX` AND the
+ * `NEW1` lane lease both stop being heartbeated by the agent and start being
+ * heartbeated here. Only the first half was ever implemented, and the gap showed:
+ * on 29-30 Aug `resource-lease status HEAVY_BOX` correctly read
+ * RUNNING_PROGRESSING for 341 minutes after the NEW1 session died, while
+ * `lane-lease status NEW1` read DEAD for those same 341 minutes, about the same
+ * walk, on the same box. Two bus surfaces, one worker, opposite answers.
+ *
+ * The heartbeat is sent AS THE RECORDED OWNER, read off the lease itself — the
+ * same thing the HEAVY_BOX path does. This keeper does not claim the lane; it
+ * reports that the lane's worker is provably alive. `--current-output` advances
+ * `lastProgressAt` only when the row count actually MOVED, so a walk that stops
+ * still decays the lease to DEAD inside one window.
+ *
+ * It only READS as alive if the lease itself opted in with
+ * `--liveness durable-progress`. A lane that has not opted in is unaffected.
+ */
+if (verdict === 'ALIVE' && rows != null) {
+  try {
+    const laneLease = JSON.parse(readFileSync(LANE_LEASE, 'utf8'));
+    if (!laneLease?.sessionId) throw new Error('NEW1 lane lease has no sessionId');
+    const out = execFileSync(
+      process.execPath,
+      [LANE, 'heartbeat', 'NEW1', '--session', laneLease.sessionId, '--current-output', String(rows)],
+      { encoding: 'utf8', env: { ...process.env, LAWMIND_LANE: 'NEW1' }, timeout: 120000 },
+    );
+    truth.laneHeartbeat = { ok: true, said: out.trim().split(/\r?\n/)[0] };
+  } catch (e) {
+    truth.laneHeartbeat = {
+      ok: false,
+      said: String(e?.stdout ?? e?.message ?? e).trim().split(/\r?\n/).slice(0, 2).join(' | '),
+    };
+  }
+} else {
+  truth.laneHeartbeat = { ok: false, said: 'not heartbeated: verdict is ' + verdict };
+}
+
 writeFileSync(OUT, JSON.stringify(truth, null, 2) + '\n');
 console.log(at + '  ' + verdict + '  rows ' + rows + ' (' + (truth.rowsDelta ?? '?') + ')  ' + why);
 if (truth.heartbeat) console.log('  heartbeat: ' + truth.heartbeat.said);
+if (truth.laneHeartbeat) console.log('  lane:      ' + truth.laneHeartbeat.said);
 process.exitCode = verdict === 'ALIVE' ? 0 : verdict === 'UNKNOWN' ? 0 : 3;
