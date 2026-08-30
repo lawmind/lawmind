@@ -28,6 +28,16 @@
 > schema fix for `platform_config`; and the quota accounting. Every measurement
 > here is good. One inference from them was not.
 >
+> **Canonical state string, per `LAWMIND_MASTER_ROADMAP_V7_1.md` §2, appended by
+> the Sprint-2 Day-0 seal (30 August 2026, LCC):**
+>
+> ```
+> CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT
+> ```
+>
+> The settled conditions are only those in the canonical authorization record
+> (`CLAUDE.md` §6a). Nothing below this line is altered.
+>
 > **What does NOT follow from the withdrawal:** monitoring does not become ready.
 > The eCourts pilot moves from `DISABLED_EXTERNAL_BLOCK` to
 > `DISABLED_NOT_READY`, and the observation writer, measured capacity and

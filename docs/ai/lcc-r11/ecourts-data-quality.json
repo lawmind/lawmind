@@ -1,4 +1,18 @@
 {
+  "correction": {
+    "appendedAt": "2026-08-30T07:05:00Z",
+    "appendedBy": "LCC Sprint-2 Day-0 integration seal",
+    "CAPTCHA_OPERATIONAL_BASIS": "RETRACTED_AS_INVENTED_REQUIREMENT",
+    "what": "The `pilot.reason` field below states CAPTCHA_IMPLEMENTATION_BLOCKED and CAPTCHA_OPERATIONAL_BASIS=NONE_RECORDED. That blocker was LCC's own invention and no document in this repository ever imposed it. It is retracted here rather than edited out, per LAWMIND_MASTER_ROADMAP_V7_1.md rule 16 and the append-only correction rule.",
+    "authority": "LAWMIND_MASTER_ROADMAP_V7_1.md section 2; CLAUDE.md section 6a; corrected in code by 6b90f98",
+    "settledConditionsAre": "only those in the canonical authorization record (CLAUDE.md section 6a): grant non-null and unexpired, code only in services/api/src/court/ecourts.ts, every request ledgered and rate limited",
+    "unchangedByThisCorrection": [
+      "every measurement in this artifact: request counts, quota utilisation, retained raw artifact shas, parser findings",
+      "monitoringProductState = DISABLED_NOT_READY",
+      "ecourts_observation = 0",
+      "the eCourts and Supreme Court authorization state, which is SATISFIED and is not reopened"
+    ]
+  },
   "artifact": "LCC_ECOURTS_DATA_QUALITY",
   "version": "ECOURTS_DQ_V1",
   "takenAt": "2026-08-29T16:58:04.160Z",

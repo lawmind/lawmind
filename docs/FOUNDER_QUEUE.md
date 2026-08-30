@@ -256,6 +256,16 @@ not overstate what we know.
 > and `captchaImplementable()` no longer exist. This entry is the record on the
 > founder-facing side.
 >
+> **Canonical state string, per `LAWMIND_MASTER_ROADMAP_V7_1.md` §2, appended by
+> the Sprint-2 Day-0 seal (30 August 2026, LCC):**
+>
+> ```
+> CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT
+> ```
+>
+> The settled conditions are only those in the canonical authorization record
+> (`CLAUDE.md` §6a). This entry stays WITHDRAWN and asks nothing of the founder.
+>
 > **The text below is the entry as originally written on 29 August 2026 and is
 > left unaltered.** It is wrong in its conclusion and correct in its evidence —
 > the response bytes, the source key and the parser findings all stand.

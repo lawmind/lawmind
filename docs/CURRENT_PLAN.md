@@ -261,6 +261,18 @@ the generator would each be inventing a security bypass, so none was done.
 > the request shape, the CAPTCHA solver, an observation writer, and the two
 > measurements — capacity and retention — that monitoring waits on.
 > `USER_MONITORING_PRODUCT` stays `DISABLED_NOT_READY` regardless.
+>
+> **Canonical state string, per `LAWMIND_MASTER_ROADMAP_V7_1.md` §2, appended by
+> the Sprint-2 Day-0 seal (30 August 2026, LCC):**
+>
+> ```
+> CAPTCHA_OPERATIONAL_BASIS = RETRACTED_AS_INVENTED_REQUIREMENT
+> ```
+>
+> The settled conditions are only those in the canonical authorization record
+> (`CLAUDE.md` §6a). This appends the roadmap's canonical token so a future grep
+> finds the retraction rather than the retracted claim. It broadens nothing,
+> invents no replacement requirement, quotes no grant text, and reopens no gate.
 
 **Switch is OFF again**, through the audited path, reason recorded: canary NOT
 PASS (0 parsed observations), pilot not registered, nothing scheduled to use it.
