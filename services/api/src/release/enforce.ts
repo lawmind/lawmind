@@ -35,7 +35,10 @@ import { fail } from '../envelope.ts';
 import {
   capabilityRefusal,
   isUserReachable,
+  isUserReachableOnPlatform,
+  parsePlatform,
   type CapabilityName,
+  type Platform,
 } from './capabilities.ts';
 
 /**
@@ -77,4 +80,34 @@ export function refuseIfDisabled(c: Context, name: CapabilityName): Response | n
  */
 export function semanticArmPermitted(): boolean {
   return isUserReachable('search.semantic.broad');
+}
+
+/**
+ * Which platform made this request.
+ *
+ * `X-Lawmind-Platform: ios | android | web`. ADDITIVE and PROVISIONAL: a client
+ * that sends nothing resolves to `unknown`, which gets the release-wide
+ * capability set — exactly the behaviour every existing client has today.
+ *
+ * A header rather than a token claim because it is not a security boundary and
+ * must not be mistaken for one. §9.5's switch protects an App Review outcome, so
+ * what it has to be right about is what the iOS BINARY does; a caller that lies
+ * about its platform gains a capability it could already reach from a browser.
+ * Anything that must not be reachable at all is DISABLED release-wide, where no
+ * header can touch it.
+ */
+export function platformFromRequest(c: Context): Platform {
+  return parsePlatform(c.req.header('x-lawmind-platform'));
+}
+
+/**
+ * May the party-name arm run for this request?
+ *
+ * Roadmap v7.1 §9.5. Read by `/search` before ranking. When false the arm does
+ * not run, `degraded` carries `party_name_disabled`, and exact case number, CNR
+ * and citation lookup are untouched — the visible degradation §9.5 requires,
+ * rather than a capability that silently vanishes.
+ */
+export function partyNameArmPermitted(platform: Platform): boolean {
+  return isUserReachableOnPlatform('search.party_name', platform);
 }

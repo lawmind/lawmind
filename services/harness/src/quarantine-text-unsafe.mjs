@@ -62,9 +62,14 @@ try {
   } else {
     const ids = victims.map((v) => v.judgment_id);
     const reason = new Map(victims.map((v) => [v.judgment_id, v.script_quality]));
+    // `snapshot_hash` rides along in BOTH directions. A quarantine that drops
+    // the generation cannot be reversed honestly: the reversal statement printed
+    // in the artifact below would re-insert the row under whatever generation is
+    // current at the time, which is exactly the relabelling this column exists
+    // to prevent.
     const list =
       'judgment_id, content_hash, court, year, member_count, text_chars, ' +
-      'embedded_chars, tokens, recipe, model, embedding, created_at';
+      'embedded_chars, tokens, recipe, model, embedding, created_at, snapshot_hash';
     await sql.unsafe(
       `WITH m AS (
          DELETE FROM new1_doc_vector_stage WHERE judgment_id = ANY($1::uuid[]) RETURNING ${list}

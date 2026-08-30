@@ -69,11 +69,17 @@ if (RESTORE.length > 0) {
       DELETE FROM new1_doc_vector_stage_refused
       WHERE refused_class = ANY(${RESTORE})
       RETURNING judgment_id, content_hash, court, year, member_count, text_chars,
-                embedded_chars, tokens, recipe, model, embedding, created_at
+                embedded_chars, tokens, recipe, model, embedding, created_at,
+                -- A lift back is not a new generation. Carrying the identity is
+                -- the only way a restored row keeps saying which snapshot made
+                -- it; before 30 Aug 2026 the quarantine table had no such column
+                -- at all, so every restore silently re-labelled 72,099 rows with
+                -- whatever generation happened to be current.
+                snapshot_hash
     )
     INSERT INTO new1_doc_vector_stage
       (judgment_id, content_hash, court, year, member_count, text_chars,
-       embedded_chars, tokens, recipe, model, embedding, created_at)
+       embedded_chars, tokens, recipe, model, embedding, created_at, snapshot_hash)
     SELECT * FROM lifted
     ON CONFLICT (judgment_id) DO NOTHING
   `;
@@ -167,9 +173,11 @@ if (process.argv.includes('--text-unsafe')) {
     )
     INSERT INTO new1_doc_vector_stage_refused
       (judgment_id, content_hash, court, year, member_count, text_chars,
-       embedded_chars, tokens, recipe, model, embedding, created_at, refused_class)
+       embedded_chars, tokens, recipe, model, embedding, created_at, refused_class,
+       snapshot_hash)
     SELECT judgment_id, content_hash, court, year, member_count, text_chars,
-           embedded_chars, tokens, recipe, model, embedding, created_at, reason
+           embedded_chars, tokens, recipe, model, embedding, created_at, reason,
+           snapshot_hash
     FROM lifted
     ON CONFLICT DO NOTHING
   `;

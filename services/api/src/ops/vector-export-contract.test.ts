@@ -35,13 +35,49 @@ describe('vector export contract', () => {
     const refusal = await vectorExportRefusal(sql, 'new1_doc_vector_stage');
     assert.ok(refusal, 'the stage table must not be exportable in its current shape');
     /**
-     * Measured 30 August 2026: the column is nullable with a constant DEFAULT of
-     * `'5b5d02384b46c96c'` applied by no migration, and `doc-vector-embed.mjs`
-     * mentions the column zero times. Both failures are real; the default is
-     * reported first because it is the one that will mislabel a FUTURE snapshot
-     * rather than merely leaving an old one blank.
+     * ─────────────────────────────────────────────────────────────────────────
+     * THE HANDSHAKE BUS 1546 PREDICTED, COMPLETED 30 AUGUST 2026
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * This assertion used to read `identity_from_column_default`, and LCC told
+     * NEW1 on the bus that *"when you land the writer change and drop the
+     * default, that assertion will go red — that is the handshake, not a break.
+     * Flip it then."*
+     *
+     * `packages/db/factory/0001_vector_snapshot_identity.sql` dropped the
+     * default, `doc-vector-embed.mjs` now supplies the identity explicitly, and
+     * a trigger refuses any write that cannot name a registered ACTIVE
+     * generation. So the table is no longer refused for the reason that would
+     * have mislabelled a FUTURE snapshot.
+     *
+     * It is STILL REFUSED, and that is correct rather than a leftover: 486,955
+     * rows written before identity binding existed carry SQL NULL. They were
+     * deliberately not rewritten — a mass UPDATE of half a million rows under a
+     * live GPU writer buys neatness and costs bloat — and they are named
+     * `UNIDENTIFIED_LEGACY_V1` in `embedding_snapshot` rather than left as a
+     * silent residual class.
+     *
+     * So the reason moved from "the schema is supplying identity" to "some rows
+     * have none", which is the honest remaining fact. A promotion of this table
+     * must still decide what to do about those rows; it can no longer be
+     * ambushed by the next generation wearing this one's label.
      */
-    assert.equal(refusal.reason, 'identity_from_column_default');
+    assert.equal(refusal.reason, 'null_snapshot_identity');
+    assert.ok(
+      'nullRows' in refusal && refusal.nullRows > 0,
+      'the refusal must name how many rows carry no identity, not merely that some do',
+    );
+
+    // And the defect that USED to be reported is gone from the live schema.
+    const [column] = await sql<{ column_default: string | null }[]>`
+      SELECT column_default FROM information_schema.columns
+       WHERE table_name = 'new1_doc_vector_stage'
+         AND column_name = ${VECTOR_SNAPSHOT_IDENTITY_COLUMN}`;
+    assert.equal(
+      column?.column_default ?? null,
+      null,
+      'a constant column DEFAULT is not an identity — REPRO_DEBT_1 removed it',
+    );
   });
 
   it('says nothing about a table that carries no snapshot identity column', async () => {

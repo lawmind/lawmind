@@ -41,7 +41,7 @@ import {
   type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
-import { semanticArmPermitted } from '../release/enforce.ts';
+import { partyNameArmPermitted, platformFromRequest, semanticArmPermitted } from '../release/enforce.ts';
 
 /**
  * The derived precedential layers for a page of structured hits, in ONE query.
@@ -708,6 +708,10 @@ async function runSearch(
     },
     offset,
     signals,
+    // §9.5. Resolved from the request's own platform, so an iOS build can lose
+    // the party arm without any other client losing anything, and without
+    // `/search` refusing — exact case number, CNR and citation are untouched.
+    { partyNameArm: partyNameArmPermitted(platformFromRequest(c)) },
   );
   const hasMore = retrieved.length > pageSize;
   if (hasMore) retrieved.length = pageSize;

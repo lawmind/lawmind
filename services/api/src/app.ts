@@ -105,7 +105,7 @@ import {
 } from './premium/route.ts';
 import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
-import { capabilityRegistry } from './release/capabilities.ts';
+import { capabilityRegistry, parsePlatform } from './release/capabilities.ts';
 import { refuseIfDisabled } from './release/enforce.ts';
 import {
   annotationBody,
@@ -256,7 +256,12 @@ export function createApp(deps: AppDeps) {
    * on a feature flag, and NEW3's acceptance runs against it rather than against
    * a screenshot.
    */
-  app.get('/release/capabilities', (c) => ok(c, capabilityRegistry()));
+  // §9.5's claims register is PER PLATFORM. A caller that sends no platform gets
+  // the release-wide set, byte-identical to what it always returned.
+  app.get('/release/capabilities', (c) => {
+    const raw = c.req.header('x-lawmind-platform') ?? c.req.query('platform');
+    return ok(c, raw === undefined ? capabilityRegistry() : capabilityRegistry(parsePlatform(raw)));
+  });
 
   const auth = deps.auth;
   if (auth) {

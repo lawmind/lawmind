@@ -513,6 +513,24 @@ try {
       recipe: 'HEAD:' + HEAD_CHARS,
       model: 'BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar',
       embedding: '[' + vectors[j].vector.join(',') + ']',
+      // WHICH GENERATION PRODUCED THIS VECTOR - supplied, never inherited.
+      //
+      // Until 30 Aug 2026 this column was filled by a constant schema DEFAULT of
+      // '5b5d02384b46c96c' and this file named it zero times. That is fine while
+      // the definition never moves and silently wrong the day it does: the writer
+      // keeps stamping the OLD generation's hash, nothing errors, and two
+      // populations end up wearing one label in a table that looks consistent.
+      //
+      // `RECONCILED_VIEW_HASH` is the right value precisely because
+      // `assertContractHash()` has already proven, at THIS batch's start, that
+      // the live eligibility view still hashes to it. So the identity written on
+      // the row is the identity the batch was verified against, not a constant
+      // somebody has to remember to change.
+      //
+      // The database now refuses an identity it does not hold as the single
+      // ACTIVE generation (packages/db/factory/0001), so a stale value here fails
+      // loudly instead of mixing.
+      snapshot_hash: RECONCILED_VIEW_HASH,
     }));
     tokensTotal += vectors.reduce((a, v) => a + v.tokens, 0);
     const res = await sql`
@@ -529,6 +547,7 @@ try {
         'recipe',
         'model',
         'embedding',
+        'snapshot_hash',
       )}
       ON CONFLICT (judgment_id) DO NOTHING
     `;

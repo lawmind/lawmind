@@ -1,0 +1,11 @@
+{
+  "snapshotHash": "5b5d02384b46c96c",
+  "generation": "coarse-v2",
+  "definitionVersion": "document-vectors-v2",
+  "manifestSha256": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
+  "modelIdentity": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+  "recipe": "HEAD:4800",
+  "dimensions": 1024,
+  "metric": "cosine",
+  "note": "The generation the coarse walk is producing. snapshotHash is the deployed judgment_embedding_eligibility definition hash that doc-vector-embed.mjs asserts at every batch start (RECONCILED_VIEW_HASH); manifestSha256 is docs/ai/embedding-manifests/document-vectors-v2/manifest-tier-a.json, the same value the HEAVY_BOX lease carries as inputVersion. modelIdentity and recipe are the values every row of the live stage already carries, read from the table rather than asserted."
+}

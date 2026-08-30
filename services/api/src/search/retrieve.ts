@@ -84,7 +84,23 @@ export type DegradedArm =
    *
    * See {@link SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY}.
    */
-  | 'sparse_unbounded';
+  | 'sparse_unbounded'
+  /**
+   * The party-name arm was NOT RUN because the capability registry disables it
+   * for the platform that made the request.
+   *
+   * Roadmap v7.1 §9.5. Apple's guideline 5.1.1(viii) is broad enough to reach an
+   * app that compiles personal information from public databases, and case-first
+   * design is the correct mitigation rather than a guarantee. So the switch has
+   * to exist BEFORE App Review, not after a rejection under launch pressure.
+   *
+   * It is a `degraded` arm and not a route refusal, and that distinction is the
+   * whole requirement: exact case number, CNR and citation lookup keep working
+   * untouched, and the response SAYS the party arm did not run so the client can
+   * show the advocate what to type instead. §9.5: a capability that silently
+   * vanishes produces support load and a feature-parity claim problem.
+   */
+  | 'party_name_disabled';
 
 function isQueryCanceled(error: unknown): boolean {
   return (
@@ -1931,6 +1947,15 @@ export type RetrievalSignals = {
   filteredAdmission?: 'admitted' | 'refused' | undefined;
 };
 
+/** Per-request capability decisions, resolved by the route and passed down. */
+export type HybridSearchOptions = {
+  /**
+   * When false, a query classified `party_name` does not reach the title probe
+   * and does not suppress the sparse arm. Absent or true is the normal path.
+   */
+  partyNameArm?: boolean | undefined;
+};
+
 export async function hybridSearch(
   sql: Sql,
   query: string,
@@ -1959,6 +1984,15 @@ export async function hybridSearch(
    * caller, which then behaves exactly as before.
    */
   signals?: RetrievalSignals,
+  /**
+   * Per-request capability decisions the RANKER cannot take for itself.
+   *
+   * Additive and optional, like `offset` and `signals` before it: every existing
+   * caller keeps its behaviour. It exists because which platform made the
+   * request is a fact about the CLIENT, and a ranker that reached for a header
+   * would be deciding release policy from inside a SQL module.
+   */
+  options?: HybridSearchOptions,
 ): Promise<RetrievedJudgment[]> {
   // Each arm is skipped rather than computed-and-discarded: an isolated-arm
   // measurement that still paid for the other half would report the fused
@@ -2002,6 +2036,18 @@ export async function hybridSearch(
    */
   const shape = classifyQuery(query);
   /**
+   * §9.5's kill switch, resolved once and read twice below.
+   *
+   * `partySuppressed` is deliberately narrow: it is true ONLY for a query the
+   * classifier called `party_name`. A `case_name` query — "X v. Y" — still gets
+   * its title probe, because that is a case identifier and not a person search,
+   * and disabling it would take the exact-lookup capability away with the one
+   * Apple's guideline is actually about.
+   */
+  const partyArmPermitted = options?.partyNameArm !== false;
+  const partySuppressed = shape.shape === 'party_name' && !partyArmPermitted;
+  if (partySuppressed) onDegrade?.('party_name_disabled');
+  /**
    * ───────────────────────────────────────────────────────────────────────────
    * THE EXACT LOOKUPS ARE BOUNDED TOO, AND THAT WAS LEARNED THE HARD WAY
    * ───────────────────────────────────────────────────────────────────────────
@@ -2033,7 +2079,7 @@ export async function hybridSearch(
              * it. Giving the new shape a second probe would be building the
              * thing that already exists.
              */
-            shape.shape === 'case_name' || shape.shape === 'party_name'
+            shape.shape === 'case_name' || (shape.shape === 'party_name' && partyArmPermitted)
             ? await caseNamePins(
                 sql,
                 query,
@@ -2066,7 +2112,7 @@ export async function hybridSearch(
     (shape.shape === 'citation' ||
       shape.shape === 'section' ||
       shape.shape === 'case_name' ||
-      shape.shape === 'party_name');
+      (shape.shape === 'party_name' && partyArmPermitted));
 
   const emptyDense = { ranked: [] as Ranked[], bestChunk: new Map<string, BestChunk>() };
   /**

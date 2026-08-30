@@ -62,7 +62,7 @@
  * capability set was this candidate frozen with" is answerable by query rather
  * than by reading a commit log.
  */
-export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.3';
+export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.4';
 
 export type CapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPERIMENTAL_INTERNAL';
 
@@ -97,6 +97,7 @@ export type CapabilityName =
   | 'search.exact_identity'
   | 'search.structured_filters'
   | 'search.pagination'
+  | 'search.party_name'
   // ── §5.2 judgment reader / source evidence ─────────────────────────────────
   | 'judgment.reader'
   | 'judgment.exact_span'
@@ -154,6 +155,15 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
     reason:
       'Court, date, act and section filters are SQL predicates with a real COUNT(*) behind them. ' +
       'The structured path reports a true total; the hybrid path deliberately reports none.',
+    asOf: AS_OF,
+  },
+  'search.party_name': {
+    state: 'ENABLED',
+    reason:
+      'A bare party name reaches the case-title probe and the CASE is pinned above the judgments ' +
+      'citing it — measured 3/6 to 6/6 recall at ranks 1-3 across six courts (d96147e). Case-first ' +
+      'by construction: there is no person endpoint, no cross-case dossier and no aggregation of an ' +
+      'individual, and a repository-wide route scan asserts it.',
     asOf: AS_OF,
   },
   'search.pagination': {
@@ -418,11 +428,128 @@ export function capabilityRefusal(name: CapabilityName) {
   };
 }
 
-/** The whole set, for `GET /release/capabilities` and the release manifest. */
-export function capabilityRegistry() {
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * PER-PLATFORM CAPABILITY — ROADMAP v7.1 §9.5
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Apple's guideline 5.1.1(viii) reaches an app that compiles personal
+ * information from any source not supplied directly by the user, **public
+ * databases included**. v7 discussed case-first design as though it settled App
+ * Review. v7.1 corrects that: case-first is the right mitigation and it is not a
+ * guarantee.
+ *
+ * The consequence is a mechanism, not a mood. A capability may be ENABLED on one
+ * platform and DISABLED on another, which means two things this file did not
+ * previously support:
+ *
+ *   1. the SWITCH exists before App Review, so a rejection is a config decision
+ *      rather than a redesign under launch pressure;
+ *   2. the CLAIMS REGISTER becomes per platform — `GET /release/capabilities`
+ *      answers for the caller's platform, so a store listing cannot claim a
+ *      capability that is off on the platform it is listed under.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY THE OVERRIDES ARE EMPTY TODAY, AND WHY THAT IS THE CORRECT STATE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * §9.5 says to SHIP THE SWITCH. It does not say to disable party search, and
+ * disabling it pre-emptively would remove a capability advocates use on a
+ * prediction about a review nobody has run yet. So `ios` carries no override and
+ * the map is exercised only by its tests — which is the same discipline
+ * `vectorExportRefusal()` follows: a guard first exercised on the day it is
+ * needed is a guard first exercised after the damage.
+ *
+ * Narrowing only. A platform override may take a capability DOWN and never up —
+ * `resolveState` enforces it — so this map can never become a back door that
+ * turns on something the release-wide registry refuses.
+ */
+export type Platform = 'ios' | 'android' | 'web' | 'unknown';
+
+export const PLATFORMS: readonly Platform[] = ['ios', 'android', 'web', 'unknown'];
+
+/** Parse the `X-Lawmind-Platform` header. Anything unrecognised is `unknown`. */
+export function parsePlatform(raw: string | null | undefined): Platform {
+  const v = (raw ?? '').trim().toLowerCase();
+  return (PLATFORMS as readonly string[]).includes(v) && v !== 'unknown' ? (v as Platform) : 'unknown';
+}
+
+type PlatformOverride = { readonly state: CapabilityState; readonly reason: string; readonly asOf: string };
+
+/**
+ * Capability states that are NARROWER on a specific platform than the
+ * release-wide set above.
+ *
+ * `search.party_name` on `ios` is the one this exists for. It is absent, not
+ * present-and-enabled: an empty override means "the release-wide state stands",
+ * and adding the row is the entire act of flipping the switch.
+ */
+export const PLATFORM_CAPABILITY_OVERRIDES: Readonly<
+  Partial<Record<Platform, Partial<Record<CapabilityName, PlatformOverride>>>>
+> = {};
+
+/** A platform may narrow a capability, never widen it. */
+const NARROWNESS: Record<CapabilityState, number> = {
+  ENABLED: 3,
+  LIMITED: 2,
+  EXPERIMENTAL_INTERNAL: 1,
+  DISABLED: 0,
+};
+
+/**
+ * The state of one capability AS SEEN BY one platform.
+ *
+ * An override that is not strictly narrower is ignored rather than obeyed. That
+ * is deliberate: the failure mode of a widening override is a capability the
+ * release-wide registry refuses becoming reachable from a client that sends the
+ * right header, which is the "stale feature flag" this whole file exists to stop.
+ */
+export function capabilityStateForPlatform(name: CapabilityName, platform: Platform): CapabilityState {
+  const base = RELEASE_CAPABILITIES[name].state;
+  const override = PLATFORM_CAPABILITY_OVERRIDES[platform]?.[name];
+  if (override === undefined) return base;
+  return NARROWNESS[override.state] < NARROWNESS[base] ? override.state : base;
+}
+
+/** May a user-facing route do this, for the platform that asked? */
+export function isUserReachableOnPlatform(name: CapabilityName, platform: Platform): boolean {
+  const state = capabilityStateForPlatform(name, platform);
+  return state === 'ENABLED' || state === 'LIMITED';
+}
+
+/**
+ * The whole set, for `GET /release/capabilities` and the release manifest.
+ *
+ * With a platform, the `capabilities` block is that platform's RESOLVED view —
+ * the thing a store listing must be checked against — and `platformOverrides`
+ * names what was narrowed, so the resolution is auditable rather than implicit.
+ * Without one it is the release-wide set, byte-identical to what it always was.
+ */
+export function capabilityRegistry(platform?: Platform) {
+  if (platform === undefined) {
+    return {
+      registryVersion: RELEASE_CAPABILITIES_VERSION,
+      asOf: AS_OF,
+      capabilities: RELEASE_CAPABILITIES,
+    };
+  }
+  const overrides = PLATFORM_CAPABILITY_OVERRIDES[platform] ?? {};
+  const resolved = Object.fromEntries(
+    (Object.keys(RELEASE_CAPABILITIES) as CapabilityName[]).map((name) => {
+      const base = RELEASE_CAPABILITIES[name];
+      const state = capabilityStateForPlatform(name, platform);
+      const o = overrides[name];
+      return [
+        name,
+        state === base.state ? base : { ...base, state, reason: o?.reason ?? base.reason, asOf: o?.asOf ?? base.asOf },
+      ];
+    }),
+  ) as Readonly<Record<CapabilityName, Capability>>;
   return {
     registryVersion: RELEASE_CAPABILITIES_VERSION,
     asOf: AS_OF,
-    capabilities: RELEASE_CAPABILITIES,
+    platform,
+    capabilities: resolved,
+    platformOverrides: Object.keys(overrides),
   };
 }
