@@ -30,6 +30,7 @@ import type {
   Profile,
   ProfilePatch,
   PremiumPreview,
+  ReleaseCapabilities,
   SearchFilters,
   SearchResponse,
   Session,
@@ -100,18 +101,99 @@ import type {
  * before that binary can even be produced. FQ-HOSTING (docs/FOUNDER_QUEUE.md)
  * still owns the actual channel URLs — this only refuses to guess one.
  */
-function resolveBaseUrl(): string {
-  const configured = process.env.EXPO_PUBLIC_API_URL;
-  if (configured) return configured;
-  if (__DEV__) return 'http://localhost:3000';
+/**
+ * THE THREE ENVIRONMENTS, NAMED. `development` | `staging` | `production`.
+ *
+ * Declared rather than inferred. `__DEV__` alone answered "is this a Metro dev
+ * bundle", which is not the same question as "which backend is this build
+ * for" — a staging binary and a production binary are both `__DEV__ === false`
+ * and must not share a default. `EXPO_PUBLIC_APP_ENV` is set per profile in
+ * `eas.json`; absent, a dev bundle is `development` and anything else is
+ * treated as `production`, because the conservative direction is the strict one.
+ */
+export type AppEnvironment = 'development' | 'staging' | 'production';
+
+export function resolveAppEnvironment(
+  declared: string | undefined,
+  isDev: boolean,
+): AppEnvironment {
+  if (declared === 'development' || declared === 'staging' || declared === 'production') {
+    return declared;
+  }
+  return isDev ? 'development' : 'production';
+}
+
+/**
+ * THE ONE URL THAT MAY NEVER COME BACK. `api-production-1c0b4.up.railway.app`
+ * had 0 active deployments from 11 August 2026 and was the silent fallback
+ * until 22 August. Naming it here means a stale `.env`, a copied EAS secret or
+ * a resurrected shell profile fails LOUDLY instead of producing a build that
+ * compiles clean, installs clean, and then fails every request forever.
+ *
+ * NOT A DEPLOY DECISION. Nothing here asks for that service to be revived —
+ * the point is that no build may point at it by default, whether it is alive
+ * or dead.
+ */
+export const RETIRED_API_HOSTS = ['api-production-1c0b4.up.railway.app'] as const;
+
+/**
+ * `EXPO_PUBLIC_API_URL` is inlined at build time by Metro (the `EXPO_PUBLIC_`
+ * prefix is what makes an env var reach client code at all — see
+ * https://docs.expo.dev/guides/environment-variables/). Set it per channel in
+ * `eas.json` build profiles (`env`), or in a local `.env` for `expo start`.
+ *
+ * FAIL CLOSED, NOT SILENTLY WRONG — and fail closed in all three environments,
+ * which is what R12 §2 asked for and what this function did only half of.
+ *
+ *   · `development` — an explicit URL wins; absent, the API's own default port
+ *     (`services/api/src/env.ts`) is used, because LOCAL-FIRST is the posture
+ *     in `docs/CURRENT_PLAN.md` and a developer running `expo start` against
+ *     their own backend should not need a dotfile to do it. This is the ONLY
+ *     environment with a default, and it is a loopback address, so a
+ *     misconfiguration here cannot reach anybody else's data.
+ *   · `staging` and `production` — NO DEFAULT AT ALL. A missing URL throws at
+ *     import time. `app.config.ts` also fails the EAS build itself, so a
+ *     misconfigured binary never leaves the queue; this is the second line of
+ *     defence for a local `eas build --local` or a differently-invoked bundler.
+ *
+ * A URL that is present but retired, or not http(s), is rejected the same way.
+ * FQ-HOSTING (`docs/FOUNDER_QUEUE.md`) owns the actual channel URLs; this only
+ * refuses to guess one, and refuses to accept a known-dead one.
+ */
+export function resolveBaseUrl(
+  configured: string | undefined,
+  environment: AppEnvironment,
+): string {
+  if (configured !== undefined && configured !== '') {
+    const url = configured.trim();
+    if (!/^https?:\/\//i.test(url)) {
+      throw new Error(
+        `EXPO_PUBLIC_API_URL must be an absolute http(s) URL. Got: ${url}`,
+      );
+    }
+    if (RETIRED_API_HOSTS.some((host) => url.includes(host))) {
+      throw new Error(
+        `EXPO_PUBLIC_API_URL points at a retired API host (${url}). That service has had no ` +
+          'active deployment since 11 August 2026 and every request to it fails. Set the URL ' +
+          `for the "${environment}" environment — see docs/FOUNDER_QUEUE.md FQ-HOSTING.`,
+      );
+    }
+    return url;
+  }
+  if (environment === 'development') return 'http://localhost:3000';
   throw new Error(
-    'EXPO_PUBLIC_API_URL is not set on a non-dev build. Refusing to fall back to a ' +
-      'guessed API URL — set it in the eas.json build profile (or the hosting ' +
-      'environment) for this channel. See docs/FOUNDER_QUEUE.md FQ-HOSTING.',
+    `EXPO_PUBLIC_API_URL is not set for the "${environment}" build. Refusing to fall back to a ` +
+      'guessed API URL — set it in the eas.json build profile (or the hosting environment) for ' +
+      'this channel. See docs/FOUNDER_QUEUE.md FQ-HOSTING.',
   );
 }
 
-const BASE_URL = resolveBaseUrl();
+export const APP_ENVIRONMENT: AppEnvironment = resolveAppEnvironment(
+  process.env.EXPO_PUBLIC_APP_ENV,
+  __DEV__,
+);
+
+const BASE_URL = resolveBaseUrl(process.env.EXPO_PUBLIC_API_URL, APP_ENVIRONMENT);
 
 /** Court corridors have terrible connectivity; a request that never returns is worse than one that fails. */
 const TIMEOUT_MS = 15_000;
@@ -304,6 +386,18 @@ export const api = {
     }),
 
   currentTerms: () => get<CurrentTerms>('/terms/current'),
+
+  /**
+   * THE SERVER'S OWN CAPABILITY REGISTRY -- `RELEASE_CAPABILITIES_R8_3.3`.
+   *
+   * Public, no auth, and read once at launch. `state/capabilities.ts` ANDs it
+   * with the product's frozen v1 decision: this registry may CLOSE a surface
+   * and may never open one. RCC_V1_API_CONTRACT_R12 1.6 -- read it rather than
+   * hardcoding the list, so a capability the server withdraws disappears from
+   * the app without a release.
+   */
+  releaseCapabilities: () => get<ReleaseCapabilities>('/release/capabilities'),
+
 
   /**
    * `held` is derived live at query time server-side — never cached there, so

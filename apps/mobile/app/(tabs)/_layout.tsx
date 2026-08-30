@@ -3,6 +3,7 @@ import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 
 import { Glass } from '../../src/components/Glass';
 import { TABS, TabActiveRule, TabButton, tabBarStyles } from '../../src/components/TabButton';
+import { useSurfaceEnabled } from '../../src/state/capabilities';
 
 /**
  * The four tabs. `expo-router/ui` rather than the default tab navigator,
@@ -24,11 +25,26 @@ import { TABS, TabActiveRule, TabButton, tabBarStyles } from '../../src/componen
  */
 export default function TabsLayout() {
   const segments = useSegments();
+  /**
+   * DRAFTING IS NOT IN V1 — R12 §3/§7. `POST /documents` 404s (it is blocked on
+   * the countersigned DPA) and `generation.evidence_from_passages` is DISABLED
+   * in the server's own registry. A tab that opens onto a feature that cannot
+   * write is worse than no tab: the advocate finds it, tries it, and learns
+   * the app is unfinished on the one screen that was supposed to save them
+   * time.
+   *
+   * The route file stays in place, inert — the same call the founder made for
+   * the desktop workspaces under PD-15. Nothing is deleted; it is simply not
+   * reachable, and it becomes reachable again by moving one row in
+   * `state/capabilities.ts`.
+   */
+  const draftingEnabled = useSurfaceEnabled('drafting');
+  const tabs = TABS.filter((tab) => tab.name !== 'drafts' || draftingEnabled);
   // Falls back to the first tab before the route settles, which is where the
   // rule already sits — so there is no opening slide from nowhere.
   const activeIndex = Math.max(
     0,
-    TABS.findIndex((tab) => segments.includes(tab.name as never))
+    tabs.findIndex((tab) => segments.includes(tab.name as never))
   );
 
   return (
@@ -37,7 +53,7 @@ export default function TabsLayout() {
       <TabList asChild>
         <Glass edge="top" style={tabBarStyles.bar}>
           <TabActiveRule activeIndex={activeIndex} />
-          {TABS.map(({ name, href, label, Icon }) => (
+          {tabs.map(({ name, href, label, Icon }) => (
             <TabTrigger asChild href={href} key={name} name={name}>
               <TabButton Icon={Icon} label={label} />
             </TabTrigger>

@@ -42,6 +42,21 @@ const graphOf = (overruledStatus: OverruledStatus): PrecedentGraph => ({
   totalNodes: 2,
   returned: 2,
   truncated: false,
+  /**
+   * G-3. The spine REFUSES to draw a graph that does not declare its own
+   * partiality, so every fixture carries the declaration — the numbers are
+   * LCC's measured ones (`docs/ai/lcc-r12/citation-graph-coverage.json`).
+   */
+  coverage: {
+    basis: 'resolved outgoing citation edges',
+    resolvedEdgesInCorpus: 200_761,
+    judgmentsWithAnyResolvedOutgoing: 105_024,
+    corpusDenominator: 18_758_460,
+    declaredPartial: true,
+    outgoingCoverageShare: 105_024 / 18_758_460,
+    measuredAt: '2026-08-30T00:00:00.000Z',
+    note: 'This citation graph is PARTIAL. An edge we do not hold is not evidence that the judgment does not cite the authority.',
+  },
 });
 
 const draw = (graph: PrecedentGraph | null) =>
@@ -122,5 +137,39 @@ describe('the spine states what it is not showing', () => {
     await draw(null);
 
     expect(screen.getByText('Drawing the network…')).toBeTruthy();
+  });
+});
+
+/**
+ * G-3 — ABSENCE OF AN EDGE IS NEVER ABSENCE OF A CITATION.
+ *
+ * Measured by LCC R12: 105,024 of 18,758,460 judgments carry any resolved
+ * outgoing citation — 0.56% — and 71.97% of the citation rows are blank
+ * sentinels. A judgment drawn with no edges is overwhelmingly likely to be one
+ * whose citations we never resolved, not one that cites nothing. Two boxes on a
+ * spine read as the whole network unless something says otherwise.
+ */
+describe('the spine declares that the graph is partial', () => {
+  it('renders the server’s own sentence, verbatim', async () => {
+    await draw(graphOf('none'));
+    expect(
+      screen.getByText(/This citation graph is PARTIAL/),
+    ).toBeTruthy();
+  });
+
+  it('states the coverage denominator rather than implying completeness', async () => {
+    await draw(graphOf('none'));
+    expect(screen.getByText(/1,05,024 of 1,87,58,460 judgments we hold/)).toBeTruthy();
+  });
+
+  /**
+   * The refusal. A pre-G-3 server sends no `coverage`, and drawing the network
+   * anyway would be drawing an undeclared partial graph — the exact defect.
+   */
+  it('refuses to draw a graph that does not declare its partiality', async () => {
+    const { coverage: _dropped, ...withoutCoverage } = graphOf('none');
+    await draw(withoutCoverage as PrecedentGraph);
+    expect(screen.getByText(/We cannot show this network yet/)).toBeTruthy();
+    expect(screen.queryByText('Mock Root v. Mock State')).toBeNull();
   });
 });

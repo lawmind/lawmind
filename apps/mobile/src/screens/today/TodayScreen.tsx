@@ -18,6 +18,7 @@ import { useAlerts } from '../../state/alerts';
 import { useCommandPalette } from '../../state/commandPalette';
 import { describeCacheAge } from '../../state/offlineCache';
 import { useSession } from '../../state/session';
+import { useSurfaceEnabled } from '../../state/capabilities';
 import {
   alsoThisWeek,
   listedToday,
@@ -63,6 +64,17 @@ export function TodayScreen() {
   const openCommandPalette = useCommandPalette((s) => s.setOpen);
 
   const matters = usePractice((s) => s.matters);
+  /**
+   * THE WEDGE IS NOT READY, SO IT IS NOT SHOWN — R12 §6/§7. `matter.briefing`
+   * is DISABLED_NOT_READY in the frozen registry: the routes are mounted but
+   * were not run through acceptance this round. A briefing card that renders
+   * from a route nobody accepted is a promise about tomorrow's hearing, and
+   * that is the one promise this product cannot afford to get wrong.
+   *
+   * ABSENT, not disabled and not teased. Today keeps its real work: the
+   * hearings the advocate recorded themselves, which is the PRIMARY path.
+   */
+  const briefingEnabled = useSurfaceEnabled('briefing');
   const briefings = usePractice((s) => s.briefings);
   const freshness = usePractice((s) => s.freshness);
   const loading = usePractice((s) => s.loading);
@@ -237,7 +249,7 @@ export function TodayScreen() {
         ) : null}
 
         {/* 2 · tomorrow's briefing */}
-        {ready ? (
+        {briefingEnabled && ready ? (
           <Card style={styles.briefingCard}>
             <View style={styles.briefingHead}>
               <BriefingSeal />

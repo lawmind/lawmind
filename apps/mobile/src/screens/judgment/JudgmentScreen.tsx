@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import { ChevronLeft, Clock, Info, X } from 'lucide-react-native';
@@ -23,6 +23,7 @@ import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 import { AuthoritiesPanel, useAuthorities } from './AuthoritiesPanel';
 import { MatterPicker } from './MatterPicker';
+import { BodyTextWithheld, SourceTrustBlock } from './SourceTrustBlock';
 import { ReadingView } from './ReadingView';
 import { UnverifiedCitationScreen } from './UnverifiedCitationScreen';
 import { VerificationSheet } from './VerificationSheet';
@@ -597,16 +598,22 @@ export function JudgmentScreen({
               Case number · {judgment.caseNumber}
             </Text>
           ) : null}
-          <Pressable
-            accessibilityLabel="Open the court's own copy of this judgment"
-            accessibilityRole="link"
-            onPress={() => void Linking.openURL(judgment.sourceUrl)}
-          >
-            <Text variant="uiStrong" style={styles.sourceLink}>
-              Open the court's copy
-            </Text>
-          </Pressable>
         </View>
+
+        {/*
+          WHERE THIS CAME FROM — R12 §5. Four facts with four different
+          evidences: the source URL (100% of the corpus), the recorded
+          provenance (0.031%), the derived text origin, and the date quality.
+          Kept apart deliberately; see `SourceTrustBlock.tsx` for why merging
+          any two of them produces a claim we cannot support.
+        */}
+        <SourceTrustBlock judgment={judgment} />
+
+        {/*
+          THE READER'S REFUSAL. Rendered instead of an empty page when the body
+          text is convicted damaged — empty by REFUSAL, not by absence.
+        */}
+        <BodyTextWithheld judgment={judgment} />
 
       {/*
           THE OPERATIVE PARAGRAPH IS DRAWN ONLY WHEN THE SERVER NAMES ONE.

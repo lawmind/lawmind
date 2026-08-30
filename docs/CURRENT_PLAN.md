@@ -25,6 +25,71 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 30 August 2026 (SPRINT 2, RCC) — THE CLIENT IS BUILT AGAINST THE FROZEN CONTRACT, AND IT CAN NO LONGER SAY "NOTHING MATCHED" WHEN NOBODY LOOKED
+
+**Round:** RCC R12, v1 client implementation against `RCC_V1_API_CONTRACT_R12`
+(FROZEN) and `V1_CAPABILITY_REGISTRY_R12`. **No file outside `apps/mobile/` and
+`docs/` was edited** — `services/api`, `services/ingest`, `services/embed` and every
+lane's evidence are untouched. Full design record:
+`docs/RCC_DESIGN_DIRECTION_R12.md`.
+
+**What landed.**
+
+1. **The client could not tell a refusal from an empty corpus, and now it can.**
+   `SearchResponse` was missing `emptyBecause`, `retrievalOutcome` and two of the
+   four `degraded` arms, so a query the server REFUSED to rank rendered as
+   "No judgments matched" — the sentence that tells an advocate the corpus holds
+   no authority on their point. Five states are now derived from the response
+   rather than from `results.length` (`screens/search/searchTruth.ts`), and the
+   refusal's remedy is MORE TERMS, never a filter: measured, `bail` narrowed to
+   the High Courts over one month is still refused at `rarestDf 0.2577`, because
+   the admission gate never sees the filters (G-2).
+2. **A capability gate, ANDing the product's frozen decision with the server's
+   own registry** (`state/capabilities.ts`, read from `GET /release/capabilities`
+   at launch). Either may close a surface; neither may open one the other closed.
+   Drafting, briefings, counter-arguments, matter sharing, the saved-search feed,
+   Hindi, semantic search and monitoring are all ABSENT — not greyed, not teased.
+   The v1 core stays open when the registry is unreachable, because search, the
+   reader, saved authorities and matters must work in a court corridor.
+3. **The trust surface on a judgment** (`screens/judgment/SourceTrustBlock.tsx`):
+   source URL, text origin, recorded provenance and date quality, kept apart
+   because merging any two makes a claim we cannot support. Provenance is
+   recorded for **5,830 of 18,758,460 rows** and its absence is never rendered as
+   "source unknown". The body-text refusal renders as a refusal, never an empty
+   page.
+4. **The citation graph declares its partiality or is not drawn** (G-3, closed by
+   LCC this round). `PrecedentSpine` renders the server's own sentence verbatim
+   and refuses to draw a graph with no `coverage` block.
+5. **BASE_URL fails closed in all three environments.** The old guard only fired
+   for EAS cloud builds; `expo export` and a local bundler still produced a
+   silent-dead binary. `eas.json` now has `development`/`staging`/`preview`/
+   `production`, and the retired Railway host is REFUSED even when explicitly
+   set. No deploy, no revival, no invented URL.
+
+**Verified by observation, not by reading.** `tsc --noEmit` clean; **698/698 mobile
+tests across 66 suites**; and a **19/19 real-API smoke** of the whole core loop
+against the local backend — search, open, inspect source, read, save, attach to a
+matter, return to the matter — with no mock in the path. Smoke rows were deleted
+afterwards.
+
+**Two surprises worth more than the round's own work.**
+
+- **G-1 IS CLOSED, and the frozen registry does not know it.** `search.party_name_only`
+  is recorded as `DISABLED_NOT_READY`, MEASURED ZERO on two probes. Re-measured
+  30 Aug against the live local backend: `SATENDER KUMAR ANTIL` alone returns the
+  authority at **rank 1**, three near-duplicate rows of the same case, not
+  degraded. The client's case-first hint fires only on a refusal or an empty, so
+  it costs nothing — but **NEW3 owns that registry row and should re-measure it**.
+- **The magic-link email still points at the dead Railway host.** Observed in the
+  API's own console-transport log during the smoke. Server-side, so reported
+  rather than edited: `docs/FOUNDER_QUEUE.md` FQ-HOSTING.
+
+**Still held, deliberately:** OD-12 (the saved-search feed) is OPEN and was not
+resolved by shipping it. Monitoring is `DISABLED_NOT_READY` and the client makes
+no promise about a court date it did not observe.
+
+---
+
 ### 29 August 2026 (SPRINT 2, NEW3) — v1 IS DEFINED, AND THE TWO THINGS BLOCKING IT ARE QUERY SHAPE, NOT DATA
 
 **Round:** Sprint 2 product definition against versioned data capabilities,

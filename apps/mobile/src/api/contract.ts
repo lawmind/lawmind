@@ -388,6 +388,88 @@ export type JudgmentDetail = Omit<
    * Measured across 1964–2023, 11 of 15 judgments were above 0.5.
    */
   numberedShare: number;
+
+  /* ---------------------------------------------- the trust surface, R12 §5 */
+
+  /**
+   * THE BODY-TEXT REFUSAL ENVELOPE — `services/api/src/judgments/route.ts`,
+   * `search/body-text-safety.ts`.
+   *
+   * `evidenceWithheld: true` means this judgment's body text is CONVICTED
+   * damaged and `fullText` has been emptied deliberately — empty by REFUSAL,
+   * not by absence. **The reader must render the refusal. It must never render
+   * an empty page**, which reads as "this judgment has no text" and is a claim
+   * about the court rather than about our copy.
+   *
+   * Everything else about the judgment stays true and stays shown: the
+   * citation, title, court, date and treatment are undamaged, and body damage
+   * is no evidence against them.
+   *
+   * Optional only because an older server sends no envelope. Absent means the
+   * question was never asked, which is not the same as a clean answer.
+   */
+  bodyText?: {
+    /** `TEXT_DAMAGED` | `TEXT_UNKNOWN`. There is no CLEAN state — nothing certifies clean. */
+    state: 'TEXT_DAMAGED' | 'TEXT_UNKNOWN';
+    /**
+     * How well the damage is PROVEN, a different axis from whether it is
+     * damaged. `PROOF` is a byte-stream examination; `SCREEN` is a density or a
+     * marker — enough to refuse a batch, not enough to tell a person their
+     * document is corrupt. The two are never pooled into one damage rate.
+     */
+    grade: 'PROOF' | 'SCREEN' | 'NONE';
+    evidenceWithheld: boolean;
+  };
+  /**
+   * WHAT THE RETAINED ARTIFACT IS — a statement about the artifact, never a
+   * segmentation of the body. `REPORTER_EDITION` matters legally: a reporter's
+   * copy-edited text is not the court's own words (`CLAUDE.md`, *EBC v. Modak*)
+   * and may not be presented as them.
+   */
+  textOrigin?: 'REPORTER_EDITION' | 'COURT_SOURCE' | 'UNKNOWN';
+  /** FALSE for a reporter edition. This client never generates, so it only refuses. */
+  generationEvidenceEligible?: boolean;
+  /**
+   * FOUR FACTS, AND THE CLIENT CAN TELL ALL FOUR APART. `DATE_UNCHECKED` is the
+   * named form of "nobody looked" and was what the R12 probe observed — so
+   * **present is not verified, and no surface may imply otherwise.**
+   * `DATE_SUSPECT` is the only one that refuses.
+   */
+  dateQualityState?: 'DATE_VERIFIED' | 'DATE_SUSPECT' | 'DATE_UNKNOWN' | 'DATE_UNCHECKED';
+  /** The raw column behind `dateQualityState`; `null` means nothing has looked. */
+  dateQuality?: 'DATE_VERIFIED' | 'DATE_SUSPECT' | 'DATE_UNKNOWN' | null;
+  /**
+   * WHERE THIS DOCUMENT CAME FROM, AS A RECORD — migration `0092`, put on the
+   * wire by LCC R12 (`f2a14b5`). **Measured 30 Aug 2026: 5,830 of 18,758,460
+   * rows carry it, 0.031%.** Every other judgment answers `null` here, and NULL
+   * is published rather than defaulted.
+   *
+   * `recorded` is the field to branch on. A client must NOT read absence of the
+   * record as absence of provenance, and must never render "source unknown" as
+   * a quality claim: `sourceUrl` is present for 100% of the corpus, so we can
+   * always say where a document came from. What is missing is the STRUCTURED
+   * record.
+   *
+   * BANNED CLAIM, from the frozen registry: "Verified from the retained
+   * official PDF" is FALSE for 99.92% of the corpus and must never appear on a
+   * judgment surface. "Source: <court>, <url>" is true everywhere.
+   */
+  provenance?: {
+    /** e.g. `aws_hc`, `sci_pdf`. `null` for almost every row. */
+    source: string | null;
+    /**
+     * The RECORDED edition. `textOrigin` beside it is the EVIDENCED answer and
+     * is derived per row; this one is recorded for almost nothing, and
+     * defaulting it to `court_raw` would be true of the corpus and unevidenced
+     * of the row.
+     */
+    sourceEdition: string | null;
+    /** An ingest-provenance note, NOT a rights determination. */
+    basis: string | null;
+    recordedAt: string | null;
+    /** TRUE only when this ROW carries recorded provenance. Branch on this. */
+    recorded: boolean;
+  };
 };
 
 /* --------------------------------------------------- treatment and precedent */
@@ -536,6 +618,42 @@ export type GraphNode = {
 
 export type GraphEdge = { from: string; to: string; relationship: TreatmentRelationship };
 
+/**
+ * THE GRAPH SAYS IT IS PARTIAL — G-3, closed by LCC R12 (`f2a14b5`,
+ * `services/api/src/judgments/graph-coverage.ts`).
+ *
+ * Before this field existed, `truncated` said "this PAGE is short" and nothing
+ * said "this GRAPH is 0.56% complete" — so a judgment with no edges was
+ * indistinguishable from a judgment that cites nothing. On a citation graph
+ * that is the same silent-drop defect `CITATION_HARNESS.md` forbids for a
+ * citation: **absence of an edge is never absence of a citation**, and no
+ * surface may draw it as though it were.
+ *
+ * `declaredPartial` is `true` and is a CONSTANT on the server, not a threshold.
+ * There is no coverage level at which this graph becomes a complete statement
+ * about Indian citation practice; when it genuinely is, the field is removed
+ * rather than flipped. So a client must never branch on it being `false`.
+ *
+ * `note` is the server's own sentence and is rendered VERBATIM where the graph
+ * is shown. It is kept server-side deliberately — three clients paraphrasing
+ * the distinction would produce three different claims, and this is the claim
+ * an advocate must not get wrong.
+ */
+export type GraphCoverage = {
+  /** What was counted, in the server's words. */
+  basis: string;
+  resolvedEdgesInCorpus: number;
+  judgmentsWithAnyResolvedOutgoing: number;
+  corpusDenominator: number;
+  /** Always `true`. See above — never branch on a `false` that cannot occur. */
+  declaredPartial: true;
+  /** Share of the corpus with at least one resolved outgoing citation, 0-1. */
+  outgoingCoverageShare: number;
+  measuredAt: string;
+  /** Render this verbatim. Never paraphrase it. */
+  note: string;
+};
+
 export type PrecedentGraph = {
   rootId: string;
   asOf: string;
@@ -543,7 +661,15 @@ export type PrecedentGraph = {
   edges: GraphEdge[];
   totalNodes: number;
   returned: number;
+  /** THIS PAGE is short. Says nothing about how complete the graph is. */
   truncated: boolean;
+  /**
+   * ADDITIVE, LCC R12. Optional here because a client built against the
+   * pre-G-3 server must not crash on its absence — but a surface that renders
+   * the graph WITHOUT it is rendering an undeclared partial graph, which is the
+   * defect G-3 names. Absent means: do not draw the graph.
+   */
+  coverage?: GraphCoverage;
 };
 
 /* ------------------------------------------------- authorities, point in time */
@@ -1313,6 +1439,21 @@ export type SearchResponse = {
    * cursor over a frozen set.
    */
   page?: { page: number; pageSize: number; hasMore: boolean };
+  /**
+   * PRESENT ONLY ON A REFUSAL. See `SearchEmptyBecause` — a response carrying
+   * this is not an empty result and may never render as one.
+   */
+  emptyBecause?: SearchEmptyBecause;
+  /**
+   * THE RETRIEVAL LAYER'S OWN VERDICT ON ITS ANSWER. Optional — absent on parts
+   * of the structured path and on any older server.
+   */
+  retrievalOutcome?: RetrievalOutcome;
+  /**
+   * How many distinct judgments an exact TITLE lookup matched. Sent alongside
+   * `ambiguous: true` when it exceeds one. A candidate list, never a pin.
+   */
+  exactTitleCandidates?: number;
 };
 
 /**
@@ -1326,11 +1467,82 @@ export type SearchResponse = {
 export const SEARCH_QUERY_MAX_CHARS = 500;
 
 /**
- * The two ways a ranker can run out of its statement budget mid-request —
- * `services/api/src/search/retrieve.ts`. Neither means the corpus was
- * searched to completion.
+ * THE FOUR WAYS AN ARM CAN FAIL TO ANSWER — `services/api/src/search/retrieve.ts`
+ * (`DegradeReason`). None of them means the corpus was searched to completion,
+ * and TWO OF THEM ARE NOT TIMEOUTS AT ALL, which is why the union grew from two
+ * to four in R12: a client that typed only the timeouts described a refusal as
+ * a slow query, and then told the advocate to narrow a search that narrowing
+ * cannot fix.
+ *
+ *   · `sparse_timeout` / `dense_timeout` — an arm exceeded its statement budget.
+ *     Retrying is a second full-cost query and may work.
+ *   · `sparse_unbounded` — THE LEXICAL ARM REFUSED. The match set was unbounded
+ *     at the corpus-wide document-frequency gate, so nothing was ranked. This is
+ *     a REFUSAL, not a failure, and its remedy is MORE terms, never a filter:
+ *     `filters` is not consulted before the refusal (capability
+ *     `search.filtered_broad_query`, DISABLED_NOT_READY, gap G-2).
+ *   · `pin_timeout` — the strongest. The answer an INDEX should have held was
+ *     not computed in time.
  */
-export type DegradedArm = 'sparse_timeout' | 'dense_timeout';
+export type DegradedArm =
+  | 'sparse_timeout'
+  | 'dense_timeout'
+  | 'sparse_unbounded'
+  | 'pin_timeout';
+
+/**
+ * WHY ZERO RESULTS CAME BACK, WHEN THE SERVER KNOWS — additive,
+ * `services/api/src/search/route.ts`. Present only where the lexical arm
+ * REFUSED to rank (`degraded` includes `sparse_unbounded`) and nothing else
+ * produced a row.
+ *
+ * A RESPONSE CARRYING THIS IS NOT AN EMPTY RESULT AND MAY NEVER RENDER AS ONE.
+ * "No judgments matched" says the corpus does not hold the advocate's
+ * authority. Here we never looked — the gate refused before ranking. Those are
+ * different sentences with different consequences, and only one of them is true.
+ *
+ * `remedy` is the server's instruction, and the only correct one:
+ * `add_more_terms` means MAKE THE QUERY MORE SPECIFIC. Offering a court or date
+ * filter instead would be actively wrong — see `sparse_unbounded` above.
+ */
+export type SearchEmptyBecause = {
+  /** `query_too_broad_to_rank` is the only reason the server sends today. */
+  reason: string;
+  /** `add_more_terms` is the only remedy the server sends today. */
+  remedy: string;
+};
+
+/**
+ * WHAT THE RETRIEVAL LAYER SAYS ABOUT ITS OWN ANSWER — R7 §7.1,
+ * `services/api/src/search/outcome.ts`. Optional: the structured path omits it
+ * on some responses, and an older server sends none at all.
+ *
+ * `state` is ordered by how much a consumer may rely on it, and the one that
+ * matters most to this client is `coverage_unknown`: **we did not look, or
+ * could not look properly, and we do not know what is out there. This may never
+ * render as "no results."**
+ *
+ * `safeForGeneration` was FALSE on every response observed in R12. Nothing in
+ * v1 generates from search results, so this client reads it only to refuse —
+ * never to enable a surface.
+ */
+export type RetrievalOutcome = {
+  state: 'answered' | 'abstained' | 'degraded' | 'coverage_unknown' | 'review_required';
+  /** Every reason that applies, most specific first. Never empty unless `answered`. */
+  reasons: string[];
+  /** True only for `answered`. This client never turns a surface ON with it. */
+  safeForGeneration: boolean;
+  /** Exact-identity lookups survive a cold semantic arm; almost always true. */
+  exactIdentityUsable: boolean;
+  resultCount: number;
+  /**
+   * The document frequency of the rarest lexeme the lexical arm kept, when it
+   * ran. A number, not a category — NEW1 bus 1222: query LENGTH is not the
+   * driver, `min(df)` is. Internal diagnostics only; never rendered as a score.
+   */
+  rarestDf?: number;
+  contractVersion: number;
+};
 
 export type SearchRequest = {
   query: string;
@@ -1941,6 +2153,40 @@ export type CourtLookupResult =
     }
   | { available: true; matter: Omit<Matter, 'matterId'> };
 
+/**
+ * THE SIX MONITORING FIELDS — frozen by RCC_V1_API_CONTRACT_R12 §1.9 and served
+ * as `null` / `never_attempted`. **There are zero eCourts observations and
+ * there will be zero until a founder-level answer arrives.**
+ *
+ * TYPED, NOT SHOWN. Declaring the shape now means the day observations start
+ * arriving is a rendering decision rather than a contract change — but until
+ * then every one of these reads as "nothing has ever looked", and the client
+ * renders that as **"you are keeping this date yourself"**, never as
+ * "monitoring is on".
+ *
+ * WHAT MAY NEVER APPEAR ANYWHERE IN THIS CLIENT, per §6 and §1.9: a polling
+ * frequency, an SLA, a promised next check, a simulated court update, or a
+ * price attached to any of them — including onboarding copy, store screenshots
+ * and marketing. `LISTED` is never rendered as `HEARING_OCCURRED`.
+ *
+ * Every field is optional because the server sends none of them today. A
+ * client that requires one would break on the response it actually gets.
+ */
+export type MatterMonitoring = {
+  /** `null` while nothing monitors. Never a frequency, and never an SLA. */
+  monitoringPolicy?: string | null;
+  lastObservedAt?: string | null;
+  /**
+   * NEVER RENDERED AS A PROMISE. A planned check the advocate can see is a
+   * commitment about their hearing date, and this product makes none.
+   */
+  nextPlannedObservationAt?: string | null;
+  observationSource?: string | null;
+  /** `never_attempted` today, on every matter. */
+  lastObservationOutcome?: string | null;
+  monitoringDegradedReason?: string | null;
+};
+
 /* --------------------------------------------------------------------- alerts */
 
 /**
@@ -1999,4 +2245,74 @@ export type AlertSettings = {
    * array means everything toggleable currently works.
    */
   unavailable: string[];
+};
+
+/* ------------------------------------------------ release capability registry */
+
+/**
+ * THE SERVER'S STATEMENT ABOUT ITSELF — `GET /release/capabilities`, serving
+ * `RELEASE_CAPABILITIES_R8_3.3` (`services/api/src/release/capabilities.ts`).
+ *
+ * RCC_V1_API_CONTRACT_R12 §1.6: "RCC should read it at launch and hide any
+ * surface whose capability is not ENABLED rather than hardcoding the list."
+ * The reading happens in `state/capabilities.ts`, which ANDs this with the
+ * product's own frozen v1 decision — this registry can close a surface and
+ * never open one.
+ *
+ * The four states are the server's vocabulary, NOT the product's five-state
+ * one. They are deliberately kept apart: conflating "the code runs" with "we
+ * ship it" is how an EXPERIMENTAL_INTERNAL capability reaches an advocate.
+ */
+export type ReleaseCapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPERIMENTAL_INTERNAL';
+
+/**
+ * Every name the registry serves, taken from `CapabilityName` in
+ * `services/api/src/release/capabilities.ts`. Read from the server file, never
+ * guessed — a name that does not exist there would gate a surface on a key that
+ * is always `undefined`, which reads as "unknown" forever.
+ */
+export type ReleaseCapabilityName =
+  | 'search.exact_identity'
+  | 'search.structured_filters'
+  | 'search.pagination'
+  | 'judgment.reader'
+  | 'judgment.exact_span'
+  | 'statute.lookup'
+  | 'statute.linked_judgments'
+  | 'statute.old_new_correspondence'
+  | 'matter.workspace'
+  | 'matter.saved_authorities'
+  | 'matter.briefing'
+  | 'treatment.resolved_signals'
+  | 'treatment.good_law_claim'
+  | 'search.semantic.broad'
+  | 'search.semantic.supporting_authority'
+  | 'search.semantic.adverse_authority'
+  | 'search.semantic.counterarguments'
+  | 'search.semantic.long_input'
+  | 'search.semantic.abstention'
+  | 'generation.evidence_from_passages'
+  | 'generation.premium_jobs'
+  | 'language.hindi'
+  | 'court.ecourts_live'
+  | 'court.cause_list_harvest';
+
+export type ReleaseCapability = {
+  state: ReleaseCapabilityState;
+  /** The server's own sentence about why. Internal-facing; never advocate copy. */
+  reason: string;
+  asOf: string;
+  /** What would move this state, when the server names it. */
+  unblockedBy?: string;
+};
+
+/**
+ * `capabilities` is typed as a partial record rather than a full one: the server
+ * may add a name before this client knows it, and an unknown key must read as
+ * "nothing said" rather than crash a launch.
+ */
+export type ReleaseCapabilities = {
+  registryVersion: string;
+  asOf: string;
+  capabilities: Partial<Record<ReleaseCapabilityName, ReleaseCapability>>;
 };

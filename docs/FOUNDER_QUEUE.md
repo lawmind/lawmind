@@ -4872,6 +4872,40 @@ both apps, 570/570 mobile tests green, no channel URL invented anywhere — the
 actual per-channel value is still entirely yours to set, this only refuses to
 guess one.
 
+**Addendum, RCC R12, 30 August 2026 — the fail-closed behaviour now covers all
+THREE environments, and it names one URL as forbidden rather than merely
+un-defaulted.** The August hardening only fired when `EAS_BUILD_PROFILE` was set,
+so `expo export` and a locally-invoked bundler still produced a binary whose first
+request went nowhere. Three changes, none of them spend and none of them a
+decision:
+
+1. `apps/mobile/app.config.ts` now refuses any RELEASE-SHAPED bundle with no URL —
+   an EAS build, an explicit `EXPO_PUBLIC_APP_ENV=staging|production`, or
+   `NODE_ENV=production`. It also refuses a release build that declares no
+   environment at all, because a build nobody chose an environment for is a build
+   nobody chose a backend for.
+2. `apps/mobile/eas.json` now has FOUR profiles — `development`, `staging`,
+   `preview`, `production` — each declaring `EXPO_PUBLIC_APP_ENV` and none
+   declaring a URL. **The URL is still entirely yours**; the profiles only make
+   the slot explicit so it can be filled with an EAS secret rather than guessed.
+3. `apps/mobile/src/api/client.ts` now REFUSES `api-production-1c0b4.up.railway.app`
+   even when it is explicitly set (`RETIRED_API_HOSTS`), and refuses anything that
+   is not an absolute http(s) URL. A stale `.env` or a copied secret now fails
+   loudly instead of reproducing the exact silent-dead build this entry is about.
+   Development alone keeps a default, and it is loopback.
+
+**What is still owed and is genuinely yours:** the three per-channel URLs, once
+there is somewhere to point them. Nothing was deployed and nothing was revived to
+make an old URL work — the code simply refuses to use one.
+
+**One finding OUTSIDE the client's file-set, recorded here because it is the same
+dead host.** The magic-link email built by the server still carries
+`https://api-production-1c0b4.up.railway.app/api/auth/magic-link/verify?...` —
+observed in the local API's own console-transport log on 30 Aug 2026 during the
+R12 smoke. Sign-in links sent from a real deployment would point at the dead host.
+That is LCC's file-set (better-auth's base URL), not RCC's, so it is reported
+rather than edited; it needs no founder decision, only the same env-var treatment.
+
 ## FQ-PARTLY-OVERRULED-UNREADABLE — what does an advocate see when a later court partly overruled an authority and we cannot say which paragraphs?
 
 **Raised 22 Aug 2026, LCC. Not a blocker — everything around it is built and

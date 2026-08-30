@@ -11,6 +11,7 @@ import { useAppFonts } from '../src/theme/fonts';
 import { useCommandPalette } from '../src/state/commandPalette';
 import { useOutbox } from '../src/state/outbox';
 import { useReadingStore } from '../src/state/reading';
+import { useCapabilities } from '../src/state/capabilities';
 import { useSession } from '../src/state/session';
 import { color, family, type as typeScale } from '../src/theme/tokens';
 
@@ -36,6 +37,7 @@ export default function RootLayout() {
   const hydrateOutbox = useOutbox((s) => s.hydrate);
   const flushOutbox = useOutbox((s) => s.flush);
   const hydrateSession = useSession((s) => s.hydrate);
+  const fetchCapabilities = useCapabilities((s) => s.fetch);
 
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync().catch(() => {});
@@ -75,6 +77,21 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrateSession();
   }, [hydrateSession]);
+  /**
+   * WHAT THE SERVER STILL SERVES — `GET /release/capabilities`, read once at
+   * launch. RCC_V1_API_CONTRACT_R12 §1.6 asks the client to read the registry
+   * rather than hardcode the list, so a capability the server withdraws
+   * disappears from the app without a release.
+   *
+   * PUBLIC AND UNAUTHENTICATED, so it runs before and independently of the
+   * session. A FAILURE IS NOT AN OUTAGE: `state/capabilities.ts` fails closed
+   * for held surfaces and stays OPEN for the v1 core, because search, the
+   * reader, saved authorities and matters must work in a court building with
+   * no signal. Nothing here blocks the first paint.
+   */
+  useEffect(() => {
+    void fetchCapabilities();
+  }, [fetchCapabilities]);
 
   /**
    * CMD/CTRL+K — THE COMMAND PALETTE, WEB ONLY. `9_GLOBAL_COMMAND_CENTER.md`:

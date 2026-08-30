@@ -24,6 +24,7 @@ import { citationRender } from '../../citation/renderState';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
 import { usePractice } from '../../state/practice';
+import { useSurfaceEnabled } from '../../state/capabilities';
 import { useRecentItems } from '../../state/recentItems';
 import {
   describeHearingDate,
@@ -129,6 +130,17 @@ export function MatterScreen({
   const [bundle, setBundle] = useState<MatterBundle | null>(null);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
+  /**
+   * SURFACES THIS BUILD HOLDS BACK — R12 §6, §7, §8. Read from
+   * `state/capabilities.ts`, which ANDs the product's frozen v1 decision with
+   * the server's own registry. A held surface is simply ABSENT: no greyed
+   * button, no "coming soon", no teaser. A disabled control that an advocate
+   * can see is a promise, and a promise about court data we cannot keep is
+   * exactly what §6 forbids.
+   */
+  const briefingEnabled = useSurfaceEnabled('briefing');
+  const counterArgumentsEnabled = useSurfaceEnabled('counterArguments');
+  const sharingEnabled = useSurfaceEnabled('matterSharing');
   const [addEventOpen, setAddEventOpen] = useState(false);
   /**
    * THE AUTHORITIES SAVED TO THIS MATTER — `GET /matters/:id/authorities`.
@@ -394,11 +406,13 @@ export function MatterScreen({
             write and checks no ownership. A sharee researching the other
             side's likely authorities is doing the thing the share was for.
           */}
-          <Button
-            label="What will be said against you"
-            variant="secondary"
-            onPress={onOpenCounterArguments}
-          />
+          {counterArgumentsEnabled ? (
+            <Button
+              label="What will be said against you"
+              variant="secondary"
+              onPress={onOpenCounterArguments}
+            />
+          ) : null}
           {isOwner ? (
             <>
               <Button
@@ -406,7 +420,9 @@ export function MatterScreen({
                 variant="secondary"
                 onPress={onSendClientUpdate}
               />
-              <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
+              {sharingEnabled ? (
+                <Button label="Who can see this matter" variant="secondary" onPress={onShare} />
+              ) : null}
             </>
           ) : (
             /*
@@ -422,7 +438,7 @@ export function MatterScreen({
           )}
         </View>
 
-        {briefings.length > 0 ? (
+        {briefingEnabled && briefings.length > 0 ? (
           <View style={styles.section}>
             <SectionRule label="Briefings" />
             {briefings.map((b) => (

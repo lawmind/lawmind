@@ -44,7 +44,14 @@ it('opens on the store flag and shows the static actions', async () => {
 
   expect(await screen.findByText('Search law')).toBeTruthy();
   expect(screen.getByText('New matter')).toBeTruthy();
-  expect(screen.getByText('Open drafts')).toBeTruthy();
+  /**
+   * DRAFTING IS HELD IN V1 — R12 §7. The palette is the one surface that can
+   * still reach a route the tab bar no longer shows, so the gate is asserted
+   * here rather than assumed. `generation.evidence_from_passages` is DISABLED
+   * server-side and `POST /documents` 404s; a command that opens onto that is
+   * a promise the build cannot keep.
+   */
+  expect(screen.queryByText('Open drafts')).toBeNull();
   expect(screen.getByText('Open matters')).toBeTruthy();
 });
 

@@ -78,12 +78,23 @@ const draw = async (access: MatterAccess | undefined, onOpenPremiumPlans = jest.
   return { onOpenPremiumPlans };
 };
 
-const OWNER_ONLY = [
-  'Add event',
-  'Record the next date',
-  'Send update to client',
-  'Who can see this matter',
-];
+const OWNER_ONLY = ['Add event', 'Record the next date', 'Send update to client'];
+
+/**
+ * HELD IN V1 FOR EVERYONE, OWNER INCLUDED — R12 §7 and §8, enforced in
+ * `state/capabilities.ts`.
+ *
+ *   · "Who can see this matter" is firm/team administration. A single-user v1
+ *     account has nobody to share with, and the workspace concept stays
+ *     invisible; the endpoints exist and no screen reaches them.
+ *   · "What will be said against you" is generation-adjacent, and
+ *     `search.semantic.counterarguments` is DISABLED server-side. Every
+ *     response observed this round had `safeForGeneration: false`.
+ *
+ * Both were reachable before this round. Their absence is the change under
+ * test, not an oversight.
+ */
+const HELD_IN_V1 = ['Who can see this matter', 'What will be said against you'];
 
 beforeEach(() => {
   matter.mockReset();
@@ -131,15 +142,33 @@ describe('an advocate the matter was shared with', () => {
     ).toBeTruthy();
   });
 
-  /**
-   * `POST /arguments/counter` performs no write and checks no ownership. A
-   * sharee researching the other side's likely authorities is doing the thing
-   * the share was for, so this one is deliberately NOT gated.
-   */
-  it('may still research what will be said against them', async () => {
+});
+
+describe('surfaces this build holds back', () => {
+  it.each(HELD_IN_V1)('does not offer "%s" to the owner', async (label) => {
+    await draw('owner');
+
+    await screen.findByText('Mock Client v. Mock Opponent');
+    expect(screen.queryByText(label)).toBeNull();
+  });
+
+  it.each(HELD_IN_V1)('does not offer "%s" to a sharee either', async (label) => {
     await draw('shared');
 
-    expect(await screen.findByText('What will be said against you')).toBeTruthy();
+    await screen.findByText('Mock Client v. Mock Opponent');
+    expect(screen.queryByText(label)).toBeNull();
+  });
+
+  /**
+   * ABSENT, NOT DISABLED. A greyed control an advocate can see is a promise,
+   * and this round makes none about drafting, briefings or court monitoring.
+   */
+  it('shows no disabled teaser in place of a held surface', async () => {
+    await draw('owner');
+
+    await screen.findByText('Mock Client v. Mock Opponent');
+    expect(screen.queryByText(/coming soon/i)).toBeNull();
+    expect(screen.queryByText(/upgrade to/i)).toBeNull();
   });
 });
 

@@ -90,6 +90,32 @@ export function PrecedentSpine({
     );
   }
 
+  /**
+   * G-3 — A GRAPH THAT DOES NOT DECLARE ITS PARTIALITY IS NOT DRAWN.
+   *
+   * Measured by LCC R12: 105,024 judgments carry any resolved outgoing
+   * citation, against a corpus of 18,758,460 — 0.56%. 71.97% of the citation
+   * rows are blank sentinels. So a judgment drawn with no edges is
+   * overwhelmingly likely to be one whose citations we have not resolved, NOT
+   * one that cites nothing — and a spine with two boxes on it reads as the
+   * whole network unless something says otherwise.
+   *
+   * `coverage` is that something. It is additive and a pre-G-3 server does not
+   * send it; where it is absent the honest act is to refuse the drawing rather
+   * than to draw an undeclared partial graph. The frozen contract says the
+   * same in one line: this screen does not ship until the graph declares it.
+   */
+  if (!graph.coverage) {
+    return (
+      <View style={styles.centred}>
+        <Text variant="ui" style={styles.muted}>
+          We cannot show this network yet. The corpus has not told us how much of it it holds,
+          and a citation map drawn without that reads as complete when it is not.
+        </Text>
+      </View>
+    );
+  }
+
   /** The edge that reaches each node, so the segment above it can be coloured. */
   const relationshipTo = new Map<string, TreatmentRelationship>();
   for (const e of graph.edges) relationshipTo.set(e.to, e.relationship);
@@ -138,6 +164,25 @@ export function PrecedentSpine({
         </Text>
       ) : null}
 
+      {/*
+        ABSENCE OF AN EDGE IS NEVER ABSENCE OF A CITATION — the same
+        silent-drop rule `CITATION_HARNESS.md` applies to a citation, applied
+        to the map of them. `truncated` above says THIS PAGE is short; this
+        says THE GRAPH is partial, and they are different claims.
+
+        The sentence is the server's own and is rendered VERBATIM. It is kept
+        server-side deliberately: three clients paraphrasing this distinction
+        would produce three different claims, and this is the one an advocate
+        must not get wrong.
+      */}
+      <View style={styles.coverage}>
+        <Text variant="ui" style={styles.coverageNote}>
+          {graph.coverage.note}
+        </Text>
+        <Text variant="record" style={styles.muted}>
+          {`Resolved citations exist for ${graph.coverage.judgmentsWithAnyResolvedOutgoing.toLocaleString('en-IN')} of ${graph.coverage.corpusDenominator.toLocaleString('en-IN')} judgments we hold.`}
+        </Text>
+      </View>
       <View style={styles.legend}>
         <Text variant="eyebrow">LEGEND</Text>
         <View style={styles.legendRow}>
@@ -242,6 +287,20 @@ const styles = StyleSheet.create({
   nodeStatus: { color: state.cautionText, textAlign: 'center' },
 
   truncated: { color: color.inkMuted, paddingTop: space.sm, textAlign: 'center' },
+  /**
+   * Neutral ink with a dashed edge — the house style for OUR uncertainty.
+   * Never amber: amber means the law has moved, and the map being partial is
+   * a fact about us, not about the law.
+   */
+  coverage: {
+    marginTop: space.md,
+    paddingLeft: space.sm,
+    borderLeftColor: color.rule,
+    borderLeftWidth: 1,
+    borderStyle: 'dashed',
+    gap: space.xs,
+  },
+  coverageNote: { color: color.ink },
 
   legend: {
     width: '90%',

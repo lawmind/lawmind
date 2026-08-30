@@ -19,6 +19,7 @@ import {
   type HiddenResult,
   type SearchFilters,
   type SearchResult,
+  type SearchEmptyBecause,
 } from '../../api/contract';
 import { api } from '../../api/client';
 import { DEFAULT_FILTERS } from '../../api/mock';
@@ -29,6 +30,7 @@ import { MatterPicker } from '../judgment/MatterPicker';
 import { Toast } from '../../components/Toast';
 import { haptics } from '../../theme/haptics';
 import { FiltersSheet } from './FiltersSheet';
+import { classifySearch, looksLikeBarePartyName, type SearchTruth } from './searchTruth';
 
 /**
  * Search — the first of the four core features.
@@ -210,6 +212,41 @@ export function SearchScreen({
    */
   const [unpopulatedCourtCategories, setUnpopulatedCourtCategories] = useState<CourtCategory[]>([]);
 
+  /**
+   * WHICH OF THE FIVE THINGS THE SERVER ACTUALLY SAID — `searchTruth.ts`.
+   *
+   * Derived from the response, never from `results.length`, because a
+   * zero-length list is the one thing all five have in common. `refused` and
+   * `unknown` in particular may NEVER render as "no judgments matched": in
+   * neither case did we look.
+   */
+  const [truth, setTruth] = useState<SearchTruth>('answered');
+  /**
+   * THE SERVER'S OWN REASON AND REMEDY for a refusal. `remedy` is
+   * `add_more_terms` — MORE SPECIFIC, never a filter, because `filters` is not
+   * consulted before the refusal (gap G-2). Offering a court or date filter
+   * here would be advice that cannot work.
+   */
+  const [emptyBecause, setEmptyBecause] = useState<SearchEmptyBecause | null>(null);
+
+  /**
+   * CASE-FIRST. True when the query reads as a bare party name — the highest-
+   * value gap in v1 search (`search.party_name_only`, measured zero twice).
+   * Used ONLY to ask for the cause title. Never to offer a person.
+   */
+  const partyNameHint = useMemo(() => looksLikeBarePartyName(query), [query]);
+
+  /**
+   * THE SERVER'S REMEDY WINS OVER OURS WHEN IT IS ONE WE DO NOT KNOW.
+   *
+   * `add_more_terms` is the only remedy the server sends today and the copy
+   * below says it in the advocate's language. If a later server sends a remedy
+   * this build has never heard of, paraphrasing it would be inventing advice —
+   * so the raw pair is shown instead. Honest and ugly beats fluent and wrong.
+   */
+  const unknownRemedy =
+    emptyBecause !== null && emptyBecause.remedy !== 'add_more_terms' ? emptyBecause : null;
+
   const run = useCallback(
     async (nextFilters: SearchFilters = filters, nextQuery: string = query) => {
       if (!nextQuery.trim()) return;
@@ -226,6 +263,8 @@ export function SearchScreen({
       setHasMore(false);
       setPageNumber(1);
       setLoadMoreFailure(null);
+      setTruth('answered');
+      setEmptyBecause(null);
 
       const response = await api.search(nextQuery, language, nextFilters);
 
@@ -256,6 +295,8 @@ export function SearchScreen({
       setTotal(response.data.total ?? null);
       setUnpopulatedCourtCategories(response.data.unpopulatedCourtCategories ?? []);
       setDegraded(response.data.degraded ?? []);
+      setEmptyBecause(response.data.emptyBecause ?? null);
+      setTruth(classifySearch(response.data));
       setAmbiguous(response.data.ambiguous ?? false);
       setHasMore(response.data.page?.hasMore ?? false);
 
@@ -488,6 +529,68 @@ export function SearchScreen({
           <EmptyState
             body="Ask the way you would ask a junior. Every citation you get back has been checked against the reported record before you see it."
             title="Search the corpus"
+          />
+        </View>
+      ) : truth === 'refused' ? (
+        /**
+         * WE DID NOT LOOK. The lexical arm refused to rank because the match
+         * set was unbounded at the corpus-wide document-frequency gate, so no
+         * judgment was ever compared against this query. "No judgments
+         * matched" would tell the advocate the corpus holds nothing on their
+         * point; it holds nothing we RANKED, which is a different sentence and
+         * the only true one.
+         *
+         * THE REMEDY IS MORE TERMS AND IT IS NEVER A FILTER. Measured: 'bail'
+         * restricted to the High Courts over a single month — a window holding
+         * 45,660 judgments — is still refused, because `filters` is not
+         * consulted before the gate (gap G-2). Offering "clear the filters" or
+         * "add a court" here would be advice that cannot work.
+         */
+        <View style={styles.list}>
+          <EmptyState
+            actions={[
+              {
+                label: 'See what we hold',
+                onPress: () => router.push('/coverage' as never),
+                variant: 'secondary' as const,
+              },
+            ]}
+            body={
+              unknownRemedy !== null
+                ? `This search was not run: ${unknownRemedy.reason}. The server's remedy is “${unknownRemedy.remedy}”.`
+                : partyNameHint
+                ? /**
+                   * CASE-FIRST, ALWAYS. A name is how an advocate names a CASE,
+                   * and the cause title resolves at rank 1 where the name alone
+                   * returns nothing (gap G-1). Nothing here offers to look up a
+                   * PERSON: there is no profile, no history and no dossier in
+                   * this product, and the only thing on the other side of this
+                   * sentence is a judgment.
+                   */
+                  'This search matched too much of the corpus to rank, so nothing was compared against it. If you are looking for a case by the names in it, type the full cause title — “Satender Kumar Antil v. CBI” — which finds it directly.'
+                : 'This search matched too much of the corpus to rank, so nothing was compared against it. Adding more of the words you expect in the judgment narrows it — a court or date filter does not.'
+            }
+            title="This search was too broad to run"
+          />
+        </View>
+      ) : truth === 'unknown' ? (
+        /**
+         * `retrievalOutcome.state === 'coverage_unknown'` — we did not look, or
+         * could not look properly, and we do not know what is out there. The
+         * contract is explicit that this may never render as "no results".
+         */
+        <View style={styles.list}>
+          <EmptyState
+            actions={[
+              { label: 'Try again', onPress: () => void run() },
+              {
+                label: 'See what we hold',
+                onPress: () => router.push('/coverage' as never),
+                variant: 'secondary' as const,
+              },
+            ]}
+            body="This search could not be completed against the whole corpus, so it is not an answer about what we hold. Nothing here says the law you are looking for is absent."
+            title="We could not search everything"
           />
         </View>
       ) : results.length === 0 && degraded.length > 0 ? (

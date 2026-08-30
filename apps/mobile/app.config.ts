@@ -25,22 +25,52 @@ import type { ExpoConfig } from 'expo/config';
  * taken by a config file.
  */
 /**
- * FAIL THE BUILD, NOT THE FIRST REQUEST. `EAS_BUILD_PROFILE` is set by EAS
- * Build itself for every cloud build (`preview`, `production`) and absent
- * under local `expo start` — so this only fires for a real release artefact,
- * never for a developer's dev server. `src/api/client.ts` carries the same
- * refusal at import time as a second line of defence (a local `eas build
- * --local` or a differently-invoked bundler), but failing here means a
- * misconfigured build never leaves the EAS queue at all. FQ-HOSTING
- * (docs/FOUNDER_QUEUE.md) owns the real per-channel URL; this only refuses to
- * guess one.
+ * FAIL THE BUILD, NOT THE FIRST REQUEST — for all three environments.
+ *
+ * A release-shaped bundle is one of three things, and none of them may guess an
+ * API URL:
+ *
+ *   1. an EAS cloud build (`EAS_BUILD_PROFILE` is set by EAS itself);
+ *   2. an explicit `staging`/`production` bundle (`EXPO_PUBLIC_APP_ENV`);
+ *   3. a production Metro export (`NODE_ENV=production`, which is what
+ *      `expo export` sets and what an EAS build runs under).
+ *
+ * Only (1) was checked until R12, so `expo export` and a locally-invoked
+ * bundler both produced a binary whose first request went nowhere. All three
+ * are checked now, and the check is on the RELEASE SHAPE rather than on the
+ * absence of `__DEV__`, so a developer running `expo start` is never blocked.
+ *
+ * `src/api/client.ts` carries the same refusal at import time as a second line
+ * of defence. Failing here means a misconfigured build never leaves the queue
+ * at all. FQ-HOSTING (docs/FOUNDER_QUEUE.md) owns the real per-channel URL;
+ * this only refuses to guess one.
  */
-if (process.env.EAS_BUILD_PROFILE && !process.env.EXPO_PUBLIC_API_URL) {
+const declaredEnv = process.env.EXPO_PUBLIC_APP_ENV;
+const releaseShaped =
+  Boolean(process.env.EAS_BUILD_PROFILE) ||
+  declaredEnv === 'staging' ||
+  declaredEnv === 'production' ||
+  process.env.NODE_ENV === 'production';
+
+if (releaseShaped && !process.env.EXPO_PUBLIC_API_URL) {
+  const which =
+    process.env.EAS_BUILD_PROFILE ?? declaredEnv ?? 'production (NODE_ENV=production)';
   throw new Error(
-    `EXPO_PUBLIC_API_URL is not set for the "${process.env.EAS_BUILD_PROFILE}" EAS build ` +
-      'profile. Set it in eas.json (build.<profile>.env) or as an EAS secret before building — ' +
-      'see docs/FOUNDER_QUEUE.md FQ-HOSTING. Refusing to build a binary that would silently ' +
+    `EXPO_PUBLIC_API_URL is not set for the "${which}" build. Set it in eas.json ` +
+      '(build.<profile>.env) or as an EAS secret before building — see ' +
+      'docs/FOUNDER_QUEUE.md FQ-HOSTING. Refusing to build a binary that would silently ' +
       'call a guessed API URL.'
+  );
+}
+
+/**
+ * A build that declares no environment is a build nobody chose one for.
+ * `development` is never assumed for a release-shaped bundle.
+ */
+if (releaseShaped && declaredEnv !== 'staging' && declaredEnv !== 'production') {
+  throw new Error(
+    'EXPO_PUBLIC_APP_ENV must be "staging" or "production" for a release build. ' +
+      'Set it in the eas.json build profile alongside EXPO_PUBLIC_API_URL.'
   );
 }
 

@@ -5,6 +5,7 @@ import { FilePlus, FolderOpen, Search as SearchIcon } from 'lucide-react-native'
 
 import { Text } from './Text';
 import { useCommandPalette } from '../state/commandPalette';
+import { useSurfaceEnabled } from '../state/capabilities';
 import { usePractice } from '../state/practice';
 import { useRecentItems, type RecentKind } from '../state/recentItems';
 import { haptics } from '../theme/haptics';
@@ -49,6 +50,7 @@ export function CommandPalette() {
   const setOpen = useCommandPalette((s) => s.setOpen);
   const router = useRouter();
   const matters = usePractice((s) => s.matters);
+  const draftingEnabled = useSurfaceEnabled('drafting');
   const recentItems = useRecentItems((s) => s.items);
   const hydrateRecent = useRecentItems((s) => s.hydrate);
 
@@ -85,12 +87,22 @@ export function CommandPalette() {
         label: 'New matter',
         onSelect: () => go(() => router.push('/matter/new' as never)),
       },
-      {
-        kind: 'action',
-        key: 'drafts',
-        label: 'Open drafts',
-        onSelect: () => go(() => router.push('/drafts')),
-      },
+      /*
+        DRAFTING IS HELD IN V1 — R12 §7. The palette is the one surface that can
+        reach a route the tab bar no longer shows, so the gate is applied here
+        too. A command that opens a screen the product does not ship is the
+        same promise the hidden tab was removed to avoid.
+      */
+      ...(draftingEnabled
+        ? [
+            {
+              kind: 'action' as const,
+              key: 'drafts',
+              label: 'Open drafts',
+              onSelect: () => go(() => router.push('/drafts')),
+            },
+          ]
+        : []),
       {
         kind: 'action',
         key: 'matters',
@@ -134,7 +146,7 @@ export function CommandPalette() {
       }));
 
     return [...actions, ...matterRows, ...recentRows];
-  }, [query, matters, recentItems, router]);
+  }, [query, matters, recentItems, router, draftingEnabled]);
 
   /** Escape closes on web/desktop, where the palette is keyboard-first. */
   useEffect(() => {
@@ -160,7 +172,7 @@ export function CommandPalette() {
           <TextInput
             autoFocus
             onChangeText={setQuery}
-            placeholder="Search law, matters, drafts…"
+            placeholder="Search law and matters…"
             placeholderTextColor={color.inkFaint}
             ref={inputRef}
             style={styles.input}
