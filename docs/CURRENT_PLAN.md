@@ -25,6 +25,70 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 30 August 2026 (SPRINT 2, NEW2) — THE GATE-A RECEIPT CITED TWO AUTHORITIES A CLONE COULD NOT REACH, AND THE FIX FOR THE FIRST ONE BROKE HEAD
+
+**Round:** NEW2 evidence-debt round. No worker touched, no ingest changed, no
+migration. Leases: `NEW2` (re-acquired — it had read DEAD since a session that
+ended long ago), `GIT_COMMIT` per commit. Raised by LCC bus 1576 and 1510.
+
+**What was wrong.** `docs/ai/lcc-r12/m0-gate-a-receipt.json` binds its evidence
+by sha256, and **two** of those bindings could not be followed from a clone:
+
+- `docs/ai/new2-r10/freshness-observation.json` was uncommitted — HEAD held
+  `116a1748…`, the receipt bound the working-tree `47676cd9…`. LCC found this.
+- `manifest.path` names `.tmp-new2/m0-upstream/objects.json`, which
+  `.gitignore:128` excludes. Not merely uncommitted — **unreachable by
+  construction**, and it is the authority for `upstreamUnique` 18,951,606, 1,438
+  partitions and 0 partition errors. LCC bus 1576 counted this one as matching
+  HEAD; it never could. NEW2 found it while verifying the fix for the first, and
+  LCC appended a `manifestPathCorrection` to its own receipt rather than
+  reconstructing it.
+
+**What landed.**
+
+| commit | what |
+| --- | --- |
+| `ee73218` | the bound freshness observation, committed **unmodified** — the working-tree bytes were the authoritative later measurement under the same `definitionVersion` |
+| `b488371` | the manifest bytes republished at `docs/ai/new2-r10/m0-upstream-objects-gate.json`, byte-identical, with `M0_MANIFEST_PROVENANCE.json` recording the equivalence and stating plainly that it does **not** make the receipt self-verifying |
+| `eee476dc` | the two artifacts LCC held for four days: `NEW2_R10_CLOSURE.md` and `sc-authorization-reanchor.json` now name `CLAUDE.md` §6a as controlling record and the SCI grant as **CONTESTED / NOT_IN_HEAD** |
+| `1a550cf5` | the coupled freshness triple moved together, repairing what `ee73218` broke |
+
+**The mistake worth keeping.** `ee73218` committed one file of a coupled set.
+The freshness triple — observation, parity matrix, source measurement — is safe
+only if all three move together, which LCC had already said in bus 1510.
+Afterwards `freshness-object.test.ts` failed at HEAD (published generation
+`14:38:58.523Z` against a committed measurement of `10:19:28.784Z`) **and passed
+13/13 on this box every time**, because the working tree held the pair a clone
+did not. It was caught by hashing what a clone gets, not by any test run. It is
+recorded because the fix for a reproducibility gap created a reproducibility gap.
+
+**SCI is untouched.** `sc-authorization-reanchor.json` had recorded the separate
+SCI written grant as "confirmed valid through 2029" while citing
+`docs/SCI_AUTHORISATION.md`, which is NOT_IN_HEAD — an uncommitted document
+becoming true by citation. The observed cycle (1 homepage fetch, 25 official PDF
+fetches, 0 search, 0 expanded access) rests on `public_official` and never
+depended on that grant, so separating the two keeps the measurement usable while
+the question stays open. `SCI_AUTHORISATION_STATE = UNCHANGED`.
+
+**Verified at HEAD, not in the worktree.** All seven Gate-A bindings match
+(`c7e4a496 · 9fab443c · 92545a40 · 019b15c7 · 47676cd9 · 1e5bdd90 · a72d9868`);
+`freshness-object` + `freshness-publication` 13/13 pass.
+
+**Ingest was idle and correctly so.** NEW1 measured `max(judgments.created_at)`
+stopped at `2026-08-29T14:31:01Z`. That is the daily cadence, not a stall: the
+`new2-daily-delta` scheduled task last ran 29 Aug 18:00 local with result 0 and
+next runs 30 Aug 18:00, and `pg_stat_activity` showed zero non-idle backends.
+The lag that matters is the honest currency frontier — 59 days HC, 120 days SC —
+which is upstream publication behaviour and no poll rate changes it.
+
+**Still open.** FIFTH holds `HOLD` on the third resolver gate (bus 1583):
+`rowsApplied = 0`, `DECIDE_ONLY`, no `--apply`. 60.6% of UNIQUE pins come
+through `judgment_citation_aliases` while the adjudication scores the final pin,
+cross-court collisions are outside the replay, 352/500 court-consistency checks
+are UNTESTABLE, and the risk truth set helped drive the resolver it then scored.
+Re-presentation must be prediction-blind and alias-stratified. Accepted without
+argument.
+
 ### 30 August 2026 (SPRINT 2, RCC) — THE CLIENT IS BUILT AGAINST THE FROZEN CONTRACT, AND IT CAN NO LONGER SAY "NOTHING MATCHED" WHEN NOBODY LOOKED
 
 **Round:** RCC R12, v1 client implementation against `RCC_V1_API_CONTRACT_R12`
