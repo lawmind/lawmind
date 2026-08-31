@@ -169,6 +169,35 @@ a `judgments.neutral_citation` attribution defect at ingest; and the apply
 candidate's self-edges can now be produced correctly at source rather than
 filtered on the apply side.
 
+**Verified after the commit, and one of the three changed code.** Non-vacuity is
+measured, not asserted: `resolver-cohort.test.ts` against the resolver exactly as
+it stood at `6f0d96bf` fails **7 of 10** (the 3 that pass assert corpus facts or
+the AMBIGUOUS control the old resolver already got right). Two connector patterns
+— `ANALOGOUS` and `TAGGED WITH` — fired **zero** times in 14,452 cause titles and
+are removed as remembered-not-observed, `CLAUDE.md` §7; they never matched, so
+the re-scored gate is identical to the digit and no published number moves.
+`C/W` alone carries 83 of the 97 catches.
+
+**HEAD retest: 963 tests, 959 pass, 3 skipped, 1 FAIL, and the failure is NOT
+this round's.** `corpus/freshness-publication.test.ts` — the published freshness
+observation records parity sha `ba2d0c5c…` while the committed
+`docs/ai/new2-r10/parity-matrix.json` hashes to `2a477022…`. Both files are
+committed and clean, so it reproduces in a clone; `parity-matrix.json` was
+rewritten in `08baae98` without republishing the observation. It read green
+earlier today only because the working tree still held an UNCOMMITTED copy that
+matched, until NEW2's lane rewrote it back at 14:14:58 — the shape LCC bus 1576
+raised once already. Reported as bus 1634. **NEW2's to fix; neither file was
+touched here.**
+
+**Next for LCC, named and deliberately not done this round.**
+`services/api/src/search/structured.ts:362` is the path an advocate hits typing
+`cite:"…"`, and it has the SAME shape: `total === 1` is one bearer we HOLD, not
+one judgment that exists, so a connected-matter cohort with one member landed is
+shown as a single confident answer. It was outside NEW2's measurement, it changes
+what a user sees, and it needs its own numbers first. Extrapolating from the
+key-level sample and NOT measured on query traffic: roughly **1.5% of single-hit
+citation lookups** would become a disambiguation.
+
 ### 30 August 2026 (R13, CONTINUOUS WALK) — NEW1: THE WALK IS AT 39.42%, ONE WRITER, AND HNSW IS STILL UNAUTHORIZED
 
 **Round:** NEW1 continuous-walk round, founder-directed. Lease: `GIT_COMMIT` for

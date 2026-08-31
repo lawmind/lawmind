@@ -138,14 +138,28 @@ export const CAUSE_TITLE_CHARS = 800;
  * `C/W` is Karnataka's, `A/W` Bombay's, `With` Jharkhand's and Allahabad's.
  * Matched case-insensitively and on a word boundary so `WITHOUT` and the `with`
  * inside a sentence cannot fire it.
+ *
+ * **Every entry is here for a number.** Censused over 14,452 cause titles and
+ * attributed over NEW2's holdout — `scripts/lcc-connector-census.mts`:
+ *
+ *   connector        printed   declares >1   catches   refuses in vain
+ *   C/W                  205           205        83                10
+ *   WITH                 513           174         9                16
+ *   A/W                   54            33         1                 5
+ *   ALONG WITH           252            20         2                 3
+ *   CONNECTED WITH       202             1         2                 0
+ *
+ * `C/W` alone carries 83 of the 97. **`ANALOGOUS` and `TAGGED WITH` were in the
+ * first draft of this list and are gone: they fired ZERO times in 14,452 cause
+ * titles.** They were remembered rather than observed, which is the failure
+ * `CLAUDE.md` §7 names outright, and a pattern that has never matched anything
+ * is not evidence that it would.
  */
 const CONNECTORS: readonly { readonly re: RegExp; readonly name: string }[] = [
   { re: /\bC\s*\/\s*W\b/i, name: 'C/W' },
   { re: /\bA\s*\/\s*W\b/i, name: 'A/W' },
   { re: /\bconnected\s+with\b/i, name: 'CONNECTED WITH' },
-  { re: /\banalogous\s+(with|case)\b/i, name: 'ANALOGOUS' },
   { re: /\balong\s*with\b/i, name: 'ALONG WITH' },
-  { re: /\btagged\s+with\b/i, name: 'TAGGED WITH' },
   { re: /(^|\n)\s*with\b/i, name: 'WITH' },
 ];
 

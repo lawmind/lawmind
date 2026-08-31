@@ -236,6 +236,29 @@ No migration was written. The gate that ships needs no schema change at all.
 another judgment's neutral citation in `judgments.neutral_citation`. Handed to
 NEW2; not absorbed into a resolver gate that would then look better than it is.
 
+### An adjacent exposure, named rather than fixed or ignored
+
+`services/api/src/search/structured.ts:362` is the path an advocate hits when
+they type `cite:"…"` directly. It has the SAME shape as the defect this round
+fixed, on a surface a user sees:
+
+```ts
+if (total > 1 && isBareCitationTerm(ast)) return { kind: 'ambiguous', … };
+return { kind: 'matched', … };
+```
+
+`total === 1` is one bearer we HOLD, not one judgment that exists. A
+connected-matter cohort with one member landed is shown to the advocate as a
+single confident answer. `CITATION_HARNESS.md` §"Exact citation lookup" already
+frames its three outcomes as "found live in the corpus", which is exactly the
+assumption the holdout falsified.
+
+**Deliberately not changed here.** It was not in NEW2's measurement, it changes
+what a user sees, and it needs its own numbers before it moves. The size, as an
+EXTRAPOLATION from the key-level sample above and not a measurement of query
+traffic: roughly **1.5% of single-hit citation lookups** would become a
+disambiguation. Queued rather than done.
+
 Known limitation, asserted in a test rather than described in prose:
 `judgment_citation_aliases_key` is UNIQUE, so **no alias key has two claimants
 and no gate can ever fire on one**. Confirmed today: 4,394 alias keys, 0
@@ -283,3 +306,68 @@ in about a minute.
   from the corrected run.
 - **`RESOLVER_VERSION` moved to `citation-resolver-v0.2`.** Any stored v0.1
   result was produced by a resolver that could say `UNIQUE` in both these cases.
+
+---
+
+## 9. Addendum — three things checked after the commit, one of which changed the code
+
+**Non-vacuity, verified rather than asserted.** `resolver-cohort.test.ts` run
+against `services/api/src/citations/resolver.ts` exactly as it stood at
+`6f0d96bf`: **7 of 10 fail.** The three that pass are the two asserting corpus
+facts rather than resolver behaviour (freshness is CURRENT; no alias key has two
+claimants) and the AMBIGUOUS control, which the old resolver already answered
+correctly.
+
+```
+X a sibling the court DECLARED but we have not landed stops UNIQUE
+X an ordinary single-matter judgment still resolves UNIQUE
+X a cause title we cannot read is never evidence of uniqueness
+X a judgment's own neutral citation is a SELF_REFERENCE, not an edge
+X the same citation from ANOTHER judgment is an ordinary resolution
+X a bearer of a shared citation cites its connected sibling
+X a bare string carries no citing context, and the resolver says so
+```
+
+Bus 1633 said "6 of the 9" — written before the tenth test existed. 7 of 10 is
+the figure.
+
+**Two connector patterns were remembered, not observed, and are gone.**
+`scripts/lcc-connector-census.mts` over 14,452 cause titles:
+
+| connector | printed | declares >1 | catches | refuses in vain |
+| --- | ---: | ---: | ---: | ---: |
+| `C/W` | 205 | 205 | 83 | 10 |
+| `WITH` | 513 | 174 | 9 | 16 |
+| `A/W` | 54 | 33 | 1 | 5 |
+| `ALONG WITH` | 252 | 20 | 2 | 3 |
+| `CONNECTED WITH` | 202 | 1 | 2 | 0 |
+| `ANALOGOUS` (removed) | **0** | 0 | 0 | 0 |
+| `TAGGED WITH` (removed) | **0** | 0 | 0 | 0 |
+
+`C/W` — Karnataka's marker, and the only one that is 100% cohort when printed —
+carries 83 of the 97. The two dropped patterns fired zero times, so removing
+them is behaviour-neutral by construction, and the re-scored gate is identical
+to the digit: 97/180 and 34/2,295. **Every number in this document was measured
+with those two patterns present and none of them moves.** Proved rather than
+argued: `cohort-gate.json` regenerated after the removal differs from the version
+generated before it in exactly one field, `measuredAt`. Every count, rate and
+variant is byte-identical.
+
+**HEAD retest: 963 tests, 959 pass, 3 skipped, 1 FAIL — and the failure is not
+this round's.**
+
+```
+X corpus/freshness-publication.test.ts
+  projects the repository publication and matches its own artifact
+    docs/ai/new2-r10/freshness-observation.json  records parity sha  ba2d0c5c...
+    docs/ai/new2-r10/parity-matrix.json          actually hashes to  2a477022...
+```
+
+Both files are committed and clean, so the disagreement is between two committed
+objects and reproduces in a clone. `parity-matrix.json` was rewritten in
+`08baae98` without republishing the observation against it. It was green earlier
+today only because the working tree still held an UNCOMMITTED
+`parity-matrix.json` that did match, and something in NEW2's lane rewrote it back
+to the committed content at 14:14:58 — which is the shape LCC bus 1576 already
+raised once, and the shape that test exists to catch. Reported as bus 1634;
+neither file was touched here.

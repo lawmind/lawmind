@@ -146,6 +146,12 @@ export type ResolutionState =
    * different: that one clears when the index catches up with ingest, this one
    * clears when the sibling is acquired. Collapsing them would hide an
    * acquisition gap inside an indexing metric.
+   *
+   * A consumer must handle it, on the same terms as the stale-index state:
+   * enrichment fails closed, a UI shows the candidate WITHOUT the claim of
+   * uniqueness, and **it must never be widened back to `UNIQUE` by anything
+   * downstream.** Widening it would restore exactly the 226 wrong pins the gate
+   * exists to prevent.
    */
   | 'UNIQUE_UNCONFIRMED_COHORT'
   /**
