@@ -1,0 +1,2541 @@
+{
+ "artifact": "NEW2_R18_REPARSE_CHECKPOINT",
+ "lane": "NEW2",
+ "startedAt": "2026-08-31T18:07:34.488Z",
+ "updatedAt": "2026-08-31T18:15:29.361Z",
+ "scope": "EXHAUSTIVE over AWS Open Data High Court rows carrying a stored neutral_citation",
+ "cursor": "2026UHC999",
+ "rowsEvaluated": 1349549,
+ "classes": {
+  "UNCHANGED_CONFIRMED": 1302660,
+  "CLEAR_TO_NULL": 19004,
+  "UNTESTABLE": 26532,
+  "NOT_A_NEUTRAL_CITATION_DATE_STAMP": 434,
+  "AMBIGUOUS": 710,
+  "REPLACE_WITH_DIFFERENT_OWN_CITATION": 206,
+  "SOURCE_GENUINE_FOREIGN_CITATION": 3
+ },
+ "arms": {
+  "in_court_token": 1349516,
+  "old_arm_reproduces_stored": 1322582,
+  "off_court_token": 33
+ },
+ "dbSuffix": {
+  "plain_stored_no_suffix_in_text": 1138872,
+  "stored_with_suffix": 210625,
+  "plain_stored_suffix_in_text_GLUED": 43,
+  "plain_stored_suffix_in_text_WITH_boundary": 9
+ },
+ "dbOccurrences": {
+  "occurrence_no_suffix": 3630825,
+  "occurrence_suffix_with_boundary": 913840,
+  "occurrence_suffix_GLUED": 138,
+  "glued_CORROBORATED_elsewhere_in_document": 92,
+  "glued_only_occurrence": 46
+ },
+ "dbGlueTails": {
+  "Neutral Cita": 1,
+  "p \u0001\u0002\u0003\u0004 \u0004 \u0005\u0006\u0004": 1,
+  "List this ma": 2,
+  "2 issued by ": 1,
+  "3 S.122(1)(g": 1,
+  "4 Operator/M": 1,
+  "2 parking fl": 1,
+  "3 4. Though ": 1,
+  "2 circle, HP": 1,
+  "3 5. In view": 1,
+  "2 ……...Petit": 1,
+  "3 limestone ": 1,
+  "4 3. Since p": 1,
+  "5 exercises ": 1,
+  "6 5. While f": 1,
+  "7 and decide": 1,
+  "8 9. Since i": 1,
+  "9 expeditiou": 1,
+  "This is a di": 3,
+  "2 2. Precise": 1,
+  "3 6. Claim o": 1,
+  "4 claimed qu": 1,
+  "5 paid compe": 1,
+  "6 A provides": 1,
+  "7 “48. …In o": 1,
+  "8 invoking t": 1,
+  "9 “12.9. In ": 1,
+  "10 26. In vi": 1,
+  "11 for the p": 1,
+  "12 Sita Ram,": 1,
+  "13 18. In th": 1,
+  "14 cannot be": 1,
+  "Insurance Co": 1,
+  "2025:MLHC:34": 2,
+  "2025:MLHC:39": 1,
+  "2025:MLHC:41": 18,
+  "2025:MLHC:40": 6,
+  "2025:MLHC:42": 2,
+  "2 the paper ": 1,
+  "3 perused th": 1,
+  "4 5. Learned": 1,
+  "5 7. Having ": 1,
+  "6 could be c": 1,
+  "7 viewed in ": 1,
+  "8 underminin": 1,
+  "9 emboldened": 1,
+  "10 stage of ": 1,
+  "11 both the ": 1,
+  "12 implicitl": 1,
+  "13 even if d": 1,
+  "14 20. Befor": 1,
+  "3 and NC:202": 1,
+  "2026:MLHC:44": 2,
+  "2026:MLHC:47": 12,
+  "2026:MLHC:71": 42,
+  "2026:MLHC:74": 1,
+  "2026:MLHC:90": 2
+ },
+ "byCourt": {
+  "High Court of Uttarakhand": {
+   "UNCHANGED_CONFIRMED": 21898,
+   "CLEAR_TO_NULL": 150,
+   "UNTESTABLE": 49,
+   "AMBIGUOUS": 4
+  },
+  "High Court of Sikkim": {
+   "UNCHANGED_CONFIRMED": 11
+  },
+  "High Court Of Chhattisgarh": {
+   "UNCHANGED_CONFIRMED": 107526,
+   "UNTESTABLE": 1402,
+   "CLEAR_TO_NULL": 1226,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 79,
+   "AMBIGUOUS": 6
+  },
+  "High Court  for State of Telangana": {
+   "UNCHANGED_CONFIRMED": 1,
+   "CLEAR_TO_NULL": 2
+  },
+  "Madras High Court": {
+   "NOT_A_NEUTRAL_CITATION_DATE_STAMP": 434,
+   "UNCHANGED_CONFIRMED": 160,
+   "CLEAR_TO_NULL": 98,
+   "AMBIGUOUS": 10
+  },
+  "High Court of Kerala": {
+   "UNCHANGED_CONFIRMED": 7067,
+   "AMBIGUOUS": 6,
+   "CLEAR_TO_NULL": 4,
+   "UNTESTABLE": 1,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 9
+  },
+  "Gauhati High Court": {
+   "UNCHANGED_CONFIRMED": 19054,
+   "CLEAR_TO_NULL": 3103,
+   "AMBIGUOUS": 14
+  },
+  "High Court of Delhi": {
+   "UNCHANGED_CONFIRMED": 1960,
+   "AMBIGUOUS": 85,
+   "CLEAR_TO_NULL": 466,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 2,
+   "SOURCE_GENUINE_FOREIGN_CITATION": 1
+  },
+  "High Court of Karnataka": {
+   "UNTESTABLE": 539,
+   "UNCHANGED_CONFIRMED": 226731,
+   "AMBIGUOUS": 32,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 1,
+   "CLEAR_TO_NULL": 5
+  },
+  "Bombay High Court": {
+   "UNCHANGED_CONFIRMED": 48857,
+   "CLEAR_TO_NULL": 10419,
+   "UNTESTABLE": 1589,
+   "AMBIGUOUS": 7,
+   "SOURCE_GENUINE_FOREIGN_CITATION": 1
+  },
+  "Allahabad High Court": {
+   "UNCHANGED_CONFIRMED": 547762,
+   "UNTESTABLE": 8311,
+   "CLEAR_TO_NULL": 1912,
+   "AMBIGUOUS": 90,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 1
+  },
+  "High Court of Himachal Pradesh": {
+   "UNCHANGED_CONFIRMED": 28037,
+   "AMBIGUOUS": 75,
+   "CLEAR_TO_NULL": 79,
+   "UNTESTABLE": 1011
+  },
+  "High Court of Punjab and Haryana": {
+   "CLEAR_TO_NULL": 404,
+   "UNTESTABLE": 13606,
+   "AMBIGUOUS": 102,
+   "UNCHANGED_CONFIRMED": 41910,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 103
+  },
+  "High Court Of Rajasthan": {
+   "UNCHANGED_CONFIRMED": 197275,
+   "CLEAR_TO_NULL": 647,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 11,
+   "AMBIGUOUS": 241,
+   "UNTESTABLE": 22
+  },
+  "High Court of Andhra Pradesh": {
+   "AMBIGUOUS": 1,
+   "CLEAR_TO_NULL": 2,
+   "SOURCE_GENUINE_FOREIGN_CITATION": 1
+  },
+  "Calcutta High Court": {
+   "UNCHANGED_CONFIRMED": 8,
+   "CLEAR_TO_NULL": 10
+  },
+  "High Court of Jharkhand": {
+   "UNCHANGED_CONFIRMED": 52761,
+   "AMBIGUOUS": 34,
+   "CLEAR_TO_NULL": 29,
+   "UNTESTABLE": 2
+  },
+  "Patna High Court": {
+   "CLEAR_TO_NULL": 1
+  },
+  "High Court of Meghalaya": {
+   "CLEAR_TO_NULL": 410,
+   "UNCHANGED_CONFIRMED": 1300,
+   "AMBIGUOUS": 1
+  },
+  "High Court of Manipur": {
+   "UNCHANGED_CONFIRMED": 109,
+   "CLEAR_TO_NULL": 7
+  },
+  "High Court of Tripura": {
+   "UNCHANGED_CONFIRMED": 222,
+   "CLEAR_TO_NULL": 17,
+   "AMBIGUOUS": 2
+  },
+  "Orissa High Court": {
+   "CLEAR_TO_NULL": 8,
+   "UNCHANGED_CONFIRMED": 11
+  },
+  "High Court of Jammu and Kashmir": {
+   "CLEAR_TO_NULL": 5
+  }
+ },
+ "samples": {
+  "CLEAR_TO_NULL": [
+   {
+    "id": "319c6673-8eaa-46c1-8a0b-03c45bc23234",
+    "court": "High Court of Uttarakhand",
+    "stored": "2003:UHC:3602",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "81e277af-16a0-4552-8bfc-db74cabf1010",
+    "court": "High Court of Uttarakhand",
+    "stored": "2003:UHC:366",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "2a70676d-5ca5-49fc-b2ea-a3d7cbfb0739",
+    "court": "High Court of Uttarakhand",
+    "stored": "2004:UHC:4588",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "07087035-9b7f-4a7e-a4a9-6060d28b0a3a",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2010:CGHC:10184",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "9e1bb0ec-b818-4c8c-aeb0-80110623bcbd",
+    "court": "Madras High Court",
+    "stored": "2011:JANURARY:19",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "874da584-5457-40b7-925f-b4e0b0caa056",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2013:CGHC:2972",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "c5cb7a33-1f3f-4587-984e-e80dc5aabe8d",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2013:CGHC:2972",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "de2278e9-7b0b-4108-9d1e-279c4b8c04fe",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "2dd8b7f2-34d8-4082-96ef-c1ee15631bf0",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "535b96fb-72f7-4866-8896-0ce59c6dc533",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "a58e1915-4863-43f2-b3ea-3e31feb8dae0",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "adbeb2e8-ebfb-475e-b607-294df8016261",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "194f4478-6b15-4ec5-8642-9bda4ddad6e9",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "1a9a1988-f12e-4383-97de-e1cc36040ac1",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "1508efab-9f91-45fc-bbcd-c42b1810e27e",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "0fa1f2d0-dc7a-4e90-a341-f0aedacb45b6",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "5e85c93c-a62b-4086-833f-71cbc7fed97f",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "b9bfcced-b7ac-4f8f-bcc8-1bbe284ef9c3",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "9ae1b12e-2ffc-4c93-8df7-a4a432597c7b",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "cdf6ffec-66b9-4ca6-8f6e-1029478b4765",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003277",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "00585c6c-9dc1-4873-9f57-80c0fd56bfc3",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "214a1a29-15c5-45e4-a6e6-08afcf4407d5",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "2217c33c-b70c-4d01-b6e2-2da1b82dcd7c",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "149f6825-c94f-4975-aad5-194b4d53a01f",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   },
+   {
+    "id": "2fc87fac-a2e6-49f9-a3ae-c449633f2fe6",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 1
+   }
+  ],
+  "UNTESTABLE": [
+   {
+    "id": "45b7735b-e850-4f59-9302-2feec4d751bf",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2007:CGHC:5493-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "25f602ff-5c09-4048-9aea-15bd82d85c11",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2012:CGHC:2884",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "abaafa35-2788-4ee1-8848-b3d9fb99f546",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2012:CGHC:6208",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "98cc701f-bbdc-4f25-8d14-ccf4dee03444",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2012:CGHC:9072-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "698fabb6-86bc-4293-9832-83ae31f2ea1d",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2013:CGHC:3088",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "6316d106-bd15-4270-aea8-92950ddb3b08",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2013:CGHC:6201",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "d81c88d3-37df-449f-9126-e047b6de206b",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2014:CGHC:7756",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "897086bc-0828-4614-b11d-6dd5180dd0fc",
+    "court": "High Court Of Chhattisgarh",
+    "stored": "2017:CGHC:25689",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "6c5f95bf-b360-4b49-90a3-261423fc3749",
+    "court": "High Court of Karnataka",
+    "stored": "2019:KHC:4484",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "8ebbe105-d4e9-4050-924e-ee9044a39a81",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "8bb5cdd8-3719-4ca8-8018-9cc850a253e4",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:INSC:1154",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "524dc70e-e226-4914-8a14-6813f46037b7",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:173505",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "9f3ddb5c-9a8c-444f-a9fd-b63f737baf86",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:173506",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "198c49a0-dfd4-4d12-b8c5-b987f8388dd9",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:173507",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "1d1b2620-f512-4349-b14f-ab7595a499ce",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:173567",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "3cdfd65a-7888-4b29-ae58-f287598eb1e9",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100022",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "4900e52b-287b-46ad-afde-f0ee6a00ab55",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100031",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "a5cb392b-e325-4140-a785-8b647140a9e1",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100051",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "ae79c40f-cb71-4b61-a765-7633110c7cc7",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100092",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "d05e7e52-da34-480e-bd3c-f47e59bb8996",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100099",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "de568c02-8537-4b9f-8892-999e844c8cc2",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100259",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "f38b68d3-e11d-478a-9e74-951d79602544",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100269",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "1e2e0389-b0dc-41e2-b759-7fd8e3aad708",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100489",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "fe24db71-50e6-4977-beba-79746dede86d",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100612",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "3cfabb5f-87c3-4d53-8556-b7a05cd9d7b7",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:100719",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   }
+  ],
+  "NOT_A_NEUTRAL_CITATION_DATE_STAMP": [
+   {
+    "id": "cfd73071-aac1-43e3-a860-ed13065ae5ab",
+    "court": "Madras High Court",
+    "stored": "2009:AUGUST:24",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "2521bb39-931a-453f-a71c-009825d18151",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "625ce8e0-d076-4823-9875-bfe590ec456d",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:06",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "1a22ad60-61d3-4017-b6b1-75173dc0c6fe",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:08",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "d7d50425-2efb-4b7e-91ef-1df8a3289302",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:18",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "d1d503fb-7e89-4c64-bec0-422f84c97d33",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:18",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "a070de2e-8420-4a8c-a60d-35a10f9eb4d8",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:21",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "002e9843-bc7d-4f13-8699-2f31851d5980",
+    "court": "Madras High Court",
+    "stored": "2011:APRIL:27",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "ca079b28-65ec-40d2-bb77-eef3072e9b37",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:01",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "984e1273-db26-4e0e-b98c-862aec4ff2db",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:03",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "83978533-4d8a-4e7a-a994-67226f657682",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:03",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "a329e087-a0a9-49c3-bb49-20df6bdf8132",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:03",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "81a714d3-40cc-4874-85e0-76ea783027db",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:03",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "2b48a130-836e-4e9d-be2f-7e7c599d5488",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "2b178ba2-4cb5-4a28-9de9-a1a38fe29a65",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "e871be9b-c84d-4d0d-9f35-e16e11b112a3",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "fa547954-a4c0-49d7-8751-202b26728bc7",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "7a89c95a-589a-40ee-9d54-58cf34944db1",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "909cb89c-4abb-4fd7-8fa4-150a627dbe7b",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "bedb1892-4783-4699-bb8c-17f818a9cce4",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:04",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "56debfa1-08d3-409a-a10b-f27f49847206",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "9b7192d0-f469-4b49-93e7-f0ffc8857412",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "b46ea894-d418-46ad-bce3-d811a540d784",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "6d866d56-8411-4531-84df-ed54eaecc005",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   },
+   {
+    "id": "47535dd0-9eae-4063-8bbf-655a8366c148",
+    "court": "Madras High Court",
+    "stored": "2011:AUGUST:05",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 0
+   }
+  ],
+  "AMBIGUOUS": [
+   {
+    "id": "91619ce4-6dd1-4826-aaf4-07a610ad3c48",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 7
+   },
+   {
+    "id": "9344a94c-0cce-4560-9a95-3ab69ec650cc",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "87b21932-a088-48cf-b24f-7a99340bbf16",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "d50d1e53-0b15-4ffb-9fb3-829bddcd7b8a",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "d7f9902d-09a5-4cb5-a9b5-b2807b27995e",
+    "court": "High Court of Delhi",
+    "stored": "2022:DHC:2814-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "030e5639-b054-4adf-94d6-13f2f5fc2e2c",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "0b8dcf6c-3cea-4303-82fe-2f9b4b5fc925",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 5
+   },
+   {
+    "id": "1fdfee87-a59c-41bd-bed1-42cbea926728",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "4d1fc14c-2735-4956-9d53-28a61014bb28",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "6f96c7dd-b0a4-4e88-96c3-679ac829f896",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "b113d454-75ef-42cd-814d-5c204dba1b77",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 5
+   },
+   {
+    "id": "bfcd4046-a9f5-4516-bd53-340ebcf21544",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "c27b5f6d-cc08-4f98-911f-62e1552e64a1",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "d43f3e9b-171e-434d-bb20-a6ec66508e42",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:003983",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 3
+   },
+   {
+    "id": "a9e5cc4a-819a-475b-a58b-ff09751de93f",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2022:PHHC:058722",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "cfd18fe3-c878-4640-b070-dcf66fcb181a",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:111864",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "d1a4c477-98eb-4aea-ac0a-e5669ac10220",
+    "court": "High Court of Andhra Pradesh",
+    "stored": "2023:AHC:152051-DB",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "b5ab426b-9957-4163-8d9c-cb196e7013f5",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:200102",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "2a0aa86a-8c19-4283-9db3-42fbed8091f0",
+    "court": "High Court of Delhi",
+    "stored": "2023:DHC:000081",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "947cc220-5611-4abe-9e3a-6262f59776fe",
+    "court": "High Court of Delhi",
+    "stored": "2023:DHC:2584",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "5470ae06-5a5f-4180-9fd9-a6b474a3b528",
+    "court": "High Court of Delhi",
+    "stored": "2023:DHC:6242",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "77e994d3-96c7-4384-b7bf-1009f8534287",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:FU-JP:23656",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "4ad7180a-3217-42e6-b83f-1434f474b42d",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2023:HHC:5908",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   },
+   {
+    "id": "413c277d-70b7-44f5-b3f3-1a6c63801384",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:IU-JP:30324",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 4
+   },
+   {
+    "id": "132c93b8-479f-499d-a5e8-ceeafbb2d0be",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:IW-JP:41490",
+    "candidate": null,
+    "tier": "NONE",
+    "distinctEligible": 2
+   }
+  ],
+  "db_glue_corroborated": [
+   {
+    "id": "cfd18fe3-c878-4640-b070-dcf66fcb181a",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:111864",
+    "occurrence": "2023:AHC:111864",
+    "suffixed": "2023:AHC:111864-DB",
+    "evidence": "2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16."
+   },
+   {
+    "id": "d0da1dbc-0f3d-411d-a2ec-967a8bdcf01d",
+    "court": "Allahabad High Court",
+    "stored": "2024:AHC-LKO:56770-DB",
+    "occurrence": "2024:AHC-LKO:56770",
+    "suffixed": "2024:AHC-LKO:56770-DB",
+    "evidence": "ned Standing Counsel shall seek instructions from the respondents. Neutral Citation No. - 2024:AHC-LKO:56770-DBList this matter on 16.8.2024 as fresh.\" 2. Learned Stand"
+   },
+   {
+    "id": "50f76d58-1327-416e-8a5b-fa6d9e05282b",
+    "court": "Allahabad High Court",
+    "stored": "2024:AHC-LKO:56770-DB",
+    "occurrence": "2024:AHC-LKO:56770",
+    "suffixed": "2024:AHC-LKO:56770-DB",
+    "evidence": "ned Standing Counsel shall seek instructions from the respondents. Neutral Citation No. - 2024:AHC-LKO:56770-DBList this matter on 16.8.2024 as fresh.\" 2. Learned Stand"
+   },
+   {
+    "id": "c21adda6-ced1-45f2-9ad6-75000f10559d",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12854-DB",
+    "occurrence": "2024:HHC:12854",
+    "suffixed": "2024:HHC:12854-DB",
+    "evidence": "30.6.2022 1 Whether the reporters of the local papers may be allowed to see the judgment? 2024:HHC:12854-DB2 issued by District Panchayat Officer concerned perusal"
+   },
+   {
+    "id": "c21adda6-ced1-45f2-9ad6-75000f10559d",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12854-DB",
+    "occurrence": "2024:HHC:12854",
+    "suffixed": "2024:HHC:12854-DB",
+    "evidence": "ed counsel for the petitioner does not sustain, since there is no distinction provided in 2024:HHC:12854-DB3 S.122(1)(g) of the Act ibid, qua ‘temporary’ or ‘perman"
+   },
+   {
+    "id": "c21adda6-ced1-45f2-9ad6-75000f10559d",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12854-DB",
+    "occurrence": "2024:HHC:12854",
+    "suffixed": "2024:HHC:12854-DB",
+    "evidence": "f the Act ibid, which cannot be ignored on account of the fact that the post of Para Pump 2024:HHC:12854-DB4 Operator/Multi Purpose Worker is ‘temporary’ in nature."
+   },
+   {
+    "id": "b5bffda5-4b5f-4db7-8483-30841436722e",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12855-DB",
+    "occurrence": "2024:HHC:12855",
+    "suffixed": "2024:HHC:12855-DB",
+    "evidence": "on of 4+1 1 Whether the reporters of the local papers may be allowed to see the judgment? 2024:HHC:12855-DB2 parking floor commercial guest house building from Muni"
+   },
+   {
+    "id": "b5bffda5-4b5f-4db7-8483-30841436722e",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12855-DB",
+    "occurrence": "2024:HHC:12855",
+    "suffixed": "2024:HHC:12855-DB",
+    "evidence": "l Corporation, Dharamshala, nothing remains to be adjudicated in the instant proceedings. 2024:HHC:12855-DB3 4. Though at this stage, learned counsel for the petiti"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "ner Versus Union of India and Ors. …....Respondents 5. CWP No. 2667 of 2021 Sanjay Parmar 2024:HHC:16958-DB2 ……...Petitioner Versus Union of India and Ors. …....Res"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "e Government of Himachal Pradesh for conversion of mining lease granted for extraction of 2024:HHC:16958-DB3 limestone from minor minerals to major minerals, this C"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "w of above, limestone came to be shifted from the category of ‘minor’ to ‘major’ mineral. 2024:HHC:16958-DB4 3. Since permission for mining of major minerals could"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "lving the exercise of powers of the Central Government, it is the Ministry of Mines which 2024:HHC:16958-DB5 exercises such powers with the approval of the Hon'ble"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "granted to the petitioners for mining the limestone in terms of chapter IX of the MCR-16. 2024:HHC:16958-DB6 5. While fairly admitting that Mineral Concession Rules"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "ions under Chapter IX of the Mineral Concession Rules 2016 and respondents shall consider 2024:HHC:16958-DB7 and decide the same in accordance with law/rules occupy"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "as \"rahkam\" and therefore, Mahsul is nothing but land revenue payable to the Government. 2024:HHC:16958-DB8 9. Since it is not in dispute that Mineral Concession R"
+   },
+   {
+    "id": "193dd241-e93f-4c47-9607-f93b88a12b60",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:16958-DB",
+    "occurrence": "2024:HHC:16958",
+    "suffixed": "2024:HHC:16958-DB",
+    "evidence": "bmitted by the Government of Himachal Pradesh pursuant to request made by the petitioners 2024:HHC:16958-DB9 expeditiously, preferably, within a period of eight wee"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "avoided.” 1 Whether the reporters of the local papers may be allowed to see the judgment? 2025:HHC:2243-DB2 2. Precisely, the facts of the case, as emerge from the"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "in facts as have been noticed herein above, have not been disputed rather stand admitted. 2025:HHC:2243-DB3 6. Claim of the petitioner for compensation raised in t"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "Vishal Panwar, learned Additional Advocate General submitted that no compensation can be 2025:HHC:2243-DB4 claimed qua the roads constructed under Pradhan Mantri"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "construction of road in question. It is also not in dispute that some of land owners were 2025:HHC:2243-DB5 paid compensation after initiation of acquisition proce"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "re State, and a Constitutional right under Article 300 A of the Constitution. Article 300 2025:HHC:2243-DB6 A provides that no person shall be deprived of his prop"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "is supplied) In Jilubhai Nanbhai Khachar v. State of Gujarat this Court held as follows : 2025:HHC:2243-DB7 “48. …In other words, Article 300A only limits the powe"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "ty for over 12 years. The State cannot be permitted to perfect its title over the land by 2025:HHC:2243-DB8 invoking the doctrine of adverse possession to grab the"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "contention of ‘oral’ consent to be baseless and outlined the responsibility of the State: 2025:HHC:2243-DB9 “12.9. In a democratic polity governed by the rule of l"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "upra) is squarely applicable to the nearly identical facts before us in the present case. 2025:HHC:2243-DB10 26. In view of the above discussion, in view of this c"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "ruction of road in question, is compelled to agree with the submission of learned counsel 2025:HHC:2243-DB11 for the petitioner that his client is entitled for com"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "of 2021 alongwith Execution Petition No. 17 of 2019, titled State of Himachal Pradesh v. 2025:HHC:2243-DB12 Sita Ram, wherein reference made to Full Bench came to"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "ated or given by him willingly with free will and consent for construction of such road.” 2025:HHC:2243-DB13 18. In the aforesaid case, specific reference was made"
+   },
+   {
+    "id": "5cde62e4-de60-4753-8cc9-20a03d501af2",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:2243-DB",
+    "occurrence": "2025:HHC:2243",
+    "suffixed": "2025:HHC:2243-DB",
+    "evidence": "nd of residents as a favour to them on conditions that they would not claim compensation, 2025:HHC:2243-DB14 cannot be sustained because such stand is violative of"
+   },
+   {
+    "id": "bac37b0b-5eed-412c-9826-1995e77006c3",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2025:HHC:22696-DB",
+    "occurrence": "2025:HHC:22696",
+    "suffixed": "2025:HHC:22696-DB",
+    "evidence": "appellant has placed reliance upon judgment passed by Karnataka High Court in Oriental 8 2025:HHC:22696-DBInsurance Company Ltd. Vs. Hanumant and another, 2006 ACJ"
+   }
+  ],
+  "db_glued": [
+   {
+    "id": "cfd18fe3-c878-4640-b070-dcf66fcb181a",
+    "court": "Allahabad High Court",
+    "stored": "2023:AHC:111864",
+    "nextChar": "N",
+    "evidence": "2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16."
+   },
+   {
+    "id": "efa0c025-0f2a-40ed-822e-69a79aae74ef",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:080381",
+    "nextChar": "p",
+    "evidence": "\u0001 2023:PHHC:080381-DBp \u0001\u0002\u0003\u0004 \u0004 \u0005\u0006\u0004\u0007\b \u0004\b\u0005 \b\u0004 \u000e\u0007\u0004 \u000f\u0004\u0010 \u0006\u0011\u0012\u0013\u0004\u0012\u0006\u0014\u0004\b\u0012\u000e\u0015\u0012\u0006\u0012\u0004\u0012\u0007\u0004\u0004 \u0004 \u0004 \u0004"
+   },
+   {
+    "id": "11300f56-5fe6-44f2-abb5-659ddc393178",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12882",
+    "nextChar": "2",
+    "evidence": "neer, 8th 1 Whether the reporters of the local papers may be allowed to see the judgment? 2024:HHC:12882-DB2 circle, HPPWD, reveals that vide letter of July, 2021 ("
+   },
+   {
+    "id": "928a8788-3a7a-429d-8ff7-92e3cfa24d89",
+    "court": "High Court of Delhi",
+    "stored": "2025:DHC:8491",
+    "nextChar": "T",
+    "evidence": "esaid terms. ANIL KSHETARPAL, J. HARISH VAIDYANATHAN SHANKAR, J. OCTOBER 31, 2025/ v/va 1 2025:DHC:8491-DBThis is a digitally signed order. The authenticity of the"
+   },
+   {
+    "id": "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+    "court": "High Court of Delhi",
+    "stored": "2025:DHC:8491",
+    "nextChar": "T",
+    "evidence": "said terms. ANIL KSHETARPAL, J. HARISH VAIDYANATHAN SHANKAR, J. NOVEMBER 26, 2025/tk/kr 1 2025:DHC:8491-DBThis is a digitally signed order. The authenticity of the"
+   },
+   {
+    "id": "0efb2c57-94db-40e6-958f-6d274ed07fc4",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:347",
+    "nextChar": "2",
+    "evidence": "Mr. S. Sengupta, Addl. P.P i) Whether approved for reporting in Yes/No Law journals etc.:2025:MLHC:347-DB2025:MLHC:347-DB 2 ii) Whether approved for publication i"
+   },
+   {
+    "id": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:384",
+    "nextChar": "2",
+    "evidence": ". 12 of 2025] be listed on 19th May, 2025 as previously directed. Serial No. 05 Daily List2025:MLHC:384-DB2025:MLHC:390-DB Page 2 of 2 All interim orders will cont"
+   },
+   {
+    "id": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:411-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "1336fc3b-ee59-42de-828b-f10687d840ed",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:414-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:417-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "1c0e2f86-0c69-470c-807c-09d0127cf726",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:418-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "369edfb8-c738-411c-96fc-77e814bde7c3",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:412-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "362f404c-8329-4e09-905c-0c4e4c5994e2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:419-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:413-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "693edabf-ebf4-430a-bd99-fd4132ae11c2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:408-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "531984d2-c3ed-48af-a011-3a005bb68111",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:412-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:417-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:415-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "6bd431b1-50dd-4781-9c63-19fc18b64289",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:415-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "7ebbf954-1255-480c-a750-0fe24c42349a",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:411-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "897be712-7475-49a8-ba10-ec1bca844181",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:413-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "a4d66317-cede-4d97-9e8f-ab115924ec08",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:410-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:408-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "94d609a4-fbcb-498e-aeb2-7481cf000a23",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:419-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:420-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "add8896a-6d16-41ee-b02a-40fed3224216",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:406-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "97386fd5-d3e4-4efd-8e77-17a315b5df80",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:410-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "f8760958-5025-489f-888a-d824cbfe63e2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:409-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "db52fe55-a7d3-4379-b058-8902c91466ab",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:420-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "cbb34ae7-b643-46b3-a046-19a746a8907e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:409-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "c45c8329-66a6-4240-be57-724befa9e6ff",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:407-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "d7411ed4-78b2-4521-bbf1-86b199dadb1e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:418-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "e773ad2b-6d02-440f-9e71-18e269739d9e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "nextChar": "2",
+    "evidence": "swet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:414-DB Page 2 of 3 State of Meghalaya vs. Wanla"
+   },
+   {
+    "id": "e6ee45a9-de4d-41d9-84c7-92c0a53cc1b3",
+    "court": "High Court of Delhi",
+    "stored": "2026:DHC:433",
+    "nextChar": "T",
+    "evidence": "meaning of Article 12 of the Constitution of India; neither does it perform any public 1 2026:DHC:433-DBThis is a digitally signed order. The authenticity of the"
+   },
+   {
+    "id": "56ff15f7-9714-4f00-b244-7f70bf0be6fe",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:448",
+    "nextChar": "2",
+    "evidence": "espondents: Mr. K. Khan, AAG with Mr. A.H. Kharwanlang, Addl.Sr.GA Serial No.07 Daily List2026:MLHC:448-DB2026:MLHC:448-DB Since the appeals will be taken up for f"
+   },
+   {
+    "id": "0fad6b9c-6ca0-4575-bcd0-e49576be6242",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:448",
+    "nextChar": "2",
+    "evidence": "espondents: Mr. K. Khan, AAG with Mr. A.H. Kharwanlang, Addl.Sr.GA Serial No.07 Daily List2026:MLHC:448-DB2026:MLHC:448-DB Since the appeals will be taken up for f"
+   },
+   {
+    "id": "4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:476",
+    "nextChar": "2",
+    "evidence": "journals etc.: ii) Whether approved for publication Yes in press: Serial No.01 Daily List2026:MLHC:476-DB2026:MLHC:477-DB Page 2 of 17 JUDGMENT: (per the Hon’ble,"
+   },
+   {
+    "id": "ec0c134a-9f90-4a78-9154-1039f30d1abe",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:476",
+    "nextChar": "2",
+    "evidence": "journals etc.: ii) Whether approved for publication Yes in press: Serial No.01 Daily List2026:MLHC:476-DB2026:MLHC:477-DB Page 2 of 17 JUDGMENT: (per the Hon’ble,"
+   },
+   {
+    "id": "14e6f4e1-29c5-423e-b41c-990fce02bc1e",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:717",
+    "nextChar": "2",
+    "evidence": "the High Court of Meghalaya, at Shillong. ...Respondents Serial No. 02 Supplementary List2026:MLHC:717-DB2026:MLHC:717-DB Page 2 of 36 Coram: Hon’ble Mrs. Justice"
+   },
+   {
+    "id": "625b28c9-bb07-4459-a72b-3800ad0d81fc",
+    "court": "High Court of Meghalaya",
+    "stored": "2026:MLHC:717",
+    "nextChar": "2",
+    "evidence": "the High Court of Meghalaya, at Shillong. ...Respondents Serial No. 02 Supplementary List2026:MLHC:717-DB2026:MLHC:717-DB Page 2 of 36 Coram: Hon’ble Mrs. Justice"
+   }
+  ],
+  "REPLACE_WITH_DIFFERENT_OWN_CITATION": [
+   {
+    "id": "693a7131-5646-4b04-8972-989fa817f9b9",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:EU-JP:41491",
+    "candidate": "2023:RJ-JP:41491",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "3842b125-3318-40f0-a43c-d1607bfab032",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:FU-JP:21738",
+    "candidate": "2023:RJ-JP:21738",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "32f8e6f1-9a69-4b79-9750-9c43688d9675",
+    "court": "High Court Of Rajasthan",
+    "stored": "2023:FU-JP:22105",
+    "candidate": "2023:IU-JP:22105",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "6598fc7e-1170-45ec-8647-cb12c92a5b53",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:054188",
+    "candidate": "2023:PHHC:054190",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "a2bbb7c5-8953-4053-a189-5baac3d46363",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:089265",
+    "candidate": "2023:PHHC:089267",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "116a8db9-47e7-4469-9f1f-efe62021bbbb",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:095391",
+    "candidate": "2023:PHHC:095394",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "961f1238-d0a7-432f-b21d-18c080cd8678",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:095967",
+    "candidate": "2023:PHHC:095972",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "c92cc241-1578-484c-9b16-11e58db539d1",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:095967",
+    "candidate": "2023:PHHC:095970",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "fa96d1f1-2831-4e85-ba82-82ff261fb5de",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:095967",
+    "candidate": "2023:PHHC:095968",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "f4bb7fec-b1b5-4ab6-b965-58c08ae432eb",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:098311",
+    "candidate": "2023:PHHC:098312",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "1c3205e9-1f1a-4036-a39f-9138de36ce40",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:100797",
+    "candidate": "2023:PHHC:100805",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "8a9f2fd7-4831-4c47-a878-193436a533b8",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:100797",
+    "candidate": "2023:PHHC:100801",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "d2a1f01e-7bf5-4441-bce5-f921163eedfd",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:100797",
+    "candidate": "2023:PHHC:100802",
+    "tier": "OWN_ID",
+    "distinctEligible": 4
+   },
+   {
+    "id": "ab1e795a-c5a5-49a7-8946-58bf6484ac90",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:106132",
+    "candidate": "2023:PHHC:106134",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "1c0220af-0ce0-432c-927c-3dae98a45a2d",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:111414",
+    "candidate": "2023:PHHC:111417",
+    "tier": "OWN_ID",
+    "distinctEligible": 5
+   },
+   {
+    "id": "1c4bab07-e6d8-482c-808d-f8038c65d0d6",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:111414",
+    "candidate": "2023:PHHC:111415",
+    "tier": "OWN_ID",
+    "distinctEligible": 5
+   },
+   {
+    "id": "6eb5e28c-a8b4-41f9-88b8-8ad1509394e1",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:111414",
+    "candidate": "2023:PHHC:111416",
+    "tier": "OWN_ID",
+    "distinctEligible": 5
+   },
+   {
+    "id": "ef36d5c1-f14b-48ea-9ece-25fe85718f48",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:111414",
+    "candidate": "2023:PHHC:111419",
+    "tier": "OWN_ID",
+    "distinctEligible": 5
+   },
+   {
+    "id": "b010fc23-636a-4636-9ee4-75efe7e48ae4",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:111931",
+    "candidate": "2023:PHHC:111932",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "0d75fbc2-83f1-406d-ad53-dc33f2d2bf48",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:113315",
+    "candidate": "2023:PHHC:113530",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "c8c88ae0-0d5c-4988-a440-017294fda517",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:113481",
+    "candidate": "2023:PHHC:113482",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "47dfdd87-e145-41ed-b577-41413c37025e",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:123495",
+    "candidate": "2023:PHHC:123498",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "dda043de-c87d-4af8-996b-7504fc2932bd",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:128708",
+    "candidate": "2023:PHHC:128709",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "f965289c-6102-4a91-895b-ba203c26c57c",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:129141",
+    "candidate": "2023:PHHC:129146",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   },
+   {
+    "id": "f449727b-ce4e-4a32-b818-4e317309c13d",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:130173",
+    "candidate": "2023:PHHC:130176",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   }
+  ],
+  "db_glue_uncorroborated": [
+   {
+    "id": "efa0c025-0f2a-40ed-822e-69a79aae74ef",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:080381",
+    "occurrence": "2023:PHHC:080381",
+    "suffixed": "2023:PHHC:080381-DB",
+    "evidence": "\u0001 2023:PHHC:080381-DBp \u0001\u0002\u0003\u0004 \u0004 \u0005\u0006\u0004\u0007\b \u0004\b\u0005 \b\u0004 \u000e\u0007\u0004 \u000f\u0004\u0010 \u0006\u0011\u0012\u0013\u0004\u0012\u0006\u0014\u0004\b\u0012\u000e\u0015\u0012\u0006\u0012\u0004\u0012\u0007\u0004\u0004 \u0004 \u0004 \u0004"
+   },
+   {
+    "id": "11300f56-5fe6-44f2-abb5-659ddc393178",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12882",
+    "occurrence": "2024:HHC:12882",
+    "suffixed": "2024:HHC:12882-DB",
+    "evidence": "neer, 8th 1 Whether the reporters of the local papers may be allowed to see the judgment? 2024:HHC:12882-DB2 circle, HPPWD, reveals that vide letter of July, 2021 ("
+   },
+   {
+    "id": "11300f56-5fe6-44f2-abb5-659ddc393178",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:12882",
+    "occurrence": "2024:HHC:12882",
+    "suffixed": "2024:HHC:12882-DB",
+    "evidence": "ainst the encroachers, but if not, same shall be taken within the shortest possible time. 2024:HHC:12882-DB3 5. In view of above, this court, without going into mer"
+   },
+   {
+    "id": "928a8788-3a7a-429d-8ff7-92e3cfa24d89",
+    "court": "High Court of Delhi",
+    "stored": "2025:DHC:8491",
+    "occurrence": "2025:DHC:8491",
+    "suffixed": "2025:DHC:8491-DB",
+    "evidence": "esaid terms. ANIL KSHETARPAL, J. HARISH VAIDYANATHAN SHANKAR, J. OCTOBER 31, 2025/ v/va 1 2025:DHC:8491-DBThis is a digitally signed order. The authenticity of the"
+   },
+   {
+    "id": "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+    "court": "High Court of Delhi",
+    "stored": "2025:DHC:8491",
+    "occurrence": "2025:DHC:8491",
+    "suffixed": "2025:DHC:8491-DB",
+    "evidence": "said terms. ANIL KSHETARPAL, J. HARISH VAIDYANATHAN SHANKAR, J. NOVEMBER 26, 2025/tk/kr 1 2025:DHC:8491-DBThis is a digitally signed order. The authenticity of the"
+   },
+   {
+    "id": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:384",
+    "occurrence": "2025:MLHC:384",
+    "suffixed": "2025:MLHC:384-DB",
+    "evidence": "arlier. (W. Diengdoh) (I.P. Mukerji) Judge Chief Justice Meghalaya 14.05.2025 “Sylvana PS”2025:MLHC:384-DB2025:MLHC:390-DB"
+   },
+   {
+    "id": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:411-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "1336fc3b-ee59-42de-828b-f10687d840ed",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:414-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:417-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "1c0e2f86-0c69-470c-807c-09d0127cf726",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:418-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "369edfb8-c738-411c-96fc-77e814bde7c3",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:412-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "362f404c-8329-4e09-905c-0c4e4c5994e2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:419-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:413-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "693edabf-ebf4-430a-bd99-fd4132ae11c2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:408-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "531984d2-c3ed-48af-a011-3a005bb68111",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:412-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:417-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:415-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "6bd431b1-50dd-4781-9c63-19fc18b64289",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:415-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "7ebbf954-1255-480c-a750-0fe24c42349a",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:411-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "897be712-7475-49a8-ba10-ec1bca844181",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:413-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "a4d66317-cede-4d97-9e8f-ab115924ec08",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:410-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:408-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "94d609a4-fbcb-498e-aeb2-7481cf000a23",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:419-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:420-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "add8896a-6d16-41ee-b02a-40fed3224216",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:406-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "97386fd5-d3e4-4efd-8e77-17a315b5df80",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:410-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "f8760958-5025-489f-888a-d824cbfe63e2",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:409-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "db52fe55-a7d3-4379-b058-8902c91466ab",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:420-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "cbb34ae7-b643-46b3-a046-19a746a8907e",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:409-DB Page 3 of 3 Dismissal of the appeal on t"
+   },
+   {
+    "id": "c45c8329-66a6-4240-be57-724befa9e6ff",
+    "court": "High Court of Meghalaya",
+    "stored": "2025:MLHC:405",
+    "occurrence": "2025:MLHC:405",
+    "suffixed": "2025:MLHC:405-DB",
+    "evidence": "pplicable to all the employees whereas according to the State, it has limited application.2025:MLHC:405-DB2025:MLHC:407-DB Page 3 of 3 Dismissal of the appeal on t"
+   }
+  ],
+  "db_boundary_ok": [
+   {
+    "id": "073d9ef5-744c-4376-8a86-35314ed9d7b7",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2023:PHHC:081753",
+    "nextChar": "\n",
+    "evidence": "TEJWINDER SINGH 2023.06.09 20:27 I attest to the accuracy and integrity of this document 2023:PHHC:081753-DB CRWP-5499-2023 -2- from ASI Zorawar Singh, P.S. Sadar Na"
+   },
+   {
+    "id": "ae156e65-5871-48f3-8dc8-93a5c7e172dc",
+    "court": "High Court of Himachal Pradesh",
+    "stored": "2024:HHC:17024",
+    "nextChar": "\n",
+    "evidence": "UAL MATRIX: 1 Whether reporters of Local Papers may be allowed to see the judgment? Yes 2 2024:HHC:17024-DB 2. Case as set-up by Mr. Maan Singh, Learned Counsel is"
+   },
+   {
+    "id": "6805abd3-1809-4713-b9ff-f625fa4b44db",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2024:PHHC:147654",
+    "nextChar": ".",
+    "evidence": "of this Court passed in ‘Rakesh Das Vs. State of Haryana and another’, Neutral Citation: 2024:PHHC:147654-DB. (SUMEET GOEL) JUDGE Yes/No Yes/No ……Petitioner(s) ……Res"
+   },
+   {
+    "id": "64b75430-4755-475e-9bed-931f9418a71f",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2024:PHHC:147654",
+    "nextChar": ")",
+    "evidence": "h Das Vs. State of Haryana and another passed in CRM 2023 on 12.11.2024 (Neutral Citation 2024:PHHC:147654-DB), the instant petition seeking quashing of FIR based on"
+   },
+   {
+    "id": "9bfbd1da-b820-4d9f-83f8-a50b77394e2e",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2024:PHHC:147654",
+    "nextChar": ".",
+    "evidence": "of this Court passed in ‘Rakesh Das Vs. State of Haryana and another’, Neutral Citation: 2024:PHHC:147654-DB. (SUMEET GOEL) JUDGE Yes/No Yes/No ……Petitioner(s) ……Res"
+   },
+   {
+    "id": "896967ad-9347-4b6a-aee9-d0d5d8c4ae3c",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2026:PHHC:027747",
+    "nextChar": " ",
+    "evidence": "iance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order"
+   },
+   {
+    "id": "c2f6cca9-752f-4f8c-9f89-fcf37cd2176e",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2026:PHHC:027747",
+    "nextChar": " ",
+    "evidence": "iance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order"
+   },
+   {
+    "id": "abba5069-d5b5-41a8-8dae-db54ffa12e45",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2026:PHHC:027747",
+    "nextChar": " ",
+    "evidence": "iance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order"
+   },
+   {
+    "id": "0a6acaa1-ba77-4893-8a69-e7a0e9a2f7ab",
+    "court": "High Court of Punjab and Haryana",
+    "stored": "2026:PHHC:027747",
+    "nextChar": " ",
+    "evidence": "iance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order"
+   }
+  ],
+  "SOURCE_GENUINE_FOREIGN_CITATION": [
+   {
+    "id": "3f65f3ba-4a43-4c69-a880-dd9e6e7e3c07",
+    "court": "High Court of Andhra Pradesh",
+    "stored": "2025:AHC:103497-DB",
+    "candidate": "2025:AHC:103497-DB",
+    "tier": "OWN_ID",
+    "distinctEligible": 1
+   },
+   {
+    "id": "b57e503e-23fe-4417-98f5-26bebf93e5c0",
+    "court": "High Court of Delhi",
+    "stored": "2025:KER:21383",
+    "candidate": "2025:KER:21383",
+    "tier": "UNMARKED",
+    "distinctEligible": 1
+   },
+   {
+    "id": "dc9a9532-24d9-4d03-bb5d-ae66a2f571ba",
+    "court": "Bombay High Court",
+    "stored": "2025:PHHC:092344",
+    "candidate": "2025:PHHC:092344",
+    "tier": "OWN_ID",
+    "distinctEligible": 2
+   }
+  ]
+ },
+ "tokenHomeMap": {
+  "RJ-JD": "High Court Of Rajasthan",
+  "AHC": "Allahabad High Court",
+  "PHHC": "High Court of Punjab and Haryana",
+  "JHHC": "High Court of Jharkhand",
+  "FEBRUARY": "Madras High Court",
+  "BHC-AS": "Bombay High Court",
+  "KHC": "High Court of Karnataka",
+  "MLHC": "High Court of Meghalaya",
+  "DHC": "High Court of Delhi",
+  "MHC": "Madras High Court",
+  "KHC-D": "High Court of Karnataka",
+  "MNHC": "High Court of Manipur",
+  "KER": "High Court of Kerala",
+  "BHC-GOA": "Bombay High Court",
+  "GAU-AP": "Gauhati High Court",
+  "CGHC": "High Court Of Chhattisgarh",
+  "UHC": "High Court of Uttarakhand",
+  "GAU-NL": "Gauhati High Court",
+  "SEPTEMBER": "Madras High Court",
+  "RT-JP": "High Court Of Rajasthan",
+  "THC": "High Court of Tripura",
+  "AUGUST": "Madras High Court",
+  "HHC": "High Court of Himachal Pradesh",
+  "RJ-JP": "High Court Of Rajasthan",
+  "AHC-LKO": "Allahabad High Court",
+  "KHC-K": "High Court of Karnataka",
+  "BHC-OS": "Bombay High Court",
+  "DECEMBER": "Madras High Court",
+  "BHC-AUG": "Bombay High Court",
+  "GAU-AS": "Gauhati High Court",
+  "NOVEMBER": "Madras High Court"
+ },
+ "tokenTotals": {
+  "CHC-JP": {
+   "total": 3,
+   "home": null,
+   "share": 1
+  },
+  "JULY": {
+   "total": 21,
+   "home": null,
+   "share": 1
+  },
+  "RJ-JD": {
+   "total": 61635,
+   "home": "High Court Of Rajasthan",
+   "share": 1
+  },
+  "FU-JP": {
+   "total": 16,
+   "home": null,
+   "share": 1
+  },
+  "AHC": {
+   "total": 280165,
+   "home": "Allahabad High Court",
+   "share": 1
+  },
+  "OHC": {
+   "total": 17,
+   "home": null,
+   "share": 1
+  },
+  "DEC": {
+   "total": 15,
+   "home": null,
+   "share": 1
+  },
+  "PHHC": {
+   "total": 56123,
+   "home": "High Court of Punjab and Haryana",
+   "share": 0.9998
+  },
+  "JHHC": {
+   "total": 52842,
+   "home": "High Court of Jharkhand",
+   "share": 1
+  },
+  "FEBRUARY": {
+   "total": 33,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "PIHC": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "BHC-AS": {
+   "total": 7099,
+   "home": "Bombay High Court",
+   "share": 0.9992
+  },
+  "SEP": {
+   "total": 11,
+   "home": null,
+   "share": 1
+  },
+  "EW-JP": {
+   "total": 2,
+   "home": null,
+   "share": 1
+  },
+  "FEB": {
+   "total": 8,
+   "home": null,
+   "share": 1
+  },
+  "AGT": {
+   "total": 2,
+   "home": null,
+   "share": 1
+  },
+  "KHC": {
+   "total": 174955,
+   "home": "High Court of Karnataka",
+   "share": 1
+  },
+  "BHC-KOL": {
+   "total": 12,
+   "home": null,
+   "share": 1
+  },
+  "OCT": {
+   "total": 3,
+   "home": null,
+   "share": 1
+  },
+  "RJJP": {
+   "total": 2,
+   "home": null,
+   "share": 1
+  },
+  "APRIL": {
+   "total": 7,
+   "home": null,
+   "share": 1
+  },
+  "AH": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "MLHC": {
+   "total": 1710,
+   "home": "High Court of Meghalaya",
+   "share": 1
+  },
+  "DHC": {
+   "total": 2501,
+   "home": "High Court of Delhi",
+   "share": 0.9996
+  },
+  "OCTOBER": {
+   "total": 18,
+   "home": null,
+   "share": 1
+  },
+  "MHC": {
+   "total": 257,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "KHC-D": {
+   "total": 47970,
+   "home": "High Court of Karnataka",
+   "share": 1
+  },
+  "MNHC": {
+   "total": 116,
+   "home": "High Court of Manipur",
+   "share": 1
+  },
+  "FBNCHG": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "JANURARY": {
+   "total": 9,
+   "home": null,
+   "share": 1
+  },
+  "KER": {
+   "total": 7087,
+   "home": "High Court of Kerala",
+   "share": 0.9999
+  },
+  "BHC-GOA": {
+   "total": 1593,
+   "home": "Bombay High Court",
+   "share": 1
+  },
+  "JUNE": {
+   "total": 17,
+   "home": null,
+   "share": 1
+  },
+  "INSC": {
+   "total": 14,
+   "home": null,
+   "share": 0.4286
+  },
+  "GAU-MZ": {
+   "total": 12,
+   "home": null,
+   "share": 1
+  },
+  "FLJ-JP": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "HER": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "GAU-AP": {
+   "total": 387,
+   "home": "Gauhati High Court",
+   "share": 1
+  },
+  "SEPTEMEBER": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "MAY": {
+   "total": 7,
+   "home": null,
+   "share": 1
+  },
+  "FLT-JP": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "CGHC": {
+   "total": 110304,
+   "home": "High Court Of Chhattisgarh",
+   "share": 1
+  },
+  "AHA": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "UHC": {
+   "total": 22100,
+   "home": "High Court of Uttarakhand",
+   "share": 1
+  },
+  "EU-JP": {
+   "total": 15,
+   "home": null,
+   "share": 1
+  },
+  "JANUARY": {
+   "total": 11,
+   "home": null,
+   "share": 1
+  },
+  "BHC-NAG": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "AHC-KO": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "CHC-AS": {
+   "total": 5,
+   "home": null,
+   "share": 1
+  },
+  "GAU-NL": {
+   "total": 784,
+   "home": "Gauhati High Court",
+   "share": 1
+  },
+  "JAN": {
+   "total": 5,
+   "home": null,
+   "share": 1
+  },
+  "SEPTEMBER": {
+   "total": 49,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "RT-JP": {
+   "total": 39,
+   "home": "High Court Of Rajasthan",
+   "share": 1
+  },
+  "THC": {
+   "total": 241,
+   "home": "High Court of Tripura",
+   "share": 1
+  },
+  "AUGUST": {
+   "total": 80,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "HHC": {
+   "total": 29356,
+   "home": "High Court of Himachal Pradesh",
+   "share": 1
+  },
+  "SHC": {
+   "total": 12,
+   "home": null,
+   "share": 0.9167
+  },
+  "RJ-JP": {
+   "total": 136770,
+   "home": "High Court Of Rajasthan",
+   "share": 1
+  },
+  "RJ-JB": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "AHC-LKO": {
+   "total": 278761,
+   "home": "Allahabad High Court",
+   "share": 1
+  },
+  "CHA": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "IU-JP": {
+   "total": 3,
+   "home": null,
+   "share": 1
+  },
+  "IW-JP": {
+   "total": 2,
+   "home": null,
+   "share": 1
+  },
+  "MARCH": {
+   "total": 10,
+   "home": null,
+   "share": 1
+  },
+  "HCK": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "KHC-K": {
+   "total": 4400,
+   "home": "High Court of Karnataka",
+   "share": 1
+  },
+  "BHC-OS": {
+   "total": 295,
+   "home": "Bombay High Court",
+   "share": 1
+  },
+  "CHC-OS": {
+   "total": 5,
+   "home": null,
+   "share": 1
+  },
+  "AHCLKO": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "ELT-JP": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "JHHG": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "RI-JP": {
+   "total": 4,
+   "home": null,
+   "share": 1
+  },
+  "DECEMBER": {
+   "total": 68,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "BHC-AUG": {
+   "total": 51873,
+   "home": "Bombay High Court",
+   "share": 1
+  },
+  "NCPHHC": {
+   "total": 10,
+   "home": null,
+   "share": 1
+  },
+  "GAU-AS": {
+   "total": 20989,
+   "home": "Gauhati High Court",
+   "share": 1
+  },
+  "RLJP": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "CGLJ": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "JKLHC-JMU": {
+   "total": 5,
+   "home": null,
+   "share": 1
+  },
+  "ARPIL": {
+   "total": 1,
+   "home": null,
+   "share": 1
+  },
+  "NOVEMBER": {
+   "total": 62,
+   "home": "Madras High Court",
+   "share": 1
+  },
+  "CG": {
+   "total": 2,
+   "home": null,
+   "share": 1
+  },
+  "NOV": {
+   "total": 6,
+   "home": null,
+   "share": 1
+  }
+ }
+}

@@ -1,0 +1,266 @@
+{
+ "artifact": "NEW2_R18_DB_SUFFIX_DEFECT",
+ "lane": "NEW2",
+ "takenAt": "2026-08-31T18:33:38.264Z",
+ "scope": {
+  "basis": "EXHAUSTIVE",
+  "definition": "every neutral-citation occurrence in every AWS High Court document carrying a stored neutral_citation; occurrences, not rows",
+  "rowsWalked": 1350954,
+  "occurrencesInspected": 4575593
+ },
+ "DB_SUFFIX_DEFECT_REPRODUCED": "YES",
+ "reproduction": {
+  "inputSampledFrom": "judgment cfd18fe3-c878-4640-b070-dcf66fcb181a, Allahabad High Court",
+  "text": "2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16.",
+  "oldRule": [
+   "2023:AHC:111864",
+   "2023:AHC:111864-DB"
+  ],
+  "proposedRule": [
+   "2023:AHC:111864-DB",
+   "2023:AHC:111864-DB"
+  ],
+  "mechanism": "the optional group ends in a word boundary. On `...8491-DBThis` the B|T pair is not a boundary, the -DB alternative fails, the group matches EMPTY, and the boundary after the digits succeeds against the hyphen. The regex never fails — it returns a DIFFERENT citation key, and the same document can then yield two distinct keys for one citation."
+ },
+ "classes": {
+  "VALID_SUFFIX_FORM": 914489,
+  "NO_SUFFIX_PRINTED": 3660966,
+  "MISSING_BOUNDARY": 138,
+  "of_which_TEXT_CONCATENATION_DAMAGE": 1,
+  "of_which_CORROBORATED_BY_A_CLEAN_PRINT_IN_THE_SAME_DOCUMENT": 92,
+  "of_which_AMBIGUOUS_single_uncorroborated_occurrence": 46,
+  "EXTRACTION_BUG": "all 138 — the missing boundary is the SOURCE condition; the extraction bug is the regex answering a different key instead of failing, and it is ours"
+ },
+ "existingRowsAffected": {
+  "STORED_WITH_SUFFIX": 210791,
+  "STORED_PLAIN_AND_THE_SUFFIXED_FORM_IS_GLUED_IN_THE_TEXT": 43,
+  "STORED_PLAIN_AND_THE_SUFFIXED_FORM_HAS_A_BOUNDARY_IN_THE_TEXT": 9,
+  "STORED_PLAIN_AND_NO_SUFFIX_ANYWHERE": 1140111,
+  "note": "existing rows are CANDIDATES only. Nothing here rewrites one."
+ },
+ "glueTailShapes": {
+  "NEXT_CITATION_CONCATENATED": 88,
+  "PAGE_OR_PARA_NUMBER_CONCATENATED": 42,
+  "WORD_CONCATENATED": 7,
+  "CONTROL_CHAR_OR_MOJIBAKE": 1,
+  "OTHER": 0,
+  "COULD_BE_A_LONGER_SUFFIX": 0
+ },
+ "glueTailExamples": {
+  "WORD_CONCATENATED": [
+   "Neutral Cita",
+   "List this ma",
+   "This is a di",
+   "Insurance Co"
+  ],
+  "CONTROL_CHAR_OR_MOJIBAKE": [
+   "p \u0001\u0002\u0003\u0004 \u0004 \u0005\u0006\u0004"
+  ],
+  "PAGE_OR_PARA_NUMBER_CONCATENATED": [
+   "2 issued by ",
+   "3 S.122(1)(g",
+   "4 Operator/M",
+   "2 parking fl",
+   "3 4. Though ",
+   "2 circle, HP",
+   "3 5. In view",
+   "2 ……...Petit"
+  ],
+  "NEXT_CITATION_CONCATENATED": [
+   "2025:MLHC:34",
+   "2025:MLHC:39",
+   "2025:MLHC:41",
+   "2025:MLHC:40",
+   "2025:MLHC:42",
+   "2026:MLHC:44",
+   "2026:MLHC:47",
+   "2026:MLHC:71"
+  ]
+ },
+ "glueTails": {
+  "Neutral Cita": 1,
+  "p \u0001\u0002\u0003\u0004 \u0004 \u0005\u0006\u0004": 1,
+  "List this ma": 2,
+  "2 issued by ": 1,
+  "3 S.122(1)(g": 1,
+  "4 Operator/M": 1,
+  "2 parking fl": 1,
+  "3 4. Though ": 1,
+  "2 circle, HP": 1,
+  "3 5. In view": 1,
+  "2 ……...Petit": 1,
+  "3 limestone ": 1,
+  "4 3. Since p": 1,
+  "5 exercises ": 1,
+  "6 5. While f": 1,
+  "7 and decide": 1,
+  "8 9. Since i": 1,
+  "9 expeditiou": 1,
+  "This is a di": 3,
+  "2 2. Precise": 1,
+  "3 6. Claim o": 1,
+  "4 claimed qu": 1,
+  "5 paid compe": 1,
+  "6 A provides": 1,
+  "7 “48. …In o": 1,
+  "8 invoking t": 1,
+  "9 “12.9. In ": 1,
+  "10 26. In vi": 1,
+  "11 for the p": 1,
+  "12 Sita Ram,": 1,
+  "13 18. In th": 1,
+  "14 cannot be": 1,
+  "Insurance Co": 1,
+  "2025:MLHC:34": 2,
+  "2025:MLHC:39": 1,
+  "2025:MLHC:41": 18,
+  "2025:MLHC:40": 6,
+  "2025:MLHC:42": 2,
+  "2 the paper ": 1,
+  "3 perused th": 1,
+  "4 5. Learned": 1,
+  "5 7. Having ": 1,
+  "6 could be c": 1,
+  "7 viewed in ": 1,
+  "8 underminin": 1,
+  "9 emboldened": 1,
+  "10 stage of ": 1,
+  "11 both the ": 1,
+  "12 implicitl": 1,
+  "13 even if d": 1,
+  "14 20. Befor": 1,
+  "3 and NC:202": 1,
+  "2026:MLHC:44": 2,
+  "2026:MLHC:47": 12,
+  "2026:MLHC:71": 42,
+  "2026:MLHC:74": 1,
+  "2026:MLHC:90": 2
+ },
+ "controls": [
+  {
+   "kind": "positive",
+   "text": "2023:DHC:2073-DB before the bench",
+   "note": "a clean -DB, the form 210,754 rows already hold",
+   "oldRule": [
+    "2023:DHC:2073-DB"
+   ],
+   "proposedRule": [
+    "2023:DHC:2073-DB"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "positive",
+   "text": "2023:DHC:2073-FB before the bench",
+   "note": "a clean -FB, 37 rows",
+   "oldRule": [
+    "2023:DHC:2073-FB"
+   ],
+   "proposedRule": [
+    "2023:DHC:2073-FB"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "positive",
+   "text": "IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT",
+   "note": "no suffix at all",
+   "oldRule": [
+    "2023:DHC:2720"
+   ],
+   "proposedRule": [
+    "2023:DHC:2720"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "positive",
+   "text": "Neutral Citation 2023:KHC-D:1",
+   "note": "a hyphenated COURT token, which is not a suffix",
+   "oldRule": [
+    "2023:KHC-D:1"
+   ],
+   "proposedRule": [
+    "2023:KHC-D:1"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "positive",
+   "text": "2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16.",
+   "note": "the defect, sampled: judgment cfd18fe3-c878-4640-b070-dcf66fcb181a",
+   "oldRule": [
+    "2023:AHC:111864",
+    "2023:AHC:111864-DB"
+   ],
+   "proposedRule": [
+    "2023:AHC:111864-DB",
+    "2023:AHC:111864-DB"
+   ],
+   "unchanged": false
+  },
+  {
+   "kind": "positive",
+   "text": "2025:DHC:8491-DBThis is a digitally signed order",
+   "note": "the defect as R17 §7 recorded it",
+   "oldRule": [
+    "2025:DHC:8491"
+   ],
+   "proposedRule": [
+    "2025:DHC:8491-DB"
+   ],
+   "unchanged": false
+  },
+  {
+   "kind": "negative",
+   "text": "2023:DHC:2073-Crl.A. 55 of 2023",
+   "note": "a hyphen belonging to the NEXT token",
+   "oldRule": [
+    "2023:DHC:2073"
+   ],
+   "proposedRule": [
+    "2023:DHC:2073"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "negative",
+   "text": "2023:DHC:2073-SB before the bench",
+   "note": "a bench abbreviation that is not one of the two real suffixes",
+   "oldRule": [
+    "2023:DHC:2073"
+   ],
+   "proposedRule": [
+    "2023:DHC:2073"
+   ],
+   "unchanged": true
+  },
+  {
+   "kind": "negative",
+   "text": "x2023:DHC:2720",
+   "note": "no leading word boundary — must not match at all",
+   "oldRule": [],
+   "proposedRule": [],
+   "unchanged": true
+  },
+  {
+   "kind": "negative",
+   "text": "2023:DHC:11186499",
+   "note": "a number too long for the series — must not match at all",
+   "oldRule": [],
+   "proposedRule": [],
+   "unchanged": true
+  }
+ ],
+ "controlVerdict": {
+  "negativeControlsMoved": 0,
+  "negativeControlsMovedDetail": [],
+  "positiveControlsFixed": 2,
+  "safeToShipForFutureExtraction": true
+ },
+ "DB_SUFFIX_FUTURE_FIX": "services/ingest/src/harvest/hc-load.ts NEUTRAL_G: move the word boundary onto the NUMBER and let the suffix follow it — /\b(d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(d{1,6})\b(?:-(?:DB|FB))?/ . Future extraction only.",
+ "notDoneHere": {
+  "services/ingest/src/citations.ts": "carries the same regex for CITED references. Changing it changes the citation EDGE key space while CITATION_BULK_APPLY = HOLD, so it is named and measured here and left alone — the same occurrence count bounds its exposure.",
+  "existingRows": "candidate-only, in NEW2-R18-EXISTING; no judgments row is rewritten."
+ }
+}

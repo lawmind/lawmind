@@ -1,0 +1,526 @@
+{
+ "artifact": "NEW2_R18_TOKEN_COURT_MATRIX",
+ "takenAt": "2026-08-31T18:07:16.176Z",
+ "rows": [
+  {
+   "court": "Calcutta High Court",
+   "tok": "CHC-JP",
+   "n": "3"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "JULY",
+   "n": "21"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RJ-JD",
+   "n": "61635"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "FU-JP",
+   "n": "16"
+  },
+  {
+   "court": "Calcutta High Court",
+   "tok": "AHC",
+   "n": "3"
+  },
+  {
+   "court": "Orissa High Court",
+   "tok": "OHC",
+   "n": "17"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "DEC",
+   "n": "15"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "PHHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "tok": "JHHC",
+   "n": "52842"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "FEBRUARY",
+   "n": "33"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "tok": "PIHC",
+   "n": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "BHC-AS",
+   "n": "7093"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "SEP",
+   "n": "11"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "EW-JP",
+   "n": "2"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "FEB",
+   "n": "8"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "AGT",
+   "n": "2"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "tok": "PHHC",
+   "n": "2"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "tok": "KHC",
+   "n": "174955"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "BHC-KOL",
+   "n": "12"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "OCT",
+   "n": "3"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RJJP",
+   "n": "2"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "APRIL",
+   "n": "7"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AH",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "tok": "MLHC",
+   "n": "1710"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "DHC",
+   "n": "2500"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "OCTOBER",
+   "n": "18"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "MHC",
+   "n": "257"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "tok": "KHC-D",
+   "n": "47970"
+  },
+  {
+   "court": "High Court of Manipur",
+   "tok": "MNHC",
+   "n": "116"
+  },
+  {
+   "court": "High Court  for State of Telangana",
+   "tok": "FBNCHG",
+   "n": "1"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "JANURARY",
+   "n": "9"
+  },
+  {
+   "court": "High Court of Kerala",
+   "tok": "KER",
+   "n": "7086"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "BHC-AS",
+   "n": "6"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "BHC-GOA",
+   "n": "1593"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "JUNE",
+   "n": "17"
+  },
+  {
+   "court": "Calcutta High Court",
+   "tok": "INSC",
+   "n": "1"
+  },
+  {
+   "court": "Gauhati High Court",
+   "tok": "GAU-MZ",
+   "n": "12"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "INSC",
+   "n": "5"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "FLJ-JP",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Kerala",
+   "tok": "HER",
+   "n": "1"
+  },
+  {
+   "court": "Gauhati High Court",
+   "tok": "GAU-AP",
+   "n": "387"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "SEPTEMEBER",
+   "n": "1"
+  },
+  {
+   "court": "Calcutta High Court",
+   "tok": "PHHC",
+   "n": "1"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "MAY",
+   "n": "7"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "FLT-JP",
+   "n": "1"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "tok": "CGHC",
+   "n": "110304"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "tok": "INSC",
+   "n": "6"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AHA",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "tok": "UHC",
+   "n": "22100"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "EU-JP",
+   "n": "15"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "JANUARY",
+   "n": "11"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "tok": "BHC-NAG",
+   "n": "1"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AHC-KO",
+   "n": "1"
+  },
+  {
+   "court": "Calcutta High Court",
+   "tok": "CHC-AS",
+   "n": "5"
+  },
+  {
+   "court": "Gauhati High Court",
+   "tok": "GAU-NL",
+   "n": "784"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "JAN",
+   "n": "5"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "SEPTEMBER",
+   "n": "49"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RT-JP",
+   "n": "39"
+  },
+  {
+   "court": "High Court of Tripura",
+   "tok": "THC",
+   "n": "241"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "AUGUST",
+   "n": "80"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "tok": "HHC",
+   "n": "29356"
+  },
+  {
+   "court": "High Court of Sikkim",
+   "tok": "SHC",
+   "n": "11"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "tok": "AHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RJ-JP",
+   "n": "136769"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RJ-JB",
+   "n": "1"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AHC-LKO",
+   "n": "278758"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "tok": "PHHC",
+   "n": "1"
+  },
+  {
+   "court": "Orissa High Court",
+   "tok": "DHC",
+   "n": "1"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "CHA",
+   "n": "1"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "IU-JP",
+   "n": "3"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "PHHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Uttarakhand",
+   "tok": "AHC-LKO",
+   "n": "2"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "IW-JP",
+   "n": "2"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "MARCH",
+   "n": "10"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "tok": "HCK",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Karnataka",
+   "tok": "KHC-K",
+   "n": "4400"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "BHC-OS",
+   "n": "295"
+  },
+  {
+   "court": "Calcutta High Court",
+   "tok": "CHC-OS",
+   "n": "5"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AHCLKO",
+   "n": "1"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "ELT-JP",
+   "n": "1"
+  },
+  {
+   "court": "Orissa High Court",
+   "tok": "AHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Jharkhand",
+   "tok": "JHHG",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Himachal Pradesh",
+   "tok": "INSC",
+   "n": "2"
+  },
+  {
+   "court": "Allahabad High Court",
+   "tok": "AHC",
+   "n": "280157"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RI-JP",
+   "n": "4"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "DECEMBER",
+   "n": "68"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "RJ-JP",
+   "n": "1"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "BHC-AUG",
+   "n": "51873"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "tok": "NCPHHC",
+   "n": "10"
+  },
+  {
+   "court": "Gauhati High Court",
+   "tok": "GAU-AS",
+   "n": "20989"
+  },
+  {
+   "court": "Patna High Court",
+   "tok": "AHC-LKO",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Andhra Pradesh",
+   "tok": "AHC",
+   "n": "2"
+  },
+  {
+   "court": "High Court Of Rajasthan",
+   "tok": "RLJP",
+   "n": "1"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "tok": "CGLJ",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "SHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Jammu and Kashmir",
+   "tok": "JKLHC-JMU",
+   "n": "5"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "ARPIL",
+   "n": "1"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "NOVEMBER",
+   "n": "62"
+  },
+  {
+   "court": "High Court Of Chhattisgarh",
+   "tok": "CG",
+   "n": "2"
+  },
+  {
+   "court": "High Court of Punjab and Haryana",
+   "tok": "PHHC",
+   "n": "56110"
+  },
+  {
+   "court": "Bombay High Court",
+   "tok": "PHHC",
+   "n": "7"
+  },
+  {
+   "court": "Madras High Court",
+   "tok": "NOV",
+   "n": "6"
+  },
+  {
+   "court": "High Court of Meghalaya",
+   "tok": "AHC",
+   "n": "1"
+  },
+  {
+   "court": "High Court of Delhi",
+   "tok": "KER",
+   "n": "1"
+  }
+ ]
+}

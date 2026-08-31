@@ -171,3 +171,9 @@ docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl
 # docs/ai/<lane>-<round>/ deliberately; the data never belongs in git.
 /release/
 /release-rehearsal/
+
+# NEW2 R18. The reparse walk intermediate: every non-confirmed row with its full
+# evidence fields, 35 MB. It is the INPUT to the two frozen artifacts beside it
+# (existing-correction-population.jsonl and untestable-rows.jsonl), both of which
+# are committed, and it is regenerable from the committed checkpoint cursor.
+docs/ai/new2-r18/candidate-rows.jsonl

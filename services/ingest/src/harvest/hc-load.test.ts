@@ -405,3 +405,54 @@ describe('isTestFixture', () => {
     assert.equal(isTestFixture({ bench: 'patnahcucisdb94' }), false);
   });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * NEW2 R18. `-DB` GLUED TO THE NEXT WORD CHANGES THE CITATION KEY
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * R17 §7 recorded this and deliberately did not act on it, because it changes
+ * the extracted VALUE rather than the ownership question that round was asked.
+ * R18 measured it: `docs/ai/new2-r18/`.
+ *
+ * The shared regex ends its optional suffix in `\b`:
+ *
+ *     /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})(?:-(?:DB|FB))?\b/
+ *
+ * On `2023:AHC:111864-DBNeutral Citation No. …` the `B|N` pair is not a word
+ * boundary, so the `-DB` alternative fails, the group matches EMPTY, and the
+ * `\b` after `111864` succeeds against the `-`. The regex does not fail — it
+ * returns a DIFFERENT citation key, silently. `2023:AHC:111864` and
+ * `2023:AHC:111864-DB` are two rows in `judgment_citation_keys`, so the same
+ * judgment can be pinned under either and neither resolves to the other.
+ *
+ * Every string below was sampled out of the corpus, not invented.
+ */
+describe('neutralCitationFrom — the -DB token boundary', () => {
+  it('keeps the -DB the page printed even when extraction glued it to the next word', () => {
+    // Allahabad, judgment id cfd18fe3-c878-4640-b070-dcf66fcb181a. The page
+    // prints the citation twice; the FIRST print is glued, the second is clean,
+    // so the document itself corroborates that -DB is the true form.
+    assert.equal(
+      neutralCitationFrom(
+        '2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16.',
+        2023,
+      ),
+      '2023:AHC:111864-DB',
+    );
+  });
+
+  it('still reads a clean suffix, and still reads no suffix at all', () => {
+    assert.equal(neutralCitationFrom('2023:DHC:2073-DB before the bench', 2023), '2023:DHC:2073-DB');
+    assert.equal(neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023), '2023:DHC:2720');
+    assert.equal(neutralCitationFrom('Neutral Citation 2023:KHC-D:1', 2023), '2023:KHC-D:1');
+  });
+
+  it('does NOT invent a suffix out of a hyphen that is not one', () => {
+    // The negative control. Only -DB and -FB are suffixes; a hyphen followed by
+    // anything else belongs to the next token and the citation ends at the
+    // number, exactly as it does today.
+    assert.equal(neutralCitationFrom('2023:DHC:2073-Crl.A. 55 of 2023', 2023), '2023:DHC:2073');
+    assert.equal(neutralCitationFrom('2023:DHC:2073-SB before the bench', 2023), '2023:DHC:2073');
+  });
+});

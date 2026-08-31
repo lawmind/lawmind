@@ -247,8 +247,28 @@ export function caseTypeFrom(caseNumber: string | null): 'criminal' | 'civil' | 
  * Scored on the frozen population: 199 true own citations against **0 false
  * own** and 2 missed, where the shipping rule scored 195 true against 133 false.
  * Full method and per-stratum results: `docs/ai/new2-r17/arms-scored.json`.
+ *
+ * ────────────────────────────────────────────────────────────────────────────────
+ * NEW2 R18. THE WORD BOUNDARY MOVED OFF THE SUFFIX AND ONTO THE NUMBER
+ * ────────────────────────────────────────────────────────────────────────────────
+ *
+ * It used to read `(?:-(?:DB|FB))?\b`. On `2023:AHC:111864-DBNeutral Citation`
+ * the `B|N` pair is not a word boundary, so the `-DB` alternative FAILS, the
+ * optional group matches EMPTY, and the `\b` then succeeds against the hyphen
+ * after `111864`. The regex never errors — it silently returns a DIFFERENT
+ * citation key, and where the page also prints the citation cleanly the same
+ * document yields TWO distinct strings and this function then refuses both.
+ *
+ * Measured exhaustively over every neutral-citation occurrence in every High
+ * Court document carrying a stored citation (`docs/ai/new2-r18/db-suffix-defect.json`):
+ * the glued shape is rare and the fix is bounded to it. Not one negative control
+ * moves — `-SB`, `-Crl.A.`, the hyphenated COURT token `KHC-D`, an over-long
+ * number — and no observed glue tail could be a longer real suffix.
+ *
+ * FUTURE EXTRACTION ONLY. No existing row is rewritten by this change; the rows
+ * it would have read differently are candidates in `NEW2-R18-EXISTING`.
  */
-const NEUTRAL_G = /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})(?:-(?:DB|FB))?\b/g;
+const NEUTRAL_G = /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})\b(?:-(?:DB|FB))?/g;
 const CNR_G = /\b([A-Z]{2}HC[0-9]{12,14})\b/g;
 /**
  * `No. - 859 of 2023`, `859 of 2023`, `18552/2025`, `CWP-15861-2015` — a matter,
@@ -290,7 +310,7 @@ const ADJACENT = 40;
 const FURNITURE_REPEATS = 3;
 
 /** The row's own case number reduced to [serial, year]. `WRIT-A/7699/2023` -> ['7699','2023']. */
-function ownCaseNumberPair(caseNumber: string | null | undefined): [string, string] | null {
+export function ownCaseNumberPair(caseNumber: string | null | undefined): [string, string] | null {
   if (!caseNumber) return null;
   const nums = String(caseNumber)
     .split('/')
@@ -320,7 +340,7 @@ export type DocumentIdentity = {
   cnr?: string | null | undefined;
 };
 
-type OccurrenceVerdict = 'OWN_ID' | 'OWN_POS' | 'FOREIGN_LEAD' | 'FOREIGN_PAIR' | 'FOREIGN_AFTER' | 'UNMARKED';
+export type OccurrenceVerdict = 'OWN_ID' | 'OWN_POS' | 'FOREIGN_LEAD' | 'FOREIGN_PAIR' | 'FOREIGN_AFTER' | 'UNMARKED';
 
 /**
  * A citation is introduced by whatever stands CLOSEST to it, not by whatever
@@ -340,7 +360,7 @@ type OccurrenceVerdict = 'OWN_ID' | 'OWN_POS' | 'FOREIGN_LEAD' | 'FOREIGN_PAIR' 
  *                    names the LEAD matter of a connected group, and this row is
  *                    one of the members.
  */
-function classifyOccurrence(
+export function classifyOccurrence(
   text: string,
   at: number,
   citation: string,

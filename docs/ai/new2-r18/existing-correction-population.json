@@ -1,0 +1,1460 @@
+{
+ "artifact": "NEW2_R18_EXISTING_CORRECTION_POPULATION",
+ "lane": "NEW2",
+ "takenAt": "2026-08-31T18:28:37.645Z",
+ "applied": false,
+ "EXISTING_CORRECTIONS_APPLIED": "NO",
+ "CITATION_BULK_APPLY": "HOLD",
+ "FINAL_FALSIFIER_RUN": "NO",
+ "authorisation": "none sought and none implied. This population is evidence for a separate authorisation round; nothing in this round writes a judgments row.",
+ "rowsFile": "existing-correction-population.jsonl",
+ "rowsFileSha256": "9679cff06d0e6404ac10481695f1ee4858f8f625755537a75086dcb981f303c9",
+ "populationId": "NEW2-R18-EXISTING-9679cff06d0e6404",
+ "populationHash": "9679cff06d0e6404ac10481695f1ee4858f8f625755537a75086dcb981f303c9",
+ "size": 20556,
+ "scope": {
+  "basis": "EXHAUSTIVE",
+  "definition": "every AWS Open Data High Court row carrying a non-empty neutral_citation, walked on the judgments_neutral_citation_key expression index with a (key, id) keyset",
+  "rowsEvaluated": 1350954,
+  "walkStartedAt": "2026-08-31T18:20:26.517Z",
+  "walkFinishedAt": "2026-08-31T18:27:59.377Z",
+  "walkClasses": {
+   "UNCHANGED_CONFIRMED": 1303863,
+   "CLEAR_TO_NULL": 19132,
+   "UNTESTABLE": 26535,
+   "NOT_A_NEUTRAL_CITATION_DATE_STAMP": 434,
+   "AMBIGUOUS": 780,
+   "REPLACE_WITH_DIFFERENT_OWN_CITATION": 207,
+   "SOURCE_GENUINE_FOREIGN_CITATION": 3
+  },
+  "excludedFromPopulation": {
+   "UNTESTABLE": 26535,
+   "why": "the damage screen rejects the retained text, or the row carries no year partition. Nothing can be PROPOSED for a document that cannot be read, so these are counted as CURRENT_UNKNOWN in §6 and are not given a proposal here."
+  }
+ },
+ "extractorVersion": {
+  "path": "services/ingest/src/harvest/hc-load.ts",
+  "sha256": "00d29b9b78f8bfb7d7d699487ad4deb99ece8dd96acca0752c5f7694ef1f2cde",
+  "lastCommitTouchingIt": "8ff7083d2a5c024dc67178d8c6aea08cccff7763",
+  "uncommittedChangesPresent": true,
+  "repositoryHead": "b3ca71b25e36287a0360baf4481d129a81edbfbc"
+ },
+ "summary": {
+  "CORRECTION_POPULATION_COUNT": 20556,
+  "CLEAR_TO_NULL": 19132,
+  "REPLACE_WITH_DIFFERENT_OWN_CITATION": 207,
+  "AMBIGUOUS": 780,
+  "NOT_A_NEUTRAL_CITATION_DATE_STAMP": 434,
+  "SOURCE_GENUINE_FOREIGN_CITATION": 3,
+  "UNTESTABLE_not_in_population": 26535,
+  "UNCHANGED_CONFIRMED": 1303863,
+  "byCourt": {
+   "High Court Of Chhattisgarh": 1314,
+   "Bombay High Court": 10427,
+   "High Court Of Rajasthan": 900,
+   "High Court of Himachal Pradesh": 154,
+   "High Court of Meghalaya": 448,
+   "Gauhati High Court": 3118,
+   "Madras High Court": 542,
+   "Allahabad High Court": 2157,
+   "High Court of Punjab and Haryana": 609,
+   "High Court of Delhi": 557,
+   "High Court of Uttarakhand": 154,
+   "High Court of Jharkhand": 63,
+   "Orissa High Court": 8,
+   "High Court  for State of Telangana": 2,
+   "High Court of Karnataka": 38,
+   "High Court of Kerala": 19,
+   "Calcutta High Court": 10,
+   "High Court of Tripura": 19,
+   "High Court of Andhra Pradesh": 4,
+   "High Court of Jammu and Kashmir": 5,
+   "High Court of Manipur": 7,
+   "Patna High Court": 1
+  }
+ },
+ "sample": [
+  {
+   "judgmentId": "00004f1e-922e-4356-a357-0c5d916d7021",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "CRR/605/2019",
+   "currentStoredNeutralCitation": "2026:CGHC:31884",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=22_18/bench=cghccisdb/CGHC010149562019_1_2026-07-27.pdf",
+   "contentHash": "e574888f6804fbbdeffc1f98bff3663a218211c775ac4f956f27ac47a60e9fc8",
+   "retainedTextQuote": "1 CGHC010321382024 2026:CGHC:31884 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR ACQA No. 997 of 2024  Anand Kumar Gupta S/o Shri Mahendra Chandra Gupta Aged About 3"
+  },
+  {
+   "judgmentId": "0009f86c-e50d-4d38-aa12-341c0f740a5b",
+   "court": "Bombay High Court",
+   "caseNumber": "CP/120/2017",
+   "currentStoredNeutralCitation": "2025:BHC-AUG:26909-DB",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=27_1/bench=hcaurdb/HCBM030058092017_1_2025-09-25.pdf",
+   "contentHash": "92a7511ed3be42ace3d295897198c2e55fb2f69c995cda3c89593b7008da22d6",
+   "retainedTextQuote": "/12815/2016 WITH CONT. PETITION NO. 129 OF 2017 IN CA/12814/2016 WITH CONT. PETITION NO. 119 OF 2017 IN CA/12787/2016 WITH CONT. PETITION NO. 123 OF 2017 IN CA/12789/2016 … komal kamble 1/2 2025:BHC-AUG:26909-DB 118-2017 CORAM : NITIN B. SURYAWANSHI AND SMT. VAISHALI PATIL – JADHAV, JJ. DATE : SEPTEMBER 25, 2025 P E R C O U R T : 1. Learne"
+  },
+  {
+   "judgmentId": "000a61b8-22ed-411a-936f-d9eaecd05f0f",
+   "court": "Bombay High Court",
+   "caseNumber": "WP/794/2025",
+   "currentStoredNeutralCitation": "2025:BHC-AS:53891",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=27_1/bench=newas/orders_2025_230800007942025_8.pdf",
+   "contentHash": "a432dbc43d478d2efc277dedda736dc1babef96712d1f4866f85ddc08d5b67b6",
+   "retainedTextQuote": "Floor, Mumbai Samachar Marg, Fort, Mumbai – 400 023. ..Petitioner Versus 1. Google LLC Incorporated under the laws of Delware, Located at 1600, Amphitheatre Parkway, Mountain View, CA 94043.2025:BHC-AS:53891 2. State of Maharashtra …Respondents Mr. Harish Pandya a/w Adv. Raju Gupta a/w Ms. Mavali Jadhav i/b Mr. Raju Gupta, for Petition"
+  },
+  {
+   "judgmentId": "000d89b9-42e4-4876-bfe0-9f111ae82ffd",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/15188/2025",
+   "currentStoredNeutralCitation": "2025:RJ-JP:49658-DB",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_POS",
+    "FOREIGN_LEAD",
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 13,
+   "sourceObjectKey": "data/pdf/year=2025/court=8_9/bench=jaipur/RJHC020843702025_1_2025-12-06.pdf",
+   "contentHash": "02f68baff0d2dc7124fafb0249080f99975171b2764d0102a7a57ef9a8b3d11b",
+   "retainedTextQuote": "[2025:RJ-JP:49658-DB] [2025:RJ-JP:49672-DB] [2025:RJ-JP:49659-DB] [2025:RJ-JP:49673-DB] [2025:RJ-JP:49661-DB] [2025:RJ-JP:49676-DB] [2025:RJ-JP:49662-"
+  },
+  {
+   "judgmentId": "00125803-0d15-4ca0-9bd7-3e20c5f4997a",
+   "court": "Bombay High Court",
+   "caseNumber": "FA/1421/2012",
+   "currentStoredNeutralCitation": "2026:BHC-AUG:15604",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=27_1/bench=hcaurdb/HCBM030262602012_1_2026-03-29.pdf",
+   "contentHash": "b41ffb687541d4b051ccbfde45830080417271b076beb3dff1297c0cbaa4ba36",
+   "retainedTextQuote": "2 NEW INDIA ASSURANCE COMPANY LTD VERSUS ARUNABAI SUDHAKAR WAGH AND OTHERS ... WITH FIRST APPEAL NO. 1421 OF 2012 NEW INDIA ASSURANCE COMPANY LTD VERSUS BHANUDAS PUNDLIKRAO NAGRE AND OTHERS 2026:BHC-AUG:15604 2 6-FA-1417-12.odt ... WITH FIRST APPEAL NO. 1422 OF 2012 NEW INDIA ASSURANCE COMPANY LTD VERSUS MAINABAI DATTU KATKAR AND OTHERS"
+  },
+  {
+   "judgmentId": "0013b257-461c-4461-adfc-da1b57bfadbf",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "MCRC/6549/2026",
+   "currentStoredNeutralCitation": "2026:CGHC:30941",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=22_18/bench=cghccisdb/CGHC010277622026_1_2026-07-21.pdf",
+   "contentHash": "2701a72a261379a4e5d0a9203528dc87b3d4602692b119c16e5594f552d27fab",
+   "retainedTextQuote": "1 CGHC010277842026 2026:CGHC:30941 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR MCRC No. 6514 of 2026 Prakash Thakur S/o Kailash Thakur Aged About 19 Years R/o Kaila"
+  },
+  {
+   "judgmentId": "001a73ec-72c3-4b16-83fc-eedaecbc45fe",
+   "court": "High Court of Himachal Pradesh",
+   "caseNumber": "CWP/18526/2025",
+   "currentStoredNeutralCitation": "2025:HHC:40219",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2025/court=2_5/bench=cmis/HPHC010697812025_1_2025-11-26.pdf",
+   "contentHash": "e06bb5b80b6d8bf757170b2567e2c40355cc4ce1cd4020f7690c987abebc421e",
+   "retainedTextQuote": "2025:HHC:40219, 2025:HHC:40220, 2025:HHC:40221 IN THE HIGH COURT OF HIMACHAL PRADESH SHIMLA CWP Nos.18526, 10467 and 10468 of 2025 Decided on: 2"
+  },
+  {
+   "judgmentId": "001b2f2d-0008-4eb6-9699-25b3ba6ddac9",
+   "court": "Bombay High Court",
+   "caseNumber": "CAW/1138/2019",
+   "currentStoredNeutralCitation": "2023:BHC-AS:24010",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2023/court=27_1/bench=newas/HCBM010190812019_1_2023-08-23.pdf",
+   "contentHash": "cf98f76f4e168173d3137deecd9bc3dd633e3c95429bdd88f07a7001b33e94e7",
+   "retainedTextQuote": "esent for the Applicant. 2. In view of order passed by this Court dated 1 August 2023, the Civil Application stands dismissed for want of prosecution. (N. R. BORKAR,J.) Dinesh S. Sherla 1/1 2023:BHC-AS:24010"
+  },
+  {
+   "judgmentId": "001cea96-997a-4fe2-8432-436def31f17d",
+   "court": "Bombay High Court",
+   "caseNumber": "APPLN/4491/2023",
+   "currentStoredNeutralCitation": "2023:BHC-AUG:26196",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2023/court=27_1/bench=hcaurdb/HCBM030514982023_1_2023-12-14.pdf",
+   "contentHash": "af38e8bcc34146329cf490e22e7a0f6148e9799f06c92dd3469e0b8a110d866b",
+   "retainedTextQuote": "ubmit that the applicants were put on trial for the offence punishable under Section 420, 460, 471 r/w 34 of the Indian Penal Code in R.C.C. No.533/2008 before the Judicial Magistrate First 2023:BHC-AUG:26196 (2) 2-appln-4480-2023&ors..odt Class, Court No.7, Aurangabad. On conclusion of the trial, the applicants were convicted for the o"
+  },
+  {
+   "judgmentId": "001d5522-211c-46e8-9b0d-f8d9adec28ce",
+   "court": "High Court of Meghalaya",
+   "caseNumber": "Cont.Cas(C)/13/2024",
+   "currentStoredNeutralCitation": "2024:MLHC:519",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2024/court=17_21/bench=meghalaya/MLHC010004702024_1_2024-06-10.pdf",
+   "contentHash": "46b82cc3f8c528a3dc8ee13c894cccb64d89337fe75761219370746836ebbd4b",
+   "retainedTextQuote": "ioner(s) : Mr. S.A. Sheikh, Adv. For the Respondent(s) : Mr. S. Dey, Adv. i) Whether approved for reporting in Yes/No Law journals etc.: ii) Whether approved for publication in press: Yes/No2024:MLHC:519 Page 2 of 2 (ORAL) 1. Learned counsels for the parties submit that the order has since been complied, as such nothing survives fo"
+  },
+  {
+   "judgmentId": "00296295-28ba-4bbf-a19d-2d2833846b73",
+   "court": "Gauhati High Court",
+   "caseNumber": "Bail Appln./960/2026",
+   "currentStoredNeutralCitation": "2026:GAU-AS:5719",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=18_6/bench=asghccis/GAHC010068662026_1_2026-04-27.pdf",
+   "contentHash": "cb9a4a38c361d39240acdd7064f940bbb70ea57b01830b39baaf303af2b0400c",
+   "retainedTextQuote": "Page No.# 1/4 GAHC010066262026 2026:GAU-AS:5719 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Bail Appln./936/2026 CHANDAN GOA"
+  },
+  {
+   "judgmentId": "002e9843-bc7d-4f13-8699-2f31851d5980",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/2206/2011",
+   "currentStoredNeutralCitation": "2011:APRIL:27",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011515002011_1_2011-04-06.pdf",
+   "contentHash": "fbbf93d0eef06a51941a5f67bbb5d9f5a75260c720c9cacf5ebbc00fdff53e87",
+   "retainedTextQuote": "rict. 4.The Principal, Mount Zion College of Engineering and Technology Lena Vilakku Pulivalam Post, Thirumayam Taluk, Pudukottai District. 1CC TO MR. D. RAJENDIRAN, ADVOCATE,S R: 12810: DM:2011:APRIL:27: W.P.(MD) No.2206 of 2011 1P:6C:: 06.04.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "0031fed8-cfa1-4dd4-b8d7-dd19d540d205",
+   "court": "Allahabad High Court",
+   "caseNumber": "SPLA/602/2026",
+   "currentStoredNeutralCitation": "2026:AHC:79101",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=9_13/bench=cisdb_16012018/UPHC012791512026_1_2026-05-14.pdf",
+   "contentHash": "6ff55085e919cfaff46ff0a58d78c0ee41a016172c11e8d5bff05c0133340c60",
+   "retainedTextQuote": "ding Counsel for the State respondents. 2. Present appeal has been preferred against the order of the learned single judge dated 10.04.2026 in Priyanka Goyal Vs. State of U.P. And 5 Others, 2026:AHC:79101. By that order, learned single judge has dismissed the writ petition filed by the original petitioner-appellant at the fresh stag"
+  },
+  {
+   "judgmentId": "00337c5b-9228-49b9-86cd-84efb27d70a5",
+   "court": "Allahabad High Court",
+   "caseNumber": "WTAX/5261/2025",
+   "currentStoredNeutralCitation": "2025:AHC:179271-DB",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=9_13/bench=cisdb_16012018/orders_2025_204700052612025_1.pdf",
+   "contentHash": "40a7c4f3c297e9095fda8ef611d1f395b5ec29ff9d660a77426fe6a503849e43",
+   "retainedTextQuote": "large number of similar petitions. Primarily, we have considered and dealt with the same in Writ Tax No. 3964 of 2025 (M/s Riya Construction vs State of U.P. & 3 Ors, Neutral Citation No. - 2025:AHC:179271-DB, dated 09.10.2025. 4. Facts being similar, writ petition is allowed and the impugned order is set aside, subject to the petitione"
+  },
+  {
+   "judgmentId": "003761c4-de93-4114-bd47-4e32a3e3ec2c",
+   "court": "Bombay High Court",
+   "caseNumber": "WP/4247/2024",
+   "currentStoredNeutralCitation": "2024:BHC-AUG:9001-DB",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2024/court=27_1/bench=hcaurdb/HCBM030155612024_1_2024-04-24.pdf",
+   "contentHash": "39d4dc4085caeda87dda0ba13c275599fb986bdb931e9ae6d5979ea713cdfdbc",
+   "retainedTextQuote": "may be disposed off. 3. In view of the above statement and with the liberty, this Writ Petition is disposed off, as withdrawn on instructions. (R. M. JOSHI, J.) (RAVINDRA V. GHUGE, J.) sjk 2024:BHC-AUG:9001-DB"
+  },
+  {
+   "judgmentId": "0038e673-8492-4583-9fb3-0a0aff26ab58",
+   "court": "Bombay High Court",
+   "caseNumber": "WP/2922/2021",
+   "currentStoredNeutralCitation": "2023:BHC-OS:10733-DB",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2023/court=27_1/bench=newos/HCBM020053682021_1_2023-09-27.pdf",
+   "contentHash": "cc3dd6890d5c6017bb22ed17947d5b2065c9de103a0f2e028543a7d9a0c33b9d",
+   "retainedTextQuote": "ra & Ors. .. Respondents ALONG WITH WRIT PETITION NO.2082 OF 2021 Digambar Anant Redkar .. Petitioner Vs. The State of Maharashtra & Ors. .. Respondents Aarti Palkar 1/9 902.WP.779.2021.doc 2023:BHC-OS:10733-DB ALONG WITH WRIT PETITION NO.1870 OF 2021 Mamata Prashant Ghadi .. Petitioner Vs. The State of Maharashtra & Ors. .. Respondents A"
+  },
+  {
+   "judgmentId": "003d10d2-22c7-47b8-9661-aa8e02bffca8",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPT/189/2018",
+   "currentStoredNeutralCitation": "2026:CGHC:30737",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=22_18/bench=cghccisdb/CGHC010277112018_1_2026-07-20.pdf",
+   "contentHash": "f82ac020ce06666ee49ecfec4a079b821660845f15f32c7a0be89ded76575e7f",
+   "retainedTextQuote": "1 CGHC010309672018 2026:CGHC:30737 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPT No. 204 of 2018 1 - M/s Pravin Kumar Kotak A Proprietorship Firm, Having Its Offi"
+  },
+  {
+   "judgmentId": "004039c1-a3e6-4ace-899b-c84225fa481f",
+   "court": "Bombay High Court",
+   "caseNumber": "WP/9641/2025",
+   "currentStoredNeutralCitation": "2025:BHC-AUG:21470-DB",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=27_1/bench=hcaurdb/HCBM030162322025_1_2025-08-08.pdf",
+   "contentHash": "e963a5c0c163f6d0b1f9cf6c8742fcf3fcce7789a0d9384c507be35b59628bde",
+   "retainedTextQuote": "NO. 13676 OF 2021 Pramilabai Dagadulal Jain Through General Power Of Attorney Holder Sachin Dagadulal Jain VERSUS The National Highway Authority Of India Through Its Project Director & Anr.2025:BHC-AUG:21470-DB 2 906.WP.7866.21.odt 916 WRIT PETITION NO. 13679 OF 2021 Shilpa Rajendra Shinde VERSUS The National Highway Authority Of India Th"
+  },
+  {
+   "judgmentId": "0040900f-cb27-479d-a3c5-7615ae34aa05",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CRLMP/6790/2024",
+   "currentStoredNeutralCitation": "2026:RJ-JP:3018",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=8_9/bench=jaipur/RJHC020855802024_1_2026-01-22.pdf",
+   "contentHash": "7f2a63ac1124d4712c15976d8cbd105f5144a9a2b96af8576cdd5e90c4a8ff5c",
+   "retainedTextQuote": "[2026:RJ-JP:3018] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Criminal Miscellaneous Application No. 485/2024 Liladhar Shyamsunder"
+  },
+  {
+   "judgmentId": "00436035-dcaf-4531-a674-4cdcf03ae026",
+   "court": "Bombay High Court",
+   "caseNumber": "WP/1077/2023",
+   "currentStoredNeutralCitation": "2025:BHC-AUG:14961",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=27_1/bench=hcaurdb/HCBM030296342023_1_2025-06-13.pdf",
+   "contentHash": "b7e26c650085b7c99ee63b75c1a1e04360fe37991cfd355adebc0d0af00bc967",
+   "retainedTextQuote": "the learned trial Court to decide the complaint SCC No.380 of 2012 as early as possible within a period of one year from the date of receipt of the writ. [ Y. G. KHOBRAGADE, J. ] SMS 1 of 1 2025:BHC-AUG:14961"
+  },
+  {
+   "judgmentId": "0043c0af-f273-4f96-a47c-2d1fd555c56a",
+   "court": "Bombay High Court",
+   "caseNumber": "FA/713/2019",
+   "currentStoredNeutralCitation": "2025:BHC-AUG:10242",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=27_1/bench=hcaurdb/HCBM030511692017_1_2025-07-11.pdf",
+   "contentHash": "7ae1f09629642934a29467613985c3764b351192a9e042bd27d6fe1f2a0d20bb",
+   "retainedTextQuote": "l has been disposed off finally by the Judgment and Order dated 7th April, 2025. The operative order of the said Judgment reads as under: - \"ORDER [i] The Appeal is partly allowed. SG Punde 2025:BHC-AUG:10242 This Order is Speaking to Minutes order of order dated // 2 901FA713.2019.odt [ii] The Interest awarded by the learned Reference"
+  },
+  {
+   "judgmentId": "0049265a-9610-42ca-9416-f6bfe4df128c",
+   "court": "Bombay High Court",
+   "caseNumber": "CA/8467/2024",
+   "currentStoredNeutralCitation": "2024:BHC-AUG:19146",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2024/court=27_1/bench=hcaurdb/HCBM030291372024_1_2024-08-23.pdf",
+   "contentHash": "8b4616efb3a70772527aa9f969ca7872903f84610e8c85b05ec2caccb4edd123",
+   "retainedTextQuote": "THROUGH THE COLLECTOR, JALNA AND OTHERS ... Mr. Deepak M. Kakade, Advocate for Applicant Mr. D.B. Bhange, AGP for Respondents ... WITH CIVIL APPLICATION NO. 8464 OF 2024 IN FA/1958/2018 SVH 2024:BHC-AUG:19146 2 910-CA-8472-24.odt SHASHIKALA BAPURAO MANWATKAR VERSUS THE STATE OF MAHARASHTRA THROUGH THE COLLECTOR, JALNA AND OTHERS ... Mr."
+  },
+  {
+   "judgmentId": "004c3bbb-ba66-43b7-9fe9-b071d879fb51",
+   "court": "Bombay High Court",
+   "caseNumber": "FA/1367/2024",
+   "currentStoredNeutralCitation": "2026:BHC-AUG:8725",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "CLEAR_TO_NULL",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=27_1/bench=hcaurdb/HCBM030114312024_1_2026-03-07.pdf",
+   "contentHash": "917512da9735619c8486e4ef5c5215a5ca3e5e4d180c9f1135a9d27d6f044536",
+   "retainedTextQuote": "is pointed at internal page no. 34 of the judgment. At Serial No. ‘C’ of paragraph 37, First Appeal No. 1337/2024 is recorded, which should have been First Appeal No. 1331/2024. PAGE 1 OF 2 2026:BHC-AUG:8725 This Order is Speaking to Minutes order of order dated // P.1.odt 3. The mistake is obvious an typographical error and needs corr"
+  },
+  {
+   "judgmentId": "006c166c-03da-4f94-ae61-032f6e5668b7",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/15125/2011",
+   "currentStoredNeutralCitation": "2011:NOVEMBER:29",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011264952011_1_2011-11-22.pdf",
+   "contentHash": "363941b2f78ff2bbb514b84d39ad9b2bc89f640ea9c1e14629cecb8979e4faa1",
+   "retainedTextQuote": "Police Station, Thoothukudi District. 3.The Inspector of Police, Sipcot Police Station, Thoothukudi District. 4.The Addl. Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM::2011:NOVEMBER:29:: ORDER MADE IN CRL.O.P.(MD).No.15125 of 2011 22.11.2011 2P:5C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "008c0134-8748-4d82-8824-17bd685134ae",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/12124/2011",
+   "currentStoredNeutralCitation": "2011:SEPTEMBER:15",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011231562011_1_2011-09-13.pdf",
+   "contentHash": "a89b85027efc555f2ce294e29cbde62aae5061df9caecaba8bd4a243cd405667",
+   "retainedTextQuote": "L. PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADURAI 4 THE INSPECTOR OF POLICE DISTRICT CRIME BRANCH, TIRUNELVELI DISTRICT 1. CC to M/S. M.SARAVANAKUMAR Advocate SR.No.31623: DM::2011:SEPTEMBER:15:: ORDER IN CRL OP(MD) No.12124 of 2011 Date :13/09/2011 2P;6C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "010fc566-08fd-48b2-8dee-c2eaa7f3ef6b",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRM-M/50336/2024",
+   "currentStoredNeutralCitation": "2024:PHHC:141575",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2024:PHHC:141577",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=3_22/bench=phhc/PHHC011355032024_1_2024-10-28.pdf",
+   "contentHash": "dfcec7f8c0939f2bb1979984502abe9b838961991df7a633db40c43f00c24e1c",
+   "retainedTextQuote": "CRM-M-38849-2024 2024:PHHC:141575 CRM-M-50336-2024 2024:PHHC:141577 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of Decision: October 28, 2024 (I) CRM-M-38849-2024 Birender … Pe00oner"
+  },
+  {
+   "judgmentId": "012413b0-0898-4738-8de7-cfd96b24c867",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/14847/2011",
+   "currentStoredNeutralCitation": "2011:NOVEMBER:18",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011261872011_1_2011-11-16.pdf",
+   "contentHash": "6581101c35db09f79224ab94bf192385a3f92473136833e61e9d325f471b3863",
+   "retainedTextQuote": "HE ADDL. PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADURAI 5 THE INSPECTOR OF POLICE, CONTONMENT POLICE STATION, TRICHY. 1. CC to M/S. R.APPAVU RETHINAM Advocate SR.No.39913: DM::2011:NOVEMBER:18:: ORDER IN CRL OP(MD) No.14847 of 2011 2P:7C: Date :16/11/2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "01dd913f-7cca-490d-a124-d1d1b796a8cc",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/17447/2011",
+   "currentStoredNeutralCitation": "2011:DECEMBER:29",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011290592011_1_2011-12-28.pdf",
+   "contentHash": "3542c15c02986fb363c09a7672404c4b82d8a35aee19330243b8971eace377eb",
+   "retainedTextQuote": ". PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADURAI 4 THE SUB INSPECTOR OF POLICE THIRUPPUVANAM POLICE STATION, SIVAGANGAI DIST +1. CC to M/S. R.GANESAN Advocate SR.No.46101: DM::2011:DECEMBER:29:: ORDER IN CRL OP(MD) No.17447 of 2011 Date :28/12/2011 2P:6C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "01f9f79b-1756-4295-becd-4b4d0151c095",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/15317/2011",
+   "currentStoredNeutralCitation": "2011:NOVEMBER:25",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011267072011_1_2011-11-24.pdf",
+   "contentHash": "fd6cf835b6a9118ba19ac16b43f80cd8a675a4bd50bed5fc7a46b888e95e16c3",
+   "retainedTextQuote": ", Jayamangalam Police Station, Theni District. 3.The Addl Public Prosecutor, Madurai Bench of Madras High Court, Madurai. 1CC TO MR. V.THIRUMAL,A DVOCATE ON PAYMENT OF CAHRGES,SR:41359: DM::2011:NOVEMBER:25:: Crl.O.P.(MD)No.15317 of 2011 1P:5C:: 24.11.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "027c7fbd-4a83-4384-8b66-302d779582a6",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/8622/2011",
+   "currentStoredNeutralCitation": "2011:JULY:20",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011367052011_1_2011-07-15.pdf",
+   "contentHash": "69784ffb9dea3599701aa89b8e1a17f96df03d6480fe5c6af911ca68026162d0",
+   "retainedTextQuote": "olice, Thiruparangundram Police Station, Madurai District. 4.The Additional Public Prosecutor, Madurai Bench of Madras High Court, Madurai. 1CC TO MR. M. AJMAL KHAN, ADVOCATE, SR: 23400: DM:2011:JULY:20:: Crl.O.P(MD).No.8622 of 2011 2P:6C:;https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "030e5639-b054-4adf-94d6-13f2f5fc2e2c",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRM-M/43530/2023",
+   "currentStoredNeutralCitation": "2022:PHHC:003983",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC011101512023_1_2023-09-11.pdf",
+   "contentHash": "fecee2aa488b9fcbdfd48e41a26e7aaba1f363748f4f31b77d5edc44437684eb",
+   "retainedTextQuote": "ccused in the case in which he has been charged and other circumstances such as possibility of fleeing away from the jurisdiction of the Court etc. 6. In Paramjeet Singh v. State of Punjab, 2022:PHHC:003983 [Para 8], CRM-M 50243 of 2021, this court observed, While considering each bail petition of the accused with a criminal history,"
+  },
+  {
+   "judgmentId": "031df629-04a9-4c1e-a4f5-10fbc2924f2a",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/37983/2018",
+   "currentStoredNeutralCitation": "2024:PHHC:001381",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2024:PHHC:001398",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 5,
+   "sourceObjectKey": "data/pdf/year=2024/court=3_22/bench=phhc/PHHC011401232018_1_2024-01-08.pdf",
+   "contentHash": "1cf3bfb9755cb01448f181d11409fee739b98733f096b89455fed3ba1dfa9457",
+   "retainedTextQuote": "CWP-11036-2018 2024:PHHC:001381 CWP-32236-2018 2024:PHHC:001396 CWP-37983-2018 2024:PHHC:001398 CWP-30452-2019 2024:PHHC:001402 CWP-16149-2018 2024:PHHC:001404 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH 210/1 CWP-1"
+  },
+  {
+   "judgmentId": "0325fcc6-6134-4733-938f-673a86166a8e",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPS/5780/2025",
+   "currentStoredNeutralCitation": "2025:CGHC:26982",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:CGHC:26990",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 4,
+   "sourceObjectKey": "data/pdf/year=2025/court=22_18/bench=cghccisdb/CGHC010232872025_1_2025-06-23.pdf",
+   "contentHash": "4697e47aa6ccc8debe4779070ae3142985629795fa92bbba0df4509f8ac5eec7",
+   "retainedTextQuote": "- The District Education Officer Balrampur-Ramanujganj, District Balrampur- Ramanujganj (C.G.) 6 - The Block Education Officer Rajpur, District Balrampur-Ramanujganj (C.G.) --- Respondents 2025:CGHC:26990 3 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5780 of 2025 1 - Smt. Chandrakala Patel W/o Shri Niranjan Patel Aged About"
+  },
+  {
+   "judgmentId": "03280161-ae0c-4aab-b5b2-c722c345c19b",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/10047/2011",
+   "currentStoredNeutralCitation": "2011:AUGUST:23",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011208042011_1_2011-08-09.pdf",
+   "contentHash": "d91a16ae5b3b9a918721e742da5c6642a0da36c3a81eaf83a2c330953662f5dd",
+   "retainedTextQuote": "as per order of this Hon'ble Court dated 26/08/2011. /TRUE COPY/ gsr SUB ASST REGISTRAR TO:(To be substituted the order copy already despatched). THE JUDICIAL MAGISTRATE, THIRUVAIYARU. DM::2011:AUGUST:23:: Crl.O.P.(MD)No.10047 of 2011 1P:2C:: 09.08.2011 PA/05.09.2011/1P/2Chttps://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "036324ab-db6e-45fb-b0b2-1643951acb2e",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/18908/2024",
+   "currentStoredNeutralCitation": "2024:RJ-JP:51894",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=8_9/bench=jaipur/RJHC021058132024_1_2024-12-17.pdf",
+   "contentHash": "3c0df53851cf8a895e27d0a30b5c82c6360177c4b5ac289a750a355988199dac",
+   "retainedTextQuote": "[2024:RJ-JP:51894] [2024:RJ-JP:51895] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Civil Writ Petition No. 18908/2024 Anisha Meghwal"
+  },
+  {
+   "judgmentId": "03942c12-b26d-4345-bb47-3b1e95a4aa48",
+   "court": "Allahabad High Court",
+   "caseNumber": "A227/6107/2025",
+   "currentStoredNeutralCitation": "2024:AHC-LKO:72508",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=9_13/bench=cishclko/orders_2025_209000061072025_1.pdf",
+   "contentHash": "e6254be2dfb79f69887131a83afbff4f9f1b4844103d985aef6fd15077b7666c",
+   "retainedTextQuote": "ed counsel for the petitioner has placed reliance on a judgement rendered by a Division Bench of this Court in the case of Bank of Baroda versus State of UP and Others; Neutral Citation No. 2024:AHC-LKO:72508- Versus Counsel for Petitioner(s) : Aniket Raj Counsel for Respondent(s) : Dcb Bank Ltd Thru. Auth. Representative Mr. Lokesh Mit"
+  },
+  {
+   "judgmentId": "03a394cf-21b2-45dc-891b-9758b2fbaf46",
+   "court": "Gauhati High Court",
+   "caseNumber": "WP(C)/282/2026",
+   "currentStoredNeutralCitation": "2026:GAU-AS:3725",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2026/court=18_6/bench=asghccis/GAHC010005112026_1_2026-03-13.pdf",
+   "contentHash": "b89584550bc30c581e6266923e7bcecb8dbf38b859448eb686061e03d9b98603",
+   "retainedTextQuote": "Page No.# 1/68 GAHC010212742025 2026:GAU-AS:3725 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/5686/2025 FERDAUS RAHMAN M"
+  },
+  {
+   "judgmentId": "03cee2bc-ce38-4672-9671-55d0c59ff154",
+   "court": "High Court of Jharkhand",
+   "caseNumber": "WPC/1053/2025",
+   "currentStoredNeutralCitation": "2025:JHHC:10177-DB",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=20_7/bench=jhar_pg/JHHC010012362025_1_2025-04-03.pdf",
+   "contentHash": "2569d25538fbfea83bd5aed254eae755b0aed6c1398d421a4b9001b4a46fc2b7",
+   "retainedTextQuote": "2025:JHHC:10177-DB 2025:JHHC:10179-DB 1 IN THE HIGH COURT OF JHARKHAND AT RANCHI W.P.(C) No. 904 of 2025 ----- Vision Hospitality Services and Consu"
+  },
+  {
+   "judgmentId": "03db1446-6aaa-49fa-8f8c-89e1109e98aa",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/16683/2020",
+   "currentStoredNeutralCitation": "2025:PHHC:179597",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:PHHC:179601",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 8,
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010822452020_1_2025-11-14.pdf",
+   "contentHash": "5be2a6d2bebf30dc36290c70d9efa8845ac04fa1f2b3c73ebd4f6b2734156fb0",
+   "retainedTextQuote": "ab and others …Respondents 4. CWP-16390-2020 (O/M) 2025:PHHC:179600 M/s Shri Salasar Rice Mills and others Petitioners Versus State of Punjab and others …Respondents 5. CWP-16683-2020 (O/M) 2025:PHHC:179601 M/s Jai Bhagwati Rice Mills Petitioner Versus State of Punjab and others …Respondents Priyanka 2026.01.01 15:11 I attest to the a"
+  },
+  {
+   "judgmentId": "0462f4a7-df6a-44cb-a6da-e76eacb8fe62",
+   "court": "Allahabad High Court",
+   "caseNumber": "/1548/2025",
+   "currentStoredNeutralCitation": "2024:AHC:38820-DB",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=9_13/bench=cishclko/UPHC020976702025_1_2025-12-16.pdf",
+   "contentHash": "fffaa339fa32267e3d2342a8d5e457d43b75ce55e1c4b076f92866c3604e2165",
+   "retainedTextQuote": "een passed after a gap of near about 13 days whereas the Division Bench of this Court passed in Writ Tax No.303 of 2024 [Mahaveer Trading Company vs. Deputy Commissioner, State Tax and Anr; 2024:AHC:38820-DB] has held that the date of passing of the order must Versus Counsel for Petitioner(s) : Anit Vishal Srivastav, Mirza Humayun Qada"
+  },
+  {
+   "judgmentId": "04734ba5-96cb-4ac0-8a9c-84b6efc93063",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CRLR/1206/2021",
+   "currentStoredNeutralCitation": "2023:RJ-JP:16312",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=8_9/bench=jaipur/RJHC020696332021_1_2023-08-02.pdf",
+   "contentHash": "53a231aec9f1a89d8fe5063e2a19cc7c52579c7bf6e2e9788857d9c151e9ce0a",
+   "retainedTextQuote": "[2023:RJ-JP:16312 & 2023:RJ-JP:16314] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Criminal Revision Petition No. 1206/2021 Ramdayal"
+  },
+  {
+   "judgmentId": "04b85686-47c9-478f-9b83-e84f5d7ce320",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/18808/2022",
+   "currentStoredNeutralCitation": "2024:RJ-JP:11557",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=8_9/bench=jaipur/RJHC020992762022_1_2024-03-06.pdf",
+   "contentHash": "386c271d252918a500df24c760396cb7561c3ca4b1f5612e8ea1c30eec9f7c72",
+   "retainedTextQuote": "[2024:RJ-JP:11557] [2024:RJ-JP:11583] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Civil Writ Petition No. 18808/2022 1. Ram Chandra"
+  },
+  {
+   "judgmentId": "04cc7e32-99f6-4395-8462-8eb3a63a7dff",
+   "court": "High Court of Jharkhand",
+   "caseNumber": "A.B.A./2516/2026",
+   "currentStoredNeutralCitation": "2026:JHHC:21493",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID",
+    "UNMARKED"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2026/court=20_7/bench=jhar_pg/JHHC010130752026_1_2026-07-21.pdf",
+   "contentHash": "587acbb491f7022ae8f8a9c28a032998ef2c10de678a345d2a533a10be106fe6",
+   "retainedTextQuote": "2026:JHHC:21493 2026:JHHC:21495 IN THE HIGH COURT OF JHARKHAND AT RANCHI A.B.A. No. 2516 of 2026 ------ 1. Jagu Oraon, aged about 60 years, son o"
+  },
+  {
+   "judgmentId": "0524d42d-f79c-432f-a365-1aac151c1c2f",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/13985/2024",
+   "currentStoredNeutralCitation": "2024:RJ-JP:36352",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 5,
+   "sourceObjectKey": "data/pdf/year=2024/court=8_9/bench=jaipur/RJHC020733962024_1_2024-08-30.pdf",
+   "contentHash": "9890ebdb2b28821bb04595278d14d8de7ce668856561db9a4b13b406384011fb",
+   "retainedTextQuote": "[2024:RJ-JP:36352] [2024:RJ-JP:36353] [2024:RJ-JP:36356] [2024:RJ-JP:36354] [2024:RJ-JP:36408] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIP"
+  },
+  {
+   "judgmentId": "0570f67a-ebf9-43bf-8346-504d6c49a9dc",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRM-M/11365/2023",
+   "currentStoredNeutralCitation": "2023:PHHC:077259",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID",
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC010279562023_1_2023-05-24.pdf",
+   "contentHash": "8d507af6fcd02c5a805309d1ad4f00bb83ce121d96b7a5f0cbcf28452075146a",
+   "retainedTextQuote": "2023:PHHC:077259 2023:PHHC:077260 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH 230+231 1) CRM-M-11365-2023 Decided on : 24.05.2023 Jaswin"
+  },
+  {
+   "judgmentId": "05f08d7c-a84b-4695-9817-474b7a692282",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/13203/2011",
+   "currentStoredNeutralCitation": "2011:NOVEMBER:22",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011243572011_1_2011-11-02.pdf",
+   "contentHash": "d7e622b30b9bb478f392de16f111755da52da69c6e4dfd68ca06aa9f71d3350a",
+   "retainedTextQuote": "ent of Police, Puthukkottai District. 2.The Inspector of Police,Karambakudi Police Station, Puthukkottai Dist. 3.The Addl.Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM::2011:NOVEMBER:22:: ORDER MADE IN CRL.O.P.(MD)No.13203 of 2011 1P:4C:: 02.11.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "06049b29-18ce-442b-984c-580f9bc64e17",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/6884/2011",
+   "currentStoredNeutralCitation": "2011:NOV:24",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011562742011_1_2011-11-22.pdf",
+   "contentHash": "80dd87ea0b649098b9a7c4abf07d70b222f88dcff6eedaa941ce6a6cff9a9ee0",
+   "retainedTextQuote": "is closed. SD ASST REGISTRAR ( CO ) /TRUE COPY/ Svn SUB ASST REGISTRAR To:: The Commissioner, Madurai Corporation, Anna Maligai, Madurai-2. 1CC TO MR. C.M. ARUMUGAM, ADVOCATE, SR: 40907: DM:2011:NOV:24:: W.P.(MD)No.6884 of 2011 1P:3C:; 22.11.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "06275600-521c-4e7d-b899-18cfff2813ed",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/16728/2018",
+   "currentStoredNeutralCitation": "2025:PHHC:073091",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:PHHC:073092",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010873552018_1_2025-05-27.pdf",
+   "contentHash": "8df953d6404794694dce3e6c211c3cd1aa2ecfc22f2719a08e22b7e6135b869b",
+   "retainedTextQuote": "CWP-9027-2018 (O/M) -1- 2025:PHHC:073091 CWP-16728-2018 (O/M) 2025:PHHC:073092 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision : 27.05.2025 1. CWP-9027-2018 (O/M) Bhupinder Sood ......"
+  },
+  {
+   "judgmentId": "066b9e23-e683-45b3-8b81-eaf6280a31ac",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/9203/2020",
+   "currentStoredNeutralCitation": "2024:RJ-JP:35100",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=8_9/bench=jaipur/RJHC020475382020_1_2024-08-20.pdf",
+   "contentHash": "e315d06f79dd14e3c267c252f4b84e66e100b71031c4974d9ee30f7a7f8539a5",
+   "retainedTextQuote": "[2024:RJ-JP:35100] [2024:RJ-JP:35096] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Civil Writ Petition No. 9204/2020 Sunita Kumari B"
+  },
+  {
+   "judgmentId": "07098d63-e987-4975-972f-17fa874a2ad0",
+   "court": "High Court of Delhi",
+   "caseNumber": "W.P.(C)/10250/2024",
+   "currentStoredNeutralCitation": "2024:DHC:4554-DB",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=7_26/bench=dhcdb/DLHC010437712024_1_2024-10-24.pdf",
+   "contentHash": "05852867fe17c4601d316ad35d02757d6f7e25f879b67c18392f497ea5ee7de3",
+   "retainedTextQuote": "ent petition are covered by the decisions of a Coordinate Bench of this Court in Dinesh Jindal v. Assistant Commissioner of Income Tax, Central Circle 20, Delhi & Ors.: Neutral Citation No.:2024:DHC:4554-DB and The Pr. Commissioner of Income Tax -Central-1 v. Ojjus Medicare Pvt. Ltd.: 2024:DHC:2629-DB. 4. The petitioner has also annex"
+  },
+  {
+   "judgmentId": "071aa4ed-d160-4493-b22c-709ec7f92de5",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/16215/2011",
+   "currentStoredNeutralCitation": "2011:DECEMBER:19",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011277032011_1_2011-12-13.pdf",
+   "contentHash": "cd29f19655d7d1fc439b49e2c0658445141894e24c734d4a38b293a31698d2c6",
+   "retainedTextQuote": "ncipal District Judge, Sivagangai. 2.The Inspector of Police, Thiruppachetti Police Station, Sivagangai DT. 3.The Addl Public Prosecutor,Madurai Bench of the Madras High Court, Madurai. DM::2011:DECEMBER:19:: Crl.O.P.(MD).No.16215 of 2011 1P:4C:: 13.12.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "072732ae-bec6-4076-ad51-7c230378063f",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/27058/2022",
+   "currentStoredNeutralCitation": "2023:PHHC:164674",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2023:PHHC:164702",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 13,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC011340512022_1_2023-12-18.pdf",
+   "contentHash": "01e0a94e78fbd25f4b5ae8c96f7105c1fb45544b8da9984cbfb98085f227c19c",
+   "retainedTextQuote": "na Staff Selection Commission and others ... Respondents 8) CWP-2527-2023 2023:PHHC:164696 Parveen Kumar .... Petitioner Versus State of Haryana and others ... Respondents 9) CWP-27058-2022 2023:PHHC:164702 Archana Sehrawat .... Petitioner Versus Haryana Staff Selection Commission and others ... Respondents MANINDER 2024.01.08 17:42 I"
+  },
+  {
+   "judgmentId": "073d9ef5-744c-4376-8a86-35314ed9d7b7",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRWP/5499/2023",
+   "currentStoredNeutralCitation": "2023:PHHC:081753",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC010741022023_1_2023-06-08.pdf",
+   "contentHash": "b47cfba4a2862bfa669e1c67ffc913de1cacc0ecc48776f051a1773a6d83ac9d",
+   "retainedTextQuote": "203 2023:PHHC:081753- DB IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH CRWP-5499-2023 Date of Decision: June 08, 2023 ASHWANI KUMAR ALIAS ASHU"
+  },
+  {
+   "judgmentId": "07491510-7fa7-4412-bc39-7a406298e3a5",
+   "court": "Allahabad High Court",
+   "caseNumber": "WTAX/2528/2026",
+   "currentStoredNeutralCitation": "2026:AHC:277-DB",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2026/court=9_13/bench=cisdb_16012018/orders_2026_204700025282026_1.pdf",
+   "contentHash": "da0e6743a8281ba79021dc553711c2f650e2abdf850f818aa89a972da89ecc5f",
+   "retainedTextQuote": "bjection has been raised that the petitioner has alternative remedy of appeal. 4. On the issue of limitation, reliance has been placed on M/S Shree Shakti Infra Vs. State of U.P. & Anr., 2026:AHC:277-DB, following another order passed in M/S Bambino Agro Industries Ltd. Vs. State of Uttar Pradesh & Anr., 2025:AHC:229995-DB. 5."
+  },
+  {
+   "judgmentId": "074ff62b-c0a3-46a5-b2c9-aac862332301",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPS/9577/2025",
+   "currentStoredNeutralCitation": "2025:CGHC:41367",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:CGHC:41373",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 11,
+   "sourceObjectKey": "data/pdf/year=2025/court=22_18/bench=cghccisdb/CGHC010335262025_1_2025-08-18.pdf",
+   "contentHash": "d986ca34f6f85aab7eb37cca8ea07d32123d2166d57c3fe42a8bf6d02f950f9c",
+   "retainedTextQuote": "ayat, Kabirdham, District : Kawardha (Kabirdham), Chhattisgarh 7 - The Chief Executive Officer Janpad Panchayat, Pandariya, District : Kawardha (Kabirdham), Chhattisgarh ... Respondent(s) 7 2025:CGHC:41373 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 9577 of 2025 1 - Devlal Sahu S/o Shri Chamru Ram Sahu Aged About 57 Years Pos"
+  },
+  {
+   "judgmentId": "0751fe4e-75fc-4cfd-be8d-becfc7d3352c",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/3696/2011",
+   "currentStoredNeutralCitation": "2011:AUGUST:29",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011312392011_1_2011-08-16.pdf",
+   "contentHash": "3c9d353be2bcb13a9a1e3aaa719e71952fd94581f63944999d0748c847847c00",
+   "retainedTextQuote": "nch, Nagercoil, Kanyakumari District. 3.The Inspector of Police, CBCID, Nagercoil, Kanyakumari District. 4.The Additional Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM::2011:AUGUST:29:: CRL.O.P.(MD).No.3696 of 2011 1P:5C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "076a06d0-27d1-47c2-ba3d-dcab6c6f9640",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "RSA/2123/1992",
+   "currentStoredNeutralCitation": "2023:PHHC:115221",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC010269951992_1_2023-09-01.pdf",
+   "contentHash": "3de75fa2e6cdbf52e5c53dbb9074bba1554b6d747488b26974cffdcf8241c82c",
+   "retainedTextQuote": "Neutral Citation No. : 2023:PHHC:115221 Neutral Citation No. : 2023:PHHC:115313 RSA-2123-1992 AND RSA-2124-1992 - 1 - IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGA"
+  },
+  {
+   "judgmentId": "0772e865-1fb3-49ad-8565-7917517afbf7",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/5481/2011",
+   "currentStoredNeutralCitation": "2011:MAY:10",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011548262011_1_2011-05-04.pdf",
+   "contentHash": "a1b076622870444fbbe8f2b4423835233601d303fd20b76fa9ac091031c9a40d",
+   "retainedTextQuote": "District. 2.The Deputy Superintendent of Police, Puliankudi, Tirunelveli District. 3.The Inspector of Police, Kadayanalloor, Tirunelveli District. 1CC TO THE SPL. GOVT PLEADER SR: 10492: DM:2011:MAY:10: W.P.(MD) No.5481 of 2011 1P:5C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "0790127d-c053-4744-92f1-b3c1516d0369",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/2531/2011",
+   "currentStoredNeutralCitation": "2012:JANUARY:23",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2012/court=33_10/bench=mdubench/HCMD011518292011_1_2012-01-05.pdf",
+   "contentHash": "b7e7c3339f80a50b42462e5090378339ea644c1a410cb86c006e0721331a0df6",
+   "retainedTextQuote": "wments Board, Sivagangai. 3.The Assistant Commissioner, Hindu Religious & Charitable Endowments Board, Paramakudi, Ramanathapuram District. 1CC TO MR. M.S. JEYAKARTHIK, ADVOCATE, SR: 733 DM:2012:JANUARY:23:: W.P.(MD)No.2531 of 2011 05.01.2012 2P:5C:https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "0798a591-e280-43dd-b69f-bb9055fdb5c8",
+   "court": "High Court Of Rajasthan",
+   "caseNumber": "CW/9288/2024",
+   "currentStoredNeutralCitation": "2024:RJ-JD:25045",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER",
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2024/court=8_9/bench=rhcjodh240618/RJHC010412622024_1_2024-05-30.pdf",
+   "contentHash": "59a399e02dbc7f0378d72b88cf3405250ad89ff7a0337308865a804be6aa4953",
+   "retainedTextQuote": "[2024:RJ-JD:25045 qua CW 9529/24] [2024:RJ-JD:25043 qua CW 9288/24] [2024:RJ-JD:25044 qua CW 9409/24] HIGH COURT OF JUDICATURE FOR RAJASTHAN AT JOD"
+  },
+  {
+   "judgmentId": "07f01884-de14-4a31-8f08-1460182274f2",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/5703/2011",
+   "currentStoredNeutralCitation": "2012:FEBRUARY:21",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2012/court=33_10/bench=mdubench/HCMD011550522011_1_2012-02-06.pdf",
+   "contentHash": "d5a242f143fdde01cd7c17e1283b91a5b1991c80ee4cfbbf8830094be9899c11",
+   "retainedTextQuote": "erintendent of Police, Pudukkottai, Pudukkottai District. 2.The Inspector of Police, Karaiyur Police Station, Ponnamaravathi, Pudukkottai District. 1CC TO THE SPL. GOVT PLEADER SR: 3395: DM:2012:FEBRUARY:21:: Order made in W.P.(MD)No.5703 of 2011 06.02.2012 1P:4C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "087a8053-1b8c-4819-b2f2-247bc923f41d",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/16826/2011",
+   "currentStoredNeutralCitation": "2011:DECEMBER:27",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011283722011_1_2011-12-20.pdf",
+   "contentHash": "9fb85857691e8c3734f6cea7b641d42ceda5182c1ba27ba7ce065cec33aa606d",
+   "retainedTextQuote": "Sub-Assistant Registrar (C.S.) TO 1 THE INSPECTOR OF POLICE, DISTRICT CRIME BRANCH, KANYAKUMARI DT AT NAGERCOIL. 2 THE ADDL. PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADURAI DM::2011:DECEMBER:27:: ORDER IN CRL OP(MD) No.16826 of 2011 Date :20/12/2011 1P:3C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+   "court": "High Court of Meghalaya",
+   "caseNumber": "MC(WA)/7/2025",
+   "currentStoredNeutralCitation": "2025:MLHC:405",
+   "proposedState": "HUMAN_ADJUDICATION_REQUIRED",
+   "proposedValue": null,
+   "reasonClass": "AMBIGUOUS",
+   "storedOccurrenceVerdicts": [
+    "UNMARKED"
+   ],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000362025_1_2025-05-19.pdf",
+   "contentHash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e",
+   "retainedTextQuote": "ernon R.M. Kharkongor & ors. State of Meghalaya vs. Cham Bareh & ors. State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:411-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. State of Megh"
+  },
+  {
+   "judgmentId": "09600932-3af9-4f0a-b3fe-3261ae2a3962",
+   "court": "Madras High Court",
+   "caseNumber": "WP/15970/2024",
+   "currentStoredNeutralCitation": "2024:AGT:63311",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2024/court=33_10/bench=hc_cis_mas/HCMA011036692024_1_2024-06-28.pdf",
+   "contentHash": "a8902c0cb96e4141d58e4893ac0bbe644d3000f6ec4c46895c86fa606fc7e0bd",
+   "retainedTextQuote": "the Constitution of India, pleased to issue a Writ of Certiorari to call for the records pertaining to the impugned proceedings of the 3rd respondent, dated 01.06.2024 made in REF:HRM:6931:2024:AGT:63311:1 and quash the same. For Petitioner : Mr.G.Mutharasu, for Mr.K.Gangadaran For Respondents : Mrs.S.R.Sumathy, Standing Counsel OR"
+  },
+  {
+   "judgmentId": "096d9504-674a-401b-abf8-7427e2048758",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/15275/2011",
+   "currentStoredNeutralCitation": "2011:DEC:07",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011266592011_1_2011-11-24.pdf",
+   "contentHash": "87b379a2c4a565c4a2f1faeb6c90c0f7b87fd0d639aae7e1f339a37dfed20d42",
+   "retainedTextQuote": "irunelveli District,Tirunelveli District. 2.The Inspector of Police,District Crime Branch,Tirunelveli District. 3.The Addl Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM:2011:DEC:07:: Crl.O.P.(MD)No.15275 of 2011 1P:4C:: 24.11.2011https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "09943e9e-e32b-40af-913b-5c73a073516f",
+   "court": "Madras High Court",
+   "caseNumber": "CRL OP(MD)/11056/2011",
+   "currentStoredNeutralCitation": "2011:AUGUST:25",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011219742011_1_2011-08-23.pdf",
+   "contentHash": "8db57f0791c87faa0e39da311bf8251731095bb429f0ac363de5879ccc8e5901",
+   "retainedTextQuote": "PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADRUAI 4 THE INSPECTOR OF POLICE MASARPATTY POLICE STATION, THOOTHUKUDI DISTRICT 1. CC to M/S. A.K.AZAGARSAMI Advocate SR.No.28706: DM::2011:AUGUST:25:: ORDER IN CRL OP(MD) No.11056 of 2011 Date :23/08/2011 2P:6C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "09a3a2d9-0a81-4f9e-86b2-c4daee906c57",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "RSA/5209/2019",
+   "currentStoredNeutralCitation": "2024:PHHC:139075",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2024:PHHC:139077",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2024/court=3_22/bench=phhc/PHHC010268352019_1_2024-10-23.pdf",
+   "contentHash": "4ad0e929644c80faff6a99359e47096de226ec49e9039b1bf9ea4675399bed3a",
+   "retainedTextQuote": "between predecessor of plain&ffs and defendant Nos.2 to 5. PRIYANKA 2024.10.25 18:13 I attest to the accuracy and integrity of this document RSA-5206-2019 -2- 2024:PHHC:139075 RSA-5209-2019 2024:PHHC:139077 Faced with this situa&on, learned counsel seeks &me to assist this Court by showing the necessary case law in this regard. Adjour"
+  },
+  {
+   "judgmentId": "09e24e35-2e0a-4814-88d5-4fc6dfc7f98c",
+   "court": "Madras High Court",
+   "caseNumber": "WP(MD)/5903/2011",
+   "currentStoredNeutralCitation": "2011:SEPTEMBER:26",
+   "proposedState": "NO_SAFE_OWN_CITATION",
+   "proposedValue": null,
+   "reasonClass": "NOT_A_NEUTRAL_CITATION_DATE_STAMP",
+   "storedOccurrenceVerdicts": [],
+   "candidateVerdictTier": "NONE",
+   "distinctEligibleCitationsInText": 0,
+   "sourceObjectKey": "data/pdf/year=2011/court=33_10/bench=mdubench/HCMD011552542011_1_2011-09-09.pdf",
+   "contentHash": "939e9f663e9609b8c2a36bf5758aea7abca63f0fd267136f63ad6d95501f9e49",
+   "retainedTextQuote": "overy Officer Employees Provident Fund Organization Regional Office, Madurai - 600 002 1CC TO MR. VOS. KALAISELVAM, ADVOCATE, SR: 30714: 1CC TO MR. G.R.SWAMINATHAN, ADVOCATE, SR: 31008: DM::2011:SEPTEMBER:26:: W.P.(MD).No.5903 of 2011 And M.P.(MD).No.1 of 2011 2P:5C::https://hcservices.ecourts.gov.in/hcservices/"
+  },
+  {
+   "judgmentId": "0cee5fb4-cb69-4722-8a7d-7f936851f0b6",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRM-M/15135/2024",
+   "currentStoredNeutralCitation": "2024:PHHC:047483",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2024:PHHC:047488",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2024/court=3_22/bench=phhc/PHHC010391122024_1_2024-04-08.pdf",
+   "contentHash": "0254995b407eb2d32f0f1b5c3f77f845fbc93c43516c0febda029091320fd573",
+   "retainedTextQuote": "CRM-M-8829-2024 2024:PHHC:047483 CRM-M-8779-2024 2024:PHHC:047486\u0001 CRM-M-15135-2024 2024:PHHC:047488 214 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision : 08.04.2024 214 CRM-10750-2024 in /and CRM-M-8829-202"
+  },
+  {
+   "judgmentId": "0d4d53f6-09e3-47d9-8cae-b63886ba69ee",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "CRA/1926/2024",
+   "currentStoredNeutralCitation": "2026:CGHC:26821-DB",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2026:CGHC:26825-DB",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 5,
+   "sourceObjectKey": "data/pdf/year=2026/court=22_18/bench=cghccisdb/CGHC010351582024_1_2026-07-01.pdf",
+   "contentHash": "859ab6328f226591187636375703a7f03818dda9802bb034a5ad4d57e1872607",
+   "retainedTextQuote": "r, Raipur, Chhattisgarh. --- Respondent For Appellant : Mr. Avinash K. Mishra,Advocate For Respondent/Directorate of Revenue Intelligence : Mr. Anumeh Shrivastava, Advocate CGHC010351582024 2026:CGHC:26825-DB NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR CRA No. 1926 of 2024 Bhupendra Singh @ Bhupi S/o Girraj Singh Aged About 32 Years R/o"
+  },
+  {
+   "judgmentId": "0d75fbc2-83f1-406d-ad53-dc33f2d2bf48",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CRM-M/55598/2022",
+   "currentStoredNeutralCitation": "2023:PHHC:113315",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2023:PHHC:113530",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC011361392022_1_2023-08-29.pdf",
+   "contentHash": "7e76679abc16dc34787e2af098630daf78769147682915a8685ca3d88f603045",
+   "retainedTextQuote": "CRM-M-56745-2022 (O&M) 2023:PHHC:113315 CRM-M-55598-2022 (O&M) 2023:PHHC:113530 Page 1 of 4 210 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision: 29.08.2023 CRM-M-56745-2022 (O&M) Ranjit"
+  },
+  {
+   "judgmentId": "116a8db9-47e7-4469-9f1f-efe62021bbbb",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/17089/2022",
+   "currentStoredNeutralCitation": "2023:PHHC:095391",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2023:PHHC:095394",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2023/court=3_22/bench=phhc/PHHC010836372022_1_2023-07-26.pdf",
+   "contentHash": "0e72aadb2565fc4e81e5447229143646f1a5ad4931efb6ae34e52efcc1d868e9",
+   "retainedTextQuote": "CWP-7273-2022 2023:PHHC:095391 CWP-17089-2022 2023:PHHC:095394 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.231-a Date of Decision: July 26, 2023 CWP-7273-2022 NARENDER KUMAR A"
+  },
+  {
+   "judgmentId": "139b2712-4e6e-4589-90b6-41228c037a36",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPS/6678/2025",
+   "currentStoredNeutralCitation": "2025:CGHC:29361",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:CGHC:29364",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=22_18/bench=cghccisdb/CGHC010265022025_1_2025-07-01.pdf",
+   "contentHash": "152089817f00106ec50f8dde13577501cc6b2a19daadefff5ca32c8292735877",
+   "retainedTextQuote": "ineer Water Resource Division Ambikapur District Surguja (C.G.) 4 - Executive Engineer Water Resource Department Division Balrampur, District Balrampur- Ramanujganj (C.G.) ... Respondents 2 2025:CGHC:29364 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 6678 of 2025 1 - Gunu Ram S/o Genda Ram Aged About 61 Years R/o Village Divri"
+  },
+  {
+   "judgmentId": "14e203bc-c338-4afc-9245-614deacc21f9",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/8848/2020",
+   "currentStoredNeutralCitation": "2025:PHHC:058672",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:PHHC:058691",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010468822020_1_2025-05-06.pdf",
+   "contentHash": "50b227b899e161d7c8922abd3f5200393e3b620540d16c0c5a2cc60fc04ad47d",
+   "retainedTextQuote": "HC:058687 Gram Panchayat village Sultanpur Tehsil Raipur Rani, District Panchkula ...... Petitioner Versus State of Haryana and others ...... Respondents 3. CWP-8848-2020 (O/M) Citation No. 2025:PHHC:058691 Mohammad Iqbal ...... Petitioner Versus State of Haryana and others ...... Respondents CORAM : HON'BLE MR. JUSTICE HARSH BUNGER P"
+  },
+  {
+   "judgmentId": "15ca3a06-d18f-43e8-b9b0-1629192501a6",
+   "court": "High Court of Kerala",
+   "caseNumber": "Crl.MC/6918/2024",
+   "currentStoredNeutralCitation": "2025:KER:12610",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:KER:30684",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2025/court=32_4/bench=highcourtofkerala/KLHC011313302024_1_2025-04-03.pdf",
+   "contentHash": "1bea45ecacd3b8447f3fab603aeb8cb016024625e4a236a5f40cdb1a4409b849",
+   "retainedTextQuote": "LICE STATION, ALAPPUZHA DISTRICT-, PIN - 689573 THIS CRIMINAL MISC. CASE HAVING COME UP FOR ADMISSION ON 03.04.2025, THE COURT ON THE SAME DAY PASSED THE FOLLOWING: Crl.M.C. No.6918 of 2024 2025:KER:30684 2 ORDER Dated this the 3rd day of April, 2025 The petitioner is the 1st accused in Crime No.250 of 2024 registered at the Edathwa"
+  },
+  {
+   "judgmentId": "1661886b-bc4a-4fa7-86ce-458c340fd733",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/8549/2020",
+   "currentStoredNeutralCitation": "2025:PHHC:058672",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:PHHC:058687",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010453222020_1_2025-05-06.pdf",
+   "contentHash": "50b227b899e161d7c8922abd3f5200393e3b620540d16c0c5a2cc60fc04ad47d",
+   "retainedTextQuote": "8-2023 (O/M) Citation No. 2025:PHHC:058672 Budhu Khan and another ...... Petitioners Versus Financial Commissioner, Haryana and others ...... Respondents 2. CWP-8549-2020 (O/M) Citation No. 2025:PHHC:058687 Gram Panchayat village Sultanpur Tehsil Raipur Rani, District Panchkula ...... Petitioner Versus State of Haryana and others ...."
+  },
+  {
+   "judgmentId": "170c4bcd-bd58-45b0-913a-a261af646705",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/17363/2007",
+   "currentStoredNeutralCitation": "2024:PHHC:006617",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2024:PHHC:006620",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2024/court=3_22/bench=phhc/PHHC010559052007_1_2024-01-18.pdf",
+   "contentHash": "b71a3c310a4277d96469343a90368423d494a0621e74b44bb902f8bd207db35a",
+   "retainedTextQuote": "ARH 304 ***** CWP No.12001 of 2006 Date of Decision : 18.1.2024 Mahabir Parshad and others ..... Petitioners versus The State of Haryana and others ..... Respondents 2. CWP No.17363 of 2007 2024:PHHC:006620 Motia Rani and others ..... Petitioners versus State of Haryana and others ..... Respondents 3. CWP No.14901 of 2007 2024:PHHC:00"
+  },
+  {
+   "judgmentId": "1960e54b-5659-41c0-975c-fd04397978cc",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumber": "CWP/14173/2024",
+   "currentStoredNeutralCitation": "2025:PHHC:089491",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:PHHC:089493",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_PAIR"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010772552024_1_2025-07-21.pdf",
+   "contentHash": "f62744892b453192974ea1a0f85ed3fef611fcc8f974add1df5194bb7f427dca",
+   "retainedTextQuote": "CWP-14097-2024 (O/M) -1- 2025:PHHC:089491 CWP-14132-2024 (O/M) 2025:PHHC:089492 CWP-14173-2024 (O/M) 2025:PHHC:089493 122, 124, 125 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision : 21.07.2025 CWP-14097-2024 (O/M) 2025:PHHC:"
+  },
+  {
+   "judgmentId": "1ab88ea6-7610-4dce-94f6-89702ea12079",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPS/5956/2025",
+   "currentStoredNeutralCitation": "2025:CGHC:28408",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:CGHC:28418",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 3,
+   "sourceObjectKey": "data/pdf/year=2025/court=22_18/bench=cghccisdb/CGHC010240862025_1_2025-06-27.pdf",
+   "contentHash": "5a31b6028f245ecff4543dff1db752d21917facc231b4ce1cb0cd71364c81123",
+   "retainedTextQuote": "sgarh 3 - Joint Director Division Bilaspur, Chhattisgarh 4 - District Education Officer District Sarangarh-Bilaigarh (C.G.) 5 - Collector District Sarangarh-Bilaigarh (C.G.) ... Respondents 2025:CGHC:28418 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5956 of 2025 1 - Sandhya Sahu W/o Shri Lochan Prasad Sahu Aged About 44 Years"
+  },
+  {
+   "judgmentId": "1b7a1bf4-d3d8-4f9b-968c-39802046d80b",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumber": "WPS/8696/2025",
+   "currentStoredNeutralCitation": "2025:CGHC:39009",
+   "proposedState": "OWN_NEUTRAL_CITATION",
+   "proposedValue": "2025:CGHC:39014",
+   "reasonClass": "REPLACE_WITH_DIFFERENT_OWN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_AFTER"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 6,
+   "sourceObjectKey": "data/pdf/year=2025/court=22_18/bench=cghccisdb/CGHC010320962025_1_2025-08-06.pdf",
+   "contentHash": "e0634d8d86f66c17392930de9a7070252b12f10283a3bada9010161e296ac930",
+   "retainedTextQuote": "n, District Rajnandgaon C.G. 6 - District Education Officer, Rajnandgaon, District Rajnandgaon C.G. 7 - Block Education Officer, Block Rajnandgaon, District Rajnandgaon C.G. ... Respondents 2025:CGHC:39014 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 8696 of 2025 1 - Kamal Kishor Sahu S/o Sukhit Ram Sahu Aged About 42 Years Pr"
+  },
+  {
+   "judgmentId": "3f65f3ba-4a43-4c69-a880-dd9e6e7e3c07",
+   "court": "High Court of Andhra Pradesh",
+   "caseNumber": "WP/32050/2025",
+   "currentStoredNeutralCitation": "2025:AHC:103497-DB",
+   "proposedState": "UNCHANGED_SOURCE_TRUTH",
+   "proposedValue": null,
+   "reasonClass": "SOURCE_GENUINE_FOREIGN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "FOREIGN_LEAD",
+    "OWN_ID"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=28_2/bench=aphc/APHC010613772025_1_2026-08-13.pdf",
+   "contentHash": "9ab1200b0aca3df5a0edf5a43233f50fe611a722820a7d87823fb9745da49af5",
+   "retainedTextQuote": "vernment Pleader for Revenue 4. Standing counsel for Gram Panchayat 5. Sri Ghanta Sridhar < Gist: > Head Note: ? Cases referred: 1. Ashok Kumar Gupta v. State of U.P. [Neutral Citation No.- 2025:AHC:103497-DB of the Allahabad High Court]. 2. Mukteshwar Mahadev Mukteshwari Durga Dharmarth Seva Samiti and another v. State of U.P. and othe"
+  },
+  {
+   "judgmentId": "b57e503e-23fe-4417-98f5-26bebf93e5c0",
+   "court": "High Court of Delhi",
+   "caseNumber": "W.P.(C)/19380/2025",
+   "currentStoredNeutralCitation": "2025:KER:21383",
+   "proposedState": "UNCHANGED_SOURCE_TRUTH",
+   "proposedValue": null,
+   "reasonClass": "SOURCE_GENUINE_FOREIGN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "UNMARKED"
+   ],
+   "candidateVerdictTier": "UNMARKED",
+   "distinctEligibleCitationsInText": 1,
+   "sourceObjectKey": "data/pdf/year=2026/court=7_26/bench=dhcdb/DLHC011044992025_1_2026-03-13.pdf",
+   "contentHash": "5dadcbebbabaf9e4c6753a5d5b56889646141c8d6068aca6274789288348d2cd",
+   "retainedTextQuote": "ut the 50th or 55th year as the case may be. 5. Dr. Monika Arora, learned counsel for the respondent, has strongly opposed the submissions made by the petitioners and has placed on record 1 2025:KER:21383. 2 (2000) 8 SCC 649. Signed By:PURUSHAINDRA KUMAR KAURAV Signature Not Verified Signed By:NEHA CHOPRA Signing Date:19.03.2026 17:"
+  },
+  {
+   "judgmentId": "dc9a9532-24d9-4d03-bb5d-ae66a2f571ba",
+   "court": "Bombay High Court",
+   "caseNumber": "APEAL/1644/2011",
+   "currentStoredNeutralCitation": "2025:PHHC:092344",
+   "proposedState": "UNCHANGED_SOURCE_TRUTH",
+   "proposedValue": null,
+   "reasonClass": "SOURCE_GENUINE_FOREIGN_CITATION",
+   "storedOccurrenceVerdicts": [
+    "OWN_ID"
+   ],
+   "candidateVerdictTier": "OWN_ID",
+   "distinctEligibleCitationsInText": 2,
+   "sourceObjectKey": "data/pdf/year=2026/court=27_1/bench=newas/HCBM010504152011_1_2026-04-18.pdf",
+   "contentHash": "171b963311d6e5f61812e3c721b70d54380b38c3a1dc6daf2cffa47455dc87a7",
+   "retainedTextQuote": "ta vs Vishal Hundar, 2026 SCC OnLine MP 800; (vi) Sunil Kumar vs Daljit Kaur, Page 2 of 3 __________________________________________________ 18 April 2026 Mamta Kale 78-apeal-1644-2011.docx 2025:PHHC:092344; and (vii)Raj Kumar Vs Rajender, 2025:PHHC:079740, to contend that no legal impediment exist in directing transfer of the appeal"
+  }
+ ]
+}
