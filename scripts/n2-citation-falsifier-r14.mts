@@ -58,15 +58,32 @@ import { canonicalKeyFor, resolveBatch, RESOLVER_VERSION } from '../services/api
 import { readKeyFreshness } from '../services/api/src/citations/key-freshness.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const WORK = join(ROOT, '.tmp-new2/r14');
-const OUTDIR = join(ROOT, 'docs/ai/new2-r14');
-mkdirSync(WORK, { recursive: true });
-mkdirSync(OUTDIR, { recursive: true });
 
 const arg = (name: string, fallback: string): string => {
   const at = process.argv.indexOf(`--${name}`);
   return at < 0 ? fallback : (process.argv[at + 1] ?? fallback);
 };
+
+/**
+ * ROUND parameterisation, added 31 Aug 2026 and ADDITIVE BY CONSTRUCTION.
+ *
+ * With no flags this file is byte-for-byte the R14 instrument: `--round`
+ * defaults to `r14`, `--salt` to the empty string, so `rank()` is the same md5
+ * and the same rows are sampled. R14 stays reproducible from this script.
+ *
+ * `--salt` is what makes a re-run an INDEPENDENT falsifier rather than the same
+ * one again. It changes the sampling rank, so a second round draws a different
+ * population from the same strata — which is the whole point of re-testing a
+ * resolver that has since been changed. A round that re-drew the R14 rows would
+ * be measuring the fix against the evidence the fix was written from.
+ */
+const ROUND = arg('round', 'r14');
+const ROUND_TAG = ROUND.toUpperCase();
+const SALT = arg('salt', '');
+const WORK = join(ROOT, `.tmp-new2/${ROUND}`);
+const OUTDIR = join(ROOT, `docs/ai/new2-${ROUND}`);
+mkdirSync(WORK, { recursive: true });
+mkdirSync(OUTDIR, { recursive: true });
 const STAGE = arg('stage', 'package');
 /** Per-stratum cap. Every stratum smaller than this is taken WHOLE. */
 const CAP = Number(arg('cap', '400'));
@@ -101,8 +118,8 @@ async function fileSha256(path: string): Promise<string> {
   for await (const c of createReadStream(path)) h.update(c);
   return h.digest('hex');
 }
-/** Deterministic, uniform, and independent of row order. */
-const rank = (id: string) => createHash('md5').update(id).digest('hex');
+/** Deterministic, uniform, and independent of row order. Salted per round. */
+const rank = (id: string) => createHash('md5').update(SALT + id).digest('hex');
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * KEY CLASS — the structural facts about every key in the index.
@@ -179,7 +196,16 @@ const STRATA: Array<{ name: string; why: string; test: (flags: number | undefine
 const PACKAGE_PATH = join(WORK, 'blind-package.jsonl');
 const PACKAGE_META = join(WORK, 'blind-package.meta.json');
 
-type Sampled = { edgeId: string; raw: string; key: string | null; stratum: string; r: string };
+/**
+ * `citing` is carried through the package because the resolver's contract
+ * CHANGED under this instrument. As of `bd2aa74a` `resolveBatch` accepts
+ * `{ raw, citingJudgmentId }` and answers `SELF_REFERENCE` when the citer
+ * itself claims the key. Passing a bare string is still accepted and still
+ * compiles — and it silently disables that branch, so a falsifier that kept
+ * passing strings would report a clean self-edge class by never reaching the
+ * code that decides one. The reference form is used at both resolve sites.
+ */
+type Sampled = { edgeId: string; raw: string; key: string | null; stratum: string; r: string; citing: string | null };
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * STAGE 1 — PACKAGE. Prediction-blind by construction: the resolver is not
@@ -239,7 +265,7 @@ async function stagePackage(): Promise<void> {
       const flags = key === null ? undefined : keyClass.get(key);
       const stratum = STRATA.find((s) => s.test(flags, gate.refused))?.name;
       if (!stratum) continue;
-      offer(stratum, { edgeId: row.id, raw: row.raw, key, stratum, r: rank(row.id) });
+      offer(stratum, { edgeId: row.id, raw: row.raw, key, stratum, r: rank(row.id), citing: row.citing ?? null });
     }
     if (scanned % 500_000 < 20_000) process.stdout.write(`  scanned ${scanned}\n`);
   }
@@ -250,7 +276,7 @@ async function stagePackage(): Promise<void> {
   const hash = await fileSha256(PACKAGE_PATH);
 
   const meta = {
-    artifact: 'NEW2_R14_BLIND_PACKAGE',
+    artifact: `NEW2_${ROUND_TAG}_BLIND_PACKAGE`,
     builtAt: new Date().toISOString(),
     snapshotAt: snapshot_at,
     selectionInputs: ['judgment_citation_keys', 'judgments.court', 'judgments.case_title', 'canonicalKeyFor (pure)'],
@@ -265,7 +291,7 @@ async function stagePackage(): Promise<void> {
       populationEdges: seen.get(s.name) ?? 0,
       sampled: reservoirs.get(s.name)!.length,
     })),
-    packagePath: 'docs/ai/new2-r14/blind-package.jsonl',
+    packagePath: `docs/ai/new2-${ROUND}/blind-package.jsonl`,
     packageSha256: hash,
     sampledTotal: all.length,
   };
@@ -316,7 +342,7 @@ async function stageFreeze(): Promise<void> {
      ORDER BY id`.cursor(5_000);
 
   for await (const rows of cursor) {
-    const results = await resolveBatch(sql, rows.map((r) => r.raw), freshness);
+    const results = await resolveBatch(sql, rows.map((r) => ({ raw: r.raw, citingJudgmentId: r.citing })), freshness);
     results.forEach((r, i) => {
       scanned += 1;
       tally[r.state] = (tally[r.state] ?? 0) + 1;
@@ -344,14 +370,14 @@ async function stageFreeze(): Promise<void> {
   const hash = await fileSha256(CANDIDATE_JOURNAL);
   const count = (tally['UNIQUE'] ?? 0) - selfExcluded;
   const meta = {
-    artifact: 'NEW2_R14_CITATION_APPLY_CANDIDATE',
+    artifact: `NEW2_${ROUND_TAG}_CITATION_APPLY_CANDIDATE`,
     lane: 'NEW2',
     state: 'FROZEN_UNAPPLIED',
     createdAt: new Date().toISOString(),
     definition:
       (EXCLUDE_SELF_EDGES ? 'Excludes any pin whose target is the citing judgment itself. ' : '') +
       'judgment_citations rows with cited_judgment_id IS NULL and non-empty citation_text, created at or before snapshotAt, whose COALESCE(NULLIF(btrim(normalised_citation),\'\'), citation_text) resolves to state UNIQUE with exactly one candidate under the named resolver at the named frontier.',
-    applyPopulationId: `NEW2-R14-APPLY-${hash.slice(0, 16)}`,
+    applyPopulationId: `NEW2-${ROUND_TAG}-APPLY-${hash.slice(0, 16)}`,
     applyPopulationCount: count,
     applyPopulationSha256: hash,
     journalPath: `docs/ai/new2-r14/apply-candidate${SUFFIX}.sha256`,
@@ -541,9 +567,21 @@ function adjudicate(
     return {
       ...base,
       pinned: null,
-      verdict: res.state === 'AMBIGUOUS' || res.state === 'TARGET_NOT_HELD' || res.state === 'REFUSED'
-        ? 'CORRECT_REFUSAL'
-        : 'UNTESTABLE',
+      // SELF_REFERENCE and UNIQUE_UNCONFIRMED_COHORT joined this list on
+      // 31 Aug 2026 with the cohort gate (`bd2aa74a`). Both are the resolver
+      // DECLINING to claim uniqueness — the citer itself claims the key, or the
+      // court's own cause title declares more matters than we hold bearers for.
+      // Scoring them UNTESTABLE would file a working refusal alongside a crash,
+      // and would let a gate that fires correctly read as a gate that produced
+      // no measurable answer.
+      verdict:
+        res.state === 'AMBIGUOUS' ||
+        res.state === 'TARGET_NOT_HELD' ||
+        res.state === 'REFUSED' ||
+        res.state === 'SELF_REFERENCE' ||
+        res.state === 'UNIQUE_UNCONFIRMED_COHORT'
+          ? 'CORRECT_REFUSAL'
+          : 'UNTESTABLE',
       reasons: [`resolver returned ${res.state}`],
       courtCheck: 'UNTESTABLE',
       yearCheck: 'UNTESTABLE',
@@ -656,7 +694,7 @@ async function stageAdjudicate(): Promise<void> {
   const out: Adjudicated[] = [];
   for (let i = 0; i < rows.length; i += 200) {
     const batch = rows.slice(i, i + 200);
-    const results = await resolveBatch(sql, batch.map((b) => b.raw), freshness);
+    const results = await resolveBatch(sql, batch.map((b) => ({ raw: b.raw, citingJudgmentId: b.citing ?? null })), freshness);
 
     const pins = results.map((r) => (r.candidates[0]?.judgmentId ?? null));
     const wanted = [...new Set(pins.filter((p): p is string => p !== null))];
@@ -941,7 +979,7 @@ async function stageReport(): Promise<void> {
   const gatePass = falsePin === 0 && falseUnique === 0 && populationMaterialFalseUnique === 0 && selfEdges.selfEdges === 0;
 
   const report = {
-    artifact: 'NEW2_R14_CITATION_FALSIFIER',
+    artifact: `NEW2_${ROUND_TAG}_CITATION_FALSIFIER`,
     lane: 'NEW2',
     generatedAt: new Date().toISOString(),
     resolverVersion: RESOLVER_VERSION,
@@ -1003,7 +1041,7 @@ async function stageReport(): Promise<void> {
       'The court-code map is derived from our own corpus, so a code we hold only from one court reads unanimous whether or not it is.',
     ],
   };
-  writeFileSync(join(OUTDIR, 'citation-falsifier-r14.json'), JSON.stringify(report, null, 1));
+  writeFileSync(join(OUTDIR, `citation-falsifier-${ROUND}.json`), JSON.stringify(report, null, 1));
   process.stdout.write(`${JSON.stringify(report.results, null, 1)}\n`);
   process.stdout.write(`GATE ${report.gate.falsePinGate} · CITATION_BULK_APPLY=${report.gate.citationBulkApply}\n`);
 }

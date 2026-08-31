@@ -1,0 +1,352 @@
+{
+ "artifact": "NEW2_R15_INDEPENDENT_CITATION_FALSIFIER",
+ "lane": "NEW2",
+ "measuredAt": "2026-08-31T10:28:02.379Z",
+ "subject": {
+  "resolverGateCommit": "bd2aa74a",
+  "what": "the connected-matter / common-order cohort gate and the self-reference branch, as committed by LCC",
+  "verifiedCurrent": "services/api/src/citations/ was clean at HEAD when this ran; the gate is at HEAD, not in a working tree",
+  "lccClaimsNotInherited": "LCC's own tests were not run, read for correctness, or counted. Every number here comes from this lane's instrument on this lane's population."
+ },
+ "population": {
+  "newPopulationId": "NEW2-R15-PKG-48be7a6f42282d6d",
+  "packageSha256": "48be7a6f42282d6defc13d96759b6338c91f50d7e009d0aec4cfde166509763b",
+  "sampled": 3600,
+  "edgesScanned": 6051882,
+  "strata": [
+   {
+    "name": "I_REFUSED_FORM",
+    "why": "difficult negative: the pure gate refuses the string before any lookup",
+    "populationEdges": 827,
+    "sampled": 400
+   },
+   {
+    "name": "H_TARGET_NOT_HELD",
+    "why": "difficult negative: a well-formed citation the corpus does not hold at all",
+    "populationEdges": 3137306,
+    "sampled": 400
+   },
+   {
+    "name": "F_CROSS_COURT_COLLISION",
+    "why": "the class FIFTH named as outside the earlier replay",
+    "populationEdges": 3717,
+    "sampled": 400
+   },
+   {
+    "name": "E_MULTI_DISTINCT_CASE",
+    "why": "one citation string naming two DIFFERENT cases — the false-unique generator",
+    "populationEdges": 106323,
+    "sampled": 400
+   },
+   {
+    "name": "D_MULTI_SAME_CASE",
+    "why": "the same judgment ingested twice — a recall loss, not a false pin",
+    "populationEdges": 244180,
+    "sampled": 400
+   },
+   {
+    "name": "A_ALIAS_PATH",
+    "why": "the dominant pin path, and the one the DB unique index makes incapable of AMBIGUOUS",
+    "populationEdges": 1548529,
+    "sampled": 400
+   },
+   {
+    "name": "G_LATE_LEARNED_KEY",
+    "why": "the index learned this key only after T0 — a proxy for the target that had not landed",
+    "populationEdges": 129265,
+    "sampled": 400
+   },
+   {
+    "name": "B_REPORTER_PATH",
+    "why": "a reporter series names a publisher, not a court — the untestable-court class",
+    "populationEdges": 17399,
+    "sampled": 400
+   },
+   {
+    "name": "C_NEUTRAL_SINGLE_CLAIM",
+    "why": "the ordinary case, and the bulk of any apply",
+    "populationEdges": 864336,
+    "sampled": 400
+   }
+  ],
+  "independenceFromR14": {
+   "r14PackageSha256": "0383988c26d87df06f1b6a3c4b895c8e5bdbd7f76f3f0cd54f4fd924dd46b736",
+   "sharedEdges": 254,
+   "sharedPercent": 7.06,
+   "note": "the residual overlap is the small strata, which are taken whole; the two packages are different draws"
+  },
+  "frozenR14CandidatesUntouched": [
+   "docs/ai/new2-r14/citation-apply-candidate.json",
+   "docs/ai/new2-r14/citation-apply-candidate-v2-no-self.json"
+  ]
+ },
+ "instrumentCorrection": {
+  "what": "both resolve sites now pass { raw, citingJudgmentId } instead of a bare string",
+  "why": "resolveBatch accepts either. The string form compiles, runs, and never reaches the SELF_REFERENCE branch.",
+  "provedDirectly": [
+   {
+    "raw": "2025:AHC:79018",
+    "bareString": "UNIQUE",
+    "referenceForm": "SELF_REFERENCE"
+   },
+   {
+    "raw": "2023:KHC:33727",
+    "bareString": "UNIQUE",
+    "referenceForm": "SELF_REFERENCE"
+   },
+   {
+    "raw": "2025:BHC-AUG:6358",
+    "bareString": "UNIQUE",
+    "referenceForm": "SELF_REFERENCE"
+   }
+  ],
+  "consequence": "a falsifier that kept the string form would report a clean self-edge class without ever testing one"
+ },
+ "results": {
+  "FALSE_PIN": 0,
+  "FALSE_UNIQUE": 0,
+  "AMBIGUOUS": 411,
+  "UNTESTABLE": 0,
+  "resolverStateTally": {
+   "REFUSED": 400,
+   "TARGET_NOT_HELD": 400,
+   "AMBIGUOUS": 411,
+   "SELF_REFERENCE": 1917,
+   "UNIQUE": 472
+  },
+  "verdictTally": {
+   "CORRECT_REFUSAL": 3128,
+   "CONSISTENT": 472
+  },
+  "byStratum": {
+   "I_REFUSED_FORM": {
+    "REFUSED": 400
+   },
+   "H_TARGET_NOT_HELD": {
+    "TARGET_NOT_HELD": 400
+   },
+   "F_CROSS_COURT_COLLISION": {
+    "AMBIGUOUS": 396,
+    "SELF_REFERENCE": 4
+   },
+   "E_MULTI_DISTINCT_CASE": {
+    "SELF_REFERENCE": 386,
+    "AMBIGUOUS": 14
+   },
+   "D_MULTI_SAME_CASE": {
+    "SELF_REFERENCE": 399,
+    "AMBIGUOUS": 1
+   },
+   "A_ALIAS_PATH": {
+    "UNIQUE": 400
+   },
+   "G_LATE_LEARNED_KEY": {
+    "SELF_REFERENCE": 400
+   },
+   "B_REPORTER_PATH": {
+    "SELF_REFERENCE": 329,
+    "UNIQUE": 71
+   },
+   "C_NEUTRAL_SINGLE_CLAIM": {
+    "SELF_REFERENCE": 399,
+    "UNIQUE": 1
+   }
+  }
+ },
+ "requiredRetests": {
+  "selfEdgeClass": {
+   "state": "PASS",
+   "observed": 1917,
+   "of": 3600,
+   "note": "the citer claiming the key now ends the question. R14 scored 1,146 of its 3,600 as SELF_EDGE while the resolver still called them UNIQUE; here 1,917 are refused at source. The extra rows are multi-candidate keys R14 answered AMBIGUOUS — a class that also moved into this branch."
+  },
+  "aliases": {
+   "state": "PASS_WITH_A_KNOWN_STRUCTURAL_LIMIT",
+   "observed": {
+    "UNIQUE": 400
+   },
+   "note": "all 400 alias-path rows resolve UNIQUE and none is contradicted. The alias table carries a UNIQUE index, so this path can never return AMBIGUOUS; that limit is unchanged by this gate and is not evidence about it."
+  },
+  "crossCourtCollisions": {
+   "state": "PASS",
+   "observed": {
+    "AMBIGUOUS": 396,
+    "SELF_REFERENCE": 4
+   },
+   "note": "396 of 400 answered AMBIGUOUS and 4 SELF_REFERENCE. No cross-court key was pinned."
+  },
+  "predictionBlindPositives": {
+   "state": "PASS",
+   "observed": 472,
+   "contradicted": 0,
+   "note": "the package was written and hashed before any resolution existed; nothing here was selected after seeing a prediction."
+  },
+  "predictionBlindNegatives": {
+   "state": "PASS",
+   "refusedForm": {
+    "REFUSED": 400
+   },
+   "targetNotHeld": {
+    "TARGET_NOT_HELD": 400
+   },
+   "note": "400 of 400 malformed strings refused before any lookup; 400 of 400 well-formed citations we do not hold answered TARGET_NOT_HELD. Neither difficult negative produced a pin."
+  },
+  "connectedMatterCommonOrder": {
+   "state": "NOT_PASSED — UNTESTABLE ON THIS POPULATION, AND A FALSE NEGATIVE FOUND",
+   "gateReached": 472,
+   "gateVerdicts": {
+    "UNIQUE_NOT_REFUTED": 472
+   },
+   "declaredMattersHistogram": {
+    "0": 472
+   },
+   "note": "the gate was reached on every would-be-UNIQUE row and refused none — but it saw NO evidence on any of them."
+  }
+ },
+ "finding": {
+  "id": "NEW2-R15-F1",
+  "title": "the cohort gate reads matter numbers case-sensitively, so it fails OPEN on every title-case cause title",
+  "severity": "the gate misses about as many cohorts as it catches",
+  "mechanism": "MATTER_LONG and MATTER_SLASH in services/api/src/citations/cohort.ts capture the matter TYPE as [A-Z][A-Z.&'-]* — upper case only. A cause title printing `(Civil Appeal No. 2047 of 2007)` yields zero matters; the same string upper-cased yields one.",
+  "provedPure": [
+   {
+    "input": "(Civil appeal No. 2047 of 2007)",
+    "declaredMatters": 0
+   },
+   {
+    "input": "(CIVIL APPEAL No. 2047 of 2007)",
+    "declaredMatters": 1
+   },
+   {
+    "input": "WRIT PETITION No. 123 of 2020 / WITH / WRIT PETITION No. 456 of 2020",
+    "declaredMatters": 2,
+    "connector": "WITH"
+   },
+   {
+    "input": "Writ Petition No. 123 of 2020 / With / Writ Petition No. 456 of 2020",
+    "declaredMatters": 0,
+    "connector": "WITH"
+   }
+  ],
+  "whyItFailsOpen": "the connector is matched case-INSENSITIVELY while the matters are not, so a genuine two-matter common order in title case yields connector=WITH and declaredMatters=0. `declaredMatters > heldCandidates` is then `0 > 1`, false, and the reference is told it is the only one.",
+  "observedInThisRound": {
+   "gateEvaluations": 472,
+   "everyOneSawZeroMatters": true,
+   "reachedByStratum": {
+    "A_ALIAS_PATH": 400,
+    "B_REPORTER_PATH": 71,
+    "C_NEUTRAL_SINGLE_CLAIM": 1
+   },
+   "note": "472 of 472 would-be-UNIQUE rows had a READABLE cause title (causeTitleAvailable true, or the verdict would have been INSUFFICIENT_TO_PROVE_UNIQUE) and zero declared matters. Not one declared even the single matter an ordinary judgment prints."
+  },
+  "corpusExposure": {
+   "method": "a court-stratified md5 sample of key-bearing judgments, each head read twice — as the gate reads it, and upper-cased. The delta is exactly what letter case costs.",
+   "sampled": 4000,
+   "n": 4000,
+   "readZero": 1577,
+   "recoveredAny": 828,
+   "recoveredCohort": 78,
+   "readZeroPercent": 39.42,
+   "recoveredAnyPercent": 20.7,
+   "joinedCohortMissedPercent": 1.95,
+   "byCourt": {
+    "Allahabad High Court": {
+     "n": 1615,
+     "readZero": 772,
+     "recoveredAny": 369,
+     "recoveredCohort": 17
+    },
+    "High Court of Karnataka": {
+     "n": 667,
+     "readZero": 0,
+     "recoveredAny": 0,
+     "recoveredCohort": 0
+    },
+    "High Court Of Rajasthan": {
+     "n": 456,
+     "readZero": 423,
+     "recoveredAny": 368,
+     "recoveredCohort": 48
+    },
+    "Bombay High Court": {
+     "n": 402,
+     "readZero": 13,
+     "recoveredAny": 1,
+     "recoveredCohort": 3
+    },
+    "High Court Of Chhattisgarh": {
+     "n": 295,
+     "readZero": 10,
+     "recoveredAny": 2,
+     "recoveredCohort": 0
+    },
+    "High Court of Jharkhand": {
+     "n": 122,
+     "readZero": 38,
+     "recoveredAny": 5,
+     "recoveredCohort": 7
+    },
+    "High Court of Punjab and Haryana": {
+     "n": 122,
+     "readZero": 102,
+     "recoveredAny": 4,
+     "recoveredCohort": 0
+    },
+    "Supreme Court of India": {
+     "n": 111,
+     "readZero": 111,
+     "recoveredAny": 34,
+     "recoveredCohort": 1
+    },
+    "High Court of Himachal Pradesh": {
+     "n": 75,
+     "readZero": 25,
+     "recoveredAny": 13,
+     "recoveredCohort": 0
+    },
+    "Gauhati High Court": {
+     "n": 60,
+     "readZero": 45,
+     "recoveredAny": 21,
+     "recoveredCohort": 0
+    },
+    "High Court of Uttarakhand": {
+     "n": 41,
+     "readZero": 23,
+     "recoveredAny": 10,
+     "recoveredCohort": 2
+    },
+    "High Court of Kerala": {
+     "n": 25,
+     "readZero": 10,
+     "recoveredAny": 0,
+     "recoveredCohort": 0
+    }
+   },
+   "reading": "recoveredCohort is the shape the gate exists to refuse — a printed connector AND two or more matters — visible only once case is removed. 78 of 4,000 is 1.95%, the same order as the 1.48% recall cost the gate was measured to pay for the ones it does catch."
+  },
+  "whatThisIsNot": [
+   "it is not a false PIN: nothing observed here pins a wrong judgment, and FALSE_PIN is 0 in 3,600",
+   "it is not a claim that the gate is wrong where it fires; where it reads matters it behaves as documented",
+   "it is not measured on query traffic, and the 1.95% is of key-bearing judgments, not of user searches"
+  ],
+  "owner": "LCC — services/api/** is outside this lane's write set. No fix was attempted here.",
+  "suggestedShape": "match the matter type case-insensitively, as the connector already is.",
+  "whyTheSuiteIsGreenAnyway": "cohort.test.ts already CONTAINS a title-case matter line and does not notice. The JHHC_24297 fixture prints `Miscellaneous Appeal No. 134 of 2018` on line 6; it is silently unmatched, and the assertion still passes because the same matter is also printed upper-case as `M.A. No. 134 of 2018` on line 2. Every matter an assertion actually depends on is upper case, so no test in the file can fail on letter case. A title-case-only fixture is the missing test."
+ },
+ "gate": {
+  "FALSE_PIN": 0,
+  "FALSE_UNIQUE": 0,
+  "AMBIGUOUS": 411,
+  "UNTESTABLE": 0,
+  "connectedMatterClass": "NOT_PASSED",
+  "CITATION_BULK_APPLY": "HOLD",
+  "why": [
+   "the connected-matter class — the class the gate was built for and the one R14 failed on — is not demonstrated by this round. The gate ran on all 472 would-be-UNIQUE rows and had no evidence on any of them.",
+   "independent of the sample, 1.95% of key-bearing judgments carry a joined multi-matter cohort the gate cannot see at all, because of letter case.",
+   "a gate that cannot fire is not a gate that found nothing to fire on, and applying 1.5M edges on the strength of that distinction is exactly the failure this round exists to prevent."
+  ],
+  "newApplyPopulationFrozen": false,
+  "newApplyPopulationNote": "no apply candidate was frozen. A candidate binds rows to a resolver version, and this one is going to change: freezing 6.05M references against a resolver already known to be blind on this class would produce a hash that has to be thrown away. The population identity of record for this round is the blind package, not a candidate."
+ }
+}

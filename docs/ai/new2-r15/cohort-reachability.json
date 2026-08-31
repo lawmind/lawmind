@@ -1,0 +1,19 @@
+{
+ "rowsResolved": 3600,
+ "cohortGateReached": 472,
+ "cohortVerdicts": {
+  "UNIQUE_NOT_REFUTED": 472
+ },
+ "declaredMattersHistogram": {
+  "0": 472
+ },
+ "reachedByStratum": {
+  "A_ALIAS_PATH": 400,
+  "B_REPORTER_PATH": 71,
+  "C_NEUTRAL_SINGLE_CLAIM": 1
+ },
+ "connectorsSeen": [
+  "WITH",
+  "ALONG WITH"
+ ]
+}

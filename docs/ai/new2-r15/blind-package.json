@@ -1,0 +1,75 @@
+{
+ "artifact": "NEW2_R15_BLIND_PACKAGE",
+ "builtAt": "2026-08-31T10:21:49.289Z",
+ "snapshotAt": "2026-08-31 10:19:36.100926+00",
+ "selectionInputs": [
+  "judgment_citation_keys",
+  "judgments.court",
+  "judgments.case_title",
+  "canonicalKeyFor (pure)"
+ ],
+ "resolverConsulted": false,
+ "cap": 400,
+ "holdoutT0": "2026-08-18",
+ "edgesScanned": 6051882,
+ "keysInIndex": 1224070,
+ "strata": [
+  {
+   "name": "I_REFUSED_FORM",
+   "why": "difficult negative: the pure gate refuses the string before any lookup",
+   "populationEdges": 827,
+   "sampled": 400
+  },
+  {
+   "name": "H_TARGET_NOT_HELD",
+   "why": "difficult negative: a well-formed citation the corpus does not hold at all",
+   "populationEdges": 3137306,
+   "sampled": 400
+  },
+  {
+   "name": "F_CROSS_COURT_COLLISION",
+   "why": "the class FIFTH named as outside the earlier replay",
+   "populationEdges": 3717,
+   "sampled": 400
+  },
+  {
+   "name": "E_MULTI_DISTINCT_CASE",
+   "why": "one citation string naming two DIFFERENT cases — the false-unique generator",
+   "populationEdges": 106323,
+   "sampled": 400
+  },
+  {
+   "name": "D_MULTI_SAME_CASE",
+   "why": "the same judgment ingested twice — a recall loss, not a false pin",
+   "populationEdges": 244180,
+   "sampled": 400
+  },
+  {
+   "name": "A_ALIAS_PATH",
+   "why": "the dominant pin path, and the one the DB unique index makes incapable of AMBIGUOUS",
+   "populationEdges": 1548529,
+   "sampled": 400
+  },
+  {
+   "name": "G_LATE_LEARNED_KEY",
+   "why": "the index learned this key only after T0 — a proxy for the target that had not landed",
+   "populationEdges": 129265,
+   "sampled": 400
+  },
+  {
+   "name": "B_REPORTER_PATH",
+   "why": "a reporter series names a publisher, not a court — the untestable-court class",
+   "populationEdges": 17399,
+   "sampled": 400
+  },
+  {
+   "name": "C_NEUTRAL_SINGLE_CLAIM",
+   "why": "the ordinary case, and the bulk of any apply",
+   "populationEdges": 864336,
+   "sampled": 400
+  }
+ ],
+ "packagePath": "docs/ai/new2-r15/blind-package.jsonl",
+ "packageSha256": "48be7a6f42282d6defc13d96759b6338c91f50d7e009d0aec4cfde166509763b",
+ "sampledTotal": 3600
+}

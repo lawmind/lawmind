@@ -264,49 +264,165 @@ SCR-to-SCC concordance from a source we are authorised to use.
 
 ---
 
-## 7 · LCC citation gate — WAITING_FOR_LCC, and why the code being present is not the gate landing
+## 7 · LCC citation gate — committed mid-round, retested independently, and it does not clear
 
-Read once, at the end of the round, at HEAD `125b8345`.
+The gate was **untracked** when I first read HEAD at `125b8345`: `cohort.ts`,
+its two test files and `docs/ai/lcc-r15/` existed in this shared worktree and in
+no clone. I recorded `WAITING_FOR_LCC` and did not run a falsifier against an
+uncommitted tree, because a verdict naming a resolver nobody can check out is
+not a falsifier result.
 
-The gate is **written**. `services/api/src/citations/cohort.ts` exists,
-`resolver.ts` imports `cohortVerdict` and `declaredCohort` and refuses a UNIQUE
-where the cohort is not `UNIQUE_NOT_REFUTED`, tests sit beside it, and
-`docs/ai/lcc-r15/` carries a measurement dated 31 August 2026.
+LCC then committed it at **`bd2aa74a`**, while this round was still open.
+`services/api/src/citations/` is clean at HEAD, so the gate is current and
+testable. This section replaces the WAITING one.
 
-**None of it is committed.**
+**LCC's tests were not run, not read for correctness, and not counted.** Every
+number below is this lane's instrument on this lane's population.
+
+### 7.1 · A new population, and one correction to the instrument
+
+`scripts/n2-citation-falsifier-r14.mts` is now round-parameterised — additively,
+so with no flags it is the R14 instrument unchanged. `--salt NEW2-R15-2026-08-31`
+changes the sampling rank, and R15 draws 3,600 rows sharing only **254 (7.06%)**
+with R14's package. A round that re-drew the rows the fix was written from would
+be measuring the fix against its own evidence.
 
 ```
-?? services/api/src/citations/cohort.ts
-?? services/api/src/citations/cohort.test.ts
-?? services/api/src/citations/resolver-cohort.test.ts
-?? docs/ai/lcc-r15/
- M services/api/src/citations/resolver.ts
- M services/api/src/citations/resolver-dryrun-cli.ts
+NEW_APPLY_POPULATION_ID   NEW2-R15-PKG-48be7a6f42282d6d
+package sha256            48be7a6f42282d6defc13d96759b6338c91f50d7e009d0aec4cfde166509763b
+sampled                   3,600 across 9 strata
+edges scanned             6,051,882
 ```
 
-`git ls-files` returns nothing for any of them. They exist in this shared
-worktree and in no clone of this repository.
+Both frozen R14 candidates are untouched.
 
-So `CITATION_RETEST_STATE = WAITING_FOR_LCC`, and bulk apply stays on HOLD. I am
-not running the independent falsifier yet, for two reasons that are about
-evidence rather than about process:
+**One instrument change was load-bearing.** `resolveBatch` now takes
+`{ raw, citingJudgmentId }` and answers `SELF_REFERENCE`. **A bare string still
+compiles, still runs, and silently skips that branch.** Measured directly on
+three known self-edges before changing anything:
 
-1. **A falsifier run against an uncommitted working tree measures nothing
-   durable.** The result would name a resolver version no one else can check
-   out, and a verdict that cannot be reproduced is not a falsifier result. This
-   lane has already paid for that lesson in the other direction — a coupled set
-   committed one file at a time is green in the worktree and red in a clone.
-2. **The files can change under a run in progress.** LCC owns them and is
-   working in the same tree. A falsifier whose subject is edited mid-run
-   produces a number attached to nothing.
+| citation            | bare string | reference form   |
+| ------------------- | ----------- | ---------------- |
+| `2025:AHC:79018`    | `UNIQUE`    | `SELF_REFERENCE` |
+| `2023:KHC:33727`    | `UNIQUE`    | `SELF_REFERENCE` |
+| `2025:BHC-AUG:6358` | `UNIQUE`    | `SELF_REFERENCE` |
 
-What I did NOT do: read those files and form a view on whether the gate is
-correct. That would be inheriting LCC's claim by another route. When the commit
-lands, the falsifier is run against the committed hash, with a NEW population
-identity, and neither frozen R14 candidate is overwritten.
+A falsifier that kept passing strings would have reported a clean self-edge
+class by never reaching the code that decides one. Both resolve sites now pass
+the reference form.
 
-`services/api/**` is outside this lane's write set, so the files are left
-exactly as found — nothing staged, nothing committed, nothing moved.
+### 7.2 · Results
+
+```
+FALSE_PIN     0
+FALSE_UNIQUE  0
+AMBIGUOUS     411
+UNTESTABLE    0
+```
+
+Resolver states over the 3,600: `SELF_REFERENCE` 1,917 · `UNIQUE` 472 ·
+`AMBIGUOUS` 411 · `REFUSED` 400 · `TARGET_NOT_HELD` 400.
+
+| required retest                 | state                                                                                                                                                                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| self-edge class                 | **PASS** — 1,917 refused at source; R14 scored 1,146 of its 3,600 as `SELF_EDGE` while the resolver still called them `UNIQUE`                                                                                              |
+| aliases                         | **PASS**, with a known structural limit — 400 of 400 `UNIQUE`, none contradicted; the alias table's UNIQUE index means this path can never return `AMBIGUOUS`, which is unchanged by this gate and is not evidence about it |
+| cross-court collisions          | **PASS** — 396 `AMBIGUOUS`, 4 `SELF_REFERENCE`, nothing pinned                                                                                                                                                              |
+| prediction-blind positives      | **PASS** — package written and hashed before any resolution existed; 0 of 472 pins contradicted                                                                                                                             |
+| prediction-blind negatives      | **PASS** — 400 of 400 malformed strings refused before lookup; 400 of 400 well-formed-but-not-held answered `TARGET_NOT_HELD`                                                                                               |
+| connected matter / common order | **NOT PASSED**                                                                                                                                                                                                              |
+
+The self-reference count is larger than R14's self-pin count for a reason worth
+recording: the citer claiming the key now ends the question however many others
+claim it, so ~785 multi-candidate rows R14 answered `AMBIGUOUS` now answer
+`SELF_REFERENCE`. Both withhold a pin, so no false pin is created — but it means
+this sample exercises the `AMBIGUOUS` path in `E_MULTI_DISTINCT_CASE` on only 14
+rows rather than 400.
+
+### 7.3 · The finding — the gate reads matter numbers case-sensitively and fails OPEN
+
+The cohort gate was **reached on all 472 would-be-`UNIQUE` rows** and refused
+none. That is not a pass, because it saw no evidence on any of them:
+
+```
+cohort gate evaluations          472
+verdicts                         UNIQUE_NOT_REFUTED : 472
+declaredMatters histogram        0 : 472
+```
+
+Every one had a **readable** cause title — `cohortVerdict` returns
+`INSUFFICIENT_TO_PROVE_UNIQUE` when the title is absent, and none did; reading
+the 317 distinct pinned judgments directly confirmed `causeTitleAbsent: 0`. So
+472 readable cause titles produced **zero declared matters**, not one — not even
+the single matter an ordinary judgment prints.
+
+`MATTER_LONG` and `MATTER_SLASH` capture the matter TYPE as `[A-Z][A-Z.&'-]*` —
+**upper case only** — while the connector list is matched case-insensitively.
+Pure, no database:
+
+| input                                                                      | declaredMatters | connector |
+| -------------------------------------------------------------------------- | --------------: | --------- |
+| `(Civil appeal No. 2047 of 2007)`                                          |               0 | null      |
+| `(CIVIL APPEAL No. 2047 of 2007)`                                          |           **1** | null      |
+| `WRIT PETITION No. 123 of 2020` / `WITH` / `WRIT PETITION No. 456 of 2020` |           **2** | WITH      |
+| `Writ Petition No. 123 of 2020` / `With` / `Writ Petition No. 456 of 2020` |           **0** | WITH      |
+
+The last row is the failure. A genuine two-matter common order printed in title
+case yields `connector = WITH` and `declaredMatters = 0`, so
+`declaredMatters > heldCandidates` is `0 > 1` — false — and the reference is
+told it is the only one. **The gate fails open on exactly the shape it exists to
+refuse.**
+
+Corpus exposure, court-stratified md5 sample of 4,000 key-bearing judgments,
+each head read twice — as the gate reads it, and upper-cased:
+
+```
+read as zero matters                                 1,577   39.4%
+at least one matter recovered by case alone            828   20.7%
+JOINED multi-matter cohort visible only upper-cased     78   1.95%
+```
+
+That 1.95% is the same order as the 1.48% recall cost the gate was measured to
+pay for the cohorts it does catch — so on this evidence it misses about as many
+as it catches. Worst affected in the sample: Allahabad HC (772 of 1,615 read
+zero), Punjab & Haryana (102 of 122), and the Supreme Court (111 of 111 — the
+SCR report format prints `(Civil Appeal No. 2047 of 2007)` in title case).
+
+**Why the suite is green anyway.** `cohort.test.ts` already contains a
+title-case matter line and does not notice: the `JHHC_24297` fixture prints
+`Miscellaneous Appeal No. 134 of 2018` on line 6, it is silently unmatched, and
+the assertion still passes because the same matter is also printed upper-case as
+`M.A. No. 134 of 2018` on line 2. Every matter an assertion depends on is upper
+case, so no test in the file can fail on letter case.
+
+**What this is not.** It is not a false pin — `FALSE_PIN` is 0 in 3,600. It is
+not a claim that the gate is wrong where it fires. It is not measured on query
+traffic. `services/api/**` is outside this lane's write set and **no fix was
+attempted here**; the shape is one word — match the type case-insensitively, as
+the connector already is — and it is LCC's to make, with a title-case-only
+fixture as the missing test.
+
+### 7.4 · Verdict
+
+```
+LCC_GATE_OBSERVED       COMMITTED at bd2aa74a, verified current
+CITATION_RETEST_STATE   RETESTED_INDEPENDENTLY
+CITATION_BULK_APPLY     HOLD
+```
+
+The connected-matter class — the class the gate was built for, and the one R14
+failed on — is not demonstrated. A gate that cannot fire is not a gate that
+found nothing to fire on, and 1.5M edges is not the place to discover the
+difference.
+
+**No apply candidate was frozen.** A candidate binds rows to a resolver version,
+and this one is going to change; freezing 6,051,882 references against a
+resolver already known to be blind on this class would produce a hash that has
+to be thrown away. The population identity of record for this round is the blind
+package.
+
+Evidence: `docs/ai/new2-r15/citation-falsifier-r15.json` and the three files
+beside it.
 
 ---
 
@@ -411,10 +527,20 @@ change made on one month's reading.
 - **The citing-window census is corroboration, not the report.** 158 windows
   across 17 courts naming _Ravi Prakash Gupta_ is strong and is not the printed
   page at (2010) 7 SCC 626.
-- **The LCC gate was not read for correctness.** Its presence and its
-  uncommitted state are facts about the working tree; whether the cohort logic is
-  right is untested by this lane and will stay untested until there is a commit
-  to test.
+- **The R15 falsifier is a sample of 3,600 on a population of 6,051,882.** An
+  in-sample zero bounds the false-pin rate near 1e-3, not at zero.
+- **The case finding is a corpus-shape measurement, not a query measurement.**
+  1.95% is of key-bearing judgments in a 4,000-row md5 sample; it is not the rate
+  at which an advocate would meet the defect, and I did not measure that.
+- **Upper-casing a head is a proxy for case-insensitive matching, not the same
+  thing.** It can in principle create a match the real fix would not, so 20.7%
+  and 1.95% are upper bounds on what case alone costs.
+- **The `AMBIGUOUS` path is thinly exercised in this round.** The self-reference
+  branch now answers 386 of the 400 `E_MULTI_DISTINCT_CASE` rows, so the
+  false-unique generator stratum tested `AMBIGUOUS` on 14 rows, not 400.
+- **No apply candidate was frozen**, so nothing in this round binds rows, and the
+  6.05M-reference sweep that would produce one has not been run against the
+  current resolver.
 - **The Bombay 2026-08 refusal rate is one month.** Three months of movement is
   a trend; one month at 64.1% is a reading.
 - **`n2-hc-parity-matrix.mts` and the freshness decomposition were run, not
@@ -458,24 +584,47 @@ STATUTE_MATERIAL_TEMPORAL_ERRORS    0
 HUMAN_REVIEW_CITATION               (2010) 7 SCC 626
 HUMAN_REVIEW_STATE                  HUMAN_REVIEW_REQUIRED
 
-LCC_GATE_OBSERVED                   WRITTEN_BUT_UNCOMMITTED
-                                    cohort.ts + 2 test files untracked;
-                                    resolver.ts modified, not committed
-CITATION_RETEST_STATE               WAITING_FOR_LCC
+LCC_GATE_OBSERVED                   COMMITTED at bd2aa74a, verified current
+                                    (untracked when first read at 125b8345;
+                                    LCC committed it mid-round)
+CITATION_RETEST_STATE               RETESTED_INDEPENDENTLY
 
-NEW_APPLY_POPULATION_ID             NOT_CREATED — no committed gate to test
-FALSE_PIN                           NOT_RUN
-FALSE_UNIQUE                        NOT_RUN
-AMBIGUOUS                           NOT_RUN
-UNTESTABLE                          NOT_RUN
+NEW_APPLY_POPULATION_ID             NEW2-R15-PKG-48be7a6f42282d6d
+                                    3,600 sampled of 6,051,882 scanned;
+                                    254 rows (7.06%) shared with R14
+FALSE_PIN                           0
+FALSE_UNIQUE                        0
+AMBIGUOUS                           411
+UNTESTABLE                          0
+
+  self-edge class                   PASS   (1,917 refused at source)
+  aliases                           PASS   (structural: never AMBIGUOUS)
+  cross-court collisions            PASS   (396 AMBIGUOUS, 0 pinned)
+  prediction-blind positives        PASS   (0 of 472 contradicted)
+  prediction-blind negatives        PASS   (400 + 400, 0 pins)
+  connected matter / common order   NOT PASSED
+
+NEW2-R15-F1                         the cohort gate matches matter numbers
+                                    UPPER CASE ONLY while matching the
+                                    connector case-insensitively, so a
+                                    title-case common order yields
+                                    connector=WITH, declaredMatters=0, and
+                                    passes as unique. 472 of 472 gate
+                                    evaluations saw zero matters. 1.95% of
+                                    key-bearing judgments carry a joined
+                                    cohort it cannot see. LCC's to fix.
 
 CITATION_BULK_APPLY                 HOLD
+                                    no apply candidate frozen, nothing bound
 
 REPEAL_COLUMN_SCHEMA_REQUIRED       NO — request RETRACTED
 LCC_SCHEMA_HANDOFF                  NONE SENT (observation only, section 5)
 
 BLOCKERS                            none for this lane.
-                                    Waiting on LCC to commit the cohort gate.
+                                    NEW2-R15-F1 is LCC's to fix; bulk apply
+                                    stays HOLD until it is and a further
+                                    independent round clears the class.
                                     (2010) 7 SCC 626 needs a human with the
-                                    report — queued, not blocking.
+                                    report — queued as FQ-CITE-2010-7-SCC-626,
+                                    not blocking.
 ```

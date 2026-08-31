@@ -1,0 +1,83 @@
+{
+ "sampled": 4000,
+ "totals": {
+  "n": 4000,
+  "readZero": 1577,
+  "recoveredAny": 828,
+  "recoveredCohort": 78
+ },
+ "byCourt": {
+  "Allahabad High Court": {
+   "n": 1615,
+   "readZero": 772,
+   "recoveredAny": 369,
+   "recoveredCohort": 17
+  },
+  "High Court of Karnataka": {
+   "n": 667,
+   "readZero": 0,
+   "recoveredAny": 0,
+   "recoveredCohort": 0
+  },
+  "High Court Of Rajasthan": {
+   "n": 456,
+   "readZero": 423,
+   "recoveredAny": 368,
+   "recoveredCohort": 48
+  },
+  "Bombay High Court": {
+   "n": 402,
+   "readZero": 13,
+   "recoveredAny": 1,
+   "recoveredCohort": 3
+  },
+  "High Court Of Chhattisgarh": {
+   "n": 295,
+   "readZero": 10,
+   "recoveredAny": 2,
+   "recoveredCohort": 0
+  },
+  "High Court of Jharkhand": {
+   "n": 122,
+   "readZero": 38,
+   "recoveredAny": 5,
+   "recoveredCohort": 7
+  },
+  "High Court of Punjab and Haryana": {
+   "n": 122,
+   "readZero": 102,
+   "recoveredAny": 4,
+   "recoveredCohort": 0
+  },
+  "Supreme Court of India": {
+   "n": 111,
+   "readZero": 111,
+   "recoveredAny": 34,
+   "recoveredCohort": 1
+  },
+  "High Court of Himachal Pradesh": {
+   "n": 75,
+   "readZero": 25,
+   "recoveredAny": 13,
+   "recoveredCohort": 0
+  },
+  "Gauhati High Court": {
+   "n": 60,
+   "readZero": 45,
+   "recoveredAny": 21,
+   "recoveredCohort": 0
+  },
+  "High Court of Uttarakhand": {
+   "n": 41,
+   "readZero": 23,
+   "recoveredAny": 10,
+   "recoveredCohort": 2
+  },
+  "High Court of Kerala": {
+   "n": 25,
+   "readZero": 10,
+   "recoveredAny": 0,
+   "recoveredCohort": 0
+  }
+ }
+}
