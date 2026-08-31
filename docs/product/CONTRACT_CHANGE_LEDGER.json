@@ -409,17 +409,96 @@
       "rccConsumed": false,
       "guardEnforcementUpdate_30Aug": "CORRECTION TO THIS RECORD'S OWN EARLIER STATEMENT. When this CCR was filed it said 'no committed test would catch a violation'. That is NO LONGER TRUE and the record is corrected rather than left to age: `services/api/src/search/party-search-platform.test.ts:76-80` now asserts `assert.deepEqual(PLATFORM_CAPABILITY_OVERRIDES, {}, 'no capability is narrowed on any platform in this release; adding a row IS flipping the switch')`. OBSERVED at HEAD 784bab85, 17 tests, 17 pass. So ACTIVATION now breaks CI before it can land silently - the guard has teeth it did not have. WHAT IS STILL MISSING is condition (3) of `liftsWhen`: no test asserts that a SUPPRESSED party arm reports something truthful in `retrievalOutcome`. The activation guard therefore STANDS UNCHANGED; what improved is enforcement of the prohibition, not satisfaction of the correction.",
       "reverifiedAtHead_30Aug": "PLATFORM_CAPABILITY_OVERRIDES = {} and search.party_name = ENABLED, both re-observed at HEAD 784bab85. outcome.ts is UNMODIFIED - TIMEOUT_ARMS still holds only sparse/dense/pin timeouts and `party_name_disabled` appears nowhere in it. LCC confirms on bus 1612 that it read the DEFER before touching anything and did not widen the response contract. PARTY_DEFER_STATE = INTACT. The override is NOT activated."
+    },
+    {
+      "id": "CCR-NEW3-XS-01",
+      "new3LedgerId": "CCR-2026-08-31-12",
+      "filedBy": "LCC",
+      "filedVia": "LCC cross-surface report, adjudicated by NEW3 31 August 2026 at HEAD 6f0d96bfee9ccfea1be85fb768fc9f1c82f9f336. Full adjudication: docs/product/NEW3_CROSS_SURFACE_TREATMENT_ADJUDICATION_R14.md.",
+      "receivedAs": "RECEIVED",
+      "endpoint": "GET|POST /matters/:matterId/authorities - `overruledStatus`, in relation to the identically named field on GET /judgments/:id, POST /search and the briefing routes",
+      "missing": "Not a missing field. ONE FIELD NAME CARRIES TWO OD-14 LAYERS DEPENDING ON THE ROUTE, and R14 does not say so. On judgments/route.ts:402, search/route.ts:557 and :614, and briefings/route.ts:255, `overruledStatus` is the DERIVED `precedentialPolicy(effect).bannerStatus`, with the stored column served beside it as `overruledStatusStored`. On matters/authorities.ts:187 it is the RAW STORED `j.overruled_status`, and that route serves no `overruledStatusStored` at all - so the derived banner has no name on it and the stored value occupies the derived value’s name.",
+      "observedAtHead": {
+        "head": "6f0d96bfee9ccfea1be85fb768fc9f1c82f9f336",
+        "derivedSites": [
+          "services/api/src/judgments/route.ts:402 - `overruledStatus: policy.bannerStatus`; :403 - `overruledStatusStored: row.overruled_status`",
+          "services/api/src/search/route.ts:557-558 and :614-615 - `.banner` with `overruledStatusStored` beside it",
+          "services/api/src/briefings/route.ts:255,257 - same pair"
+        ],
+        "storedSites": [
+          "services/api/src/matters/authorities.ts:187 - `overruledStatus: r.overruled_status`, joined live from `judgments`, no `overruledStatusStored`",
+          "services/api/src/search/saved.ts:292 - the raw `hybridSearch` hit, and NO `precedentialEffect` beside it"
+        ],
+        "mechanism": "precedential-effect.ts:429-431 returns `evidence_defect` when every adverse edge behind a stored status is a MODALITY_DEFECT; precedentialPolicy :569,:589 returns `bannerStatus: ‘none’` for it. Stored adverse, derived banner none.",
+        "liveCensus": {
+          "takenVia": "The committed derivation (MODALITY_DEFECT filter, EDGE_RANK 1/2/3, storedRank comparison, policy table) transcribed into SQL and run against the live database, 31 Aug 2026.",
+          "judgmentsWithNonNoneStoredStatus": 98,
+          "bannerEqualsStored": 97,
+          "divergent": 1,
+          "rows": [
+            "stored set_aside / effect overruled / banner set_aside : 72",
+            "stored doubted / effect doubted / banner doubted : 17",
+            "stored partly_set_aside / effect overruled_in_part / banner partly_set_aside : 8",
+            "stored set_aside / effect evidence_defect / banner none : 1  <-- the only divergence"
+          ],
+          "theOneRow": "f83d0700-eaf5-4075-9744-2e20faacedc9 - DIVISIONAL PERSONNEL OFFICER, SOUTHERN RAILWAY & ANR. versus T. R. CHALLAPPAN, 1975 INSC 212. One adverse edge, zero usable. Saved to ZERO live matter authorities right now.",
+          "bannerUpgradeClass": "ZERO ROWS. Where `review_required` or a graver edge raises the derived banner ABOVE the stored value, the saved-authority route would UNDER-state a warning. Measured at zero and latent, not impossible."
+        },
+        "testCoverage": "NO committed test pins which layer the matters route serves. matters/authorities.test.ts:559-589 covers `evidence_defect` and asserts `precedentialEffect`, `canAddToMatter` and `citableForUntouchedPropositions` - deliberately not `overruledStatus`. :554 asserts `overruledStatus` for an `overruled_in_part` authority, where stored and banner coincide, so it does not discriminate either."
+      },
+      "contractSilence": "R14 §A5 says `overruledStatus` is \"unchanged: still four values, still the only value that may drive a banner, still read live and never cached\". R14 §WHAT DID NOT CHANGE repeats it \"on every surface\". R14 §A6 adds the three policy fields to the saved-authority shape and says nothing about which layer that route’s `overruledStatus` carries. A client author reading R14 alone would conclude the field means the same thing everywhere. It does not.",
+      "rccPosition": "RCC needs nothing and is asked for nothing. RCC consumed R14 A6 at 6f0d96bf and its consumption is what neutralises the difference: MatterScreen.tsx:521-522 maps `precedentialEffect === ‘evidence_defect’` to `overruledStatus: ‘none’` before citationRender, so the LAW MOVED chip, danger band and strikethrough are suppressed exactly as on the reader. treatmentRelationshipCopy independently refuses a verb for that value. OBSERVED: `npx jest src/screens/matter/MatterScreen.authorities.test.tsx` at HEAD - 16 pass, 0 fail.",
+      "severitySubmittedByRCC": "n/a - filed by LCC, not RCC.",
+      "severityAdjudicatedByNEW3": "P1. Not P0, and not a deliberate compatibility distinction either.",
+      "severityAdjudicationReason": "CONTRACT_CHANGE_CONTROL.md §3 defines P0 as a surface that STATES OR IMPLIES SOMETHING FALSE. No released surface does: one judgment corpus-wide diverges, it is saved to zero live matters, the only surface that renders MatterAuthority neutralises it with a committed passing test, and the divergence direction for `evidence_defect` SUBTRACTS a warning rather than hiding one - the stale-overruled zero threshold is untouched. LCC’s severity conclusion was not inherited; this severity was derived from the census and the executed client test.",
+      "affectedSurface": "The matter workspace authority list (apps/mobile/src/screens/matter/MatterScreen.tsx) - the ONLY renderer of MatterAuthority in the app, grepped at HEAD.",
+      "userTruthImpact": "NONE at HEAD, and the reason is the client, not the contract. If MatterScreen.tsx:521-522 were removed as redundant - which a future author reading R14 alone would reasonably think it is - the matter list would show LAW MOVED on a judgment the reader shows clean. That is the actual risk, and it is a DOCUMENTATION risk, not a wire-shape one.",
+      "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
+      "userTruthClassificationQualification": "Internal ONLY because the client compensates, not because the contract distinguishes the two meanings. Nothing in R14 obliges RCC to keep the override.",
+      "CONTRACT_CHANGE_REQUIRED": "NOT NOW - see requiredCorrectionWhenConverted",
+      "CURRENT_GATE_B_P0": "NO",
+      "decision": "DEFER",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-08-31",
+      "rationale": "DEFER, not AMEND and not NO_CHANGE. Not AMEND: no advocate is waiting on it, NEW3 cannot implement it (services/**), and landing a semantic change on a field RCC consumed hours ago would repeat the ordering mistake R14 §A4.0 records - for a smaller reason. Not NO_CHANGE: the §4 carve-out for NO_CHANGE requires the fields to have EXPLICITLY different semantics, and they do not - R14 is silent, no test pins the layer, and the client type uses the same union with no note. Two things are genuinely owed: the naming/representation cleanup, and a guard against the banner-upgrade class that has zero rows today and would UNDER-state a warning if it ever had one. No R15 is created; R14 remains current.",
+      "deferExitConditions": [
+        "any judgment appears whose derived bannerStatus is GRAVER than its stored overruled_status (the banner-upgrade class, currently zero rows)",
+        "any client other than MatterScreen.tsx renders MatterAuthority.overruledStatus",
+        "GET /saved-searches/:id/feed acquires a consumer or a v1 capability row",
+        "RCC proposes removing the evidence_defect override at MatterScreen.tsx:521"
+      ],
+      "requiredCorrectionWhenConverted": {
+        "note": "Specified now so the future AMEND is mechanical. This is NOT a revision and creates none.",
+        "preferred": "Serve `overruledStatus = policy.bannerStatus` on GET|POST /matters/:matterId/authorities and add `overruledStatusStored = j.overruled_status` beside it, making the route identical to judgments/route.ts:402-403, search/route.ts:557-558 and briefings/route.ts:255-257.",
+        "wireImpact": "ADDITIVE for `overruledStatusStored`. For `overruledStatus` it is a VALUE change inside an unchanged four-value type on one route: one judgment moves set_aside -> none. Not a shape change, not a removal, not a narrowing.",
+        "wireProtocolInteger": "UNCHANGED at 1. minSupportedContract UNCHANGED at 1.",
+        "rccImpact": "NONE, before or after. The override at MatterScreen.tsx:521-522 becomes a no-op rather than wrong. It must NOT be deleted as part of the change.",
+        "testRequired": "A committed test pinning WHICH LAYER the route serves - an evidence_defect authority whose listed `overruledStatus` is asserted equal to `none`. No such test exists today."
+      },
+      "priorVersion": "R14",
+      "newVersion": null,
+      "schemaDelta": "none - no request or response shape moves in this round",
+      "semanticDelta": "none on the wire. What changes is the RECORD: the two meanings of `overruledStatus` are now stated, having been undocumented. The semantic correction itself is specified under requiredCorrectionWhenConverted and lands with a future amendment.",
+      "capabilityImpact": "none. matter.saved_authorities stays ENABLED. No registry row moves. ENABLED_WITHOUT_EVIDENCE stays 0.",
+      "claimImpact": "none. No claim changes and none is added. UNSUPPORTED_CLAIMS stays 0.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: record only, no work scheduled - do not change the route now; the correction in requiredCorrectionWhenConverted lands when an exit condition fires. Two items for your record, neither scheduled: search/saved.ts:292 serves the raw stored value with NO precedentialEffect beside it (unconsumed, not a v1 capability, must not ship without deriving), and matters/authorities.test.ts pins no layer. RCC: no change requested; the evidence_defect override at MatterScreen.tsx:521-522 is CONTRACT-LOAD-BEARING and must not be removed as redundant.",
+      "reconsideredAt": "Gate C, 18 September 2026, and immediately on any exit condition.",
+      "openAs": "NON_GATE_P1_OPEN",
+      "releasedToRCC": null,
+      "rccConsumed": false,
+      "relatedRelease": "R14 §A6.1. RCC_CONSUMED moved NO -> YES at 6f0d96bf (bus 1629) during this session, which is why this is decided now rather than at the release: the client half of the answer only came into existence at that commit."
     }
   ],
   "counts": {
-    "received": 11,
+    "received": 12,
     "amended": 7,
-    "deferred": 2,
+    "deferred": 3,
     "rejectedWithAlternative": 1,
     "engineeringDefectRoutedToLCC": 1,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R13 recorded 5 received / 0 P0 open. Those counts are SUPERSEDED, not carried: the four RCC Sprint-2 CCRs in apps/mobile/CONTRACT_CHANGE_REQUESTS.md had never been ledgered, so the R13 numbers described a ledger that was missing four rows. R14 recorded 10 received / 1 deferred. Superseded 30 Aug 2026 by the Sprint-2 final adjudication, which added CCR-NEW3-S2F-01 (DEFER)."
+    "note": "R13 recorded 5 received / 0 P0 open. Those counts are SUPERSEDED, not carried: the four RCC Sprint-2 CCRs in apps/mobile/CONTRACT_CHANGE_REQUESTS.md had never been ledgered, so the R13 numbers described a ledger that was missing four rows. R14 recorded 10 received / 1 deferred. Superseded 30 Aug 2026 by the Sprint-2 final adjudication, which added CCR-NEW3-S2F-01 (DEFER). Superseded again 31 Aug 2026 by the cross-surface treatment adjudication, which added CCR-NEW3-XS-01 (DEFER)."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "TWO DIFFERENT NUMBERS. CONTRACT_REVISION (R12 -> R13 -> R14) is the NEW3 governance revision of the contract document. WIRE_PROTOCOL_VERSION is the integer served at GET /version as `contract`, defined in services/api/src/contract-version.ts as bumped ONLY by a change a current client cannot ignore, with every within-version change ADDITIVE. R14's amendments are additive or semantic - an optional request selector, optional response fields, one added value on an open-ended string field, and stated meanings - so the wire integer STAYS 1 and minSupportedContract stays 1. No services/** change is required or made by this decision.",

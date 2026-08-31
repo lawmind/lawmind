@@ -144,3 +144,62 @@ UNSUPPORTED_CLAIMS = 0
 These counters cover this governance transition. They do not restate a product
 capability as available; they record that none was enabled and no availability
 claim was authorised.
+
+## 5 · Saved-authority R14 consumption — closed
+
+The §3 release observation recorded `SAVED_AUTHORITY_RCC_CONSUMED = NO`, which was
+true when it was written. It is superseded here rather than rewritten:
+
+```text
+SAVED_AUTHORITY_RCC_CONSUMED = YES
+CONSUMPTION_COMMIT           = 6f0d96bf   (bus 1629, 31 Aug 2026)
+CONTRACT_REVISION            = R14        (unchanged; no R15)
+```
+
+Observed at HEAD `6f0d96bfee9ccfea1be85fb768fc9f1c82f9f336`:
+`apps/mobile/src/screens/matter/MatterScreen.tsx` reads `precedentialEffect`,
+`canAddToMatter` and `citableForUntouchedPropositions` on the saved-authority row,
+and `npx jest src/screens/matter/MatterScreen.authorities.test.tsx` returns
+**16 pass, 0 fail**. `CCR-RCC-S2-02` is closed end to end.
+
+## 6 · Cross-surface `overruledStatus` — adjudicated DEFER, no R15
+
+LCC reported that the judgment reader and the saved-authority list appear to
+disagree about the same judgment's treatment status. Adjudicated in full at
+[`NEW3_CROSS_SURFACE_TREATMENT_ADJUDICATION_R14.md`](NEW3_CROSS_SURFACE_TREATMENT_ADJUDICATION_R14.md),
+ledger row `CCR-NEW3-XS-01`.
+
+```text
+SAME_LEGAL_FACT_DIFFERENT_VALUE = YES
+USER_TRUTH_CLASSIFICATION       = INTERNAL_ONLY_DIFFERENCE
+DECISION                        = DEFER
+NEW_REVISION                    = none — R14 remains current
+SEVERITY                        = P1
+WIRE_PROTOCOL_VERSION           = 1  (unchanged)
+LCC_CHANGE_REQUIRED             = NO  (record only)
+RCC_CHANGE_REQUIRED             = NO
+```
+
+The difference is one field name carrying two OD-14 layers: `overruledStatus` is
+the derived `policy.bannerStatus` on the reader, search and briefings — each with
+the stored column beside it as `overruledStatusStored` — and the raw stored column
+on `GET|POST /matters/:matterId/authorities`, which serves no
+`overruledStatusStored` at all.
+
+Live census at HEAD: **98** judgments carry a non-`none` stored status, **97** have
+banner == stored, and the single divergence is `1975 INSC 212`
+(*T. R. Challappan*, `evidence_defect`, stored `set_aside`, banner `none`), saved
+to **zero** live matter authorities. The banner-upgrade class — where the derived
+banner would be graver than the stored value, and the saved list would therefore
+under-state a warning — measures **zero rows**.
+
+It is `INTERNAL_ONLY_DIFFERENCE` **because RCC's consumption in §5 compensates for
+it**, not because R14 distinguishes the two meanings. R14 does not. The override at
+`MatterScreen.tsx:521–522` is therefore contract-load-bearing and must not be
+removed as redundant; that is the one instruction issued to RCC, and it asks for no
+change.
+
+No capability changes state. The counters in §4 stand: `ENABLED_WITHOUT_EVIDENCE = 0`,
+`UNSUPPORTED_CLAIMS = 0`. `PARTY_IOS_OVERRIDE_ACTIVATION` remains
+`BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT` and `ADVOCATE_WEB_PUBLIC_CAPABILITY`
+remains `DISABLED_NOT_READY`.
