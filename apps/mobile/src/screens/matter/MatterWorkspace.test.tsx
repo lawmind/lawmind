@@ -3,6 +3,7 @@ import { useWindowDimensions } from 'react-native';
 
 import { MatterWorkspace } from './MatterWorkspace';
 import { api } from '../../api/client';
+import type { MatterAuthority } from '../../api/contract';
 
 /**
  * THE DESKTOP MATTER WORKSPACE — same two guarantees as
@@ -36,11 +37,33 @@ const mockMatter = {
   cnrNumber: null,
   court: 'Mock High Court',
   caseType: 'civil',
-  parties: {},
+  parties: { description: 'Mock Petitioner and Mock State' },
+  ourSide: 'petitioner',
   nextHearingDate: null,
-  clientName: null,
-  clientPhone: null,
+  clientName: 'Mock Client',
+  clientPhone: '9800000000',
   notes: null,
+};
+
+const savedAuthority: MatterAuthority = {
+  authorityId: 'auth_1',
+  judgmentId: 'jdg_1',
+  caseTitle: 'Mock Authority v. Union of India',
+  neutralCitation: '2026 MOCK 1',
+  reporterCitations: [],
+  addedBy: 'usr_1',
+  addedAt: '2026-08-30T00:00:00.000Z',
+  removedAt: null,
+  verificationState: 'verified',
+  verifiedBySource: 'corpus',
+  overruledStatus: 'set_aside',
+  overruledByJudgmentId: 'jdg_2',
+  overruledByTitle: 'Mock Later Judgment v. Union of India',
+  overruledParas: null,
+  overruledNote: null,
+  precedentialEffect: 'overruled',
+  canAddToMatter: true,
+  citableForUntouchedPropositions: true,
 };
 
 jest.mock('../../state/practice', () => ({
@@ -92,4 +115,31 @@ it('opens a matter in a second pane at desktop width, and the list survives it',
   // Never falls back to a route push once a pane exists to open into.
   expect(mockPush).not.toHaveBeenCalled();
   expect(api.matter).toHaveBeenCalledWith('mat_1');
+});
+
+it('loads saved authorities in the desktop matter pane with the released R14 relationship', async () => {
+  (api.matter as jest.MockedFunction<typeof api.matter>).mockResolvedValueOnce({
+    ok: true,
+    data: { matter: mockMatter, access: 'owner', events: [], documents: [], briefings: [] },
+  });
+  (
+    api.matterAuthorities as jest.MockedFunction<typeof api.matterAuthorities>
+  ).mockResolvedValueOnce({
+    ok: true,
+    data: { authorities: [savedAuthority], asOf: '2026-08-30T00:00:00.000Z' },
+  });
+
+  await render(<MatterWorkspace />);
+  await fireEvent.press(await screen.findByText('Mock Petitioner v. Mock State'));
+
+  expect(await screen.findByText('Mock Authority v. Union of India')).toBeTruthy();
+  expect(screen.getByText('2026 MOCK 1')).toBeTruthy();
+  expect(screen.getByText('Overruled by Mock Later Judgment v. Union of India')).toBeTruthy();
+  expect(
+    screen.getByText('Still citable for propositions the later judgment did not reach.'),
+  ).toBeTruthy();
+  expect(screen.queryByText(/Set aside in Mock Later Judgment/)).toBeNull();
+
+  await fireEvent.press(screen.getByText('Mock Authority v. Union of India'));
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/judgment/[id]', params: { id: 'jdg_1' } });
 });

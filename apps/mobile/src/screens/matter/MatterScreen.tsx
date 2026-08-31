@@ -516,9 +516,13 @@ export function MatterScreen({
                 const { moved } = citationRender({
                   verificationState: a.verificationState,
                   verifiedBySource: a.verifiedBySource,
-                  overruledStatus: a.overruledStatus,
+                  // An evidence defect is our parser's mistake, not moved law.
+                  // R14 requires no banner and no prohibition for that value.
+                  overruledStatus:
+                    a.precedentialEffect === 'evidence_defect' ? 'none' : a.overruledStatus,
                   overruledNote: a.overruledNote,
                   overruledParas: a.overruledParas,
+                  canAddToMatter: a.canAddToMatter,
                 });
                 return (
                   <Pressable
@@ -571,9 +575,22 @@ export function MatterScreen({
                       ) : null}
 
                       {/* Named, not merely flagged — the server joins who displaced it. */}
-                      {moved.kind === 'moved' && a.overruledByTitle ? (
+                      {a.overruledByTitle &&
+                      (moved.kind === 'moved' || a.precedentialEffect === 'evidence_defect') ? (
                         <Text variant="ui" style={styles.overruledBy}>
-                          {treatmentRelationshipCopy(a.overruledByTitle)}
+                          {treatmentRelationshipCopy(
+                            a.overruledByTitle,
+                            a.precedentialEffect,
+                          )}
+                        </Text>
+                      ) : null}
+
+                      {moved.kind === 'moved' &&
+                      a.citableForUntouchedPropositions === true &&
+                      (a.precedentialEffect === 'overruled' ||
+                        a.precedentialEffect === 'overruled_in_part') ? (
+                        <Text variant="ui" style={styles.stillStands}>
+                          Still citable for propositions the later judgment did not reach.
                         </Text>
                       ) : null}
 

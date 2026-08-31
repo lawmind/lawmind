@@ -9,9 +9,10 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * FROZEN — PD-15 REVERSED 12 AUG 2026, FOUNDER DIRECTION. See the identical
- * notice at the top of `ResearchWorkspace.tsx`. Left in place, inert below the
- * breakpoint on every phone; not extended further.
+ * LOCAL V1 — Master Roadmap v7.1 governs and restores the advocate research
+ * workstation to v1 scope. NEW3 R14 still records public advocate web as
+ * `DISABLED_NOT_READY`; this is the local Expo web shell only. See the matching
+ * boundary at the top of `ResearchWorkspace.tsx`.
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * THE DESKTOP MATTER WORKSPACE — same pattern as `ResearchWorkspace.tsx`,

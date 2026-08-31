@@ -100,10 +100,11 @@ export default function RootLayout() {
    * instead — `Platform.OS === 'web'` here is the correct gate, not a
    * temporary one.
    *
-   * FROZEN, NOT THE PALETTE ITSELF. PD-15 (desktop) is reversed 12 Aug
-   * 2026 — this listener never fires for an advocate on the phone app either
-   * way, since `Platform.OS` is never `'web'` there. The command palette's
-   * mobile trigger (Today screen) is unaffected and stays a live feature.
+   * LOCAL WEB ONLY. Master Roadmap v7.1 restores the desktop workstation to v1
+   * scope, while NEW3 R14 keeps every public advocate-web capability
+   * `DISABLED_NOT_READY`. This listener never fires on the phone because
+   * `Platform.OS` is never `'web'` there; the Today-screen mobile trigger is
+   * unaffected.
    */
   const toggleCommandPalette = useCommandPalette((s) => s.toggle);
   useEffect(() => {

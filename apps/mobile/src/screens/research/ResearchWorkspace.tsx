@@ -10,12 +10,12 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * FROZEN — PD-15 REVERSED 12 AUG 2026, FOUNDER DIRECTION. "This is only an
- * app, we do not plan for a desktop." Left in place rather than deleted, the
- * founder's explicit call — below `size.researchTwoPane` this has always
- * rendered exactly the phone screen, so no phone user was ever affected by
- * either the settling or the reversal. Do not extend this: no new desktop
- * surface, no further breakpoint work. See `PRODUCT_DECISIONS.md` PD-15.
+ * LOCAL V1 — Master Roadmap v7.1 governs and places the advocate research
+ * workstation in v1. NEW3 R14 still records every public advocate-web
+ * capability as `DISABLED_NOT_READY`, so this remains a local Expo web surface
+ * and authorises no public route, claim or deployment. Below
+ * `size.researchTwoPane` it still renders exactly the phone screen, so the
+ * mobile path is unchanged.
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * THE DESKTOP RESEARCH WORKSPACE — PD-15, settled 11 Aug 2026 (`FQ-D9`),

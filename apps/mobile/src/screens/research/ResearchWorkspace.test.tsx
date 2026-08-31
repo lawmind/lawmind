@@ -8,7 +8,7 @@ import { size } from '../../theme/tokens';
 import type { SearchResponse } from '../../api/contract';
 
 /**
- * THE DESKTOP RESEARCH WORKSPACE — PD-15, 11 Aug 2026.
+ * THE LOCAL DESKTOP RESEARCH WORKSPACE — Master Roadmap v7.1.
  *
  * Two guarantees are under test and the FIRST ONE MATTERS MOST:
  *

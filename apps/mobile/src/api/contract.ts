@@ -1345,6 +1345,14 @@ export type MatterAuthority = {
   overruledByTitle: string | null;
   overruledParas: number[] | null;
   overruledNote: string | null;
+  /**
+   * R14 A6, released to RCC on 31 Aug 2026. These three fields are derived live
+   * on each GET/POST response and are never copied onto the saved row. They
+   * remain optional so an older local API keeps the conservative pre-A6 path.
+   */
+  precedentialEffect?: PrecedentialEffect;
+  canAddToMatter?: boolean;
+  citableForUntouchedPropositions?: boolean;
 };
 
 export type HiddenResult = {

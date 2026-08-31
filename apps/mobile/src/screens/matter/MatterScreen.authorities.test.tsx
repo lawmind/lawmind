@@ -333,6 +333,65 @@ describe('good-law status, live from bus 0048/0049 (LCC dd9871b)', () => {
     expect(screen.queryByText(/Set aside in Mock Successor/)).toBeNull();
   });
 
+  it('uses the released R14 relationship and policy without weakening the warning', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: {
+        authorities: [
+          authority({
+            overruledStatus: 'set_aside',
+            overruledByJudgmentId: 'jdg_2',
+            overruledByTitle: 'Mock Constitutional Bench v. Union of India',
+            precedentialEffect: 'overruled',
+            canAddToMatter: true,
+            citableForUntouchedPropositions: true,
+          }),
+        ],
+        asOf: '2026-08-31T00:00:00.000Z',
+      },
+    });
+
+    await draw();
+
+    expect(await screen.findByText('Overruled')).toBeTruthy();
+    expect(
+      screen.getByText('Overruled by Mock Constitutional Bench v. Union of India'),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Still citable for propositions the later judgment did not reach.',
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText(/Set aside in Mock Constitutional Bench/)).toBeNull();
+  });
+
+  it('removes a parser-defect warning while keeping the later judgment visible neutrally', async () => {
+    matterAuthorities.mockResolvedValue({
+      ok: true,
+      data: {
+        authorities: [
+          authority({
+            overruledStatus: 'doubted',
+            overruledByJudgmentId: 'jdg_2',
+            overruledByTitle: 'Mock Later Judgment v. Union of India',
+            precedentialEffect: 'evidence_defect',
+            canAddToMatter: true,
+            citableForUntouchedPropositions: true,
+          }),
+        ],
+        asOf: '2026-08-31T00:00:00.000Z',
+      },
+    });
+
+    await draw();
+
+    expect(
+      await screen.findByText('Later judgment: Mock Later Judgment v. Union of India'),
+    ).toBeTruthy();
+    expect(screen.queryByText('Doubted')).toBeNull();
+    expect(screen.queryByText(/Doubted in Mock Later Judgment/)).toBeNull();
+  });
+
   it('states what still stands on a partly set-aside authority, before what fell', async () => {
     matterAuthorities.mockResolvedValue({
       ok: true,

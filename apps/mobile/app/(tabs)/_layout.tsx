@@ -33,8 +33,7 @@ export default function TabsLayout() {
    * the app is unfinished on the one screen that was supposed to save them
    * time.
    *
-   * The route file stays in place, inert — the same call the founder made for
-   * the desktop workspaces under PD-15. Nothing is deleted; it is simply not
+   * The route file stays in place, inert. Nothing is deleted; it is simply not
    * reachable, and it becomes reachable again by moving one row in
    * `state/capabilities.ts`.
    */
