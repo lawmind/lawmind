@@ -1,0 +1,73 @@
+{
+  "artifact": "NEW2_R17_DOCUMENT_IDENTITY_CASE",
+  "lane": "NEW2",
+  "takenAt": "2026-08-31T16:02:27.782Z",
+  "citationKey": "2023KHCD14142",
+  "subject": "R16 INGEST_WRONG_DOCUMENT_IDENTITY, handled apart from the extraction correction",
+  "DOCUMENT_IDENTITY_CORRECTION_REQUIRED": "NO",
+  "verdict": "SOURCE_PUBLISHED_ANOTHER_MATTERS_JUDGMENT_UNDER_THIS_CNR",
+  "why": "the two rows name two genuinely different objects — different sha256 — and both render the SAME matter. The loader stored what each object contains, so there is no loader defect to correct. The court published another matter judgment under the mismatched row CNR, which is a source fact to record against the row, not a canonical identity to rewrite.",
+  "CANONICAL_IDENTITY_REWRITTEN": "NO",
+  "note": "nothing here writes a judgments row. A canonical identity correction goes through the NEW2 data-truth process with its own authorisation, and this artifact is its evidence.",
+  "facts": {
+    "bearers": 2,
+    "distinctTextSha256": 1,
+    "distinctSourceObjects": 2,
+    "bearersWhoseMastheadNamesAnotherMatter": 1,
+    "objectBytesIdentical": false
+  },
+  "sourceObjects": [
+    {
+      "rowCaseNumber": "MFA/25207/2011",
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhcdharwad/KAHC020253502011_1_2023-12-04.pdf",
+      "status": 200,
+      "bytes": 57617,
+      "sha256": "479e1bbe8654a6a98112bb46b0ba08b4f28bee799108f8f6c3667d6bf286824c"
+    },
+    {
+      "rowCaseNumber": "MFA/25707/2011",
+      "url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhcdharwad/KAHC020007402011_1_2023-12-05.pdf",
+      "status": 200,
+      "bytes": 57617,
+      "sha256": "309cdb0940bc0de6cac141a04a86533307e7cb97256e6b72a7556d33fc88f56a"
+    }
+  ],
+  "bearers": [
+    {
+      "judgmentId": "7c905625-a494-43d5-bdc0-59e12ac23760",
+      "court": "High Court of Karnataka",
+      "judgmentDate": "2023-12-04",
+      "rowCaseNumber": "MFA/25207/2011",
+      "rowCaseTitle": "SMT. SUMITRA @ NAGAMMA W/O Vs THE GENERAL MANAGER",
+      "rowCnr": "KAHC020253502011",
+      "storedNeutralCitation": "2023:KHC-D:14142",
+      "contentHash": "1ee01aa8656ea59a7351937495f45dcd83ab87fa79bc15cc4909fc5e2fb345b6",
+      "textSha256": "1ee01aa8656ea59a7351937495f45dcd83ab87fa79bc15cc4909fc5e2fb345b6",
+      "textLength": 3729,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhcdharwad/KAHC020253502011_1_2023-12-04.pdf",
+      "pdfBasename": "KAHC020253502011_1_2023-12-04.pdf",
+      "sourceBenchCode": "karhcdharwad",
+      "mastheadCaseNumber": "MFA No. 25207 of 2011",
+      "mastheadMatchesRow": true,
+      "masthead": "- 1 - NC: 2023:KHC-D:14142 MFA No. 25207 of 2011 IN THE HIGH COURT OF KARNATAKA, DHARWAD BENCH DATED THIS THE 4TH DAY OF DECEMBER, 2023 BEFORE THE HON'BLE MR JUSTICE HANCHATE SANJEEVKUMAR MISCELLANEOU"
+    },
+    {
+      "judgmentId": "d6c2e21c-89c1-4517-84ab-667164ab8016",
+      "court": "High Court of Karnataka",
+      "judgmentDate": "2023-12-05",
+      "rowCaseNumber": "MFA/25707/2011",
+      "rowCaseTitle": "LALITA W/O MAHADEV HERALAGI Vs SHRI ASHOKKUMAR S/O DARIYARAM",
+      "rowCnr": "KAHC020007402011",
+      "storedNeutralCitation": "2023:KHC-D:14142",
+      "contentHash": "1ee01aa8656ea59a7351937495f45dcd83ab87fa79bc15cc4909fc5e2fb345b6",
+      "textSha256": "1ee01aa8656ea59a7351937495f45dcd83ab87fa79bc15cc4909fc5e2fb345b6",
+      "textLength": 3729,
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=29_3/bench=karhcdharwad/KAHC020007402011_1_2023-12-05.pdf",
+      "pdfBasename": "KAHC020007402011_1_2023-12-05.pdf",
+      "sourceBenchCode": "karhcdharwad",
+      "mastheadCaseNumber": "MFA No. 25207 of 2011",
+      "mastheadMatchesRow": false,
+      "masthead": "- 1 - NC: 2023:KHC-D:14142 MFA No. 25207 of 2011 IN THE HIGH COURT OF KARNATAKA, DHARWAD BENCH DATED THIS THE 4TH DAY OF DECEMBER, 2023 BEFORE THE HON'BLE MR JUSTICE HANCHATE SANJEEVKUMAR MISCELLANEOU"
+    }
+  ]
+}

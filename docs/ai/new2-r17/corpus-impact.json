@@ -1,0 +1,605 @@
+{
+  "artifact": "NEW2_R17_CORPUS_IMPACT",
+  "lane": "NEW2",
+  "takenAt": "2026-08-31T16:03:53.544Z",
+  "seed": "NEW2-R17-IMPACT",
+  "scope": "2023+ AWS Open Data High Court rows with retained text, bench=testcase excluded, random uuid anchors",
+  "note": "no ground truth here on purpose — this prices HOW MUCH would change, not how often either rule is right. The frozen evaluation population answers that, and its precision is not a corpus rate.",
+  "documents": 59434,
+  "transitions": {
+    "both_null": 46471,
+    "same_citation": 12741,
+    "withdrawn": 211,
+    "changed": 1,
+    "gained": 10
+  },
+  "rates": {
+    "oldAnswerRate": 0.21794,
+    "candidateAnswerRate": 0.21456,
+    "withdrawnRate": 0.00355,
+    "gainedRate": 0.00017,
+    "changedRate": 0.00002,
+    "withdrawnShareOfOldAnswers": 0.01629
+  },
+  "damageScreen": {
+    "note": "a damage screen was measured as arm CAND_D_FURNITURE on the frozen population and is NOT part of the shipped rule; this is what adding it would cost on a blind draw",
+    "damagedDocuments": 3540,
+    "damagedAndAnswered": 248,
+    "shareOfCandidateAnswersItWouldWithdraw": 0.01945
+  },
+  "byCourt": {
+    "Allahabad High Court": {
+      "n": 11296,
+      "oldAns": 5289,
+      "newAns": 5271,
+      "lost": 18,
+      "gained": 0,
+      "changed": 0
+    },
+    "Bombay High Court": {
+      "n": 6729,
+      "oldAns": 603,
+      "newAns": 492,
+      "lost": 111,
+      "gained": 0,
+      "changed": 0
+    },
+    "Madras High Court": {
+      "n": 6716,
+      "oldAns": 0,
+      "newAns": 1,
+      "lost": 0,
+      "gained": 1,
+      "changed": 0
+    },
+    "High Court of Punjab and Haryana": {
+      "n": 4991,
+      "oldAns": 528,
+      "newAns": 525,
+      "lost": 5,
+      "gained": 2,
+      "changed": 1
+    },
+    "Patna High Court": {
+      "n": 4184,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "Orissa High Court": {
+      "n": 3120,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Karnataka": {
+      "n": 3085,
+      "oldAns": 2262,
+      "newAns": 2262,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court Of Rajasthan": {
+      "n": 2809,
+      "oldAns": 1960,
+      "newAns": 1946,
+      "lost": 14,
+      "gained": 0,
+      "changed": 0
+    },
+    "Calcutta High Court": {
+      "n": 2528,
+      "oldAns": 0,
+      "newAns": 1,
+      "lost": 0,
+      "gained": 1,
+      "changed": 0
+    },
+    "High Court of Andhra Pradesh": {
+      "n": 1894,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court Of Chhattisgarh": {
+      "n": 1698,
+      "oldAns": 994,
+      "newAns": 978,
+      "lost": 16,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court  for State of Telangana": {
+      "n": 1618,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Jharkhand": {
+      "n": 1503,
+      "oldAns": 517,
+      "newAns": 517,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Delhi": {
+      "n": 1375,
+      "oldAns": 25,
+      "newAns": 22,
+      "lost": 9,
+      "gained": 6,
+      "changed": 0
+    },
+    "High Court of Madhya Pradesh": {
+      "n": 1313,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Kerala": {
+      "n": 1272,
+      "oldAns": 56,
+      "newAns": 56,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Himachal Pradesh": {
+      "n": 1040,
+      "oldAns": 286,
+      "newAns": 285,
+      "lost": 1,
+      "gained": 0,
+      "changed": 0
+    },
+    "Gauhati High Court": {
+      "n": 891,
+      "oldAns": 217,
+      "newAns": 187,
+      "lost": 30,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Uttarakhand": {
+      "n": 543,
+      "oldAns": 197,
+      "newAns": 197,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Jammu and Kashmir": {
+      "n": 422,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Gujarat": {
+      "n": 202,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Manipur": {
+      "n": 79,
+      "oldAns": 1,
+      "newAns": 1,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Tripura": {
+      "n": 74,
+      "oldAns": 4,
+      "newAns": 4,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Meghalaya": {
+      "n": 45,
+      "oldAns": 14,
+      "newAns": 7,
+      "lost": 7,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Jammu and Kashmir and Ladakh": {
+      "n": 4,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    },
+    "High Court of Sikkim": {
+      "n": 3,
+      "oldAns": 0,
+      "newAns": 0,
+      "lost": 0,
+      "gained": 0,
+      "changed": 0
+    }
+  },
+  "samples": {
+    "withdrawn": [
+      {
+        "court": "High Court Of Chhattisgarh",
+        "caseNumber": "WP227/854/2026",
+        "old": "2026:CGHC:30478",
+        "cand": null,
+        "evidence": "1 CGHC010208752026 2026:CGHC:30478 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WP227 No. 845 of 2026 Agriculture Insurance Compan"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/1940/2023",
+        "old": "2023:BHC-AUG:27292-DB",
+        "cand": null,
+        "evidence": "D OTHERS ….. Advocate for Applicant : Mr. Shambhuraje V. Deshmukh. Advocate for Respondent No.1 to 3 : Mr. A. B. Kale AGP for Respondent No.4 : Mrs. Uma Bhosale ….. WITH 2023:BHC-AUG:27292-DB -2- 914 to 917 - CA.1938.2023 stay 917 CIVIL APPLICATION NO. 1940 OF 2023 IN FAST/4815/2"
+      },
+      {
+        "court": "High Court of Punjab and Haryana",
+        "caseNumber": "CR/3714/2019",
+        "old": "2023:PHHC:116328",
+        "cand": null,
+        "evidence": "2023:PHHC:116328 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH (i) CR-3714-2019 (O&M) Om Parkash ...Pe"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CP/462/2016",
+        "old": "2025:BHC-AUG:27701-DB",
+        "cand": null,
+        "evidence": "Advocate for the Petitioner • Mr. A. S. Shinde, AGP for Respondent/s – State • Adv. P. S. Mantri h/f. Mr. P. V. Barde, Advocate for Respondent No. 5 ... komal kamble 1/2 2025:BHC-AUG:27701-DB CPs-947.461.2016,948.462.2016.949.464.2016 CORAM : NITIN B. SURYAWANSHI AND VAISHALI PAT"
+      },
+      {
+        "court": "Gauhati High Court",
+        "caseNumber": "WP(C)/5473/2017",
+        "old": "2025:GAU-AS:1358",
+        "cand": null,
+        "evidence": "Page No.# 1/2 GAHC010279732019 2025:GAU-AS:1358 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) WP(C)/5"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/1969/2024",
+        "old": "2024:BHC-AUG:3912-DB",
+        "cand": null,
+        "evidence": "ts/State CORAM : RAVINDRA V. GHUGE AND R. M. JOSHI, JJ. DATE : 20th February, 2024 PER COURT: 1. Leave to correct prayer clause (B). Correction be carried out forthwith. 2024:BHC-AUG:3912-DB 1969.24wp etc (2) 2. All these Petitioners are identically placed. The only prayer put fo"
+      },
+      {
+        "court": "Gauhati High Court",
+        "caseNumber": "MACApp./45/2021",
+        "old": "2025:GAU-AS:2086",
+        "cand": null,
+        "evidence": "Page 1 of 17 MACApp. No. 233 of 2020 WITH MACApp. No. 45 of 2021 Page1 GAHC010124662020 2025:GAU-AS:2086 IN THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM & ARUNACHAL PRADESH) MAC AP"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "BA/739/2024",
+        "old": "2024:BHC-AUG:10726",
+        "cand": null,
+        "evidence": "13th JUNE, 2024 ORDER : 1. Heard the learned counsel for the applicant and the learned APP for the respondent-State. 2. The applicant seeks bail in Crime No.0138 of 2024,2024:BHC-AUG:10726 registered with Chikalthana Police Station, District – Chhatrapati Sambhajinagar, for the o"
+      },
+      {
+        "court": "High Court of Meghalaya",
+        "caseNumber": "Crl.Petn./36/2024",
+        "old": "2024:MLHC:1029",
+        "cand": null,
+        "evidence": "gma, learned Counsel appearing for the petitioner on instruction submits that the petitioner does not want to press this application and prays for withdrawal of the same.2024:MLHC:1029 On submission being made, this criminal petition stands dismissed on withdrawal. Judge Meghalay"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/5771/2017",
+        "old": "2025:BHC-AUG:30495",
+        "cand": null,
+        "evidence": "MOHAN RANGRAO PATIL ... Mr. Shyam C. Arora, Advocate for Applicants; Mr. Ramesh V. Naiknavare, Advocate for Respondent No.1. ... WITH CIVIL APPLICATION NO. 5765 OF 2017 2025:BHC-AUG:30495 2 of 4 901-CA.5758.2017 IN FAST/5808/2017 THE EX. ENGINEER, L.I.D. OSMANABAD THR HAJIMALANG"
+      },
+      {
+        "court": "High Court Of Chhattisgarh",
+        "caseNumber": "WPC/4385/2024",
+        "old": "2026:CGHC:35723",
+        "cand": null,
+        "evidence": "1 CGHC010294852024 2026:CGHC:35723 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPC No. 4335 of 2024 1 - Manbodh Srivas S/o Shri R"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/11700/2024",
+        "old": "2024:BHC-AUG:25661-DB",
+        "cand": null,
+        "evidence": "INASH WALMIK RUDRE THR NATURAL GUARDIAN FATHER WALMIK BABURAO RUDRE VERSUS SUB DIVISIONAL OFFICER MAJALGAON … 971 WRIT PETITION NO. 11717 OF 2024 PRATIKSHA JEJRATH NIRDE 2024:BHC-AUG:25661-DB 2 951.WP-11697-2024 with Ors.doc VERSUS SUB DIVISIONAL OFFICER MAJALGAON … 973 WRIT PETI"
+      },
+      {
+        "court": "Allahabad High Court",
+        "caseNumber": "WTAX/1293/2025",
+        "old": "2024:AHC:38820-DB",
+        "cand": null,
+        "evidence": "ined and this issue was dealt by the Division Bench of this Court passed in Writ Tax No.303 of 2024 [Mahaveer Trading Company vs. Deputy Commissioner, State Tax and Anr; 2024:AHC:38820-DB]. 4. Learned Additional Chief Standing Counsel, on the basis of the instructions, states tha"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "ABA/1368/2024",
+        "old": "2025:BHC-AUG:1819",
+        "cand": null,
+        "evidence": "anted interim protection to the applicant. In terms of the said order the applicant has attended the concerned Police Station and has co-operated with the investigation. 2025:BHC-AUG:1819 2 1368.24 ABA 4] The learned counsel for the applicant submits that the allegation against t"
+      },
+      {
+        "court": "Gauhati High Court",
+        "caseNumber": "Bail Appln./1764/2025",
+        "old": "2025:GAU-AS:7709",
+        "cand": null,
+        "evidence": "Page No.# 1/3 GAHC010115212025 2025:GAU-AS:7709 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "BA/953/2023",
+        "old": "2023:BHC-AS:29515",
+        "cand": null,
+        "evidence": "STATEOFMAHARASHTRA ..RESPONDENT ALONGWITH BAILAPPLICATIONNO.1142 OF2023 SINDHUREWARAM BAGDE @ SAUNILIMAJITENDRADESAI ..APPLICANT VS. STATEOFMAHARASHTRA ..RESPONDENT 1/9 2023:BHC-AS:29515 UrmilaIngale 929-ba-946-23 & ors.odt ALONGWITH BAILAPPLICATIONNO.1292 OF2023 SINDHURBAGADE ."
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "SA/241/2015",
+        "old": "2024:BHC-AUG:11570",
+        "cand": null,
+        "evidence": "ompleted. In view of the same, the second appeal stands withdrawn and disposed of alongwith the pending civil application, if any. ( SANDIPKUMAR C. MORE, J. ) VS Maind/- 2024:BHC-AUG:11570"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/8626/2021",
+        "old": "2025:BHC-AUG:1844",
+        "cand": null,
+        "evidence": "the principle of parity. 4 The learned AGP and the learned counsel for the acquiring body strongly oppose the application. It is lastly prayed to reject the application.2025:BHC-AUG:1844 2 911 CA.8626.2021.odt 5 Considering the law laid down by the Honourable Supreme Court in th"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/6080/2026",
+        "old": "2026:BHC-AUG:24800",
+        "cand": null,
+        "evidence": "TH GUDALE AND ORS. … AND CIVIL APPLICATION NO. 6065 OF 2026 IN FAST/13614/2026 THE EXECUTIVE ENGINEER MINOR IRRIGATION DIVISION LATUR VERSUS TANAJI KALIDAS MANE AND ORS. 2026:BHC-AUG:24800 (2) 953-ca-6057-2026-Delay.odt … AND CIVIL APPLICATION NO. 6067 OF 2026 IN FAST/13610/2026"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/3226/2017",
+        "old": "2025:BHC-AUG:35200-DB",
+        "cand": null,
+        "evidence": "P. B. Shirsath and Mr. D. R. Markad, Advocates for the Petitioner Mrs. V. S. Chaudhari, AGP for Respondent/State Mr. S. T. Shelke, Advocate for Respondent No.1 … AND SVH 2025:BHC-AUG:35200-DB 2 57-WP-3266-17.odt WRIT PETITION NO. 3369 OF 2017 RAMDAS BHAGWAN SHINDE VERSUS THE STAT"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/11365/2024",
+        "old": "2024:BHC-AUG:25486",
+        "cand": null,
+        "evidence": "disposed of. 3. Amendment be carried out within stipulated period. 4. List Civil Revision Application No.41 of 2024 on 20/11/2024. ( SANDIPKUMAR C. MORE, J. ) VS Maind/- 2024:BHC-AUG:25486"
+      },
+      {
+        "court": "High Court Of Chhattisgarh",
+        "caseNumber": "CRA/410/2013",
+        "old": "2025:CGHC:6555",
+        "cand": null,
+        "evidence": "1 /18 {Cr. A. No.-410/2013 & 418/2013} 2025:CGHC:6555 अ्ቚ ति\u0016वे्ቕ छ्ቈ ीसगढ़ उ्ሴ न् यायालय, बि(लासपुर बि,्ቓ.य सुरति/\u0016 बि0,ाँक-31/01/2025 बि,्ቓ.य उ्ሾोब"
+      },
+      {
+        "court": "Allahabad High Court",
+        "caseNumber": "WTAX/7483/2025",
+        "old": "2025:AHC:179271-DB",
+        "cand": null,
+        "evidence": "ve already been considered in large number of similar petitions. Primarily, we have considered and dealt with the same in M/s Riya Construction vs State of U.P. & 3 Ors, 2025:AHC:179271-DB. 4. Facts being similar, writ petition is allowed and the impugned order is set aside, subj"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "FA/3019/2022",
+        "old": "2024:BHC-AUG:23722",
+        "cand": null,
+        "evidence": "y and Mr. S.V. Warad, Advocate for respondent No.3 in respective matters. CORAM : KISHORE C. SANT, J. DATE : 19.09.2024 PC :- 01. Heard learned Advocates for the parties.2024:BHC-AUG:23722 ( 2 ) {fa3016.22} 02. Limited grievance raised in these appeals is that the learned Referen"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "ABA/203/2025",
+        "old": "2025:BHC-AUG:5567",
+        "cand": null,
+        "evidence": "l for the applicants and the learned APP for the respondent-State. 2] The applicants are apprehending arrest in connection with Crime No.282/2024, registered at Malakoli 2025:BHC-AUG:5567 2 938 Police Station, District Nanded, for the offences punishable under Sections 108, 3(5)"
+      },
+      {
+        "court": "High Court Of Rajasthan",
+        "caseNumber": "CRLMB/9822/2025",
+        "old": "2025:RJ-JP:44338",
+        "cand": null,
+        "evidence": "[2025:RJ-JP:44338] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Criminal Miscellaneous Bail Appl"
+      },
+      {
+        "court": "Gauhati High Court",
+        "caseNumber": "Crl.Rev.P./3/2016",
+        "old": "2026:GAU-AP:89",
+        "cand": null,
+        "evidence": "Page No.# 1/13 GAHC040008952016 2026:GAU-AP:89 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No."
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/47/2021",
+        "old": "2025:BHC-AUG:8096-DB",
+        "cand": null,
+        "evidence": "RS VERSUS 1) The State of Maharashtra, Through the Secretary, Home Department, Maharashtra State, Mumbai-32, 2) The Superintendent of Police, Ahmednagar, Dist-Ahmednagar,2025:BHC-AUG:8096-DB 3) The Police Station Officer, Parner Police Station, Tal-Parner, Dist-Ahmednagar. ...RES"
+      },
+      {
+        "court": "Allahabad High Court",
+        "caseNumber": "WTAX/1442/2025",
+        "old": "2024:AHC:38820-DB",
+        "cand": null,
+        "evidence": "ined and this issue was dealt by the Division Bench of this Court passed in Writ Tax No.303 of 2024 [Mahaveer Trading Company vs. Deputy Commissioner, State Tax and Anr; 2024:AHC:38820-DB]. 5. Learned Additional Chief Standing Counsel, on the basis of the instructions, states tha"
+      },
+      {
+        "court": "High Court Of Chhattisgarh",
+        "caseNumber": "WPS/505/2023",
+        "old": "2026:CGHC:36688",
+        "cand": null,
+        "evidence": "1 CGHC010350612022 2026:CGHC:36688 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 7539 of 2022 Smt. Sukanti Bhoi Wd/o Late R"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "ARB.P./1982/2024",
+        "old": "2023:DHC:3705",
+        "cand": null,
+        "evidence": "was filed by the petitioner, which was withdrawn on 19.04.2024 in view of the decision of Division Bench of this Court in Kotak Mahindra Bank v. Narendra Kumar Prajapat:2023:DHC:3705:DB, with liberty to initiate appropriate proceedings to recover dues. 4. The petitioner states t"
+      },
+      {
+        "court": "High Court Of Rajasthan",
+        "caseNumber": "CW/2621/2025",
+        "old": "2025:RJ-JP:7208",
+        "cand": null,
+        "evidence": "[2025:RJ-JP:7208] [2025:RJ-JP:7209] [2025:RJ-JP:7210] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S."
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/9602/2025",
+        "old": "2025:BHC-AUG:21445-DB",
+        "cand": null,
+        "evidence": "ramilabai Dagadulal Jain Through General Power Of Attorney Holder Sachin Dagadulal Jain VERSUS The National Highway Authority Of India Through Its Project Director & Anr.2025:BHC-AUG:21445-DB 2 906.WP.7866.21.odt 916 WRIT PETITION NO. 13679 OF 2021 Shilpa Rajendra Shinde VERSUS T"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/13401/2023",
+        "old": "2025:BHC-AUG:28622",
+        "cand": null,
+        "evidence": "AGP for State. AND CIVIL APPLICATION NO. 13409 OF 2023 IN FAST/30153/2023 The Executive Engineer, Latur Minor Irrigation Division, Dist. Latur .. Applicant Versus 1 of 3 2025:BHC-AUG:28622 2 919-CA 13403-2023.odt Chandrabhagabai Ramchandra Kolhe .. Respondents Mr. S. C. Arora, Ad"
+      },
+      {
+        "court": "High Court Of Chhattisgarh",
+        "caseNumber": "TAXC/83/2025",
+        "old": "2025:CGHC:24257-DB",
+        "cand": null,
+        "evidence": "Page 1 of 28 (Tax Case No.81/2025 and 27 other connected cases) 2025:CGHC:24257-DB AFR HIGH COURT OF CHHATTISGARH AT BILASPUR TAXC No. 81 of 2025 (Assessment Year 2018-19) {A"
+      },
+      {
+        "court": "Allahabad High Court",
+        "caseNumber": "WTAX/5658/2025",
+        "old": "2025:AHC:179271-DB",
+        "cand": null,
+        "evidence": "lar petitions. Primarily, we have considered and dealt with the same in Writ Tax No. 3964 of 2025 (M/s Riya Construction vs State of U.P. & 3 Ors, Neutral Citation No. - 2025:AHC:179271-DB, dated 09.10.2025. 4. Facts being similar, writ petition is allowed and the impugned order"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "CA/5807/1995",
+        "old": "2025:BHC-AUG:13631",
+        "cand": null,
+        "evidence": "Regular Civil Appeal No.177/1989, thereby reversing judgment and decree dated 20.04.1989 passed by Civil Judge Junior Division, Kandhar in Regular Civil Suit No.113/1987.2025:BHC-AUG:13631 (Hereinafter, parties are referred to by their original status for the sake of convenience"
+      },
+      {
+        "court": "Bombay High Court",
+        "caseNumber": "WP/36/2026",
+        "old": "2026:BHC-GOA:111-DB",
+        "cand": null,
+        "evidence": "o, Bodiem, P. O. Tivim, Bardez, North Goa-Goa. 403502. ... Petitioners Versus 1. The Union of India, Through its Secretary, Ministry of Home Affairs, Government of India,2026:BHC-GOA:111-DB (33) WP 36.2026 Page 2 of 4 22nd January, 2026 North Block, General Secretariat, New Delhi"
+      },
+      {
+        "court": "High Court Of Rajasthan",
+        "caseNumber": "SOSR/540/2023",
+        "old": "2024:RJ-JP:7636",
+        "cand": null,
+        "evidence": "[2024:RJ-JP:7636] (1 of 2) [CRLR-1810/2023] HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR S.B. Crimina"
+      },
+      {
+        "court": "Allahabad High Court",
+        "caseNumber": "WTAX/2769/2025",
+        "old": "2025:AHC:179271-DB",
+        "cand": null,
+        "evidence": "lar petitions. Primarily, we have considered and dealt with the same in Writ Tax No. 3964 of 2025 (M/s Riya Construction vs State of U.P. & 3 Ors, Neutral Citation No. - 2025:AHC:179271-DB, dated 09.10.2025. 4. Facts being similar, writ petition is allowed and the impugned order"
+      }
+    ],
+    "changed": [
+      {
+        "court": "High Court of Punjab and Haryana",
+        "caseNumber": "CR/1664/2020",
+        "old": "2024:PHHC:146797",
+        "cand": "2024:PHHC:146802",
+        "evidence": "CR No.1662 of 2020 (O&M) 2024:PHHC:146797\u0001 CR No.1663 of 2020 (O&M) 2024:PHHC:146800\u0001 CR No.1664 of 2020 (O&M) 2024:PHHC:146802 CR No.6"
+      }
+    ],
+    "gained": [
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/5369/2023",
+        "old": null,
+        "cand": "2025:DHC:547-DB",
+        "evidence": "of the curative steps which the respondents had taken in compliance with the liberty that was granted in Ashish Agarwal so as to salvage various reassessment notices. 10 2025:DHC:547-DB 11 TOLA 12 (2023) 1 SCC 617 Digitally Signed By:KAMLESH KUMAR Signing Date:04.02.2025 16:15:56"
+      },
+      {
+        "court": "Madras High Court",
+        "caseNumber": "WP/24236/2021",
+        "old": null,
+        "cand": "2023:DHC:3122",
+        "evidence": "of the present case, it is evident that Petitioners were not 're-employed' as the advertisement invited applications from general public fitting Neutral Citation Number: 2023:DHC:3122 into the eligibility conditions mentioned therein. There was no requirement of the retired Gover"
+      },
+      {
+        "court": "Calcutta High Court",
+        "caseNumber": "FMA/1315/2025",
+        "old": null,
+        "cand": "2025:KHC:16279",
+        "evidence": "ows: ‘22. It is not possible for the claimants to examine a person as they have witnessed that the deceased has purchased tickets and also it is not possible for the NC: 2025:KHC:16279 MFA No. 6117 of 2016 claimants to examine a person as eye witness to the incident. If any passe"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/13166/2019",
+        "old": null,
+        "cand": "2025:DHC:5684",
+        "evidence": "ar before the learned Labour Court, the learned Labour Court rightly passed the Impugned Award. 8. The Statement of Claim filed by the Respondent/Workman sets out that 1 2025:DHC:5684 W.P.(C) 13166/2019 Page 4 of 12 the Respondent/Workman worked as an Accountant since 25.01.2016."
+      },
+      {
+        "court": "High Court of Punjab and Haryana",
+        "caseNumber": "CRM-M/30904/2026",
+        "old": null,
+        "cand": "2025:PHHC:089161",
+        "evidence": "abused or misdirected.” 6.2. Further, this Court in the case of Jaswinder Singh alias Kala versus State of Punjab passed in CRM-M-33729-2025 CRM-M No.30904 of 2026 -5- (2025:PHHC:089161) has held thus: “14. As a sequitur to above-said rumination, the following postulates emerge:"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/12334/2024",
+        "old": null,
+        "cand": "2023:DHC:4164",
+        "evidence": "tal by scanning the QR code shown above. The Order is downloaded from the DHC Server on 04/07/2025 at 02:01:29 W.P.(C) 12182/2024 and connected matters Page 5 of 5 Ors., 2023:DHC:4164 and therefore, direction be issued to Respondent No. 1 to promote the Petitioners from the respe"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/6753/2023",
+        "old": null,
+        "cand": "2025:DHC:547-DB",
+        "evidence": "of the curative steps which the respondents had taken in compliance with the liberty that was granted in Ashish Agarwal so as to salvage various reassessment notices. 10 2025:DHC:547-DB 11 TOLA 12 (2023) 1 SCC 617 Digitally Signed By:KAMLESH KUMAR Signing Date:04.02.2025 16:15:56"
+      },
+      {
+        "court": "High Court of Punjab and Haryana",
+        "caseNumber": "CRM-M/41296/2025",
+        "old": null,
+        "cand": "2025:PHHC:002695",
+        "evidence": "in light of the Article 21 of the Constitution of This Court in a judgment titled as passed in CRM CRM CRM CRM----MMMM----64074 64074 64074 64074----2024 2024 2024 2024 (2025:PHHC:002695); after relying ratio decidendi of the judgments of the Hon’ble Supreme Court in Hussainara K"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/7263/2023",
+        "old": null,
+        "cand": "2025:DHC:547-DB",
+        "evidence": "of the curative steps which the respondents had taken in compliance with the liberty that was granted in Ashish Agarwal so as to salvage various reassessment notices. 10 2025:DHC:547-DB 11 TOLA 12 (2023) 1 SCC 617 Digitally Signed By:KAMLESH KUMAR Signing Date:04.02.2025 16:15:56"
+      },
+      {
+        "court": "High Court of Delhi",
+        "caseNumber": "W.P.(C)/12621/2018",
+        "old": null,
+        "cand": "2024:DHC:5425",
+        "evidence": "(1) of the RTI Act.3 9. Accordingly, the present petition is disposed of. SANJEEV NARULA, J JULY 19, 2024 nk 2 “RTI Act” 3 SH Sunny Sachdeva V ACP North RTI Cell and Anr 2024:DHC:5425-DBThis is a digitally signed order. The authenticity of the order can be re-verified from Delhi"
+      }
+    ]
+  }
+}

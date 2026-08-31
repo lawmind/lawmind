@@ -1,0 +1,331 @@
+{
+  "artifact": "NEW2_R17_HAND_ADJUDICATION",
+  "lane": "NEW2",
+  "population": "NEW2-R17-EVAL-b93ed61f2710cc8e",
+  "method": "every UNDECIDED row in the automatic identity adjudication, read by hand from the retained document text. Two first-pass labels were CORRECTED on a second pass after the Rajasthan page-stamp form was read properly; both corrections are noted in place rather than overwritten silently.",
+  "counts": {
+    "undecided": 59,
+    "decided": 63,
+    "bombayPageStamp": 45,
+    "stillOpen": 0,
+    "correctedOnSecondPass": 2,
+    "addedOnSecondPass": 2,
+    "addedOnThirdPass": 2
+  },
+  "decisions": {
+    "0101899e-5f05-4cd8-8e47-526561b51fb2": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:20964",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "0296f0e1-c96a-4d0a-b086-0c644415d84d": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:34493",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "02b5408e-0057-422a-94a7-245000c445d2": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:36999",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "05097ce0-9dd0-4901-8f40-399485a4c47b": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:2728-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "058a6442-e1a5-4855-84b3-e0e0e5cb5a93": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:27438-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "06270bb0-1c65-496c-a5ab-32c9d3fdae7b": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:18220",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "0937c3dc-eac9-40fd-a770-7a801b2688e2": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:13980",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "0c8ac568-2676-4bbf-a8ce-ced4e577b464": {
+      "label": "OWN",
+      "citation": "2026:BHC-AUG:37905",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "0fb7effe-5769-4212-8573-2b1c0455b7b8": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:31540",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1020af45-1070-4e52-8b1c-6be064508ae1": {
+      "label": "OWN",
+      "citation": "2023:BHC-AUG:27180",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "11cb2b38-7e50-4675-a772-ce530f24ea9c": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:4259-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1893e8d4-63d5-43cc-ab95-44e377b57170": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:31271",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1d256c47-3747-45cf-b61a-31e183dc2893": {
+      "label": "OWN",
+      "citation": "2023:BHC-AS:29607",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1da76d87-9de3-4e95-852b-e61d144ef180": {
+      "label": "OWN",
+      "citation": "2023:BHC-AS:33175",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1df3cdb4-bb19-4ee0-ab90-6b12713f1e6d": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:17965",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1df517d2-cf28-4524-86fd-00064825b239": {
+      "label": "OWN",
+      "citation": "2026:BHC-AUG:3214",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "1f5d5b27-dc2e-4928-b69c-6373b59b8dce": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:2923-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "2494b9a0-ba0c-4156-b914-9a29cbebb4b1": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:11064",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "24fa50fc-610b-43e2-8117-a82a848214ca": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:4160-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "268e7272-31ab-4345-8979-4895addd5316": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:7135",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "26e8e787-5e87-4f43-bea3-76ecbe7c5e2f": {
+      "label": "OWN",
+      "citation": "2024:BHC-AS:6772",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "31e4a267-7c6f-443a-93ba-bf8e21014577": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:2964",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "3bb09b38-79c7-4b92-9973-ec54225e6d9b": {
+      "label": "OWN",
+      "citation": "2026:BHC-AUG:7884-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "3c74b77c-1c40-40f8-b7c8-2c40203a90fd": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:30170-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "3dae7781-cd2e-4811-b544-3eca9292c887": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:19402-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "40c906b9-5754-4182-86e5-84003880049a": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:9063-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "42fd87a5-ef67-473c-8572-448a1dd928b6": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:14886",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "434c3a78-acb5-4bd2-af45-63c04073243e": {
+      "label": "OWN",
+      "citation": "2026:BHC-AUG:598",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "52564601-65ca-41f0-ba29-95413d477a9b": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:27301-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "52dd7c37-af9f-4156-8079-4e83070088c2": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:26657",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "53cebf30-1086-4e23-8e08-0e86f8fc9749": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:7061",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "589a24c5-b8b5-4b74-82c2-129a55fbc5ec": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:1328",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "5d8dedd1-24db-4c49-b8e5-4b465c4b806b": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:18128-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "5e53f85a-d2e6-4b1a-ae0c-8a46ee1f3260": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:23273-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "703a4070-78f2-4b4a-ac0e-530c21c141e8": {
+      "label": "OWN",
+      "citation": "2026:BHC-AUG:9390",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "715c8507-302b-4e9d-9c48-fe0ffd655ca1": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:10262",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "72cf3070-9f3c-4871-b751-040cd50a50cf": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:25530-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "75897bd2-0376-46c9-8d87-7aabf8c7c336": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:37917",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "83d86dfb-be2f-4888-b0a9-2535b8c6210c": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:2821",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "845c0e35-0cf8-4926-91de-9003d678251a": {
+      "label": "OWN",
+      "citation": "2023:BHC-AS:29121-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "86815e89-23b2-4867-905a-59b0be83a62c": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:31872",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "8b13bf50-0686-4e33-b567-fb4971d58798": {
+      "label": "OWN",
+      "citation": "2026:BHC-GOA:1088-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "8b2d72c8-a80c-46e8-8d4d-3322009ac12c": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:17380",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "8c016c20-0f58-4ee1-b3b3-af3ba32d116b": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:9034",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "8d12fd8b-278d-48f5-a3eb-b57886f4b4a5": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:22719-DB",
+      "note": "Bombay page-stamp form: the only citation in the document, printed in the page furniture beside the signature block or the registry file name"
+    },
+    "0161815c-1313-4829-abf5-01d42ed72b73": {
+      "label": "OWN",
+      "citation": "2025:CGHC:10295",
+      "note": "Chhattisgarh masthead: \"1 <citation> NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR\"; the printed cause title reads MCRC No. 1696 of 2025 against a row number of 1666 — recorded, out of scope for this round"
+    },
+    "01c44b64-67fd-4258-ad79-5d42a69f734a": {
+      "label": "OWN",
+      "citation": "2025:RJ-JP:37072-DB",
+      "note": "Rajasthan bracketed masthead at offset 1; the cause title names the lead matter of a connected group"
+    },
+    "02683cb0-62a5-43f9-8a17-230b19a3fd8e": {
+      "label": "OWN",
+      "citation": "2024:UHC:7331",
+      "note": "Uttarakhand masthead at offset 0, ahead of RESERVED JUDGMENT"
+    },
+    "045457b2-8fe6-49c8-b4fd-af324706fcee": {
+      "label": "OWN",
+      "citation": "2025:RJ-JP:22340-DB",
+      "note": "Rajasthan bracketed masthead at offset 1; cause title names the lead matter"
+    },
+    "05ee5135-c33f-46f5-956c-9dc97235cf24": {
+      "label": "OWN",
+      "citation": "2025:CGHC:54000",
+      "note": "Chhattisgarh masthead; printed cause title MAC No. 1364 of 2018 against a row number of 1722 — recorded, out of scope"
+    },
+    "07d8a842-5efc-4d51-b0bd-4749af53678d": {
+      "label": "OWN",
+      "citation": "2025:RJ-JP:37433-DB",
+      "note": "Rajasthan bracketed masthead at offset 1; cause title names the lead matter"
+    },
+    "8c977c31-51bc-424d-a591-89de3e51e740": {
+      "label": "OWN",
+      "citation": "2025:AHC:20934",
+      "note": "Allahabad masthead form \"Neutral Citation No. - <citation> Court No. 75\""
+    },
+    "d7eade67-84a4-4de5-9126-699d13cceb04": {
+      "label": "OWN",
+      "citation": "2025:AHC:20934",
+      "note": "Allahabad masthead form \"Neutral Citation No. - <citation> Court No. 75\""
+    },
+    "d6c2e21c-89c1-4517-84ab-667164ab8016": {
+      "label": "OWN",
+      "citation": "2023:KHC-D:14142",
+      "note": "Karnataka masthead \"NC: <citation> MFA No. 25207 of 2011\". The citation is the document own; the ROW identity is the defect (R16 INGEST_WRONG_DOCUMENT_IDENTITY) and is handled separately"
+    },
+    "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2": {
+      "label": "OWN",
+      "citation": "2025:DHC:8491-DB",
+      "note": "Delhi digital-signature footer stamp; the page prints the -DB suffix and the extracted text glues the next word to it"
+    },
+    "928a8788-3a7a-429d-8ff7-92e3cfa24d89": {
+      "label": "OWN",
+      "citation": "2025:DHC:8491-DB",
+      "note": "Delhi digital-signature footer stamp; the page prints the -DB suffix and the extracted text glues the next word to it"
+    },
+    "7a921d7c-2e1a-4ebf-9df9-a4c24eda8fae": {
+      "label": "OWN",
+      "citation": "2026:RJ-JP:14275-DB",
+      "note": "CORRECTED from AMBIGUOUS. 2026:RJ-JP:14243-DB is stamped as \"(n of 10) [CW-5762/2026]\" — bound to CW-5762/2026, not to this row CW/5963/2026"
+    },
+    "8a586047-5bc5-493a-a178-c9e059c5bc00": {
+      "label": "OWN",
+      "citation": "2025:RJ-JP:21896",
+      "note": "CORRECTED from AMBIGUOUS. 2025:RJ-JP:21724 is stamped 10 times as \"[2025:RJ-JP:21724] (n of 10) [CW-4514/2025]\" — bound to CW-4514/2025, not to this row CW/2909/2025; 21896 is the other citation in the shared header"
+    },
+    "bcfe3ef3-da3e-4e9c-b1de-f1d82a88e13a": {
+      "label": "NONE",
+      "note": "Calcutta appeal; all four citations are Supreme Court (INSC) authorities quoted in the body with reporter references beside them, and the court printed no citation of its own"
+    },
+    "7c3f0488-0f67-437f-b17b-f9226404d785": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:26098",
+      "note": "Bombay page-stamp form: \"1 of 2 2024:BHC-AUG:26098 (2) 57ca1118.24\" — the only citation in the document, in the page furniture beside the registry file name"
+    },
+    "001c88dd-eba7-4e52-b48e-1aebcf05bc3d": {
+      "label": "OWN",
+      "citation": "2024:KHC-D:6367",
+      "note": "Karnataka connected group: the masthead lists the row own number inside its C/W list and the citation is stamped on all 12 pages; the automatic adjudicator called it NONE only because the LEAD matter number sits 8 characters nearer"
+    },
+    "36a06e99-444f-4879-b9fb-44dd52e46fc4": {
+      "label": "OWN",
+      "citation": "2024:BHC-AUG:18872-DB",
+      "note": "Bombay page stamp after \"(SHIVKUMAR DIGE, J.) rlj/\". The nearest case number, \"criminal appeal No. 448 of 2024\", is the appeal this order lists for hearing — it is the subject of the order, not a citation lead"
+    },
+    "7449c4c3-4788-431b-9001-1a50a90cb7b9": {
+      "label": "OWN",
+      "citation": "2025:BHC-AUG:23489",
+      "note": "Bombay page stamp beside the registry file name \"2 52(i).CA-\", on a common order for CA 8533/8535/8522/8532 of 2025; this row is one of the connected applications named in the list before it"
+    }
+  }
+}
