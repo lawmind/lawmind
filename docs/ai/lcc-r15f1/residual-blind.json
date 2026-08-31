@@ -1,0 +1,15 @@
+{
+  "measuredAt": "2026-08-31T13:33:32.172Z",
+  "distinctPinnedJudgments": 317,
+  "byCourt": {
+    "Supreme Court of India": {
+      "zero": 205,
+      "read": 112,
+      "samples": [
+        "[2012] 8 S.C.R. 753 | GIAN SINGH | v. | STATE OF PUNJAB & ANOTHER | (Special Leave Petition (Crl.) No. 8989 of 2010 etc.) | SEPTEMBER 24, 2012",
+        "NATIONAL INSURANCE CO. LTD. A | v. | CHOLLETI BHARATAMMAAND ORS. | OCTOBER 12, 2007 | B | [S.B. SINHA AND HARJIT SINGH BEDI, JJ.)",
+        "A | B | MEDICAL COUNCIL OF INDIA | v. | STATE OF KARNATAKA AND ORS. ETC. | JULY 16, 1998"
+      ]
+    }
+  }
+}

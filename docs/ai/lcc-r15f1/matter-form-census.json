@@ -1,0 +1,717 @@
+{
+  "measuredAt": "2026-08-31T10:42:20.452Z",
+  "window": 800,
+  "sampled": 1358,
+  "headsUpperGrammarFindsNothing": 542,
+  "headsWhereCaseInsensitiveFindsMore": 415,
+  "newMatchCaseClasses": {
+    "UPPER": 1,
+    "lower": 15,
+    "Title": 455,
+    "Mixed": 81
+  },
+  "newTypeTokens": [
+    {
+      "cls": "Title",
+      "type": "CASE CRIME",
+      "n": 102,
+      "example": "arising out of Case Crime No.60 of 2019"
+    },
+    {
+      "cls": "Title",
+      "type": "WRIT PETITION",
+      "n": 102,
+      "example": "S.B. Civil Writ Petition No. 15983/2025"
+    },
+    {
+      "cls": "Title",
+      "type": "BAIL APPLICATION",
+      "n": 59,
+      "example": "S.B. Criminal Miscellaneous Bail Application No. 4180/2024"
+    },
+    {
+      "cls": "Title",
+      "type": "CRIMINAL CASE",
+      "n": 16,
+      "example": "criminal proceedings of Criminal Case No. 1996 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "CRIME",
+      "n": 14,
+      "example": "Crime No. 249 of 2025"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF CASE",
+      "n": 11,
+      "example": "as entire proceedings of Case No.834/2020"
+    },
+    {
+      "cls": "Mixed",
+      "type": "WITH FIR",
+      "n": 10,
+      "example": "Cr.P.C. in connection with FIR No.132/2018"
+    },
+    {
+      "cls": "Title",
+      "type": "COMPLAINT CASE",
+      "n": 10,
+      "example": "proceedings of earlier Complaint Case No.15 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "REVISION PETITION",
+      "n": 10,
+      "example": "S.B. Civil Revision Petition No. 171/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "PS CASE",
+      "n": 9,
+      "example": "Birsanagar P.S. Case No. 80 of 2025"
+    },
+    {
+      "cls": "Title",
+      "type": "CRIMINAL APPEAL",
+      "n": 9,
+      "example": "Criminal Appeal No. 1864 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "CASE",
+      "n": 9,
+      "example": "Case No.2570 of 2020"
+    },
+    {
+      "cls": "Title",
+      "type": "CIVIL APPEAL",
+      "n": 9,
+      "example": "Civil Appeal No. 3254 of 2013"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN FIR",
+      "n": 8,
+      "example": "enlargement on bail in FIR No.59 of 2022"
+    },
+    {
+      "cls": "lower",
+      "type": "CASE CRIME",
+      "n": 7,
+      "example": "case crime no. 153 of 2024"
+    },
+    {
+      "cls": "Mixed",
+      "type": "THE CASE",
+      "n": 6,
+      "example": "to decide the Case No.123 of 2019"
+    },
+    {
+      "cls": "Mixed",
+      "type": "WITH CRIME",
+      "n": 6,
+      "example": "connection with Crime No.12/2026"
+    },
+    {
+      "cls": "Title",
+      "type": "CRLA",
+      "n": 5,
+      "example": "Crl.A./169/2020"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF FIR",
+      "n": 5,
+      "example": "accused-petitioners for quashing of FIR No.220/2022"
+    },
+    {
+      "cls": "Title",
+      "type": "APPLN",
+      "n": 5,
+      "example": "Appln./393/2026"
+    },
+    {
+      "cls": "Title",
+      "type": "CRMP",
+      "n": 4,
+      "example": "CrMP No. 2082 of 2020"
+    },
+    {
+      "cls": "Title",
+      "type": "CONTEMPT PETITION",
+      "n": 4,
+      "example": "S.B. Writ Contempt Petition No. 953/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "MISC CASE",
+      "n": 3,
+      "example": "Agra to decide Misc. Case No. 10 of 2016"
+    },
+    {
+      "cls": "Title",
+      "type": "SESSIONS TRIAL",
+      "n": 3,
+      "example": "Suguja in Sessions Trial No. 30/2007"
+    },
+    {
+      "cls": "Title",
+      "type": "SECOND APPEAL",
+      "n": 3,
+      "example": "S.B. Civil Second Appeal No. 563/2019"
+    },
+    {
+      "cls": "Title",
+      "type": "RESTORATION APPLICATION",
+      "n": 3,
+      "example": "S.B. Civil Restoration Application No. 1177/2024"
+    },
+    {
+      "cls": "Title",
+      "type": "REGULAR SUIT",
+      "n": 3,
+      "example": "disposal of Regular Suit No.92 of 2017"
+    },
+    {
+      "cls": "Title",
+      "type": "SESSION TRIAL",
+      "n": 3,
+      "example": "bail in Special Session Trial No.936 of 2022"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN CRIME",
+      "n": 3,
+      "example": "applicant seeks bail in Crime No.297 of 2023"
+    },
+    {
+      "cls": "Title",
+      "type": "WRIT C",
+      "n": 3,
+      "example": "our judgment in Writ C No. 8867 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "MISC SINGLE",
+      "n": 2,
+      "example": "Writ Petition Misc. Single No. 2844 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "CRIMINAL APPLICATION",
+      "n": 2,
+      "example": "Criminal Application No. 2547/2025"
+    },
+    {
+      "cls": "Title",
+      "type": "APPEAL WRIT",
+      "n": 2,
+      "example": "D.B. Special Appeal Writ No. 8/2025"
+    },
+    {
+      "cls": "Title",
+      "type": "CRIMINAL REVISION",
+      "n": 2,
+      "example": "Criminal Revision No.383 of 2026"
+    },
+    {
+      "cls": "Title",
+      "type": "CORPUS PETITION",
+      "n": 2,
+      "example": "D.B. Habeas Corpus Petition No. 141/2026"
+    },
+    {
+      "cls": "Title",
+      "type": "CR MMO",
+      "n": 2,
+      "example": "Cr. MMO No. 989 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "WRIT CONTEMPT",
+      "n": 2,
+      "example": "S.B. Writ Contempt No. 1607/2018"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN WRITC",
+      "n": 2,
+      "example": "of date passed in Writ-C No.26335 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "PETITION",
+      "n": 2,
+      "example": "Petition No. 21131/2017"
+    },
+    {
+      "cls": "Title",
+      "type": "WRIT TAX",
+      "n": 2,
+      "example": "Writ Tax No.606 of 2025"
+    },
+    {
+      "cls": "Title",
+      "type": "APPL WRIT",
+      "n": 2,
+      "example": "D.B. Spl. Appl. Writ No. 901/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "MISCELLANEOUS APPLICATION",
+      "n": 2,
+      "example": "S.B. Writ Miscellaneous Application No. 176/2024"
+    },
+    {
+      "cls": "Title",
+      "type": "COMPANY APPLICATION",
+      "n": 2,
+      "example": "S.B. Company Application No. 40/2013"
+    },
+    {
+      "cls": "Title",
+      "type": "COMPANY PETITION",
+      "n": 2,
+      "example": "S.B. Company Petition No.3/1956"
+    },
+    {
+      "cls": "Title",
+      "type": "MUTATION CASE",
+      "n": 2,
+      "example": "Gorakhpur to decide Mutation Case No. 91/2008"
+    },
+    {
+      "cls": "Title",
+      "type": "SESSIONS CASE",
+      "n": 2,
+      "example": "Sirohi in Sessions Case No.36/2019"
+    },
+    {
+      "cls": "Title",
+      "type": "MISCELLANEOUS APPEAL",
+      "n": 2,
+      "example": "D.B. Civil Miscellaneous Appeal No. 2069/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "SPECIAL TRIAL",
+      "n": 2,
+      "example": "entire proceedings of Special Trial No. 19/2019"
+    },
+    {
+      "cls": "Title",
+      "type": "APPEAL",
+      "n": 2,
+      "example": "Appeal No.27/2004"
+    },
+    {
+      "cls": "Mixed",
+      "type": "DECIDE CASE",
+      "n": 2,
+      "example": "to decide Case No.00467 of 2021"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN CASE",
+      "n": 2,
+      "example": "filed seeking bail in Case No. 7843 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "EXEMPTION APPLICATION",
+      "n": 1,
+      "example": "Criminal Misc. Exemption Application No.1 of 2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF COMPLAINT",
+      "n": 1,
+      "example": "the proceeding of Complaint No. 2847 of 2017"
+    },
+    {
+      "cls": "Title",
+      "type": "CANCELLATION APPLICATION",
+      "n": 1,
+      "example": "S.B. Criminal Bail Cancellation Application No. 14/2022"
+    },
+    {
+      "cls": "Title",
+      "type": "MACAPP",
+      "n": 1,
+      "example": "MACApp./260/2025"
+    },
+    {
+      "cls": "Title",
+      "type": "COMPUTER",
+      "n": 1,
+      "example": "Computer No.437 of 2021"
+    },
+    {
+      "cls": "Title",
+      "type": "REVISION",
+      "n": 1,
+      "example": "Revision No. 1274 of 2020"
+    },
+    {
+      "cls": "lower",
+      "type": "CLAIM PETITION",
+      "n": 1,
+      "example": "to decide the claim petition no. 2349 of 2023"
+    },
+    {
+      "cls": "UPPER",
+      "type": "FIR",
+      "n": 1,
+      "example": "FIR no.221 of 2020"
+    },
+    {
+      "cls": "Title",
+      "type": "SUBSTITUTION APPLICATION",
+      "n": 1,
+      "example": "Order on Substitution Application No. 40692/1995"
+    },
+    {
+      "cls": "Title",
+      "type": "REF",
+      "n": 1,
+      "example": "Ref./1/2021"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN OA",
+      "n": 1,
+      "example": "in O.A. No. 1649/2020"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IMPUGNED FIR",
+      "n": 1,
+      "example": "to quash the impugned FIR No.323/2021"
+    },
+    {
+      "cls": "Title",
+      "type": "ELECTION PETITION",
+      "n": 1,
+      "example": "Election Petition No. 02040 of 2021"
+    },
+    {
+      "cls": "Mixed",
+      "type": "HIS CASE",
+      "n": 1,
+      "example": "expeditious disposal of his Case No.82 of 2019"
+    },
+    {
+      "cls": "Title",
+      "type": "TO APPEAL",
+      "n": 1,
+      "example": "S.B. Crml Leave To Appeal No. 276/2024"
+    },
+    {
+      "cls": "Title",
+      "type": "PETITION CRIMINAL",
+      "n": 1,
+      "example": "Writ Petition Criminal No. 1117 of 2026"
+    },
+    {
+      "cls": "Mixed",
+      "type": "BEARING CRIME",
+      "n": 1,
+      "example": "Report bearing Crime No. 77 of 2023"
+    },
+    {
+      "cls": "Title",
+      "type": "CLAIM CASE",
+      "n": 1,
+      "example": "Bilaspur in Claim Case No.219/2016"
+    },
+    {
+      "cls": "Title",
+      "type": "OBJECTION APPLICATION",
+      "n": 1,
+      "example": "Criminal Misc. No Objection Application No.1 of 2025"
+    },
+    {
+      "cls": "lower",
+      "type": "REPORT",
+      "n": 1,
+      "example": "report no.0623/2020"
+    },
+    {
+      "cls": "lower",
+      "type": "BAIL APPLICATION",
+      "n": 1,
+      "example": "criminal misc. bail application No. 8586 of 2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN CWPOA",
+      "n": 1,
+      "example": "by this Court in CWPOA No.978 of 2019"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN OS",
+      "n": 1,
+      "example": "filed by petitioner in O.S. No. 249 of 2025"
+    },
+    {
+      "cls": "Title",
+      "type": "EVICTION PETITION",
+      "n": 1,
+      "example": "the Eviction Petition No.145/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "IN COP",
+      "n": 1,
+      "example": "In COP No.182 of 2012"
+    },
+    {
+      "cls": "Title",
+      "type": "WRITA",
+      "n": 1,
+      "example": "Writ-A No.5617 of 2024"
+    },
+    {
+      "cls": "lower",
+      "type": "OF CRIME",
+      "n": 1,
+      "example": "arising out of crime No. 0128/2022"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN SST",
+      "n": 1,
+      "example": "passed in S.S.T. No. 2002 of 2022"
+    },
+    {
+      "cls": "Mixed",
+      "type": "AT FIR",
+      "n": 1,
+      "example": "lodged at F.I.R. No. - 0241 of 2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN MATAPP",
+      "n": 1,
+      "example": "order passed today in Mat.App. No. 70/2017"
+    },
+    {
+      "cls": "Title",
+      "type": "ST CASE",
+      "n": 1,
+      "example": "in connection with S.T. Case No. 63 of 2025"
+    },
+    {
+      "cls": "Mixed",
+      "type": "TO GR",
+      "n": 1,
+      "example": "corresponding to G.R. No. 57 of 2025"
+    },
+    {
+      "cls": "Mixed",
+      "type": "VIDE FIR",
+      "n": 1,
+      "example": "vide FIR No. 292 of 2020"
+    },
+    {
+      "cls": "Title",
+      "type": "CRMMO",
+      "n": 1,
+      "example": "Cr.MMO No. : 870 of 2025"
+    },
+    {
+      "cls": "Title",
+      "type": "MISCELLANEOUS PETITION",
+      "n": 1,
+      "example": "S.B. Criminal Miscellaneous Petition No.7111/2018"
+    },
+    {
+      "cls": "Mixed",
+      "type": "THAT WRITC",
+      "n": 1,
+      "example": "It appears that Writ-C No. 9974 of 2024"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF WRITC",
+      "n": 1,
+      "example": "This Court disposed of Writ-C No. 9974 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "ONE FIR",
+      "n": 1,
+      "example": "One FIR No.83/2021"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN ABA",
+      "n": 1,
+      "example": "before this Court in ABA No.6763 of 2025"
+    },
+    {
+      "cls": "Mixed",
+      "type": "THE SUIT",
+      "n": 1,
+      "example": "to decide the Suit No. 759 of 2016"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF ST",
+      "n": 1,
+      "example": "the entire proceedings of S.T. No.673 of 2023"
+    },
+    {
+      "cls": "lower",
+      "type": "BEARING REGISTRATION",
+      "n": 1,
+      "example": "bearing registration No. 769 of 2024"
+    },
+    {
+      "cls": "Title",
+      "type": "CIVIL SUIT",
+      "n": 1,
+      "example": "submits that Regular Civil Suit No.29 of 2012"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN APPEAL",
+      "n": 1,
+      "example": "in Appeal No. 116 of 2013"
+    },
+    {
+      "cls": "Mixed",
+      "type": "TO FIR",
+      "n": 1,
+      "example": "pertaining to FIR No.70/2022"
+    },
+    {
+      "cls": "lower",
+      "type": "COMPLIANT CASE",
+      "n": 1,
+      "example": "disposal of compliant case No. 90644 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "WRIT A",
+      "n": 1,
+      "example": "Court in Writ A No.13388 of 2019"
+    },
+    {
+      "cls": "Title",
+      "type": "IN CRIME",
+      "n": 1,
+      "example": "Complainant In Crime No. 205/2021"
+    },
+    {
+      "cls": "Title",
+      "type": "SPECIAL CASE",
+      "n": 1,
+      "example": "discharge in Special Case No. 619 of 2022"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN MACP",
+      "n": 1,
+      "example": "compensation granted in MACP No.528/2002"
+    },
+    {
+      "cls": "Title",
+      "type": "NOGW",
+      "n": 1,
+      "example": "No.GW/11/2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN ST",
+      "n": 1,
+      "example": "in S.T. No. 1699 of 2023"
+    },
+    {
+      "cls": "Title",
+      "type": "SPL CASE",
+      "n": 1,
+      "example": "proceedings of Spl. Case No.52 of 2018"
+    },
+    {
+      "cls": "Title",
+      "type": "COMPLAINANT CASE",
+      "n": 1,
+      "example": "Complainant Case No.95 of 2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN CR",
+      "n": 1,
+      "example": "applicants seek bail in C.R.No.0247 of 2019"
+    },
+    {
+      "cls": "Mixed",
+      "type": "IN CWP",
+      "n": 1,
+      "example": "of this Court in CWP No. 2004 of 2017"
+    },
+    {
+      "cls": "Title",
+      "type": "GR CASE",
+      "n": 1,
+      "example": "arose out of G.R. Case no. 702 of 2015"
+    },
+    {
+      "cls": "lower",
+      "type": "CHARGE SHEET",
+      "n": 1,
+      "example": "as well as charge sheet No.383/2019"
+    },
+    {
+      "cls": "Title",
+      "type": "ORIGINAL SUIT",
+      "n": 1,
+      "example": "application filed in Original Suit No.1155 of 2023"
+    },
+    {
+      "cls": "Title",
+      "type": "SUIT",
+      "n": 1,
+      "example": "Suit No.1155 of 2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "MUTATION CASE",
+      "n": 1,
+      "example": "and decide the mutation Case no 2592/2023"
+    },
+    {
+      "cls": "Mixed",
+      "type": "BEARING FIR",
+      "n": 1,
+      "example": "bearing FIR No.131/2025"
+    },
+    {
+      "cls": "Mixed",
+      "type": "OF CRMP",
+      "n": 1,
+      "example": "prayer for restoration of Cr.M.P. No.3517 of 2022"
+    },
+    {
+      "cls": "Title",
+      "type": "MJC CASE",
+      "n": 1,
+      "example": "and M.J.C. Case No. 437/2023"
+    },
+    {
+      "cls": "Title",
+      "type": "BAIL APPL",
+      "n": 1,
+      "example": "Bail Appl. No.3951 OF 2025"
+    },
+    {
+      "cls": "lower",
+      "type": "COMPLAINT CASE",
+      "n": 1,
+      "example": "entire proceeding of complaint case no. 293 of 2024"
+    }
+  ]
+}

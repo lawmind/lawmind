@@ -1,0 +1,46 @@
+{
+  "measuredAt": "2026-08-31T13:38:24.237Z",
+  "t0": "2026-08-18",
+  "causeTitleChars": 800,
+  "holdout": {
+    "COHORT_TITLES_SCANNED": 2295,
+    "COHORT_TITLES_RECOGNIZED": {
+      "preFix": 1247,
+      "postFix": 1772
+    },
+    "WOULD_BE_UNIQUE_ROWS": 2475,
+    "positives": 226,
+    "positivesReachable": 180,
+    "positivesOutOfScope": 46,
+    "REACHABLE_FALSE_UNIQUE_CLOSED": {
+      "preFix": 97,
+      "postFix": 101,
+      "of": 180
+    },
+    "RECALL_COST_KEYS": {
+      "preFix": 34,
+      "postFix": 39,
+      "of": 2295
+    },
+    "UNREADABLE_FAIL_CLOSED": 0
+  },
+  "new2BlindPackage": {
+    "source": "docs/ai/new2-r15/falsifier-adjudicated.jsonl",
+    "WOULD_BE_UNIQUE_ROWS": 472,
+    "distinctPinnedJudgments": 317,
+    "declaredMattersHistogram": {
+      "pre": {
+        "0": 472
+      },
+      "post": {
+        "0": 294,
+        "1": 178
+      }
+    },
+    "UNIQUE_WITHHELD_BY_COHORT": {
+      "preFix": 0,
+      "postFix": 0
+    },
+    "UNREADABLE_FAIL_CLOSED": 0
+  }
+}

@@ -1,0 +1,2974 @@
+{
+  "measuredAt": "2026-08-31T13:38:57.253Z",
+  "t0": "2026-08-18",
+  "causeTitleChars": 800,
+  "reachable": {
+    "total": 180,
+    "caught": 101,
+    "missedNoConnector": 78,
+    "missedSiblingNamed": 1,
+    "missedSiblingNotNamed": 0,
+    "noConnector": [
+      {
+        "citationKey": "2023KHCD12668DB",
+        "t0BearerId": "4530a0ae-3e65-4b0a-8604-8cb1938f6612",
+        "t0CaseNumber": "MFA/101864/2016",
+        "court": "High Court of Karnataka",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "101864|2016"
+        ],
+        "siblingCaseNumbers": [
+          "MFA/101863/2016"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2023KHCD14854",
+        "t0BearerId": "81830870-3b06-432a-8308-dee832f71012",
+        "t0CaseNumber": "CRL.P/103219/2023",
+        "court": "High Court of Karnataka",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "103219|2023"
+        ],
+        "siblingCaseNumbers": [
+          "CRL.P/103298/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2023KHCD8277DB",
+        "t0BearerId": "0dad9049-96c7-49d2-a634-fa7e0d9efb01",
+        "t0CaseNumber": "MFA/101803/2019",
+        "court": "High Court of Karnataka",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "101803|2019"
+        ],
+        "siblingCaseNumbers": [
+          "MFA/101664/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2023KHCD9003",
+        "t0BearerId": "e962abf6-e806-43f2-b261-c3e9768f8f14",
+        "t0CaseNumber": "RSA/100141/2023",
+        "court": "High Court of Karnataka",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "100141|2023"
+        ],
+        "siblingCaseNumbers": [
+          "RSA/100145/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO39133",
+        "t0BearerId": "9af0d303-4e08-4887-a3e1-572ff52038c1",
+        "t0CaseNumber": "ABAIL/69/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "69|2024"
+        ],
+        "siblingCaseNumbers": [
+          "/69/2024",
+          "/3068/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO42254",
+        "t0BearerId": "ef8f9b66-7ae2-4968-a539-8ec6158a712d",
+        "t0CaseNumber": "A482/1728/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "1728|2024"
+        ],
+        "siblingCaseNumbers": [
+          "/7155/2023",
+          "/1728/2024"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO49343",
+        "t0BearerId": "46423912-334d-4d06-8e9e-f9995e122583",
+        "t0CaseNumber": "ABAIL/787/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "787|2024",
+          "94|2022"
+        ],
+        "siblingCaseNumbers": [
+          "/616/2023",
+          "/787/2024"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO55437",
+        "t0BearerId": "7457aed4-de83-46a5-af59-40e56fbdda67",
+        "t0CaseNumber": "A482/3961/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "3961|2024"
+        ],
+        "siblingCaseNumbers": [
+          "/3961/2024",
+          "/9782/2023",
+          "/11047/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO68598",
+        "t0BearerId": "34912a8b-b790-4e68-9443-574cb11816ff",
+        "t0CaseNumber": "A482/5413/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "5413|2024",
+          "2283|2023"
+        ],
+        "siblingCaseNumbers": [
+          "/5413/2024",
+          "/2283/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2024AHCLKO72986",
+        "t0BearerId": "b58c5e06-91cb-434e-8e01-a19bcbe8ab0b",
+        "t0CaseNumber": "A482/1889/2024",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "1889|2024"
+        ],
+        "siblingCaseNumbers": [
+          "/1889/2024",
+          "/3040/2016"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC116496",
+        "t0BearerId": "3e4e0c92-b730-49c0-99a9-91fe4e99b629",
+        "t0CaseNumber": "WRIC/31274/2019",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "31274|2019"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/31279/2019",
+          "WRIC/31323/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC117235DB",
+        "t0BearerId": "7e81b6ac-6792-4337-875b-c608638dbce0",
+        "t0CaseNumber": "WRIC/47107/2006",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "47107|2006"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/38662/2006"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC118668",
+        "t0BearerId": "ab63f4cf-b498-490e-acdb-626bf31b8b8c",
+        "t0CaseNumber": "A482/39695/2010",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "39695|2010"
+        ],
+        "siblingCaseNumbers": [
+          "A482/39691/2010"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC118946DB",
+        "t0BearerId": "1d061bd1-af59-4d33-bab1-e0aaed7af775",
+        "t0CaseNumber": "WRIC/69040/2009",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "69040|2009"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/68053/2009"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC119941DB",
+        "t0BearerId": "51629162-e06d-413a-bc12-5dbd0e68fbf1",
+        "t0CaseNumber": "WRIC/60555/2011",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "60555|2011"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/60551/2011"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC119945DB",
+        "t0BearerId": "442dd508-df61-4cd3-a78d-3122c76b2abe",
+        "t0CaseNumber": "WRIC/62077/2011",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "62077|2011"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/44512/2010"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC12010",
+        "t0BearerId": "aea3bf48-c92f-450e-a3ee-25dc7e52c100",
+        "t0CaseNumber": "WRIA/9663/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "9663|2023"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/9684/2023",
+          "WRIA/9669/2023",
+          "WRIA/9650/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC120509DB",
+        "t0BearerId": "8a218f83-a013-48de-823e-26fb4d735be4",
+        "t0CaseNumber": "WRIC/66664/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "66664|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/34/2014"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC12074DB",
+        "t0BearerId": "e10f608e-eb79-496d-8aa3-c8c3a06bf72b",
+        "t0CaseNumber": "WRIC/37357/2019",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "37357|2019"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/1750/2020"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC12335",
+        "t0BearerId": "b1860475-a4b1-45f5-8cad-22fce08ab211",
+        "t0CaseNumber": "BAIL/18275/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "BAIL/26920/2021"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC123444DB",
+        "t0BearerId": "58f44826-6029-4883-88c4-24e5837b38fa",
+        "t0CaseNumber": "WRIC/57061/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "57061|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/57650/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC123508",
+        "t0BearerId": "b744f1a3-9888-419d-a4e8-9c2cb7c0fa1e",
+        "t0CaseNumber": "CRLR/1202/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "1202|2023"
+        ],
+        "siblingCaseNumbers": [
+          "CRLR/3387/2023",
+          "CRLR/1213/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC12394DB",
+        "t0BearerId": "d44f8a9c-1cb3-4719-b29c-e03fad9d2a9f",
+        "t0CaseNumber": "CRLA/278/1993",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "278|1993"
+        ],
+        "siblingCaseNumbers": [
+          "CRLA/210/1991"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC124469DB",
+        "t0BearerId": "3611e691-1eac-43e3-8e79-b692e3510a9e",
+        "t0CaseNumber": "WRIC/47863/2016",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "47863|2016"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/52280/2016"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC125816DB",
+        "t0BearerId": "193c9064-1400-4e7a-860d-7bb07bd68eb1",
+        "t0CaseNumber": "WRIC/9136/2006",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "9136|2006"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/17942/2003"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC125820DB",
+        "t0BearerId": "549163fb-611e-459d-95d7-9490595d699a",
+        "t0CaseNumber": "WRIC/36834/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "36834|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/36837/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC125880DB",
+        "t0BearerId": "28b9790a-dd92-4240-8b84-0942b0ff152a",
+        "t0CaseNumber": "WRIC/26877/2011",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "26877|2011"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/31363/2011"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC126045DB",
+        "t0BearerId": "7c1328ce-da24-4e31-a93f-ed17a9d6f670",
+        "t0CaseNumber": "WRIC/11462/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "11462|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/20382/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC126049DB",
+        "t0BearerId": "ddef6f65-0e92-48a8-97b6-6a6eb870330c",
+        "t0CaseNumber": "WRIC/12924/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "12924|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/11585/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC126163DB",
+        "t0BearerId": "068c7c83-6c1f-438a-aacf-813d6eb9209b",
+        "t0CaseNumber": "WRIC/41660/2009",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "41660|2009"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/37847/2009"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC126484DB",
+        "t0BearerId": "08bf1bab-a2dd-42e3-9691-d5a72c71e506",
+        "t0CaseNumber": "WRIC/9526/2014",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "9526|2014"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/9520/2014",
+          "WRIC/9620/2014"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC127124DB",
+        "t0BearerId": "e798f067-dc2b-4252-a1fb-b4e7548453d5",
+        "t0CaseNumber": "WRIC/713/2014",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "713|2014"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/1455/2014"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC130987",
+        "t0BearerId": "7b81841b-8658-481c-b6f8-e803f44736b2",
+        "t0CaseNumber": "WRIA/13845/2012",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "13845|2012"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/12839/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC13127",
+        "t0BearerId": "70ec9f9d-7313-4482-9fbb-75a9b9da7d29",
+        "t0CaseNumber": "ARCO/34/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "ARCO/116/2022"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC139542",
+        "t0BearerId": "f6e2e694-b940-4482-b9f0-8494e3f3c142",
+        "t0CaseNumber": "BAILC/599/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "599|2023"
+        ],
+        "siblingCaseNumbers": [
+          "BAILC/700/2023",
+          "BAILC/485/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC141584",
+        "t0BearerId": "c9912523-1638-42cc-a5f9-a230f409a591",
+        "t0CaseNumber": "WRIA/26281/2008",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "26281|2008"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/14414/2009"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC141700",
+        "t0BearerId": "9d2cf73a-ea62-400a-8c8f-eeb46ba82b2a",
+        "t0CaseNumber": "WRIA/3790/2018",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "3790|2018"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/3791/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC142995",
+        "t0BearerId": "0755ffe2-96d2-4a19-b098-354e621a7bd6",
+        "t0CaseNumber": "A482/28784/2022",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "28784|2022"
+        ],
+        "siblingCaseNumbers": [
+          "A482/28796/2022",
+          "A482/28698/2022"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC144332DB",
+        "t0BearerId": "9934dd1f-7a49-493d-b1fb-d7d6cda22a94",
+        "t0CaseNumber": "WRIC/23374/2012",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "23374|2012"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/23376/2012"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC144624",
+        "t0BearerId": "454a9f4e-2f29-4abc-a23b-0865bb0e12e2",
+        "t0CaseNumber": "WRIA/2373/2015",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "2373|2015"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/52591/2015"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC170153",
+        "t0BearerId": "772bbce7-8035-4ffc-9c0b-d139b6283929",
+        "t0CaseNumber": "WRIA/14381/2009",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "14381|2009"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/17126/2009",
+          "WRIA/15878/2009"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC17458",
+        "t0BearerId": "d73deaa9-8d16-48ca-aab7-d1edae7e2250",
+        "t0CaseNumber": "A482/28413/2015",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 3,
+        "declaredKeys": [
+          "28413|2015",
+          "72|2015",
+          "161|2014"
+        ],
+        "siblingCaseNumbers": [
+          "A482/28414/2015"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC18804",
+        "t0BearerId": "1707a0d5-5831-4a30-b16c-fbe0d3f720fa",
+        "t0CaseNumber": "BAIL/47252/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "47252|2023"
+        ],
+        "siblingCaseNumbers": [
+          "BAIL/46694/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC19282",
+        "t0BearerId": "c8412baf-5be0-4ec0-8a95-59d702d291ed",
+        "t0CaseNumber": "WRIA/40834/2014",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "40834|2014"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/45292/2014"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC25732DB",
+        "t0BearerId": "da36093e-43e3-4d59-8861-c41cc112cb32",
+        "t0CaseNumber": "WRIC/27553/2022",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "27553|2022"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/33408/2022",
+          "WRIC/26129/2022",
+          "WRIC/8483/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC25789DB",
+        "t0BearerId": "f99c777c-4f84-4e97-9037-9782bc00cb85",
+        "t0CaseNumber": "WRIC/17836/2020",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "17836|2020"
+        ],
+        "siblingCaseNumbers": [
+          "WRIC/41880/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC30639",
+        "t0BearerId": "e462e5af-7c67-4677-9d99-1c25b12845dd",
+        "t0CaseNumber": "CRLR/3637/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "3637|2013"
+        ],
+        "siblingCaseNumbers": [
+          "CRLR/2611/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC39677",
+        "t0BearerId": "c3b9af47-b7a6-40b1-baf7-e61fab4c4fdd",
+        "t0CaseNumber": "A482/40208/2019",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "40208|2019"
+        ],
+        "siblingCaseNumbers": [
+          "A482/40232/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC4140",
+        "t0BearerId": "0bc7f5aa-6700-4d07-ac85-e8d1a3a8e93b",
+        "t0CaseNumber": "A482/40503/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "40503|2023",
+          "2144|2018"
+        ],
+        "siblingCaseNumbers": [
+          "A482/40456/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC41724",
+        "t0BearerId": "926e4658-44ff-4861-8f89-c609e88d06e3",
+        "t0CaseNumber": "CRLR/527/2018",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "527|2018"
+        ],
+        "siblingCaseNumbers": [
+          "CRLR/956/2018"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC50446",
+        "t0BearerId": "1edf857c-daa7-484c-bae0-1440fc127178",
+        "t0CaseNumber": "BAILC/210/2023",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "BAILC/475/2022"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC70572",
+        "t0BearerId": "c61da1c8-f12a-4263-b7b7-baa18262127c",
+        "t0CaseNumber": "CRLP/5392/2022",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "5392|2022"
+        ],
+        "siblingCaseNumbers": [
+          "A227/8316/2018"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC84553DB",
+        "t0BearerId": "0f70e81c-3d08-4bb4-9a44-3007795c90d0",
+        "t0CaseNumber": "CRLA/11/2008",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "11|2008"
+        ],
+        "siblingCaseNumbers": [
+          "CRLA/329/2008"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC85472",
+        "t0BearerId": "de8318b7-4862-4627-a0a8-25bde3fafdf9",
+        "t0CaseNumber": "WRIA/5193/2016",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "5193|2016",
+          "26|2025"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/2852/2015",
+          "WRIA/9906/2016",
+          "WRIA/5205/2016",
+          "WRIA/39384/2015"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC86548",
+        "t0BearerId": "8a323678-5664-47bc-bd1c-3d9ba701a8e7",
+        "t0CaseNumber": "WRIA/54832/2013",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "54832|2013"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/4528/2014",
+          "WRIA/47605/2016"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC86905",
+        "t0BearerId": "e7d53cab-685d-4ea2-b30b-51ab1c7964bd",
+        "t0CaseNumber": "A482/19182/2017",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "19182|2017",
+          "2517|2014"
+        ],
+        "siblingCaseNumbers": [
+          "A482/13391/2019",
+          "A482/13393/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC87175",
+        "t0BearerId": "fa8f33dd-ba72-4927-a1fe-844f243a62e7",
+        "t0CaseNumber": "FAFO/1038/2019",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "1038|2019"
+        ],
+        "siblingCaseNumbers": [
+          "FAFO/770/2019"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC88150",
+        "t0BearerId": "75e0afbe-e26f-4b97-81a1-1cce9e82ec25",
+        "t0CaseNumber": "FAFO/2239/2009",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "2239|2009"
+        ],
+        "siblingCaseNumbers": [
+          "FAFO/2238/2009"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC88191",
+        "t0BearerId": "328037d8-9f6c-487a-a5d4-09ec9f058d8d",
+        "t0CaseNumber": "WRIA/17670/2014",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "17670|2014"
+        ],
+        "siblingCaseNumbers": [
+          "WRIA/58591/2008"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025AHC88326DB",
+        "t0BearerId": "88af51bd-e998-4a99-b690-d816c23acaad",
+        "t0CaseNumber": "CUSA/13/2020",
+        "court": "Allahabad High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "13|2020"
+        ],
+        "siblingCaseNumbers": [
+          "CUSA/11/2020"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG11428",
+        "t0BearerId": "42e31ee3-68a3-4871-b23b-b72fcfaa9bff",
+        "t0CaseNumber": "FA/3594/2019",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "3594|2019"
+        ],
+        "siblingCaseNumbers": [
+          "FA/884/2023"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG11798",
+        "t0BearerId": "821ff9b0-6f32-41f6-a16b-a9f93ed5fbe4",
+        "t0CaseNumber": "CA/4091/2025",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 8,
+        "declaredKeys": [
+          "4125|2025",
+          "22522|2020",
+          "4076|2025",
+          "22565|2020",
+          "4124|2025",
+          "22515|2020",
+          "4077|2025",
+          "22561|2020"
+        ],
+        "siblingCaseNumbers": [
+          "CA/4090/2025"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG13506",
+        "t0BearerId": "958685e2-dbfe-4dac-a11d-50f5d586f892",
+        "t0CaseNumber": "CA/740/2021",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 4,
+        "declaredKeys": [
+          "738|2021",
+          "15709|2020",
+          "740|2021",
+          "15706|2020"
+        ],
+        "siblingCaseNumbers": [
+          "CA/738/2021"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG13510",
+        "t0BearerId": "dd10a327-3a58-4d67-b9ec-f642a0a8e9a1",
+        "t0CaseNumber": "CA/741/2021",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 4,
+        "declaredKeys": [
+          "739|2021",
+          "15709|2020",
+          "741|2021",
+          "15706|2020"
+        ],
+        "siblingCaseNumbers": [
+          "CA/739/2021"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG14200",
+        "t0BearerId": "a8a35441-5356-4dbc-8e74-df7c9b2785d3",
+        "t0CaseNumber": "CA/5484/2025",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 4,
+        "declaredKeys": [
+          "5484|2025",
+          "799|2022",
+          "5485|2025",
+          "798|2022"
+        ],
+        "siblingCaseNumbers": [
+          "CA/5485/2025"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG20927DB",
+        "t0BearerId": "ad9b0502-d15c-47db-af52-64227feae9fd",
+        "t0CaseNumber": "APPLN/2831/2025",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "2831|2025",
+          "2834|2025"
+        ],
+        "siblingCaseNumbers": [
+          "APPLN/2834/2025"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG22740DB",
+        "t0BearerId": "2dc1edb7-7512-4758-8674-778e890d6e3b",
+        "t0CaseNumber": "WP/13451/2024",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "13451|2024"
+        ],
+        "siblingCaseNumbers": [
+          "WP/13608/2024"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025BHCAUG27867",
+        "t0BearerId": "ed5e2e2e-2e1c-42ad-9d96-e9ff89682858",
+        "t0CaseNumber": "APPLN/2910/2025",
+        "court": "Bombay High Court",
+        "connector": null,
+        "declaredMatters": 2,
+        "declaredKeys": [
+          "1137|2025",
+          "2910|2025"
+        ],
+        "siblingCaseNumbers": [
+          "ABA/1137/2025"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC008410",
+        "t0BearerId": "3d64c7af-e435-450d-8547-3f2dd2af7028",
+        "t0CaseNumber": "RSA/3718/2000",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "COCP/592/2001"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC035578",
+        "t0BearerId": "b782b15a-788c-4b0a-a252-8c780aaeff41",
+        "t0CaseNumber": "RSA/2318/1989",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "RSA/2317/1989"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC058053",
+        "t0BearerId": "6ad93c2d-e0a1-4ea7-a6d9-b9067ce07105",
+        "t0CaseNumber": "RSA/204/2018",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 1,
+        "declaredKeys": [
+          "204|2018"
+        ],
+        "siblingCaseNumbers": [
+          "CR/3582/2017"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC058672",
+        "t0BearerId": "14e203bc-c338-4afc-9245-614deacc21f9",
+        "t0CaseNumber": "CWP/8848/2020",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "CWP/21368/2023",
+          "CWP/8549/2020"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC061942",
+        "t0BearerId": "3b642089-5507-4303-8538-89e454d54ef1",
+        "t0CaseNumber": "RSA/1964/2013",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "RSA/2832/2013"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC073091",
+        "t0BearerId": "87e522e5-a686-4f59-b8f3-9613b191c209",
+        "t0CaseNumber": "CWP/9027/2018",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "CWP/16728/2018"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC089269",
+        "t0BearerId": "cd3d80c1-9e00-4f19-941c-45ae601f19c8",
+        "t0CaseNumber": "CRA-S/2271/2008",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "CRR/1136/2010"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC150114",
+        "t0BearerId": "5a3b8979-125c-4172-8501-da1b8a971f1a",
+        "t0CaseNumber": "XOBJS/10/2018",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "RSA/3555/2015"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC165813",
+        "t0BearerId": "d4dc51a3-0bd2-4df2-9f24-5632789c5558",
+        "t0CaseNumber": "FAO/1745/2001",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "FAO/2792/2000",
+          "XOBJC/12/2001"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      },
+      {
+        "citationKey": "2025PHHC169754",
+        "t0BearerId": "e9baac9e-2a21-43b0-95dc-1301f4525f75",
+        "t0CaseNumber": "RSA/109/1999",
+        "court": "High Court of Punjab and Haryana",
+        "connector": null,
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "RSA/108/1999"
+        ],
+        "siblingNamedAnyway": false,
+        "namedSiblings": []
+      }
+    ],
+    "namedButUncounted": [
+      {
+        "citationKey": "2025AHC11863",
+        "t0BearerId": "22239692-ea7a-4ee7-99e5-e184aabb8c5e",
+        "t0CaseNumber": "BAIL/47257/2021",
+        "court": "Allahabad High Court",
+        "connector": "WITH",
+        "declaredMatters": 0,
+        "declaredKeys": [],
+        "siblingCaseNumbers": [
+          "BAIL/30561/2021",
+          "BAIL/41933/2021"
+        ],
+        "namedSiblings": [
+          "BAIL/30561/2021",
+          "BAIL/41933/2021"
+        ]
+      }
+    ],
+    "notNamed": []
+  },
+  "outOfScope": {
+    "total": 46,
+    "sameCourtDifferentDate": 43,
+    "crossCourt": 3,
+    "cases": [
+      {
+        "citationKey": "2023AHC152051DB",
+        "class": "CROSS_COURT",
+        "bearers": [
+          {
+            "judgmentId": "2900f754-f976-43ce-8d0c-c21e56325b9f",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2023-07-25",
+            "caseNumber": "WTAX/859/2023",
+            "caseTitle": "M/S TIKONA INFINET PRIVATE LIMITED Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:19:56.222298+00"
+          },
+          {
+            "judgmentId": "d1a4c477-98eb-4aea-ac0a-e5669ac10220",
+            "court": "High Court of Andhra Pradesh",
+            "judgmentDate": "2023-11-09",
+            "caseNumber": "WP/28743/2023",
+            "caseTitle": "TIKONA INFINET PRIVATE LIMITED Vs THE STATE OF ANDHRA PRADESH",
+            "keyLandedAt": "2026-08-24 18:40:02.246787+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023AHC169934DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "ac3e341d-f715-4061-b76a-eeb895583c48",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2023-08-10",
+            "caseNumber": "CRLP/12619/2023",
+            "caseTitle": "GOVARDHAN Vs STATE OF U.P.",
+            "keyLandedAt": "2026-08-17 16:20:41.864833+00"
+          },
+          {
+            "judgmentId": "b5f84512-c658-4f10-b626-a181ad0f0951",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-10-18",
+            "caseNumber": "CRLP/7622/2024",
+            "caseTitle": "RIKESH ALIAS RINKU (IN AADHAAR CARD RINKESH KUMAR YADAV) VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. OF HOME LKO AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:10.305161+00"
+          },
+          {
+            "judgmentId": "4f32a651-f108-4126-afae-fa2c16c05974",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-11-18",
+            "caseNumber": "CRLP/8542/2024",
+            "caseTitle": "Vijendra Kumar VS State of U.P. THRU. PRIN. SECY., HOME and others",
+            "keyLandedAt": "2026-08-24 18:40:13.245397+00"
+          },
+          {
+            "judgmentId": "eb7e4861-4e82-4e34-8ac6-9531fbe42cbe",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-11-18",
+            "caseNumber": "CRLP/8543/2024",
+            "caseTitle": "Munendra Kumar VS State of U.P. THRU. PRIN. SECY., HOME and others",
+            "keyLandedAt": "2026-08-24 18:40:13.245397+00"
+          },
+          {
+            "judgmentId": "56b8ef37-6bce-419e-80f2-4f92bf54a460",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-08-07",
+            "caseNumber": "CRLP/5469/2024",
+            "caseTitle": "FAUZDAR SINGH VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:16.385927+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023AHCLKO59744",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "fd7a0b65-e974-4b13-b59b-0b91938ec426",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2023-09-18",
+            "caseNumber": "/2263/2023",
+            "caseTitle": "DINESH KUMAR GUPTA AND 3 OTHERS Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:25:53.948757+00"
+          },
+          {
+            "judgmentId": "39f626f9-f8bb-47c5-b4db-5f73dcfd345c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-05-13",
+            "caseNumber": "CRLA/1579/2024",
+            "caseTitle": "NANHU DUBEY @ VED PRAKASH DWIVEDI VS STATE OF U.P. THRU. PRIN.SECY. HOME DEPTT. LKO AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:40:08.574648+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023AHCLKO65518DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "d57f09d7-78d3-49f3-9175-bbc544e560b0",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2023-10-09",
+            "caseNumber": "WRIA/7699/2023",
+            "caseTitle": "NO. 15447310W EX RECT , RAUSHAN KUMAR SINGH Vs THE ARMED FORCES TRIBUNAL REGIONAL BENCH LKO. AND OTHERS",
+            "keyLandedAt": "2026-08-17 16:26:09.113284+00"
+          },
+          {
+            "judgmentId": "2bbbd6c8-3add-4526-a02c-66464081c038",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-20",
+            "caseNumber": "WRIA/12521/2024",
+            "caseTitle": "UNION OF INDIA THRU. SECY. MIN. DEFENCE NEW DELHI AND 3 OTHERS VS EX SUB BRAJ BHAN SACHAN",
+            "keyLandedAt": "2026-08-24 18:40:31.4562+00"
+          },
+          {
+            "judgmentId": "2cf2c8e1-b8e0-4f40-91dc-6427275ae033",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-20",
+            "caseNumber": "WRIA/12515/2024",
+            "caseTitle": "UNION OF INDIA THRU. SECY. MINISTRY OF DEFENCE NEW DELHI AND 3 OTHERS VS NO2701284A EX GDR DHEERENDRA PRATAP SINGH",
+            "keyLandedAt": "2026-08-24 18:40:31.4562+00"
+          },
+          {
+            "judgmentId": "5495f296-9cec-4e0b-8abf-2fe5ced42977",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-20",
+            "caseNumber": "WRIA/12788/2024",
+            "caseTitle": "UNION OF INDIA THRU. SECY. MINISTRY DEFENCE GOVT. INDIA AND 3 OTHERS VS EX NK (MACP HAVILDAR) DATTATRAY VASANT JADHAV",
+            "keyLandedAt": "2026-08-24 18:40:31.4562+00"
+          },
+          {
+            "judgmentId": "ad364ee8-176a-45ac-8276-847af1035d27",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-20",
+            "caseNumber": "WRIA/12760/2024",
+            "caseTitle": "UNION OF INDIA THRU. SECY. GOVT. OF INDIA,MINISTRY OF DEFENCE NEW DELHI AND 3 OTHERS VS NO. JC. 804827P EX SUB HONY CAPT. PROMOD KUMAR MISHRA",
+            "keyLandedAt": "2026-08-24 18:40:31.4562+00"
+          },
+          {
+            "judgmentId": "e4c0f4fa-ac2a-4147-89c5-f16637911b07",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-11-20",
+            "caseNumber": "WRIA/10885/2024",
+            "caseTitle": "UNION OF INDIA THRU. SECY. GOVT. OF INDIA MINISTRY OF DEFENCE NEW DELHI AND 3 OTHERS VS NO 2792082K EX HAV TEKAWADE SANTOSH BAPURAO",
+            "keyLandedAt": "2026-08-24 18:40:31.4562+00"
+          },
+          {
+            "judgmentId": "bf6f4b09-3436-4b5c-9c4c-c6ba8811c6ed",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-10",
+            "caseNumber": "WRIA/11837/2024",
+            "caseTitle": "U.O.I. THRU. SECY. MINISTRY OF DEFENCE NEW DELHI. AND 2 ORS. VS NO 14406129N EX HAV CHANDRAMA RAM",
+            "keyLandedAt": "2026-08-24 18:40:33.880674+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023KHCD14142",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "d6c2e21c-89c1-4517-84ab-667164ab8016",
+            "court": "High Court of Karnataka",
+            "judgmentDate": "2023-12-05",
+            "caseNumber": "MFA/25707/2011",
+            "caseTitle": "LALITA W/O MAHADEV HERALAGI Vs SHRI ASHOKKUMAR S/O DARIYARAM",
+            "keyLandedAt": "2026-08-17 16:41:03.570417+00"
+          },
+          {
+            "judgmentId": "7c905625-a494-43d5-bdc0-59e12ac23760",
+            "court": "High Court of Karnataka",
+            "judgmentDate": "2023-12-04",
+            "caseNumber": "MFA/25207/2011",
+            "caseTitle": "SMT. SUMITRA @ NAGAMMA W/O Vs THE GENERAL MANAGER",
+            "keyLandedAt": "2026-08-24 18:39:52.817909+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023MHC3983",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "e1cc646d-d7e0-41de-a429-9bb7e0d23606",
+            "court": "Madras High Court",
+            "judgmentDate": "2023-09-29",
+            "caseNumber": "WMP/28194/2023",
+            "caseTitle": "BHUVANESWARI Vs THE SECRETARY",
+            "keyLandedAt": "2026-08-17 16:23:06.079486+00"
+          },
+          {
+            "judgmentId": "b825e59a-c91e-4d9e-9b4e-ddf96e654208",
+            "court": "Madras High Court",
+            "judgmentDate": "2023-12-06",
+            "caseNumber": "WP(MD)/28643/2023",
+            "caseTitle": "Pavithra Vs The State represented by its The Secretary to the Government of Tamil Nadu",
+            "keyLandedAt": "2026-08-24 18:39:59.202504+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023PHHC094498",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "cdfb7f9f-5608-4fb5-9733-e606cbcfdec1",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2023-07-26",
+            "caseNumber": "CWP/15861/2015",
+            "caseTitle": "DEEPAK KUMAR Vs STATE OF PUNJAB & ORS",
+            "keyLandedAt": "2026-08-17 16:30:05.23637+00"
+          },
+          {
+            "judgmentId": "0df34462-7210-48e3-848c-6669d1dd48c5",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-07-18",
+            "caseNumber": "CWP/1220/2024",
+            "caseTitle": "RAJ KUMAR Vs UNION OF INDIA AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:58.820648+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2023PHHC163841",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "fceb0f16-f4b0-4701-9589-4ab06ceee9d0",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2023-12-20",
+            "caseNumber": "SAO/56/2023",
+            "caseTitle": "SUKHDEV KAUR Vs JAGJIT SINGH",
+            "keyLandedAt": "2026-08-17 16:30:18.570413+00"
+          },
+          {
+            "judgmentId": "23545fcf-294f-41d6-b1a4-d622244778e9",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-01-09",
+            "caseNumber": "RSA/2128/1991",
+            "caseTitle": "STATE OF PUNJAB AND OTHERS Vs BALWINDER SINGH",
+            "keyLandedAt": "2026-08-24 18:41:51.205733+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHC132878",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "929f5c4e-1321-4c90-8721-246f9d8f0e14",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-19",
+            "caseNumber": "WTAX/6447/2025",
+            "caseTitle": "M/S RAJASTHAN COAL SUPPLIERS VS STATE OF UTTAR PRADESH AND 2 OTHERS",
+            "keyLandedAt": "2026-08-17 16:28:48.578241+00"
+          },
+          {
+            "judgmentId": "43b5c9f7-9012-44f8-bedd-4070ae78228a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-25",
+            "caseNumber": "WTAX/5066/2025",
+            "caseTitle": "M/S UMESH KUMAR SANJIV KUMAR Vs STATE OF UTTAR PRADESH AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:47:51.258568+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHC200147",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "2dcd5912-73c7-4b06-9179-1fe33e7b4f0e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-12-20",
+            "caseNumber": "WRIA/10425/2024",
+            "caseTitle": "DR HIMANSHU SHEKHAR TRIPATHI VS STATE OF U.P. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-17 16:40:54.684409+00"
+          },
+          {
+            "judgmentId": "901aa664-937b-4bd2-8bea-74e2121c566b",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-23",
+            "caseNumber": "WRIA/11258/2025",
+            "caseTitle": "MAIKU LAL VS STATE OF U.P. THRU. ADDL. CHIEF SECY. AGRICULTURAL MARKETING AND AGRI. FOREIGN TRADE LKO AND 4 ORS,",
+            "keyLandedAt": "2026-08-24 18:50:30.656408+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHC40545DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "2cd14124-6298-42c7-9e8a-49ec0de36d6c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-08-12",
+            "caseNumber": "WRIC/26280/2024",
+            "caseTitle": "AKHILESH RAI VS STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:40:55.861479+00"
+          },
+          {
+            "judgmentId": "feaa5d8f-fa6d-4005-90bc-8c1d1030c24d",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-08-11",
+            "caseNumber": "WRIC/7484/2025",
+            "caseTitle": "SMT. SEEMA BANAUDHA VS THE INDIAN OIL CORPORATION THRU. DIRECTOR MUMBAI AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:47.599031+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO108",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "d8104e47-b613-49ff-b68f-f86fa577e094",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-06",
+            "caseNumber": "A482/1032/2024",
+            "caseTitle": "SALMAN AND ANOTHER VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:41:08.813062+00"
+          },
+          {
+            "judgmentId": "e25612f4-ecdb-4b3f-bb8a-f7693fb26756",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-06",
+            "caseNumber": "/1032/2024",
+            "caseTitle": "SALMAN AND ANOTHER Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:41:18.159716+00"
+          },
+          {
+            "judgmentId": "74781b96-f6a2-4688-9ff5-8b109cd22190",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-02",
+            "caseNumber": "/15166/2023",
+            "caseTitle": "ABHISEK KUMAR SINGH Vs STATE OF U.P. THRU. PRIN. SECY., HOME, LUCKNOW",
+            "keyLandedAt": "2026-08-24 18:41:51.205733+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO12221",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "e5b58a66-691a-40a5-9f89-bea302aa795e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-09",
+            "caseNumber": "A482/646/2024",
+            "caseTitle": "PRAGAT GUPTA ALIAS SATYAM VS STATE OF U.P. THRU. PRIN. SECY. HOME GOVT. CIVIL SECRT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:41:24.351685+00"
+          },
+          {
+            "judgmentId": "d7db4d31-82d1-47e7-8358-b1a37b76db85",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-09",
+            "caseNumber": "/646/2024",
+            "caseTitle": "PRAGAT GUPTA ALIAS SATYAM Vs STATE OF U.P. THRU. PRIN. SECY. HOME GOVT. CIVIL SECRT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:41:51.205733+00"
+          },
+          {
+            "judgmentId": "c1f58945-f126-48f9-a426-954eec9fb691",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-04",
+            "caseNumber": "A482/9169/2025",
+            "caseTitle": "MANISH KUMAR VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:49:15.823535+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO135",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "db972d41-31d7-4707-a0e6-3acfc83d7ec5",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-15",
+            "caseNumber": "A482/1358/2024",
+            "caseTitle": "BABBAN ALIAS BABBAN SAROJ AND 6 OTHERS VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:41:04.06016+00"
+          },
+          {
+            "judgmentId": "9b7c00ae-b973-40b9-bdb3-ca2d3aac2a9a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-02",
+            "caseNumber": "WRIA/24877/2021",
+            "caseTitle": "KAPIL MUNI Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. and ORS.",
+            "keyLandedAt": "2026-08-24 18:41:22.223639+00"
+          },
+          {
+            "judgmentId": "633fbf88-6e3f-4618-af85-06f64dd2cebb",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-02-15",
+            "caseNumber": "/1358/2024",
+            "caseTitle": "BABBAN ALIAS BABBAN SAROJ AND 6 OTHERS Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:42:07.083684+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO1982",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "287ed3ba-ede3-4d50-b192-2bef25f6047a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-09",
+            "caseNumber": "A482/116/2024",
+            "caseTitle": "SATYENDRA TIWARI AND 2 OTHERS VS STATE OF U.P. THRU. PRIN.SECY. HOME AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:41:38.103237+00"
+          },
+          {
+            "judgmentId": "d79293e0-dcab-4a08-a434-8521aa2ede04",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-03-05",
+            "caseNumber": "WRIB/260/2024",
+            "caseTitle": "CHANDRA BHUSHAN PRATAP SINGH VS DEPUTY DIRECTOR OF CONSOLIDATION AYODHYA CAMP AMBEDKAR NAGAR AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:47.465594+00"
+          },
+          {
+            "judgmentId": "031a5382-02fa-46dd-91d0-64f8d32b8cf2",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-09",
+            "caseNumber": "/116/2024",
+            "caseTitle": "SATYENDRA TIWARI AND 2 OTHERS Vs STATE OF U.P. THRU. PRIN.SECY. HOME AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:41:07.064581+00"
+          },
+          {
+            "judgmentId": "813a8d5c-7891-42ad-980f-0a48b3b0e366",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-03-05",
+            "caseNumber": "/260/2024",
+            "caseTitle": "CHANDRA BHUSHAN PRATAP SINGH Vs DEPUTY DIRECTOR OF CONSOLIDATION AYODHYA CAMP AMBEDKAR NAGAR AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:41:40.422856+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO266",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "5469a35a-eeeb-4e66-8a6b-99800cf77fe2",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-10",
+            "caseNumber": "A482/154/2024",
+            "caseTitle": "RAJIT RAM ALIAS RAJIT RAM SHARMA VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:41:38.103237+00"
+          },
+          {
+            "judgmentId": "bc8c89c9-b564-40a6-b4e7-2157c51d44fb",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-02",
+            "caseNumber": "/4183/2023",
+            "caseTitle": "RAM DAS VERMA Vs SRI ANAND KUMAR SINGH, M.D./CHAIRMAN(ADMIN.COMMITTEE) PRADESHIK COOP. DAIRY FED. LTD. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:41:14.452311+00"
+          },
+          {
+            "judgmentId": "3afa25a4-dda9-4d50-80af-4253f5477baf",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-10",
+            "caseNumber": "/154/2024",
+            "caseTitle": "RAJIT RAM ALIAS RAJIT RAM SHARMA Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:41:56.183656+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO5501",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "0288fc3d-fc54-47ef-88cf-91e58573b214",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-19",
+            "caseNumber": "A227/234/2024",
+            "caseTitle": "SUKUN DEVI AND ANOTHER VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. OF REVENUE CIVIL SECRT. LKO. AND 5 OTHERS",
+            "keyLandedAt": "2026-08-17 16:41:00.764257+00"
+          },
+          {
+            "judgmentId": "fcc653fe-44c8-456b-8987-f064c79a14ba",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-08-09",
+            "caseNumber": "WRIA/6357/2024",
+            "caseTitle": "DR. DEEPIKA ASI AND 4 OTHERS VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. AYUSH GOVT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:40:38.848064+00"
+          },
+          {
+            "judgmentId": "25156de3-9905-49b2-ad1b-1b8487012c1b",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-08-09",
+            "caseNumber": "/6357/2024",
+            "caseTitle": "DR. DEEPIKA ASI AND 4 OTHERS Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. AYUSH GOVT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:42:01.4389+00"
+          },
+          {
+            "judgmentId": "befccb6d-a84c-466e-9f83-81b915bcaa78",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-01-19",
+            "caseNumber": "/234/2024",
+            "caseTitle": "SUKUN DEVI AND ANOTHER Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. OF REVENUE CIVIL SECRT. LKO. AND 5 OTHERS",
+            "keyLandedAt": "2026-08-24 18:42:01.4389+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024AHCLKO76731",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "19b0e52d-967d-4774-9b07-6165f92a84c9",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-05-27",
+            "caseNumber": "CAPL/2550/2025",
+            "caseTitle": "CHINTA MANI MISHRA VS DR. HEERA LAL, COMMISSIONER AND REGISTRAR CO-OPERATIVE",
+            "keyLandedAt": "2026-08-17 16:24:03.974056+00"
+          },
+          {
+            "judgmentId": "3db5b243-fc5e-4a3e-b076-5b029e187937",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-11-19",
+            "caseNumber": "WRIA/10746/2024",
+            "caseTitle": "NARAYAN SAHAY SINGH VS STATE OF U.P. THRU. PRIN. SECY. CO. OPERATIVE DEPTT. GOVT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:33.880674+00"
+          },
+          {
+            "judgmentId": "8c0e86cc-ef02-4ed4-86b8-cd30c4dd43dd",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2024-11-19",
+            "caseNumber": "/10746/2024",
+            "caseTitle": "NARAYAN SAHAY SINGH Vs STATE OF U.P. THRU. PRIN. SECY. CO. OPERATIVE DEPTT. GOVT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:41:18.159716+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024PHHC010957",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "52975fd4-1ff0-4528-b5b8-d9b17032872e",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-01-25",
+            "caseNumber": "CRM-M/3896/2024",
+            "caseTitle": "VIKAS ALIAS SONU Vs STATE OF HARYANA AND ANR",
+            "keyLandedAt": "2026-08-17 16:41:08.709166+00"
+          },
+          {
+            "judgmentId": "f957687c-9311-409b-a6e4-2cadd20bebac",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-04-05",
+            "caseNumber": "CRM-M/16389/2024",
+            "caseTitle": "BALJINDER KAUR Vs STATE OF PUNJAB AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:49.495956+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2024PHHC020579",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "accc37f5-2590-45cd-bc0d-5af3a5b09d29",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-02-14",
+            "caseNumber": "CRM-M/6210/2024",
+            "caseTitle": "PRIYANKA GARG AND OTHERS Vs STATE OF HARYANA AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:40:57.48277+00"
+          },
+          {
+            "judgmentId": "5c552127-9bb5-494d-a62b-39856718da0a",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2024-02-12",
+            "caseNumber": "CRM-M/7111/2024",
+            "caseTitle": "ANJU BALA AND ANOTHER Vs STATE OF HARYANA AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:40:53.9991+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC103497DB",
+        "class": "CROSS_COURT",
+        "bearers": [
+          {
+            "judgmentId": "9bb2c3c9-44b0-456b-90a1-96682c3cee36",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-07-02",
+            "caseNumber": "WRIC/6490/2025",
+            "caseTitle": "ASHOK KUMAR GUPTA Vs STATE OF U.P. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-17 16:35:18.349156+00"
+          },
+          {
+            "judgmentId": "1de3e64d-eedf-4527-8faf-19c5275b478f",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-17",
+            "caseNumber": "WRIC/10442/2025",
+            "caseTitle": "HAFIZ MOHD. NOORULLAH @ MOHAMMAD NOORULLAH VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. OF URBAN DEVELOPMENT U.P. LKO. AND 5 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:45.795437+00"
+          },
+          {
+            "judgmentId": "3f65f3ba-4a43-4c69-a880-dd9e6e7e3c07",
+            "court": "High Court of Andhra Pradesh",
+            "judgmentDate": "2026-08-12",
+            "caseNumber": "WP/32050/2025",
+            "caseTitle": "Anumukonda Praharsh Dhana Syam, Vs The State of Andhra Pradesh,",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC103820",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "04ed22dd-25c3-4fd7-9383-8d29a5087153",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-23",
+            "caseNumber": "WRIA/14499/2025",
+            "caseTitle": "GAUTAM SHARMA Vs STATE OF U.P. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-17 16:33:01.042257+00"
+          },
+          {
+            "judgmentId": "975bf129-9c65-47d1-9f49-0daf25650891",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-07-02",
+            "caseNumber": "WRIA/947/2024",
+            "caseTitle": "MAHESH KUMAR CHAUHAN Vs STATE OF UP AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:07.982491+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC179271",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "1c2f8f13-3152-4b31-a487-ae06be7a3557",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-15",
+            "caseNumber": "WTAX/4923/2025",
+            "caseTitle": "M/S C PAUL AND CO VS UNION OF INDIA AND 3 OTHERS",
+            "keyLandedAt": "2026-08-17 16:28:48.578241+00"
+          },
+          {
+            "judgmentId": "7c65c75f-c609-4428-9838-201a3ab51195",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-14",
+            "caseNumber": "WTAX/4907/2025",
+            "caseTitle": "M/S RICH DOT Vs STATE OF U.P AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:32.361622+00"
+          },
+          {
+            "judgmentId": "9c5a4b4a-4952-423c-95a7-2697e8ffefe8",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-14",
+            "caseNumber": "WTAX/4897/2025",
+            "caseTitle": "K.K. CONSTRUCTION Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:32.361622+00"
+          },
+          {
+            "judgmentId": "d2b733e6-4312-466c-8dee-c7b2f4b9ecb0",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-14",
+            "caseNumber": "WTAX/4879/2025",
+            "caseTitle": "M/S A.M. ENTERPRISES Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:32.361622+00"
+          },
+          {
+            "judgmentId": "0f2ff604-d512-4270-a6b6-8ceba7dd3331",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-14",
+            "caseNumber": "WTAX/4923/2025",
+            "caseTitle": "M/S C PAUL AND CO Vs UNION OF INDIA AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:34.688101+00"
+          },
+          {
+            "judgmentId": "782dd993-f3b0-41d2-b90a-4534e04fb664",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-14",
+            "caseNumber": "WTAX/4888/2025",
+            "caseTitle": "M/S IRA AUTO SPARE PARTS Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:34.688101+00"
+          },
+          {
+            "judgmentId": "e3d0ee63-999b-46af-9484-910fc0f6f1e5",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5145/2025",
+            "caseTitle": "M/S SWASTIK ENTERPRISES Vs STATE OF UTTAR PRADESH AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "20753b6c-525c-4b11-b6a4-93c4e40111ff",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5408/2025",
+            "caseTitle": "M/S MUSKAN MEDICAL STORE Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "62ed9366-1328-4a19-a9b3-e1c5f25600c3",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5406/2025",
+            "caseTitle": "M/S BALAJI ENTERPRISES Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "a295a763-6c4a-422c-a9a6-c5a464cdbebc",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5405/2025",
+            "caseTitle": "M/S KRISHNA TRANSPORT COMPANY Vs UNION OF INDIA AND 5 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "bbdfebf8-201d-44dc-9da4-3cd4d573c7db",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5403/2025",
+            "caseTitle": "M/S VIJAY PRATAP SINGH Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "6e6e670f-8a21-4b31-b5d0-ff55a965c09d",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5411/2025",
+            "caseTitle": "M/S KRISHNA TRANSPORT COMPANY Vs UNION OF INDIA AND 5 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "d7db789d-5bf1-4c97-bc00-7cd2ef6185fd",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5410/2025",
+            "caseTitle": "M/S VIJAY PRATAP SINGH Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "60cb1861-5616-4c76-b983-b23bb3906c1a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5407/2025",
+            "caseTitle": "M/S BALAJI ENTERPRISES Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "5f494b32-87af-459e-ab98-16518fd79d4f",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-13",
+            "caseNumber": "WTAX/5144/2025",
+            "caseTitle": "M/S PRASHANT ROAD LINES Vs STATE OF UTTAR PRADESH AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "91e9ee0c-cd99-4bd0-9b88-1f1aaef6bc4e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-16",
+            "caseNumber": "WTAX/733/2025",
+            "caseTitle": "M/S BALA JI KHAD BHANDAR, (LEGAL NAME RAJESH KUMAR) Vs STATE OF U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "11a4187c-d06a-4f16-b0b7-6263828c68cc",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-16",
+            "caseNumber": "WTAX/5491/2025",
+            "caseTitle": "M/S JASVANT SINGH Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          },
+          {
+            "judgmentId": "af671c0e-7c7b-4aa5-8e97-8745b800c70a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-10-16",
+            "caseNumber": "WTAX/2481/2025",
+            "caseTitle": "M/S VISHAL ENT UDHYOG Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:37.023914+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC20934",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "8c977c31-51bc-424d-a591-89de3e51e740",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-02-14",
+            "caseNumber": "A482/32636/2024",
+            "caseTitle": "ISLAM VS State of U.P.",
+            "keyLandedAt": "2026-08-17 16:18:15.559265+00"
+          },
+          {
+            "judgmentId": "d7eade67-84a4-4de5-9126-699d13cceb04",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-02-12",
+            "caseNumber": "A482/29547/2024",
+            "caseTitle": "RAM YASH DUBEY ALIAS UJIYARI LAL AND 4 OTHERS Vs STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:48:30.037893+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC23801",
+        "class": "CROSS_COURT",
+        "bearers": [
+          {
+            "judgmentId": "1f357452-27e6-4c3f-acbd-dd224b7bca57",
+            "court": "Orissa High Court",
+            "judgmentDate": "2026-05-18",
+            "caseNumber": "WP(C)/16093/2025",
+            "caseTitle": "MANOJ KUMAR DEBNATH Vs THE COMMISSIONER OF COMMERCIAL TAXES AND GOODS AND SERVICES TAX , ODISHA",
+            "keyLandedAt": "2026-08-17 16:23:39.769451+00"
+          },
+          {
+            "judgmentId": "0f68c379-24c9-40b9-87e6-fe8c6a852c1e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-02-18",
+            "caseNumber": "WTAX/1319/2024",
+            "caseTitle": "M/S DAYAL PRODUCT Vs ADDITIONAL COMMISSIONER GRADE-2 AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:47:59.872354+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC45317DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "3ca5d907-d403-45dd-a170-2f40228ded74",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-04-02",
+            "caseNumber": "WTAX/917/2025",
+            "caseTitle": "AMIT KUMAR SETHIA (DECEASED) VS STATE OF U.P. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:28:52.161212+00"
+          },
+          {
+            "judgmentId": "17b37af7-865e-41a3-ad6d-ab7e960d0d2c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-16",
+            "caseNumber": "WTAX/1600/2025",
+            "caseTitle": "ASHWANI KUMAR PANDAY VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:57.545263+00"
+          },
+          {
+            "judgmentId": "5b772ef4-992e-4f9a-be0d-c0763005f923",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-17",
+            "caseNumber": "WTAX/1547/2025",
+            "caseTitle": "ASHWANI KUMAR PANDAY VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. STATE TAX LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:57.545263+00"
+          },
+          {
+            "judgmentId": "dec20bcf-9244-42c6-9c08-dc2abdf46cf4",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-16",
+            "caseNumber": "WTAX/1559/2025",
+            "caseTitle": "ASHWANI KUMAR PANDEY VS STATE OF U.P. THRU. PRIN. SECY. DEPTT. STATE TAX LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:57.545263+00"
+          },
+          {
+            "judgmentId": "56b35144-fa93-41fc-bf81-cf7e193f2be9",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-16",
+            "caseNumber": "/1600/2025",
+            "caseTitle": "ASHWANI KUMAR PANDAY Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:27.911485+00"
+          },
+          {
+            "judgmentId": "cd309b33-ec2f-48e7-9ced-289004bfff46",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-17",
+            "caseNumber": "WTAX/1547/2025",
+            "caseTitle": "ASHWANI KUMAR PANDAY Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. STATE TAX LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:55.092841+00"
+          },
+          {
+            "judgmentId": "5216503e-75de-4bf9-8a15-a6e42fe0e2d4",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-16",
+            "caseNumber": "/1559/2025",
+            "caseTitle": "ASHWANI KUMAR PANDEY Vs STATE OF U.P. THRU. PRIN. SECY. DEPTT. STATE TAX LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:57.378128+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC62288",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "68109831-a646-4950-be15-dc5133c67855",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-04-23",
+            "caseNumber": "WRIA/2686/2021",
+            "caseTitle": "POOJA TIWARI Vs STATE OF U.P. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-17 16:34:03.737352+00"
+          },
+          {
+            "judgmentId": "9af7f21d-27d2-4126-b183-b8fe226017d3",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-05-18",
+            "caseNumber": "WRIA/7717/2021",
+            "caseTitle": "PRIYANKA SHARMA Vs STATE OF UTTAR PRADESH THROUGH ITS SECRETARY (BASIC EDUCT.)",
+            "keyLandedAt": "2026-08-24 18:48:24.783424+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC63946",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "4334fe6e-8cc5-49e5-89d8-52b2238b359a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-05-06",
+            "caseNumber": "SPLA/647/2026",
+            "caseTitle": "KM. BEENU Vs STATE OF U.P. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-17 16:16:01.070707+00"
+          },
+          {
+            "judgmentId": "e56e04a7-b626-489f-9074-48459eb67135",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-04-24",
+            "caseNumber": "WRIA/35136/2014",
+            "caseTitle": "KUMARI BEENU Vs STATE OF U.P. THRU SECY. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-24 18:48:30.037893+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC65284",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "61e4b962-d954-46d0-ae8e-194f4506e210",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-05-04",
+            "caseNumber": "NA528/1743/2026",
+            "caseTitle": "RAMAN VERMA @ RAMAN KUMAR AND 2 OTHERS VS STATE OF U.P. THRU. ITS ADDL. CHIEF SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-17 16:36:54.378492+00"
+          },
+          {
+            "judgmentId": "51187e9d-f860-45bc-a67e-0ac41e87339b",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-02",
+            "caseNumber": "A482/7262/2025",
+            "caseTitle": "DALBIR SANGWAN VS STATE OF U.P. THRU. ADDL. CHIEF SECY. HOME LKO AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:49:21.771936+00"
+          },
+          {
+            "judgmentId": "582c5b52-ac30-458f-8244-8c923102f436",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-10",
+            "caseNumber": "NA528/1205/2025",
+            "caseTitle": "SAMAR BAHADUR YADAV VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:23.244259+00"
+          },
+          {
+            "judgmentId": "c3847ef3-2835-4fb6-a60a-4d99be5949fa",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-18",
+            "caseNumber": "NA528/1228/2025",
+            "caseTitle": "KALA NIDHI SHARMA @ GOVIND KALA NIDHI SHARMA VS THE STATE OF U.P. THRU. SECY. DEPTT. OF HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:23.244259+00"
+          },
+          {
+            "judgmentId": "00f40d90-426b-4ccb-b43a-9d0bd50e1ccf",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-02",
+            "caseNumber": "NA528/1086/2025",
+            "caseTitle": "MS SUPER CURE BIOTECH PVT. LTD THRU. M.D. VIRESH KUMAR VS STATE OF U.P. THRU. THE PRIN. SECY. HOME DEPTT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:23.244259+00"
+          },
+          {
+            "judgmentId": "d27e74d9-9053-4fd7-a5ee-273728f13875",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-09",
+            "caseNumber": "NA528/1168/2025",
+            "caseTitle": "BAIJNATH ALIAS KABIL AND ANOTHER VS STATE OF U.P. THRU. ITS ADDL. CHIEF SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:23.244259+00"
+          },
+          {
+            "judgmentId": "7f782057-0763-436d-9ab2-1e73797d9409",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-10",
+            "caseNumber": "NA528/1205/2025",
+            "caseTitle": "SAMAR BAHADUR YADAV Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:27.911485+00"
+          },
+          {
+            "judgmentId": "a73d03b7-2a42-4fb6-bb90-07afc6af725c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-02",
+            "caseNumber": "NA528/1086/2025",
+            "caseTitle": "MS SUPER CURE BIOTECH PVT. LTD THRU. M.D. VIRESH KUMAR Vs STATE OF U.P. THRU. THE PRIN. SECY. HOME DEPTT. LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:32.726369+00"
+          },
+          {
+            "judgmentId": "608fffc9-6810-492c-b479-685fa051c60c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-09",
+            "caseNumber": "NA528/1168/2025",
+            "caseTitle": "BAIJNATH ALIAS KABIL AND ANOTHER Vs STATE OF U.P. THRU. ITS ADDL. CHIEF SECY. HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:41.246099+00"
+          },
+          {
+            "judgmentId": "c512d17d-046c-4220-9164-95ac9309d301",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-02",
+            "caseNumber": "A482/7262/2025",
+            "caseTitle": "DALBIR SANGWAN Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. HOME LKO AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:46.47037+00"
+          },
+          {
+            "judgmentId": "32a00925-2655-49e8-84e7-ae2571796aa7",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-18",
+            "caseNumber": "NA528/1228/2025",
+            "caseTitle": "KALA NIDHI SHARMA @ GOVIND KALA NIDHI SHARMA Vs THE STATE OF U.P. THRU. SECY. DEPTT. OF HOME LKO. AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:50.476577+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHC91662DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "02e11151-c2b5-494a-b268-cc80bc36364a",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-10",
+            "caseNumber": "WRIA/6896/2020",
+            "caseTitle": "ANIL KUMAR PURWAR Vs STATE OF U.P. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-17 16:32:36.945645+00"
+          },
+          {
+            "judgmentId": "cc126118-2ab7-4d8c-aae2-b008aa85a7b0",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-03",
+            "caseNumber": "WRIA/7378/2020",
+            "caseTitle": "HARI SHANKAR GUPTA Vs STATE OF U.P. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-24 18:47:40.892558+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHCLKO28235",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "48f7df71-264d-4fc8-ac95-6820d5ac1f20",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-03-31",
+            "caseNumber": "WRIB/1179/2026",
+            "caseTitle": "RADHEY SHYAM VS THE STATE OF U.P. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-17 16:15:47.898849+00"
+          },
+          {
+            "judgmentId": "1fd5dfcc-f9d9-475f-a412-9f11d3112667",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-05-14",
+            "caseNumber": "WRIB/1236/2024",
+            "caseTitle": "ANIL KUMAR DUBEY VS DEPUTY DIRECTOR OF CONSOLIDATION, SULTANPUR AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:49:02.036655+00"
+          },
+          {
+            "judgmentId": "e172fd51-e939-42ae-a936-0a7a38b436d2",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-05-14",
+            "caseNumber": "WRIB/1236/2024",
+            "caseTitle": "ANIL KUMAR DUBEY Vs DEPUTY DIRECTOR OF CONSOLIDATION, SULTANPUR AND OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:16.968854+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHCLKO37983",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "af54acde-4007-42bb-8d70-4bcaab0a54f8",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-03-30",
+            "caseNumber": "WPIL/265/2026",
+            "caseTitle": "RAKESH KUMAR VS STATE OF U.P. THRU. ADDL. CHIEF SECY. REVENUE DEPTT. LKO. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-17 16:37:44.324778+00"
+          },
+          {
+            "judgmentId": "3ab397ee-051e-4c75-8c2c-9f0990892f89",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-07-04",
+            "caseNumber": "WRIC/6190/2025",
+            "caseTitle": "AMARJEET VS STATE OF U.P. THRU. SECY. REVENUE DEPTT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:51.298931+00"
+          },
+          {
+            "judgmentId": "66f9e9fa-c4b1-4308-b314-5c28220db55d",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-07-04",
+            "caseNumber": "WRIC/6190/2025",
+            "caseTitle": "AMARJEET Vs STATE OF U.P. THRU. SECY. REVENUE DEPTT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:19.363603+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHCLKO44647DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "7d16b264-2941-4404-a9e4-83029c07398f",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-02-05",
+            "caseNumber": "WRIC/759/2026",
+            "caseTitle": "RAM KRISHNA VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-17 16:38:28.788651+00"
+          },
+          {
+            "judgmentId": "fc989a4a-7013-4e2c-9a3e-0f5d704ff59e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-18",
+            "caseNumber": "WRIC/12099/2025",
+            "caseTitle": "ANIL KUMAR AWASTHI VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:47.599031+00"
+          },
+          {
+            "judgmentId": "3cd10d84-13b9-43ac-a80a-48216b6291d5",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-24",
+            "caseNumber": "WRIC/11273/2025",
+            "caseTitle": "MAGAN MURTI SINGH VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "7c57800a-60b0-410b-88b4-8bb8ca796e24",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-24",
+            "caseNumber": "WRIC/11253/2025",
+            "caseTitle": "AKASH KASAUDHAN VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "800e0110-4261-49c6-9285-de60e104244d",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-15",
+            "caseNumber": "WRIC/10974/2025",
+            "caseTitle": "VINAY SHUKLA VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "ee27c009-aa8b-482f-a18f-b4572917fb60",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-15",
+            "caseNumber": "WRIC/10969/2025",
+            "caseTitle": "AKSHHAY KUMAR VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "7809300f-6eb6-408c-ac41-43e3b8ce2225",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-07",
+            "caseNumber": "WRIC/10688/2025",
+            "caseTitle": "ANAND KUMAR VS STATE OF U.P. THRU. PRIN. SECY. HOME AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "848cdbf6-970d-4e4c-addd-06d670ba35d7",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-07",
+            "caseNumber": "WRIC/10766/2025",
+            "caseTitle": "VRIJENDRA TRIPATHI VS STATE OF U.P. THRU. PRIN. SECY. HOME DEPTT. LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "825583c6-a50a-4141-bed9-5ddc9a0d2cf8",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-23",
+            "caseNumber": "WRIC/9284/2025",
+            "caseTitle": "MOHAMMAD SAJID VS STATE OF U.P. THRU. SECY. HOME LKO.AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "027cc89f-503e-4390-8e3f-98b5073a9cb6",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-19",
+            "caseNumber": "WRIC/9168/2025",
+            "caseTitle": "DURGESH KUMAR @ DURGESH VS STATE OF U.P. THRU. ADDL. CHIEF SECY. SECONDARY EDU. LKO. U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "917667d5-e062-4f7f-8772-f4ba97606420",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-18",
+            "caseNumber": "WRIC/9194/2025",
+            "caseTitle": "MANOJ KUMAR VS STATE OF U.P. THRU. ADDL. CHIEF SECY. SECONDARY EDUCATION LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:49.202868+00"
+          },
+          {
+            "judgmentId": "b983eeab-c150-4df3-9f51-54d6e1b68144",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-09",
+            "caseNumber": "WRIC/8680/2025",
+            "caseTitle": "PREM CHANDRA PANDEY VS STATE OF U.P. THRU. PRIN. SECY. HOME DEPTT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:51.298931+00"
+          },
+          {
+            "judgmentId": "4e8c1f17-0e91-4fb4-85b7-cf7a253d1e13",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-04",
+            "caseNumber": "WRIC/8555/2025",
+            "caseTitle": "M/S COMMERCIAL TRADING COMPANY THRU. PROPRIETOR RAFEEQ ULLAH KHAN VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:51.298931+00"
+          },
+          {
+            "judgmentId": "4ade0b86-30e6-43de-b50e-9f42aa3dfea4",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-08-29",
+            "caseNumber": "WRIC/8324/2025",
+            "caseTitle": "MAYANK SRIVASTAVA VS STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:51.298931+00"
+          },
+          {
+            "judgmentId": "4f4d616a-e2ba-46ad-a5a7-b2754a12c5fc",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-08-01",
+            "caseNumber": "WRIC/7006/2025",
+            "caseTitle": "PAWAN KUMAR DUBEY VS STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:50:51.298931+00"
+          },
+          {
+            "judgmentId": "49620c8a-e02e-49ff-8244-393ba1b66d4e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-19",
+            "caseNumber": "WRIC/9168/2025",
+            "caseTitle": "DURGESH KUMAR @ DURGESH Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. SECONDARY EDU. LKO. U.P. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:00.510826+00"
+          },
+          {
+            "judgmentId": "d6da159e-1f51-4540-b356-5f3313e1bcbe",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-09",
+            "caseNumber": "WRIC/8680/2025",
+            "caseTitle": "PREM CHANDRA PANDEY Vs STATE OF U.P. THRU. PRIN. SECY. HOME DEPTT. LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:00.510826+00"
+          },
+          {
+            "judgmentId": "1d4997f2-1ddf-4b1a-8c09-9f285dcd1343",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-15",
+            "caseNumber": "WRIC/10969/2025",
+            "caseTitle": "AKSHHAY KUMAR Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:08.376105+00"
+          },
+          {
+            "judgmentId": "8eb945ff-cb76-4c6d-9df9-5137f522a4d7",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-24",
+            "caseNumber": "/11273/2025",
+            "caseTitle": "MAGAN MURTI SINGH Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO. AND 4 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:16.968854+00"
+          },
+          {
+            "judgmentId": "142ec06d-3700-4427-adea-332a8356288c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-08-01",
+            "caseNumber": "WRIC/7006/2025",
+            "caseTitle": "PAWAN KUMAR DUBEY Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:19.363603+00"
+          },
+          {
+            "judgmentId": "aaf9ca45-665c-44a4-8a8a-410074bf016e",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-07",
+            "caseNumber": "WRIC/10766/2025",
+            "caseTitle": "VRIJENDRA TRIPATHI Vs STATE OF U.P. THRU. PRIN. SECY. HOME DEPTT. LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:21.752678+00"
+          },
+          {
+            "judgmentId": "57f2d6d0-0425-4168-8ecc-7722a01d2da4",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-07",
+            "caseNumber": "WRIC/10688/2025",
+            "caseTitle": "ANAND KUMAR Vs STATE OF U.P. THRU. PRIN. SECY. HOME AND ANOTHER",
+            "keyLandedAt": "2026-08-24 18:51:25.011631+00"
+          },
+          {
+            "judgmentId": "42efaadd-c1ee-4def-9277-433f9c347167",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-23",
+            "caseNumber": "/9284/2025",
+            "caseTitle": "MOHAMMAD SAJID Vs STATE OF U.P. THRU. SECY. HOME LKO.AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:32.726369+00"
+          },
+          {
+            "judgmentId": "87d8d0dc-dc6a-4374-8046-c723363f4e77",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-18",
+            "caseNumber": "WRIC/9194/2025",
+            "caseTitle": "MANOJ KUMAR Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. SECONDARY EDUCATION LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:37.026665+00"
+          },
+          {
+            "judgmentId": "551aac5a-ef54-44f1-bf31-f379c9699c9c",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-09-04",
+            "caseNumber": "WRIC/8555/2025",
+            "caseTitle": "M/S COMMERCIAL TRADING COMPANY THRU. PROPRIETOR RAFEEQ ULLAH KHAN Vs STATE OF U.P. THRU. ADDL. CHIEF SECY. DEPTT. OF HOME LKO AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:46.47037+00"
+          },
+          {
+            "judgmentId": "6d8a676b-c88e-46ae-92f1-f4757b43ea82",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-24",
+            "caseNumber": "/11253/2025",
+            "caseTitle": "AKASH KASAUDHAN Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 2 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:48.26597+00"
+          },
+          {
+            "judgmentId": "ecedb577-9d71-4553-bfaf-228007ff2936",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-11-15",
+            "caseNumber": "WRIC/10974/2025",
+            "caseTitle": "VINAY SHUKLA Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:52.625501+00"
+          },
+          {
+            "judgmentId": "086d50fc-f4ae-4ea0-898f-2695a1d48e45",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-12-18",
+            "caseNumber": "WRIC/12099/2025",
+            "caseTitle": "ANIL KUMAR AWASTHI Vs STATE OF U.P. THRU. PRIN. SECY. HOME LKO. AND 3 OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:59.444171+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025AHCLKO6899",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "db013e52-b188-4f2a-9ef6-95e6b1b62ed8",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2026-07-16",
+            "caseNumber": "WRIA/1476/2005",
+            "caseTitle": "RAKESH KUMAR SHUKLA Vs DIRECTOR OF EDUCATION U.P.AT ALLAHABAD AND 2 ORS",
+            "keyLandedAt": "2026-08-17 16:38:34.703936+00"
+          },
+          {
+            "judgmentId": "6144277c-4637-4481-a5bf-daf4a7ea00e7",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-01-31",
+            "caseNumber": "WRIA/1476/2005",
+            "caseTitle": "RAKESH KUMAR SHUKLA Vs DIRECTOR OF EDUCATION U.P.AT ALLAHABAD AND 2 ORS",
+            "keyLandedAt": "2026-08-24 18:51:43.986338+00"
+          },
+          {
+            "judgmentId": "9eba31a4-b928-45c8-aaa3-0091e0b93fe6",
+            "court": "Allahabad High Court",
+            "judgmentDate": "2025-01-31",
+            "caseNumber": "WRIA/7747/2008",
+            "caseTitle": "GYAN CHAND DWIVEDI S/O RAM DAS DWIVEDI and ANR. Vs STATE OF U.P. THROUGH SECRETARY MADHYA OF EDUCATION and OTHERS",
+            "keyLandedAt": "2026-08-24 18:51:50.476577+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025DHC4543DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "b9830449-859c-4fc7-98ed-3d8ebbd87ba4",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-09-18",
+            "caseNumber": "W.P.(C)/14514/2025",
+            "caseTitle": "UNION OF INDIA & ORS. Vs SATISH KUMAR-III & ORS.",
+            "keyLandedAt": "2026-08-17 16:40:25.256361+00"
+          },
+          {
+            "judgmentId": "9d3d842a-9c60-4b94-973c-70650d3d2eba",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-12-10",
+            "caseNumber": "W.P.(C)/17361/2025",
+            "caseTitle": "UNION OF INDIA AND ORS Vs SANGEETA KAUSHIK",
+            "keyLandedAt": "2026-08-24 18:53:43.902917+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025DHC6181DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "175067cf-f399-4d2a-a201-3f26ba6ad375",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-09-09",
+            "caseNumber": "W.P.(C)/12192/2025",
+            "caseTitle": "ASHISH ENTERPRISES THROUGH ITS PROPRIETOR ASHISH GUPTA Vs ASSISTANT COMMISSIONER DIVISION SHAHDARA EAST DELHI CGST & ORS.",
+            "keyLandedAt": "2026-08-17 16:18:17.298236+00"
+          },
+          {
+            "judgmentId": "a9d9e4db-ee37-4df7-8ba7-b93be386913b",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2026-08-13",
+            "caseNumber": "W.P.(C)/11604/2026",
+            "caseTitle": "KUSUM CABLES AND WIRES PRIVATE LIMITED Vs ASSISTANT COMMISSIONER (ADJUDICATION) CGST DELHI NORTH & ORS.",
+            "keyLandedAt": "2026-08-27 10:46:31.851275+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025DHC7392DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "d744bdc2-676c-4f16-874d-30a921f1a314",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-09-12",
+            "caseNumber": "W.P.(C)/10398/2024",
+            "caseTitle": "M/S KANTA FOOD PRODUCT Vs UNION OF INDIA AND ORS",
+            "keyLandedAt": "2026-08-17 16:16:57.321358+00"
+          },
+          {
+            "judgmentId": "c27e0144-c837-4ed5-a88c-030dd6ca12ed",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-11-17",
+            "caseNumber": "W.P.(C)/10114/2025",
+            "caseTitle": "M/S AAR GEE IMPEX Vs DIRECTORATE GENERAL SERVICES TAX INTELLIGENCE, JAIPUR ZONAL UNIT GOODS & ANR.",
+            "keyLandedAt": "2026-08-24 18:58:08.245156+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025DHC751",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "731c662b-0194-4b77-ba2a-26702f69f23e",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-10-31",
+            "caseNumber": "W.P.(C)/16559/2025",
+            "caseTitle": "SHAMEEM Vs COMMISSIONER OF CUSTOMS",
+            "keyLandedAt": "2026-08-17 16:37:56.783919+00"
+          },
+          {
+            "judgmentId": "a064eb50-1800-4b93-894d-3484d4aaa8d4",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-12-18",
+            "caseNumber": "W.P.(C)/18552/2025",
+            "caseTitle": "NAND KISHOR SHARMA Vs COMMISSIONER OF CUSTOMS",
+            "keyLandedAt": "2026-08-24 18:53:47.311944+00"
+          },
+          {
+            "judgmentId": "5c80c275-2164-4d3f-aac0-a61eaf0cca02",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-12-10",
+            "caseNumber": "W.P.(C)/18729/2025",
+            "caseTitle": "FAYZILATKHON GULYAMKHODAEVA Vs COMMISSIONER OF CUSTOMS",
+            "keyLandedAt": "2026-08-24 18:53:51.245622+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025DHC8491",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "928a8788-3a7a-429d-8ff7-92e3cfa24d89",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-10-31",
+            "caseNumber": "MAT.APP.(F.C.)/166/2025",
+            "caseTitle": "LOVELY SHARMA Vs MANISSH JAISANI",
+            "keyLandedAt": "2026-08-17 16:39:51.38679+00"
+          },
+          {
+            "judgmentId": "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+            "court": "High Court of Delhi",
+            "judgmentDate": "2025-11-26",
+            "caseNumber": "MAT.APP.(F.C.)/330/2023",
+            "caseTitle": "SHRADDHA GUPTA Vs SUMIT JAIN",
+            "keyLandedAt": "2026-08-24 18:58:08.245156+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025MHC1162",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "2eeedf6d-71f2-49b1-9665-1b18cdf0f335",
+            "court": "Madras High Court",
+            "judgmentDate": "2025-06-23",
+            "caseNumber": "WP/7946/2023",
+            "caseTitle": "C.Palanivel Vs The District Collector",
+            "keyLandedAt": "2026-08-17 16:40:16.972693+00"
+          },
+          {
+            "judgmentId": "e060665a-6087-4e98-9562-8f04c7cf6882",
+            "court": "Madras High Court",
+            "judgmentDate": "2025-07-16",
+            "caseNumber": "WP/9205/2023",
+            "caseTitle": "Maragathavalli Vs The District Collector",
+            "keyLandedAt": "2026-08-24 18:48:27.382045+00"
+          },
+          {
+            "judgmentId": "2ca34c43-6eea-41e8-b416-512b2cf0a295",
+            "court": "Madras High Court",
+            "judgmentDate": "2025-06-19",
+            "caseNumber": "WP/5250/2024",
+            "caseTitle": "P.PERUMAL Vs THE DISTRICT COLLECTOR",
+            "keyLandedAt": "2026-08-24 18:48:56.744301+00"
+          },
+          {
+            "judgmentId": "c316294b-96d3-440b-a118-663e951b35b0",
+            "court": "Madras High Court",
+            "judgmentDate": "2025-07-15",
+            "caseNumber": "WP/9128/2024",
+            "caseTitle": "K.MURUGESAN, Vs THE DISTRICT COLLECTOR,",
+            "keyLandedAt": "2026-08-24 18:49:42.841209+00"
+          },
+          {
+            "judgmentId": "1c2beba6-862b-4b45-811d-e1b9e320d87e",
+            "court": "Madras High Court",
+            "judgmentDate": "2025-07-07",
+            "caseNumber": "WP/8222/2023",
+            "caseTitle": "Thiripurasundari Vs The State of Tamil Nadu",
+            "keyLandedAt": "2026-08-24 18:49:52.025231+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025PHHC004198",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "36577431-c9bc-4f81-af18-9720c35e6238",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2025-09-22",
+            "caseNumber": "CRM-M/45917/2025",
+            "caseTitle": "MAHIPAL Vs STATE OF HARYANA",
+            "keyLandedAt": "2026-08-17 16:28:56.727283+00"
+          },
+          {
+            "judgmentId": "ae768671-5de0-4e03-a7ab-6a85b92c440d",
+            "court": "High Court of Punjab and Haryana",
+            "judgmentDate": "2025-12-04",
+            "caseNumber": "CRM-M/66809/2025",
+            "caseTitle": "KARAN Vs STATE OF PUNJAB",
+            "keyLandedAt": "2026-08-24 18:58:07.404908+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2025UHC857",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "21fae811-a023-4b65-be12-d707f103e5b0",
+            "court": "High Court of Uttarakhand",
+            "judgmentDate": "2025-02-13",
+            "caseNumber": "WPMS/251/2025",
+            "caseTitle": "SURESH CHAND Vs SATENDRA NATH GOYAL",
+            "keyLandedAt": "2026-08-17 16:16:24.114371+00"
+          },
+          {
+            "judgmentId": "5a48fa2b-c7b1-4334-b9f7-7f6a3dea3995",
+            "court": "High Court of Uttarakhand",
+            "judgmentDate": "2026-08-18",
+            "caseNumber": "WPMS/2251/2026",
+            "caseTitle": "MINAKSHI JOSHI Vs STATE OF UTTARAKHAND",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2026CGHC3744",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "287c5905-b5c3-4b74-bdd5-39e070b4620e",
+            "court": "High Court Of Chhattisgarh",
+            "judgmentDate": "2026-01-21",
+            "caseNumber": "WPC/6187/2024",
+            "caseTitle": "SMT. JANKI BAI Vs STATE OF CHHATTISGARH",
+            "keyLandedAt": "2026-08-17 16:16:19.785716+00"
+          },
+          {
+            "judgmentId": "d33848b1-b56d-4e5f-818c-0425e6cbdc8b",
+            "court": "High Court Of Chhattisgarh",
+            "judgmentDate": "2026-08-19",
+            "caseNumber": "CRA/128/2023",
+            "caseTitle": "UMESH NISHAD Vs STATE OF CHHATTISGARH",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2026HHC30615",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "3ee75b19-f117-472d-96b7-96c5af01410c",
+            "court": "High Court of Himachal Pradesh",
+            "judgmentDate": "2026-07-24",
+            "caseNumber": "FAO/499/2016",
+            "caseTitle": "NEW INDIA ASSURANCE COMPANY Vs RAM DASSI",
+            "keyLandedAt": "2026-08-17 16:16:40.068768+00"
+          },
+          {
+            "judgmentId": "e5e265c2-ab0c-403e-9fc2-439c38f7edb0",
+            "court": "High Court of Himachal Pradesh",
+            "judgmentDate": "2026-08-18",
+            "caseNumber": "FAO/509/2016",
+            "caseTitle": "NEW INDIA ASSURANCE COMPANY Vs SHYAM KUMARI",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2026JHHC2459",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "12a40f45-3f62-406e-8e31-447db05b8c31",
+            "court": "High Court of Jharkhand",
+            "judgmentDate": "2026-01-30",
+            "caseNumber": "WPC/405/2026",
+            "caseTitle": "RAKESH KUMAR SAHU ALIAS CHUNNI LAL SAHU Vs CIRCLE OFFICER, KANKE RANCHI",
+            "keyLandedAt": "2026-08-17 16:15:51.002272+00"
+          },
+          {
+            "judgmentId": "2e837488-b897-4fc7-85d0-899711ed0df9",
+            "court": "High Court of Jharkhand",
+            "judgmentDate": "2026-08-14",
+            "caseNumber": "Cont.(Cvl)/1168/2025",
+            "caseTitle": "PREM SHANKAR PRASAD Vs THE STATE OF JHARKHAND THR THE PR SECRETARY DEPTT OF PERSONNEL ADMINISTRATIVE REFORMS AND RAJBHASA",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      },
+      {
+        "citationKey": "2026UHC4224DB",
+        "class": "SAME_COURT_DIFFERENT_DATE",
+        "bearers": [
+          {
+            "judgmentId": "e4dd6f2f-ea93-4091-bf2b-30149bcadd57",
+            "court": "High Court of Uttarakhand",
+            "judgmentDate": "2026-05-27",
+            "caseNumber": "HABC/16/2026",
+            "caseTitle": "GULAM MUSTAFA Vs STATE OF UTTARAKHAND",
+            "keyLandedAt": "2026-08-17 16:16:11.326636+00"
+          },
+          {
+            "judgmentId": "0887bd3f-1203-4477-b086-61c11357251e",
+            "court": "High Court of Uttarakhand",
+            "judgmentDate": "2026-08-11",
+            "caseNumber": "HABC/16/2023",
+            "caseTitle": "JIMDAAR Vs STATE OF UTTARAKHAND",
+            "keyLandedAt": "2026-08-27 10:46:29.594416+00"
+          }
+        ]
+      }
+    ]
+  }
+}

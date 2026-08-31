@@ -1,0 +1,8108 @@
+{
+  "measuredAt": "2026-08-31T10:50:58.459Z",
+  "documentsRead": 2521,
+  "docsWithCollapse": 531,
+  "collapses": [
+    {
+      "citationKey": "2023KHCD10132",
+      "src": "control",
+      "serialYear": "104315|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 104315 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.104315/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12378",
+      "src": "control",
+      "serialYear": "102544|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102544 of 2023",
+        "CRIMINAL PETITION NO. 102544 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12460",
+      "src": "control",
+      "serialYear": "22917|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22917 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.22917/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12977",
+      "src": "control",
+      "serialYear": "21216|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 21216 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.21216/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6558",
+      "src": "control",
+      "serialYear": "110316|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 110316 of 2019",
+        "WRIT PETITION NO. 110316 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6632",
+      "src": "control",
+      "serialYear": "100269|2023",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100269 of 2023",
+        "CRIMINAL APPEAL NO. 100269 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7223",
+      "src": "control",
+      "serialYear": "75521|2013",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 75521 of 2013",
+        "WRIT PETITION NO. 75521 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7944",
+      "src": "control",
+      "serialYear": "104616|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 104616 of 2023",
+        "WRIT PETITION NO. 104616 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8463",
+      "src": "control",
+      "serialYear": "110927|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 110927 of 2017",
+        "WRIT PETITION NO. 110927 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8566",
+      "src": "control",
+      "serialYear": "101343|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101343 of 2023",
+        "CRIMINAL PETITION No. 101343 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8786",
+      "src": "control",
+      "serialYear": "103275|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 103275 of 2021",
+        "WRIT PETITION NO. 103275 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9506DB",
+      "src": "control",
+      "serialYear": "100135|2023",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No.100135 of 2023",
+        "WRIT APPEAL NO.100135 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC10397",
+      "src": "control",
+      "serialYear": "1644|2013",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1644 of 2013",
+        "REGULAR SECOND APPEAL NO. 1644 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2024KHC12174",
+      "src": "control",
+      "serialYear": "625|2020",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 625 of 2020",
+        "REGULAR SECOND APPEAL NO.625 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHC12543",
+      "src": "control",
+      "serialYear": "9424|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 9424 of 2023",
+        "CRIMINAL PETITION NO. 9424 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC13016",
+      "src": "control",
+      "serialYear": "10656|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 10656 of 2022",
+        "CRIMINAL PETITION NO. 10656 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC13546",
+      "src": "control",
+      "serialYear": "3260|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3260 of 2024",
+        "WRIT PETITION NO.3260 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC13546",
+      "src": "control",
+      "serialYear": "4665|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 4665 of 2024",
+        "WRIT PETITION NO.4665 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC13835",
+      "src": "control",
+      "serialYear": "1299|2022",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 1299 of 2022",
+        "CRIMINAL REVISION PETITION NO.1299 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC1482",
+      "src": "control",
+      "serialYear": "22068|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 22068 of 2021",
+        "WRIT PETITION NO.22068 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC1557",
+      "src": "control",
+      "serialYear": "24931|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 24931 of 2023",
+        "WRIT PETITION NO. 24931 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC15600",
+      "src": "control",
+      "serialYear": "21832|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 21832 of 2022",
+        "WRIT PETITION NO. 21832 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC16215",
+      "src": "control",
+      "serialYear": "3834|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3834 of 2023",
+        "WRIT PETITION NO. 3834 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC16284",
+      "src": "control",
+      "serialYear": "11889|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 11889 of 2024",
+        "WRIT PETITION NO. 11889 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC16412",
+      "src": "control",
+      "serialYear": "16513|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16513 of 2023",
+        "WRIT PETITION NO. 16513 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC16830",
+      "src": "control",
+      "serialYear": "10771|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 10771 of 2024",
+        "WRIT PETITION NO. 10771 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC16939DB",
+      "src": "control",
+      "serialYear": "12518|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12518 of 2024",
+        "WRIT PETITION NO. 12518 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC17528",
+      "src": "control",
+      "serialYear": "13571|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13571 of 2024",
+        "WRIT PETITION NO. 13571 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC18466",
+      "src": "control",
+      "serialYear": "111|2024",
+      "types": [
+        "CP",
+        "CIVILPETITION"
+      ],
+      "raws": [
+        "CP No. 111 of 2024",
+        "CIVIL PETITION NO. 111 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC18818",
+      "src": "control",
+      "serialYear": "7132|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7132 of 2022",
+        "CRIMINAL PETITION NO. 7132 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC19145",
+      "src": "control",
+      "serialYear": "12938|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12938 of 2024",
+        "WRIT PETITION NO. 12938 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC19926",
+      "src": "control",
+      "serialYear": "6869|2018",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6869 of 2018",
+        "CRIMINAL PETITION NO. 6869 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2024KHC20756",
+      "src": "control",
+      "serialYear": "21879|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 21879 of 2022",
+        "WRIT PETITION NO. 21879 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC21174",
+      "src": "control",
+      "serialYear": "50679|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 50679 of 2017",
+        "WRIT PETITION NO. 50679 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC22381",
+      "src": "control",
+      "serialYear": "5483|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5483 of 2024",
+        "CRIMINAL PETITION NO. 5483 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC22410",
+      "src": "control",
+      "serialYear": "5490|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5490 of 2024",
+        "CRIMINAL PETITION NO. 5490 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC22987",
+      "src": "control",
+      "serialYear": "4602|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 4602 of 2024",
+        "CRIMINAL PETITION NO. 4602 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC23134",
+      "src": "control",
+      "serialYear": "19733|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 19733 of 2023",
+        "WRIT PETITION NO.19733 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC23665",
+      "src": "control",
+      "serialYear": "11233|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 11233 of 2022",
+        "CRIMINAL PETITION NO. 11233 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC23944",
+      "src": "control",
+      "serialYear": "10166|2020",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 10166 of 2020",
+        "WRIT PETITION NO. 10166 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHC23973",
+      "src": "control",
+      "serialYear": "19482|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 19482 of 2021",
+        "WRIT PETITION NO. 19482 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC24389",
+      "src": "control",
+      "serialYear": "1035|2018",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1035 of 2018",
+        "REGULAR SECOND APPEAL NO. 1035 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2024KHC24501",
+      "src": "control",
+      "serialYear": "4466|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 4466 of 2024",
+        "CRIMINAL PETITION NO.4466 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC25115",
+      "src": "control",
+      "serialYear": "710|2016",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 710 of 2016",
+        "CRIMINAL REVISION PETITION No.710 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2024KHC25269",
+      "src": "control",
+      "serialYear": "26016|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 26016 of 2023",
+        "WRIT PETITION NO. 26016 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC25439",
+      "src": "control",
+      "serialYear": "793|2021",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 793 of 2021",
+        "CRIMINAL REVISION PETITION NO.793/2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26100",
+      "src": "control",
+      "serialYear": "8506|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 8506 of 2022",
+        "WRIT PETITION NO. 8506 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26230",
+      "src": "control",
+      "serialYear": "2297|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP NO.2297 OF 2024",
+        "WRIT PETITION NO.2297 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26340",
+      "src": "control",
+      "serialYear": "5442|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5442 of 2024",
+        "CRIMINAL PETITION NO. 5442 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26470",
+      "src": "control",
+      "serialYear": "231|2024",
+      "types": [
+        "CMP",
+        "MISCPETITION"
+      ],
+      "raws": [
+        "CMP No. 231 of 2024",
+        "CIVIL MISC. PETITION NO. 231 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26788",
+      "src": "control",
+      "serialYear": "86|2023",
+      "types": [
+        "CP",
+        "CIVILPETITION"
+      ],
+      "raws": [
+        "CP No. 86 of 2023",
+        "CIVIL PETITION NO. 86 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC26891DB",
+      "src": "control",
+      "serialYear": "4053|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 4053 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO. 4053 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC27028",
+      "src": "control",
+      "serialYear": "48062|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 48062 of 2017",
+        "WRIT PETITION NO. 48062 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC27055",
+      "src": "control",
+      "serialYear": "1255|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 1255 of 2024",
+        "CRIMINAL PETITION NO. 1255 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC29040",
+      "src": "control",
+      "serialYear": "6822|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6822 of 2024",
+        "CRIMINAL PETITION NO. 6822 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC29182",
+      "src": "control",
+      "serialYear": "582|2023",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 582 of 2023",
+        "CRIMINAL APPEAL No. 582 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC29664",
+      "src": "control",
+      "serialYear": "5280|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 5280 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO. 5280 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHC30164",
+      "src": "control",
+      "serialYear": "6845|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6845 of 2024",
+        "CRIMINAL PETITION NO. 6845 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC30305",
+      "src": "control",
+      "serialYear": "16577|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16577 of 2017",
+        "WRIT PETITION NO. 16577 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC3052",
+      "src": "control",
+      "serialYear": "373|2022",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 373 of 2022",
+        "CRIMINAL APPEAL NO. 373 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC31010",
+      "src": "control",
+      "serialYear": "26404|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 26404 of 2023",
+        "WRIT PETITION NO. 26404 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC31081",
+      "src": "control",
+      "serialYear": "278|2014",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 278 of 2014",
+        "REGULAR SECOND APPEAL NO. 278 OF 2014"
+      ]
+    },
+    {
+      "citationKey": "2024KHC31439",
+      "src": "control",
+      "serialYear": "14814|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 14814 of 2024",
+        "WRIT PETITION NO. 14814 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC32098",
+      "src": "control",
+      "serialYear": "23458|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 23458 of 2021",
+        "WRIT PETITION NO. 23458 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC32618",
+      "src": "control",
+      "serialYear": "10900|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 10900 of 2022",
+        "CRIMINAL PETITION NO. 10900 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC32637",
+      "src": "control",
+      "serialYear": "19993|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 19993 of 2024",
+        "WRIT PETITION NO. 19993 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC32710DB",
+      "src": "control",
+      "serialYear": "17773|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 17773 of 2024",
+        "WRIT PETITION NO. 17773 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC32723",
+      "src": "control",
+      "serialYear": "331|2013",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 331 of 2013",
+        "REGULAR SECOND APPEAL NO. 331 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2024KHC33147DB",
+      "src": "control",
+      "serialYear": "388|2023",
+      "types": [
+        "ITA",
+        "TAXAPPEAL"
+      ],
+      "raws": [
+        "ITA No. 388 of 2023",
+        "INCOME TAX APPEAL NO. 388 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC33313",
+      "src": "control",
+      "serialYear": "8812|2015",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 8812 of 2015",
+        "MISCELLANEOUS FIRST APPEAL NO. 8812 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2024KHC33339",
+      "src": "control",
+      "serialYear": "20736|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 20736 of 2024",
+        "WRIT PETITION NO. 20736 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC33986",
+      "src": "control",
+      "serialYear": "2234|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No.2234 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO.2234/2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC34286",
+      "src": "control",
+      "serialYear": "23043|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 23043 of 2024",
+        "WRIT PETITION NO. 23043 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC34491",
+      "src": "control",
+      "serialYear": "6084|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6084 of 2024",
+        "CRIMINAL PETITION NO. 6084 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC34592",
+      "src": "control",
+      "serialYear": "16425|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16425 of 2021",
+        "WRIT PETITION NO. 16425 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC35013",
+      "src": "control",
+      "serialYear": "12933|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12933 of 2024",
+        "WRIT PETITION NO. 12933 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC35017",
+      "src": "control",
+      "serialYear": "28383|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 28383 of 2023",
+        "WRIT PETITION NO. 28383 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC35127",
+      "src": "control",
+      "serialYear": "18790|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18790 of 2022",
+        "WRIT PETITION NO. 18790 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC3693",
+      "src": "control",
+      "serialYear": "2516|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 2516 of 2024",
+        "WRIT PETITION NO. 2516 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC37419",
+      "src": "control",
+      "serialYear": "988|2023",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 988 of 2023",
+        "REGULAR FIRST APPEAL NO. 988 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC37924",
+      "src": "control",
+      "serialYear": "24044|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 24044 of 2024",
+        "WRIT PETITION NO. 24044 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC38161",
+      "src": "control",
+      "serialYear": "10837|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 10837 of 2015",
+        "WRIT PETITION NO. 10837 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2024KHC38731",
+      "src": "control",
+      "serialYear": "7298|2014",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7298 of 2014",
+        "MISCELLANEOUS FIRST APPEAL NO. 7298 OF 2014"
+      ]
+    },
+    {
+      "citationKey": "2024KHC38731",
+      "src": "control",
+      "serialYear": "7299|2014",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7299 of 2014",
+        "MISCELLANEOUS FIRST APPEAL NO. 7299 OF 2014"
+      ]
+    },
+    {
+      "citationKey": "2024KHC39081DB",
+      "src": "control",
+      "serialYear": "51819|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 51819 of 2019",
+        "WRIT PETITION NO.51819 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHC39165",
+      "src": "control",
+      "serialYear": "7192|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7192 of 2024",
+        "CRIMINAL PETITION NO. 7192 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC39619",
+      "src": "control",
+      "serialYear": "25727|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 25727 of 2024",
+        "WRIT PETITION NO.25727 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC40035",
+      "src": "control",
+      "serialYear": "9133|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 9133 of 2024",
+        "CRIMINAL PETITION NO. 9133 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC41074",
+      "src": "control",
+      "serialYear": "10870|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 10870 of 2022",
+        "CRIMINAL PETITION NO. 10870 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC42207",
+      "src": "control",
+      "serialYear": "28049|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 28049 of 2024",
+        "WRIT PETITION NO. 28049 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC4239",
+      "src": "control",
+      "serialYear": "76|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 76 of 2024",
+        "CRIMINAL PETITION NO. 76 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC4267",
+      "src": "control",
+      "serialYear": "26423|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 26423 of 2023",
+        "WRIT PETITION NO. 26423 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC43237",
+      "src": "control",
+      "serialYear": "255|2019",
+      "types": [
+        "CRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRP No. 255 of 2019",
+        "CIVIL REVISION PETITION NO. 255 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHC43589DB",
+      "src": "control",
+      "serialYear": "490|2022",
+      "types": [
+        "COMAP",
+        "COMMERCIALAPPEAL"
+      ],
+      "raws": [
+        "COMAP No. 490 of 2022",
+        "COMMERCIAL APPEAL NO. 490 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC43594",
+      "src": "control",
+      "serialYear": "2691|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 2691 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO.2691 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHC43705",
+      "src": "control",
+      "serialYear": "590|2024",
+      "types": [
+        "CRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRP No. 590 of 2024",
+        "CIVIL REVISION PETITION NO. 590 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC44714",
+      "src": "control",
+      "serialYear": "635|2022",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 635 of 2022",
+        "CRIMINAL REVISION PETITION NO. 635 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC44824",
+      "src": "control",
+      "serialYear": "1859|2017",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 1859 of 2017",
+        "MISCELLANEOUS FIRST APPEAL NO. 1859 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC4560DB",
+      "src": "control",
+      "serialYear": "789|2017",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 789 of 2017",
+        "CRIMINAL APPEAL NO.789 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC45714",
+      "src": "control",
+      "serialYear": "1645|2016",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1645 of 2016",
+        "REGULAR SECOND APPEAL NO. 1645 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2024KHC45776",
+      "src": "control",
+      "serialYear": "21070|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 21070 of 2024",
+        "WRIT PETITION NO.21070 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC46062",
+      "src": "control",
+      "serialYear": "30388|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 30388 of 2024",
+        "WRIT PETITION NO.30388 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC46078DB",
+      "src": "control",
+      "serialYear": "1464|2023",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 1464 of 2023",
+        "WRIT APPEAL NO. 1464 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC46506",
+      "src": "control",
+      "serialYear": "585|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 585 of 2024",
+        "WRIT PETITION NO. 585 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC47015",
+      "src": "control",
+      "serialYear": "17053|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 17053 of 2024",
+        "WRIT PETITION NO.17053 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC4807",
+      "src": "control",
+      "serialYear": "1193|2021",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1193 of 2021",
+        "CRIMINAL APPEAL NO.1193 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC48119",
+      "src": "control",
+      "serialYear": "14679|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 14679 of 2022",
+        "WRIT PETITION NO. 14679 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC48218",
+      "src": "control",
+      "serialYear": "2985|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 2985 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO. 2985 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHC48223",
+      "src": "control",
+      "serialYear": "5661|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 5661 of 2021",
+        "WRIT PETITION NO.5661 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHC48347",
+      "src": "control",
+      "serialYear": "6793|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 6793 of 2023",
+        "WRIT PETITION NO. 6793 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC48389",
+      "src": "control",
+      "serialYear": "7797|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7797 of 2023",
+        "CRIMINAL PETITION NO. 7797 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC49168",
+      "src": "control",
+      "serialYear": "12073|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 12073 of 2024",
+        "CRIMINAL PETITION NO. 12073 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC49231",
+      "src": "control",
+      "serialYear": "31368|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 31368 of 2024",
+        "WRIT PETITION NO. 31368 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC49594",
+      "src": "control",
+      "serialYear": "814|2019",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 814 of 2019",
+        "CRIMINAL REVISION PETITION NO. 814 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHC50064",
+      "src": "control",
+      "serialYear": "455|2017",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 455 of 2017",
+        "CRIMINAL REVISION PETITION No.455 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHC50253",
+      "src": "control",
+      "serialYear": "12467|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12467 of 2024",
+        "WRIT PETITION NO. 12467 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC51329",
+      "src": "control",
+      "serialYear": "1021|2023",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 1021 of 2023",
+        "CRIMINAL REVISION PETITION NO. 1021 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC51359DB",
+      "src": "control",
+      "serialYear": "21126|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 21126 of 2024",
+        "WRIT PETITION No. 21126 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC51670",
+      "src": "control",
+      "serialYear": "12385|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 12385 of 2024",
+        "CRIMINAL PETITION NO. 12385 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC51684",
+      "src": "control",
+      "serialYear": "8735|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8735 of 2022",
+        "CRIMINAL PETITION NO.8735 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC5204",
+      "src": "control",
+      "serialYear": "214|2023",
+      "types": [
+        "CP",
+        "CIVILPETITION"
+      ],
+      "raws": [
+        "CP No. 214 of 2023",
+        "CIVIL PETITION NO. 214 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC5204",
+      "src": "control",
+      "serialYear": "90|2023",
+      "types": [
+        "CP",
+        "CIVILPETITION"
+      ],
+      "raws": [
+        "CP No.90/2023",
+        "CIVIL PETITION NO. 90 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC6042",
+      "src": "control",
+      "serialYear": "5072|2013",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 5072 of 2013",
+        "MISCELLANEOUS FIRST APPEAL NO. 5072 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2024KHC6239",
+      "src": "control",
+      "serialYear": "1496|2016",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 1496 of 2016",
+        "CRIMINAL REVISION PETITION NO. 1496 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2024KHC6708",
+      "src": "control",
+      "serialYear": "8615|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 8615 of 2022",
+        "WRIT PETITION NO. 8615 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHC7070",
+      "src": "control",
+      "serialYear": "5196|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 5196 of 2024",
+        "WRIT PETITION NO.5196 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHC7245",
+      "src": "control",
+      "serialYear": "1678|2019",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1678 of 2019",
+        "CRIMINAL APPEAL NO.1678 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHC7993",
+      "src": "control",
+      "serialYear": "13225|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 13225 of 2023",
+        "CRIMINAL PETITION NO. 13225 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHC9588",
+      "src": "control",
+      "serialYear": "3774|2019",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 3774 of 2019",
+        "CRIMINAL PETITION NO. 3774 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD10411",
+      "src": "control",
+      "serialYear": "103942|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 103942 of 2022",
+        "WRIT PETITION NO.103942 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD10414DB",
+      "src": "control",
+      "serialYear": "100243|2024",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No.100243 of 2024",
+        "WRIT APPEAL NO.100243 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD10584",
+      "src": "control",
+      "serialYear": "102185|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102185 of 2024",
+        "CRIMINAL PETITION NO. 102185 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD10840",
+      "src": "control",
+      "serialYear": "100289|2017",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100289 of 2017",
+        "REGULAR FIRST APPEAL NO. 100289 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD11147DB",
+      "src": "control",
+      "serialYear": "100171|2024",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 100171 of 2024",
+        "CIVIL CONTEMPT PETITION NO. 100171 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD12090",
+      "src": "control",
+      "serialYear": "102066|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 102066 of 2021",
+        "WRIT PETITION NO. 102066 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD12418",
+      "src": "control",
+      "serialYear": "100123|2023",
+      "types": [
+        "MSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "MSA No. 100123 of 2023",
+        "MISCELLANEOUS SECOND APPEAL NO. 100123 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD12628",
+      "src": "control",
+      "serialYear": "103992|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 103992 of 2024",
+        "WRIT PETITION NO. 103992 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD14693DB",
+      "src": "control",
+      "serialYear": "101913|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101913 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO. 101913 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD14783",
+      "src": "control",
+      "serialYear": "101281|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101281 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO. 101281 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD14914",
+      "src": "control",
+      "serialYear": "109894|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 109894 of 2019",
+        "WRIT PETITION NO.109894 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD1555",
+      "src": "control",
+      "serialYear": "100936|2016",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100936 of 2016",
+        "WRIT PETITION NO. 100936 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD16856",
+      "src": "control",
+      "serialYear": "106792|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106792 of 2024",
+        "WRIT PETITION NO.106792 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD17371",
+      "src": "control",
+      "serialYear": "3083|2010",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 3083 of 2010",
+        "REGULAR FIRST APPEAL NO. 3083 OF 2010"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD17376",
+      "src": "control",
+      "serialYear": "103670|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 103670 of 2024",
+        "WRIT PETITION NO. 103670 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD18165",
+      "src": "control",
+      "serialYear": "100443|2024",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100443 of 2024",
+        "REGULAR FIRST APPEAL NO.100443 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD18589",
+      "src": "control",
+      "serialYear": "107832|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 107832 of 2024",
+        "WRIT PETITION NO. 107832 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD1919DB",
+      "src": "control",
+      "serialYear": "100528|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100528 of 2024",
+        "WRIT PETITION NO. 100528 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD2212",
+      "src": "control",
+      "serialYear": "24692|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 24692 of 2011",
+        "MISCELLANEOUS FIRST APPEAL No.24692 OF 2011"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD2243",
+      "src": "control",
+      "serialYear": "111454|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 111454 of 2019",
+        "WRIT PETITION NO. 111454 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD2551",
+      "src": "control",
+      "serialYear": "100707|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100707 of 2024",
+        "WRIT PETITION NO. 100707 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD2863DB",
+      "src": "control",
+      "serialYear": "100397|2020",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100397 of 2020",
+        "REGULAR FIRST APPEAL NO. 100397 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD3692",
+      "src": "control",
+      "serialYear": "100956|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100956 of 2024",
+        "WRIT PETITION NO. 100956 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD3768",
+      "src": "control",
+      "serialYear": "101439|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 101439 of 2018",
+        "WRIT PETITION NO. 101439 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD4126",
+      "src": "control",
+      "serialYear": "103426|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103426 of 2023",
+        "CRIMINAL PETITION NO.103426 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD4228",
+      "src": "control",
+      "serialYear": "100396|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 100396 of 2024",
+        "CRIMINAL PETITION NO. 100396 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD4347",
+      "src": "control",
+      "serialYear": "100555|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 100555 of 2024",
+        "CRIMINAL PETITION NO. 100555 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD4359",
+      "src": "control",
+      "serialYear": "101154|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 101154 of 2024",
+        "WRIT PETITION NO. 101154 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD4443",
+      "src": "control",
+      "serialYear": "103511|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103511 of 2023",
+        "CRIMINAL PETITION NO.103511 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD5009",
+      "src": "control",
+      "serialYear": "106040|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106040 of 2022",
+        "WRIT PETITION NO. 106040 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD5511",
+      "src": "control",
+      "serialYear": "65023|2012",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 65023 of 2012",
+        "WRIT PETITION NO.65023/2012"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD6250",
+      "src": "control",
+      "serialYear": "112220|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 112220 of 2019",
+        "WRIT PETITION NO. 112220 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD6549",
+      "src": "control",
+      "serialYear": "106684|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106684 of 2023",
+        "WRIT PETITION NO.106684/2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD6606",
+      "src": "control",
+      "serialYear": "103219|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103219 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 103219 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD6705",
+      "src": "control",
+      "serialYear": "103559|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103559 of 2023",
+        "CRIMINAL PETITION NO. 103559 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD7058",
+      "src": "control",
+      "serialYear": "101263|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101263 of 2024",
+        "CRIMINAL PETITION NO. 101263 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD714",
+      "src": "control",
+      "serialYear": "100525|2023",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100525 of 2023",
+        "CRIMINAL APPEAL NO. 100525 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD7161DB",
+      "src": "control",
+      "serialYear": "100051|2024",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100051 of 2024",
+        "WRIT APPEAL NO.100051 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD8273",
+      "src": "control",
+      "serialYear": "101396|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101396 of 2024",
+        "CRIMINAL PETITION NO. 101396 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD8638",
+      "src": "control",
+      "serialYear": "102546|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 102546 of 2023",
+        "WRIT PETITION NO. 102546 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD8699",
+      "src": "control",
+      "serialYear": "103538|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 103538 of 2024",
+        "WRIT PETITION NO.103538 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD8836",
+      "src": "control",
+      "serialYear": "103868|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103868 of 2023",
+        "CRIMINAL PETITION NO.103868 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD9239",
+      "src": "control",
+      "serialYear": "105027|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105027 of 2023",
+        "WRIT PETITION NO.105027 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD9324",
+      "src": "control",
+      "serialYear": "105684|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105684 of 2023",
+        "WRIT PETITION NO. 105684 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCD9908DB",
+      "src": "control",
+      "serialYear": "103823|2017",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103823 of 2017",
+        "MISCELLANEOUS FIRST APPEAL NO.103823 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2024KHCK10339",
+      "src": "control",
+      "serialYear": "202208|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 202208 of 2024",
+        "MISCL. FIRST APPEAL NO. 202208 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCK549",
+      "src": "control",
+      "serialYear": "200603|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No.200603 of 2023",
+        "CRIMINAL PETITION NO.200603 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2024KHCK8685",
+      "src": "control",
+      "serialYear": "201069|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 201069 of 2024",
+        "CRIMINAL PETITION NO. 201069 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2024KHCK9412",
+      "src": "control",
+      "serialYear": "203132|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 203132 of 2023",
+        "MISCL. FIRST APPEAL NO.203132 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025BHCAUG19313",
+      "src": "control",
+      "serialYear": "840|2025",
+      "types": [
+        "CRIMINALAPPLICATION",
+        "APPLICATION"
+      ],
+      "raws": [
+        "Criminal Application No.840 of 2025",
+        "Application No.840/2025"
+      ]
+    },
+    {
+      "citationKey": "2025BHCAUG9750DB",
+      "src": "control",
+      "serialYear": "4399|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP NO. 4399 OF 2025",
+        "WRIT PETITION NO. 4399 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KER30051",
+      "src": "control",
+      "serialYear": "4454|2025",
+      "types": [
+        "BA",
+        "BAILAPPL"
+      ],
+      "raws": [
+        "B.A.No.4454 of 2025",
+        "BAIL APPL. NO. 4454 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC11134",
+      "src": "control",
+      "serialYear": "7032|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 7032 of 2025",
+        "WRIT PETITION NO. 7032 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC12419",
+      "src": "control",
+      "serialYear": "25042|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 25042 of 2024",
+        "WRIT PETITION NO. 25042 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC12431",
+      "src": "control",
+      "serialYear": "2115|2023",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 2115 of 2023",
+        "REGULAR FIRST APPEAL No. 2115 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC13118",
+      "src": "control",
+      "serialYear": "3|2018",
+      "types": [
+        "EP",
+        "ELECTIONPETITION"
+      ],
+      "raws": [
+        "EP No. 3 of 2018",
+        "ELECTION PETITION NO. 3 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC1320",
+      "src": "control",
+      "serialYear": "5255|2018",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5255 of 2018",
+        "CRIMINAL PETITION NO. 5255 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC13796",
+      "src": "control",
+      "serialYear": "18482|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18482 of 2023",
+        "WRIT PETITION NO. 18482 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC14208",
+      "src": "control",
+      "serialYear": "302|2024",
+      "types": [
+        "CA",
+        "COMPANYAPPLICATION"
+      ],
+      "raws": [
+        "CA No. 302 of 2024",
+        "COMPANY APPLICATION NO. 302 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC14310",
+      "src": "control",
+      "serialYear": "33730|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 33730 of 2024",
+        "WRIT PETITION NO. 33730 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC15195",
+      "src": "control",
+      "serialYear": "3938|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 3938 of 2025",
+        "CRIMINAL PETITION NO. 3938 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC15264",
+      "src": "control",
+      "serialYear": "10986|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 10986 of 2025",
+        "WRIT PETITION NO. 10986 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC16035",
+      "src": "control",
+      "serialYear": "19610|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 19610 of 2024",
+        "WRIT PETITION NO. 19610 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC16688",
+      "src": "control",
+      "serialYear": "6283|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 6283 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO. 6283 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2025KHC17083",
+      "src": "control",
+      "serialYear": "4858|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 4858 of 2025",
+        "CRIMINAL PETITION NO. 4858 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC17607",
+      "src": "control",
+      "serialYear": "11647|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 11647 of 2025",
+        "WRIT PETITION NO. 11647 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC17660",
+      "src": "control",
+      "serialYear": "15|2021",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 15 of 2021",
+        "CRIMINAL REVISION PETITION NO. 15 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2025KHC183",
+      "src": "control",
+      "serialYear": "520|2017",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 520 of 2017",
+        "CRIMINAL REVISION PETITION NO. 520 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2025KHC19183",
+      "src": "control",
+      "serialYear": "447|2023",
+      "types": [
+        "CA",
+        "COMPANYAPPLICATION"
+      ],
+      "raws": [
+        "CA No. 447 of 2023",
+        "COMPANY APPLICATION NO. 447 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC20366",
+      "src": "control",
+      "serialYear": "6123|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6123 of 2025",
+        "CRIMINAL PETITION NO. 6123 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC20778DB",
+      "src": "control",
+      "serialYear": "13779|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13779 of 2025",
+        "WRIT PETITION NO. 13779 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC21273",
+      "src": "control",
+      "serialYear": "4658|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP NO.4658 OF 2025",
+        "WRIT PETITION NO.4658 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC21344",
+      "src": "control",
+      "serialYear": "7078|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 7078 of 2025",
+        "WRIT PETITION NO. 7078 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC21447",
+      "src": "control",
+      "serialYear": "5267|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5267 of 2025",
+        "CRIMINAL PETITION NO. 5267 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC21877",
+      "src": "control",
+      "serialYear": "7414|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7414 of 2025",
+        "CRIMINAL PETITION NO. 7414 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC22100",
+      "src": "control",
+      "serialYear": "7432|2015",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7432 of 2015",
+        "MISCELLANEOUS FIRST APPEAL NO. 7432 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2025KHC22127",
+      "src": "control",
+      "serialYear": "18302|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18302 of 2025",
+        "WRIT PETITION NO. 18302 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC2242",
+      "src": "control",
+      "serialYear": "35336|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 35336 of 2024",
+        "WRIT PETITION NO. 35336 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC22476",
+      "src": "control",
+      "serialYear": "2166|2024",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 2166 of 2024",
+        "REGULAR FIRST APPEAL NO.2166 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC24285",
+      "src": "control",
+      "serialYear": "130|2025",
+      "types": [
+        "CMP",
+        "MISCPETITION"
+      ],
+      "raws": [
+        "CMP No. 130 of 2025",
+        "CIVIL MISC. PETITION NO. 130 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC24840",
+      "src": "control",
+      "serialYear": "27943|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 27943 of 2018",
+        "WRIT PETITION NO. 27943 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC25310",
+      "src": "control",
+      "serialYear": "8584|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8584 of 2025",
+        "CRIMINAL PETITION NO. 8584 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC26383",
+      "src": "control",
+      "serialYear": "606|2024",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 606 of 2024",
+        "REVIEW PETITION NO. 606 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC26510",
+      "src": "control",
+      "serialYear": "2684|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 2684 of 2025",
+        "WRIT PETITION NO.2684 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC26580",
+      "src": "control",
+      "serialYear": "6342|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 6342 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.6342 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2025KHC27339",
+      "src": "control",
+      "serialYear": "15664|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 15664 of 2025",
+        "WRIT PETITION NO.15664 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC27718",
+      "src": "control",
+      "serialYear": "10544|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 10544 of 2025",
+        "CRIMINAL PETITION NO. 10544 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC27926",
+      "src": "control",
+      "serialYear": "2317|2018",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 2317 of 2018",
+        "REGULAR SECOND APPEAL NO. 2317 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC27926",
+      "src": "control",
+      "serialYear": "467|2019",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 467 of 2019",
+        "REGULAR SECOND APPEAL NO. 467 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2025KHC28662",
+      "src": "control",
+      "serialYear": "989|2021",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 989 of 2021",
+        "CRIMINAL REVISION PETITION NO.989 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2025KHC28829DB",
+      "src": "control",
+      "serialYear": "61|2025",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 61 of 2025",
+        "CIVIL CONTEMPT PETITION NO. 61 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC29021",
+      "src": "control",
+      "serialYear": "24961|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 24961 of 2023",
+        "WRIT PETITION NO. 24961 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC29110",
+      "src": "control",
+      "serialYear": "15412|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 15412 of 2025",
+        "WRIT PETITION NO. 15412 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC29390",
+      "src": "control",
+      "serialYear": "8963|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8963 of 2022",
+        "CRIMINAL PETITION NO. 8963 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC30369",
+      "src": "control",
+      "serialYear": "23502|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 23502 of 2022",
+        "WRIT PETITION NO. 23502 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC30548",
+      "src": "control",
+      "serialYear": "1105|2015",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1105 of 2015",
+        "REGULAR SECOND APPEAL NO.1105 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2025KHC31303",
+      "src": "control",
+      "serialYear": "8621|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 8621 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO. 8621 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2025KHC31478",
+      "src": "control",
+      "serialYear": "1116|2025",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 1116 of 2025",
+        "CRIMINAL REVISION PETITION NO. 1116 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC32350",
+      "src": "control",
+      "serialYear": "9948|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 9948 of 2025",
+        "CRIMINAL PETITION NO. 9948 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC32442DB",
+      "src": "control",
+      "serialYear": "8272|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 8272 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO.8272 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC32620",
+      "src": "control",
+      "serialYear": "15322|2020",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 15322 of 2020",
+        "WRIT PETITION NO. 15322 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2025KHC32747",
+      "src": "control",
+      "serialYear": "27538|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 27538 of 2024",
+        "WRIT PETITION NO. 27538 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC32755",
+      "src": "control",
+      "serialYear": "13070|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13070 of 2022",
+        "WRIT PETITION NO. 13070 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC3312",
+      "src": "control",
+      "serialYear": "33293|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 33293 of 2019",
+        "WRIT PETITION NO. 33293 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2025KHC34105",
+      "src": "control",
+      "serialYear": "1478|2017",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1478 of 2017",
+        "CRIMINAL APPEAL NO. 1478 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2025KHC34187",
+      "src": "control",
+      "serialYear": "21638|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 21638 of 2023",
+        "WRIT PETITION NO. 21638 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC34561",
+      "src": "control",
+      "serialYear": "2269|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 2269 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 2269 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC34672",
+      "src": "control",
+      "serialYear": "7859|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7859 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 7859 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC34672",
+      "src": "control",
+      "serialYear": "8851|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 8851 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 8851 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC3495",
+      "src": "control",
+      "serialYear": "87|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 87 of 2025",
+        "CRIMINAL PETITION NO. 87 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC3495",
+      "src": "control",
+      "serialYear": "557|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 557 of 2025",
+        "CRIMINAL PETITION NO. 557 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC35314",
+      "src": "control",
+      "serialYear": "5334|2015",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 5334 of 2015",
+        "MISCELLANEOUS FIRST APPEAL NO. 5334 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2025KHC36126",
+      "src": "control",
+      "serialYear": "6879|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 6879 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 6879 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2025KHC37153",
+      "src": "control",
+      "serialYear": "11519|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 11519 of 2025",
+        "CRIMINAL PETITION NO. 11519 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC37988",
+      "src": "control",
+      "serialYear": "1074|2025",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 1074 of 2025",
+        "REGULAR FIRST APPEAL NO.1074 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC38217",
+      "src": "control",
+      "serialYear": "9813|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 9813 of 2025",
+        "WRIT PETITION NO. 9813 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC38859",
+      "src": "control",
+      "serialYear": "11781|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 11781 of 2025",
+        "CRIMINAL PETITION NO. 11781 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC39523",
+      "src": "control",
+      "serialYear": "11445|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 11445 of 2023",
+        "WRIT PETITION NO.11445 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC39726",
+      "src": "control",
+      "serialYear": "27511|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 27511 of 2025",
+        "WRIT PETITION NO. 27511 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC40066",
+      "src": "control",
+      "serialYear": "1286|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 1286 of 2024",
+        "WRIT PETITION NO. 1286 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC4030",
+      "src": "control",
+      "serialYear": "251|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 251 of 2025",
+        "CRIMINAL PETITION NO. 251 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC40479",
+      "src": "control",
+      "serialYear": "406|2024",
+      "types": [
+        "CMP",
+        "MISCPETITION"
+      ],
+      "raws": [
+        "CMP No. 406 of 2024",
+        "CIVIL MISC. PETITION NO. 406 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC40718",
+      "src": "control",
+      "serialYear": "29284|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 29284 of 2025",
+        "WRIT PETITION NO. 29284 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC41175",
+      "src": "control",
+      "serialYear": "13098|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 13098 of 2025",
+        "CRIMINAL PETITION NO. 13098 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC42442",
+      "src": "control",
+      "serialYear": "30258|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 30258 of 2025",
+        "WRIT PETITION NO. 30258 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC42538",
+      "src": "control",
+      "serialYear": "13980|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 13980 of 2025",
+        "CRIMINAL PETITION NO. 13980 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC42786DB",
+      "src": "control",
+      "serialYear": "1753|2025",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 1753 of 2025",
+        "WRIT APPEAL NO. 1753 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC42808",
+      "src": "control",
+      "serialYear": "9588|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 9588 of 2022",
+        "CRIMINAL PETITION NO.9588 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC42966",
+      "src": "control",
+      "serialYear": "831|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 831 of 2024",
+        "WRIT PETITION NO. 831 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC44058",
+      "src": "control",
+      "serialYear": "2338|2025",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 2338 of 2025",
+        "REGULAR FIRST APPEAL NO. 2338 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC44068",
+      "src": "control",
+      "serialYear": "7025|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7025 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 7025 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC44453",
+      "src": "control",
+      "serialYear": "30863|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 30863 of 2025",
+        "WRIT PETITION NO. 30863 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC44486",
+      "src": "control",
+      "serialYear": "33119|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 33119 of 2025",
+        "WRIT PETITION NO. 33119 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC44577",
+      "src": "control",
+      "serialYear": "18391|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18391 of 2025",
+        "WRIT PETITION NO. 18391 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC4570",
+      "src": "control",
+      "serialYear": "2590|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 2590 of 2025",
+        "WRIT PETITION NO. 2590 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC45867",
+      "src": "control",
+      "serialYear": "587|2023",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 587 of 2023",
+        "CRIMINAL REVISION PETITION NO. 587 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC45967",
+      "src": "control",
+      "serialYear": "465|2023",
+      "types": [
+        "CRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRP No. 465 of 2023",
+        "CIVIL REVISION PETITION NO. 465 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC46446",
+      "src": "control",
+      "serialYear": "25456|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 25456 of 2024",
+        "WRIT PETITION NO. 25456 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC46533",
+      "src": "control",
+      "serialYear": "26412|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 26412 of 2025",
+        "WRIT PETITION NO.26412 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC47131",
+      "src": "control",
+      "serialYear": "18241|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18241 of 2022",
+        "WRIT PETITION NO.18241 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC47142",
+      "src": "control",
+      "serialYear": "744|2010",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 744 of 2010",
+        "REGULAR FIRST APPEAL NO. 744 OF 2010"
+      ]
+    },
+    {
+      "citationKey": "2025KHC47704",
+      "src": "control",
+      "serialYear": "11|2023",
+      "types": [
+        "CRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRP No. 11 of 2023",
+        "CIVIL REVISION PETITION NO. 11 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC4778",
+      "src": "control",
+      "serialYear": "3453|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3453 of 2022",
+        "WRIT PETITION NO.3453 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC47997",
+      "src": "control",
+      "serialYear": "605|2025",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 605 of 2025",
+        "REGULAR SECOND APPEAL NO.605 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC4803",
+      "src": "control",
+      "serialYear": "435|2024",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 435 of 2024",
+        "CRIMINAL REVISION PETITION NO.435 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC48898",
+      "src": "control",
+      "serialYear": "15458|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 15458 of 2025",
+        "CRIMINAL PETITION NO. 15458 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC49274",
+      "src": "control",
+      "serialYear": "36395|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 36395 of 2024",
+        "WRIT PETITION NO. 36395 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC49355",
+      "src": "control",
+      "serialYear": "8068|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8068 of 2022",
+        "CRIMINAL PETITION NO. 8068 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC49829DB",
+      "src": "control",
+      "serialYear": "4795|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 4795 of 2018",
+        "MISCELLANEOUS FIRST APPEAL No. 4795 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC4984",
+      "src": "control",
+      "serialYear": "22771|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 22771 of 2024",
+        "WRIT PETITION NO. 22771 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC50199",
+      "src": "control",
+      "serialYear": "16487|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16487 of 2024",
+        "WRIT PETITION NO. 16487 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC50516",
+      "src": "control",
+      "serialYear": "15935|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 15935 of 2022",
+        "WRIT PETITION NO. 15935 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC50606",
+      "src": "control",
+      "serialYear": "295|2021",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 295 of 2021",
+        "CRIMINAL APPEAL NO. 295 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2025KHC5158",
+      "src": "control",
+      "serialYear": "9651|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 9651 of 2022",
+        "WRIT PETITION NO. 9651 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC51945DB",
+      "src": "control",
+      "serialYear": "551|2025",
+      "types": [
+        "COMAP",
+        "COMMERCIALAPPEAL"
+      ],
+      "raws": [
+        "COMAP No. 551 of 2025",
+        "COMMERCIAL APPEAL NO. 551 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC51968",
+      "src": "control",
+      "serialYear": "27061|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 27061 of 2025",
+        "WRIT PETITION NO. 27061 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC52275",
+      "src": "control",
+      "serialYear": "60479|2016",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 60479 of 2016",
+        "WRIT PETITION NO.60479 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2025KHC52275",
+      "src": "control",
+      "serialYear": "60474|2016",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 60474 of 2016",
+        "WRIT PETITION NO.60474 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2025KHC52275",
+      "src": "control",
+      "serialYear": "204|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 204 of 2017",
+        "WRIT PETITION NO.204 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2025KHC52598DB",
+      "src": "control",
+      "serialYear": "35250|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 35250 of 2025",
+        "WRIT PETITION NO. 35250 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC53307",
+      "src": "control",
+      "serialYear": "32911|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 32911 of 2025",
+        "WRIT PETITION NO. 32911 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC53372",
+      "src": "control",
+      "serialYear": "37809|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 37809 of 2025",
+        "WRIT PETITION NO.37809 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC53687",
+      "src": "control",
+      "serialYear": "22134|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 22134 of 2022",
+        "WRIT PETITION NO. 22134 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC54424DB",
+      "src": "control",
+      "serialYear": "1767|2024",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 1767 of 2024",
+        "WRIT APPEAL NO. 1767 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC54476",
+      "src": "control",
+      "serialYear": "24509|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 24509 of 2021",
+        "WRIT PETITION NO. 24509 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2025KHC55200",
+      "src": "control",
+      "serialYear": "2402|2025",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 2402 of 2025",
+        "CRIMINAL APPEAL NO. 2402 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC55393",
+      "src": "control",
+      "serialYear": "261|2020",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 261 of 2020",
+        "CRIMINAL APPEAL NO. 261 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2025KHC55733",
+      "src": "control",
+      "serialYear": "602|2023",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 602 of 2023",
+        "CRIMINAL APPEAL NO.602 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC5582",
+      "src": "control",
+      "serialYear": "3049|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3049 of 2025",
+        "WRIT PETITION NO.3049 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC56052",
+      "src": "control",
+      "serialYear": "545|2025",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 545 of 2025",
+        "CRIMINAL APPEAL NO. 545 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC56125",
+      "src": "control",
+      "serialYear": "591|2023",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 591 of 2023",
+        "CRIMINAL APPEAL NO. 591 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC563",
+      "src": "control",
+      "serialYear": "34577|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 34577 of 2024",
+        "WRIT PETITION NO.34577 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC56337",
+      "src": "control",
+      "serialYear": "981|2016",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 981 of 2016",
+        "CRIMINAL APPEAL NO. 981 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2025KHC57131",
+      "src": "control",
+      "serialYear": "1881|2022",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1881 of 2022",
+        "CRIMINAL APPEAL NO. 1881 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC57427",
+      "src": "control",
+      "serialYear": "1392|2018",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1392 of 2018",
+        "CRIMINAL APPEAL NO. 1392 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2025KHC57850",
+      "src": "control",
+      "serialYear": "1362|2016",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1362 of 2016",
+        "CRIMINAL APPEAL NO. 1362 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2025KHC58104",
+      "src": "control",
+      "serialYear": "264|2024",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 264 of 2024",
+        "CRIMINAL APPEAL NO. 264 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC58130",
+      "src": "control",
+      "serialYear": "1259|2024",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1259 of 2024",
+        "CRIMINAL APPEAL NO. 1259 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC58182",
+      "src": "control",
+      "serialYear": "621|2022",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 621 of 2022",
+        "CRIMINAL APPEAL NO. 621 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC5986",
+      "src": "control",
+      "serialYear": "31492|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 31492 of 2024",
+        "WRIT PETITION NO.31492 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC6284",
+      "src": "control",
+      "serialYear": "13860|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13860 of 2024",
+        "WRIT PETITION NO. 13860 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC6404",
+      "src": "control",
+      "serialYear": "497|2024",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 497 of 2024",
+        "CRIMINAL REVISION PETITION NO. 497 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC6424",
+      "src": "control",
+      "serialYear": "1089|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 1089 of 2025",
+        "CRIMINAL PETITION NO. 1089 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC6513",
+      "src": "control",
+      "serialYear": "26119|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 26119 of 2022",
+        "WRIT PETITION NO. 26119 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHC681",
+      "src": "control",
+      "serialYear": "32913|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 32913 of 2024",
+        "WRIT PETITION NO. 32913 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC681",
+      "src": "control",
+      "serialYear": "30848|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 30848 of 2024",
+        "WRIT PETITION NO. 30848 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC6866",
+      "src": "control",
+      "serialYear": "377|2025",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 377 of 2025",
+        "CRIMINAL APPEAL NO. 377 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC7056",
+      "src": "control",
+      "serialYear": "2343|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P NO.2343 OF 2023",
+        "CRIMINAL PETITION NO.2343 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHC7290",
+      "src": "control",
+      "serialYear": "33889|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 33889 of 2024",
+        "WRIT PETITION NO. 33889 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC9381",
+      "src": "control",
+      "serialYear": "1718|2024",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1718 of 2024",
+        "REGULAR SECOND APPEAL NO. 1718 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC9392",
+      "src": "control",
+      "serialYear": "36452|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 36452 of 2024",
+        "WRIT PETITION NO. 36452 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHC9855",
+      "src": "control",
+      "serialYear": "6397|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 6397 of 2025",
+        "WRIT PETITION NO. 6397 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHC9867",
+      "src": "control",
+      "serialYear": "1451|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 1451 of 2025",
+        "WRIT PETITION NO. 1451 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD10578",
+      "src": "control",
+      "serialYear": "103257|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103257 of 2025",
+        "CRIMINAL PETITION NO. 103257 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD10826",
+      "src": "control",
+      "serialYear": "100152|2024",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 100152 of 2024",
+        "REVIEW PETITION NO. 100152 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD11633DB",
+      "src": "control",
+      "serialYear": "107798|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 107798 of 2023",
+        "WRIT PETITION NO. 107798 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD11664",
+      "src": "control",
+      "serialYear": "103334|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103334 of 2023",
+        "CRIMINAL PETITION NO. 103334 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD12",
+      "src": "control",
+      "serialYear": "103311|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103311 of 2024",
+        "CRIMINAL PETITION NO.103311 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD12014",
+      "src": "control",
+      "serialYear": "106798|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106798 of 2025",
+        "WRIT PETITION NO. 106798 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD12589DB",
+      "src": "control",
+      "serialYear": "100053|2023",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No.100053 of 2023",
+        "REGULAR FIRST APPEAL NO.100053 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD12786",
+      "src": "control",
+      "serialYear": "103848|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103848 of 2025",
+        "CRIMINAL PETITION NO. 103848 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD13584",
+      "src": "control",
+      "serialYear": "106416|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106416 of 2024",
+        "WRIT PETITION NO. 106416 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD14058",
+      "src": "control",
+      "serialYear": "68087|2010",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 68087 of 2010",
+        "WRIT PETITION NO. 68087 OF 2010"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD14288",
+      "src": "control",
+      "serialYear": "100087|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100087 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO.100087 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD14724",
+      "src": "control",
+      "serialYear": "105767|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 105767 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO. 105767 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD16275",
+      "src": "control",
+      "serialYear": "107767|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 107767 of 2025",
+        "WRIT PETITION NO.107767 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD16865",
+      "src": "control",
+      "serialYear": "102021|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 102021 of 2017",
+        "WRIT PETITION NO. 102021 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD17036DB",
+      "src": "control",
+      "serialYear": "100230|2022",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100230 of 2022",
+        "WRIT APPEAL NO. 100230 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD17433",
+      "src": "control",
+      "serialYear": "100293|2025",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100293 of 2025",
+        "CRIMINAL APPEAL NO. 100293 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD18082DB",
+      "src": "control",
+      "serialYear": "100069|2025",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100069 of 2025",
+        "WRIT APPEAL NO. 100069 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD18396",
+      "src": "control",
+      "serialYear": "100928|2017",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100928 of 2017",
+        "WRIT PETITION NO. 100928 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD18613",
+      "src": "control",
+      "serialYear": "109786|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 109786 of 2025",
+        "WRIT PETITION NO. 109786 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD2334",
+      "src": "control",
+      "serialYear": "103548|2022",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103548 of 2022",
+        "CRIMINAL PETITION NO. 103548 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD2673",
+      "src": "control",
+      "serialYear": "102767|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 102767 of 2022",
+        "WRIT PETITION NO. 102767 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD3883",
+      "src": "control",
+      "serialYear": "100168|2024",
+      "types": [
+        "RPFC",
+        "FAMILYCOURT"
+      ],
+      "raws": [
+        "RPFC No. 100168 of 2024",
+        "REV.PET FAMILY COURT NO. 100168 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD4183",
+      "src": "control",
+      "serialYear": "64691|2011",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 64691 of 2011",
+        "WRIT PETITION NO. 64691 OF 2011"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD4293",
+      "src": "control",
+      "serialYear": "100005|2025",
+      "types": [
+        "CP",
+        "CIVILPETITION"
+      ],
+      "raws": [
+        "CP No. 100005 of 2025",
+        "CIVIL PETITION NO. 100005 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD4736",
+      "src": "control",
+      "serialYear": "105566|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105566 of 2024",
+        "WRIT PETITION NO. 105566 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD5357",
+      "src": "control",
+      "serialYear": "101969|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 101969 of 2025",
+        "WRIT PETITION NO. 101969 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD5649",
+      "src": "control",
+      "serialYear": "100126|2022",
+      "types": [
+        "RPFC",
+        "FAMILYCOURT"
+      ],
+      "raws": [
+        "RPFC No. 100126 of 2022",
+        "REV.PET FAMILY COURT NO. 100126 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD7682",
+      "src": "control",
+      "serialYear": "100618|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100618 of 2025",
+        "WRIT PETITION NO. 100618 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD7683",
+      "src": "control",
+      "serialYear": "100428|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100428 of 2025",
+        "WRIT PETITION NO. 100428 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD7708",
+      "src": "control",
+      "serialYear": "101998|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101998 of 2025",
+        "CRIMINAL PETITION NO.101998 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD7718",
+      "src": "control",
+      "serialYear": "102032|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102032 of 2025",
+        "CRIMINAL PETITION NO. 102032 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD8321",
+      "src": "control",
+      "serialYear": "103272|2014",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103272 of 2014",
+        "MISCELLANEOUS FIRST APPEAL NO. 103272 OF 2014"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD8799",
+      "src": "control",
+      "serialYear": "104493|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 104493 of 2025",
+        "WRIT PETITION NO. 104493 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD8876",
+      "src": "control",
+      "serialYear": "103487|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103487 of 2024",
+        "CRIMINAL PETITION NO.103487 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD8886",
+      "src": "control",
+      "serialYear": "100086|2023",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 100086 of 2023",
+        "REVIEW PETITION NO. 100086 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD9241DB",
+      "src": "control",
+      "serialYear": "100046|2025",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 100046 of 2025",
+        "CIVIL CONTEMPT PETITION NO.100046 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCD9783",
+      "src": "control",
+      "serialYear": "105166|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105166 of 2025",
+        "WRIT PETITION NO. 105166 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2025KHCK1686",
+      "src": "control",
+      "serialYear": "200401|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 200401 of 2019",
+        "MISCL. FIRST APPEAL NO.200401/2019"
+      ]
+    },
+    {
+      "citationKey": "2025KHCK1769DB",
+      "src": "control",
+      "serialYear": "200170|2024",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 200170 of 2024",
+        "CIVIL CONTEMPT PETITION NO.200170 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC10064DB",
+      "src": "control",
+      "serialYear": "589|2025",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 589 of 2025",
+        "REVIEW PETITION NO.589 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC10373",
+      "src": "control",
+      "serialYear": "39465|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 39465 of 2025",
+        "WRIT PETITION NO. 39465 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC10718",
+      "src": "control",
+      "serialYear": "1251|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 1251 of 2026",
+        "CRIMINAL PETITION No. 1251 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC10922",
+      "src": "control",
+      "serialYear": "124|2025",
+      "types": [
+        "CMP",
+        "MISCPETITION"
+      ],
+      "raws": [
+        "CMP No. 124 of 2025",
+        "CIVIL MISC. PETITION NO. 124 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC11456",
+      "src": "control",
+      "serialYear": "6895|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 6895 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO. 6895 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC11942",
+      "src": "control",
+      "serialYear": "12860|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12860 of 2023",
+        "WRIT PETITION NO. 12860 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12122",
+      "src": "control",
+      "serialYear": "5967|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5967 of 2025",
+        "CRIMINAL PETITION NO. 5967 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12122",
+      "src": "control",
+      "serialYear": "8009|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8009 of 2024",
+        "CRIMINAL PETITION NO. 8009 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12122",
+      "src": "control",
+      "serialYear": "5598|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5598 of 2025",
+        "CRIMINAL PETITION NO. 5598 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12128",
+      "src": "control",
+      "serialYear": "13394|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13394 of 2025",
+        "WRIT PETITION NO. 13394 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12387",
+      "src": "control",
+      "serialYear": "992|2021",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 992 of 2021",
+        "CRIMINAL REVISION PETITION NO. 992 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHC12651",
+      "src": "control",
+      "serialYear": "9724|2012",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 9724 of 2012",
+        "WRIT PETITION NO. 9724 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2026KHC13453",
+      "src": "control",
+      "serialYear": "6554|2025",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 6554 of 2025",
+        "MISCELLANEOUS FIRST APPEAL NO. 6554 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC147",
+      "src": "control",
+      "serialYear": "39137|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 39137 of 2025",
+        "WRIT PETITION NO. 39137 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC15227",
+      "src": "control",
+      "serialYear": "1385|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 1385 of 2026",
+        "WRIT PETITION NO. 1385 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC15330DB",
+      "src": "control",
+      "serialYear": "5697|2024",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 5697 of 2024",
+        "MISCELLANEOUS FIRST APPEAL NO. 5697 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC15699",
+      "src": "control",
+      "serialYear": "7006|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 7006 of 2026",
+        "WRIT PETITION NO. 7006 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC15862DB",
+      "src": "control",
+      "serialYear": "563|2026",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 563 of 2026",
+        "WRIT APPEAL NO. 563 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC16373",
+      "src": "control",
+      "serialYear": "16894|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 16894 of 2025",
+        "CRIMINAL PETITION NO. 16894 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17011",
+      "src": "control",
+      "serialYear": "1403|2009",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1403 of 2009",
+        "REGULAR SECOND APPEAL NO. 1403 OF 2009"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17100",
+      "src": "control",
+      "serialYear": "2373|2019",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 2373 of 2019",
+        "CRIMINAL PETITION NO. 2373 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17125",
+      "src": "control",
+      "serialYear": "4851|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 4851 of 2025",
+        "CRIMINAL PETITION NO. 4851 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17574",
+      "src": "control",
+      "serialYear": "3210|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 3210 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO.3210 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17633",
+      "src": "control",
+      "serialYear": "7690|2013",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 7690 of 2013",
+        "MISCELLANEOUS FIRST APPEAL NO. 7690 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17905",
+      "src": "control",
+      "serialYear": "30858|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 30858 of 2025",
+        "WRIT PETITION NO. 30858 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17905",
+      "src": "control",
+      "serialYear": "25084|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 25084 of 2025",
+        "WRIT PETITION NO. 25084 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17905",
+      "src": "control",
+      "serialYear": "25108|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 25108 of 2025",
+        "WRIT PETITION NO. 25108 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC17925",
+      "src": "control",
+      "serialYear": "869|2014",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 869 of 2014",
+        "CRIMINAL APPEAL NO. 869 OF 2014"
+      ]
+    },
+    {
+      "citationKey": "2026KHC18675",
+      "src": "control",
+      "serialYear": "5694|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 5694 of 2026",
+        "WRIT PETITION NO. 5694 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC19039",
+      "src": "control",
+      "serialYear": "22821|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 22821 of 2021",
+        "WRIT PETITION NO. 22821 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHC19493",
+      "src": "control",
+      "serialYear": "33424|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 33424 of 2025",
+        "WRIT PETITION NO. 33424 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC19782DB",
+      "src": "control",
+      "serialYear": "1440|2025",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 1440 of 2025",
+        "CIVIL CONTEMPT PETITION NO. 1440 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC20366",
+      "src": "control",
+      "serialYear": "15695|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 15695 of 2025",
+        "CRIMINAL PETITION NO. 15695 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC2058",
+      "src": "control",
+      "serialYear": "16946|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16946 of 2024",
+        "WRIT PETITION NO. 16946 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC22493",
+      "src": "control",
+      "serialYear": "906|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 906 of 2026",
+        "WRIT PETITION NO. 906 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC22744",
+      "src": "control",
+      "serialYear": "830|2023",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 830 of 2023",
+        "CRIMINAL REVISION PETITION NO. 830 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2026KHC22822",
+      "src": "control",
+      "serialYear": "2978|2024",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 2978 of 2024",
+        "WRIT PETITION NO. 2978 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC23538",
+      "src": "control",
+      "serialYear": "373|2017",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 373 of 2017",
+        "CRIMINAL REVISION PETITION NO. 373 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2026KHC2406",
+      "src": "control",
+      "serialYear": "825|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 825 of 2026",
+        "WRIT PETITION NO. 825 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC24762",
+      "src": "control",
+      "serialYear": "6438|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 6438 of 2026",
+        "CRIMINAL PETITION NO. 6438 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC25017DB",
+      "src": "control",
+      "serialYear": "350|2026",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 350 of 2026",
+        "WRIT APPEAL NO.350 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC25322",
+      "src": "control",
+      "serialYear": "7001|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7001 of 2025",
+        "CRIMINAL PETITION NO. 7001 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC26081",
+      "src": "control",
+      "serialYear": "3441|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 3441 of 2026",
+        "CRIMINAL PETITION NO. 3441 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC26438DB",
+      "src": "control",
+      "serialYear": "13386|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 13386 of 2021",
+        "WRIT PETITION NO. 13386 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHC26627",
+      "src": "control",
+      "serialYear": "2902|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 2902 of 2026",
+        "CRIMINAL PETITION NO. 2902 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC26803DB",
+      "src": "control",
+      "serialYear": "8|2018",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 8 of 2018",
+        "WRIT APPEAL NO. 8 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2026KHC26897",
+      "src": "control",
+      "serialYear": "16067|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16067 of 2026",
+        "WRIT PETITION NO. 16067 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC27110",
+      "src": "control",
+      "serialYear": "5467|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 5467 of 2026",
+        "CRIMINAL PETITION NO. 5467 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC27248DB",
+      "src": "control",
+      "serialYear": "540|2025",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 540 of 2025",
+        "CIVIL CONTEMPT PETITION NO.540 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC29024",
+      "src": "control",
+      "serialYear": "15387|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 15387 of 2025",
+        "CRIMINAL PETITION NO. 15387 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC29183",
+      "src": "control",
+      "serialYear": "8990|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 8990 of 2026",
+        "WRIT PETITION NO. 8990 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC29194",
+      "src": "control",
+      "serialYear": "6113|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 6113 of 2026",
+        "WRIT PETITION NO. 6113 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC30077",
+      "src": "control",
+      "serialYear": "27726|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 27726 of 2025",
+        "WRIT PETITION NO. 27726 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC30500",
+      "src": "control",
+      "serialYear": "12318|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 12318 of 2026",
+        "WRIT PETITION NO. 12318 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC30570",
+      "src": "control",
+      "serialYear": "4484|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 4484 of 2026",
+        "CRIMINAL PETITION NO. 4484 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC31393",
+      "src": "control",
+      "serialYear": "17134|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 17134 of 2026",
+        "WRIT PETITION NO. 17134 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC31535",
+      "src": "control",
+      "serialYear": "7003|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7003 of 2026",
+        "CRIMINAL PETITION NO. 7003 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC31559",
+      "src": "control",
+      "serialYear": "8480|2019",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8480 of 2019",
+        "CRIMINAL PETITION NO. 8480 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2026KHC31608",
+      "src": "control",
+      "serialYear": "810|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 810 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.810 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2026KHC32101",
+      "src": "control",
+      "serialYear": "2398|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 2398 of 2022",
+        "WRIT PETITION NO. 2398 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2026KHC32407DB",
+      "src": "control",
+      "serialYear": "78|2020",
+      "types": [
+        "MFACROB",
+        "CROSSOBJECTION"
+      ],
+      "raws": [
+        "MFA.CROB No. 78 of 2020",
+        "MFA CROSS OBJECTION NO. 78 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2026KHC32967",
+      "src": "control",
+      "serialYear": "19140|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 19140 of 2026",
+        "WRIT PETITION NO. 19140 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC33305",
+      "src": "control",
+      "serialYear": "32608|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 32608 of 2025",
+        "WRIT PETITION NO. 32608 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC34162",
+      "src": "control",
+      "serialYear": "9699|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 9699 of 2026",
+        "WRIT PETITION NO.9699 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC34619DB",
+      "src": "control",
+      "serialYear": "86|2026",
+      "types": [
+        "ITA",
+        "TAXAPPEAL"
+      ],
+      "raws": [
+        "ITA No. 86 of 2026",
+        "INCOME TAX APPEAL NO. 86 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC3468",
+      "src": "control",
+      "serialYear": "16670|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 16670 of 2025",
+        "WRIT PETITION NO. 16670 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC34807",
+      "src": "control",
+      "serialYear": "10966|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 10966 of 2022",
+        "WRIT PETITION NO. 10966 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2026KHC35697",
+      "src": "control",
+      "serialYear": "17800|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 17800 of 2023",
+        "WRIT PETITION NO. 17800 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2026KHC3673",
+      "src": "control",
+      "serialYear": "39141|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 39141 of 2025",
+        "WRIT PETITION NO. 39141 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC3685",
+      "src": "control",
+      "serialYear": "52462|2019",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 52462 of 2019",
+        "WRIT PETITION NO. 52462 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2026KHC37544",
+      "src": "control",
+      "serialYear": "512|2017",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 512 of 2017",
+        "REGULAR SECOND APPEAL No.512 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2026KHC37738",
+      "src": "control",
+      "serialYear": "8436|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8436 of 2026",
+        "CRIMINAL PETITION NO. 8436 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC37950",
+      "src": "control",
+      "serialYear": "37737|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 37737 of 2025",
+        "WRIT PETITION NO. 37737 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC38722",
+      "src": "control",
+      "serialYear": "1215|2024",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 1215 of 2024",
+        "CRIMINAL REVISION PETITION NO.1215 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC39153",
+      "src": "control",
+      "serialYear": "8345|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 8345 of 2026",
+        "CRIMINAL PETITION NO. 8345 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC39235DB",
+      "src": "control",
+      "serialYear": "1809|2026",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 1809 of 2026",
+        "WRIT APPEAL NO. 1809 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC39819",
+      "src": "control",
+      "serialYear": "13706|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 13706 of 2025",
+        "CRIMINAL PETITION NO. 13706 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC4458DB",
+      "src": "control",
+      "serialYear": "24|2024",
+      "types": [
+        "COMAP",
+        "COMMERCIALAPPEAL"
+      ],
+      "raws": [
+        "COMAP No. 24 of 2024",
+        "COMMERCIAL APPEAL NO. 24 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC5050DB",
+      "src": "control",
+      "serialYear": "195|2024",
+      "types": [
+        "COMAP",
+        "COMMERCIALAPPEAL"
+      ],
+      "raws": [
+        "COMAP No. 195 of 2024",
+        "COMMERCIAL APPEAL NO. 195 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC6158",
+      "src": "control",
+      "serialYear": "7193|2025",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7193 of 2025",
+        "CRIMINAL PETITION NO. 7193 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC6427",
+      "src": "control",
+      "serialYear": "3011|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 3011 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.3011 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2026KHC6451",
+      "src": "control",
+      "serialYear": "560|2025",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 560 of 2025",
+        "CRIMINAL APPEAL NO. 560 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC6921",
+      "src": "control",
+      "serialYear": "32654|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 32654 of 2025",
+        "WRIT PETITION NO. 32654 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC7002",
+      "src": "control",
+      "serialYear": "354|2025",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 354 of 2025",
+        "REVIEW PETITION NO. 354 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC7114",
+      "src": "control",
+      "serialYear": "3707|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3707 of 2026",
+        "WRIT PETITION NO. 3707 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC741DB",
+      "src": "control",
+      "serialYear": "862|2025",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 862 of 2025",
+        "WRIT APPEAL NO. 862 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC7814",
+      "src": "control",
+      "serialYear": "7731|2024",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 7731 of 2024",
+        "CRIMINAL PETITION NO. 7731 OF 2024"
+      ]
+    },
+    {
+      "citationKey": "2026KHC8332",
+      "src": "control",
+      "serialYear": "18524|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 18524 of 2023",
+        "WRIT PETITION NO. 18524 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2026KHC8539",
+      "src": "control",
+      "serialYear": "4954|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 4954 of 2025",
+        "WRIT PETITION NO. 4954 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHC8770",
+      "src": "control",
+      "serialYear": "5565|2021",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 5565 of 2021",
+        "WRIT PETITION NO. 5565 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHC9531",
+      "src": "control",
+      "serialYear": "1349|2015",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 1349 of 2015",
+        "CRIMINAL APPEAL NO. 1349 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2026KHC9839",
+      "src": "control",
+      "serialYear": "157|2026",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 157 of 2026",
+        "CRIMINAL PETITION NO. 157 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHC9853",
+      "src": "control",
+      "serialYear": "2639|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 2639 of 2023",
+        "CRIMINAL PETITION NO. 2639 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2026KHC9921",
+      "src": "control",
+      "serialYear": "3421|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 3421 of 2026",
+        "WRIT PETITION NO.3421 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHCD1213",
+      "src": "control",
+      "serialYear": "100643|2026",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 100643 of 2026",
+        "WRIT PETITION NO. 100643 OF 2026"
+      ]
+    },
+    {
+      "citationKey": "2026KHCD1304",
+      "src": "control",
+      "serialYear": "101271|2021",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101271 of 2021",
+        "CRIMINAL PETITION NO. 101271 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2026KHCD1377",
+      "src": "control",
+      "serialYear": "109347|2025",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 109347 of 2025",
+        "WRIT PETITION NO. 109347 OF 2025"
+      ]
+    },
+    {
+      "citationKey": "2026KHCD25",
+      "src": "control",
+      "serialYear": "106786|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106786 of 2015",
+        "WRIT PETITION NO. 106786 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10066DB",
+      "src": "positive",
+      "serialYear": "100456|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100456 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO.100456 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10066DB",
+      "src": "positive",
+      "serialYear": "103226|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103226 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO.103226 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10322",
+      "src": "positive",
+      "serialYear": "22396|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22396 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.22396/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10354DB",
+      "src": "positive",
+      "serialYear": "100082|2023",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 100082 of 2023",
+        "MFA CROSS OBJ NO. 100082 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10354DB",
+      "src": "positive",
+      "serialYear": "102070|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102070 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 102070 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10396",
+      "src": "positive",
+      "serialYear": "100002|2020",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 100002 of 2020",
+        "REVIEW PETITION NO. 100002 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10396",
+      "src": "positive",
+      "serialYear": "100004|2020",
+      "types": [
+        "RP",
+        "REVIEWPETITION"
+      ],
+      "raws": [
+        "RP No. 100004 of 2020",
+        "REVIEW PETITION NO. 100004 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10437",
+      "src": "positive",
+      "serialYear": "101088|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101088 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO.101088/2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10437",
+      "src": "positive",
+      "serialYear": "101201|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101201 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO.101201/2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10685DB",
+      "src": "positive",
+      "serialYear": "102791|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102791 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 102791 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10685DB",
+      "src": "positive",
+      "serialYear": "102606|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102606 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 102606 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10810",
+      "src": "positive",
+      "serialYear": "100062|2023",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 100062 of 2023",
+        "REGULAR SECOND APPEAL NO. 100062 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10810",
+      "src": "positive",
+      "serialYear": "100215|2023",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 100215 of 2023",
+        "REGULAR SECOND APPEAL NO. 100215 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10842DB",
+      "src": "positive",
+      "serialYear": "100125|2023",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 100125 of 2023",
+        "CIVIL CONTEMPT PETITION NO.100125 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10842DB",
+      "src": "positive",
+      "serialYear": "100157|2023",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100157 of 2023",
+        "WRIT APPEAL NO.100157 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10876",
+      "src": "positive",
+      "serialYear": "100962|2014",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100962 of 2014",
+        "MISCELLANEOUS FIRST APPEAL NO.100962/2014"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10876",
+      "src": "positive",
+      "serialYear": "23614|2013",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 23614 of 2013",
+        "MISCELLANEOUS FIRST APPEAL NO.23614/2013"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10927",
+      "src": "positive",
+      "serialYear": "23303|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 23303 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.23303/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD10927",
+      "src": "positive",
+      "serialYear": "20720|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 20720 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.20720/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11005DB",
+      "src": "positive",
+      "serialYear": "100429|2022",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100429 of 2022",
+        "WRIT APPEAL NO. 100429 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11005DB",
+      "src": "positive",
+      "serialYear": "100079|2023",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100079 of 2023",
+        "WRIT APPEAL NO. 100079 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11111",
+      "src": "positive",
+      "serialYear": "103184|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103184 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO.103184/2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11111",
+      "src": "positive",
+      "serialYear": "104006|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 104006 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO.104006/2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11156DB",
+      "src": "positive",
+      "serialYear": "100812|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100812 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 100812 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11156DB",
+      "src": "positive",
+      "serialYear": "103686|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103686 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 103686 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11162DB",
+      "src": "positive",
+      "serialYear": "103695|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103695 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO. 103695 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11162DB",
+      "src": "positive",
+      "serialYear": "100980|2017",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100980 of 2017",
+        "MISCELLANEOUS FIRST APPEAL NO. 100980 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11207",
+      "src": "positive",
+      "serialYear": "25530|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25530 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.25530/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11207",
+      "src": "positive",
+      "serialYear": "25529|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25529 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.25529/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11363DB",
+      "src": "positive",
+      "serialYear": "101759|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101759 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO. 101759 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11363DB",
+      "src": "positive",
+      "serialYear": "101832|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101832 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO. 101832 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11432",
+      "src": "positive",
+      "serialYear": "102074|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102074 of 2023",
+        "CRIMINAL PETITION NO. 102074 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11432",
+      "src": "positive",
+      "serialYear": "102077|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102077 of 2023",
+        "CRIMINAL PETITION NO. 102077 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11432",
+      "src": "positive",
+      "serialYear": "102079|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102079 of 2023",
+        "CRIMINAL PETITION NO. 102079 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11482",
+      "src": "positive",
+      "serialYear": "100648|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100648 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO.100648/2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11482",
+      "src": "positive",
+      "serialYear": "100649|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100649 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO.100649/2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11637",
+      "src": "positive",
+      "serialYear": "100366|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100366 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.100366/2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11637",
+      "src": "positive",
+      "serialYear": "100790|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100790 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.100790/2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11920DB",
+      "src": "positive",
+      "serialYear": "101476|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101476 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 101476 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD11920DB",
+      "src": "positive",
+      "serialYear": "103319|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103319 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 103319 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12240",
+      "src": "positive",
+      "serialYear": "104174|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 104174 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.104174/2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12240",
+      "src": "positive",
+      "serialYear": "104179|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 104179 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.104179/2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12385",
+      "src": "positive",
+      "serialYear": "101756|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101756 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.101756/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12385",
+      "src": "positive",
+      "serialYear": "100951|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100951 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.100951/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12386",
+      "src": "positive",
+      "serialYear": "103815|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103815 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.103815/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12386",
+      "src": "positive",
+      "serialYear": "103817|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103817 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO.103817/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12393",
+      "src": "positive",
+      "serialYear": "22331|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22331 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22331/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12393",
+      "src": "positive",
+      "serialYear": "24973|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 24973 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.24973/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12407",
+      "src": "positive",
+      "serialYear": "102465|2015",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102465 of 2015",
+        "MISCELLANEOUS FIRST APPEAL NO.102465/2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12407",
+      "src": "positive",
+      "serialYear": "102464|2015",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102464 of 2015",
+        "MISCELLANEOUS FIRST APPEAL NO.102464/2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12443DB",
+      "src": "positive",
+      "serialYear": "100220|2016",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100220 of 2016",
+        "REGULAR FIRST APPEAL NO. 100220 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12443DB",
+      "src": "positive",
+      "serialYear": "100001|2018",
+      "types": [
+        "RFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "RFA.CROB No. 100001 of 2018",
+        "RFA CROSS OBJ NO. 100001 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12536DB",
+      "src": "positive",
+      "serialYear": "100109|2016",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100109 of 2016",
+        "REGULAR FIRST APPEAL NO.100109 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12536DB",
+      "src": "positive",
+      "serialYear": "100149|2022",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 100149 of 2022",
+        "REGULAR FIRST APPEAL NO.100149 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12668DB",
+      "src": "positive",
+      "serialYear": "101864|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101864 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO. 101864 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12935",
+      "src": "positive",
+      "serialYear": "5092|2008",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 5092 of 2008",
+        "REGULAR SECOND APPEAL NO. 5092 OF 2008"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD12935",
+      "src": "positive",
+      "serialYear": "5091|2008",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 5091 of 2008",
+        "REGULAR SECOND APPEAL NO. 5091 OF 2008"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13000",
+      "src": "positive",
+      "serialYear": "106999|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106999 of 2018",
+        "WRIT PETITION NO. 106999 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13000",
+      "src": "positive",
+      "serialYear": "107000|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 107000 of 2018",
+        "WRIT PETITION NO. 107000 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13330",
+      "src": "positive",
+      "serialYear": "102951|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102951 of 2023",
+        "CRIMINAL PETITION NO. 102951 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13330",
+      "src": "positive",
+      "serialYear": "102972|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 102972 of 2023",
+        "CRIMINAL PETITION NO. 102972 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13586DB",
+      "src": "positive",
+      "serialYear": "105580|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105580 of 2023",
+        "WRIT PETITION NO. 105580 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13586DB",
+      "src": "positive",
+      "serialYear": "105983|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105983 of 2023",
+        "WRIT PETITION NO. 105983 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13736",
+      "src": "positive",
+      "serialYear": "106932|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106932 of 2023",
+        "WRIT PETITION NO. 106932 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13736",
+      "src": "positive",
+      "serialYear": "106733|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106733 of 2023",
+        "WRIT PETITION NO. 106733 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13759DB",
+      "src": "positive",
+      "serialYear": "100367|2017",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100367 of 2017",
+        "CRIMINAL APPEAL NO. 100367 OF 2017"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13759DB",
+      "src": "positive",
+      "serialYear": "100028|2018",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100028 of 2018",
+        "CRIMINAL APPEAL NO. 100028 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13780",
+      "src": "positive",
+      "serialYear": "104624|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 104624 of 2015",
+        "WRIT PETITION NO. 104624 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13780",
+      "src": "positive",
+      "serialYear": "106530|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106530 of 2015",
+        "WRIT PETITION NO. 106530 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13916",
+      "src": "positive",
+      "serialYear": "103041|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103041 of 2023",
+        "CRIMINAL PETITION NO. 103041 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13916",
+      "src": "positive",
+      "serialYear": "103048|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103048 of 2023",
+        "CRIMINAL PETITION NO. 103048 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13981",
+      "src": "positive",
+      "serialYear": "855|2012",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 855 of 2012",
+        "MFA CROSS OBJ NO.855/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13981",
+      "src": "positive",
+      "serialYear": "23875|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL",
+        "INMFA"
+      ],
+      "raws": [
+        "MFA No. 23875 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.23875/2011",
+        "THIS CROSS OBJECTION IN MFA.NO.23875/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13996",
+      "src": "positive",
+      "serialYear": "103175|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103175 of 2023",
+        "CRIMINAL PETITION NO. 103175 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD13996",
+      "src": "positive",
+      "serialYear": "100192|2020",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 100192 of 2020",
+        "CRIMINAL PETITION NO. 100192 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14049",
+      "src": "positive",
+      "serialYear": "100206|2016",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 100206 of 2016",
+        "CRIMINAL REVISION PETITION NO. 100206 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14049",
+      "src": "positive",
+      "serialYear": "100207|2016",
+      "types": [
+        "CRLRP",
+        "REVISIONPETITION"
+      ],
+      "raws": [
+        "CRL.RP No. 100207 of 2016",
+        "CRIMINAL REVISION PETITION NO. 100207 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14142",
+      "src": "positive",
+      "serialYear": "25207|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25207 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.25207/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14302",
+      "src": "positive",
+      "serialYear": "60134|2012",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 60134 of 2012",
+        "WRIT PETITION NO. 60134 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14302",
+      "src": "positive",
+      "serialYear": "110172|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 110172 of 2015",
+        "WRIT PETITION NO. 110172 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14431DB",
+      "src": "positive",
+      "serialYear": "100217|2018",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No.100217 of 2018",
+        "REGULAR FIRST APPEAL NO.100217 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14431DB",
+      "src": "positive",
+      "serialYear": "100186|2018",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No.100186 of 2018",
+        "REGULAR FIRST APPEAL NO.100186 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14548",
+      "src": "positive",
+      "serialYear": "105057|2023",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105057 of 2023",
+        "WRIT PETITION NO. 105057 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14548",
+      "src": "positive",
+      "serialYear": "102770|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 102770 of 2022",
+        "WRIT PETITION NO. 102770 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14633",
+      "src": "positive",
+      "serialYear": "5644|2012",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 5644 of 2012",
+        "REGULAR SECOND APPEAL NO. 5644 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14633",
+      "src": "positive",
+      "serialYear": "5666|2012",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 5666 of 2012",
+        "REGULAR SECOND APPEAL NO. 5666 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14854",
+      "src": "positive",
+      "serialYear": "103219|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 103219 of 2023",
+        "CRIMINAL PETITION NO. 103219 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14941",
+      "src": "positive",
+      "serialYear": "22404|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22404 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO. 22404 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14941",
+      "src": "positive",
+      "serialYear": "22403|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22403 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO. 22403 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14968",
+      "src": "positive",
+      "serialYear": "1397|2005",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1397 of 2005",
+        "REGULAR SECOND APPEAL NO. 1397 OF 2005"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD14968",
+      "src": "positive",
+      "serialYear": "1399|2005",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 1399 of 2005",
+        "REGULAR SECOND APPEAL NO. 1399 OF 2005"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6304",
+      "src": "positive",
+      "serialYear": "100174|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100174 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO. 100174/2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6304",
+      "src": "positive",
+      "serialYear": "100114|2016",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 100114 of 2016",
+        "MFA CROSS OBJ NO. 100114/2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6401DB",
+      "src": "positive",
+      "serialYear": "100252|2015",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100252 of 2015",
+        "CRIMINAL APPEAL NO. 100252 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6401DB",
+      "src": "positive",
+      "serialYear": "100242|2015",
+      "types": [
+        "CRLA",
+        "CRIMINALAPPEAL"
+      ],
+      "raws": [
+        "CRL.A No. 100242 of 2015",
+        "CRIMINAL APPEAL NO. 100242 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6462",
+      "src": "positive",
+      "serialYear": "20892|2013",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 20892 of 2013",
+        "MISCELLANEOUS FIRST APPEAL NO.20892 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6462",
+      "src": "positive",
+      "serialYear": "20891|2013",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 20891 of 2013",
+        "MISCELLANEOUS FIRST APPEAL NO. 20891 OF 2013"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6551",
+      "src": "positive",
+      "serialYear": "106848|2015",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106848 of 2015",
+        "WRIT PETITION NO. 106848 OF 2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD6551",
+      "src": "positive",
+      "serialYear": "101230|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 101230 of 2018",
+        "WRIT PETITION NO. 101230 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7065DB",
+      "src": "positive",
+      "serialYear": "100051|2021",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No.100051 of 2021",
+        "MFA CROSS OBJ NO.100051 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7293DB",
+      "src": "positive",
+      "serialYear": "102220|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102220 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO.102220 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7293DB",
+      "src": "positive",
+      "serialYear": "102048|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 102048 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO.102048 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7302",
+      "src": "positive",
+      "serialYear": "106005|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 106005 of 2022",
+        "WRIT PETITION NO. 106005 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7302",
+      "src": "positive",
+      "serialYear": "105963|2022",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 105963 of 2022",
+        "WRIT PETITION NO. 105963 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7914",
+      "src": "positive",
+      "serialYear": "3046|2009",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 3046 of 2009",
+        "REGULAR FIRST APPEAL NO.3046/2009"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD7914",
+      "src": "positive",
+      "serialYear": "3017|2010",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 3017 of 2010",
+        "REGULAR FIRST APPEAL NO.3017/2010"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8042",
+      "src": "positive",
+      "serialYear": "25052|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25052 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.25052/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8042",
+      "src": "positive",
+      "serialYear": "100304|2014",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No.100304 of 2014",
+        "MISCELLANEOUS FIRST APPEAL NO.100304/2014"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8042",
+      "src": "positive",
+      "serialYear": "100064|2021",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No.100064 of 2021",
+        "MFA CROSS OBJ NO.100064/2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8053",
+      "src": "positive",
+      "serialYear": "20741|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 20741 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.20741/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8079",
+      "src": "positive",
+      "serialYear": "100040|2019",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 100040 of 2019",
+        "MFA CROSS OBJ NO.100040/2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8079",
+      "src": "positive",
+      "serialYear": "25725|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25725 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.25725/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8087",
+      "src": "positive",
+      "serialYear": "101762|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101762 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 101762 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8087",
+      "src": "positive",
+      "serialYear": "101764|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101764 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO. 101764 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8249",
+      "src": "positive",
+      "serialYear": "21804|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 21804 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.21804/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8249",
+      "src": "positive",
+      "serialYear": "24979|2011",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 24979 of 2011",
+        "MISCELLANEOUS FIRST APPEAL NO.24979/2011"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8277DB",
+      "src": "positive",
+      "serialYear": "101803|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101803 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 101803 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8374",
+      "src": "positive",
+      "serialYear": "22120|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22120 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22120/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8374",
+      "src": "positive",
+      "serialYear": "25629|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25629 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.25629/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8433",
+      "src": "positive",
+      "serialYear": "100099|2018",
+      "types": [
+        "MSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "MSA No. 100099 of 2018",
+        "MISCELLANEOUS SECOND APPEAL NO. 100099 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8433",
+      "src": "positive",
+      "serialYear": "100040|2019",
+      "types": [
+        "MSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "MSA No. 100040 of 2019",
+        "MISCELLANEOUS SECOND APPEAL NO. 100040 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8648DB",
+      "src": "positive",
+      "serialYear": "100113|2021",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 100113 of 2021",
+        "CIVIL CONTEMPT PETITION NO. 100113 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8648DB",
+      "src": "positive",
+      "serialYear": "100072|2022",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100072 of 2022",
+        "WRIT APPEAL NO. 100072 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8650DB",
+      "src": "positive",
+      "serialYear": "100850|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100850 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 100850 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8650DB",
+      "src": "positive",
+      "serialYear": "100767|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100767 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 100767 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8789DB",
+      "src": "positive",
+      "serialYear": "100432|2022",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100432 of 2022",
+        "WRIT APPEAL NO. 100432 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8789DB",
+      "src": "positive",
+      "serialYear": "100433|2022",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100433 of 2022",
+        "WRIT APPEAL NO. 100433 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8842",
+      "src": "positive",
+      "serialYear": "100179|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100179 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO.100179/2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8842",
+      "src": "positive",
+      "serialYear": "101124|2023",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101124 of 2023",
+        "MISCELLANEOUS FIRST APPEAL NO.101124/2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8853",
+      "src": "positive",
+      "serialYear": "25426|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25426 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.25426/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8853",
+      "src": "positive",
+      "serialYear": "100105|2015",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 100105 of 2015",
+        "MFA CROSS OBJ NO.100105/2015"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8911",
+      "src": "positive",
+      "serialYear": "21726|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 21726 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.21726/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8911",
+      "src": "positive",
+      "serialYear": "22434|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22434 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22434/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8974",
+      "src": "positive",
+      "serialYear": "826|2013",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 826 of 2013",
+        "MFA CROSS OBJ NO.826/2013"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8974",
+      "src": "positive",
+      "serialYear": "21403|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 21403 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.21403/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8996",
+      "src": "positive",
+      "serialYear": "4083|2012",
+      "types": [
+        "RFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "RFA No. 4083 of 2012",
+        "REGULAR FIRST APPEAL NO. 4083 OF 2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD8996",
+      "src": "positive",
+      "serialYear": "100006|2023",
+      "types": [
+        "RFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "RFA.CROB No. 100006 of 2023",
+        "RFA CROSS OBJ NO. 100006 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9003",
+      "src": "positive",
+      "serialYear": "100141|2023",
+      "types": [
+        "RSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "RSA No. 100141 of 2023",
+        "REGULAR SECOND APPEAL NO. 100141 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9138",
+      "src": "positive",
+      "serialYear": "104240|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 104240 of 2018",
+        "WRIT PETITION NO. 104240 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9138",
+      "src": "positive",
+      "serialYear": "107735|2018",
+      "types": [
+        "WP",
+        "WRITPETITION"
+      ],
+      "raws": [
+        "WP No. 107735 of 2018",
+        "WRIT PETITION NO. 107735 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9145",
+      "src": "positive",
+      "serialYear": "103144|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103144 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO. 103144 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9145",
+      "src": "positive",
+      "serialYear": "103145|2016",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103145 of 2016",
+        "MISCELLANEOUS FIRST APPEAL NO. 103145 OF 2016"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9228",
+      "src": "positive",
+      "serialYear": "22162|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22162 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22162/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9228",
+      "src": "positive",
+      "serialYear": "22312|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22312 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22312/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9338",
+      "src": "positive",
+      "serialYear": "21495|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 21495 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.21495/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9338",
+      "src": "positive",
+      "serialYear": "22321|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 22321 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.22321/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9367DB",
+      "src": "positive",
+      "serialYear": "100336|2022",
+      "types": [
+        "CCC",
+        "CONTEMPTPETITION"
+      ],
+      "raws": [
+        "CCC No. 100336 of 2022",
+        "CIVIL CONTEMPT PETITION NO. 100336 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9367DB",
+      "src": "positive",
+      "serialYear": "100001|2023",
+      "types": [
+        "WA",
+        "WRITAPPEAL"
+      ],
+      "raws": [
+        "WA No. 100001 of 2023",
+        "WRIT APPEAL NO. 100001 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9467DB",
+      "src": "positive",
+      "serialYear": "100824|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 100824 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.100824 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9467DB",
+      "src": "positive",
+      "serialYear": "101625|2018",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101625 of 2018",
+        "MISCELLANEOUS FIRST APPEAL NO.101625 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9512DB",
+      "src": "positive",
+      "serialYear": "101904|2022",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101904 of 2022",
+        "MISCELLANEOUS FIRST APPEAL NO. 101904 OF 2022"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9512DB",
+      "src": "positive",
+      "serialYear": "100045|2023",
+      "types": [
+        "MFACROB",
+        "CROSSOBJ"
+      ],
+      "raws": [
+        "MFA.CROB No. 100045 of 2023",
+        "MFA CROSS OBJ NO. 100045 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9523",
+      "src": "positive",
+      "serialYear": "100038|2018",
+      "types": [
+        "MSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "MSA No. 100038 of 2018",
+        "MISCELLANEOUS SECOND APPEAL NO. 100038 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9523",
+      "src": "positive",
+      "serialYear": "100047|2018",
+      "types": [
+        "MSA",
+        "SECONDAPPEAL"
+      ],
+      "raws": [
+        "MSA No. 100047 of 2018",
+        "MISCELLANEOUS SECOND APPEAL NO. 100047 OF 2018"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9548DB",
+      "src": "positive",
+      "serialYear": "101238|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101238 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO.101238 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9548DB",
+      "src": "positive",
+      "serialYear": "101286|2020",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101286 of 2020",
+        "MISCELLANEOUS FIRST APPEAL NO.101286 OF 2020"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9692DB",
+      "src": "positive",
+      "serialYear": "101525|2021",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 101525 of 2021",
+        "MISCELLANEOUS FIRST APPEAL NO. 101525 OF 2021"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9692DB",
+      "src": "positive",
+      "serialYear": "103087|2019",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 103087 of 2019",
+        "MISCELLANEOUS FIRST APPEAL NO. 103087 OF 2019"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9733",
+      "src": "positive",
+      "serialYear": "101682|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101682 of 2023",
+        "CRIMINAL PETITION NO. 101682 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9733",
+      "src": "positive",
+      "serialYear": "101683|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101683 of 2023",
+        "CRIMINAL PETITION NO. 101683 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9787",
+      "src": "positive",
+      "serialYear": "101901|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P No. 101901 of 2023",
+        "CRIMINAL PETITION NO. 101901 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9787",
+      "src": "positive",
+      "serialYear": "101902|2023",
+      "types": [
+        "CRLP",
+        "CRIMINALPETITION"
+      ],
+      "raws": [
+        "CRL.P NO. 101902 OF 2023",
+        "CRIMINAL PETITION NO. 101902 OF 2023"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9957",
+      "src": "positive",
+      "serialYear": "23411|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 23411 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.23411/2012"
+      ]
+    },
+    {
+      "citationKey": "2023KHCD9957",
+      "src": "positive",
+      "serialYear": "25263|2012",
+      "types": [
+        "MFA",
+        "FIRSTAPPEAL"
+      ],
+      "raws": [
+        "MFA No. 25263 of 2012",
+        "MISCELLANEOUS FIRST APPEAL NO.25263/2012"
+      ]
+    }
+  ]
+}

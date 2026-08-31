@@ -88,7 +88,14 @@ describe('cohort — reading what the court declared', () => {
     const d = declaredCohort(JHHC_24297);
     assert.equal(d.declaredMatters, 2, `declared ${JSON.stringify(d.matters)}`);
     assert.equal(d.connector, 'WITH');
-    assert.deepEqual(d.matters.map((m) => m.key).sort(), ['CO|9|2022', 'MA|134|2018']);
+    // The key became `serial|year` at the R15-F1 correction. The MATTERS pinned
+    // here are the same two the court printed; what changed is that the type is
+    // no longer part of a matter's identity, because the registry prints one
+    // matter under two names — this very fixture carries `M.A. No. 134 of 2018`
+    // and `Miscellaneous Appeal No. 134 of 2018`, and the old key counted them
+    // as two. `docs/ai/lcc-r15f1/key-collapse.json` enumerates all 623 such
+    // collapses; every one is an abbreviation beside its own expansion.
+    assert.deepEqual(d.matters.map((m) => m.key).sort(), ['134|2018', '9|2022']);
   });
 
   it('holding one of a declared two, UNIQUE is not available', () => {
@@ -135,7 +142,13 @@ describe('cohort — reading what the court declared', () => {
     );
     assert.deepEqual(
       d.matters.map((m) => m.key),
-      ['CRIMINALAPPEAL|887|2006'],
+      ['887|2006'],
+    );
+    // The type still decides whether a capture is a matter AT ALL, which is what
+    // keeps the section and the Act out — only the identity moved to serial|year.
+    assert.deepEqual(
+      d.matters.map((m) => m.type),
+      ['CRIMINALAPPEAL'],
     );
     assert.equal(cohortBlocksUnique(d, 1), false);
   });

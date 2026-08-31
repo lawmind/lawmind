@@ -49,16 +49,64 @@
  * threshold to tune and nothing to switch off.
  *
  * ─────────────────────────────────────────────────────────────────────────────
+ * NEW2-R15-F1 — THE FIRST CUT READ CAPITAL LETTERS, NOT MATTER NUMBERS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The version shipped at `bd2aa74a` captured the matter TYPE as `[A-Z][A-Z.&'-]*`
+ * while matching connectors case-insensitively, and NEW2 retested it on its own
+ * population (bus 1637, `docs/ai/new2-r15/`): the gate was reached on all 472
+ * would-be-`UNIQUE` rows and refused none, because all 472 declared ZERO matters
+ * — not the one an ordinary judgment prints. A common order printed in title
+ * case gave `connector = WITH` and `declaredMatters = 0`, so
+ * `declaredMatters > heldCandidates` was `0 > 1`, false, and the reference was
+ * told it was the only one. **It failed OPEN on the exact shape it exists to
+ * refuse**, and every test then in the file was green because every matter their
+ * assertions depended on happened to be upper case.
+ *
+ * The obvious repair is to drop the case-sensitivity. That was measured and it
+ * is NOT what shipped, because case-sensitivity had been doing a second job by
+ * accident: Indian judgment PROSE is title case, so `[A-Z]`-only matching was
+ * suppressing the FIR, the sessions trial and the mid-sentence recital as a side
+ * effect of suppressing half the real cause titles. Censused over 1,358
+ * key-bearing judgments (`docs/ai/lcc-r15f1/matter-form-census.json`), ignoring
+ * case alone adds 552 matches of which the largest single group is
+ * `arising out of Case Crime No.60 of 2019` — a police number in a sentence.
+ *
+ * So the rule is structural instead. A matter DECLARATION opens a line, or opens
+ * the text immediately after a conjunction the court printed; a case number
+ * recited mid-sentence is a reference, not a sibling. Scored side by side on
+ * NEW2's holdout (`docs/ai/lcc-r15f1/grammar-sweep.json`, T0 2026-08-18, 180
+ * reachable positives and 2,295 controls):
+ *
+ *   grammar                                  recall         false refusals
+ *   upper-case only, unanchored (bd2aa74a)   97/180  53.9%  34/2,295 1.48%
+ *   case-insensitive, unanchored             98/180  54.4%  42/2,295 1.83%
+ *   case-insensitive, anchored               98/180  54.4%  35/2,295 1.53%
+ *   + the registry type forms  <- shipped   101/180  56.1%  39/2,295 1.70%
+ *
+ * Anchoring buys back three quarters of what ignoring case costs, and it loses
+ * nothing the shipped grammar caught. The last row is {@link TYPE_WORD} and
+ * {@link NOT_A_MATTER}: three named Allahabad forms, each with a judgment id
+ * beside it, not a threshold moved until a number improved. It trades four more
+ * true refusals for five more recall-cost ones, which is taken because a refusal
+ * still returns the authority and a wrong pin does not.
+ *
+ * The number that actually moves is none of those: cause titles the parser can
+ * READ AT ALL went from 54.3% to 77.2% of the same 2,295. The gate was blind on
+ * nearly half the corpus and answering anyway.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
  * WHAT IT IS WORTH, MEASURED ON AN INSTRUMENT THAT READS NO RESOLVER OUTPUT
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * LCC re-derived NEW2's holdout independently and got the same 226 keys.
- * `docs/ai/lcc-r15/cohort-gate.json`, 31 August 2026:
+ * LCC re-derived NEW2's holdout independently and got the same 226 keys, twice —
+ * once for `bd2aa74a` and again for this correction, on the same T0 and the same
+ * 2,295 controls, so the two rows above are one comparison and not two rounds.
  *
- *    97 of the 180 reachable false uniques  (53.9%)  no longer claim UNIQUE
- *    34 of 2,295 keys that stayed single    (1.48%)  lose the word "only"
+ *   101 of the 180 reachable false uniques  (56.1%)  no longer claim UNIQUE
+ *    39 of 2,295 keys that stayed single    (1.70%)  lose the word "only"
  *
- * The 1.48% is a recall cost and NOT a wrong answer: in each of those the court
+ * The 1.70% is a recall cost and NOT a wrong answer: in each of those the court
  * did print a conjunction and a sibling we do not hold. Hand-read, the
  * commonest reason a refusal was not worth making is a lower-court or FIR
  * number joined by a conjunction — `CRIMINAL APPEAL No. 123 of 2013 ...
@@ -66,10 +114,29 @@
  * those needs a list of which registry types are High Court matters, and a list
  * that scores well on the documents it was written from is not evidence.
  *
- * 83 of the 180 are not reachable from any document we hold: the court issued
- * SEPARATE orders under one neutral citation, each declaring only its own
- * matter. No amount of reading judgment A reveals judgment B. That residue is a
- * data-contract gap and is handed back rather than papered over.
+ * **The 79 that remain were re-derived, not carried forward.** The previous
+ * round put 83 misses down to a data-contract gap while using a parser that
+ * could not read half the cause titles, which is a conclusion drawn from an
+ * instrument that was broken in the same direction. Re-run against this parser
+ * (`docs/ai/lcc-r15f1/residue.json`), asking of every miss whether the SIBLING's
+ * own case number appears anywhere in the bearer's cause title:
+ *
+ *   78  the court printed no conjunction AND the sibling is not named  UNREACHABLE
+ *    0  the sibling is named but no conjunction joins it
+ *    1  a conjunction and a named sibling the parser still misses      PARSER GAP
+ *
+ * So the earlier conclusion SURVIVES on better evidence, and is now stronger
+ * than it was: those 78 are not merely un-fired, they carry no trace of the
+ * sibling at all. The court issued SEPARATE orders under one neutral citation
+ * and each declares only its own matter. No amount of reading judgment A reveals
+ * judgment B. That residue is handed back rather than papered over.
+ *
+ * The single parser gap is a line-wrapped year — Allahabad's
+ * `BAIL APPLICATION No. - 47257 of` / `2021` puts the year on the next line, and
+ * segments are split on lines. Left alone deliberately: un-wrapping lines before
+ * parsing would let a declaration form across a boundary the court did not draw,
+ * which is a larger change to what counts as a cause title than one positive in
+ * 180 justifies.
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * WHAT THIS IS NOT
@@ -121,6 +188,11 @@
  * The first run of that sweep was worthless and is recorded as such — every
  * variant was silently clamped to this constant, so four rows measured one
  * window. {@link declaredCohort} now takes the bound as an argument.
+ *
+ * The sweep above is the UPPER-CASE grammar's. The window was not re-swept for
+ * the R15-F1 correction and the two are not interchangeable: 800 is carried
+ * forward as the shipped value, not re-derived, and that is a caveat rather than
+ * a result.
  */
 export const CAUSE_TITLE_CHARS = 800;
 
@@ -135,9 +207,9 @@ export const CAUSE_TITLE_CHARS = 800;
  * (502 -> 34 of 2,295). That trade is taken because a refusal still returns the
  * authority and a wrong pin does not.
  *
- * `C/W` is Karnataka's, `A/W` Bombay's, `With` Jharkhand's and Allahabad's.
- * Matched case-insensitively and on a word boundary so `WITHOUT` and the `with`
- * inside a sentence cannot fire it.
+ * `C/W` is Karnataka's, `A/W` Bombay's and Himachal's, `With` Jharkhand's and
+ * Allahabad's. Matched case-insensitively and on a word boundary so `WITHOUT`
+ * and the `with` inside a sentence cannot fire it.
  *
  * **Every entry is here for a number.** Censused over 14,452 cause titles and
  * attributed over NEW2's holdout — `scripts/lcc-connector-census.mts`:
@@ -164,20 +236,75 @@ const CONNECTORS: readonly { readonly re: RegExp; readonly name: string }[] = [
 ];
 
 /**
- * `M.A. No. 134 of 2018`, `MFA No.100456 OF 2021`, `WRIT TAX No. - 859 of 2023`.
+ * The same conjunctions as ONE splitter.
+ *
+ * A sibling is not always on its own line. Karnataka prints
+ * `MFA NO.100456/2021 C/W MFA NO.100457/2021` on one, so the second matter opens
+ * no line — it opens the text immediately after the conjunction, which is the
+ * other structural position a declaration can occupy. Splitting here is what
+ * makes {@link declaredCohort} see it without letting the parser wander into the
+ * middle of a sentence.
+ */
+const CONNECTOR_SPLIT =
+  /\bC\s*\/\s*W\b|\bA\s*\/\s*W\b|\bconnected\s+with\b|\balong\s*with\b|\bwith\b/gi;
+
+/**
+ * A word inside a matter type.
+ *
+ * Letters, a slash, a short digit group, or a standalone dash. None of these is
+ * decoration — each one is a registry form that silently cost a declaration:
+ *
+ *   `Case :- WRIT - C No. - 19783 of 2022`              a standalone dash
+ *   `Case :- MATTERS UNDER ARTICLE 227 No. - 541 of 2024`   a digit group
+ *   `Case :- APPLICATION U/S 482 No. - 391 of 2024`     a slash AND a digit
+ *
+ * Without them the capture stops at `WRIT`, at `MATTERS UNDER`, at `APPLICATION`
+ * — and since the pattern then requires `No.` immediately, the whole declaration
+ * is lost rather than shortened. Three of the four remaining reachable misses on
+ * NEW2's holdout were this and nothing else (`docs/ai/lcc-r15f1/residue.json`).
+ *
+ * The digit group is bounded at four and can never START a type, so a bare
+ * number in the text cannot become a matter on its own.
+ */
+const TYPE_WORD = "(?:[A-Za-z][A-Za-z.&'/-]*|\\d{1,4}|[-–—])";
+
+/**
+ * `M.A. No. 134 of 2018`, `MFA No.100456 OF 2021`, `WRIT TAX No. - 859 of 2023`,
+ * `S.B. Criminal Miscellaneous Bail Application No. 848/2025`.
  *
  * The registry prints a matter type, a serial and a year, and it prints them in
- * exactly two layouts. This is the long one. The type is bounded at 40
- * characters so a runaway match cannot swallow a paragraph, and the year is
- * anchored to four digits beginning 19 or 20 so `of 12` in prose cannot form a
- * matter.
+ * exactly two layouts. This is the long one. The type is bounded at five words
+ * so a runaway match cannot swallow a paragraph, and the year is anchored to
+ * four digits beginning 19 or 20 so `of 12` in prose cannot form a matter.
+ *
+ * **Anchored at `^`** — see {@link segmentsOf}. The bound and the anchor are
+ * doing different jobs: the anchor says WHERE a declaration may begin, the bound
+ * says how much of it may be type.
  */
-const MATTER_LONG =
-  /([A-Z][A-Z.&'-]*(?:[ \t]+[A-Z][A-Z.&'-]*){0,4})[ \t]*(?:No[.s]?|NO[.S]?|Nos?\.?)[ \t]*[-.:]?[ \t]*(\d{1,7})[ \t]*(?:of|OF|\/)[ \t]*((?:19|20)\d{2})\b/g;
+const MATTER_LONG = new RegExp(
+  `^([A-Za-z][A-Za-z.&'-]*(?:[ \\t]+${TYPE_WORD}){0,4})` +
+    `[ \\t]*(?:Nos?\\.?)[ \\t]*[-.:]?[ \\t]*(\\d{1,7})[ \\t]*(?:of|\\/)[ \\t]*((?:19|20)\\d{2})\\b`,
+  'i',
+);
 
-/** `MA/134/2018`, `APPLN/3717/2023`. The slash layout. */
-const MATTER_SLASH =
-  /([A-Z][A-Z.&'-]{0,15})[ \t]*\/[ \t]*(\d{1,7})[ \t]*\/[ \t]*((?:19|20)\d{2})\b/g;
+/** `MA/134/2018`, `APPLN/3717/2023`. The slash layout, same anchor. */
+const MATTER_SLASH = /^([A-Za-z][A-Za-z.&'-]{0,15})[ \t]*\/[ \t]*(\d{1,7})[ \t]*\/[ \t]*((?:19|20)\d{2})\b/i;
+
+/**
+ * Bounded noise a registry prints before the type, stripped so the anchor still
+ * lands: a serial or bullet (`1 M.A. No. 134 of 2018`,
+ * `62 CONT. PETITION NO. 268 OF 2018`, `1.Review Petition No. 48 of 2024`), an
+ * opening bracket (the Supreme Court's `(Civil Appeal No. 2047 of 2007)`).
+ *
+ * It strips a PREFIX. It never searches for a matter, which is the difference
+ * between this and the unbounded "find any number" the round forbade.
+ */
+const LEAD = /^[\s(\[*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]*)?[\s(\[*\-–—.:;,#•]*/;
+
+/** Allahabad's cause-title label: `Case :- FIRST APPEAL FROM ORDER No. - 1202 of
+ *  1999`. The colon is required, so `Case No.2570 of 2020` — where `Case` IS the
+ *  matter type — is left alone. */
+const LABEL = /^(?:case|matter|item)[ \t]*:[-–—\s]*/i;
 
 /**
  * `CONT. PETITION NO. 268 OF 2018 / IN WP/5150/2013`.
@@ -186,8 +313,12 @@ const MATTER_SLASH =
  * below the contempt, the trial below the appeal. It is not a sibling disposed
  * of by the same order, and counting it as one refuses every appeal that names
  * the order it appeals. Same reasoning for `arising out of`.
+ *
+ * Tolerant of a line break, because Rajasthan prints the marker on a line of its
+ * own: `D.B. Criminal Misc. ... Application No. 1840/2025` / `in` /
+ * `D.B. Criminal Appeal No. 154/2025`.
  */
-const PARENT_MATTER = /\b(?:IN|ARISING\s+(?:OUT\s+)?(?:OF|FROM)|FROM)[ \t]*$/i;
+const PARENT_MATTER = /\b(?:IN|ARISING\s+(?:OUT\s+)?(?:OF|FROM)|FROM)[ \t\r\n]*$/i;
 
 /** The same marker where the greedy type capture swallowed it — `IN WRIT
  *  PETITION No. 5150 of 2013` matches from `IN`, so it never appears before
@@ -202,6 +333,10 @@ const PARENT_LEADING = /^(?:IN|ARISING|FROM)\b/i;
  * manufacture a two-matter cohort out of one matter. Keeping only the last two
  * words of the type collapses them, and is stable within a document, which is
  * the only place the comparison is ever made.
+ *
+ * The token is no longer the identity of a matter — {@link matterKey} is — but
+ * it still decides whether a capture is a matter at all, via
+ * {@link NOT_A_MATTER}, and it is reported so a disagreement is auditable.
  */
 function typeToken(captured: string): string {
   return captured
@@ -219,6 +354,13 @@ function typeToken(captured: string): string {
  * `Section 302 of 1860` and `Act No. 2 of 1974` have the shape of a case number
  * and are legislation. A statute counted as a connected matter would refuse
  * every judgment that cites one, which is every judgment.
+ *
+ * Tested against the WHOLE captured type, never against {@link typeToken}'s
+ * last-two-word abbreviation. Allahabad's `MATTERS UNDER ARTICLE 227 No. - 541
+ * of 2024` is a real matter type whose last two words are `ARTICLE 227`, and
+ * testing the token threw the declaration away as legislation. Whether a phrase
+ * is a statute reference is a property of the phrase; the two-word token exists
+ * to collapse repeats of one matter, which is a different question.
  */
 const NOT_A_MATTER =
   /^(SECTION|SECTIONS|ACT|ACTS|ARTICLE|ARTICLES|RULE|RULES|ORDER|ORDERS|CHAPTER|PART|SCHEDULE|CLAUSE|REGULATION|NOTIFICATION|AMENDMENT|ANNEXURE|PARA|PARAGRAPH|VOLUME|PAGE|EDITION|ITEM)$/;
@@ -226,9 +368,30 @@ const NOT_A_MATTER =
 export type DeclaredMatter = {
   /** The court's own text, byte for byte, so a disagreement is auditable. */
   readonly raw: string;
-  /** `MA|134|2018`. Layout-independent, so `M.A. No. 134 of 2018` and
-   *  `MA/134/2018` are recognised as ONE matter and never counted twice. */
+  /**
+   * `134|2018` — serial and year, layout-independent AND spelling-independent.
+   *
+   * The registry prints ONE matter under two names in the same cause title:
+   * `MFA No. 101864 of 2016` on one line and
+   * `MISCELLANEOUS FIRST APPEAL NO. 101864 OF 2016` on another. Keying on the
+   * type counted that as two matters and invented a cohort out of a duplicate —
+   * which is visible in this gate's own first measurement, where two of the
+   * recorded misses are exactly that pair.
+   *
+   * Every collapse this key makes was enumerated before it shipped
+   * (`docs/ai/lcc-r15f1/key-collapse.json`): 623 events over 2,521 documents,
+   * 25 distinct type pairs, and all 25 are an abbreviation beside its own
+   * expansion — `WP + WRIT PETITION`, `CRL.P + CRIMINAL PETITION`,
+   * `RSA + REGULAR SECOND APPEAL`. Not one pair is two different matters.
+   *
+   * The residual risk is stated rather than hidden: two genuinely different
+   * matters sharing a serial AND a year in one cause title would collapse to
+   * one, and the gate would under-refuse. None was found in 623 collapses.
+   */
   readonly key: string;
+  /** The matter type as the court spelled it, normalised. Reported for audit;
+   *  never the identity of a matter. */
+  readonly type: string;
 };
 
 export type CohortDeclaration = {
@@ -259,13 +422,46 @@ const NO_DECLARATION: CohortDeclaration = {
   causeTitleAvailable: false,
 };
 
-function matterKey(type: string, serial: string, year: string): string | null {
+function matterKey(type: string, serial: string, year: string): DeclaredMatter | null {
+  const whole = type.toUpperCase().replace(/[^A-Z]/g, '');
   const t = typeToken(type);
-  if (t.length === 0 || NOT_A_MATTER.test(t)) return null;
+  if (t.length === 0 || NOT_A_MATTER.test(whole)) return null;
   // Leading zeros are cosmetic: `C.O. No. 09 of 2022` and `C.O./9/2022` are one
   // matter, and counting them as two would invent a cohort out of a duplicate.
   const n = serial.replace(/^0+/, '') || '0';
-  return `${t}|${n}|${year}`;
+  return { raw: '', key: `${n}|${year}`, type: t };
+}
+
+/**
+ * The positions in a cause title where a matter may be DECLARED.
+ *
+ * One per line, plus one after every conjunction the court printed. Everything
+ * else in the window — the body of a sentence — can only RECITE a case number,
+ * and a recital is not a sibling. This is the whole of what replaced the
+ * accidental prose filter that `[A-Z]`-only matching had been providing: it is a
+ * statement about where courts print declarations, not about which letters they
+ * capitalise, so a title-case registry and an upper-case one are read alike.
+ *
+ * Each segment carries the text that preceded it, because `IN` on a line of its
+ * own is what makes the NEXT line a parent rather than a sibling.
+ */
+function segmentsOf(window: string): { readonly text: string; readonly before: string }[] {
+  const out: { text: string; before: string }[] = [];
+  let previous = '';
+  for (const line of window.split(/\r?\n/)) {
+    let last = 0;
+    CONNECTOR_SPLIT.lastIndex = 0;
+    for (let m = CONNECTOR_SPLIT.exec(line); m !== null; m = CONNECTOR_SPLIT.exec(line)) {
+      const text = line.slice(last, m.index);
+      out.push({ text, before: previous });
+      previous = text;
+      last = m.index + m[0].length;
+    }
+    const tail = line.slice(last);
+    out.push({ text: tail, before: previous });
+    previous = tail;
+  }
+  return out;
 }
 
 /**
@@ -286,13 +482,16 @@ export function declaredCohort(
   if (window.trim().length === 0) return NO_DECLARATION;
 
   const found = new Map<string, DeclaredMatter>();
-  for (const re of [MATTER_LONG, MATTER_SLASH]) {
-    re.lastIndex = 0;
-    for (let m = re.exec(window); m !== null; m = re.exec(window)) {
-      if (PARENT_MATTER.test(window.slice(Math.max(0, m.index - 24), m.index))) continue;
+  for (const segment of segmentsOf(window)) {
+    if (PARENT_MATTER.test(segment.before)) continue;
+    const text = segment.text.replace(LEAD, '').replace(LABEL, '').replace(LEAD, '');
+    for (const re of [MATTER_LONG, MATTER_SLASH]) {
+      const m = re.exec(text);
+      if (m === null) continue;
       if (PARENT_LEADING.test(m[1]!.trim())) continue;
-      const key = matterKey(m[1]!, m[2]!, m[3]!);
-      if (key !== null && !found.has(key)) found.set(key, { raw: m[0]!.trim(), key });
+      const matter = matterKey(m[1]!, m[2]!, m[3]!);
+      if (matter === null || found.has(matter.key)) continue;
+      found.set(matter.key, { ...matter, raw: m[0]!.trim() });
     }
   }
 

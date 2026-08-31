@@ -1,0 +1,127 @@
+{
+  "measuredAt": "2026-08-31T10:49:43.212Z",
+  "t0": "2026-08-18",
+  "causeTitleChars": 800,
+  "positives": 226,
+  "positivesRecoverable": 180,
+  "positivesOutOfScope": 46,
+  "controls": 2295,
+  "variants": {
+    "V0_SHIPPED_UPPER": {
+      "recoverableCaught": 97,
+      "recoverableRecall": 0.5388888888888889,
+      "positivesCaught": 97,
+      "controlsRefused": 34,
+      "controlFalseRefusalRate": 0.014814814814814815
+    },
+    "V1_CASE_INSENSITIVE": {
+      "recoverableCaught": 98,
+      "recoverableRecall": 0.5444444444444444,
+      "positivesCaught": 99,
+      "controlsRefused": 42,
+      "controlFalseRefusalRate": 0.018300653594771243
+    },
+    "V2_CI_ANCHORED": {
+      "recoverableCaught": 98,
+      "recoverableRecall": 0.5444444444444444,
+      "positivesCaught": 99,
+      "controlsRefused": 39,
+      "controlFalseRefusalRate": 0.01699346405228758
+    },
+    "V3_CI_ANCHORED_SERIALYEAR": {
+      "recoverableCaught": 98,
+      "recoverableRecall": 0.5444444444444444,
+      "positivesCaught": 99,
+      "controlsRefused": 35,
+      "controlFalseRefusalRate": 0.015250544662309368
+    },
+    "V4_CI_ANCHORED_CAPWORD": {
+      "recoverableCaught": 98,
+      "recoverableRecall": 0.5444444444444444,
+      "positivesCaught": 98,
+      "controlsRefused": 37,
+      "controlFalseRefusalRate": 0.016122004357298474
+    },
+    "V5_CI_ANCHORED_CAPWORD_SERIALYEAR": {
+      "recoverableCaught": 98,
+      "recoverableRecall": 0.5444444444444444,
+      "positivesCaught": 98,
+      "controlsRefused": 33,
+      "controlFalseRefusalRate": 0.01437908496732026
+    }
+  },
+  "recoverableSetDiffVsShipped": {
+    "V1_CASE_INSENSITIVE": {
+      "gained": 1,
+      "lost": 0,
+      "gainedKeys": [
+        "2025AHC84904"
+      ],
+      "lostKeys": []
+    },
+    "V2_CI_ANCHORED": {
+      "gained": 1,
+      "lost": 0,
+      "gainedKeys": [
+        "2025AHC84904"
+      ],
+      "lostKeys": []
+    },
+    "V3_CI_ANCHORED_SERIALYEAR": {
+      "gained": 1,
+      "lost": 0,
+      "gainedKeys": [
+        "2025AHC84904"
+      ],
+      "lostKeys": []
+    },
+    "V4_CI_ANCHORED_CAPWORD": {
+      "gained": 1,
+      "lost": 0,
+      "gainedKeys": [
+        "2025AHC84904"
+      ],
+      "lostKeys": []
+    },
+    "V5_CI_ANCHORED_CAPWORD_SERIALYEAR": {
+      "gained": 1,
+      "lost": 0,
+      "gainedKeys": [
+        "2025AHC84904"
+      ],
+      "lostKeys": []
+    }
+  },
+  "recognitionOnControls": {
+    "V0_SHIPPED_UPPER": {
+      "scanned": 2295,
+      "recognized": 1247,
+      "rate": 0.543355119825708
+    },
+    "V1_CASE_INSENSITIVE": {
+      "scanned": 2295,
+      "recognized": 1792,
+      "rate": 0.7808278867102396
+    },
+    "V2_CI_ANCHORED": {
+      "scanned": 2295,
+      "recognized": 1672,
+      "rate": 0.7285403050108933
+    },
+    "V3_CI_ANCHORED_SERIALYEAR": {
+      "scanned": 2295,
+      "recognized": 1672,
+      "rate": 0.7285403050108933
+    },
+    "V4_CI_ANCHORED_CAPWORD": {
+      "scanned": 2295,
+      "recognized": 1608,
+      "rate": 0.7006535947712418
+    },
+    "V5_CI_ANCHORED_CAPWORD_SERIALYEAR": {
+      "scanned": 2295,
+      "recognized": 1608,
+      "rate": 0.7006535947712418
+    }
+  }
+}
