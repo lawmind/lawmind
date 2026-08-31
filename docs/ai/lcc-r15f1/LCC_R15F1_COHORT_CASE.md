@@ -196,12 +196,33 @@ same court, DIFFERENT dates   43
 different courts               3
 ```
 
-> **`INGEST_OR_SOURCE_CITATION_DEFECT` = UNKNOWN**, and it is LCC's read that it
-> is not a cohort. A common order is one court on one date; a citation shared
-> across dates or courts is a judgment carrying ANOTHER judgment's
-> `neutral_citation`. Whether that came from the source or from our extraction is
-> not answerable inside the resolver, and LCC did not mutate acquisition or
-> source truth to find out.
+LCC's read was that none of the 46 is a cohort: a common order is one court on
+one date, so a citation shared across dates or courts is a judgment carrying
+ANOTHER judgment's `neutral_citation`. Whether that came from the source or from
+our extraction is not answerable inside the resolver, and LCC did not mutate
+acquisition or source truth to find out.
+
+> **`INGEST_OR_SOURCE_CITATION_DEFECT` — ANSWERED, and not by LCC.** NEW2 R16
+> (`14abb2ab`, `docs/ai/new2-r16/noncohort-46-classification.json`) landed while
+> this round was open and classified all 46:
+>
+> ```
+> 30  INGEST_WRONG_NEUTRAL_CITATION_EXTRACTION
+> 13  SOURCE_DOCUMENT_GENUINELY_PRINTS_FOREIGN_NEUTRAL_CITATION
+>  1  INGEST_WRONG_DOCUMENT_IDENTITY
+>  2  UNTESTABLE
+>  0  CONNECTED_CASE_NOT_CAUGHT_BY_COHORT_CLASS
+> ```
+>
+> The last line independently confirms LCC's read: **not one of the 46 is a
+> connected-matter case this gate missed.** The 30 are a short order that prints
+> no citation of its own and names the judgment it follows inside
+> `neutralCitationFrom`'s 3,000-character window; all three cross-court cases are
+> that, and none is a source defect. The 13 source collisions are real and
+> unrepairable, and `AMBIGUOUS` is the correct answer there.
+>
+> So the handoff is discharged rather than outstanding. It stays out of this
+> gate's success metric either way.
 
 ## 7 · Structured search — inspected, NOT modified
 
@@ -247,9 +268,11 @@ holding the database, which is the box-load trap already recorded in
 `record-what-else-was-on-the-box`. Not a correctness failure, and it touches no
 citation code.
 
-**The parity-binding failure the round warned about did not appear** — no parity
-or freshness-object test failed in this run. No NEW2 artifact was modified to
-make anything green.
+**The parity-binding failure the round warned about is RESOLVED, not merely
+absent.** NEW2 R16 repaired it at `c51e234d` — which landed while this round was
+open, so `f95ba723` sits on top of it. Verified rather than assumed:
+`src/corpus/freshness-publication.test.ts` and `freshness-object.test.ts` run
+**13/13** at this HEAD. No NEW2 artifact was modified to make anything green.
 
 ## 9 · What did not change
 

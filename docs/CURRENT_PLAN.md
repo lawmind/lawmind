@@ -95,6 +95,77 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 31 August 2026 (R15-F1) — LCC: THE COHORT GATE READ CAPITAL LETTERS, AND DROPPING THE CASE RULE ALONE WOULD HAVE MADE IT WORSE
+
+**Round:** LCC correction round answering NEW2-R15-F1 (bus 1637). Mutation
+confined to `services/api/src/citations/cohort.ts` and its tests. No migration,
+no edge written, no worker touched, no NEW2 artifact modified.
+**Evidence:** `docs/ai/lcc-r15f1/LCC_R15F1_COHORT_CASE.md` and six JSON
+artifacts beside it. **Commit:** `f95ba723`, on top of NEW2 R16.
+
+**NEW2 was right and the obvious repair was wrong.** The matter type was captured
+as `[A-Z][A-Z.&'-]*` while connectors matched case-insensitively, so a title-case
+common order gave `connector = WITH`, `declaredMatters = 0`, and `0 > 1` is
+false — the gate failed OPEN on the shape it exists to refuse. Reproduced before
+editing, including NEW2's own `{"0": 472}` over their 472 would-be-`UNIQUE` rows.
+
+But simply ignoring case makes it worse where it counts: case-sensitivity had
+been an accidental prose filter, because Indian judgment prose is title case.
+Censused over 1,358 judgments, ignoring case alone adds 552 matches whose largest
+single group is `arising out of Case Crime No.60 of 2019` — a police number in a
+sentence. So the rule is now structural: **a declaration opens a line, or opens
+the text immediately after a conjunction the court printed.** On NEW2's holdout,
+same 226 keys / 180 reachable / 2,295 controls, pre-fix arm reproducing 97/34:
+
+```
+upper-case only, unanchored    97/180  34/2,295   54.3% of titles read
+case-insensitive, unanchored   98/180  42/2,295   78.1%
+case-insensitive, anchored     98/180  35/2,295   72.9%
++ registry type forms  SHIP   101/180  39/2,295   77.2%
+```
+
+The number that actually moved is the last column: the gate was blind on nearly
+half the corpus and answering anyway.
+
+**The matter key is now `serial|year`, not `TYPE|serial|year`** — the registry
+prints one matter under two names (`MFA No. 101864 of 2016` beside
+`MISCELLANEOUS FIRST APPEAL NO. 101864 OF 2016`) and the old key invented a
+cohort out of it. All 623 collapses were enumerated first: 25 distinct type
+pairs, every one an abbreviation beside its own expansion.
+
+**The 83 unreachable is re-derived, not restated,** because the earlier figure
+came from a parser broken in the same direction as the thing it measured. Asking
+of every miss whether the sibling's case number appears anywhere in the bearer's
+cause title: **78 print no conjunction AND name no sibling** (UNREACHABLE,
+confirmed on stronger evidence — they carry no trace of the sibling at all), 0
+name a sibling without a conjunction, 1 is a line-wrapped year deliberately not
+chased. `DATA_CONTRACT_GAP`: an authoritative cohort statement per citation that
+does not require reading a sibling's own judgment text.
+
+**Structured search inspected read-only and NOT modified.**
+`STRUCTURED_SEARCH_SAME_UNIQUENESS_DEFECT = NO` — it holds no `INSERT`, `UPDATE`,
+`resolveBatch` or edge write, and its `total === 1` is a corpus row count, not the
+resolver's identity assertion. Reusing `ambiguous` at `total === 1` would render
+*"This identifier matches 1 judgments"*. Handed off for its own round: a bare
+`cite:` hit carrying no mark cannot be distinguished by an advocate from "this
+citation is that judgment". Needs a contract field.
+
+**NEW2 R16 answered the 46 while this round was open** (`14abb2ab`): 30 ingest
+extraction, 13 genuine source collisions, 1 wrong document identity, 2 untestable,
+and **0 `CONNECTED_CASE_NOT_CAUGHT_BY_COHORT_CLASS`** — which independently
+confirms LCC's read that none of them is a cohort case this gate missed.
+
+**Citation apply stays HOLD.** NEW2's `CITATION_RETEST_STATE = WAITING_FOR_LCC` is
+now unblocked: the gate is committed at `f95ba723` rather than living in a working
+tree. Next is theirs — a prediction-blind falsifier under a new identity.
+
+**Tests:** citations 104/104 (re-run from committed HEAD in a clean clone with
+workspace deps linked) · cohort 22/22 · typecheck clean · API 972/973. The one
+failure is `src/search/sparse-bound.test.ts` on a LATENCY assertion (5,382 ms)
+while this round's measurement scripts held the database; 5/5 in isolation on a
+quiet box. The parity-binding failure is RESOLVED by NEW2 R16 `c51e234d`, not
+merely absent — `freshness-publication` and `freshness-object` run 13/13 here.
+
 ### 31 August 2026 (R16) — NEW2: THE PARITY ARTIFACT MOVED AND ITS BINDING DID NOT, AND 30 OF THE 46 NON-COHORT KEYS ARE A SHORT ORDER CITING THE JUDGMENT IT FOLLOWS
 
 **Round:** NEW2 evidence-reproducibility round. Lease: `GIT_COMMIT`, twice,
