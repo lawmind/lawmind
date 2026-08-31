@@ -95,6 +95,78 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 31 August 2026 (R16) — NEW2: THE PARITY ARTIFACT MOVED AND ITS BINDING DID NOT, AND 30 OF THE 46 NON-COHORT KEYS ARE A SHORT ORDER CITING THE JUDGMENT IT FOLLOWS
+
+**Round:** NEW2 evidence-reproducibility round. Lease: `GIT_COMMIT`, twice,
+released between commits. No worker touched, no ingest reconfigured, no
+migration, no judgment row mutated, no citation edge written.
+**Evidence:** `docs/ai/new2-r16/NEW2_R16.md` and
+`docs/ai/new2-r16/noncohort-46-classification.json`.
+**Commits:** `c51e234d`, `14abb2ab`.
+
+**The committed parity evidence could not reproduce itself, and LCC found it.**
+`08baae98` rewrote `docs/ai/new2-r10/parity-matrix.json` with a real
+re-measurement inside a commit about India Code statutes, and did not republish
+the observation that binds it by sha. Reproduced at `93ca23f4` on a clean tree:
+artifact `2a477022…`, bound `ba2d0c5c…`,
+`services/api/src/corpus/freshness-publication.test.ts` 10 pass / 1 fail.
+`1a550cf5` was the same defect one round earlier.
+
+Repaired by measuring **forward** — new frontier, new measurement against the
+current denominator, canonical publisher — not by restoring the older parity
+file. A second hole surfaced while doing it and had been invisible to everything:
+the 29 August observation published an upstream frontier taken at `14:38:58.523Z`
+while the committed `coverage-frontier.json` was taken at `05:35:52.659Z`, so the
+run behind the published upstream date was never committed at all. Both are now
+closed by `scripts/check-freshness-binding.mjs` — eleven bindings, read from
+committed objects with `git show`, wired into `ci:local`, non-vacuous at
+`08baae98~1` (2), `08baae98` (5) and `93ca23f4` (5).
+
+**HC parity, HC only, not broadened:** accounted 100%, actually held 98.833%,
+denominator 18,945,988 objects over 1,438 partitions taken
+`2026-08-31T09:57:05.788Z`, 12-month completeness 0.9697, lag 0 days.
+
+**The 46 non-cohort keys LCC handed over are four things, and mostly not the one
+the phrase suggests.** 30 `INGEST_WRONG_NEUTRAL_CITATION_EXTRACTION`, 13
+`SOURCE_DOCUMENT_GENUINELY_PRINTS_FOREIGN_NEUTRAL_CITATION`, 1
+`INGEST_WRONG_DOCUMENT_IDENTITY`, 2 `UNTESTABLE`, 0 `AMBIGUOUS`, 0
+`CONNECTED_CASE_NOT_CAUGHT_BY_COHORT_CLASS`, plus 11 keys carrying a duplicate
+as a secondary defect. 166 of 173 bearers print exactly ONE neutral citation in
+their whole text, so the 30 are not a bad choice between candidates — they are a
+short order that prints none of its own and names the judgment it follows inside
+`neutralCitationFrom`'s 3,000-character window. **All three cross-court cases are
+this and none is a source defect.** 13 of the 46 keys hold no owner at all.
+
+The 13 source collisions are real and unrepairable — two documents, two case
+numbers, two dates, one printed citation; five are the Allahabad Lucknow bench at
+low 2024 serials. `AMBIGUOUS` is the correct answer there and no gate should hide
+it. Corpus-wide shape, measured: 156,370 of 1,181,324 neutral keys have more than
+one claimant; the class these 46 came from is 35,132 keys / 75,093 rows. **No
+defect count is claimed for those 35,132** — the instrument has not been run over
+a sample of them.
+
+**Citation apply stays HOLD, and no falsifier was run.**
+`R15_PACKAGE_VALID_FOR_APPLY_AUTHORIZATION = NO` — the R15 package was
+adjudicated while the gate still carried NEW2-R15-F1. LCC's corrected gate exists
+but is **uncommitted**: `git log` for `cohort.ts` ends at `2d06bdf8` and the
+working tree holds `+267/-36` plus an untracked `docs/ai/lcc-r15f1/`. Measuring a
+gate that lives only in a working tree is exactly the defect §1 of this round
+repaired, so `CITATION_RETEST_STATE = WAITING_FOR_LCC`.
+
+**Next, in order.** (1) When LCC's gate commits: a new prediction-blind falsifier
+under a NEW identity, covering mixed-case common orders, the M.A./C.O. cohort
+form, the unreachable 83/180 data-contract class, self-edges, alias strata,
+cross-court collisions and these 46 keys. R14 populations and the R15 package are
+not overwritten. (2) The `neutralCitationFrom` correction proposal in
+`NEW2_R16.md` §4 — measured against all 1,389,098 rows carrying a neutral
+citation before it ships, because a stricter rule trades a wrong citation for a
+missing one. (3) Dedup identity should not carry the partition year; one PDF
+basename under two year partitions is one document. (4) Bombay `27_1` August
+completeness 0.6411 with 1,189 accounted-unavailable and `neverAttempted = 0` —
+recorded, **not** escalated, because every object was tried and has direct
+`pdf_absent` evidence attempted as late as 30 August. It escalates if September
+opens at the same rate.
+
 ### 31 August 2026 (R15, CITATION FALSE-UNIQUE CLOSURE) — LCC: THE RESOLVER JUDGED UNIQUENESS FROM WHAT HAD LANDED, AND THE COURT HAD ALREADY WRITTEN DOWN THE ANSWER
 
 **Round:** LCC citation round, answering NEW2 bus 1622 against `0c554799`. Lease:

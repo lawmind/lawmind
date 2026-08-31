@@ -279,3 +279,83 @@ It is a **falsifier population with a package hash**, which is not the same thin
 as a frozen, signed apply population, and its PASS-like counts (FALSE_PIN 0,
 FALSE_UNIQUE 0) were measured against a gate that has since changed. Neither the
 counts nor the identity carry forward.
+
+---
+
+## 6. LCC gate watch — read once, at the end of the round
+
+```
+LCC_CORRECTED_GATE_OBSERVED = NO
+CITATION_RETEST_STATE       = WAITING_FOR_LCC
+CITATION_BULK_APPLY         = HOLD
+```
+
+The correction exists and it is **not committed**. `git log` for
+`services/api/src/citations/cohort.ts` still ends at `2d06bdf8`, and the version
+committed at HEAD carries no `NEW2-R15-F1` section — while the shared working
+tree holds `cohort.ts +267/-36`, a modified `cohort.test.ts`, an untracked
+`cohort-case.test.ts` and an untracked `docs/ai/lcc-r15f1/` with six artifacts.
+The uncommitted header answers NEW2-R15-F1 directly and says the obvious repair —
+dropping case-sensitivity — was measured and rejected, because `[A-Z]`-only
+matching was suppressing prose as a side effect; the replacement is structural.
+
+**No new falsifier was run, and that is the point.** Measuring a gate that lives
+only in a working tree is precisely the defect §1 of this round repaired: an
+evidence artifact bound to something no clone has. A falsifier run now would
+carry a `resolverGateCommit` that does not exist, and would have to be thrown
+away when the gate lands changed. R14's populations and the R15 package are
+untouched.
+
+When the corrected gate commits, the next round runs a new prediction-blind
+falsifier under a **new** identity, covering: mixed-case connected/common-order
+titles, the existing M.A./C.O. cohort form, the unreachable 83/180 data-contract
+class, self-edge cases, alias-heavy strata, cross-court collisions, the 46
+non-cohort keys classified above, and independent positives and negatives.
+
+---
+
+## 7. Continuous work — ingestion, and the Bombay question
+
+**Health.** AWS HC 18,720,643 rows, last ingest `2026-08-30 14:05`, newest
+decision `2026-08-29`, upstream newest decision `2026-08-29` — frontier gap 0.
+SCI 27 rows, last ingest `2026-08-29 14:12`. The 30 August gap-closure
+revalidation ran to completion: 2,500 selected, 125 recovered to `TEXT_READABLE`,
+2,375 still absent on recheck. Nothing was stopped, started or reconfigured by
+this round; both scripts it ran are read-only against the database.
+
+**Bombay HC (`27_1`), August 2026 — measured, and NOT escalated.**
+
+```
+month     upstream   held   sourceUnavailableCurrent   neverAttempted   completeness
+2026-05      5514    4914             600                    0            0.8912
+2026-06      4356    3896             460                    0            0.8944
+2026-07      1931    1429             502                    0            0.7400
+2026-08      3313    2124            1189                    0            0.6411
+```
+
+The unavailable RATE has risen 11% → 11% → 26% → 36%. It is clustered: 2 of 24
+August cells are below 0.95 completeness, and `27_1` is the worse of the two
+(`18_6` is 0.8623).
+
+It is **not** escalated, on the existing criteria and not on a feeling:
+
+- `neverAttempted = 0` and `actionableFailures = 0`. Every one of those objects
+  was tried.
+- The shortfall has direct per-object evidence — 149,404 `pdf_absent` rows for
+  `27_1` in `hc_ingest_ledger`, attempted between 18 and 30 August, 1,977 of them
+  on 30 August alone. `pdf_absent` is a 404/403/410 from the publisher, i.e. an
+  object upstream named and did not upload.
+- August is the current month and the definition's own rule is a 90-day
+  revalidation window, not an immediate verdict. Held rows for Bombay in August
+  (3,239) are already 2.2x July's (1,459), so "August is degrading" is not what
+  the held side says either.
+
+Recorded, and due for its ordinary bounded revalidation. If September's cell
+opens at the same rate with the same direct evidence, that is a clustered source
+failure and it escalates then.
+
+**Statutes.** The improved India Code resolution from `08baae98` is preserved and
+untouched: `statutes.act_id` keyed against `dc.identifier.act_id` with the AC\_
+prefix test, the stored handle's body read, and CENTRAL preferred over State
+reproductions. No crawler architecture was added and the 49-Act measurement was
+not expanded.
