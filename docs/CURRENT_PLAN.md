@@ -95,6 +95,80 @@ live state lives in `docs/ai/RETRIEVAL_PROGRAM.md`, not here; this file's Q1.0
 and Q1.4 entries below are kept as the historical record with corrections
 layered on top, per this file's own convention, rather than rewritten.
 
+### 31 August 2026 (R15, CITATION FALSE-UNIQUE CLOSURE) — LCC: THE RESOLVER JUDGED UNIQUENESS FROM WHAT HAD LANDED, AND THE COURT HAD ALREADY WRITTEN DOWN THE ANSWER
+
+**Round:** LCC citation round, answering NEW2 bus 1622 against `0c554799`. Lease:
+`GIT_COMMIT` for the commit only. No worker touched, no migration, no ingest
+change. **`CITATION_BULK_APPLY` remains HOLD and this round does not move it** —
+no `judgment_citations` row was written, deleted or rewritten, no NEW2 population
+was touched, no journal hash altered. **Evidence:**
+`docs/ai/lcc-r15/LCC_R15_COHORT_GATE.md`, `docs/ai/lcc-r15/cohort-gate.json`.
+
+**Root cause.** `resolveBatch` decided `UNIQUE` from the number of bearers that
+had LANDED, from an input — a bare string — carrying neither who printed it nor
+what the printing document said about the matters it disposed of. All three
+freshness gates reason about rows that EXIST (above the cursor, below it,
+corpus-wide lag), so none can see a bearer that was never ingested, and there is
+no threshold below zero.
+
+**Reproduced independently before any code changed**, and NEW2's holdout
+re-derived from scratch: **226 material false uniques, exactly matching R14 §7.**
+**The 226 are two defects, not one, and that is new:** 180 same-court same-date
+(connected matter — LCC's), 43 same-court different-dates and 3 cross-court (a
+judgment carrying ANOTHER judgment's neutral citation — ingest's, handed back).
+All 567 bearer rows are `source = 'neutral'`; `2023:AHC:152051-DB` has an Andhra
+Pradesh writ petition wearing an Allahabad neutral citation.
+
+**The fourth gate is the court's own cause title.** On 27 August the corpus
+already held the proof for FIFTH's falsifier, printed by the High Court of
+Jharkhand on lines 2-4: `M.A. No. 134 of 2018` / `With` / `C.O. No. 09 of 2022`,
+where `case_number` names one. `declaredMatters > heldCandidates` -> the cohort
+has not landed -> `UNIQUE_UNCONFIRMED_COHORT`. No party, date or title similarity
+anywhere; the gate creates no edge and only ever withholds the word "only",
+returning the candidate as the three gates before it do. It stops firing on its
+own once the siblings land — no threshold, nothing to switch off.
+
+**Worth, on an instrument that reads no resolver output:** 97 of the 180
+reachable false uniques (53.9%) no longer claim UNIQUE; 34 of 2,295 keys that
+stayed single-claim (1.48%) lose the word "only", which is a recall cost and not
+a wrong answer. Window and connector were swept rather than asserted, and the
+first sweep was worthless — every variant was clamped to the shipped constant.
+
+**The self-edge is fixed where it was broken.** The extractor already refuses to
+self-pin and `schema.ts` already keeps the unresolved row; both verified, both
+untouched. `resolveBatch` took `readonly string[]`, and a string is the same
+string whoever wrote it — so it now takes `{ raw, citingJudgmentId? }`, drops the
+citing judgment from its own candidate list, and answers `SELF_REFERENCE`. The
+dry-run CLI passes the id. **`uniqueRate` before and after
+`citation-resolver-v0.2` is not comparable**: self-references and one-member
+cohorts were being counted as confident pins, and `metricsFor` now reports all
+three withheld states separately.
+
+**The first cut of the self-edge fix produced a NEW false pin, on FIFTH's own
+falsifier, and it is recorded because it is the more useful half of the round.**
+Dropping only the citer and pinning what remains is the obvious implementation:
+`2026:JHHC:24297` has two bearers, so asked as the first of them it left one
+candidate — the connected sibling — and answered `UNIQUE`, asserting *"M.A.
+134/2018 cites C.O. 9/2022"*. Found by probing the code, not by reasoning about
+it. The rule is now that the citer claiming the key ends the question however
+many others claim it, and `candidates` is empty on `SELF_REFERENCE` so there is
+nothing for a careless consumer to pin.
+
+**83 of the 180 are unreachable and are handed back, not papered over.** The
+court issued SEPARATE orders under one neutral citation, each declaring only its
+own matter (`2023:KHC-D:12668-DB` is 11,679 and 54,016 characters of different
+text). Nothing in `judgments` records connected-matter membership. **The missing
+contract, exactly: a per-judgment list of the case numbers disposed of by the
+same order, from the source that knows it — the eCourts cause list or the
+registry's connected-matter field — landed as data rather than re-derived from
+text.** `SCHEMA_CHANGE_REQUIRED = YES` for that residue only; **no migration was
+written** and the gate that ships needs none.
+
+**Next, and it is NEW2's rather than LCC's:** the 46 non-cohort false uniques are
+a `judgments.neutral_citation` attribution defect at ingest; and the apply
+candidate's self-edges can now be produced correctly at source rather than
+filtered on the apply side.
+
 ### 30 August 2026 (R13, CONTINUOUS WALK) — NEW1: THE WALK IS AT 39.42%, ONE WRITER, AND HNSW IS STILL UNAUTHORIZED
 
 **Round:** NEW1 continuous-walk round, founder-directed. Lease: `GIT_COMMIT` for

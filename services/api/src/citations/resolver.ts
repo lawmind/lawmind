@@ -6,11 +6,15 @@
  * Given a raw citation string somebody wrote down, which judgment in this corpus
  * is it — and, far more often, is the honest answer that we cannot say?
  *
- *   RAW REFERENCE
+ *   RAW REFERENCE  (+ the citing judgment, where the caller knows it)
  *     -> placeholder / garbage REFUSAL
  *     -> canonical key candidate(s)
  *     -> materialised key set  (`judgment_citation_keys`, one indexed read)
+ *     -> the citer itself claims the key?          SELF_REFERENCE
  *     -> UNIQUE | AMBIGUOUS | TARGET_NOT_HELD | REFUSED
+ *        with UNIQUE withheld as UNIQUE_UNCONFIRMED_STALE_INDEX (the index has
+ *        not read everything) or UNIQUE_UNCONFIRMED_COHORT (the corpus does not
+ *        hold everything the court said it decided together)
  *
  * Nothing here writes to the corpus. It answers a question; a caller decides
  * what to do with the answer, and this round no caller backfills anything.
@@ -61,11 +65,21 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * The predecessor materialised `judgments × unnest(reporter_citations)` per run
- * and NEW1 measured 16.4 hours on 7.3M rows. This does ONE indexed read against
- * `judgment_citation_keys (citation_key)` per batch, with the keys passed as an
- * array — the plan is a bitmap index scan whose cost is the number of keys
- * asked for, not the size of the corpus. `resolveBatch` is the only entry point
- * that touches the database for exactly this reason.
+ * and NEW1 measured 16.4 hours on 7.3M rows. The identity read here is ONE
+ * indexed read against `judgment_citation_keys (citation_key)` per batch, with
+ * the keys passed as an array — the plan is a bitmap index scan whose cost is
+ * the number of keys asked for, not the size of the corpus. `resolveBatch` is
+ * the only entry point that touches the database for exactly this reason.
+ *
+ * **It is no longer one query, and pretending otherwise would be the kind of
+ * stale comment this file exists to avoid.** A batch issues, at most, four
+ * bounded reads: the key lookup, the unwalked-window check, the dirty-work
+ * check, and — only for references that would otherwise be told they are the
+ * only one — a primary-key read of those candidates' first
+ * {@link CAUSE_TITLE_CHARS} characters. Every one is bounded by the BATCH, none
+ * by the corpus, and the first three are skipped outright on a healthy index.
+ * Measured 31 August 2026 on a quiet box: 20,000 references in 2,971 ms, 149 ms
+ * per 1,000, against 180 ms per 1,000 on a 1,500-reference window.
  */
 import {
   type KeyFreshness,
@@ -74,6 +88,7 @@ import {
   collidingKeysInUnwalkedWindow,
 } from './key-freshness.ts';
 import { dirtyKeysBlockingUnique } from './citation-key-dirty.ts';
+import { CAUSE_TITLE_CHARS, type CohortVerdict, cohortVerdict, declaredCohort } from './cohort.ts';
 import type { Sql } from 'postgres';
 
 import { citationLookupKey } from '../search/query-shape.ts';
@@ -86,13 +101,53 @@ import { citationLookupKey } from '../search/query-shape.ts';
  * the rules have become. A resolver whose output cannot be dated is a resolver
  * whose mistakes cannot be scoped.
  */
-export const RESOLVER_VERSION = 'citation-resolver-v0.1';
+export const RESOLVER_VERSION = 'citation-resolver-v0.2';
 
 export type ResolutionState =
   | 'UNIQUE'
   | 'AMBIGUOUS'
   | 'TARGET_NOT_HELD'
   | 'REFUSED'
+  /**
+   * The only judgment claiming this key is the judgment that printed it.
+   *
+   * A judgment prints its own neutral citation in its own header; the extractor
+   * makes a row of it. `citations-cli.ts` already declines to pin that row
+   * (`target !== judgment.id ? target : null`) and `schema.ts` keeps it
+   * unresolved for coverage. Both are right. What was wrong is that THIS module
+   * took a bare string with no idea who wrote it, so any later sweep built on it
+   * pinned the judgment to itself — NEW2 counted 1,003,733 such rows, 39.2% of
+   * the R14 apply candidate (bus 1622).
+   *
+   * The identity is correct and the EDGE is nonsense: it corrupts no case
+   * identity and wrecks every "how many judgments cite X" count in the product,
+   * including the citator the retention moat is built on. A separate state, not
+   * a refusal, because nothing was wrong with the reference — it is simply not
+   * an edge.
+   *
+   * **`candidates` is empty even where OTHER judgments claim the key.** Those
+   * others are the citer's connected matters under one common order, not
+   * something it cited, and offering them would replace one false pin with a
+   * subtler one. Nothing is offered, so nothing can be pinned by a careless
+   * consumer.
+   */
+  | 'SELF_REFERENCE'
+  /**
+   * Exactly one candidate, and the court's own cause title declares siblings we
+   * do not hold.
+   *
+   * A neutral citation identifies a DISPOSAL EVENT. Where a common order
+   * disposes of several connected matters, every one of them bears the same
+   * citation, and until all of them have been ingested a single claimant is the
+   * only one that has LANDED rather than the only one that EXISTS. See
+   * `cohort.ts` for the mechanism and the measurement.
+   *
+   * Distinct from `UNIQUE_UNCONFIRMED_STALE_INDEX` because the remedies are
+   * different: that one clears when the index catches up with ingest, this one
+   * clears when the sibling is acquired. Collapsing them would hide an
+   * acquisition gap inside an indexing metric.
+   */
+  | 'UNIQUE_UNCONFIRMED_COHORT'
   /**
    * Exactly one candidate was found, and the index is too far behind ingest for
    * that to mean "exactly one exists".
@@ -114,6 +169,29 @@ export type ResolverCandidate = {
   readonly source: 'neutral' | 'reporter' | 'alias';
   /** The corpus-side string that produced the matching key. Never the input. */
   readonly sourceText: string;
+};
+
+/**
+ * A reference, and — where the caller knows it — WHO PRINTED IT.
+ *
+ * A bare string is still accepted, because most callers ask "what is this
+ * citation" with no citing document in hand. But a sweep over
+ * `judgment_citations` always knows, and passing the id is what lets the
+ * resolver decline to pin a judgment to itself. `selfExcluded` on the result
+ * reports which of the two happened, so a sweep that forgot to pass it is
+ * visible in its own output instead of in a million rows a fortnight later.
+ */
+export type ResolverReference = {
+  readonly raw: string;
+  readonly citingJudgmentId?: string | null;
+};
+
+export type CohortEvidence = {
+  readonly verdict: CohortVerdict;
+  /** Distinct matters the candidate's cause title names. 0 when unreadable. */
+  readonly declaredMatters: number;
+  /** The conjunction the court printed between them, or null. */
+  readonly connector: string | null;
 };
 
 export type Resolution = {
@@ -140,6 +218,20 @@ export type Resolution = {
    * toward currentness coverage.
    */
   readonly verifiedTreatmentEligible: false;
+  /**
+   * True when the citing judgment was dropped from its own candidate list.
+   *
+   * False on a bare string means "no citing context was supplied", NOT "nothing
+   * was dropped" — the two are indistinguishable to a consumer and the second
+   * would be a lie.
+   */
+  readonly selfExcluded: boolean;
+  /**
+   * What the candidate's own cause title said. Null wherever the gate was not
+   * reached: a refusal, a target we do not hold, an already-ambiguous key, or a
+   * single candidate the earlier freshness gates had already stopped.
+   */
+  readonly cohort: CohortEvidence | null;
 };
 
 /**
@@ -242,8 +334,31 @@ function refused(raw: string, why: string): Resolution {
     version: RESOLVER_VERSION,
     relationship: 'UNKNOWN',
     verifiedTreatmentEligible: false,
+    selfExcluded: false,
+    cohort: null,
   };
 }
+
+/**
+ * Read the cause title of each candidate judgment — the first
+ * {@link CAUSE_TITLE_CHARS} characters, never the whole judgment.
+ *
+ * Injectable so the gate's failure mode is testable without arranging for a row
+ * with no text. A stub returning an empty map is the "we could not read it"
+ * case, and the gate must refuse on it rather than wave it through.
+ */
+export type ReadCauseTitles = (
+  sql: Sql,
+  judgmentIds: readonly string[],
+) => Promise<Map<string, string>>;
+
+const readCauseTitlesFromCorpus: ReadCauseTitles = async (sql, judgmentIds) => {
+  if (judgmentIds.length === 0) return new Map();
+  const rows = await sql<{ id: string; head: string }[]>`
+    SELECT id, left(full_text, ${CAUSE_TITLE_CHARS}) AS head
+      FROM judgments WHERE id = ANY(${judgmentIds}::uuid[])`;
+  return new Map(rows.map((r) => [r.id, r.head]));
+};
 
 /**
  * Resolve a batch of raw references in ONE indexed read.
@@ -255,7 +370,7 @@ function refused(raw: string, why: string): Resolution {
  */
 export async function resolveBatch(
   sql: Sql,
-  raws: readonly string[],
+  refs: readonly (string | ResolverReference)[],
   /**
    * The index's own freshness. Read once by the caller and passed in, rather
    * than read per batch — a resolver run walks thousands of batches and the
@@ -266,11 +381,17 @@ export async function resolveBatch(
    * path nobody remembered to update.
    */
   freshness?: KeyFreshness,
+  /** See {@link ReadCauseTitles}. Defaults to reading the corpus. */
+  readCauseTitles: ReadCauseTitles = readCauseTitlesFromCorpus,
 ): Promise<Resolution[]> {
   const fresh = freshness ?? (await readKeyFreshness(sql));
   const state = fresh.state;
   const unique = mayAssertUnique(state);
-  const gated = raws.map((raw) => ({ raw, gate: canonicalKeyFor(raw) }));
+  const gated = refs.map((ref) => {
+    const raw = typeof ref === 'string' ? ref : ref.raw;
+    const citing = typeof ref === 'string' ? null : (ref.citingJudgmentId ?? null);
+    return { raw, citing, gate: canonicalKeyFor(raw) };
+  });
   const keys = [
     ...new Set(gated.filter((g) => !g.gate.refused).map((g) => (g.gate as Accepted).key)),
   ];
@@ -345,9 +466,99 @@ export async function resolveBatch(
     byKey.set(r.citation_key, list);
   }
 
-  return gated.map(({ raw, gate }) => {
+  /**
+   * PASS 1 — decide each reference's candidate list and whether the three
+   * freshness gates leave `UNIQUE` on the table. Nothing is finalised yet,
+   * because the fourth gate needs one more read and reading it per reference
+   * would be a round trip per row.
+   */
+  const pass1 = gated.map(({ raw, citing, gate }) => {
+    if (gate.refused) return { raw, gate } as const;
+    const held = byKey.get(gate.key) ?? [];
+    /**
+     * THE SELF-EDGE. Decided per REFERENCE and not per key: two judgments in one
+     * batch can print the same citation, and only one of them wrote it.
+     *
+     * **The citer claiming the key ends the question, however many others claim
+     * it too.** Dropping only the citer and pinning what is left looks obvious
+     * and is a false pin: `2026:JHHC:24297` has two bearers, so asked as the
+     * first of them it would leave exactly one candidate — the connected
+     * sibling — and assert "M.A. 134/2018 cites C.O. 9/2022". It does not. Both
+     * matters printed the citation of the one common order that disposed of
+     * both. The first cut of this round produced exactly that, on FIFTH's own
+     * falsifier, which is why it is a test.
+     */
+    const selfExcluded = citing !== null && held.some((c) => c.judgmentId === citing);
+    const candidates = selfExcluded ? [] : held;
+    const freshnessAllowsUnique =
+      unique && !collidingUnwalked.has(gate.key) && !dirtyBlocked.has(gate.key);
+    return {
+      raw,
+      gate,
+      candidates,
+      selfExcluded,
+      /** The fourth gate is only reached where one candidate could still be
+       *  UNIQUE. A self-reference has no candidates, so it never gets here. */
+      needsCauseTitle: candidates.length === 1 && freshnessAllowsUnique,
+      freshnessAllowsUnique,
+    } as const;
+  });
+
+  /**
+   * THE FOURTH GATE — one further indexed read, by primary key, and only for the
+   * references that would otherwise be told they are the only one. `cohort.ts`
+   * carries the mechanism and the measurement; the cost model is unchanged
+   * because this is bounded by the batch, not by the corpus, and a batch with no
+   * would-be-UNIQUE reference issues no query at all.
+   */
+  const needTitles = [
+    ...new Set(
+      pass1
+        .filter((p) => 'needsCauseTitle' in p && p.needsCauseTitle)
+        .map((p) => (p as { candidates: ResolverCandidate[] }).candidates[0]!.judgmentId),
+    ),
+  ];
+  const causeTitles = await readCauseTitles(sql, needTitles);
+
+  return pass1.map((p) => {
+    const { raw, gate } = p;
     if (gate.refused) return refused(raw, gate.why);
-    const candidates = byKey.get(gate.key) ?? [];
+    const { candidates, selfExcluded, needsCauseTitle, freshnessAllowsUnique } = p as Extract<
+      typeof p,
+      { candidates: readonly ResolverCandidate[] }
+    >;
+
+    /**
+     * The citing judgment was the ONLY claimant. Its own citation, printed in
+     * its own header. Not an edge, and never a refusal — the reference is
+     * perfectly well formed, it just does not point anywhere else.
+     */
+    if (selfExcluded) {
+      return {
+        raw,
+        state: 'SELF_REFERENCE' as const,
+        key: gate.key,
+        candidates: [],
+        heldCandidates: 0,
+        refusedReason: null,
+        version: RESOLVER_VERSION,
+        relationship: 'UNKNOWN' as const,
+        verifiedTreatmentEligible: false as const,
+        selfExcluded: true,
+        cohort: null,
+      };
+    }
+
+    const cohort: CohortEvidence | null = needsCauseTitle
+      ? (() => {
+          const declaration = declaredCohort(causeTitles.get(candidates[0]!.judgmentId));
+          return {
+            verdict: cohortVerdict(declaration, candidates.length),
+            declaredMatters: declaration.declaredMatters,
+            connector: declaration.connector,
+          };
+        })()
+      : null;
 
     /**
      * Three states, and the ordering of these branches is the whole safety
@@ -379,9 +590,20 @@ export async function resolveBatch(
              * cursor claims THIS citation; the dirty-work one says nothing
              * BELOW it does either. The third is the only one that can see a
              * mutation or a backfill, which is the shape FIFTH falsified. */
-            unique && !collidingUnwalked.has(gate.key) && !dirtyBlocked.has(gate.key)
-            ? 'UNIQUE'
-            : 'UNIQUE_UNCONFIRMED_STALE_INDEX'
+            !freshnessAllowsUnique
+            ? 'UNIQUE_UNCONFIRMED_STALE_INDEX'
+            : /* FOUR gates now. The first three ask whether the INDEX has read
+               * everything; this one asks whether the CORPUS holds everything
+               * the court said it decided together. A cohort of two with one
+               * landed passes all three of the others and is still not one
+               * judgment. NEW2 measured 226 references this would have pinned
+               * wrongly on 18 August (R14 §7). Two verdicts withhold the claim:
+               * a declared sibling we do not hold, and a cause title we could
+               * not read at all — the second because a gate that cannot see is
+               * a gate that must not vouch. */
+              cohort !== null && cohort.verdict !== 'UNIQUE_NOT_REFUTED'
+              ? 'UNIQUE_UNCONFIRMED_COHORT'
+              : 'UNIQUE'
           : 'AMBIGUOUS';
 
     return {
@@ -397,6 +619,8 @@ export async function resolveBatch(
       version: RESOLVER_VERSION,
       relationship: 'UNKNOWN' as const,
       verifiedTreatmentEligible: false as const,
+      selfExcluded,
+      cohort,
     };
   });
 }
@@ -408,6 +632,18 @@ export type ResolverMetrics = {
   readonly unique: number;
   readonly ambiguous: number;
   readonly targetNotHeld: number;
+  /**
+   * The three states that used to be reported as `unique` and are not.
+   *
+   * **`uniqueRate` in any report older than `citation-resolver-v0.2` is not
+   * comparable with one after it**, and the drop is not a regression: a
+   * self-reference and a cohort with one member landed were both being counted
+   * as a confident pin. Reported as absolutes beside the rates so the size of
+   * the correction is visible rather than inferred from a moved percentage.
+   */
+  readonly selfReference: number;
+  readonly uniqueUnconfirmedCohort: number;
+  readonly uniqueUnconfirmedStaleIndex: number;
   /** Of the FORMED references — the denominator that answers "did the key work". */
   readonly hitRate: number;
   readonly uniqueRate: number;
@@ -431,6 +667,7 @@ export function metricsFor(results: readonly Resolution[]): ResolverMetrics {
   const unique = results.filter((r) => r.state === 'UNIQUE').length;
   const ambiguous = results.filter((r) => r.state === 'AMBIGUOUS').length;
   const targetNotHeld = results.filter((r) => r.state === 'TARGET_NOT_HELD').length;
+  const count = (s: ResolutionState) => results.filter((r) => r.state === s).length;
   const over = (x: number) => (formed === 0 ? 0 : x / formed);
   return {
     n,
@@ -439,6 +676,9 @@ export function metricsFor(results: readonly Resolution[]): ResolverMetrics {
     unique,
     ambiguous,
     targetNotHeld,
+    selfReference: count('SELF_REFERENCE'),
+    uniqueUnconfirmedCohort: count('UNIQUE_UNCONFIRMED_COHORT'),
+    uniqueUnconfirmedStaleIndex: count('UNIQUE_UNCONFIRMED_STALE_INDEX'),
     hitRate: over(unique + ambiguous),
     uniqueRate: over(unique),
     ambiguousRate: over(ambiguous),

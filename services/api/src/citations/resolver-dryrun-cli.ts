@@ -93,8 +93,20 @@ async function main(): Promise<number> {
      * carried into `resolveBatch` were the empty string. A tranche that is 73%
      * blank is not a representative tranche of anything.
      */
-    const rows = await sql<{ raw: string }[]>`
-      SELECT COALESCE(NULLIF(btrim(normalised_citation), ''), citation_text) AS raw
+    /**
+     * `citing_judgment_id` is selected and PASSED THROUGH, and that is the whole
+     * self-edge fix on this side.
+     *
+     * NEW2 counted 1,003,733 rows of the R14 apply candidate — 39.2% — where the
+     * pin points at the judgment that printed the citation, because this window
+     * used to hand `resolveBatch` a bare string. The string is the same whoever
+     * wrote it; only the caller knows who did. `citations-cli.ts` has always
+     * declined to self-pin and `schema.ts` has always kept the row unresolved,
+     * so this was the one component in the chain that could not see it.
+     */
+    const rows = await sql<{ raw: string; citing_judgment_id: string }[]>`
+      SELECT COALESCE(NULLIF(btrim(normalised_citation), ''), citation_text) AS raw,
+             citing_judgment_id
         FROM judgment_citations
        WHERE cited_judgment_id IS NULL
          AND COALESCE(citation_text, '') <> ''
@@ -110,7 +122,9 @@ async function main(): Promise<number> {
     const started = Date.now();
     const results: Resolution[] = [];
     for (let i = 0; i < rows.length; i += BATCH) {
-      const slice = rows.slice(i, i + BATCH).map((r) => r.raw);
+      const slice = rows
+        .slice(i, i + BATCH)
+        .map((r) => ({ raw: r.raw, citingJudgmentId: r.citing_judgment_id }));
       results.push(...(await resolveBatch(sql, slice)));
     }
     const elapsedMs = Date.now() - started;
@@ -161,6 +175,15 @@ async function main(): Promise<number> {
     console.log(`unique%       ${(m.uniqueRate * 100).toFixed(2)}   (${m.unique})`);
     console.log(`ambiguous%    ${(m.ambiguousRate * 100).toFixed(2)}   (${m.ambiguous})`);
     console.log(`not-held%     ${(m.targetNotHeldRate * 100).toFixed(2)}   (${m.targetNotHeld})`);
+    console.log(
+      `self-ref      ${m.selfReference}   <- a judgment printing its OWN citation. ` +
+        'NOT an edge, and was counted as unique before v0.2',
+    );
+    console.log(
+      `cohort-held   ${m.uniqueUnconfirmedCohort}   <- one candidate, and the court's cause ` +
+        'title declares a sibling we do not hold',
+    );
+    console.log(`stale-held    ${m.uniqueUnconfirmedStaleIndex}   <- one candidate, index behind ingest`);
     console.log(
       `ambiguity size  p50 ${pct(0.5)} · p90 ${pct(0.9)} · max ${sizes.at(-1) ?? 0}`,
     );

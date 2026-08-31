@@ -1,0 +1,1516 @@
+{
+  "measuredAt": "2026-08-31T09:53:55.407Z",
+  "t0": "2026-08-18",
+  "causeTitleChars": 800,
+  "positives": 226,
+  "positivesRecoverable": 180,
+  "positivesOutOfScope": 46,
+  "controls": 2295,
+  "variants": {
+    "connector@400": {
+      "positivesCaught": 93,
+      "recoverableCaught": 93,
+      "recoverableRecall": 0.5166666666666667,
+      "controlsRefused": 28,
+      "controlFalseRefusalRate": 0.012200435729847494
+    },
+    "bare@400": {
+      "positivesCaught": 108,
+      "recoverableCaught": 104,
+      "recoverableRecall": 0.5777777777777777,
+      "controlsRefused": 478,
+      "controlFalseRefusalRate": 0.20827886710239651
+    },
+    "connector@800": {
+      "positivesCaught": 97,
+      "recoverableCaught": 97,
+      "recoverableRecall": 0.5388888888888889,
+      "controlsRefused": 34,
+      "controlFalseRefusalRate": 0.014814814814814815
+    },
+    "bare@800": {
+      "positivesCaught": 112,
+      "recoverableCaught": 108,
+      "recoverableRecall": 0.6,
+      "controlsRefused": 502,
+      "controlFalseRefusalRate": 0.21873638344226579
+    },
+    "connector@1200": {
+      "positivesCaught": 97,
+      "recoverableCaught": 97,
+      "recoverableRecall": 0.5388888888888889,
+      "controlsRefused": 44,
+      "controlFalseRefusalRate": 0.01917211328976035
+    },
+    "bare@1200": {
+      "positivesCaught": 114,
+      "recoverableCaught": 109,
+      "recoverableRecall": 0.6055555555555555,
+      "controlsRefused": 524,
+      "controlFalseRefusalRate": 0.22832244008714597
+    },
+    "connector@2400": {
+      "positivesCaught": 102,
+      "recoverableCaught": 99,
+      "recoverableRecall": 0.55,
+      "controlsRefused": 104,
+      "controlFalseRefusalRate": 0.04531590413943355
+    },
+    "bare@2400": {
+      "positivesCaught": 118,
+      "recoverableCaught": 110,
+      "recoverableRecall": 0.6111111111111112,
+      "controlsRefused": 552,
+      "controlFalseRefusalRate": 0.24052287581699347
+    }
+  },
+  "recoverableMisses": [
+    {
+      "citationKey": "2023KHCD12668DB",
+      "caseNumber": "MFA/101864/2016",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "MFA No. 101864 of 2016",
+            "key": "MFA|101864|2016"
+          },
+          {
+            "raw": "MISCELLANEOUS FIRST APPEAL NO. 101864 OF 2016",
+            "key": "FIRSTAPPEAL|101864|2016"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2023KHCD14854",
+      "caseNumber": "CRL.P/103219/2023",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRL.P No. 103219 of 2023",
+            "key": "CRLP|103219|2023"
+          },
+          {
+            "raw": "CRIMINAL PETITION NO. 103219 OF 2023",
+            "key": "CRIMINALPETITION|103219|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2023KHCD8277DB",
+      "caseNumber": "MFA/101803/2019",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "MFA No. 101803 of 2019",
+            "key": "MFA|101803|2019"
+          },
+          {
+            "raw": "MISCELLANEOUS FIRST APPEAL NO. 101803 OF 2019",
+            "key": "FIRSTAPPEAL|101803|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2023KHCD9003",
+      "caseNumber": "RSA/100141/2023",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "RSA No. 100141 of 2023",
+            "key": "RSA|100141|2023"
+          },
+          {
+            "raw": "REGULAR SECOND APPEAL NO. 100141 OF 2023",
+            "key": "SECONDAPPEAL|100141|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO23017",
+      "caseNumber": "A227/541/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": "ALONG WITH",
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO39133",
+      "caseNumber": "ABAIL/69/2024",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CR.P.C. No. - 69 of 2024",
+            "key": "CRPC|69|2024"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO42254",
+      "caseNumber": "A482/1728/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO49343",
+      "caseNumber": "ABAIL/787/2024",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CR.P.C. No. - 787 of 2024",
+            "key": "CRPC|787|2024"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO52352",
+      "caseNumber": "A482/391/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": "WITH",
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO55437",
+      "caseNumber": "A482/3961/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO68598",
+      "caseNumber": "A482/5413/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO72986",
+      "caseNumber": "A482/1889/2024",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2024AHCLKO83463",
+      "caseNumber": "A482/5025/2024",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": "CONNECTED WITH",
+        "matters": [
+          {
+            "raw": "CRIMINAL REVISION No. - 249 of 2024",
+            "key": "CRIMINALREVISION|249|2024"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC116496",
+      "caseNumber": "WRIC/31274/2019",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 31274 of 2019",
+            "key": "C|31274|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC117235DB",
+      "caseNumber": "WRIC/47107/2006",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 47107 of 2006",
+            "key": "C|47107|2006"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC11863",
+      "caseNumber": "BAIL/47257/2021",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": "WITH",
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC118668",
+      "caseNumber": "A482/39695/2010",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC118946DB",
+      "caseNumber": "WRIC/69040/2009",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 69040 of 2009",
+            "key": "C|69040|2009"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC119941DB",
+      "caseNumber": "WRIC/60555/2011",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 60555 of 2011",
+            "key": "C|60555|2011"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC119945DB",
+      "caseNumber": "WRIC/62077/2011",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 62077 of 2011",
+            "key": "C|62077|2011"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC12010",
+      "caseNumber": "WRIA/9663/2023",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 9663 of 2023",
+            "key": "A|9663|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC120509DB",
+      "caseNumber": "WRIC/66664/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 66664 of 2013",
+            "key": "C|66664|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC12074DB",
+      "caseNumber": "WRIC/37357/2019",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 37357 of 2019",
+            "key": "C|37357|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC12335",
+      "caseNumber": "BAIL/18275/2023",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC123444DB",
+      "caseNumber": "WRIC/57061/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 57061 of 2013",
+            "key": "C|57061|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC123508",
+      "caseNumber": "CRLR/1202/2023",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL REVISION No. - 1202 of 2023",
+            "key": "CRIMINALREVISION|1202|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC12394DB",
+      "caseNumber": "CRLA/278/1993",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL APPEAL No. - 278 of 1993",
+            "key": "CRIMINALAPPEAL|278|1993"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC124469DB",
+      "caseNumber": "WRIC/47863/2016",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 47863 of 2016",
+            "key": "C|47863|2016"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC125816DB",
+      "caseNumber": "WRIC/9136/2006",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 9136 of 2006",
+            "key": "C|9136|2006"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC125820DB",
+      "caseNumber": "WRIC/36834/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 36834 of 2013",
+            "key": "C|36834|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC125880DB",
+      "caseNumber": "WRIC/26877/2011",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 26877 of 2011",
+            "key": "C|26877|2011"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC126045DB",
+      "caseNumber": "WRIC/11462/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 11462 of 2013",
+            "key": "C|11462|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC126049DB",
+      "caseNumber": "WRIC/12924/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 12924 of 2013",
+            "key": "C|12924|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC126163DB",
+      "caseNumber": "WRIC/41660/2009",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 41660 of 2009",
+            "key": "C|41660|2009"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC126484DB",
+      "caseNumber": "WRIC/9526/2014",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 9526 of 2014",
+            "key": "C|9526|2014"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC127124DB",
+      "caseNumber": "WRIC/713/2014",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 713 of 2014",
+            "key": "C|713|2014"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC130987",
+      "caseNumber": "WRIA/13845/2012",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 13845 of 2012",
+            "key": "A|13845|2012"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC13127",
+      "caseNumber": "ARCO/34/2023",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC139542",
+      "caseNumber": "BAILC/599/2023",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "APPLICATION No. - 599 of 2023",
+            "key": "APPLICATION|599|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC141584",
+      "caseNumber": "WRIA/26281/2008",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 26281 of 2008",
+            "key": "A|26281|2008"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC141700",
+      "caseNumber": "WRIA/3790/2018",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 3790 of 2018",
+            "key": "A|3790|2018"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC142995",
+      "caseNumber": "A482/28784/2022",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC144332DB",
+      "caseNumber": "WRIC/23374/2012",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 23374 of 2012",
+            "key": "C|23374|2012"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC144624",
+      "caseNumber": "WRIA/2373/2015",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 2373 of 2015",
+            "key": "A|2373|2015"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC170153",
+      "caseNumber": "WRIA/14381/2009",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 14381 of 2009",
+            "key": "A|14381|2009"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC17458",
+      "caseNumber": "A482/28413/2015",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC18804",
+      "caseNumber": "BAIL/47252/2023",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL MISC. BAIL APPLICATION No. - 47252 of 2023",
+            "key": "BAILAPPLICATION|47252|2023"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC19282",
+      "caseNumber": "WRIA/40834/2014",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 40834 of 2014",
+            "key": "A|40834|2014"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC25732DB",
+      "caseNumber": "WRIC/27553/2022",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 27553 of 2022",
+            "key": "C|27553|2022"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC25789DB",
+      "caseNumber": "WRIC/17836/2020",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "C No. - 17836 of 2020",
+            "key": "C|17836|2020"
+          },
+          {
+            "raw": "C No. 41880 of 2019",
+            "key": "C|41880|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC30639",
+      "caseNumber": "CRLR/3637/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL REVISION No. - 3637 of 2013",
+            "key": "CRIMINALREVISION|3637|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC39677",
+      "caseNumber": "A482/40208/2019",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC4140",
+      "caseNumber": "A482/40503/2023",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC41724",
+      "caseNumber": "CRLR/527/2018",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL REVISION No. - 527 of 2018",
+            "key": "CRIMINALREVISION|527|2018"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC50446",
+      "caseNumber": "BAILC/210/2023",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC70572",
+      "caseNumber": "CRLP/5392/2022",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL MISC. WRIT PETITION No. - 5392 of 2022",
+            "key": "WRITPETITION|5392|2022"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC84553DB",
+      "caseNumber": "CRLA/11/2008",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL APPEAL No. - 11 of 2008",
+            "key": "CRIMINALAPPEAL|11|2008"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC84904",
+      "caseNumber": "FAFO/1250/2012",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": "ALONG WITH",
+        "matters": [
+          {
+            "raw": "FIRST APPEAL FROM ORDER No. - 1250 of 2012",
+            "key": "FROMORDER|1250|2012"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC85472",
+      "caseNumber": "WRIA/5193/2016",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 5193 of 2016",
+            "key": "A|5193|2016"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC86548",
+      "caseNumber": "WRIA/54832/2013",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 54832 of 2013",
+            "key": "A|54832|2013"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC86905",
+      "caseNumber": "A482/19182/2017",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC87175",
+      "caseNumber": "FAFO/1038/2019",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "FIRST APPEAL FROM ORDER No. - 1038 of 2019",
+            "key": "FROMORDER|1038|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC88150",
+      "caseNumber": "FAFO/2239/2009",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "FIRST APPEAL FROM ORDER No. - 2239 of 2009",
+            "key": "FROMORDER|2239|2009"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC88191",
+      "caseNumber": "WRIA/17670/2014",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "A No. - 17670 of 2014",
+            "key": "A|17670|2014"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025AHC88326DB",
+      "caseNumber": "CUSA/13/2020",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CUSTOM APPEAL No. - 13 of 2020",
+            "key": "CUSTOMAPPEAL|13|2020"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG11428",
+      "caseNumber": "FA/3594/2019",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "FIRST APPEAL NO. 3594 OF 2019",
+            "key": "FIRSTAPPEAL|3594|2019"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG11798",
+      "caseNumber": "CA/4091/2025",
+      "declared": {
+        "declaredMatters": 8,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CIVILAPPLICATIONNO.4125OF2025",
+            "key": "CIVILAPPLICATION|4125|2025"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.4076OF2025",
+            "key": "CIVILAPPLICATION|4076|2025"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.4124OF2025",
+            "key": "CIVILAPPLICATION|4124|2025"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.4077OF2025",
+            "key": "CIVILAPPLICATION|4077|2025"
+          },
+          {
+            "raw": "INFAST/22522/2020",
+            "key": "INFAST|22522|2020"
+          },
+          {
+            "raw": "INFAST/22565/2020",
+            "key": "INFAST|22565|2020"
+          },
+          {
+            "raw": "INFAST/22515/2020",
+            "key": "INFAST|22515|2020"
+          },
+          {
+            "raw": "INFAST/22561/2020",
+            "key": "INFAST|22561|2020"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG13506",
+      "caseNumber": "CA/740/2021",
+      "declared": {
+        "declaredMatters": 4,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CIVILAPPLICATIONNO.738OF2021",
+            "key": "CIVILAPPLICATION|738|2021"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.740OF2021",
+            "key": "CIVILAPPLICATION|740|2021"
+          },
+          {
+            "raw": "INFAST/15709/2020",
+            "key": "INFAST|15709|2020"
+          },
+          {
+            "raw": "INFAST/15706/2020",
+            "key": "INFAST|15706|2020"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG13510",
+      "caseNumber": "CA/741/2021",
+      "declared": {
+        "declaredMatters": 4,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CIVILAPPLICATIONNO.739OF2021",
+            "key": "CIVILAPPLICATION|739|2021"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.741OF2021",
+            "key": "CIVILAPPLICATION|741|2021"
+          },
+          {
+            "raw": "INFAST/15709/2020",
+            "key": "INFAST|15709|2020"
+          },
+          {
+            "raw": "INFAST/15706/2020",
+            "key": "INFAST|15706|2020"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG14200",
+      "caseNumber": "CA/5484/2025",
+      "declared": {
+        "declaredMatters": 4,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CIVILAPPLICATIONNO.5484OF2025",
+            "key": "CIVILAPPLICATION|5484|2025"
+          },
+          {
+            "raw": "CIVILAPPLICATIONNO.5485OF2025",
+            "key": "CIVILAPPLICATION|5485|2025"
+          },
+          {
+            "raw": "INFA/799/2022",
+            "key": "INFA|799|2022"
+          },
+          {
+            "raw": "INFA/798/2022",
+            "key": "INFA|798|2022"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG20927DB",
+      "caseNumber": "APPLN/2831/2025",
+      "declared": {
+        "declaredMatters": 4,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "CRIMINAL APPLICATION NO. 2831 OF 2025",
+            "key": "CRIMINALAPPLICATION|2831|2025"
+          },
+          {
+            "raw": "CRIMINAL APPEAL NO. 1046 OF 2024",
+            "key": "CRIMINALAPPEAL|1046|2024"
+          },
+          {
+            "raw": "CRIMINAL APPLICATION NO. 2834 OF 2025",
+            "key": "CRIMINALAPPLICATION|2834|2025"
+          },
+          {
+            "raw": "CRIMINAL APPEAL NO. 1032 OF 2024",
+            "key": "CRIMINALAPPEAL|1032|2024"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG22740DB",
+      "caseNumber": "WP/13451/2024",
+      "declared": {
+        "declaredMatters": 1,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "WRIT PETITION NO. 13451 OF 2024",
+            "key": "WRITPETITION|13451|2024"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025BHCAUG27867",
+      "caseNumber": "APPLN/2910/2025",
+      "declared": {
+        "declaredMatters": 2,
+        "connector": null,
+        "matters": [
+          {
+            "raw": "ANTICIPATORY BAIL APPLICATION NO.1137 OF 2025",
+            "key": "BAILAPPLICATION|1137|2025"
+          },
+          {
+            "raw": "CRIMINAL APPLICATION NO. 2910 OF 2025",
+            "key": "CRIMINALAPPLICATION|2910|2025"
+          }
+        ],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC008410",
+      "caseNumber": "RSA/3718/2000",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC035578",
+      "caseNumber": "RSA/2318/1989",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC058053",
+      "caseNumber": "RSA/204/2018",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC058672",
+      "caseNumber": "CWP/8848/2020",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC061942",
+      "caseNumber": "RSA/1964/2013",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC073091",
+      "caseNumber": "CWP/9027/2018",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC089269",
+      "caseNumber": "CRA-S/2271/2008",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC150114",
+      "caseNumber": "XOBJS/10/2018",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC165813",
+      "caseNumber": "FAO/1745/2001",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    },
+    {
+      "citationKey": "2025PHHC169754",
+      "caseNumber": "RSA/109/1999",
+      "declared": {
+        "declaredMatters": 0,
+        "connector": null,
+        "matters": [],
+        "causeTitleAvailable": true
+      }
+    }
+  ],
+  "outOfScope": [
+    {
+      "citationKey": "2023AHC152051DB",
+      "sameCourt": false,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023AHC169934DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023AHCLKO59744",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023AHCLKO65518DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023KHCD14142",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023MHC3983",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023PHHC094498",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2023PHHC163841",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHC132878",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHC200147",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHC40545DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO108",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO12221",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO135",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO1982",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO266",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO5501",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024AHCLKO76731",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024PHHC010957",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2024PHHC020579",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC103497DB",
+      "sameCourt": false,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC103820",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC179271",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC20934",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC23801",
+      "sameCourt": false,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC45317DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC62288",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC63946",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC65284",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHC91662DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHCLKO28235",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHCLKO37983",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHCLKO44647DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025AHCLKO6899",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025DHC4543DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025DHC6181DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025DHC7392DB",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025DHC751",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025DHC8491",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025MHC1162",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025PHHC004198",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2025UHC857",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2026CGHC3744",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2026HHC30615",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2026JHHC2459",
+      "sameCourt": true,
+      "sameDate": false
+    },
+    {
+      "citationKey": "2026UHC4224DB",
+      "sameCourt": true,
+      "sameDate": false
+    }
+  ]
+}
