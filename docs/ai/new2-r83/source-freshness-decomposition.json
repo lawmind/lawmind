@@ -2,99 +2,99 @@
  "artifact": "NEW2_SOURCE_FRESHNESS_DECOMPOSITION",
  "lane": "NEW2",
  "protocol": "LAWMIND_FINAL_R8_3_LIMITED_FREEZE_ORCHESTRATION_2026-08-26.md §11 N2-2",
- "generated_at": "2026-08-26T14:49:51.281Z",
+ "generated_at": "2026-08-31T10:08:03.630Z",
  "supersedes": "docs/ai/new2-r8/SOURCE_FRESHNESS_R8.md — which measured only the local side",
  "year_under_test": 2026,
  "adapters": {
   "aws_open_data_hc": {
    "upstream": {
     "parquet_objects_for_year": 56,
-    "newest_object_written": "2026-08-26T12:30:27.000Z",
-    "newest_object_key": "metadata/parquet/year=2026/court=5_15/bench=ukhcucis_pg/metadata.parquet",
+    "newest_object_written": "2026-08-31T08:32:08.000Z",
+    "newest_object_key": "metadata/parquet/year=2026/court=24_17/bench=gujarathc/metadata.parquet",
     "upstream_write_lag_days": 0,
-    "newest_upstream_decision": "2026-08-25",
-    "decision_gap_days_upstream_minus_local": 7,
+    "newest_upstream_decision": "2026-08-27",
+    "decision_gap_days_upstream_minus_local": -2,
     "latest_month": "2026-08",
-    "upstream_latest_month_ratio_to_own_baseline": 0.6398,
-    "local_latest_month_ratio_to_own_baseline": 0.0043,
+    "upstream_latest_month_ratio_to_own_baseline": 1.0115,
+    "local_latest_month_ratio_to_own_baseline": 0.4058,
     "local_months": {
-     "2026-01": 124354,
-     "2026-02": 142492,
-     "2026-03": 123236,
-     "2026-04": 142891,
-     "2026-05": 100153,
-     "2026-06": 70675,
-     "2026-07": 93332,
-     "2026-08": 480
+     "2026-01": 125760,
+     "2026-02": 143719,
+     "2026-03": 124964,
+     "2026-04": 144001,
+     "2026-05": 100511,
+     "2026-06": 71902,
+     "2026-07": 96087,
+     "2026-08": 46068
     },
     "objects_written_last_7d": 42,
     "decision_date_probes": [
      {
-      "key": "metadata/parquet/year=2026/court=5_15/bench=ukhcucis_pg/metadata.parquet",
-      "rows": 10494,
-      "newest_decision": "2026-08-25",
+      "key": "metadata/parquet/year=2026/court=24_17/bench=gujarathc/metadata.parquet",
+      "rows": 6335,
+      "newest_decision": "2026-08-27",
       "by_month": {
-       "2026-03": 1128,
-       "2026-01": 955,
-       "2026-04": 1558,
-       "2026-02": 1210,
-       "2026-05": 1405,
-       "2026-06": 1286,
-       "2026-07": 1738,
-       "2026-08": 1214
+       "2026-04": 834,
+       "2026-02": 805,
+       "2026-03": 714,
+       "2026-05": 422,
+       "2026-01": 879,
+       "2026-06": 638,
+       "2026-07": 1144,
+       "2026-08": 899
       }
      },
      {
-      "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_circuit_bench_at_port_blair/metadata.parquet",
-      "rows": 759,
+      "key": "metadata/parquet/year=2026/court=7_26/bench=dhcdb/metadata.parquet",
+      "rows": 31872,
       "newest_decision": "2026-08-25",
       "by_month": {
-       "2026-03": 119,
-       "2026-04": 104,
-       "2026-01": 63,
-       "2026-02": 229,
-       "2026-05": 5,
-       "2026-06": 65,
-       "2026-07": 126,
-       "2026-08": 48
+       "2026-03": 3948,
+       "2026-04": 5306,
+       "2026-01": 3794,
+       "2026-02": 4819,
+       "2026-05": 4695,
+       "2026-06": 440,
+       "2026-07": 4711,
+       "2026-08": 4159
       }
      },
      {
-      "key": "metadata/parquet/year=2026/court=19_16/bench=calcutta_original_side/metadata.parquet",
-      "rows": 3561,
-      "newest_decision": "2026-08-25",
+      "key": "metadata/parquet/year=2026/court=22_18/bench=cghccisdb/metadata.parquet",
+      "rows": 35556,
+      "newest_decision": "2026-08-24",
       "by_month": {
-       "2026-03": 319,
-       "2026-04": 384,
-       "2026-01": 426,
-       "2026-02": 514,
-       "2026-05": 889,
-       "2026-06": 303,
-       "2026-07": 441,
-       "2026-08": 285
+       "2026-03": 3927,
+       "2026-01": 5549,
+       "2026-02": 4713,
+       "2026-04": 5305,
+       "2026-05": 2886,
+       "2026-06": 3450,
+       "2026-07": 6166,
+       "2026-08": 3560
       }
      }
     ]
    },
    "local": {
-    "held": 18660626,
-    "newest_ingest": "2026-08-19 23:05:38.04583+00",
-    "local_ingest_lag_days": 7,
-    "newest_decision": "2026-08-18"
+    "held": 18720643,
+    "newest_ingest": "2026-08-30 14:05:19.255799+00",
+    "local_ingest_lag_days": 1,
+    "newest_decision": "2026-08-29"
    },
    "verdict": "LOCAL_INGEST_BEHIND — upstream is publishing current law, we are not reading it"
   },
   "aws_open_data_sc": {
    "upstream": {
     "parquet_objects_for_year": 1,
-    "newest_object_written": "2026-08-15T16:48:53.000Z",
+    "newest_object_written": "2026-08-30T19:23:42.000Z",
     "newest_object_key": "metadata/parquet/year=2026/metadata.parquet",
-    "upstream_write_lag_days": 11,
-    "newest_upstream_decision": "2026-08-04",
-    "decision_gap_days_upstream_minus_local": 26,
+    "upstream_write_lag_days": 1,
+    "newest_upstream_decision": "2026-08-12",
+    "decision_gap_days_upstream_minus_local": 8,
     "latest_month": "2026-08",
-    "upstream_latest_month_ratio_to_own_baseline": 0.0736,
-    "local_latest_month_ratio_to_own_baseline": 0,
+    "upstream_latest_month_ratio_to_own_baseline": 0.2945,
+    "local_latest_month_ratio_to_own_baseline": 0.0736,
     "local_months": {
      "2026-01": 43,
      "2026-02": 38,
@@ -102,14 +102,15 @@
      "2026-04": 35,
      "2026-05": 29,
      "2026-06": 19,
-     "2026-07": 8
+     "2026-07": 15,
+     "2026-08": 2
     },
-    "objects_written_last_7d": 0,
+    "objects_written_last_7d": 1,
     "decision_date_probes": [
      {
       "key": "metadata/parquet/year=2026/metadata.parquet",
-      "rows": 208,
-      "newest_decision": "2026-08-04",
+      "rows": 214,
+      "newest_decision": "2026-08-12",
       "by_month": {
        "2026-01": 43,
        "2026-02": 38,
@@ -118,16 +119,16 @@
        "2026-05": 29,
        "2026-06": 19,
        "2026-07": 15,
-       "2026-08": 2
+       "2026-08": 8
       }
      }
     ]
    },
    "local": {
-    "held": 38342,
-    "newest_ingest": "2026-08-11 09:52:23.341728+00",
-    "local_ingest_lag_days": 15,
-    "newest_decision": "2026-07-09"
+    "held": 38352,
+    "newest_ingest": "2026-08-28 02:08:53.800477+00",
+    "local_ingest_lag_days": 3,
+    "newest_decision": "2026-08-04"
    },
    "verdict": "BOTH — upstream has not written recently AND we are behind what it does hold"
   }
@@ -144,8 +145,8 @@
    "2026-08"
   ],
   "latest_month": "2026-08",
-  "courts": 26,
-  "courts_effectively_absent_in_latest": 25,
+  "courts": 27,
+  "courts_effectively_absent_in_latest": 2,
   "method": "each court's baseline is the mean of ITS OWN settled months; a corpus-wide baseline would call every small High Court incomplete for being small",
   "rows": [
    {
@@ -188,9 +189,55 @@
       "state": "EFFECTIVELY_ABSENT"
      },
      "2026-08": {
-      "n": 22,
-      "ratio": 0.0009,
+      "n": 29,
+      "ratio": 0.0012,
       "state": "EFFECTIVELY_ABSENT"
+     }
+    }
+   },
+   {
+    "court": "Bombay High Court",
+    "baseline_per_month": 15697,
+    "months": {
+     "2026-01": {
+      "n": 23251,
+      "ratio": 1.4812,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-02": {
+      "n": 21694,
+      "ratio": 1.382,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-03": {
+      "n": 19027,
+      "ratio": 1.2121,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-04": {
+      "n": 21378,
+      "ratio": 1.3619,
+      "state": "COMPLETE_ENOUGH"
+     },
+     "2026-05": {
+      "n": 4919,
+      "ratio": 0.3134,
+      "state": "PARTIAL"
+     },
+     "2026-06": {
+      "n": 3914,
+      "ratio": 0.2493,
+      "state": "PARTIAL"
+     },
+     "2026-07": {
+      "n": 1459,
+      "ratio": 0.0929,
+      "state": "EFFECTIVELY_ABSENT"
+     },
+     "2026-08": {
+      "n": 3239,
+      "ratio": 0.2063,
+      "state": "PARTIAL"
      }
     }
    },
@@ -234,55 +281,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 62,
-      "ratio": 0.0041,
-      "state": "EFFECTIVELY_ABSENT"
-     }
-    }
-   },
-   {
-    "court": "Bombay High Court",
-    "baseline_per_month": 14530,
-    "months": {
-     "2026-01": {
-      "n": 21845,
-      "ratio": 1.5034,
-      "state": "COMPLETE_ENOUGH"
-     },
-     "2026-02": {
-      "n": 20467,
-      "ratio": 1.4086,
-      "state": "COMPLETE_ENOUGH"
-     },
-     "2026-03": {
-      "n": 17299,
-      "ratio": 1.1905,
-      "state": "COMPLETE_ENOUGH"
-     },
-     "2026-04": {
-      "n": 20268,
-      "ratio": 1.3949,
-      "state": "COMPLETE_ENOUGH"
-     },
-     "2026-05": {
-      "n": 4561,
-      "ratio": 0.3139,
+      "n": 4518,
+      "ratio": 0.299,
       "state": "PARTIAL"
-     },
-     "2026-06": {
-      "n": 2742,
-      "ratio": 0.1887,
-      "state": "PARTIAL"
-     },
-     "2026-07": {
-      "n": 56,
-      "ratio": 0.0039,
-      "state": "EFFECTIVELY_ABSENT"
-     },
-     "2026-08": {
-      "n": 1,
-      "ratio": 0.0001,
-      "state": "EFFECTIVELY_ABSENT"
      }
     }
    },
@@ -321,14 +322,14 @@
       "state": "PARTIAL"
      },
      "2026-07": {
-      "n": 13153,
-      "ratio": 1.2126,
+      "n": 13169,
+      "ratio": 1.2141,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 48,
-      "ratio": 0.0044,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 2577,
+      "ratio": 0.2376,
+      "state": "PARTIAL"
      }
     }
    },
@@ -372,55 +373,55 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 6,
-      "ratio": 0.0007,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 1851,
+      "ratio": 0.2261,
+      "state": "PARTIAL"
      }
     }
    },
    {
     "court": "High Court of Karnataka",
-    "baseline_per_month": 6167,
+    "baseline_per_month": 6176,
     "months": {
      "2026-01": {
       "n": 8051,
-      "ratio": 1.3056,
+      "ratio": 1.3036,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-02": {
       "n": 8724,
-      "ratio": 1.4147,
+      "ratio": 1.4126,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-03": {
       "n": 5621,
-      "ratio": 0.9115,
+      "ratio": 0.9102,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-04": {
       "n": 5988,
-      "ratio": 0.971,
+      "ratio": 0.9696,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-05": {
       "n": 768,
-      "ratio": 0.1245,
+      "ratio": 0.1244,
       "state": "PARTIAL"
      },
      "2026-06": {
-      "n": 7848,
-      "ratio": 1.2726,
+      "n": 7903,
+      "ratio": 1.2797,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-07": {
-      "n": 6374,
-      "ratio": 1.0336,
+      "n": 7710,
+      "ratio": 1.2484,
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 6,
-      "ratio": 0.001,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 3452,
+      "ratio": 0.559,
+      "state": "PARTIAL"
      }
     }
    },
@@ -464,9 +465,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 92,
-      "ratio": 0.0162,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 2661,
+      "ratio": 0.4699,
+      "state": "PARTIAL"
      }
     }
    },
@@ -510,9 +511,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 36,
-      "ratio": 0.0073,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 5328,
+      "ratio": 1.0734,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -556,9 +557,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 60,
-      "ratio": 0.0139,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 3533,
+      "ratio": 0.8208,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -602,9 +603,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 3631,
+      "ratio": 0.9611,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -648,9 +649,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 3,
-      "ratio": 0.0008,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 1752,
+      "ratio": 0.4647,
+      "state": "PARTIAL"
      }
     }
    },
@@ -694,9 +695,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 3,
-      "ratio": 0.001,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 1678,
+      "ratio": 0.5376,
+      "state": "PARTIAL"
      }
     }
    },
@@ -740,9 +741,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 3403,
+      "ratio": 1.1753,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -786,9 +787,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 2553,
+      "ratio": 0.9411,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -832,9 +833,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 51,
-      "ratio": 0.0241,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 1913,
+      "ratio": 0.9046,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -878,9 +879,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 680,
+      "ratio": 0.4303,
+      "state": "PARTIAL"
      }
     }
    },
@@ -924,9 +925,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 33,
-      "ratio": 0.0263,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 1214,
+      "ratio": 0.9658,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -970,9 +971,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 4,
-      "ratio": 0.0051,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 322,
+      "ratio": 0.4112,
+      "state": "PARTIAL"
      }
     }
    },
@@ -1016,9 +1017,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 42,
-      "ratio": 0.0587,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 891,
+      "ratio": 1.2459,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1062,9 +1063,9 @@
       "state": "PARTIAL"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 143,
+      "ratio": 0.7192,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1154,9 +1155,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 7,
-      "ratio": 0.0541,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 152,
+      "ratio": 1.1737,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1195,14 +1196,14 @@
       "state": "PARTIAL"
      },
      "2026-07": {
-      "n": 8,
-      "ratio": 0.2513,
+      "n": 15,
+      "ratio": 0.4712,
       "state": "PARTIAL"
      },
      "2026-08": {
-      "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 29,
+      "ratio": 0.911,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1246,9 +1247,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 3,
-      "ratio": 0.2609,
-      "state": "PARTIAL"
+      "n": 18,
+      "ratio": 1.5652,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1292,9 +1293,9 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
-      "n": 1,
-      "ratio": 0.0845,
-      "state": "EFFECTIVELY_ABSENT"
+      "n": 17,
+      "ratio": 1.4366,
+      "state": "COMPLETE_ENOUGH"
      }
     }
    },
@@ -1338,9 +1339,55 @@
       "state": "COMPLETE_ENOUGH"
      },
      "2026-08": {
+      "n": 10,
+      "ratio": 1.0345,
+      "state": "COMPLETE_ENOUGH"
+     }
+    }
+   },
+   {
+    "court": "High Court of Jammu and Kashmir and Ladakh",
+    "baseline_per_month": 0,
+    "months": {
+     "2026-01": {
       "n": 0,
-      "ratio": 0,
-      "state": "EFFECTIVELY_ABSENT"
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-02": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-03": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-04": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-05": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-06": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-07": {
+      "n": 0,
+      "ratio": null,
+      "state": "NO_BASELINE"
+     },
+     "2026-08": {
+      "n": 503,
+      "ratio": null,
+      "state": "NO_BASELINE"
      }
     }
    }

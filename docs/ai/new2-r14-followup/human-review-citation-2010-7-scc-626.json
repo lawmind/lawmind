@@ -1,0 +1,190 @@
+{
+ "artifact": "NEW2_R14_FOLLOWUP_HUMAN_REVIEW_CITATION",
+ "lane": "NEW2",
+ "measuredAt": "2026-08-31T09:55:27.485Z",
+ "state": "HUMAN_REVIEW_REQUIRED",
+ "citation": {
+  "raw": "2010 (7) SCC 626",
+  "normalised": "(2010) 7 SCC 626",
+  "key": "20107SCC626"
+ },
+ "question": "Which Supreme Court judgment is reported at (2010) 7 SCC 626 — Govt. of India v. Ravi Prakash Gupta, which the resolver pins, or Union of India v. National Confederation for Blind, which the citing text names?",
+ "theEdge": {
+  "id": "e1b011f2-3ee8-4021-944a-321448d62415",
+  "citedJudgmentId": null,
+  "note": "cited_judgment_id is NULL: this pin is a candidate and has never been written. Bulk apply is on HOLD and nothing in this round changes that.",
+  "citingJudgment": {
+   "id": "91e1c767-00d5-44c4-90f6-dd11c2a9bcf2",
+   "caseTitle": "MADHU S, Vs TRAVANCORE DEVASWOM BOARD,",
+   "court": "High Court of Kerala",
+   "judgmentDate": "2023-07-04T00:00:00.000Z",
+   "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2023/court=32_4/bench=highcourtofkerala/KLHC010417302022_1_2023-07-04.pdf",
+   "charOffset": 18123
+  },
+  "citingExtract": "r hand, learned counsel for the petitioner relied WP(C) NO. 20301 OF 2022 and conctd. Case 14on the judgments of Apex Court in Union of India and Others v. National Confederation for Development of Disabled and Another [2015 (13) SCC 643], in this judgment the issue which arose before the Apex Court was in respect of the promotion to the cadre of Indian Administrative Service from the State Civil Services or by selection from persons who are holding gazetted posts in connection with the affairs of the State. In that case the Union Public Service Commission contended that Section 33 of the PWD Act does not provide for reservation in the matter of promotion, among other contentions. The Apex Court after referring to its earlier judgment, in Union of India and Others v. National Confederation for Blind reported in [2010 (7) SCC 626] and Popat Bahiru Govardhane v. Land Acquisition Officer [2013 (10) SCC 772], where it was held that the percentage of reservation for persons with disabilities has to be computed on total number of vacancies in the cadre strength. In paragraph 10, it was held as follows: In view of the aforesaid decision of the Supreme Court, it is clear that reservation has to be computed with reference to the total number of vacancies in the cadre strength and, therefore, no distinction can be made between the posts to be filled in by direct recruitment and by promotion. Total number of vacancies in the cadre strength would include the vacancies to be filled in by"
+ },
+ "candidateIdentities": [
+  {
+   "identity": "Govt. of India through Secretary & Anr. v. Ravi Prakash Gupta & Anr.",
+   "heldInCorpus": true,
+   "judgment": {
+    "id": "80886516-ab4b-4805-b770-41e537ce065e",
+    "case_title": "GOVT. OF INDIA THROUGH SECRETARY & ANR. versus RAVI PRAKASH GUPTA & ANR.",
+    "neutral_citation": "2010 INSC 368",
+    "reporter_citations": [
+     "[2010] 7 S.C.R. 851"
+    ],
+    "court": "Supreme Court of India",
+    "bench": "ALTAMAS KABIR",
+    "judgment_date": "2010-07-07T00:00:00.000Z",
+    "case_number": "SPECIAL LEAVE PETITION (CIVIL) No. 14889/2009",
+    "case_type": "civil",
+    "petitioner": "GOVT. OF INDIA THROUGH SECRETARY & ANR.",
+    "respondent": "RAVI PRAKASH GUPTA & ANR.",
+    "disposal_nature": "Dismissed",
+    "source_url": "https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2010/english/2010_7_851_865_EN.pdf",
+    "overruled_status": "none"
+   },
+   "supportingEvidence": [
+    "the alias row keying (2010) 7 SCC 626 to this judgment, with its own parallel-citation evidence string",
+    "its reporter_citations carry [2010] 7 S.C.R. 851, which is the SCR half of that same evidence string",
+    "the citing-window census below"
+   ]
+  },
+  {
+   "identity": "Union of India & Ors. v. National Confederation for Blind",
+   "heldInCorpus": true,
+   "note": "no judgment under this exact title is held. Every Supreme Court judgment we hold whose title names a federation or confederation of the blind is listed below; none is a 2010 decision.",
+   "supremeCourtJudgmentsHeldWithBlindInTitle": [
+    {
+     "id": "d13c2465-61a2-46a5-8fd7-937afdd61875",
+     "case_title": "NATIONAL FEDERATION OF BLIND versus UNION PUBLIC SERVICE COMMISSION AND OTHERS",
+     "neutral_citation": "1993 INSC 110",
+     "reporter_citations": [
+      "[1993] 2 S.C.R. 556"
+     ],
+     "court": "Supreme Court of India",
+     "judgment_date": "1993-03-23T00:00:00.000Z"
+    },
+    {
+     "id": "d1b5f610-81d0-4891-b4fc-92e1858b2cf6",
+     "case_title": "UNION OF INDIA & ANR. versus NATIONAL FEDERATION OF THE BLIND & ORS.",
+     "neutral_citation": "2013 INSC 688",
+     "reporter_citations": [
+      "[2013] 9 S.C.R. 1023"
+     ],
+     "court": "Supreme Court of India",
+     "judgment_date": "2013-10-08T00:00:00.000Z"
+    }
+   ],
+   "sameTitlePatternInOtherCourts": 76
+  }
+ ],
+ "aliasEvidence": {
+  "rows": [
+   {
+    "alias": "(2010) 7 SCC 626",
+    "alias_key": "20107SCC626",
+    "alias_reporter": "SCC",
+    "corroborations": 5,
+    "evidence": "(2010) 7 SCC 6266 : [2010] 7 SCR 851",
+    "created_at": "2026-08-09T19:11:08.614Z"
+   }
+  ],
+  "note": "evidence reads \"(2010) 7 SCC 6266 : [2010] 7 SCR 851\". The trailing digit is doubled — the same artefact appears on the independently checkable neighbour below, where the SCR half is verifiable against our own row, so the doubling is an extraction artefact rather than a different page."
+ },
+ "citationKeyRows": [
+  {
+   "citation_key": "20107SCC626",
+   "source": "alias",
+   "source_text": "(2010) 7 SCC 626",
+   "years": [
+    "2010"
+   ],
+   "case_title": "GOVT. OF INDIA THROUGH SECRETARY & ANR. versus RAVI PRAKASH GUPTA & ANR.",
+   "judgment_id": "80886516-ab4b-4805-b770-41e537ce065e"
+  }
+ ],
+ "neighbouringCitationsInTheSameSentence": {
+  "rows": [
+   {
+    "alias": "(2013) 10 SCC 772",
+    "alias_key": "201310SCC772",
+    "corroborations": 8,
+    "evidence": "(2013) 10 SCC 7722 : [2013] 9 SCR 1023",
+    "case_title": "UNION OF INDIA & ANR. versus NATIONAL FEDERATION OF THE BLIND & ORS.",
+    "judgment_date": "2013-10-08T00:00:00.000Z",
+    "reporter_citations": [
+     "[2013] 9 S.C.R. 1023"
+    ]
+   }
+  ],
+  "whyThisMatters": "the citing sentence attributes [2013 (10) SCC 772] to Popat Bahiru Govardhane v. Land Acquisition Officer. Our own alias rows key (2013) 10 SCC 772 to Union of India v. National Federation of the Blind, corroborated, with its SCR half verifiable against that judgment's own reporter_citations. At least one case-name-to-citation pairing in that sentence is therefore wrong in the citing text itself, which is why the sentence cannot settle the identity of the citation next to it."
+ },
+ "citingWindowCensus": {
+  "edgesCarryingTheCitation": 236,
+  "windowNamesRaviPrakashGuptaOnly": 158,
+  "windowNamesBlindOnly": 5,
+  "windowNamesBoth": 28,
+  "windowNamesNeither": 45,
+  "distinctCourtsNamingGupta": 17,
+  "distinctCourtsNamingBlind": 2,
+  "windowsNamingTheBlindAndNotGupta": [
+   {
+    "citingJudgmentId": "2cde0c7a-7dd5-4181-951c-f50ea5bed9f1",
+    "court": "High Court of Kerala",
+    "caseTitle": "MOHANKUMAR T.N Vs STATE OF KERALA",
+    "judgmentDate": "2023-07-04",
+    "window": "n from persons who are holding gazetted posts in connection with the affairs of the State. In that case the Union Public Service Commission contended that Section 33 of the PWD Act does not provide for reservation in the matter of promotion, among other contentions. The Apex Court after referring to its earlier judgment, in Union of India and Others v. National Confederation for Blind reported in [2010 (7) SCC 626] and Popat Bahiru Govardhane v. Land Acquisition Officer [2013 (10) SCC 772], where it was held that the percentage of reservation for persons with disabilities has to be computed on total number of vacancies in the cadre strength. In paragraph 10, it was held as follows: In view of the aforesaid decision of the Supreme Court, it is clear that reservation has to be computed with reference to the total number of vacancies in the cadre strength and, therefore, no distinction can"
+   },
+   {
+    "citingJudgmentId": "91e1c767-00d5-44c4-90f6-dd11c2a9bcf2",
+    "court": "High Court of Kerala",
+    "caseTitle": "MADHU S, Vs TRAVANCORE DEVASWOM BOARD,",
+    "judgmentDate": "2023-07-04",
+    "window": "n from persons who are holding gazetted posts in connection with the affairs of the State. In that case the Union Public Service Commission contended that Section 33 of the PWD Act does not provide for reservation in the matter of promotion, among other contentions. The Apex Court after referring to its earlier judgment, in Union of India and Others v. National Confederation for Blind reported in [2010 (7) SCC 626] and Popat Bahiru Govardhane v. Land Acquisition Officer [2013 (10) SCC 772], where it was held that the percentage of reservation for persons with disabilities has to be computed on total number of vacancies in the cadre strength. In paragraph 10, it was held as follows: In view of the aforesaid decision of the Supreme Court, it is clear that reservation has to be computed with reference to the total number of vacancies in the cadre strength and, therefore, no distinction can"
+   },
+   {
+    "citingJudgmentId": "bd47c371-ed1f-430e-8df4-bbffd09c1da6",
+    "court": "High Court of Kerala",
+    "caseTitle": "SUMOD, Vs TRAVANCORE DEVASWOM BOARD,",
+    "judgmentDate": "2023-07-04",
+    "window": "n from persons who are holding gazetted posts in connection with the affairs of the State. In that case the Union Public Service Commission contended that Section 33 of the PWD Act does not provide for reservation in the matter of promotion, among other contentions. The Apex Court after referring to its earlier judgment, in Union of India and Others v. National Confederation for Blind reported in [2010 (7) SCC 626] and Popat Bahiru Govardhane v. Land Acquisition Officer [2013 (10) SCC 772], where it was held that the percentage of reservation for persons with disabilities has to be computed on total number of vacancies in the cadre strength. In paragraph 10, it was held as follows: In view of the aforesaid decision of the Supreme Court, it is clear that reservation has to be computed with reference to the total number of vacancies in the cadre strength and, therefore, no distinction can"
+   },
+   {
+    "citingJudgmentId": "d2ac9136-e704-4f02-96ff-aa3017d18aa9",
+    "court": "High Court of Kerala",
+    "caseTitle": "MADHU S. Vs TRAVANCORE DEVASWOM BOARD",
+    "judgmentDate": "2017-01-10",
+    "window": "n from persons who are holding gazetted posts in connection with the affairs of the State. In that case the Union Public Service Commission contended that Section 33 of the PWD Act does not provide for reservation in the matter of promotion, among other contentions. The Apex Court after referring to its earlier judgment, in Union of India and Others v. National Confederation for Blind reported in [2010 (7) SCC 626] and Popat Bahiru Govardhane v. Land Acquisition Officer [2013 (10) SCC 772], where it was held that the percentage of reservation for persons with disabilities has to be computed on total number of vacancies in the cadre strength. In paragraph 10, it was held as follows: In view of the aforesaid decision of the Supreme Court, it is clear that reservation has to be computed with reference to the total number of vacancies in the cadre strength and, therefore, no distinction can"
+   },
+   {
+    "citingJudgmentId": "f631ab8c-8cff-4b33-ae92-596589d71a20",
+    "court": "Supreme Court of India",
+    "caseTitle": "RAJASTHAN HIGH COURT, JODHPUR & ANR. versus NEETU HARSH & ANR.",
+    "judgmentDate": "2019-08-29",
+    "window": "not be justified. Hence for all the afore stated reasons, this Court finds the order dated 04.05.2017 passed by the High Court to be unsustainable and the same is accordingly set aside. [Para 18][842-F-H; 843- A-B] RAJASTHAN HIGH COURT, JODHPUR & ANR. v. NEETU HARSH & ANR. A B C D E F G H 832 SUPREME COURT REPORTS [2019] 11 S.C.R. Government of India through Secretary & Anr. v. Rani Prakash Gupta (2010) 7 SCC 626 : [2010] 7 SCR 851; Union of India & Anr. v. National Federation of the Blind (2013) 10 SCC 772 : [2013] 9 SCR 1023; Rajeev Kumar Gupta & Ors. v. Union of India & Ors. (2016) 13 SCC 153 : [2016] 3 SCR 407; V. Surendra Mohan v. State of Tamil Nadu & Ors. (2019) 4 SCC 237 : [2019] 1 SCR 954; J&K Public Service Commission v. Israr Ahmad (2005) 12 SCC 498; Registrars General, Calcutta High Court v. Shriniwas Prasad Shah & Ors. (2013) 12 SCC 364 : [2013] 3 SCR 211 – referred to. Cas"
+   }
+  ],
+  "method": "every held edge whose normalised_citation is (2010) 7 SCC 626, with a 900-character window around the citation, tested for each candidate name. Matchers tolerate this corpus's documented OCR s-dropping (\"Ravi Praka h Gupta\").",
+  "note": "This counts what citing courts SAY beside the citation. It is strong corroboration and it is not the report itself; a name repeated by many courts is still not the printed page."
+ },
+ "whyCurrentEvidenceCannotSafelyDecide": [
+  "The discriminating fact is a page number in Supreme Court Cases, a commercial law report. CLAUDE.md forbids this corpus from holding a reporter's copy-edited edition (EBC v. D.B. Modak), so we do not hold it and may not acquire it for this purpose.",
+  "Every official source we are authorised to use paginates in SCR, not SCC. India Code carries statutes, not law reports. The Supreme Court's own reports are SCR. Neither states what is printed at (2010) 7 SCC 626.",
+  "Our alias for the key is DERIVED — extracted from a parallel-citation string in other judgments, not read off the report. Its SCR half is verifiable against our own row; its SCC half is not verifiable against anything we hold.",
+  "The citing text that raised the conflict is itself internally inconsistent on a neighbouring citation, so it is evidence of a drafting error somewhere in that sentence rather than evidence about the target.",
+  "Deciding this on party-name similarity is exactly the inference this lane refuses. Title resemblance has created no edge in this round and creates none here."
+ ],
+ "whatWouldSettleIt": [
+  "a human with access to (2010) 7 SCC 626 reading the page",
+  "or an official SCR-to-SCC concordance published by a source we are authorised to use"
+ ],
+ "disposition": {
+  "state": "HUMAN_REVIEW_REQUIRED",
+  "edgeWritten": false,
+  "resolverChanged": false,
+  "bulkApply": "HOLD",
+  "note": "The corpus evidence leans one way and the packet says so plainly. Leaning is not resolution, and this lane does not convert one into the other."
+ }
+}

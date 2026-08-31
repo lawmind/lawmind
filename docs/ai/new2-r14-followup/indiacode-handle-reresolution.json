@@ -1,0 +1,2331 @@
+{
+  "artifact": "NEW2_R14_FOLLOWUP_INDIACODE_HANDLE_RERESOLUTION",
+  "lane": "NEW2",
+  "measuredAt": "2026-08-31T09:44:17.693Z",
+  "scope": {
+    "population": "the 49 Acts of STATUTE_FRESHNESS_V1, split into the 25 it recorded SOURCE_UNAVAILABLE and the 24 it resolved",
+    "deadHandles": 25,
+    "controls": 24,
+    "rowsFound": 49,
+    "frozenMeasurementGeneratedAt": "2026-08-30T21:52:13.735Z",
+    "note": "this artifact does not modify docs/ai/new2-r14/statute-freshness-v1.json, which stays frozen as measured"
+  },
+  "source": {
+    "name": "India Code (Government of India)",
+    "api": "https://indiacode.gov.in/server/api",
+    "requestsIssued": 95,
+    "delayMs": 1100
+  },
+  "method": {
+    "storedHandleFirst": "the stored handle is fetched and its BODY read; an item that resolves and agrees on act number and year has not moved",
+    "identity": "statutes.act_id is India Code dc.identifier.act_id verbatim for India-Code-ingested rows (AC_ prefix); the query is that key AND dc.identifier.collection:\"ACT\". A LawMind-minted act_id is never sent upstream",
+    "acceptance": "act number (leading zeros stripped on both sides) and act year must agree with the source on every path; title similarity alone is never accepted",
+    "whyTheOriginalFailed": "India Code /discover ranks SECTION items above the ACT item, so a top-10 title search cannot reach a principal Act that has more than ten indexed sections"
+  },
+  "tally": {
+    "all": {
+      "MOVED_OFFICIAL_HANDLE": 46,
+      "HANDLE_STILL_CURRENT": 3
+    },
+    "deadHandles": {
+      "MOVED_OFFICIAL_HANDLE": 25
+    },
+    "controls": {
+      "MOVED_OFFICIAL_HANDLE": 21,
+      "HANDLE_STILL_CURRENT": 3
+    }
+  },
+  "applied": [
+    {
+      "act": "The Anti-Hijacking Act, 2016.",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2149",
+      "to": "https://indiacode.gov.in/handle/123456789/496371"
+    },
+    {
+      "act": "The Banking Regulation Act, 1949",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1885",
+      "to": "https://indiacode.gov.in/handle/123456789/496222"
+    },
+    {
+      "act": "The Bengal Embankment Act, 1855",
+      "from": "https://www.indiacode.nic.in/handle/123456789/19037",
+      "to": "https://indiacode.gov.in/handle/123456789/496663"
+    },
+    {
+      "act": "The Bengal Military Police Act, 1892.",
+      "from": "https://www.indiacode.nic.in/handle/123456789/19221",
+      "to": "https://indiacode.gov.in/handle/123456789/496679"
+    },
+    {
+      "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+      "from": "https://www.indiacode.nic.in/handle/123456789/20099",
+      "to": "https://indiacode.gov.in/handle/123456789/496550"
+    },
+    {
+      "act": "The Bharatiya Nyaya Sanhita, 2023",
+      "from": "https://www.indiacode.nic.in/handle/123456789/20062",
+      "to": "https://indiacode.gov.in/handle/123456789/496548"
+    },
+    {
+      "act": "The Bharatiya Sakshya Adhiniyam, 2023",
+      "from": "https://www.indiacode.nic.in/handle/123456789/20063",
+      "to": "https://indiacode.gov.in/handle/123456789/496549"
+    },
+    {
+      "act": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+      "from": "https://www.indiacode.nic.in/handle/123456789/15618",
+      "to": "https://indiacode.gov.in/handle/123456789/496254"
+    },
+    {
+      "act": "The Births, Deaths and Marriages Registration Act, 1886",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2309",
+      "to": "https://indiacode.gov.in/handle/123456789/496424"
+    },
+    {
+      "act": "The Cattle-Trespass Act, 1871",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2294",
+      "to": "https://indiacode.gov.in/handle/123456789/496147"
+    },
+    {
+      "act": "The Central Excise Act, 1944",
+      "from": "https://www.indiacode.nic.in/handle/123456789/19238",
+      "to": "https://indiacode.gov.in/handle/123456789/496296"
+    },
+    {
+      "act": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+      "from": "https://www.indiacode.nic.in/handle/123456789/19721",
+      "to": "https://indiacode.gov.in/handle/123456789/496462"
+    },
+    {
+      "act": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1859",
+      "to": "https://indiacode.gov.in/handle/123456789/496018"
+    },
+    {
+      "act": "The Code of Civil Procedure, 1908",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2191",
+      "to": "https://indiacode.gov.in/handle/123456789/496430"
+    },
+    {
+      "act": "The Companies Act, 2013",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2114",
+      "to": "https://indiacode.gov.in/handle/123456789/496128"
+    },
+    {
+      "act": "The Consumer Protection Act, 2019",
+      "from": "https://www.indiacode.nic.in/handle/123456789/15256",
+      "to": "https://indiacode.gov.in/handle/123456789/496115"
+    },
+    {
+      "act": "The Court-Fees Act, 1870",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2293",
+      "to": "https://indiacode.gov.in/handle/123456789/496482"
+    },
+    {
+      "act": "The Customs Act,1962",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2475",
+      "to": "https://indiacode.gov.in/handle/123456789/496309"
+    },
+    {
+      "act": "The Delhi Municipal Corporation Act, 1957",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1410",
+      "to": "https://indiacode.gov.in/handle/123456789/496612"
+    },
+    {
+      "act": "The Destructive Insects and Pests Act, 1914",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2354",
+      "to": "https://indiacode.gov.in/handle/123456789/496133"
+    },
+    {
+      "act": "The Digital Personal Data Protection Act, 2023.",
+      "from": "https://www.indiacode.nic.in/handle/123456789/22037",
+      "to": "https://indiacode.gov.in/handle/123456789/496508"
+    },
+    {
+      "act": "The Farm Laws Repeal Act, 2021",
+      "from": "https://www.indiacode.nic.in/handle/123456789/16976",
+      "to": "https://indiacode.gov.in/handle/123456789/496136"
+    },
+    {
+      "act": "The Health Security Se National Security Cess Act, 2025",
+      "from": "https://www.indiacode.nic.in/handle/123456789/22084",
+      "to": "https://indiacode.gov.in/handle/123456789/496299"
+    },
+    {
+      "act": "The Indian Christian Marriage Act, 1872",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2186",
+      "to": "https://indiacode.gov.in/handle/123456789/496414"
+    },
+    {
+      "act": "The Indian Forest Act, 1927",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2388",
+      "to": "https://indiacode.gov.in/handle/123456789/496020"
+    },
+    {
+      "act": "The Indian Institute of Petroleum and Energy Act, 2017",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2433",
+      "to": "https://indiacode.gov.in/handle/123456789/496344"
+    },
+    {
+      "act": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2026",
+      "to": "https://indiacode.gov.in/handle/123456789/496269"
+    },
+    {
+      "act": "The Insurance Act, 1938",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2304",
+      "to": "https://indiacode.gov.in/handle/123456789/496320"
+    },
+    {
+      "act": "The Limitation Act, 1963",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1565",
+      "to": "https://indiacode.gov.in/handle/123456789/496389"
+    },
+    {
+      "act": "The Madras Rent and Revenue Sales Act, 1839",
+      "from": "https://www.indiacode.nic.in/handle/123456789/19545",
+      "to": "https://indiacode.gov.in/handle/123456789/496682"
+    },
+    {
+      "act": "The Merchant Shipping Act, 2025",
+      "from": "https://www.indiacode.nic.in/handle/123456789/22147",
+      "to": "https://indiacode.gov.in/handle/123456789/496078"
+    },
+    {
+      "act": "The Motor Vehicles Act, 1988",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1798",
+      "to": "https://indiacode.gov.in/handle/123456789/619305"
+    },
+    {
+      "act": "The Mussalman Wakf (Repeal) Act, 2025",
+      "from": "https://www.indiacode.nic.in/handle/123456789/21048",
+      "to": "https://indiacode.gov.in/handle/123456789/496506"
+    },
+    {
+      "act": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1791",
+      "to": "https://indiacode.gov.in/handle/123456789/496289"
+    },
+    {
+      "act": "The National Bank for Financing Infrastructure and Development Act, 2021",
+      "from": "https://www.indiacode.nic.in/handle/123456789/16802",
+      "to": "https://indiacode.gov.in/handle/123456789/496323"
+    },
+    {
+      "act": "The Negotiable Instruments Act, 1881",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2189",
+      "to": "https://indiacode.gov.in/handle/123456789/496318"
+    },
+    {
+      "act": "The Northern India Canal and Drainage Act, 1873",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2282",
+      "to": "https://indiacode.gov.in/handle/123456789/496713"
+    },
+    {
+      "act": "The Repealing and Amending (Second) Act, 2015",
+      "from": "https://www.indiacode.nic.in/handle/123456789/12143",
+      "to": "https://indiacode.gov.in/handle/123456789/496452"
+    },
+    {
+      "act": "The Repealing and Amending (Second) Act, 2017",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2434",
+      "to": "https://indiacode.gov.in/handle/123456789/496443"
+    },
+    {
+      "act": "The Repealing and Amending Act, 2015",
+      "from": "https://www.indiacode.nic.in/handle/123456789/12142",
+      "to": "https://indiacode.gov.in/handle/123456789/496449"
+    },
+    {
+      "act": "The Repealing and Amending Act, 2017",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2432",
+      "to": "https://indiacode.gov.in/handle/123456789/496442"
+    },
+    {
+      "act": "The Representation of the People Act, 1951",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2096",
+      "to": "https://indiacode.gov.in/handle/123456789/496502"
+    },
+    {
+      "act": "The Reserve Bank of India Act, 1934",
+      "from": "https://www.indiacode.nic.in/handle/123456789/2398",
+      "to": "https://indiacode.gov.in/handle/123456789/496319"
+    },
+    {
+      "act": "The Sick Industrial Companies (Special Provisions) Repeal Act, 2003",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1414",
+      "to": "https://indiacode.gov.in/handle/123456789/496243"
+    },
+    {
+      "act": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1889",
+      "to": "https://indiacode.gov.in/handle/123456789/496231"
+    },
+    {
+      "act": "The Wild Life (Protection) Act, 1972",
+      "from": "https://www.indiacode.nic.in/handle/123456789/1726",
+      "to": "https://indiacode.gov.in/handle/123456789/496026"
+    }
+  ],
+  "appliedCount": 46,
+  "verdicts": [
+    {
+      "act": "The Anti-Hijacking Act, 2016.",
+      "actNumber": "30",
+      "actYear": 2016,
+      "ourActId": "AC_CEN_36_56_00011_201630_1517807328179",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2149",
+      "storedHandle": "123456789/2149",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496371",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496371",
+      "upstream": {
+        "handle": "123456789/496371",
+        "uuid": "a9aa2d8e-5966-46f0-9dc1-d472feb31dee",
+        "name": "The Anti-Hijacking Act, 2016.",
+        "actId": "AC_CEN_36_56_00011_201630_1517807328179",
+        "actNumber": "30",
+        "actYear": "2016",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Civil Aviation",
+        "repealed": "false",
+        "enactDate": "2016-05-13",
+        "issued": "2016-05-13",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496371",
+          "name": "The Anti-Hijacking Act, 2016.",
+          "actNumber": "30",
+          "actYear": "2016",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_36_56_00011_201630_1517807328179"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2149 -> 123456789/496371",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Banking Regulation Act, 1949",
+      "actNumber": "10",
+      "actYear": 1949,
+      "ourActId": "AC_CEN_2_11_00002_194910_1517807317779",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1885",
+      "storedHandle": "123456789/1885",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496222",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496222",
+      "upstream": {
+        "handle": "123456789/496222",
+        "uuid": "18020586-18bc-4857-91fe-668ed2469876",
+        "name": "The Banking Regulation Act, 1949",
+        "actId": "AC_CEN_2_11_00002_194910_1517807317779",
+        "actNumber": "10",
+        "actYear": "1949",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1949-03-10",
+        "issued": "1949-03-10",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496222",
+          "name": "The Banking Regulation Act, 1949",
+          "actNumber": "10",
+          "actYear": "1949",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_11_00002_194910_1517807317779"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1885 -> 123456789/496222",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Bengal Embankment Act, 1855",
+      "actNumber": "32",
+      "actYear": 1855,
+      "ourActId": "185532",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/19037",
+      "storedHandle": "123456789/19037",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": false,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "TITLE_NUMBER_YEAR_ACT",
+      "resolvedHandle": "123456789/496663",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496663",
+      "upstream": {
+        "handle": "123456789/496663",
+        "uuid": "62553889-ac79-4010-a8af-2610e1ee0e6f",
+        "name": "The Bengal Embankment Act, 1855",
+        "actId": "AC_CEN_5_5_00084_185532_1660111426081",
+        "actNumber": "32",
+        "actYear": "1855",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "1855-11-30",
+        "issued": "1855-11-30",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496663",
+          "name": "The Bengal Embankment Act, 1855",
+          "actNumber": "32",
+          "actYear": "1855",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_5_00084_185532_1660111426081"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "no act_id path; matched on full distinctive title tokens with act number and year agreeing",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Bengal Military Police Act, 1892.",
+      "actNumber": "05",
+      "actYear": 1892,
+      "ourActId": "AC_CEN_5_5_00111_189205_1666334510811",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/19221",
+      "storedHandle": "123456789/19221",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496679",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496679",
+      "upstream": {
+        "handle": "123456789/496679",
+        "uuid": "4fab13db-baed-419b-9c86-ab5bebbd7879",
+        "name": "The Bengal Military Police Act, 1892",
+        "actId": "AC_CEN_5_5_00111_189205_1666334510811",
+        "actNumber": "5",
+        "actYear": "1892",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "1892-03-25",
+        "issued": "1892-03-25",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496679",
+          "name": "The Bengal Military Police Act, 1892",
+          "actNumber": "5",
+          "actYear": "1892",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_5_00111_189205_1666334510811"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/19221 -> 123456789/496679",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+      "actNumber": "46",
+      "actYear": 2023,
+      "ourActId": "AC_CEN_5_23_00049_202346_1719552320687",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/20099",
+      "storedHandle": "123456789/20099",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496550",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496550",
+      "upstream": {
+        "handle": "123456789/496550",
+        "uuid": "72592ac7-d084-4545-95d3-0c98dc49fac3",
+        "name": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+        "actId": "AC_CEN_5_23_00049_202346_1719552320687",
+        "actNumber": "46",
+        "actYear": "2023",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "2023-12-25",
+        "issued": "2023-12-25",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496550",
+          "name": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+          "actNumber": "46",
+          "actYear": "2023",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_23_00049_202346_1719552320687"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/20099 -> 123456789/496550",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Bharatiya Nyaya Sanhita, 2023",
+      "actNumber": "45",
+      "actYear": 2023,
+      "ourActId": "AC_CEN_5_23_00048_2023-45_1719292564123",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/20062",
+      "storedHandle": "123456789/20062",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496548",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496548",
+      "upstream": {
+        "handle": "123456789/496548",
+        "uuid": "4bb3e636-ed67-4731-8fb1-7ebfd83e1584",
+        "name": "The Bharatiya Nyaya Sanhita, 2023",
+        "actId": "AC_CEN_5_23_00048_2023-45_1719292564123",
+        "actNumber": "45",
+        "actYear": "2023",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "2023-12-25",
+        "issued": "2023-12-25",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496548",
+          "name": "The Bharatiya Nyaya Sanhita, 2023",
+          "actNumber": "45",
+          "actYear": "2023",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_23_00048_2023-45_1719292564123"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/20062 -> 123456789/496548",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Bharatiya Sakshya Adhiniyam, 2023",
+      "actNumber": "47",
+      "actYear": 2023,
+      "ourActId": "AC_CEN_5_23_00049_2023-47_1719292804654",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/20063",
+      "storedHandle": "123456789/20063",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496549",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496549",
+      "upstream": {
+        "handle": "123456789/496549",
+        "uuid": "9e461245-2c13-4171-9d9d-267425c01e1d",
+        "name": "The Bharatiya Sakshya Adhiniyam, 2023",
+        "actId": "AC_CEN_5_23_00049_2023-47_1719292804654",
+        "actNumber": "47",
+        "actYear": "2023",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "2023-12-25",
+        "issued": "2023-12-25",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496549",
+          "name": "The Bharatiya Sakshya Adhiniyam, 2023",
+          "actNumber": "47",
+          "actYear": "2023",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_23_00049_2023-47_1719292804654"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/20063 -> 123456789/496549",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+      "actNumber": "30",
+      "actYear": 2020,
+      "ourActId": "AC_CEN_2_11_00032_202030_1602065217441",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/15618",
+      "storedHandle": "123456789/15618",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496254",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496254",
+      "upstream": {
+        "handle": "123456789/496254",
+        "uuid": "e4544076-6ee6-4d07-9e4e-9eb165dfac21",
+        "name": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+        "actId": "AC_CEN_2_11_00032_202030_1602065217441",
+        "actNumber": "30",
+        "actYear": "2020",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2020-09-28",
+        "issued": "2020-09-28",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496254",
+          "name": "The Bilateral Netting of Qualified Financial Contracts Act, 2020",
+          "actNumber": "30",
+          "actYear": "2020",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_11_00032_202030_1602065217441"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/15618 -> 123456789/496254",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Births, Deaths and Marriages Registration Act, 1886",
+      "actNumber": "06",
+      "actYear": 1886,
+      "ourActId": "AC_CEN_3_20_00045_188606_1523273337975",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2309",
+      "storedHandle": "123456789/2309",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496424",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496424",
+      "upstream": {
+        "handle": "123456789/496424",
+        "uuid": "e139476c-de97-40dc-98fd-e8796f2bcb38",
+        "name": "The Births, Deaths and Marriages Registration Act, 1886",
+        "actId": "AC_CEN_3_20_00045_188606_1523273337975",
+        "actNumber": "6",
+        "actYear": "1886",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "1886-03-08",
+        "issued": "1886-03-08",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496424",
+          "name": "The Births, Deaths and Marriages Registration Act, 1886",
+          "actNumber": "6",
+          "actYear": "1886",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00045_188606_1523273337975"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2309 -> 123456789/496424",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Cattle-Trespass Act, 1871",
+      "actNumber": "1",
+      "actYear": 1871,
+      "ourActId": "AC_CEN_23_62_00006_187101_1523268567263",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2294",
+      "storedHandle": "123456789/2294",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496147",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496147",
+      "upstream": {
+        "handle": "123456789/496147",
+        "uuid": "91822d67-14e4-465c-a0fe-554842ff855b",
+        "name": "The Cattle-Trespass Act, 1871",
+        "actId": "AC_CEN_23_62_00006_187101_1523268567263",
+        "actNumber": "1",
+        "actYear": "1871",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Agriculture and Farmers Welfare",
+        "repealed": "false",
+        "enactDate": "1871-01-13",
+        "issued": "1871-01-13",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496147",
+          "name": "The Cattle-Trespass Act, 1871",
+          "actNumber": "1",
+          "actYear": "1871",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_23_62_00006_187101_1523268567263"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2294 -> 123456789/496147",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Central Excise Act, 1944",
+      "actNumber": "01",
+      "actYear": 1944,
+      "ourActId": "AC_CEN_2_2_00036_A1944-01_1671705649438",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/19238",
+      "storedHandle": "123456789/19238",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496296",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496296",
+      "upstream": {
+        "handle": "123456789/496296",
+        "uuid": "b7de3500-7d8b-4954-b89e-d97687c868ad",
+        "name": "The Central Excise Act, 1944",
+        "actId": "AC_CEN_2_2_00036_A1944-01_1671705649438",
+        "actNumber": "1",
+        "actYear": "1944",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1944-02-24",
+        "issued": "1944-02-24",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496296",
+          "name": "The Central Excise Act, 1944",
+          "actNumber": "1",
+          "actYear": "1944",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_2_00036_A1944-01_1671705649438"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/19238 -> 123456789/496296",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+      "actNumber": "49",
+      "actYear": 2023,
+      "ourActId": "AC_CEN_3_20_00080_A2023-49_1704690560714",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/19721",
+      "storedHandle": "123456789/19721",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496462",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496462",
+      "upstream": {
+        "handle": "123456789/496462",
+        "uuid": "95e575e3-dbdb-46e7-b60e-5c2bcfbc93a2",
+        "name": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+        "actId": "AC_CEN_3_20_00080_A2023-49_1704690560714",
+        "actNumber": "49",
+        "actYear": "2023",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "2023-12-28",
+        "issued": "2023-12-28",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496462",
+          "name": "The Chief Election Commissioner And Other Election Commissioners (Appointment, Conditions of Service And Term of Office) Act, 2023",
+          "actNumber": "49",
+          "actYear": "2023",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00080_A2023-49_1704690560714"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/19721 -> 123456789/496462",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+      "actNumber": "27",
+      "actYear": 1986,
+      "ourActId": "AC_CEN_15_16_00009_198627_1517807326828",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1859",
+      "storedHandle": "123456789/1859",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496018",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496018",
+      "upstream": {
+        "handle": "123456789/496018",
+        "uuid": "7badcd70-5205-4a77-a8e5-636c11f9dce4",
+        "name": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+        "actId": "AC_CEN_15_16_00009_198627_1517807326828",
+        "actNumber": "27",
+        "actYear": "1986",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Coal",
+        "repealed": "false",
+        "enactDate": "1986-05-23",
+        "issued": "1986-05-23",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496018",
+          "name": "The Coal Mines Labour Welfare Fund (Repeal) Act, 1986",
+          "actNumber": "27",
+          "actYear": "1986",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_15_16_00009_198627_1517807326828"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1859 -> 123456789/496018",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Code of Civil Procedure, 1908",
+      "actNumber": "5",
+      "actYear": 1908,
+      "ourActId": "AC_CEN_3_20_00051_190805_1523340333624",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2191",
+      "storedHandle": "123456789/2191",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496430",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496430",
+      "upstream": {
+        "handle": "123456789/496430",
+        "uuid": "3d38ec80-965e-4df0-a2d2-3d97cb1dc702",
+        "name": "The Code of Civil Procedure, 1908",
+        "actId": "AC_CEN_3_20_00051_190805_1523340333624",
+        "actNumber": "5",
+        "actYear": "1908",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "1908-03-21",
+        "issued": "1908-03-21",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496430",
+          "name": "The Code of Civil Procedure, 1908",
+          "actNumber": "5",
+          "actYear": "1908",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00051_190805_1523340333624"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2191 -> 123456789/496430",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Code of Criminal Procedure, 1973",
+      "actNumber": "2",
+      "actYear": 1974,
+      "ourActId": "MHA_JUD_2022-09_ccp1973",
+      "storedUrl": "https://indiacode.gov.in/handle/123456789/549163",
+      "storedHandle": "123456789/549163",
+      "storedHandleStatus": 200,
+      "actIdIsUpstreamKey": false,
+      "classification": "HANDLE_STILL_CURRENT",
+      "evidence": "STORED_HANDLE_LIVE",
+      "resolvedHandle": "123456789/549163",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/549163",
+      "upstream": {
+        "handle": "123456789/549163",
+        "uuid": "02baf368-ffdf-459c-a189-e4819e0b833c",
+        "name": "THE CODE OF CRIMINAL PROCEDURE, 1973",
+        "actId": "AC_CG_61_334_00284_00284_1549531688370",
+        "actNumber": "2",
+        "actYear": "1974",
+        "collection": "ACT",
+        "stateName": "Chhattisgarh",
+        "ministryName": "State Government",
+        "repealed": "false",
+        "enactDate": "1974-01-25",
+        "issued": "1974-01-25",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/549163",
+          "name": "THE CODE OF CRIMINAL PROCEDURE, 1973",
+          "actNumber": "2",
+          "actYear": "1974",
+          "stateName": "Chhattisgarh",
+          "actId": "AC_CG_61_334_00284_00284_1549531688370"
+        }
+      ],
+      "sourceItemState": "Chhattisgarh",
+      "note": "the stored handle resolves and act number and year agree, but the item is the Chhattisgarh reproduction rather than the CENTRAL one",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Companies Act, 2013",
+      "actNumber": "18",
+      "actYear": 2013,
+      "ourActId": "AC_CEN_22_29_00008_201318_1517807327856",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2114",
+      "storedHandle": "123456789/2114",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496128",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496128",
+      "upstream": {
+        "handle": "123456789/496128",
+        "uuid": "f5bbbf6b-4247-400f-80fa-38c605132a8f",
+        "name": "The Companies Act, 2013",
+        "actId": "AC_CEN_22_29_00008_201318_1517807327856",
+        "actNumber": "18",
+        "actYear": "2013",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Corporate Affairs",
+        "repealed": "false",
+        "enactDate": "2013-08-29",
+        "issued": "2013-08-29",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496128",
+          "name": "The Companies Act, 2013",
+          "actNumber": "18",
+          "actYear": "2013",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_22_29_00008_201318_1517807327856"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2114 -> 123456789/496128",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Consumer Protection Act, 2019",
+      "actNumber": "35",
+      "actYear": 2019,
+      "ourActId": "AC_CEN_21_44_00007_201935_1596441164903",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/15256",
+      "storedHandle": "123456789/15256",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496115",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496115",
+      "upstream": {
+        "handle": "123456789/496115",
+        "uuid": "1b6c1754-47b1-411e-9607-1712a9caf368",
+        "name": "The Consumer Protection Act, 2019",
+        "actId": "AC_CEN_21_44_00007_201935_1596441164903",
+        "actNumber": "35",
+        "actYear": "2019",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Consumer Affairs, Food and Public Distribution",
+        "repealed": "false",
+        "enactDate": "2019-08-09",
+        "issued": "2019-08-09",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496115",
+          "name": "The Consumer Protection Act, 2019",
+          "actNumber": "35",
+          "actYear": "2019",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_21_44_00007_201935_1596441164903"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/15256 -> 123456789/496115",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Court-Fees Act, 1870",
+      "actNumber": "07",
+      "actYear": 1870,
+      "ourActId": "AC_CEN_3_3_00023_187007_1523268447465",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2293",
+      "storedHandle": "123456789/2293",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496482",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496482",
+      "upstream": {
+        "handle": "123456789/496482",
+        "uuid": "6f74d5d7-8017-443c-a33d-3db8544a494b",
+        "name": "The Court-Fees Act, 1870",
+        "actId": "AC_CEN_3_3_00023_187007_1523268447465",
+        "actNumber": "7",
+        "actYear": "1870",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "1870-03-11",
+        "issued": "1870-03-11",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496482",
+          "name": "The Court-Fees Act, 1870",
+          "actNumber": "7",
+          "actYear": "1870",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_3_00023_187007_1523268447465"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2293 -> 123456789/496482",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Customs Act,1962",
+      "actNumber": "52",
+      "actYear": 1962,
+      "ourActId": "AC_CEN_2_2_00042_196252_1534829466423",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2475",
+      "storedHandle": "123456789/2475",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496309",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496309",
+      "upstream": {
+        "handle": "123456789/496309",
+        "uuid": "5b38b7b8-6708-4630-85d2-8b14a28e53d3",
+        "name": "The Customs Act, 1962",
+        "actId": "AC_CEN_2_2_00042_196252_1534829466423",
+        "actNumber": "52",
+        "actYear": "1962",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1962-12-13",
+        "issued": "1962-12-13",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496309",
+          "name": "The Customs Act, 1962",
+          "actNumber": "52",
+          "actYear": "1962",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_2_00042_196252_1534829466423"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2475 -> 123456789/496309",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Delhi Municipal Corporation Act, 1957",
+      "actNumber": "66",
+      "actYear": 1957,
+      "ourActId": "AC_CEN_5_5_00028_195766_1517807321857",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1410",
+      "storedHandle": "123456789/1410",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496612",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496612",
+      "upstream": {
+        "handle": "123456789/496612",
+        "uuid": "1375b52d-c6cd-48c1-85ab-2e09b01ab654",
+        "name": "The Delhi Municipal Corporation Act, 1957",
+        "actId": "AC_CEN_5_5_00028_195766_1517807321857",
+        "actNumber": "66",
+        "actYear": "1957",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "1957-12-28",
+        "issued": "1957-12-28",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496612",
+          "name": "The Delhi Municipal Corporation Act, 1957",
+          "actNumber": "66",
+          "actYear": "1957",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_5_00028_195766_1517807321857"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1410 -> 123456789/496612",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Destructive Insects and Pests Act, 1914",
+      "actNumber": "02",
+      "actYear": 1914,
+      "ourActId": "AC_CEN_23_31_00008_191402_1523342057238",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2354",
+      "storedHandle": "123456789/2354",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496133",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496133",
+      "upstream": {
+        "handle": "123456789/496133",
+        "uuid": "b8568e38-977e-4269-a647-9ec73916af59",
+        "name": "The Destructive Insects and Pests Act, 1914",
+        "actId": "AC_CEN_23_31_00008_191402_1523342057238",
+        "actNumber": "2",
+        "actYear": "1914",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Agriculture and Farmers Welfare",
+        "repealed": "false",
+        "enactDate": "1914-02-03",
+        "issued": "1914-02-03",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496133",
+          "name": "The Destructive Insects and Pests Act, 1914",
+          "actNumber": "2",
+          "actYear": "1914",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_23_31_00008_191402_1523342057238"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2354 -> 123456789/496133",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Digital Personal Data Protection Act, 2023.",
+      "actNumber": "22",
+      "actYear": 2023,
+      "ourActId": "AC_CEN_45_0_00003_2023-22_1763464807080",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/22037",
+      "storedHandle": "123456789/22037",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496508",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496508",
+      "upstream": {
+        "handle": "123456789/496508",
+        "uuid": "c058fa9f-eaf0-4ca3-98f1-3443b087bca9",
+        "name": "The Digital Personal Data Protection Act, 2023.",
+        "actId": "AC_CEN_45_0_00003_2023-22_1763464807080",
+        "actNumber": "22",
+        "actYear": "2023",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Electronics and Information Technology",
+        "repealed": "false",
+        "enactDate": "2023-08-11",
+        "issued": "2023-08-11",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496508",
+          "name": "The Digital Personal Data Protection Act, 2023.",
+          "actNumber": "22",
+          "actYear": "2023",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_45_0_00003_2023-22_1763464807080"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/22037 -> 123456789/496508",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Farm Laws Repeal Act, 2021",
+      "actNumber": "40",
+      "actYear": 2021,
+      "ourActId": "AC_CEN_23_31_00012_202140_1638437177885",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/16976",
+      "storedHandle": "123456789/16976",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496136",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496136",
+      "upstream": {
+        "handle": "123456789/496136",
+        "uuid": "d04e7411-8d1e-47ef-ad36-0b3c1216bb0c",
+        "name": "The Farm Laws Repeal Act, 2021",
+        "actId": "AC_CEN_23_31_00012_202140_1638437177885",
+        "actNumber": "40",
+        "actYear": "2021",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Agriculture and Farmers Welfare",
+        "repealed": "false",
+        "enactDate": "2021-11-30",
+        "issued": "2021-11-30",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496136",
+          "name": "The Farm Laws Repeal Act, 2021",
+          "actNumber": "40",
+          "actYear": "2021",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_23_31_00012_202140_1638437177885"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/16976 -> 123456789/496136",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Health Security Se National Security Cess Act, 2025",
+      "actNumber": "35",
+      "actYear": 2025,
+      "ourActId": "AC_CEN_2_2_00037_2025-35_1771398637863",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/22084",
+      "storedHandle": "123456789/22084",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496299",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496299",
+      "upstream": {
+        "handle": "123456789/496299",
+        "uuid": "e3988e15-800a-4b73-9d53-3e482682cd29",
+        "name": "The Health Security Se National Security Cess Act, 2025",
+        "actId": "AC_CEN_2_2_00037_2025-35_1771398637863",
+        "actNumber": "35",
+        "actYear": "2025",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2025-12-15",
+        "issued": "2025-12-15",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496299",
+          "name": "The Health Security Se National Security Cess Act, 2025",
+          "actNumber": "35",
+          "actYear": "2025",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_2_00037_2025-35_1771398637863"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/22084 -> 123456789/496299",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Indian Christian Marriage Act, 1872",
+      "actNumber": "15",
+      "actYear": 1872,
+      "ourActId": "AC_CEN_3_20_00036_187215_1523269135126",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2186",
+      "storedHandle": "123456789/2186",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496414",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496414",
+      "upstream": {
+        "handle": "123456789/496414",
+        "uuid": "23cbf968-bc98-4b60-984f-2fd6b3e665c2",
+        "name": "The Indian Christian Marriage Act, 1872",
+        "actId": "AC_CEN_3_20_00036_187215_1523269135126",
+        "actNumber": "15",
+        "actYear": "1872",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "1872-07-18",
+        "issued": "1872-07-18",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496414",
+          "name": "The Indian Christian Marriage Act, 1872",
+          "actNumber": "15",
+          "actYear": "1872",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00036_187215_1523269135126"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2186 -> 123456789/496414",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Indian Evidence Act, 1872",
+      "actNumber": "1",
+      "actYear": 1872,
+      "ourActId": "INDIACODE_547533_iea_1872",
+      "storedUrl": "https://indiacode.gov.in/handle/123456789/547533",
+      "storedHandle": "123456789/547533",
+      "storedHandleStatus": 200,
+      "actIdIsUpstreamKey": false,
+      "classification": "HANDLE_STILL_CURRENT",
+      "evidence": "STORED_HANDLE_LIVE",
+      "resolvedHandle": "123456789/547533",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/547533",
+      "upstream": {
+        "handle": "123456789/547533",
+        "uuid": "83a3b119-004c-44d2-a4f0-ad180e69ec6c",
+        "name": "INDIAN BARE ACTS Indian Evidence Act, 1872",
+        "actId": "AC_CH_60_1033_00009_00009_1598418886357",
+        "actNumber": "1",
+        "actYear": "1872",
+        "collection": "ACT",
+        "stateName": "Chandigarh",
+        "ministryName": "NO MINISTRY",
+        "repealed": "false",
+        "enactDate": "1872-03-15",
+        "issued": "1872-03-15",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/547533",
+          "name": "INDIAN BARE ACTS Indian Evidence Act, 1872",
+          "actNumber": "1",
+          "actYear": "1872",
+          "stateName": "Chandigarh",
+          "actId": "AC_CH_60_1033_00009_00009_1598418886357"
+        }
+      ],
+      "sourceItemState": "Chandigarh",
+      "note": "the stored handle resolves and act number and year agree, but the item is the Chandigarh reproduction rather than the CENTRAL one",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Indian Forest Act, 1927",
+      "actNumber": "16",
+      "actYear": 1927,
+      "ourActId": "AC_CEN_16_0_00013_192716_1523350029217",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2388",
+      "storedHandle": "123456789/2388",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496020",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496020",
+      "upstream": {
+        "handle": "123456789/496020",
+        "uuid": "37dca006-38b2-4bce-aa46-7bfedd805224",
+        "name": "The Indian Forest Act, 1927",
+        "actId": "AC_CEN_16_0_00013_192716_1523350029217",
+        "actNumber": "16",
+        "actYear": "1927",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Environment, Forest and Climate Change",
+        "repealed": "false",
+        "enactDate": "1927-09-21",
+        "issued": "1927-09-21",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496020",
+          "name": "The Indian Forest Act, 1927",
+          "actNumber": "16",
+          "actYear": "1927",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_16_0_00013_192716_1523350029217"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2388 -> 123456789/496020",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Indian Institute of Petroleum and Energy Act, 2017",
+      "actNumber": "03",
+      "actYear": 2018,
+      "ourActId": "AC_CEN_32_0_00011_201803_1523880255984",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2433",
+      "storedHandle": "123456789/2433",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496344",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496344",
+      "upstream": {
+        "handle": "123456789/496344",
+        "uuid": "1255efa3-568b-447b-b3cd-8806785eacb5",
+        "name": "The Indian Institute of Petroleum and Energy Act, 2017",
+        "actId": "AC_CEN_32_0_00011_201803_1523880255984",
+        "actNumber": "3",
+        "actYear": "2018",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Petroleum and Natural Gas",
+        "repealed": "false",
+        "enactDate": "2018-01-05",
+        "issued": "2018-01-05",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496344",
+          "name": "The Indian Institute of Petroleum and Energy Act, 2017",
+          "actNumber": "3",
+          "actYear": "2018",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_32_0_00011_201803_1523880255984"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2433 -> 123456789/496344",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Indian Penal Code, 1860",
+      "actNumber": "45",
+      "actYear": 1860,
+      "ourActId": "INDIACODE_547812_ipc_act",
+      "storedUrl": "https://indiacode.gov.in/handle/123456789/547812",
+      "storedHandle": "123456789/547812",
+      "storedHandleStatus": 200,
+      "actIdIsUpstreamKey": false,
+      "classification": "HANDLE_STILL_CURRENT",
+      "evidence": "STORED_HANDLE_LIVE",
+      "resolvedHandle": "123456789/547812",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/547812",
+      "upstream": {
+        "handle": "123456789/547812",
+        "uuid": "06909787-e38f-44a0-bf46-8cb0a3405a45",
+        "name": "THE INDIAN PENAL CODE",
+        "actId": "AC_CH_60_1453_000010_000010_1598252612726",
+        "actNumber": "45",
+        "actYear": "1860",
+        "collection": "ACT",
+        "stateName": "Chandigarh",
+        "ministryName": "NO MINISTRY",
+        "repealed": "false",
+        "enactDate": "1860-10-06",
+        "issued": "1860-10-06",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/547812",
+          "name": "THE INDIAN PENAL CODE",
+          "actNumber": "45",
+          "actYear": "1860",
+          "stateName": "Chandigarh",
+          "actId": "AC_CH_60_1453_000010_000010_1598252612726"
+        }
+      ],
+      "sourceItemState": "Chandigarh",
+      "note": "the stored handle resolves and act number and year agree, but the item is the Chandigarh reproduction rather than the CENTRAL one",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+      "actNumber": "53",
+      "actYear": 2003,
+      "ourActId": "AC_CEN_2_11_00048_200353_1517807326053",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2026",
+      "storedHandle": "123456789/2026",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496269",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496269",
+      "upstream": {
+        "handle": "123456789/496269",
+        "uuid": "5814863f-67bc-447d-93c1-a579c808e0a3",
+        "name": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+        "actId": "AC_CEN_2_11_00048_200353_1517807326053",
+        "actNumber": "53",
+        "actYear": "2003",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2003-12-30",
+        "issued": "2003-12-30",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496269",
+          "name": "The Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003",
+          "actNumber": "53",
+          "actYear": "2003",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_11_00048_200353_1517807326053"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2026 -> 123456789/496269",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Insurance Act, 1938",
+      "actNumber": "04",
+      "actYear": 1938,
+      "ourActId": "AC_CEN_2_33_00044_193804_1523351752525",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2304",
+      "storedHandle": "123456789/2304",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496320",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496320",
+      "upstream": {
+        "handle": "123456789/496320",
+        "uuid": "2b69e969-fa80-45d4-8b30-9aab7fc7f47a",
+        "name": "The Insurance Act, 1938",
+        "actId": "AC_CEN_2_33_00044_193804_1523351752525",
+        "actNumber": "4",
+        "actYear": "1938",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1938-02-26",
+        "issued": "1938-02-26",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496320",
+          "name": "The Insurance Act, 1938",
+          "actNumber": "4",
+          "actYear": "1938",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_33_00044_193804_1523351752525"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2304 -> 123456789/496320",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Limitation Act, 1963",
+      "actNumber": "36",
+      "actYear": 1963,
+      "ourActId": "AC_CEN_3_20_00005_196336_1517807319297",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1565",
+      "storedHandle": "123456789/1565",
+      "storedHandleStatus": 200,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496389",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496389",
+      "upstream": {
+        "handle": "123456789/496389",
+        "uuid": "5e69d11a-63e7-4a63-b86f-e063bcdeaee2",
+        "name": "The Limitation Act, 1963",
+        "actId": "AC_CEN_3_20_00005_196336_1517807319297",
+        "actNumber": "36",
+        "actYear": "1963",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "1963-10-05",
+        "issued": "1963-10-05",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496389",
+          "name": "The Limitation Act, 1963",
+          "actNumber": "36",
+          "actYear": "1963",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00005_196336_1517807319297"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1565 -> 123456789/496389 (the stored handle 123456789/1565 still resolves, but to \"Rule\" — collection null, no act number — which is not an Act item)",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Madras Rent and Revenue Sales Act, 1839",
+      "actNumber": "07",
+      "actYear": 1839,
+      "ourActId": "AC_CEN_5_5_00114_183907_1691478563347",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/19545",
+      "storedHandle": "123456789/19545",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496682",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496682",
+      "upstream": {
+        "handle": "123456789/496682",
+        "uuid": "cbb70fd6-1658-4734-aa3d-fb6607df3ac1",
+        "name": "The Madras Rent and Revenue Sales Act, 1839",
+        "actId": "AC_CEN_5_5_00114_183907_1691478563347",
+        "actNumber": "7",
+        "actYear": "1839",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Home Affairs",
+        "repealed": "false",
+        "enactDate": "1839-03-18",
+        "issued": "1839-03-18",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496682",
+          "name": "The Madras Rent and Revenue Sales Act, 1839",
+          "actNumber": "7",
+          "actYear": "1839",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_5_5_00114_183907_1691478563347"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/19545 -> 123456789/496682",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Merchant Shipping Act, 2025",
+      "actNumber": "24",
+      "actYear": 2025,
+      "ourActId": "AC_CEN_198_0_00006_2025-24_1777264737276",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/22147",
+      "storedHandle": "123456789/22147",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496078",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496078",
+      "upstream": {
+        "handle": "123456789/496078",
+        "uuid": "5a5bb080-385a-4542-8b8e-ac42e773708e",
+        "name": "The Merchant Shipping Act, 2025",
+        "actId": "AC_CEN_198_0_00006_2025-24_1777264737276",
+        "actNumber": "24",
+        "actYear": "2025",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Ports, Shipping and Waterways",
+        "repealed": "false",
+        "enactDate": "2025-08-18",
+        "issued": "2025-08-18",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496078",
+          "name": "The Merchant Shipping Act, 2025",
+          "actNumber": "24",
+          "actYear": "2025",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_198_0_00006_2025-24_1777264737276"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/22147 -> 123456789/496078",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Motor Vehicles Act, 1988",
+      "actNumber": "59",
+      "actYear": 1988,
+      "ourActId": "AC_CEN_30_42_00009_198859_1517807326286",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1798",
+      "storedHandle": "123456789/1798",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/619305",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/619305",
+      "upstream": {
+        "handle": "123456789/619305",
+        "uuid": "2bbbcc40-38f1-4b15-ae94-646b85db4ee7",
+        "name": "The Motor Vehicles Act, 1988",
+        "actId": "AC_CEN_30_42_00009_198859_1517807326286",
+        "actNumber": "59",
+        "actYear": "1988",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Road Transport and Highways",
+        "repealed": "false",
+        "enactDate": "1988-10-14",
+        "issued": "1988-10-14",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/619305",
+          "name": "The Motor Vehicles Act, 1988",
+          "actNumber": "59",
+          "actYear": "1988",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_30_42_00009_198859_1517807326286"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1798 -> 123456789/619305",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Mussalman Wakf (Repeal) Act, 2025",
+      "actNumber": "15",
+      "actYear": 2025,
+      "ourActId": "AC_CEN_44_0_00005_A2025-15_1745400820389",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/21048",
+      "storedHandle": "123456789/21048",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496506",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496506",
+      "upstream": {
+        "handle": "123456789/496506",
+        "uuid": "21c04350-dcd1-4a44-8680-25e9d8b8853b",
+        "name": "The Mussalman Wakf (Repeal) Act, 2025",
+        "actId": "AC_CEN_44_0_00005_A2025-15_1745400820389",
+        "actNumber": "15",
+        "actYear": "2025",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Minority Affairs",
+        "repealed": "false",
+        "enactDate": "2025-04-05",
+        "issued": "2025-04-05",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496506",
+          "name": "The Mussalman Wakf (Repeal) Act, 2025",
+          "actNumber": "15",
+          "actYear": "2025",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_44_0_00005_A2025-15_1745400820389"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/21048 -> 123456789/496506",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+      "actNumber": "61",
+      "actYear": 1985,
+      "ourActId": "AC_CEN_2_2_00029_198561_1517807326222",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1791",
+      "storedHandle": "123456789/1791",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496289",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496289",
+      "upstream": {
+        "handle": "123456789/496289",
+        "uuid": "fe1456eb-e02e-41f2-8338-f134677bbe99",
+        "name": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+        "actId": "AC_CEN_2_2_00029_198561_1517807326222",
+        "actNumber": "61",
+        "actYear": "1985",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1985-09-16",
+        "issued": "1985-09-16",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496289",
+          "name": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+          "actNumber": "61",
+          "actYear": "1985",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_2_00029_198561_1517807326222"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1791 -> 123456789/496289",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The National Bank for Financing Infrastructure and Development Act, 2021",
+      "actNumber": "17",
+      "actYear": 2021,
+      "ourActId": "AC_CEN_2_33_00047_202117_1619088293867",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/16802",
+      "storedHandle": "123456789/16802",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496323",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496323",
+      "upstream": {
+        "handle": "123456789/496323",
+        "uuid": "040e5e03-bbf4-46d4-a75f-d032e28296d6",
+        "name": "The National Bank for Financing Infrastructure and Development Act, 2021",
+        "actId": "AC_CEN_2_33_00047_202117_1619088293867",
+        "actNumber": "17",
+        "actYear": "2021",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2021-03-28",
+        "issued": "2021-03-28",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496323",
+          "name": "The National Bank for Financing Infrastructure and Development Act, 2021",
+          "actNumber": "17",
+          "actYear": "2021",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_33_00047_202117_1619088293867"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/16802 -> 123456789/496323",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Negotiable Instruments Act, 1881",
+      "actNumber": "26",
+      "actYear": 1881,
+      "ourActId": "AC_CEN_2_33_00042_00042_1523271998701",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2189",
+      "storedHandle": "123456789/2189",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496318",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496318",
+      "upstream": {
+        "handle": "123456789/496318",
+        "uuid": "38b01c2d-f1b8-4b1f-a8bf-86b4da3b72a0",
+        "name": "The Negotiable Instruments Act, 1881",
+        "actId": "AC_CEN_2_33_00042_00042_1523271998701",
+        "actNumber": "26",
+        "actYear": "1881",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1881-12-09",
+        "issued": "1881-12-09",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496318",
+          "name": "The Negotiable Instruments Act, 1881",
+          "actNumber": "26",
+          "actYear": "1881",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_33_00042_00042_1523271998701"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2189 -> 123456789/496318",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Northern India Canal and Drainage Act, 1873",
+      "actNumber": "08",
+      "actYear": 1873,
+      "ourActId": "AC_CEN_7_0_00018_187308_1523269512549",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2282",
+      "storedHandle": "123456789/2282",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496713",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496713",
+      "upstream": {
+        "handle": "123456789/496713",
+        "uuid": "258f712a-cb95-40d9-9cc6-8462ad9d45a0",
+        "name": "The Northern India Canal and Drainage Act, 1873",
+        "actId": "AC_CEN_7_0_00018_187308_1523269512549",
+        "actNumber": "8",
+        "actYear": "1873",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Jal Shaktri",
+        "repealed": "false",
+        "enactDate": "1873-02-11",
+        "issued": "1873-02-11",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496713",
+          "name": "The Northern India Canal and Drainage Act, 1873",
+          "actNumber": "8",
+          "actYear": "1873",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_7_0_00018_187308_1523269512549"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2282 -> 123456789/496713",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Repealing and Amending (Second) Act, 2015",
+      "actNumber": "19",
+      "actYear": 2015,
+      "ourActId": "AC_CEN_3_20_00074_201519_1571722895859",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/12143",
+      "storedHandle": "123456789/12143",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496452",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496452",
+      "upstream": {
+        "handle": "123456789/496452",
+        "uuid": "dd08edb5-fbdf-4ebf-afff-113a10bdb1ea",
+        "name": "The Repealing and Amending (Second) Act, 2015",
+        "actId": "AC_CEN_3_20_00074_201519_1571722895859",
+        "actNumber": "19",
+        "actYear": "2015",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "2015-05-14",
+        "issued": "2015-05-14",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496452",
+          "name": "The Repealing and Amending (Second) Act, 2015",
+          "actNumber": "19",
+          "actYear": "2015",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00074_201519_1571722895859"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/12143 -> 123456789/496452",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Repealing and Amending (Second) Act, 2017",
+      "actNumber": "04",
+      "actYear": 2018,
+      "ourActId": "AC_CEN_3_20_00068_201804_1523879885682",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2434",
+      "storedHandle": "123456789/2434",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496443",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496443",
+      "upstream": {
+        "handle": "123456789/496443",
+        "uuid": "35506757-6282-47a9-89c5-f1015c77ced8",
+        "name": "The Repealing and Amending Act (Second) Act, 2017",
+        "actId": "AC_CEN_3_20_00068_201804_1523879885682",
+        "actNumber": "4",
+        "actYear": "2018",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "2018-01-05",
+        "issued": "2018-01-05",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496443",
+          "name": "The Repealing and Amending Act (Second) Act, 2017",
+          "actNumber": "4",
+          "actYear": "2018",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00068_201804_1523879885682"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2434 -> 123456789/496443",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Repealing and Amending Act, 2015",
+      "actNumber": "17",
+      "actYear": 2015,
+      "ourActId": "AC_CEN_3_20_00072_201517_1571392199791",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/12142",
+      "storedHandle": "123456789/12142",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496449",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496449",
+      "upstream": {
+        "handle": "123456789/496449",
+        "uuid": "416c8e6b-a06d-49e4-bda6-76560511baad",
+        "name": "The Repealing and Amending Act, 2015",
+        "actId": "AC_CEN_3_20_00072_201517_1571392199791",
+        "actNumber": "17",
+        "actYear": "2015",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "2015-05-13",
+        "issued": "2015-05-13",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496449",
+          "name": "The Repealing and Amending Act, 2015",
+          "actNumber": "17",
+          "actYear": "2015",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00072_201517_1571392199791"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/12142 -> 123456789/496449",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Repealing and Amending Act, 2017",
+      "actNumber": "02",
+      "actYear": 2018,
+      "ourActId": "AC_CEN_3_20_00067_201802_1523879770599",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2432",
+      "storedHandle": "123456789/2432",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496442",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496442",
+      "upstream": {
+        "handle": "123456789/496442",
+        "uuid": "6e5486b4-3f6c-4b92-9bb8-bc233017ee5f",
+        "name": "The Repealing and Amending Act, 2017",
+        "actId": "AC_CEN_3_20_00067_201802_1523879770599",
+        "actNumber": "2",
+        "actYear": "2018",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "2018-01-05",
+        "issued": "2018-01-05",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496442",
+          "name": "The Repealing and Amending Act, 2017",
+          "actNumber": "2",
+          "actYear": "2018",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_20_00067_201802_1523879770599"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2432 -> 123456789/496442",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Representation of the People Act, 1951",
+      "actNumber": "43",
+      "actYear": 1951,
+      "ourActId": "AC_CEN_3_81_00001_195143_1517807327542",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2096",
+      "storedHandle": "123456789/2096",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496502",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496502",
+      "upstream": {
+        "handle": "123456789/496502",
+        "uuid": "c6952b2d-766b-49df-8217-41b17a026fd5",
+        "name": "The Representation of the People Act, 1951",
+        "actId": "AC_CEN_3_81_00001_195143_1517807327542",
+        "actNumber": "43",
+        "actYear": "1951",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Law and Justice",
+        "repealed": "false",
+        "enactDate": "1951-07-17",
+        "issued": "1951-07-17",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496502",
+          "name": "The Representation of the People Act, 1951",
+          "actNumber": "43",
+          "actYear": "1951",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_3_81_00001_195143_1517807327542"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2096 -> 123456789/496502",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Reserve Bank of India Act, 1934",
+      "actNumber": "02",
+      "actYear": 1934,
+      "ourActId": "AC_CEN_2_33_00043_193402_1523351015027",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/2398",
+      "storedHandle": "123456789/2398",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496319",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496319",
+      "upstream": {
+        "handle": "123456789/496319",
+        "uuid": "3f9f5c4e-dce7-4144-b5ac-d2cc995b1761",
+        "name": "The Reserve Bank of India Act, 1934",
+        "actId": "AC_CEN_2_33_00043_193402_1523351015027",
+        "actNumber": "2",
+        "actYear": "1934",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "1934-03-06",
+        "issued": "1934-03-06",
+        "sectionCount": "0"
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496319",
+          "name": "The Reserve Bank of India Act, 1934",
+          "actNumber": "2",
+          "actYear": "1934",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_33_00043_193402_1523351015027"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/2398 -> 123456789/496319",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Sick Industrial Companies (Special Provisions) Repeal Act, 2003",
+      "actNumber": "01",
+      "actYear": 2004,
+      "ourActId": "AC_CEN_2_11_00026_200401_1517807322103",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1414",
+      "storedHandle": "123456789/1414",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496243",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496243",
+      "upstream": {
+        "handle": "123456789/496243",
+        "uuid": "fe7be826-67e9-41e3-b9bb-c115aeba973d",
+        "name": "The Sick Industrial Companies (Special Provisions) Repeal Act, 2003",
+        "actId": "AC_CEN_2_11_00026_200401_1517807322103",
+        "actNumber": "1",
+        "actYear": "2004",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2004-01-01",
+        "issued": "2004-01-01",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496243",
+          "name": "The Sick Industrial Companies (Special Provisions) Repeal Act, 2003",
+          "actNumber": "1",
+          "actYear": "2004",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_11_00026_200401_1517807322103"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1414 -> 123456789/496243",
+      "population": "DEAD_HANDLE"
+    },
+    {
+      "act": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+      "actNumber": "58",
+      "actYear": 2002,
+      "ourActId": "AC_CEN_2_11_00012_200258_1517807319709",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1889",
+      "storedHandle": "123456789/1889",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496231",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496231",
+      "upstream": {
+        "handle": "123456789/496231",
+        "uuid": "94877ed9-0ded-4eaa-9419-f75e853d0f56",
+        "name": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+        "actId": "AC_CEN_2_11_00012_200258_1517807319709",
+        "actNumber": "58",
+        "actYear": "2002",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Finance",
+        "repealed": "false",
+        "enactDate": "2002-12-17",
+        "issued": "2002-12-17",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496231",
+          "name": "The Unit Trust of India (Transfer of Undertaking and Repeal) Act, 2002",
+          "actNumber": "58",
+          "actYear": "2002",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_2_11_00012_200258_1517807319709"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1889 -> 123456789/496231",
+      "population": "CONTROL"
+    },
+    {
+      "act": "The Wild Life (Protection) Act, 1972",
+      "actNumber": "53",
+      "actYear": 1972,
+      "ourActId": "AC_CEN_16_18_00007_197253_1517807324579",
+      "storedUrl": "https://www.indiacode.nic.in/handle/123456789/1726",
+      "storedHandle": "123456789/1726",
+      "storedHandleStatus": 404,
+      "actIdIsUpstreamKey": true,
+      "classification": "MOVED_OFFICIAL_HANDLE",
+      "evidence": "ACT_ID",
+      "resolvedHandle": "123456789/496026",
+      "resolvedUrl": "https://indiacode.gov.in/handle/123456789/496026",
+      "upstream": {
+        "handle": "123456789/496026",
+        "uuid": "3df23bd4-5433-4baf-92e9-56b72f4f1008",
+        "name": "The Wild Life (Protection) Act, 1972",
+        "actId": "AC_CEN_16_18_00007_197253_1517807324579",
+        "actNumber": "53",
+        "actYear": "1972",
+        "collection": "ACT",
+        "stateName": "CENTRAL",
+        "ministryName": "Ministry of Environment, Forest and Climate Change",
+        "repealed": "false",
+        "enactDate": "1972-09-09",
+        "issued": "1972-09-09",
+        "sectionCount": null
+      },
+      "candidates": [
+        {
+          "handle": "123456789/496026",
+          "name": "The Wild Life (Protection) Act, 1972",
+          "actNumber": "53",
+          "actYear": "1972",
+          "stateName": "CENTRAL",
+          "actId": "AC_CEN_16_18_00007_197253_1517807324579"
+        }
+      ],
+      "sourceItemState": "CENTRAL",
+      "note": "act_id matched byte-for-byte; act number and year agree; handle 123456789/1726 -> 123456789/496026",
+      "population": "DEAD_HANDLE"
+    }
+  ]
+}

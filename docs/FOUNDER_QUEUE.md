@@ -7182,3 +7182,39 @@ human verification vouches and the eCourts fetch ledger. Escrow the key and that
 flips. Until then the encryption protects confidentiality **and weakens
 recoverability**, which is the honest description of the trade and the reason
 this item is still here.
+
+---
+
+## FQ-CITE-2010-7-SCC-626 — one citation needs a human with the law report · NEW2, 31 Aug 2026
+
+**What is needed:** someone with access to **Supreme Court Cases, (2010) 7 SCC
+626**, to read the page and say which judgment is reported there.
+
+**Why a machine cannot close it.** The discriminating fact is a page number in a
+commercial law report. SCC is Eastern Book Company's copy-edited edition, which
+`CLAUDE.md` forbids this corpus from holding (_EBC v. D.B. Modak_), and every
+source we are authorised to use paginates in **SCR**, not SCC — India Code
+carries statutes, and the Supreme Court's own reports are SCR. No primary source
+available to us states what is printed at that citation.
+
+**The conflict.** _Madhu S v. Travancore Devaswom Board_ (Kerala HC, 4 Jul 2023)
+cites it as _Union of India v. National Confederation for Blind_. Our resolver
+pins it to _Govt. of India v. Ravi Prakash Gupta_ (SC, 7 Jul 2010).
+
+**What was built anyway.** The full evidence packet is assembled and committed:
+`docs/ai/new2-r14-followup/human-review-citation-2010-7-scc-626.json`. It carries
+both candidate identities, the citing extract, the alias and citation-key rows,
+and a census of all 236 held citing contexts — 158 name _Ravi Prakash Gupta_
+across 17 courts, 5 name the blind across 2. It also shows the citing sentence is
+internally inconsistent on a neighbouring citation we CAN check. The corpus leans
+one way and the packet says so; leaning is not resolution and no edge was
+written.
+
+**What stays broken without it.** Nothing user-facing. The pin is a candidate,
+`cited_judgment_id` is NULL, and citation bulk apply is on HOLD for unrelated
+reasons. This is one row in a 1.5M-row candidate, named rather than averaged
+away, so that it is not silently applied later.
+
+**Where it plugs in:** the answer goes into the packet's `disposition` and the
+edge is either written or refused deliberately. Five minutes for anyone with an
+SCC volume or a subscription.
