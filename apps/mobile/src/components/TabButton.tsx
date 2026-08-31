@@ -125,6 +125,24 @@ export const tabBarStyles = StyleSheet.create({
   bar: { flexDirection: 'row', paddingBottom: size.tabBarInset },
 });
 
+/**
+ * THE BAR'S BOTTOM CLEARANCE, and `size.tabBarInset` is its FLOOR rather than
+ * its value.
+ *
+ * Until 31 Aug 2026 the bar padded a flat 30dp, which is the iOS home indicator
+ * and nothing else. Measured on a physical Galaxy S24 (Android 16, three-button
+ * navigation): the system navigation bar owns y2205-2340 of a 2340px screen
+ * while the tab row ran to y2256 -- so the label row, `Today` / `Search` /
+ * `Matters`, was drawn INSIDE the navigation bar beside Android's own buttons.
+ *
+ * `Math.max` and not a plain swap: a device reporting a smaller bottom inset
+ * than 30dp must not tighten the bar below the spacing it already ships with.
+ * The token therefore still governs wherever the system asks for less.
+ */
+export function tabBarPaddingBottom(insetBottom: number): number {
+  return Math.max(size.tabBarInset, insetBottom);
+}
+
 const styles = StyleSheet.create({
   /** The share of the bar. Must be on the host — see `hostStyle`. */
   tabHost: { flex: 1 },

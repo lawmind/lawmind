@@ -160,9 +160,21 @@ export function SearchScreen({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   /**
-   * `network`/`timeout` from `api/client.ts` mean OFFLINE — no request reached
-   * the server at all. Anything else (e.g. `INVALID_QUERY`) is a real answer
-   * FROM the server and must not be told to the advocate as connectivity.
+   * ONLY `network` MEANS OFFLINE. `timeout` DOES NOT, and saying so was wrong
+   * until 31 Aug 2026.
+   *
+   * The old rule folded `timeout` in here on the premise that both "mean no
+   * request reached the server at all". Measured on a physical Galaxy S24
+   * against the local API: `POST /search` was answered
+   * `status 200, duration_ms 15334` while the phone showed "You appear to be
+   * offline" — full WiFi, `/me` and `/matters` succeeding either side of it.
+   * The request reached the server, the server answered it, and the client had
+   * simply stopped waiting at its own 15s budget.
+   *
+   * Telling an advocate in a court corridor that they are offline when they are
+   * not is the same class of error as any other untruthful state: they act on
+   * it, and what they do next (move, hunt for signal, give up on the search) is
+   * wasted. A timeout is OUR limit, not a fact about their connection.
    */
   const [failureOffline, setFailureOffline] = useState(false);
   /**
@@ -288,13 +300,17 @@ export function SearchScreen({
        * kept apart deliberately.
        *
        * AND A REACHABILITY FAILURE IS NOT A VALIDATION FAILURE EITHER. `network`
-       * and `timeout` (`api/client.ts`) mean no request reached the server;
-       * anything else is a real answer the server gave, and telling the
-       * advocate "we could not reach the corpus" about it would be false.
+       * (`api/client.ts`) means no response arrived at all; anything else is a
+       * real answer the server gave, and telling the advocate "we could not
+       * reach the corpus" about it would be false.
+       *
+       * `timeout` is deliberately NOT offline — see the note on `failureOffline`.
+       * It renders as "This search could not complete", which is true whether
+       * the delay was ours, the server's, or the network's.
        */
       if (!response.ok) {
         setFailure(response.error.message);
-        setFailureOffline(response.error.code === 'network' || response.error.code === 'timeout');
+        setFailureOffline(response.error.code === 'network');
         setPhase('failed');
         return;
       }

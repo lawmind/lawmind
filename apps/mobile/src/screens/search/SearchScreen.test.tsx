@@ -508,6 +508,34 @@ describe('SearchScreen — a reachability failure reads differently from a serve
     expect(await screen.findByText('You appear to be offline')).toBeTruthy();
   });
 
+  /**
+   * THE MIDDLE CASE, and the one that was missing while the bug shipped.
+   *
+   * This suite tested `network` and it tested `INVALID_QUERY`, so both ends
+   * were pinned and `timeout` — which sat between them and was folded in with
+   * `network` — was asserted by nobody.
+   *
+   * Reproduced on a physical Galaxy S24, 31 Aug 2026: the API answered
+   * `POST /search` with `status 200` in 15,334ms against the client's own
+   * 15,000ms budget, and the phone — on full WiFi, with `/me` and `/matters`
+   * succeeding either side of it — told the advocate they were offline. The
+   * request reached the server and the server answered it.
+   */
+  it('does not claim offline when the deadline was ours rather than the network', async () => {
+    search.mockResolvedValue({
+      ok: false,
+      error: {
+        code: 'timeout',
+        message: 'The search took longer than we wait for. It may still be running.',
+      },
+    });
+    await render(<SearchScreen />);
+    await runSearch('anything');
+
+    expect(await screen.findByText('This search could not complete')).toBeTruthy();
+    expect(screen.queryByText('You appear to be offline')).toBeNull();
+  });
+
   it('does not claim offline for a real answer the server gave', async () => {
     search.mockResolvedValue({
       ok: false,

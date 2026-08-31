@@ -207,3 +207,57 @@ describe('the panel never rates the judgment', () => {
     expect(screen.queryByText(/2 of 2/)).toBeNull();
   });
 });
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ONE ROW PER AUTHORITY, NOT ONE PER MENTION.
+ *
+ * Reproduced on a physical Galaxy S24, 31 Aug 2026, opening Kesavananda
+ * Bharati (`2e3d517c`, 2,878,447 characters). `judgment_citations` holds one
+ * row per citation OCCURRENCE, so that judgment's 47 rows cover 44 distinct
+ * authorities — and React logged "Encountered two children with the same key"
+ * for exactly the 3 repeated ids. React's documented response to a duplicate
+ * key is that children "may be duplicated and/or omitted", and an omitted row
+ * here is an authority the advocate never learns the bench relied on.
+ *
+ * The duplicate rows differed only in `char_offset` and in how the citation was
+ * typed — "(1965) 1 S.C.R. 933" against "(1965) 1 S. C. R. 933" — so nothing
+ * this panel renders was lost by collapsing them.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('AuthoritiesPanel — the same authority cited twice', () => {
+  it('renders one row per authority, whatever the bench did', async () => {
+    await render(panel({ data: response([authority(), authority()]) }));
+
+    expect(screen.getAllByText('Kanhaiyalal v. Union of India')).toHaveLength(1);
+  });
+
+  /**
+   * The count is the half an advocate cannot check. Two mentions of one
+   * set-aside authority must never read as two set-aside authorities.
+   */
+  it('counts the authority once, not once per mention', async () => {
+    await render(panel({ data: response([authority(), authority()]) }));
+
+    expect(
+      screen.getByText(
+        'One authority had already been set aside when this bench relied on it'
+      )
+    ).toBeTruthy();
+    expect(
+      screen.queryByText('2 authorities had already been set aside when this bench relied on them')
+    ).toBeNull();
+  });
+
+  /** Distinct authorities are still distinct — the dedup keys on identity, not on shape. */
+  it('keeps two genuinely different authorities apart', async () => {
+    await render(
+      panel({
+        data: response([authority(), authority({ judgmentId: 'b', caseTitle: 'Another v. Other' })]),
+      })
+    );
+
+    expect(screen.getByText('Kanhaiyalal v. Union of India')).toBeTruthy();
+    expect(screen.getByText('Another v. Other')).toBeTruthy();
+  });
+});

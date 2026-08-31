@@ -103,10 +103,40 @@ export function AuthoritiesPanel({
     );
   }
 
-  const rows = data.authorities.map((authority) => ({
-    authority,
-    standing: standingOf(authority),
-  }));
+  /**
+   * ONE ROW PER AUTHORITY, NOT ONE PER MENTION.
+   *
+   * `judgment_citations` correctly holds one row per citation OCCURRENCE, so a
+   * bench that cites the same case twice produces two rows with the same
+   * `cited_judgment_id`. Measured on a physical Galaxy S24, 31 Aug 2026, on
+   * Kesavananda Bharati (`2e3d517c`, 2,878,447 characters): 47 citation rows
+   * over 44 distinct authorities, and React logged
+   * "Encountered two children with the same key" for exactly those 3 ids —
+   * whose documented behaviour is that children "may be duplicated and/or
+   * omitted". An omitted authority in this panel is an authority the advocate
+   * never learns the bench relied on.
+   *
+   * The duplicate rows carry NOTHING this panel shows: same `judgmentId`, same
+   * `relationship`, differing only in `char_offset` and in how the citation was
+   * typed ("(1965) 1 S.C.R. 933" against "(1965) 1 S. C. R. 933"). So the first
+   * mention wins and the rest are dropped.
+   *
+   * THE COUNTS DEPEND ON THIS TOO. `standingCounts` runs on these rows, so
+   * without the dedup one already-set-aside authority cited twice reports as
+   * "2 authorities had already been set aside" — a number the advocate has no
+   * way to check and every reason to believe.
+   */
+  const seenAuthorities = new Set<string>();
+  const rows = data.authorities
+    .filter((authority) => {
+      if (seenAuthorities.has(authority.judgmentId)) return false;
+      seenAuthorities.add(authority.judgmentId);
+      return true;
+    })
+    .map((authority) => ({
+      authority,
+      standing: standingOf(authority),
+    }));
 
   const counts = standingCounts(rows.map((r) => r.standing));
 

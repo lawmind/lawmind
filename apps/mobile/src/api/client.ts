@@ -302,7 +302,10 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
       error: {
         code: aborted ? 'timeout' : 'network',
         message: aborted
-          ? 'The request took too long. You may be offline.'
+          ? // OUR deadline, not a fact about their connection — a timed-out request
+            // may well have been answered a moment later. Observed 31 Aug 2026:
+            // `/search` returned 200 in 15,334ms against a 15,000ms budget.
+            'The search took longer than we wait for. It may still be running.'
           : 'We could not reach Lawmind. You may be offline.',
       },
     };
