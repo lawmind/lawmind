@@ -1,0 +1,1736 @@
+{
+  "measuredAt": "2026-08-31T15:51:35.831Z",
+  "t0": "2026-08-18",
+  "scope": "the unreachable residue from docs/ai/lcc-r16/population.json",
+  "KEYS_EXAMINED": 79,
+  "prospective": {
+    "SIBLING_NUMBER_IN_BEARER_CAUSE_TITLE": 13,
+    "SIBLING_NUMBER_ANYWHERE_IN_BEARER_BODY": 22,
+    "BEARER_CASE_NUMBER_NAMES_SIBLING": 0,
+    "BEARER_BODY_PRINTS_COMMON_ORDER_LANGUAGE": 9
+  },
+  "retrospective": {
+    "SHARED_CONTENT_HASH": 19,
+    "SHARED_STORAGE_KEY": 0,
+    "SHARED_SOURCE_URL": 0,
+    "SAME_CNR": 6
+  },
+  "SIBLING_NUMBER_UNPARSEABLE": 0,
+  "SIBLING_SHARES_BEARER_SERIAL_EXCLUDED": 57,
+  "classification": {
+    "NO_AUTHORITATIVE_SIGNAL_AVAILABLE": 46,
+    "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE": 22,
+    "RETROSPECTIVE_SIGNAL_ONLY": 11
+  },
+  "verdicts": [
+    {
+      "citationKey": "2023KHCD12668DB",
+      "bearerId": "4530a0ae-3e65-4b0a-8604-8cb1938f6612",
+      "siblingIds": [
+        "080c8863-b67a-4736-83dd-bf2ebb1822ac"
+      ],
+      "siblingSerialYears": [
+        "101863|2016"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2023KHCD14854",
+      "bearerId": "81830870-3b06-432a-8308-dee832f71012",
+      "siblingIds": [
+        "6cd97255-c2b8-4506-86dd-e66bed048550"
+      ],
+      "siblingSerialYears": [
+        "103298|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2023KHCD8277DB",
+      "bearerId": "0dad9049-96c7-49d2-a634-fa7e0d9efb01",
+      "siblingIds": [
+        "22c84ccf-cde4-48d4-99fe-2e6b89b85562"
+      ],
+      "siblingSerialYears": [
+        "101664|2019"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2023KHCD9003",
+      "bearerId": "e962abf6-e806-43f2-b261-c3e9768f8f14",
+      "siblingIds": [
+        "8619db9f-138a-4d74-8bf4-2ab9122aa7bd"
+      ],
+      "siblingSerialYears": [
+        "100145|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": "THE FOLLOWING: ORDER In view of the compromise entered into in RSA No.100145/2023, the above appeal is dismisse",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2024AHCLKO39133",
+      "bearerId": "9af0d303-4e08-4887-a3e1-572ff52038c1",
+      "siblingIds": [
+        "b643d3c8-aee1-40a0-b78e-eaa937707483",
+        "15dff456-6bc6-467d-a139-eb49d9d922c7"
+      ],
+      "siblingSerialYears": [
+        "69|2024",
+        "3068|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2024AHCLKO42254",
+      "bearerId": "ef8f9b66-7ae2-4968-a539-8ec6158a712d",
+      "siblingIds": [
+        "e7246fe2-e640-4798-b86b-bbcc7b56d490",
+        "264e4169-25aa-4580-a475-2a06a6f7cd7b"
+      ],
+      "siblingSerialYears": [
+        "7155|2023",
+        "1728|2024"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": " connected application i.e. Application under Section 482 Cr.P.C. No. 7155 of 2023 had passed the following orde",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2024AHCLKO49343",
+      "bearerId": "46423912-334d-4d06-8e9e-f9995e122583",
+      "siblingIds": [
+        "24dfb35e-7524-4b5c-9325-73ae969dddd2",
+        "fcb94ee5-7814-47ea-89dd-8358757f4714"
+      ],
+      "siblingSerialYears": [
+        "616|2023",
+        "787|2024"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": "ith CRIMINAL MISC ANTICIPATORY BAIL APPLICATION U/S 438 CR.P.C. No. - 616 of 2023 It is provided that till the ",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2024AHCLKO55437",
+      "bearerId": "7457aed4-de83-46a5-af59-40e56fbdda67",
+      "siblingIds": [
+        "39e45c98-bde0-4b40-b740-807af62bd0bb",
+        "eded6def-f3b0-46ab-af7d-14b62a7e465d",
+        "6a4f951e-352b-4d30-9335-b1bb5d607180"
+      ],
+      "siblingSerialYears": [
+        "3961|2024",
+        "9782|2023",
+        "11047|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "t, see my judgment dated 12.08.2024 passed in APPLICATION U/S 482 No. 9782 of 2023. Order Date :- 12.8.2024 Mohi",
+      "bodyContext": "t, see my judgment dated 12.08.2024 passed in APPLICATION U/S 482 No. 9782 of 2023. Order Date :- 12.8.2024 Mohi",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2024AHCLKO68598",
+      "bearerId": "34912a8b-b790-4e68-9443-574cb11816ff",
+      "siblingIds": [
+        "8b52c018-9138-4c24-8220-78ee56494856",
+        "662447c2-bdae-4a14-9fd5-bf336ff97cf8"
+      ],
+      "siblingSerialYears": [
+        "5413|2024",
+        "2283|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": "nsel for Opposite Party :- G.A. AND Case :- APPLICATION U/S 482 No. - 2283 of 2023 Applicant :- Jagdish Singh Op",
+      "bodyContext": "nsel for Opposite Party :- G.A. AND Case :- APPLICATION U/S 482 No. - 2283 of 2023 Applicant :- Jagdish Singh Op",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2024AHCLKO72986",
+      "bearerId": "b58c5e06-91cb-434e-8e01-a19bcbe8ab0b",
+      "siblingIds": [
+        "308c01bd-9665-4537-a30a-1bfd17e54cde",
+        "ebb8afbc-9f10-4ba7-a1f9-92a664299938"
+      ],
+      "siblingSerialYears": [
+        "1889|2024",
+        "3040|2016"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": true,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025AHC116496",
+      "bearerId": "3e4e0c92-b730-49c0-99a9-91fe4e99b629",
+      "siblingIds": [
+        "7997a670-e28a-4cf0-9589-2e8b4f450fc9",
+        "cef6e0f7-28f4-4adf-81aa-266cd64870cd"
+      ],
+      "siblingSerialYears": [
+        "31279|2019",
+        "31323|2019"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC117235DB",
+      "bearerId": "7e81b6ac-6792-4337-875b-c608638dbce0",
+      "siblingIds": [
+        "7aec6699-569f-4b54-81c9-1c8dde13cbde"
+      ],
+      "siblingSerialYears": [
+        "38662|2006"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC11863",
+      "bearerId": "22239692-ea7a-4ee7-99e5-e184aabb8c5e",
+      "siblingIds": [
+        "422016ec-4248-49a1-ad64-7829a16fae01",
+        "4593c99d-8175-41ea-908b-f53b14a6823f"
+      ],
+      "siblingSerialYears": [
+        "30561|2021",
+        "41933|2021"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": "Shiv Shankar Singh with Case :- CRIMINAL MISC. BAIL APPLICATION No. - 30561 of 2021 Applicant :- Sunny Opposite P",
+      "bodyContext": "Shiv Shankar Singh with Case :- CRIMINAL MISC. BAIL APPLICATION No. - 30561 of 2021 Applicant :- Sunny Opposite P",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC118668",
+      "bearerId": "ab63f4cf-b498-490e-acdb-626bf31b8b8c",
+      "siblingIds": [
+        "13ea7c28-8d58-4333-81cc-ee0edea7af36"
+      ],
+      "siblingSerialYears": [
+        "39691|2010"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC118946DB",
+      "bearerId": "1d061bd1-af59-4d33-bab1-e0aaed7af775",
+      "siblingIds": [
+        "fadb9e64-cd2c-4b12-8018-3c3f99e2a833"
+      ],
+      "siblingSerialYears": [
+        "68053|2009"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC119941DB",
+      "bearerId": "51629162-e06d-413a-bc12-5dbd0e68fbf1",
+      "siblingIds": [
+        "4bfec9ce-dd07-4688-bc5c-339815313574"
+      ],
+      "siblingSerialYears": [
+        "60551|2011"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC119945DB",
+      "bearerId": "442dd508-df61-4cd3-a78d-3122c76b2abe",
+      "siblingIds": [
+        "3ae4a304-8f2a-4a69-86d9-2f41ff6e0bac"
+      ],
+      "siblingSerialYears": [
+        "44512|2010"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC12010",
+      "bearerId": "aea3bf48-c92f-450e-a3ee-25dc7e52c100",
+      "siblingIds": [
+        "610b84c9-1380-4563-8ffb-8cee41361fa0",
+        "08b8b07a-ca89-4f23-9352-f0cf1a9a9675",
+        "fa9fa212-2cd9-497a-b18c-e092cdb19d6b"
+      ],
+      "siblingSerialYears": [
+        "9684|2023",
+        "9669|2023",
+        "9650|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC120509DB",
+      "bearerId": "8a218f83-a013-48de-823e-26fb4d735be4",
+      "siblingIds": [
+        "5a56cf79-da71-4591-86f2-7d2af8f0b8dc"
+      ],
+      "siblingSerialYears": [
+        "34|2014"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC12074DB",
+      "bearerId": "e10f608e-eb79-496d-8aa3-c8c3a06bf72b",
+      "siblingIds": [
+        "26b595f3-00d1-4099-a83b-88e62f6fd971"
+      ],
+      "siblingSerialYears": [
+        "1750|2020"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC12335",
+      "bearerId": "b1860475-a4b1-45f5-8cad-22fce08ab211",
+      "siblingIds": [
+        "1779689f-7074-4f90-ad2c-50db560b5769"
+      ],
+      "siblingSerialYears": [
+        "26920|2021"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC123444DB",
+      "bearerId": "58f44826-6029-4883-88c4-24e5837b38fa",
+      "siblingIds": [
+        "d88acb01-c464-4901-b9c9-2f406e2bbb6d"
+      ],
+      "siblingSerialYears": [
+        "57650|2013"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC123508",
+      "bearerId": "b744f1a3-9888-419d-a4e8-9c2cb7c0fa1e",
+      "siblingIds": [
+        "4a6f85d6-36cf-4a5c-9815-e86a3f769893",
+        "5765c969-eef9-4663-88bf-4e490f6c74c7"
+      ],
+      "siblingSerialYears": [
+        "3387|2023",
+        "1213|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC12394DB",
+      "bearerId": "d44f8a9c-1cb3-4719-b29c-e03fad9d2a9f",
+      "siblingIds": [
+        "b8416f56-080f-4f69-8832-fdd1f34ca698"
+      ],
+      "siblingSerialYears": [
+        "210|1991"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "allowed. 2. For orders, see order passed today in Criminal Appeal No. 210 of 1991 (Radhey Shyam and others v. S",
+      "bodyContext": "allowed. 2. For orders, see order passed today in Criminal Appeal No. 210 of 1991 (Radhey Shyam and others v. S",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC124469DB",
+      "bearerId": "3611e691-1eac-43e3-8e79-b692e3510a9e",
+      "siblingIds": [
+        "25662a44-2691-4d18-8975-09dd3634ccbd"
+      ],
+      "siblingSerialYears": [
+        "52280|2016"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC125816DB",
+      "bearerId": "193c9064-1400-4e7a-860d-7bb07bd68eb1",
+      "siblingIds": [
+        "5ad6fa0f-0a32-4b20-86b9-4e0302c2b674"
+      ],
+      "siblingSerialYears": [
+        "17942|2003"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC125820DB",
+      "bearerId": "549163fb-611e-459d-95d7-9490595d699a",
+      "siblingIds": [
+        "079f0dd7-c507-443a-8e04-cecb80ef2898"
+      ],
+      "siblingSerialYears": [
+        "36837|2013"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC125880DB",
+      "bearerId": "28b9790a-dd92-4240-8b84-0942b0ff152a",
+      "siblingIds": [
+        "a1370765-4195-47cb-8915-53192d133d0d"
+      ],
+      "siblingSerialYears": [
+        "31363|2011"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC126045DB",
+      "bearerId": "7c1328ce-da24-4e31-a93f-ed17a9d6f670",
+      "siblingIds": [
+        "b001efcf-b905-41f7-a4ff-422c63d36e50"
+      ],
+      "siblingSerialYears": [
+        "20382|2013"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC126049DB",
+      "bearerId": "ddef6f65-0e92-48a8-97b6-6a6eb870330c",
+      "siblingIds": [
+        "7fc3cc9a-1913-4166-bad9-a63b436d9503"
+      ],
+      "siblingSerialYears": [
+        "11585|2013"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC126163DB",
+      "bearerId": "068c7c83-6c1f-438a-aacf-813d6eb9209b",
+      "siblingIds": [
+        "a60c7335-c1ee-4bbe-a013-8cf8c36b96a1"
+      ],
+      "siblingSerialYears": [
+        "37847|2009"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC126484DB",
+      "bearerId": "08bf1bab-a2dd-42e3-9691-d5a72c71e506",
+      "siblingIds": [
+        "107de79b-8daf-4f88-9ff3-14f9a098e770",
+        "05ada857-337d-4a9d-a688-d492455747fb"
+      ],
+      "siblingSerialYears": [
+        "9520|2014",
+        "9620|2014"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC127124DB",
+      "bearerId": "e798f067-dc2b-4252-a1fb-b4e7548453d5",
+      "siblingIds": [
+        "bf5aa5b4-7c18-417b-bdb7-97480fd68555"
+      ],
+      "siblingSerialYears": [
+        "1455|2014"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC130987",
+      "bearerId": "7b81841b-8658-481c-b6f8-e803f44736b2",
+      "siblingIds": [
+        "5aeb9af5-4b88-4a3d-a35b-b2d315fe3d6d"
+      ],
+      "siblingSerialYears": [
+        "12839|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "ju Rani Chauhan,J. In view of the detailed order passed in Writ-A No. 12839 of 2023 (Shiv Kumar vs. State of U.P.",
+      "bodyContext": "ju Rani Chauhan,J. In view of the detailed order passed in Writ-A No. 12839 of 2023 (Shiv Kumar vs. State of U.P.",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC13127",
+      "bearerId": "70ec9f9d-7313-4482-9fbb-75a9b9da7d29",
+      "siblingIds": [
+        "34106c27-560d-474c-abf1-dc1d82604345"
+      ],
+      "siblingSerialYears": [
+        "116|2022"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC139542",
+      "bearerId": "f6e2e694-b940-4482-b9f0-8494e3f3c142",
+      "siblingIds": [
+        "396bfe77-1989-4600-ad78-6b15527c0465",
+        "577ecba2-e8c2-45ae-9641-2832aee80bb5"
+      ],
+      "siblingSerialYears": [
+        "700|2023",
+        "485|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC141584",
+      "bearerId": "c9912523-1638-42cc-a5f9-a230f409a591",
+      "siblingIds": [
+        "3d018d96-2ce9-49e6-a4e0-c68de64152d3"
+      ],
+      "siblingSerialYears": [
+        "14414|2009"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC141700",
+      "bearerId": "9d2cf73a-ea62-400a-8c8f-eeb46ba82b2a",
+      "siblingIds": [
+        "6a945684-e0bb-481c-81dc-ddfc2a9035a0"
+      ],
+      "siblingSerialYears": [
+        "3791|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC142995",
+      "bearerId": "0755ffe2-96d2-4a19-b098-354e621a7bd6",
+      "siblingIds": [
+        "4674affd-364d-4901-8b7d-f8fc735075f7",
+        "7da995ec-88fb-4f9f-a5af-701c45c56514"
+      ],
+      "siblingSerialYears": [
+        "28796|2022",
+        "28698|2022"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC144332DB",
+      "bearerId": "9934dd1f-7a49-493d-b1fb-d7d6cda22a94",
+      "siblingIds": [
+        "152d7387-acf0-49f0-bfc3-7826a18a5774"
+      ],
+      "siblingSerialYears": [
+        "23376|2012"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC144624",
+      "bearerId": "454a9f4e-2f29-4abc-a23b-0865bb0e12e2",
+      "siblingIds": [
+        "e8bb3b02-aa27-4d84-9bdb-41993129fc4c"
+      ],
+      "siblingSerialYears": [
+        "52591|2015"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC170153",
+      "bearerId": "772bbce7-8035-4ffc-9c0b-d139b6283929",
+      "siblingIds": [
+        "dbacd40b-c1e5-4278-a082-21f1c18fe7ef",
+        "5ad3bbe4-7e34-46b1-b59c-186d5920fd6b"
+      ],
+      "siblingSerialYears": [
+        "17126|2009",
+        "15878|2009"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC17458",
+      "bearerId": "d73deaa9-8d16-48ca-aab7-d1edae7e2250",
+      "siblingIds": [
+        "1e994f6c-f464-4956-a57a-46d3002cb629"
+      ],
+      "siblingSerialYears": [
+        "28414|2015"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC18804",
+      "bearerId": "1707a0d5-5831-4a30-b16c-fbe0d3f720fa",
+      "siblingIds": [
+        "69bca6fa-66ea-4165-885c-c75fe099ffc4"
+      ],
+      "siblingSerialYears": [
+        "46694|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC19282",
+      "bearerId": "c8412baf-5be0-4ec0-8a95-59d702d291ed",
+      "siblingIds": [
+        "83d2ff42-a11f-411e-8417-1f190f17918c"
+      ],
+      "siblingSerialYears": [
+        "45292|2014"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "is disposed of. 2. For Order, See order of dated passed in Writ-A No. 45292 of 2014. Order Date :- 10.2.2025 Saur",
+      "bodyContext": "is disposed of. 2. For Order, See order of dated passed in Writ-A No. 45292 of 2014. Order Date :- 10.2.2025 Saur",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC25732DB",
+      "bearerId": "da36093e-43e3-4d59-8861-c41cc112cb32",
+      "siblingIds": [
+        "e5d73659-54d9-49e3-b211-b0b917b8b18f",
+        "d66f9c11-14bb-40e9-b0e4-ef3450f92fc0",
+        "6770c529-383b-450f-8ab5-280aee10fbb9"
+      ],
+      "siblingSerialYears": [
+        "33408|2022",
+        "26129|2022",
+        "8483|2023"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC25789DB",
+      "bearerId": "f99c777c-4f84-4e97-9037-9782bc00cb85",
+      "siblingIds": [
+        "929ea5b0-6357-4f90-b907-d4902a69d72f"
+      ],
+      "siblingSerialYears": [
+        "41880|2019"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "easons, see our order of date, passed in leading case i.e. Writ-C No. 41880 of 2019 (M/s Gaursons Sportswood Priv",
+      "bodyContext": "easons, see our order of date, passed in leading case i.e. Writ-C No. 41880 of 2019 (M/s Gaursons Sportswood Priv",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC30639",
+      "bearerId": "e462e5af-7c67-4677-9d99-1c25b12845dd",
+      "siblingIds": [
+        "2206c5aa-776b-4a2a-a63d-15000b82baf5"
+      ],
+      "siblingSerialYears": [
+        "2611|2013"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "cords. 2. For order, see order of date passed in Criminal Revision No.2611 of 2013 (Prem Shanker Varshneya Vs. S",
+      "bodyContext": "cords. 2. For order, see order of date passed in Criminal Revision No.2611 of 2013 (Prem Shanker Varshneya Vs. S",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC39677",
+      "bearerId": "c3b9af47-b7a6-40b1-baf7-e61fab4c4fdd",
+      "siblingIds": [
+        "038b3d56-05f3-4a93-a468-57e790c4e432"
+      ],
+      "siblingSerialYears": [
+        "40232|2019"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": "ssed by this Court in connected petition being Application U/S 482 No.40232 of 2019 (Ankit Sachar Vs. State of U.",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC4140",
+      "bearerId": "0bc7f5aa-6700-4d07-ac85-e8d1a3a8e93b",
+      "siblingIds": [
+        "26cebe23-4269-44c4-b980-aec095053038"
+      ],
+      "siblingSerialYears": [
+        "40456|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": "llowing order was passed:- \"1. Connect with Application U/S 482 No. - 40456 of 2023 2. Heard learned counsel for ",
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC41724",
+      "bearerId": "926e4658-44ff-4861-8f89-c609e88d06e3",
+      "siblingIds": [
+        "3257ea47-758e-491f-aa7f-920b5815fa78"
+      ],
+      "siblingSerialYears": [
+        "956|2018"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC50446",
+      "bearerId": "1edf857c-daa7-484c-bae0-1440fc127178",
+      "siblingIds": [
+        "54075d48-d1e5-4850-ab6b-cb9304243957"
+      ],
+      "siblingSerialYears": [
+        "475|2022"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC70572",
+      "bearerId": "c61da1c8-f12a-4263-b7b7-baa18262127c",
+      "siblingIds": [
+        "18e7d466-98bd-44d7-84ad-b921986f4d56"
+      ],
+      "siblingSerialYears": [
+        "8316|2018"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC84553DB",
+      "bearerId": "0f70e81c-3d08-4bb4-9a44-3007795c90d0",
+      "siblingIds": [
+        "67539f42-7685-400d-8241-4f2ab7ee859c"
+      ],
+      "siblingSerialYears": [
+        "329|2008"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC85472",
+      "bearerId": "de8318b7-4862-4627-a0a8-25bde3fafdf9",
+      "siblingIds": [
+        "84367503-9a86-4433-9296-b6a9e1b6ebdf",
+        "7543337e-5567-4511-8287-488741eb47e1",
+        "77af4e15-15a3-48f4-8d82-e56ae75d6e1e",
+        "5b1339c5-8811-4f1c-8b97-dd0f1426db8c"
+      ],
+      "siblingSerialYears": [
+        "2852|2015",
+        "9906|2016",
+        "5205|2016",
+        "39384|2015"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC86548",
+      "bearerId": "8a323678-5664-47bc-bd1c-3d9ba701a8e7",
+      "siblingIds": [
+        "ac519cf4-090e-4c5e-9cb7-6190e3fb8d67",
+        "6d64c1cb-ec1a-4408-8428-def3dea91356"
+      ],
+      "siblingSerialYears": [
+        "4528|2014",
+        "47605|2016"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC86905",
+      "bearerId": "e7d53cab-685d-4ea2-b30b-51ab1c7964bd",
+      "siblingIds": [
+        "9c764c6e-3d64-4844-a056-02d9b02d558d",
+        "61a27eaa-ef98-4d57-8dcb-c187fb567cde"
+      ],
+      "siblingSerialYears": [
+        "13391|2019",
+        "13393|2019"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC87175",
+      "bearerId": "fa8f33dd-ba72-4927-a1fe-844f243a62e7",
+      "siblingIds": [
+        "4e87fab5-c8c3-4f36-83c7-1cfd12ce0a2f"
+      ],
+      "siblingSerialYears": [
+        "770|2019"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC88150",
+      "bearerId": "75e0afbe-e26f-4b97-81a1-1cce9e82ec25",
+      "siblingIds": [
+        "29f7226e-6826-4cbd-9ee8-ea0cb6121e01"
+      ],
+      "siblingSerialYears": [
+        "2238|2009"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC88191",
+      "bearerId": "328037d8-9f6c-487a-a5d4-09ec9f058d8d",
+      "siblingIds": [
+        "66a0189e-375a-40f8-8287-ab4d24c99d15"
+      ],
+      "siblingSerialYears": [
+        "58591|2008"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025AHC88326DB",
+      "bearerId": "88af51bd-e998-4a99-b690-d816c23acaad",
+      "siblingIds": [
+        "0d96a72a-5553-4e4f-9c72-609573001b12"
+      ],
+      "siblingSerialYears": [
+        "11|2020"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": false,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "NO_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG11428",
+      "bearerId": "42e31ee3-68a3-4871-b23b-b72fcfaa9bff",
+      "siblingIds": [
+        "047754ab-6d7d-45eb-922c-beb30b3da68f"
+      ],
+      "siblingSerialYears": [
+        "884|2023"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": " 1 2025:BHC-AUG:11428 FA-3594-19andFA884-2023.odt AND FIRST APPEAL NO.884 OF 2023 1. Shri. Balbhim Nivrutti Ras",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG11798",
+      "bearerId": "821ff9b0-6f32-41f6-a16b-a9f93ed5fbe4",
+      "siblingIds": [
+        "a772b9a0-adf6-4838-8247-60855b96832f"
+      ],
+      "siblingSerialYears": [
+        "4090|2025"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": "i.RahulA.Tambe,AdvocateforRespondentNo.2 ….. AND 39CIVILAPPLICATIONNO.4090OF2025 INFAST/32963/2021 AnnaHimmatG",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG13506",
+      "bearerId": "958685e2-dbfe-4dac-a11d-50f5d586f892",
+      "siblingIds": [
+        "8156d413-324a-4fda-8437-39efd02c3548"
+      ],
+      "siblingSerialYears": [
+        "738|2021"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "HEHIGHCOURTOFJUDICATUREATBOMBAY BENCHATAURANGABAD. CIVILAPPLICATIONNO.738OF2021 INFAST/15709/2020 TheEx.Engin",
+      "bodyContext": "HEHIGHCOURTOFJUDICATUREATBOMBAY BENCHATAURANGABAD. CIVILAPPLICATIONNO.738OF2021 INFAST/15709/2020 TheEx.Engin",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG13510",
+      "bearerId": "dd10a327-3a58-4d67-b9ec-f642a0a8e9a1",
+      "siblingIds": [
+        "0ac1c436-41aa-4a72-83ab-279d3a12b225"
+      ],
+      "siblingSerialYears": [
+        "739|2021"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "HEHIGHCOURTOFJUDICATUREATBOMBAY BENCHATAURANGABAD. CIVILAPPLICATIONNO.739OF2021 INFAST/15709/2020 TheEx.Engin",
+      "bodyContext": "HEHIGHCOURTOFJUDICATUREATBOMBAY BENCHATAURANGABAD. CIVILAPPLICATIONNO.739OF2021 INFAST/15709/2020 TheEx.Engin",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG14200",
+      "bearerId": "a8a35441-5356-4dbc-8e74-df7c9b2785d3",
+      "siblingIds": [
+        "bf4219c9-7fa0-4f11-9470-d20abee1d799"
+      ],
+      "siblingSerialYears": [
+        "5485|2025"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "gineer,LaghuPatbandhareVibhagJalgaonAndOrs ….. AND CIVILAPPLICATIONNO.5485OF2025 INFA/798/2022 RamraoNarayanPa",
+      "bodyContext": "gineer,LaghuPatbandhareVibhagJalgaonAndOrs ….. AND CIVILAPPLICATIONNO.5485OF2025 INFA/798/2022 RamraoNarayanPa",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG20927DB",
+      "bearerId": "ad9b0502-d15c-47db-af52-64227feae9fd",
+      "siblingIds": [
+        "aea9b38e-0855-410e-b00e-a011af340c79"
+      ],
+      "siblingSerialYears": [
+        "2834|2025"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": "icant Mr. A. R. Kale - APP for State ... AND CRIMINAL APPLICATION NO. 2834 OF 2025 IN CRIMINAL APPEAL NO. 1032 O",
+      "bodyContext": "icant Mr. A. R. Kale - APP for State ... AND CRIMINAL APPLICATION NO. 2834 OF 2025 IN CRIMINAL APPEAL NO. 1032 O",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG22740DB",
+      "bearerId": "2dc1edb7-7512-4758-8674-778e890d6e3b",
+      "siblingIds": [
+        "da3d52e0-6a5b-4915-a916-d8d29282dae8"
+      ],
+      "siblingSerialYears": [
+        "13608|2024"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": "nke – Advocate for Respondent Nos. 2 and 3 ………. AND WRIT PETITION NO. 13608 OF 2024 Meena Nathu Mali, Age : 58 ye",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025BHCAUG27867",
+      "bearerId": "ed5e2e2e-2e1c-42ad-9d96-e9ff89682858",
+      "siblingIds": [
+        "b7b4de6c-d5d7-42b0-be37-552fc8b98a12"
+      ],
+      "siblingSerialYears": [
+        "1137|2025"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": true,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": "RE AT BOMBAY BENCH AT AURANGABAD. 41 ANTICIPATORY BAIL APPLICATION NO.1137 OF 2025 Sonu Alias Suresh Gorakh Kale",
+      "bodyContext": "RE AT BOMBAY BENCH AT AURANGABAD. 41 ANTICIPATORY BAIL APPLICATION NO.1137 OF 2025 Sonu Alias Suresh Gorakh Kale",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025PHHC008410",
+      "bearerId": "3d64c7af-e435-450d-8547-3f2dd2af7028",
+      "siblingIds": [
+        "2cdfa351-6dc5-4ff3-b99c-a9d61a2ded59"
+      ],
+      "siblingSerialYears": [
+        "592|2001"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC035578",
+      "bearerId": "b782b15a-788c-4b0a-a252-8c780aaeff41",
+      "siblingIds": [
+        "95fd0441-39fc-4d6d-9fe4-76fd8458609f"
+      ],
+      "siblingSerialYears": [
+        "2317|1989"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC058053",
+      "bearerId": "6ad93c2d-e0a1-4ea7-a6d9-b9067ce07105",
+      "siblingIds": [
+        "51849da7-b531-4998-ac84-e2c91c34ea88"
+      ],
+      "siblingSerialYears": [
+        "3582|2017"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC058672",
+      "bearerId": "14e203bc-c338-4afc-9245-614deacc21f9",
+      "siblingIds": [
+        "55e90548-575a-452f-a496-d3fa52264e89",
+        "1661886b-bc4a-4fa7-86ce-458c340fd733"
+      ],
+      "siblingSerialYears": [
+        "21368|2023",
+        "8549|2020"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC061942",
+      "bearerId": "3b642089-5507-4303-8538-89e454d54ef1",
+      "siblingIds": [
+        "4e88825c-44ec-452f-a0ae-ae6740d2085d"
+      ],
+      "siblingSerialYears": [
+        "2832|2013"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC073091",
+      "bearerId": "87e522e5-a686-4f59-b8f3-9613b191c209",
+      "siblingIds": [
+        "06275600-521c-4e7d-b899-18cfff2813ed"
+      ],
+      "siblingSerialYears": [
+        "16728|2018"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC089269",
+      "bearerId": "cd3d80c1-9e00-4f19-941c-45ae601f19c8",
+      "siblingIds": [
+        "d44b1f2c-cbdd-4b8f-9f24-67e558940b14"
+      ],
+      "siblingSerialYears": [
+        "1136|2010"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC150114",
+      "bearerId": "5a3b8979-125c-4172-8501-da1b8a971f1a",
+      "siblingIds": [
+        "10317e59-0390-4751-875a-0c954e6e8704"
+      ],
+      "siblingSerialYears": [
+        "3555|2015"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    },
+    {
+      "citationKey": "2025PHHC165813",
+      "bearerId": "d4dc51a3-0bd2-4df2-9f24-5632789c5558",
+      "siblingIds": [
+        "b8c14695-7fa8-4daa-8eb0-8484780aad3a",
+        "ab2f4e67-ef99-4515-ac18-bcad91332882"
+      ],
+      "siblingSerialYears": [
+        "2792|2000",
+        "12|2001"
+      ],
+      "siblingNumberInBearerBody": true,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": true,
+      "causeTitleContext": null,
+      "bodyContext": "e dismissed. Cross-Objections by Claimant Ramesh Kapoor 7. In FAO No. 2792 of 2000, cross-objections have been f",
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "EXISTING_AUTHORITATIVE_SIGNAL_AVAILABLE"
+    },
+    {
+      "citationKey": "2025PHHC169754",
+      "bearerId": "e9baac9e-2a21-43b0-95dc-1301f4525f75",
+      "siblingIds": [
+        "9f0ea5e2-6425-4dab-945d-696a81fce7c4"
+      ],
+      "siblingSerialYears": [
+        "108|1999"
+      ],
+      "siblingNumberInBearerBody": false,
+      "siblingNumberInBearerCauseTitle": false,
+      "bearerCaseNumberNamesSibling": false,
+      "bearerBodyPrintsCommonOrderLanguage": false,
+      "causeTitleContext": null,
+      "bodyContext": null,
+      "sharedContentHash": true,
+      "sharedStorageKey": false,
+      "sharedSourceUrl": false,
+      "sameCnr": false,
+      "classification": "RETROSPECTIVE_SIGNAL_ONLY"
+    }
+  ]
+}
