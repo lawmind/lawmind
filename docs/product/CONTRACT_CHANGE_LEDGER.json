@@ -439,10 +439,10 @@
     },
     "R14": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md",
-      "sha256": "6322203a20a7531acb38f3bb38d4629e4d97e04ebe4d98215ed51127736799f2",
-      "gitBlob": "5566367786d096e597e17d5f59ca95828408b6c8",
+      "sha256": "542e21e5fe4e59ead48d79134ed3c354f613460fd81d2a7535581e3bcfd81dc7",
+      "gitBlob": "ed5826cc04a0b9af7e7b4a3243abd619c7ec297f",
       "state": "CURRENT",
-      "procedure": "The amendment artifact was finished, its bytes frozen, and BOTH identities computed from the frozen file before this row was written. The artifact was not touched afterwards. The file does not contain a hash of itself.",
+      "procedure": "The release seal for the already-amended R14 fields was appended on 2026-08-31 after committed LCC implementation was verified. BOTH identities were then recomputed from the committed artifact at NEW3 commit 996791fa. The file does not contain a hash of itself and no R15 was created.",
       "verifyWith": "sha256sum docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md ; git rev-parse HEAD:docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md"
     }
   },
@@ -454,17 +454,16 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-08-30, NEW3 FINAL GOVERNANCE SEAL at HEAD 784bab85. Supersedes the Sprint-2-final recompute. One P0 CLOSED on re-observed committed evidence; nothing was reclassified to reach a number.",
+    "recomputedAt": "2026-08-31, NEW3 continuous-governance release reconciliation at HEAD 996791fa. Supersedes the 30 Aug seal only for CCR-RCC-S2-02 implementation and release state; no severity was reclassified.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
-    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted and is adjudicated P1 with an honest interim contract; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0.",
+    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted, adjudicated P1, implemented by LCC and released to RCC without a new contract revision; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0.",
     "ACCEPTANCE_P0_OPEN": 0,
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
     "IMPLEMENTATION_P0_OPEN": 0,
     "IMPLEMENTATION_P0_OPEN_items": [],
-    "NON_GATE_P1_OPEN": 4,
+    "NON_GATE_P1_OPEN": 3,
     "NON_GATE_P1_OPEN_items": [
-      "CCR-RCC-S2-02 - precedentialEffect / canAddToMatter absent from the saved-authority read shape. AMENDed, LCC-owned, NOT released to RCC. RCC's fallback is honest meanwhile.",
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged by R14.",
       "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight; the schema requires no exhaustive enumeration. No new feature taxonomy was created in this round.",
       "CCR-NEW3-S2F-01 - retrievalOutcome cannot represent an administratively suppressed retrieval arm. DEFERRED under PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. LCC-owned. Latent: the branch is unreachable at HEAD and activation now BREAKS a committed test (party-search-platform.test.ts:76-80). The correction itself is still owed."
@@ -472,17 +471,18 @@
     "closedInR14": [
       "P1-1 of R13 (rarestDf corpus-wide) - CLOSED as a semantic amendment, restated in R14 A8 and not reopened.",
       "CCR-RCC-S2-01 - CLOSED, the served per-platform capability exists at HEAD.",
-      "CCR-RCC-S2-04 - CLOSED, the eighth precedentialEffect value is now in the contract."
+      "CCR-RCC-S2-04 - CLOSED, the eighth precedentialEffect value is now in the contract.",
+      "CCR-RCC-S2-02 - IMPLEMENTED at LCC commit 24cf3623 and RELEASED_TO_RCC on 2026-08-31 after source and 21/21 test verification; RCC_CONSUMED remains NO."
     ],
     "CONDITIONAL_P0_GUARDED": {
       "count": 1,
       "items": [
-        "CCR-NEW3-S2F-01 - becomes a P0 the instant any narrowing row for `search.party_name` is added to PLATFORM_CAPABILITY_OVERRIDES. Not counted as a current P0 because the branch cannot execute at HEAD; not dissolved either, because no committed test would catch the activation."
+        "CCR-NEW3-S2F-01 - becomes a P0 the instant any narrowing row for `search.party_name` is added to PLATFORM_CAPABILITY_OVERRIDES. Not counted as a current P0 because the branch cannot execute at HEAD; not dissolved either, because the committed guard catches map activation but no test yet proves a truthful retrievalOutcome for a suppressed party arm."
       ],
       "why_this_bucket_exists": "So a latent defect is neither falsely promoted into a current P0 nor quietly lost. It is counted where it is true: guarded, and conditional on a configuration change nobody may make until the correction lands."
     },
     "GATE_B_P0_OPEN": 0,
-    "GATE_B_P0_OPEN_basis": "0. ACCEPTANCE 0, CONTRACT_CHANGE 0, IMPLEMENTATION 0 as of the 30 Aug seal. NOT counted as Gate-B P0, each for a stated reason rather than by omission: deferred hosting and unmeasured hosting (a FOUNDER decision, WAIVED != PASS, see hostingOverride); saved-authority optional fields (NON_GATE_P1, RCC's fallback is honest); the SCI evidence-location inconsistency (a documentation-consistency item, the PERMISSION is SATISFIED and untouched); backup-key escrow (FQ-BACKUP-KEY-ESCROW, a founder item); and unpushed commits. None of these is a current user-visible falsehood or a data-safety condition, which is the only thing that would make one a Gate-B P0.",
+    "GATE_B_P0_OPEN_basis": "0. ACCEPTANCE 0, CONTRACT_CHANGE 0, IMPLEMENTATION 0. NOT counted as Gate-B P0, each for a stated reason rather than by omission: deferred hosting and unmeasured hosting (a FOUNDER decision, WAIVED != PASS, see hostingOverride); RCC consumption of the now-implemented and released saved-authority fields (not open backend implementation and not yet a public claim); the SCI evidence-location inconsistency (a documentation-consistency item, the PERMISSION is SATISFIED and untouched); backup-key escrow (FQ-BACKUP-KEY-ESCROW, a founder item); and unpushed commits. None of these is a current user-visible falsehood or a data-safety condition, which is the only thing that would make one a Gate-B P0.",
     "IMPLEMENTATION_P0_OPEN_basis": "Was 1 (CCR-RCC-S2-03, the magic-link origin). CLOSED 30 Aug 2026 at LCC commit a4725682, verified against COMMITTED source at HEAD 784bab85, not on LCC's report: production now refuses to start without AUTH_BASE_URL, the retired host cannot return as an implicit default, an explicit value is still honoured, and the resolver is wired through env.ts:90 to index.ts:157 where better-auth builds the link. env.test.ts 7/7 pass at HEAD. It closes because it was FIXED. The P0 severity and its full history stand in the record; nothing was downgraded.",
     "hostingOverride": {
       "recordedAt": "2026-08-30, NEW3 final governance seal",
