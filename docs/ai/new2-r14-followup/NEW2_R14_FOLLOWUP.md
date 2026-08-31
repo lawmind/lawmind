@@ -552,8 +552,13 @@ change made on one month's reading.
 
 ```
 HEAD_START                          6f0d96bf
-HEAD_FINAL                          (see the commit that lands this file)
-COMMITS                             NEW2-owned only; services/api/** untouched
+HEAD_FINAL                          a8f97ba6
+COMMITS                             08baae98  statute follow-up + human-review
+                                              packet + founder-queue entry
+                                    a8f97ba6  R15 independent falsifier
+                                    NEW2-owned only; services/api/** untouched
+BUS                                 1637 -> LCC   (NEW2-R15-F1)
+                                    1638-1642     (round, all lanes)
 
 CONTINUOUS_INGESTION_HEALTH         HEALTHY
                                     daily delta 30 Aug 18:00 local, result 0,

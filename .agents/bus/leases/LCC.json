@@ -1,21 +1,25 @@
 {
   "lane": "LCC",
-  "sessionId": "65292fca-75ff-4662-9b1a-05623f6673a1",
-  "pid": 30480,
+  "sessionId": "181cacca-e499-4a57-a1ab-0bf71847a88f",
+  "pid": 18360,
   "pidName": "claude.exe",
-  "pidCreatedAt": "2026-08-29T23:49:35.4183570+04:00",
+  "pidCreatedAt": "2026-08-30T11:44:09.5591830+04:00",
   "host": "XC",
-  "acquiredAt": "2026-08-29T20:40:41.980Z",
-  "heartbeatAt": "2026-08-29T20:40:41.980Z",
-  "task": "LCC R12: backend intelligence + eCourts + Sprint-2 serving foundation",
+  "acquiredAt": "2026-08-30T08:02:36.704Z",
+  "heartbeatAt": "2026-08-30T08:02:36.704Z",
+  "task": "LCC Sprint-2 Gate-B: REPRO_DEBT_1 snapshot identity, REPRO_DEBT_2 model artifacts, backup/restore, eCourts bounded diff, sparse quality, party routing, hosting",
   "progress": null,
   "state": "RELEASED",
+  "durableOutputMetric": null,
+  "livenessSource": null,
+  "currentOutput": null,
+  "lastProgressAt": null,
   "supersededOwner": {
-    "sessionId": "f94ab142-4aa8-404c-9128-d91953dd851c",
-    "pid": 22344,
+    "sessionId": "0b4ad19b-07f1-4fc3-b18e-3e95e4fa292e",
+    "pid": 12984,
     "health": "DEAD",
-    "heartbeatAt": "2026-08-27T17:13:00.974Z",
+    "heartbeatAt": "2026-08-30T07:05:11.435Z",
     "takeoverReason": null
   },
-  "releasedAt": "2026-08-29T21:37:16.462Z"
+  "releasedAt": "2026-08-30T10:37:52.945Z"
 }

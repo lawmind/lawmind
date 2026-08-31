@@ -6,7 +6,7 @@
   "pidCreatedAt": "2026-08-29T19:12:30.6886750+04:00",
   "host": "XC",
   "acquiredAt": "2026-08-29T18:17:58.799Z",
-  "heartbeatAt": "2026-08-30T00:35:49.373Z",
+  "heartbeatAt": "2026-08-31T10:30:48.791Z",
   "task": "R11 NEW1: keep the coarse v2 walk running, delta fairness telemetry, embedding identity manifest, stage integrity, HNSW readiness",
   "progress": null,
   "state": "HELD",
@@ -17,7 +17,7 @@
     "heartbeatAt": "2026-08-29T06:12:32.321Z",
     "takeoverReason": "prior holder session 02ab58d9 pid 25816 is not in the process table; same lane, same work, the walk it launched is still running"
   },
-  "previousOutput": "2944409",
-  "currentOutput": "2947194",
-  "lastProgressAt": "2026-08-30T00:35:49.374Z"
+  "previousOutput": "3944759",
+  "currentOutput": "3947545",
+  "lastProgressAt": "2026-08-31T10:30:48.791Z"
 }

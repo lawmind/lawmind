@@ -8,8 +8,8 @@
   "pidResolution": "RESOLVED",
   "host": "XC",
   "acquiredAt": "2026-08-29T18:18:14.265Z",
-  "heartbeatAt": "2026-08-30T00:35:49.031Z",
-  "lastProgressAt": "2026-08-30T00:35:49.031Z",
+  "heartbeatAt": "2026-08-31T10:30:48.449Z",
+  "lastProgressAt": "2026-08-31T10:30:48.449Z",
   "task": "R11 NEW1: coarse v2 snapshot walk (definition 5b5d02384b46c96c, 766 batches), continuous delta queue, HNSW build readiness. Heartbeated by services/harness/src/worker-truth.mjs, not by the agent session.",
   "purpose": "the single box: GPU, large DB writes/scans, OCR fleets, restore/replay, mixed load",
   "jobId": null,
@@ -17,7 +17,7 @@
   "inputVersion": "manifest 524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
   "durableOutputMetric": "SELECT count(*) FROM new1_doc_vector_stage",
   "startingOutput": "2755876",
-  "currentOutput": "2947194",
+  "currentOutput": "3947545",
   "contentionClass": "GPU+DB-write",
   "pauseResume": null,
   "launcher": "Task Scheduler: Lawmind-new1-coarse-walk (PT5M, IgnoreNew) -> walk-launch.sh -> stage-runner.sh",
@@ -30,6 +30,6 @@
     "health": "DEAD",
     "reason": "prior NEW1 holder session 02ab58d9 pid 25816 is gone; the walk it launched never stopped and is at batch 224/766. Re-taken by the same lane to attach durable-progress liveness so the bus stops reporting the box free while it is not."
   },
-  "previousOutput": "2944409",
+  "previousOutput": "3944759",
   "zeroDeltaWindows": 0
 }

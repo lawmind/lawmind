@@ -1,20 +1,25 @@
 {
   "lane": "NEW2",
-  "sessionId": "5a2ea479-2985-4cb6-8ebe-500cd0cd5c26",
-  "pid": 12396,
+  "sessionId": "df61f64f-010e-43b6-bb74-5b16bfc97aed",
+  "pid": 28060,
   "pidName": "claude.exe",
-  "pidCreatedAt": "2026-08-29T17:45:37.7228690+04:00",
+  "pidCreatedAt": "2026-08-30T14:24:16.3094130+04:00",
   "host": "XC",
-  "acquiredAt": "2026-08-29T13:47:22.539Z",
-  "heartbeatAt": "2026-08-29T13:47:22.539Z",
-  "task": "Gate-A narrow: frozen-manifest M0 HC closure, provenance proof on new rows, canonical freshness publication + API equality, M1 post-snapshot delta",
+  "acquiredAt": "2026-08-30T10:32:28.594Z",
+  "heartbeatAt": "2026-08-30T10:32:28.594Z",
+  "task": "NEW2 Sprint-2 Gate-B: close the Gate-A receipt reproducibility debt, answer LCC 1510/1576 and NEW1 1561, daily delta unchanged (next scheduled cycle 2026-08-30 18:00 local)",
   "progress": null,
-  "state": "HELD",
+  "state": "RELEASED",
+  "durableOutputMetric": null,
+  "livenessSource": null,
+  "currentOutput": null,
+  "lastProgressAt": null,
   "supersededOwner": {
-    "sessionId": "51b4c14c-40ee-4f01-8674-5128cd6f2937",
-    "pid": 30400,
+    "sessionId": "5a2ea479-2985-4cb6-8ebe-500cd0cd5c26",
+    "pid": 12396,
     "health": "DEAD",
-    "heartbeatAt": "2026-08-27T09:16:29.379Z",
-    "takeoverReason": "prior NEW2 holder session 51b4c14c pid 30400 last heartbeat 2026-08-27T09:16Z; session is gone"
-  }
+    "heartbeatAt": "2026-08-29T13:47:22.539Z",
+    "takeoverReason": null
+  },
+  "releasedAt": "2026-08-30T10:40:29.534Z"
 }
