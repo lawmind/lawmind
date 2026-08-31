@@ -312,7 +312,7 @@ which NEW2 adjudicated as *not a treatment at all*. It is distinct from
 
 ---
 
-## A6 · SAVED MATTER AUTHORITIES CARRY ONLY THE COARSE STATUS — **NOT YET RELEASED**
+## A6 · SAVED MATTER AUTHORITIES CARRY THE LIVE POLICY FIELDS — **RELEASED TO RCC 31 AUGUST 2026**
 
 **Adjudicates `CCR-RCC-S2-02`.** RCC is correct on the facts.
 
@@ -332,7 +332,9 @@ overruledParas · overruledNote
 **write** path, where a refusal is returned as `409 AUTHORITY_SET_ASIDE`. Search and
 the judgment reader both carry `precedentialEffect`; the saved-authority list does not.
 
-**Decision: AMEND, additive, `backendOwner: LCC`, `releasedToRCC: false`.**
+**Decision at adjudication: AMEND, additive, `backendOwner: LCC`,
+`releasedToRCC: false`. Release seal below; the earlier state remains recorded as
+history rather than being rewritten.**
 
 Amended shape — each authority gains, all optional:
 
@@ -361,6 +363,32 @@ truth, not something other than the truth. **It becomes a P0 the moment any clie
 renders a specific relationship verb from the coarse banner**, which is exactly what
 RCC's own fallback exists to prevent. RCC's submitted P0 is preserved verbatim in the
 ledger beside this adjudication.
+
+### A6.1 · NEW3 release seal — 31 August 2026
+
+```text
+IMPLEMENTATION_COMMIT = 24cf3623
+LCC_IMPLEMENTED = YES
+RELEASED_TO_RCC = YES
+RCC_CONSUMED = NO
+CONTRACT_REVISION = R14
+```
+
+Observed independently at HEAD `753dda4c906be426e94516e83645adb9a7b04643`:
+
+- `GET /matters/:matterId/authorities` and the authority returned by `POST`
+  both serve `precedentialEffect`, `canAddToMatter`, and
+  `citableForUntouchedPropositions`;
+- both shapes use the same `precedentialEffectFromEdges` ->
+  `precedentialPolicy` derivation as R14 requires;
+- a committed test inserts a later `judgment_citations` edge and observes the
+  same `authorityId` change on the next GET without resaving;
+- the schema assertion proves `matter_authorities` has no policy/currentness
+  columns, so the values have nowhere to be cached;
+- focused suite: **21 pass, 0 fail**; API typecheck: **PASS**.
+
+RCC may now consume the optional fields. Consumption remains `NO` until RCC
+changes and tests its client. No new contract revision is created.
 
 ---
 

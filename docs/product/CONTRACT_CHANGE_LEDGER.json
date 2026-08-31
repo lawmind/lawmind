@@ -227,8 +227,20 @@
       "claimImpact": "none. B2c and B3 remain BLOCKED and unchanged.",
       "backendOwner": "LCC",
       "handoff": "LCC - additive fields on an existing read shape. No migration. No new endpoint. The effect and policy functions the write path already calls are the same ones the read path needs.",
-      "releasedToRCC": false,
-      "releaseBlockedBy": "No backend serves these fields on this route. RCC MUST NOT build against them. Until they land, RCC's stated fallback IS the contract and it is honest.",
+      "historicalReleaseBlockedBy_R14AtAdjudication": "No backend served these fields on this route when NEW3 adjudicated the amendment. RCC was not permitted to build against them, and RCC's stated fallback remained the contract until implementation was observed.",
+      "implementationCommit": "24cf3623",
+      "LCC_IMPLEMENTED": "YES",
+      "RELEASED_TO_RCC": "YES",
+      "RCC_CONSUMED": "NO",
+      "releasedToRCC": true,
+      "releasedAt": "2026-08-31",
+      "releaseEvidence": {
+        "observedAtHead": "753dda4c906be426e94516e83645adb9a7b04643",
+        "source": "services/api/src/matters/authorities.ts",
+        "proof": "GET and POST authority shapes both serve precedentialEffect, canAddToMatter and citableForUntouchedPropositions through precedentialEffectFromEdges -> precedentialPolicy. A committed test inserts a later judgment_citations edge, observes the same authorityId change on the next GET without resaving, and verifies matter_authorities has no policy/currentness columns.",
+        "focusedTest": "node --env-file=.env --import tsx --test --test-concurrency=1 services/api/src/matters/authorities.test.ts - 21 pass, 0 fail",
+        "typecheck": "pnpm --filter @lawmind/api typecheck - PASS"
+      },
       "rccConsumed": false
     },
     {
