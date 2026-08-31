@@ -182,12 +182,12 @@ the re-scored gate is identical to the digit and no published number moves.
 this round's.** `corpus/freshness-publication.test.ts` — the published freshness
 observation records parity sha `ba2d0c5c…` while the committed
 `docs/ai/new2-r10/parity-matrix.json` hashes to `2a477022…`. Both files are
-committed and clean, so it reproduces in a clone; `parity-matrix.json` was
-rewritten in `08baae98` without republishing the observation. It read green
-earlier today only because the working tree still held an UNCOMMITTED copy that
-matched, until NEW2's lane rewrote it back at 14:14:58 — the shape LCC bus 1576
-raised once already. Reported as bus 1634. **NEW2's to fix; neither file was
-touched here.**
+committed and clean, so it reproduces in a clone. `08baae98` (14:15:42, four
+minutes after `bd2aa74a`) rewrote `parity-matrix.json` from the recorded
+`ba2d0c5c…` to `2a477022…` and did not touch `freshness-observation.json`; the
+test was green immediately before it. Reported as bus 1634, whose mechanism was
+wrong — an mtime-inferred working-tree story — and corrected in bus 1636.
+**NEW2's to fix; neither file was touched here.**
 
 **Next for LCC, named and deliberately not done this round.**
 `services/api/src/search/structured.ts:362` is the path an advocate hits typing

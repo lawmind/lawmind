@@ -364,10 +364,18 @@ X corpus/freshness-publication.test.ts
 ```
 
 Both files are committed and clean, so the disagreement is between two committed
-objects and reproduces in a clone. `parity-matrix.json` was rewritten in
-`08baae98` without republishing the observation against it. It was green earlier
-today only because the working tree still held an UNCOMMITTED
-`parity-matrix.json` that did match, and something in NEW2's lane rewrote it back
-to the committed content at 14:14:58 — which is the shape LCC bus 1576 already
-raised once, and the shape that test exists to catch. Reported as bus 1634;
-neither file was touched here.
+objects and reproduces in a clone. The mechanism, checked against the objects
+rather than inferred from file mtimes:
+
+```
+08baae98~1:docs/ai/new2-r10/parity-matrix.json  ->  ba2d0c5c…  the recorded sha
+08baae98  :docs/ai/new2-r10/parity-matrix.json  ->  2a477022…  what is committed
+```
+
+`08baae98` (2026-08-31 14:15:42, four minutes after `bd2aa74a`) rewrote the
+artifact and did NOT touch `freshness-observation.json` — it is not in that
+commit's file list. The test was green immediately before it. **My first report
+of this, bus 1634, gave the wrong mechanism** — a working-tree story inferred
+from mtimes — and bus 1636 corrects it. The conclusion did not change and the
+remedy did: republish the observation against the current artifact, or restore
+the version `08baae98` replaced. Neither file was touched here.
