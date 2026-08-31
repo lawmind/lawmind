@@ -220,6 +220,14 @@ const STEPS = [
   // weeks later. The same "a rule implemented at one call site is a rule the
   // second call site does not have" failure as the admission gate and OD-14.
   ['retrieval outcome coverage', 'node', ['scripts/check-retrieval-outcome-coverage.mjs']],
+  // NEW2 bus 1636. `08baae98` rewrote docs/ai/new2-r10/parity-matrix.json and did
+  // not republish the observation that binds it by sha, so from that commit the
+  // repository could not reproduce its own parity evidence. The publisher already
+  // refuses an incoherent PAIR; nothing refused an incoherent COMMIT, and
+  // `1a550cf5` was the same defect one round earlier. Reads committed objects with
+  // `--ref HEAD` rather than the working tree, because a coupled set committed one
+  // file at a time is green here and red in a clone.
+  ['freshness binding', 'node', ['scripts/check-freshness-binding.mjs', '--ref', 'HEAD']],
   // What an advocate types is a fact about their client -- provider-policy.ts
   // says so in its own header and the storage layer already honours it:
   // `searches` is deleted on erasure, `llm_calls` holds no prompt column, and

@@ -2,7 +2,7 @@
  "artifact": "NEW2_SOURCE_FRESHNESS_R10",
  "definitionVersion": "HC_PARITY_V2_2026-08-29",
  "lane": "NEW2",
- "takenAt": "2026-08-29T14:40:03.729Z",
+ "takenAt": "2026-08-31T10:47:40.925Z",
  "contract": {
   "note": "per source, never a single headline number. Recency and completeness are reported together or not at all.",
   "fields": [
@@ -16,7 +16,7 @@
   ],
   "denominator": "top-level upstreamLocalCompleteness and sourceUnavailableCount use the newest 12 decisionMonth buckets under HC_PARITY_V2. Identity is distinct pdfUrlFor(partition, basename(pdf_link)) per court, resolved to one month with fixtures excluded. All-time values remain nested. Defined in the parity artifact and consumed without recomputation.",
   "denominatorSource": "docs/ai/new2-r10/parity-matrix.json",
-  "denominatorTakenAt": "2026-08-29T14:31:35.066Z",
+  "denominatorTakenAt": "2026-08-31T09:57:05.788Z",
   "measuredWindowMonths": 12,
   "unavailableIsAccounting": "sourceUnavailableCount closes accounting, never completeness, and is never netted out of upstreamLocalCompleteness."
  },
@@ -28,14 +28,14 @@
     "state": "AUTHORIZED",
     "basis": "AWS Open Data, CC-BY-4.0; Copyright Act s.52(1)(q)(iv)"
    },
-   "latestUpstreamDecisionDate": "2026-08-28",
-   "latestUpstreamMeasuredAt": "2026-08-29T14:38:58.523Z",
-   "latestLocalDecisionDate": "2026-08-28",
-   "lastSuccessfulIngestAt": "2026-08-29T14:31:01+00",
+   "latestUpstreamDecisionDate": "2026-08-29",
+   "latestUpstreamMeasuredAt": "2026-08-31T10:45:51.192Z",
+   "latestLocalDecisionDate": "2026-08-29",
+   "lastSuccessfulIngestAt": "2026-08-30T14:05:19+00",
    "sourceLagDays": 0,
    "sourceLagRefusedBecause": null,
    "upstreamLocalCompleteness": 0.9697,
-   "sourceUnavailableCount": 46754,
+   "sourceUnavailableCount": 46623,
    "measuredWindow": {
     "months": [
      "2025-09",
@@ -51,32 +51,32 @@
      "2026-07",
      "2026-08"
     ],
-    "upstreamRecords": 1544701,
-    "upstreamCases": 1426043,
-    "held": 1497947,
+    "upstreamRecords": 1539083,
+    "upstreamCases": 1420421,
+    "held": 1492460,
     "upstreamLocalCompleteness": 0.9697,
-    "sourceUnavailableCount": 46754,
+    "sourceUnavailableCount": 46623,
     "policyRefused": 0,
     "retryExhaustedOurs": 0,
     "neverAttempted": 0
    },
    "allTime": {
-    "upstreamRecords": 18951606,
-    "held": 18730316,
-    "sourceUnavailableCount": 221290,
+    "upstreamRecords": 18945988,
+    "held": 18724829,
+    "sourceUnavailableCount": 221159,
     "retryExhaustedOurs": 0,
     "neverAttempted": 0,
     "upstreamLocalCompleteness": 0.9883,
     "accountedUpstream": 1,
-    "heldRowsInCorpus": 18720081
+    "heldRowsInCorpus": 18720643
    },
    "courtMonthDetail": [
     {
      "court": "1_12",
      "month": "2026-08",
-     "upstreamRecords": 825,
-     "upstreamCases": 826,
-     "held": 825,
+     "upstreamRecords": 795,
+     "upstreamCases": 796,
+     "held": 795,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -134,21 +134,21 @@
     {
      "court": "18_6",
      "month": "2026-08",
-     "upstreamRecords": 2147,
-     "upstreamCases": 2149,
-     "held": 1912,
+     "upstreamRecords": 1706,
+     "upstreamCases": 1707,
+     "held": 1471,
      "sourceUnavailableCount": 235,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8905,
+     "upstreamLocalCompleteness": 0.8623,
      "accountedUpstream": 1
     },
     {
      "court": "19_16",
      "month": "2026-08",
-     "upstreamRecords": 5298,
-     "upstreamCases": 5298,
-     "held": 5297,
+     "upstreamRecords": 4674,
+     "upstreamCases": 4674,
+     "held": 4673,
      "sourceUnavailableCount": 1,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -158,9 +158,9 @@
     {
      "court": "2_5",
      "month": "2026-08",
-     "upstreamRecords": 3395,
-     "upstreamCases": 3397,
-     "held": 3395,
+     "upstreamRecords": 2771,
+     "upstreamCases": 2773,
+     "held": 2771,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -170,9 +170,9 @@
     {
      "court": "20_7",
      "month": "2026-08",
-     "upstreamRecords": 1674,
-     "upstreamCases": 1675,
-     "held": 1674,
+     "upstreamRecords": 1234,
+     "upstreamCases": 1235,
+     "held": 1234,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -194,9 +194,9 @@
     {
      "court": "22_18",
      "month": "2026-08",
-     "upstreamRecords": 3531,
-     "upstreamCases": 3532,
-     "held": 3531,
+     "upstreamRecords": 2842,
+     "upstreamCases": 2844,
+     "held": 2842,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -218,9 +218,9 @@
     {
      "court": "24_17",
      "month": "2026-08",
-     "upstreamRecords": 891,
-     "upstreamCases": 892,
-     "held": 891,
+     "upstreamRecords": 822,
+     "upstreamCases": 823,
+     "held": 822,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -230,21 +230,21 @@
     {
      "court": "27_1",
      "month": "2026-08",
-     "upstreamRecords": 3987,
-     "upstreamCases": 3987,
-     "held": 2801,
-     "sourceUnavailableCount": 1186,
+     "upstreamRecords": 3313,
+     "upstreamCases": 3313,
+     "held": 2124,
+     "sourceUnavailableCount": 1189,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.7025,
+     "upstreamLocalCompleteness": 0.6411,
      "accountedUpstream": 1
     },
     {
      "court": "28_2",
      "month": "2026-08",
-     "upstreamRecords": 1752,
-     "upstreamCases": 1752,
-     "held": 1752,
+     "upstreamRecords": 1592,
+     "upstreamCases": 1592,
+     "held": 1592,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -254,13 +254,13 @@
     {
      "court": "29_3",
      "month": "2026-08",
-     "upstreamRecords": 3461,
-     "upstreamCases": 3491,
-     "held": 3439,
+     "upstreamRecords": 2554,
+     "upstreamCases": 2581,
+     "held": 2532,
      "sourceUnavailableCount": 22,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.9936,
+     "upstreamLocalCompleteness": 0.9914,
      "accountedUpstream": 1
     },
     {
@@ -302,9 +302,9 @@
     {
      "court": "36_29",
      "month": "2026-08",
-     "upstreamRecords": 678,
-     "upstreamCases": 681,
-     "held": 678,
+     "upstreamRecords": 598,
+     "upstreamCases": 601,
+     "held": 598,
      "sourceUnavailableCount": 0,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
@@ -326,13 +326,13 @@
     {
      "court": "7_26",
      "month": "2026-08",
-     "upstreamRecords": 3677,
-     "upstreamCases": 3679,
-     "held": 3625,
-     "sourceUnavailableCount": 52,
+     "upstreamRecords": 2797,
+     "upstreamCases": 2798,
+     "held": 2754,
+     "sourceUnavailableCount": 43,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.9859,
+     "upstreamLocalCompleteness": 0.9846,
      "accountedUpstream": 1
     },
     {
@@ -532,11 +532,11 @@
      "month": "2026-07",
      "upstreamRecords": 1931,
      "upstreamCases": 1931,
-     "held": 1401,
-     "sourceUnavailableCount": 530,
+     "held": 1429,
+     "sourceUnavailableCount": 502,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.7255,
+     "upstreamLocalCompleteness": 0.74,
      "accountedUpstream": 1
     },
     {
@@ -820,11 +820,11 @@
      "month": "2026-06",
      "upstreamRecords": 4356,
      "upstreamCases": 3789,
-     "held": 3880,
-     "sourceUnavailableCount": 476,
+     "held": 3896,
+     "sourceUnavailableCount": 460,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8907,
+     "upstreamLocalCompleteness": 0.8944,
      "accountedUpstream": 1
     },
     {
@@ -1108,11 +1108,11 @@
      "month": "2026-05",
      "upstreamRecords": 5514,
      "upstreamCases": 4560,
-     "held": 4909,
-     "sourceUnavailableCount": 605,
+     "held": 4914,
+     "sourceUnavailableCount": 600,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8903,
+     "upstreamLocalCompleteness": 0.8912,
      "accountedUpstream": 1
     },
     {
@@ -1408,11 +1408,11 @@
      "month": "2026-04",
      "upstreamRecords": 23481,
      "upstreamCases": 17742,
-     "held": 21337,
-     "sourceUnavailableCount": 2144,
+     "held": 21356,
+     "sourceUnavailableCount": 2125,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.9087,
+     "upstreamLocalCompleteness": 0.9095,
      "accountedUpstream": 1
     },
     {
@@ -1708,11 +1708,11 @@
      "month": "2026-03",
      "upstreamRecords": 21162,
      "upstreamCases": 15347,
-     "held": 18980,
-     "sourceUnavailableCount": 2182,
+     "held": 19009,
+     "sourceUnavailableCount": 2153,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8969,
+     "upstreamLocalCompleteness": 0.8983,
      "accountedUpstream": 1
     },
     {
@@ -2008,11 +2008,11 @@
      "month": "2026-02",
      "upstreamRecords": 24236,
      "upstreamCases": 16910,
-     "held": 21674,
-     "sourceUnavailableCount": 2562,
+     "held": 21681,
+     "sourceUnavailableCount": 2555,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8943,
+     "upstreamLocalCompleteness": 0.8946,
      "accountedUpstream": 1
     },
     {
@@ -2296,11 +2296,11 @@
      "month": "2026-01",
      "upstreamRecords": 25971,
      "upstreamCases": 18582,
-     "held": 23211,
-     "sourceUnavailableCount": 2760,
+     "held": 23232,
+     "sourceUnavailableCount": 2739,
      "retryExhaustedOurs": 0,
      "neverAttempted": 0,
-     "upstreamLocalCompleteness": 0.8937,
+     "upstreamLocalCompleteness": 0.8945,
      "accountedUpstream": 1
     },
     {
@@ -3667,7 +3667,7 @@
     {
      "outcome": "refused",
      "refusalReason": "kill_switch_off",
-     "count": 76
+     "count": 80
     },
     {
      "outcome": "refused",
@@ -3677,6 +3677,16 @@
     {
      "outcome": "error",
      "refusalReason": null,
+     "count": 3
+    },
+    {
+     "outcome": "ok",
+     "refusalReason": null,
+     "count": 109
+    },
+    {
+     "outcome": "refused",
+     "refusalReason": "min_interval",
      "count": 1
     }
    ],
