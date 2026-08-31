@@ -151,9 +151,146 @@ describe('neutralCitationFrom', () => {
     assert.equal(neutralCitationFrom('IN THE HIGH COURT OF PATNA\nJUDGMENT', 2016), null);
   });
 
-  it('does not read a citation buried deep in the body as the header one', () => {
-    const deep = 'x'.repeat(4000) + ' 2024:DHC:99 ';
-    assert.equal(neutralCitationFrom(deep, 2024), null);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * NEW2 R17. THE ASSERTION BELOW USED TO READ THE OTHER WAY, AND IT WAS WRONG
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * It read: `neutralCitationFrom('x'.repeat(4000) + ' 2024:DHC:99 ', 2024)`
+   * is `null` — "does not read a citation buried deep in the body as the header
+   * one". That encoded the same assumption as the code it was testing, which is
+   * why it passed for exactly as long as the bug lived.
+   *
+   * **Bombay does not print its citation in the masthead.** It stamps it in the
+   * page furniture after the judge's signature, 500-800 characters into a
+   * one-page order; so do Rajasthan and Karnataka, on every page. Measured on the
+   * frozen population (`docs/ai/new2-r17/eval-population.json`): 45 of the 59
+   * documents an identity-anchored adjudicator could not place are exactly this
+   * form, and a rule that refuses them loses 51 of 203 true own citations.
+   *
+   * Depth is not the signal. What introduces the citation is.
+   */
+  it('takes a page-stamped citation that no citing phrase introduces, however deep', () => {
+    const bombay =
+      'IN THE HIGH COURT OF JUDICATURE AT BOMBAY, BENCH AT AURANGABAD. ' +
+      'x'.repeat(500) +
+      ' 2. Leave is granted. 3. The application stands disposed of as withdrawn. ' +
+      '( MEHROZ K. PATHAN, J. ) Jhs/ 1/1 2025:BHC-AUG:34493';
+    assert.equal(
+      neutralCitationFrom(bombay, 2025, { caseNumber: 'ABA/1808/2025', cnr: 'HCBM030420052025' }),
+      '2025:BHC-AUG:34493',
+    );
+  });
+
+  it('REFUSES the citation of the judgment a short order says it follows', () => {
+    // Measured: all 109 rows behind NEW2 R16's 30 extraction defects. This is the
+    // Allahabad form, the commonest of them — a two-page order that prints no
+    // citation of its own and names the judgment it is covered by.
+    const follower =
+      'HIGH COURT OF JUDICATURE AT ALLAHABAD Court No. 7 Case :- WRIT - A No. - 5678 of 2024 ' +
+      'Heard learned counsel for the petitioner. The case at hand is squarely covered under the ' +
+      'judgement dated 09.10.2023 passed by this Court in Writ A No. 7699 of 2023: ' +
+      'Neutral Citation No.- 2023:AHC-LKO:65518-DB. The writ petition is disposed of.';
+    assert.equal(
+      neutralCitationFrom(follower, 2024, { caseNumber: 'WRIT-A/5678/2024', cnr: 'UPHC010000012024' }),
+      null,
+    );
+  });
+
+  it('takes THIS row’s masthead out of a PDF holding four connected petitions', () => {
+    // `WPS/5687/2025`, Chhattisgarh: four writ petitions in one document, each
+    // with its own cause title and its own citation. The old rule took the first
+    // and filed this row under WPS 5593's number.
+    // The 889 characters of party and respondent list between the two mastheads
+    // are the real document's spacing, kept because it is load-bearing: a
+    // compressed fixture puts the previous cause title inside the second
+    // citation's 200-character context and the test then measures the fixture.
+    const respondents =
+      'The State of Chhattisgarh Through The Secretary School Education Department Mahanadi Bhawan ' +
+      'Atal Nagar District Raipur Chhattisgarh, The Director Public Instruction Indravati Bhawan ' +
+      'Atal Nagar District Raipur Chhattisgarh, The District Education Officer Raigarh District ' +
+      'Raigarh Chhattisgarh, The Block Education Officer Dharamjaigarh District Raigarh ' +
+      'Chhattisgarh, and the Sub Divisional Officer Revenue Dharamjaigarh District Raigarh ' +
+      'Chhattisgarh, all of whom have been served through the office of the Advocate General ' +
+      '--- Respondents ';
+    const bundle =
+      '1 2025:CGHC:26982 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5593 of 2025 ' +
+      'Thanda Ram Kumhar S/o Shri Vishram Kumhar aged about 42 years R/o Village Kondkel ' +
+      'Tehsil Dharamjaigarh District Raigarh Chhattisgarh --- Petitioner ' +
+      respondents +
+      '2025:CGHC:26986 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5687 of 2025 ' +
+      'Madhu Bala --- Petitioner';
+    assert.equal(
+      neutralCitationFrom(bundle, 2025, { caseNumber: 'WPS/5687/2025', cnr: 'CGHC010237282025' }),
+      '2025:CGHC:26986',
+    );
+  });
+
+  it('answers NULL rather than choose between two citations it cannot separate', () => {
+    // A missing citation is a recoverable gap. A wrong one files a document under
+    // another matter's number.
+    const twoAuthorities =
+      'HIGH COURT OF JUDICATURE AT ALLAHABAD Case :- WRIT TAX No. - 5066 of 2025 ' +
+      'This issue is covered by the judgements of this Court in the case of M/s Vijay Trading ' +
+      'Company vs. Additional Commissioner; Neutral Citation No. - 2024:AHC:132878 and ' +
+      'M/s PP Polyplast, Neutral Citation No. - 2024:AHC:121612.';
+    assert.equal(
+      neutralCitationFrom(twoAuthorities, 2025, { caseNumber: 'WTAX/5066/2025', cnr: 'UPHC010000022025' }),
+      null,
+    );
+  });
+
+  it('does not mistake a DATE for the case number beside a citation', () => {
+    // `Judgment Reserved on : 09/12/2024` read as matter 12 of 2024 and made
+    // `FA/69/2022` (Chhattisgarh) disown its own masthead citation.
+    const withDate =
+      '1 2025:CGHC:3148-DB NAFR HIGH COURT OF CHHATTISGARH, BILASPUR ' +
+      'Judgment Reserved on : 09/12/2024 Judgment Delivered on : 17/01/2025 ' +
+      'FA No. 69 of 2022 Ramesh --- Appellant';
+    assert.equal(
+      neutralCitationFrom(withDate, 2025, { caseNumber: 'FA/69/2022', cnr: 'CGHC010129822022' }),
+      '2025:CGHC:3148-DB',
+    );
+  });
+
+  it('REFUSES a footer inherited from a different order, which is printed once', () => {
+    // `CWP/1220/2024`, Punjab & Haryana: another order's page stamp bled into
+    // this document's text. A real page stamp recurs; this appears once.
+    const bled =
+      'IN THE HIGH COURT FOR THE STATES OF PUNJAB AND HARYANA AT CHANDIGARH CWP No. 1220 of 2024 ' +
+      'The petitioner was therefore constrained to file the present petition. ' +
+      'MOHIT GOYAL 2024.07.19 13:55 I attest to the accuracy and integrity of this document ' +
+      'CWP-15861-2015 (O&M) 2023:PHHC:094498 Page 2 of 3 ' +
+      'Per contra, learned counsel for the respondents submits';
+    assert.equal(
+      neutralCitationFrom(bled, 2024, { caseNumber: 'CWP/1220/2024', cnr: 'PHHC010000032024' }),
+      null,
+    );
+  });
+
+  it('REFUSES a connected matter’s citation carried in an order sheet with its CNR', () => {
+    // `HABC/16/2023`, Uttarakhand. The one defect of the 109 that sat INSIDE the
+    // old 250-character masthead window: position could never have caught it,
+    // the foreign CNR beside it does.
+    const orderSheet =
+      'SL. No Date Office Notes, reports, orders or proceedings or directions and Registrar’s order ' +
+      'with Signatures COURT’S OR JUDGES’S ORDERS D1- 23 UKHC010088392026 2026:UHC:4224-DB ' +
+      'HABC No.16 of 2023 Jimdaar .....Petitioner';
+    assert.equal(
+      neutralCitationFrom(orderSheet, 2026, { caseNumber: 'HABC/16/2023', cnr: 'UKHC010012342023' }),
+      null,
+    );
+  });
+
+  it('still answers with no identity at all, on the citing phrase alone', () => {
+    // A row whose title carries no parseable case number and no CNR. A signal
+    // that cannot be evaluated is not evidence, so the case-number and CNR tests
+    // switch off and the citing phrase carries the refusal on its own.
+    assert.equal(neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023), '2023:DHC:2720');
+    assert.equal(
+      neutralCitationFrom('The court relied upon 2023:DHC:2720 in reaching this view.', 2023),
+      null,
+    );
   });
 });
 
