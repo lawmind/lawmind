@@ -16,6 +16,7 @@ import {
   type FreshnessStatement,
   type UpstreamStatement,
 } from './corpusFreshness';
+import { corpusScope, describeScope } from './corpusScope';
 import { color, space } from '../../theme/tokens';
 
 /**
@@ -101,10 +102,17 @@ export function CoverageScreen({ onBack }: { onBack: () => void }) {
         <Text variant="uiStrong" scale="title">
           What we hold
         </Text>
+        {/*
+          DERIVED FROM THE RESPONSE, NEVER ASSERTED. This sentence used to be
+          hard-coded to "every judgment ... is from the Supreme Court of India"
+          while the High Court rows below it rendered `held` from the same
+          response — so the first High Court to reach one row made the lede
+          false and the table beside it right. `corpusScope` re-derives it, and
+          keeps "we could not read this" as its own answer rather than
+          collapsing an outage into a completeness claim.
+        */}
         <Text variant="ui" style={styles.muted}>
-          Every judgment in Lawmind today is from the Supreme Court of India. Search finds nothing
-          from a High Court not because there is nothing to find, but because we do not hold it
-          yet — and that is worth knowing before you rely on an empty result.
+          {describeScope(corpusScope(coverage))}
         </Text>
 
         {loadError ? (

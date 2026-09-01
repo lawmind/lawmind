@@ -6,6 +6,7 @@ import { Button } from '../../src/components/Button';
 import { Screen } from '../../src/components/Screen';
 import { Text } from '../../src/components/Text';
 import { usePendingDestination } from '../../src/state/pendingDestination';
+import { resumeAction } from '../../src/state/resumeGate';
 import { useSession } from '../../src/state/session';
 import { color, space } from '../../src/theme/tokens';
 
@@ -35,6 +36,13 @@ export default function Route() {
   const verify = useSession((s) => s.verify);
   const status = useSession((s) => s.status);
   const consume = usePendingDestination((s) => s.consume);
+  /**
+   * WHETHER THE DESTINATION STORE HAS ANSWERED YET. On a cold start from the
+   * mail round trip the held link exists nowhere but on disk, and this screen's
+   * effects run before the layout's — see `state/resumeGate.ts` for the
+   * ordering that spends the link on Today while every part behaves correctly.
+   */
+  const pendingHydrated = usePendingDestination((s) => s.hydrated);
   const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
@@ -62,9 +70,10 @@ export default function Route() {
      * link survives to `app/onboarding.tsx`, which resumes it after the profile
      * exists.
      */
-    if (status === 'signed_in') router.replace((consume() ?? '/today') as never);
-    else if (status === 'identity_only') router.replace('/onboarding');
-  }, [status, router, consume]);
+    const action = resumeAction(status, pendingHydrated);
+    if (action === 'resume') router.replace((consume() ?? '/today') as never);
+    else if (action === 'onboarding') router.replace('/onboarding');
+  }, [status, pendingHydrated, router, consume]);
 
   return (
     <>

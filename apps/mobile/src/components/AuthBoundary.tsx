@@ -58,7 +58,39 @@ export function authDecision(
   status: SessionStatus,
   pathname: string,
 ): { render: 'children' | 'nothing'; redirectTo: string | null; hold: boolean } {
-  if (status === 'unknown') return { render: 'nothing', redirectTo: null, hold: false };
+  if (status === 'unknown') {
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * THE UNRESOLVED WINDOW HOLDS, IT JUST DOES NOT ACT.
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Render nothing and redirect nowhere — unchanged, and both load-bearing:
+     * mounting a protected screen here would leak it for the frames before the
+     * keychain answers, and redirecting would flash sign-in at an advocate who
+     * is already signed in, on every launch.
+     *
+     * WHAT CHANGED, 1 September 2026, is the third field. `unknown` used to
+     * hold nothing, on the reasoning that "a launch is not a destination". That
+     * reasoning is right and it was enforced in the wrong place: a plain launch
+     * lands on `/today` or `/`, and `isCapturableDestination` already throws
+     * both away. Whether a route is worth holding is a property of the ROUTE,
+     * not of the auth state that happened to be unresolved when it appeared.
+     *
+     * Holding nothing here is only safe if the pathname is STILL the advocate's
+     * destination when the keychain finally answers, and it need not be. A cold
+     * start from an external link puts the app on `/matter/<id>` while the
+     * session is `unknown`; the router can settle to `/today` inside that
+     * window; `/today` is not capturable; and the signed-out pass that follows
+     * captures nothing at all. The link was gone before the gate that exists to
+     * hold it ever saw it.
+     *
+     * The auth routes are excluded HERE as well as in the store, because that
+     * one is not recoverable: resuming `/auth/verify` replays a single-use
+     * token, and the server answers a replay by revoking every session the
+     * advocate has.
+     */
+    return { render: 'nothing', redirectTo: null, hold: !isOneOf(pathname, SIGNED_OUT_ROUTES) };
+  }
   if (status === 'signed_in') return { render: 'children', redirectTo: null, hold: false };
 
   if (status === 'identity_only') {
@@ -103,6 +135,7 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const params = useGlobalSearchParams();
   const capture = usePendingDestination((s) => s.capture);
+  const arrivedAt = usePendingDestination((s) => s.arrivedAt);
 
   const decision = authDecision(status, pathname);
   const href = hrefWithParams(pathname, params as Record<string, unknown>);
@@ -115,7 +148,15 @@ export function AuthBoundary({ children }: { children: ReactNode }) {
    */
   useEffect(() => {
     if (decision.hold) capture(href);
-  }, [decision.hold, href, capture]);
+    /**
+     * THE ADVOCATE ARRIVED, SO THE HOLD IS SPENT. `app/_layout.tsx` holds every
+     * external link before the session status is known, because that is the only
+     * moment the link exists; most of those advocates are already signed in and
+     * simply land on the screen. Retiring the hold on arrival is what keeps it
+     * from firing weeks later on a sign-in that had nothing to do with it.
+     */
+    else if (decision.render === 'children') arrivedAt(href);
+  }, [decision.hold, decision.render, href, capture, arrivedAt]);
 
   if (decision.redirectTo) return <Redirect href={decision.redirectTo as never} />;
   if (decision.render === 'nothing') return null;

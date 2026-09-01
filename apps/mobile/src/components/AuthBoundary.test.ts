@@ -94,16 +94,25 @@ describe('signed_in', () => {
  *
  * Redirecting on it would flash sign-in at an already-signed-in advocate on
  * every single launch and then bounce them back; rendering the child would leak
- * a protected screen for the frames before the answer arrives. Neither, and
- * nothing is captured — a launch is not a destination.
+ * a protected screen for the frames before the answer arrives. Neither.
+ *
+ * ── THE THIRD FIELD CHANGED, 1 September 2026 ───────────────────────────────
+ *
+ * This block used to assert `hold: false` for every path, on the reasoning that
+ * "a launch is not a destination". That reasoning survives; the place it is
+ * enforced does not. A plain launch lands on `/today` or `/`, and
+ * `isCapturableDestination` refuses both — so the filter belongs to the ROUTE.
+ * Holding nothing at the gate lost a cold-start deep link outright whenever the
+ * router settled off it before the keychain answered, which was the Android
+ * auth-resume P0. The hold rule now lives in `AuthBoundary.unknown.test.ts`,
+ * with the ordering that produced the loss written out; what stays here is the
+ * pair that did not change.
  */
 describe('unknown', () => {
   it.each([...PROTECTED, '/sign-in'])('renders nothing at %s and redirects nowhere', (path) => {
-    expect(authDecision('unknown', path)).toEqual({
-      render: 'nothing',
-      redirectTo: null,
-      hold: false,
-    });
+    const d = authDecision('unknown', path);
+    expect(d.render).toBe('nothing');
+    expect(d.redirectTo).toBeNull();
   });
 });
 

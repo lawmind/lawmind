@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Platform, StyleSheet } from 'react-native';
+import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,7 +12,7 @@ import { CommandPalette } from '../src/components/CommandPalette';
 import { useAppFonts } from '../src/theme/fonts';
 import { useCommandPalette } from '../src/state/commandPalette';
 import { useOutbox } from '../src/state/outbox';
-import { usePendingDestination } from '../src/state/pendingDestination';
+import { deepLinkHref, usePendingDestination } from '../src/state/pendingDestination';
 import { useReadingStore } from '../src/state/reading';
 import { useCapabilities } from '../src/state/capabilities';
 import { useSession } from '../src/state/session';
@@ -40,6 +41,7 @@ export default function RootLayout() {
   const flushOutbox = useOutbox((s) => s.flush);
   const hydrateSession = useSession((s) => s.hydrate);
   const hydratePendingDestination = usePendingDestination((s) => s.hydrate);
+  const capturePendingDestination = usePendingDestination((s) => s.capture);
   const fetchCapabilities = useCapabilities((s) => s.fetch);
 
   useEffect(() => {
@@ -95,6 +97,33 @@ export default function RootLayout() {
   useEffect(() => {
     void hydratePendingDestination();
   }, [hydratePendingDestination]);
+
+  /**
+   * THE EXTERNAL LINK IS HELD FROM THE LINK, NOT FROM THE ROUTER.
+   *
+   * `components/AuthBoundary.tsx` refuses to MOUNT a protected screen, so during
+   * the unresolved window there is no navigator at all - and expo-router's
+   * initial linking state is never applied. OBSERVED on a physical Galaxy S24,
+   * 1 September 2026: a cold start on `lawmind://matter/<id>` while signed out
+   * reported `usePathname() === '/'` for the entire launch, so the gate held
+   * nothing and the advocate resumed to Today. See `deepLinkHref` for the
+   * differential that proved it.
+   *
+   * IT LIVES HERE, ABOVE THE ROUTER, for the same reason the hydrate above it
+   * does: this effect runs whether or not any screen mounted, which is exactly
+   * the case it exists for. `capture` still applies every refusal - a spent
+   * `/auth/verify` token is never held, whatever asked for it.
+   */
+  useEffect(() => {
+    const hold = (url: string | null) => {
+      if (!url) return;
+      const href = deepLinkHref(Linking.parse(url));
+      if (href) capturePendingDestination(href);
+    };
+    void Linking.getInitialURL().then(hold);
+    const sub = Linking.addEventListener('url', (e) => hold(e.url));
+    return () => sub.remove();
+  }, [capturePendingDestination]);
   /**
    * WHAT THE SERVER STILL SERVES — `GET /release/capabilities`, read once at
    * launch. RCC_V1_API_CONTRACT_R12 §1.6 asks the client to read the registry

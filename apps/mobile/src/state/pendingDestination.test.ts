@@ -19,7 +19,7 @@ import {
 
 beforeEach(async () => {
   await AsyncStorage.clear();
-  usePendingDestination.setState({ held: null, hydrated: false });
+  usePendingDestination.setState({ held: null, hydrated: false, generation: 0 });
 });
 
 const store = () => usePendingDestination.getState();
@@ -205,8 +205,13 @@ describe('capture and consume', () => {
 describe('surviving a process death', () => {
   it('a held destination is read back after a restart', async () => {
     store().capture('/judgment/abc?paragraph=23');
-    // Whatever the previous process wrote is all the next one has.
-    usePendingDestination.setState({ held: null, hydrated: false });
+    /*
+      Whatever the previous process wrote is all the next one has — INCLUDING
+      the mutation generation, which a fresh process starts at zero. It is what
+      tells hydration that nothing in memory outranks disk yet; carrying the old
+      process's count over would simulate a restart that did not happen.
+    */
+    usePendingDestination.setState({ held: null, hydrated: false, generation: 0 });
     await store().hydrate();
     expect(store().consume()).toBe('/judgment/abc?paragraph=23');
   });
@@ -214,7 +219,7 @@ describe('surviving a process death', () => {
   it('a consumed destination does not come back after a restart', async () => {
     store().capture('/judgment/abc');
     store().consume();
-    usePendingDestination.setState({ held: null, hydrated: false });
+    usePendingDestination.setState({ held: null, hydrated: false, generation: 0 });
     await store().hydrate();
     expect(store().consume()).toBeNull();
   });

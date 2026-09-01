@@ -124,6 +124,63 @@ describe('CoverageScreen', () => {
     ).toBeTruthy();
   });
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE LEDE IS DERIVED FROM THE RESPONSE, AND THE RESPONSE CAN REFUTE IT.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The screen carried "Every judgment in Lawmind today is from the Supreme
+   * Court of India" as a hard-coded sentence while rendering High Court `held`
+   * counts from the response directly below it. The two contradict each other
+   * the moment one High Court row lands, and the sentence is the half an
+   * advocate reads first.
+   */
+  it('drops the Supreme Court-only claim as soon as one High Court holds rows', async () => {
+    corpusCoverage.mockResolvedValue({
+      ok: true,
+      data: coverage({
+        highCourts: [
+          {
+            courtName: 'Allahabad High Court',
+            courtCode: 'allahabad',
+            sourceDocuments: 3_493_695,
+            held: 12_400,
+            firstYear: 2016,
+            lastYear: 2026,
+          },
+        ],
+      }),
+    });
+    await render(<CoverageScreen onBack={() => {}} />);
+
+    expect(await screen.findByText(/12,400 of 34,93,695 documents held/)).toBeTruthy();
+    expect(screen.queryByText(/Every judgment in Lawmind today is from the Supreme Court/)).toBeNull();
+    expect(screen.getByText(/we hold part of 1 High Court of 1/)).toBeTruthy();
+  });
+
+  it('still makes the claim while every High Court holds zero', async () => {
+    corpusCoverage.mockResolvedValue({ ok: true, data: coverage() });
+    await render(<CoverageScreen onBack={() => {}} />);
+
+    expect(
+      await screen.findByText(/Every judgment in Lawmind today is from the Supreme Court/)
+    ).toBeTruthy();
+  });
+
+  /**
+   * AN OUTAGE IS NOT A STATEMENT ABOUT THE CORPUS. A failed coverage call
+   * rendering the Supreme Court-only sentence would be a completeness claim
+   * that nothing checked — the same shape of defect as showing an unverified
+   * citation as confirmed.
+   */
+  it('makes no claim at all when coverage did not answer', async () => {
+    corpusCoverage.mockResolvedValue(NEVER_ANSWERED);
+    await render(<CoverageScreen onBack={() => {}} />);
+
+    expect(await screen.findByText(/could not read what we hold just now/)).toBeTruthy();
+    expect(screen.queryByText(/Every judgment in Lawmind today is from the Supreme Court/)).toBeNull();
+  });
+
   it('sorts worst-gap-first, exactly as the server sent it — never re-sorted client-side', async () => {
     corpusCoverage.mockResolvedValue({ ok: true, data: coverage() });
     await render(<CoverageScreen onBack={() => {}} />);
