@@ -75,14 +75,103 @@ describe('capture and consume', () => {
   });
 
   /**
-   * THE FIRST CAPTURE WINS. The redirect settles through at least one more
-   * route, and a second capture would displace the judgment the advocate
-   * actually asked for.
+   * THE FIRST CAPTURE WINS WITHIN THE SETTLE. The redirect settles through at
+   * least one more route, and a second capture from that same pass would
+   * displace the judgment the advocate actually asked for. Two captures in the
+   * same tick are that pass.
    */
-  it('a second capture inside the window does not displace the first', () => {
+  it('a second capture inside the settle window does not displace the first', () => {
     store().capture('/judgment/abc');
     store().capture('/matter/m1');
     expect(store().consume()).toBe('/judgment/abc');
+  });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * BUT A REAL NAVIGATION LATER IS NOT A SETTLING PASS, AND IT WINS.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The guard was bounded by `RESUME_WINDOW_MS` — thirty minutes — so it ate
+   * genuine navigations. OBSERVED on a physical Galaxy S24, 1 September 2026:
+   * signed in on Settings → Sign out (Settings captured, correctly) → follow a
+   * shared `/matter/<id>` link → sign in → landed on **Settings**. The link the
+   * advocate followed lost to the screen they happened to be on.
+   *
+   * This is the falsifier for that: it fails against the old thirty-minute rule
+   * and passes against the settle window.
+   */
+  it('a capture after the settle window replaces the held destination', () => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date('2026-09-01T10:00:00.000Z'));
+      store().capture('/settings');
+      jest.setSystemTime(new Date('2026-09-01T10:02:00.000Z'));
+      store().capture('/matter/81f06002-af68-4e8c-bef5-6fea1e77e4cf');
+      expect(store().consume()).toBe('/matter/81f06002-af68-4e8c-bef5-6fea1e77e4cf');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  /**
+   * AND IT NEEDS NO SIGN-OUT TO BITE. Two shared links followed within half an
+   * hour resumed the FIRST one — the same defect with no session change at all.
+   */
+  it('the second of two followed links is the one resumed', () => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date('2026-09-01T10:00:00.000Z'));
+      store().capture('/judgment/abc');
+      jest.setSystemTime(new Date('2026-09-01T10:05:00.000Z'));
+      store().capture('/judgment/xyz?paragraph=23');
+      expect(store().consume()).toBe('/judgment/xyz?paragraph=23');
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * RE-CAPTURING THE SAME HREF WRITES NOTHING — the loop guard, and the reason
+   * the first attempt at this fix took the device down.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `AuthBoundary` calls `capture(href)` from an effect while the gate is held,
+   * so every re-render calls again with the same string. Narrowing the settle
+   * window let those repeats through, each one wrote the store, each write
+   * re-rendered a subscriber, and the S24 answered "Maximum update depth
+   * exceeded". `capturedAt` not moving is the observable form of "wrote
+   * nothing", and it is also what keeps the thirty-minute expiry honest.
+   */
+  it('re-capturing the same destination does not restart its clock', () => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date('2026-09-01T10:00:00.000Z'));
+      store().capture('/matter/m1');
+      const first = store().held?.capturedAt;
+      jest.setSystemTime(new Date('2026-09-01T10:20:00.000Z'));
+      store().capture('/matter/m1');
+      expect(store().held?.capturedAt).toBe(first);
+      // And it still expires on the ORIGINAL capture, not the repeat.
+      jest.setSystemTime(new Date('2026-09-01T10:31:00.000Z'));
+      expect(store().consume()).toBeNull();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  /** The settle guard still holds at its own boundary, which is what it is for. */
+  it('holds the first through a settling pass a frame later', () => {
+    jest.useFakeTimers();
+    try {
+      jest.setSystemTime(new Date('2026-09-01T10:00:00.000Z'));
+      store().capture('/judgment/abc');
+      jest.setSystemTime(new Date('2026-09-01T10:00:00.500Z'));
+      store().capture('/matter/m1');
+      expect(store().consume()).toBe('/judgment/abc');
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   /**

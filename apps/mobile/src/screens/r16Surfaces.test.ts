@@ -183,18 +183,55 @@ describe('R16-RCC-X06 · the held surfaces stay held', () => {
 });
 
 /**
- * `STATUTE_LINKED_EXPOSED = NO` — NEW3 R16 §9.
+ * `STATUTE_LINKED_EXPOSED = NO` — NEW3 R16 §9, and STILL NO after this round.
  *
- * `statute.linked_judgments` is `POST_V1` on every platform, and the lifecycle
- * is LCC's scoped evidence-qualified route first, RCC behind a gate second. The
- * known population still holds 1,723 anachronistic relationships. This round
- * builds none of it.
+ * `statute.linked_judgments` is `POST_V1` on every platform, and NEW3's own
+ * decision record spells the lifecycle out in two phases:
+ * `STATUTE_LINKED_IMPLEMENTATION_NEXT = LCC_ROUTE_THEN_RCC_IMPLEMENT_BEHIND_GATE`.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT CHANGED HERE, AND WHY IT IS A STRENGTHENING RATHER THAN A WEAKENING.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Phase one has happened: LCC's scoped, evidence-qualified route landed at
+ * `69d2a9bb`. Phase two — RCC implementing behind a gate — is what R16-RCC-08's
+ * `EXPECTED_STATE` column asks for, and its stated blocker was the route.
+ *
+ * This block used to assert that the STRING `linkedJudgments` appeared in no
+ * production source. That was a true and useful proxy for "unreachable" while
+ * the client had built nothing. It is not a reachability test: it would pass on
+ * a screen mounted at a live path through a differently-named variable, and it
+ * now fails on a component that has no route at all. Kept as written, its only
+ * available fix would have been to delete the held surface NEW3 asked for.
+ *
+ * So it is replaced by the property it was standing in for, asserted directly
+ * and more strictly, in `screens/statutes/statuteLinkedUnreachable.test.ts`: no
+ * route file exists or imports the screen, nothing under `app/` names it, the
+ * `/s/<slug>` map has no row for it, `V1_SURFACE` gained no surface, and exactly
+ * two files in the whole client may name the method.
  */
 describe('statute-linked judgments are not exposed', () => {
-  it('nothing in the client calls a linked-judgments route', () => {
-    for (const { source: src } of PRODUCTION_SOURCE) {
-      expect(src).not.toMatch(/linkedJudgments|statuteJudgments/);
-    }
+  /**
+   * The registry is the half that must not move, and it is asserted here rather
+   * than in the reachability file because it is a PRODUCT decision, not a
+   * routing fact. `POST_V1` is what makes the held surface held.
+   */
+  it('no client surface was opened for it', () => {
+    expect(Object.keys(V1_SURFACE)).not.toContain('statuteLinkedJudgments');
+    expect(Object.keys(V1_SURFACE)).not.toContain('statuteLinked');
+  });
+
+  /**
+   * REACHABILITY IS ASSERTED ELSEWHERE, AND THIS PINS THAT IT IS. A file that
+   * quietly stopped existing would take the guarantee with it, so its presence
+   * is part of this round's evidence rather than a matter of trust.
+   */
+  it('and the reachability assertions exist to carry the guarantee', () => {
+    const held = PRODUCTION_SOURCE.map(({ file }) => file);
+    expect(held.some((f) => f.endsWith('StatuteLinkedJudgmentsScreen.tsx'))).toBe(true);
+    expect(
+      readFileSync(join(SRC_DIR, 'screens', 'statutes', 'statuteLinkedUnreachable.test.ts'), 'utf8'),
+    ).toContain('there is no route to the statute-linked surface');
   });
 
   it('and no surface claims a section-to-section correspondence', () => {

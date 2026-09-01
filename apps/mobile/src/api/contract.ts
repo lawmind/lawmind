@@ -1159,6 +1159,176 @@ export type StatuteSection = {
   sourceUrl: string;
 };
 
+/* ------------------------------------------- statute-linked judgments · HELD */
+
+/**
+ * `GET /statutes/:statuteId/linked-judgments` — LCC R19 at `69d2a9bb`, NEW3 R16
+ * `R16-RCC-08`. **HELD. There is no route to it, and there must not be one.**
+ *
+ * Transcribed from `services/api/src/statutes/linked-judgments.ts` — the route
+ * source, not the handoff message and not the contract prose. Two of the fields
+ * below are shaped differently from the way the handoff described them
+ * (`resolutionState` is an ARRAY of the states aggregated into the row, and
+ * `withheld.byResolutionState` is a MAP keyed by ground), and reading the
+ * summary rather than the handler would have produced a client that compiles
+ * and mis-renders.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE ONE CLAIM THIS ROUTE MAKES, AND THE FOUR IT REFUSES
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `relationship` is `cites_statute_reference` and that is the whole of it: a
+ * judgment's TEXT carries a structurally extracted reference to this Act, or to
+ * this section of it. It is a citation fact. It is NOT that the section
+ * applied, was interpreted, was decided under, or that these are the good
+ * judgments on it — and `semantics` carries the server's own sentence saying so
+ * precisely so a client renders the server's words rather than a designer's.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE DEFAULT TIER IS EMPTY, AND THAT IS THE ANSWER
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Measured on the corpus 1 September 2026: of 905,944 rows in
+ * `judgment_statute_refs`, 905,853 carry a NULL `resolution_state` and the only
+ * 91 the resolver has ever written are REFUSALS — 49 `refused_pre_enactment`,
+ * 42 `unresolved_pre_commencement`, and zero of either confirming state.
+ * `SCHEMA_TRUTH.md` says NULL *"never"* means a confirmed link. So
+ * `resolver_confirmed` — the default — returns an empty page for every input,
+ * and the empty state is the PRIMARY state of this surface rather than its edge
+ * case.
+ *
+ * `structural_unreviewed` is the other tier. It is DEVELOPMENT AND ACCEPTANCE
+ * ONLY: it returns the unclassified population, labels every row it returns,
+ * and vouches for none of it. It must never reach an advocate as a linked
+ * judgment while this stands — see {@link StatuteLinkedEvidence}.
+ */
+export type StatuteLinkedEvidence = 'resolver_confirmed' | 'structural_unreviewed';
+
+/**
+ * Per-ROW evidence, which is not the same question as the per-REQUEST tier.
+ *
+ * A row is labelled `resolver_confirmed` only where the resolver wrote a
+ * confirming state for EVERY Act spelling aggregated into it — the route's own
+ * rule, and the strict direction: a mixed row inherits the WEAKER label, never
+ * the stronger one. So a `structural_unreviewed` row can come back inside a
+ * `resolver_confirmed` request's shape, and the row's own label is the one that
+ * decides how it may be described.
+ */
+export type StatuteLinkEvidence = StatuteLinkedEvidence;
+
+/** How this Act was reached, and therefore what the page is about. */
+export type StatuteLinkedScope = 'section' | 'act';
+
+/**
+ * The link evidence for one judgment, aggregated over every spelling the court
+ * used for the Act.
+ *
+ * `resolutionState` is `string[] | null` — NOT a single state. The route
+ * `array_remove(array_agg(DISTINCT ...), NULL)`s the column and returns `null`
+ * only when the resolver has said nothing at all about any of the rows. `null`
+ * is ABSENCE OF A DECISION and renders as absence; it is never a state, and it
+ * is never "unlinked".
+ */
+export type StatuteJudgmentLink = {
+  /** How the court itself named the Act. Evidence about the link, not decoration. */
+  actNamedInJudgment: string[];
+  sectionNumbers: string[];
+  /** How often the judgment names the provision. NOT relevance, authority or merit. */
+  occurrences: number;
+  firstOffset: number;
+  resolutionState: string[] | null;
+  resolutionReason: string[];
+  resolvedAt: string | null;
+  evidence: StatuteLinkEvidence;
+};
+
+/**
+ * One judgment on the page. The currentness fields are the SAME ones `/search`
+ * returns, derived live through `judgments/derived-effects.ts`, so a banner here
+ * can never disagree with the same judgment's banner elsewhere.
+ */
+export type StatuteLinkedJudgment = {
+  judgmentId: string;
+  caseTitle: string;
+  neutralCitation: string | null;
+  court: string;
+  judgmentDate: string;
+  caseNumber: string | null;
+  caseType: string | null;
+  /** The DERIVED banner. */
+  overruledStatus: OverruledStatus;
+  /** The raw column beside it, exactly as `/search` carries it. */
+  overruledStatusStored: OverruledStatus;
+  /**
+   * TYPED AS THE UNION, NOT AS `string`. The value set IS open-ended and the
+   * contract says so — but it "widens HERE or not at all", and every other
+   * consumer in this file takes {@link PrecedentialEffect}. A second, wider
+   * shape for the same field would let a value reach a screen that the eight
+   * declared consumers would have rejected.
+   */
+  precedentialEffect: PrecedentialEffect;
+  canAddToMatter: boolean;
+  unappliedTreatment: string | null;
+  treatmentAttribution: TreatmentAttribution | null;
+  link: StatuteJudgmentLink;
+};
+
+/**
+ * WHAT THE TIER DECLINED TO SHOW, COUNTED AND NAMED — the silent-drop rule.
+ *
+ * A map keyed by resolution state, with `unclassified` for the NULL population.
+ * `links: []` beside `{ unclassified: { references: 42697, judgments: 40134 } }`
+ * and `links: []` beside `{}` are DIFFERENT SENTENCES: the first means we hold
+ * references and vouch for none of them, the second means we hold none at all.
+ * Rendering both as "no cases" is the defect this field exists to prevent.
+ */
+export type StatuteLinkedWithheld = {
+  byResolutionState: Record<string, { references: number; judgments: number }>;
+  /** Rows the chronology gate removed from THIS page. Never backfilled. */
+  chronologyRefusedOnThisPage: number;
+};
+
+export type StatuteLinkedJudgmentsResponse = {
+  act: {
+    statuteId: string;
+    shortTitle: string;
+    hindiTitle: string | null;
+    actNumber: string;
+    actYear: number;
+    enactmentDate: string | null;
+    enforcementDate: string | null;
+    sourceUrl: string;
+    heldSectionCount: number;
+    /**
+     * `null`, NEVER `false`. `statutes` has no repeal column, so "is this Act in
+     * force" is a question this database cannot answer, and `false` would be a
+     * claim about the law. No surface may render it as "in force".
+     */
+    repealRecorded: null;
+  };
+  section: {
+    sectionId: string;
+    sectionNumber: string;
+    heading: string | null;
+    sourceUrl: string;
+  } | null;
+  scope: StatuteLinkedScope;
+  /** `available` is `false` while `statute.old_new_correspondence` is DISABLED. */
+  correspondence: { available: boolean; reason: string };
+  evidence: StatuteLinkedEvidence;
+  /** `cites_statute_reference` today. Rendered, never interpreted. */
+  relationship: string;
+  /** The server's own sentence about what the relation means. Rendered verbatim. */
+  semantics: string;
+  /** `occurrences_desc_then_judgment_id`. Stated because it reads as ranking otherwise. */
+  ordering: string;
+  links: StatuteLinkedJudgment[];
+  page: { limit: number; offset: number; returned: number; hasMore: boolean };
+  withheld: StatuteLinkedWithheld;
+  coverage: { note: string };
+  asOf: string;
+};
+
 /**
  * CATEGORIES, NEVER COURT NAMES. `judgments.court` holds printed strings like
  * `High Court  for State of Telangana`; expanding a category into the names

@@ -41,6 +41,8 @@ import type {
   Session,
   Statute,
   StatuteCoverage,
+  StatuteLinkedEvidence,
+  StatuteLinkedJudgmentsResponse,
   StatuteSection,
   TrainingConsent,
   TreatmentResponse,
@@ -298,7 +300,43 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
     const body = (await response.json()) as ApiResponse<T>;
     return body;
   } catch (cause) {
-    const aborted = cause instanceof Error && cause.name === 'AbortError';
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * WE KNOW WE ABORTED BECAUSE WE ABORTED — the signal, not the exception.
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * This used to ask the REJECTION what happened: `cause.name === 'AbortError'`.
+     * That is the standard identity for a cancelled `fetch`, it is what
+     * `whatwg-fetch` rejects with, and on a physical Galaxy S24 it is never
+     * what arrives.
+     *
+     * MEASURED 1 SEPTEMBER 2026, SM-S921B / Android 16, this HEAD, with a probe
+     * on this exact line:
+     *
+     *     { name: "Error", ctor: "FetchError", isError: true,
+     *       msg: "fetch failed: Fetch request has been canceled" }
+     *
+     * `instanceof Error` holds and the NAME does not. Expo's native fetch has
+     * replaced React Native's `whatwg-fetch` polyfill, and it rejects a
+     * cancelled request with a `FetchError` named `Error`. So `aborted` was
+     * false on every timeout, the code fell through to `network`, and
+     * `SearchScreen` — which correctly maps only `network` to offline — told an
+     * advocate on full WiFi that they were offline while the server was
+     * answering them.
+     *
+     * That is the SAME defect RCC fixed on 31 August 2026, and the fix did not
+     * hold: it corrected the screen's mapping, which was right, while the code
+     * feeding it stayed wrong. Reproduced here at 15,243 ms against a 15,000 ms
+     * budget, with `POST /search status 200` in the server's own log.
+     *
+     * THE SIGNAL IS THE AUTHORITY AND CANNOT DRIFT. `controller.signal.aborted`
+     * is our own state: it is true exactly when this function's own timer fired,
+     * whoever implements `fetch` and whatever they throw. The name check is kept
+     * beside it because it is correct where it does hold and costs nothing —
+     * but it is now the fallback, not the test.
+     */
+    const aborted =
+      controller.signal.aborted || (cause instanceof Error && cause.name === 'AbortError');
     return {
       ok: false,
       error: {
@@ -1013,4 +1051,59 @@ export const api = {
     get<{ sections: StatuteSection[]; total: number }>(
       `/statutes/sections?actId=${encodeURIComponent(actId)}&limit=${Math.min(limit, 600)}`,
     ),
+
+  /**
+   * `GET /statutes/:statuteId/linked-judgments` — HELD, and expected to REFUSE.
+   *
+   * LCC R19 at `69d2a9bb`, NEW3 R16 `R16-RCC-08`. The server answers
+   * `409 CAPABILITY_DISABLED` unless `STATUTE_LINKED_JUDGMENTS_ROUTE=enabled` is
+   * set in ITS environment, and that is set in no environment this client will
+   * ever meet. **A 409 from this method is the correct, expected answer**, not a
+   * fault to retry or to report as an outage.
+   *
+   * It exists so NEW3 can acceptance-test the surface before it is released.
+   * Nothing an advocate can reach calls it: there is no route file, no
+   * navigation entry and no deep link, which is the same way `semanticSearch`
+   * has been held — built, measured, unreachable.
+   *
+   * ─────────────────────────────────────────────────────────────────────────
+   * `evidence` DEFAULTS TO THE SERVER'S DEFAULT BY OMISSION, DELIBERATELY.
+   * ─────────────────────────────────────────────────────────────────────────
+   *
+   * The parameter is not sent unless a caller names it, so the tier is whatever
+   * the server says its default is rather than whatever this client last
+   * believed. `structural_unreviewed` is DEVELOPMENT AND ACCEPTANCE ONLY — it
+   * returns the 905,853-row unclassified population, which is not a set of
+   * confirmed links and must never be rendered to an advocate as one.
+   *
+   * `sectionId` and `sectionNumber` are mutually exclusive on the wire (both is
+   * a 400), so they are mutually exclusive here too, in the type, rather than
+   * being arbitrated silently at the call site.
+   */
+  statuteLinkedJudgments: (
+    statuteId: string,
+    options: {
+      section?: { sectionId: string } | { sectionNumber: string };
+      evidence?: StatuteLinkedEvidence;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ) => {
+    const params: string[] = [];
+    const section = options.section;
+    if (section && 'sectionId' in section) {
+      params.push(`sectionId=${encodeURIComponent(section.sectionId)}`);
+    } else if (section && 'sectionNumber' in section) {
+      params.push(`sectionNumber=${encodeURIComponent(section.sectionNumber)}`);
+    }
+    if (options.evidence !== undefined) params.push(`evidence=${options.evidence}`);
+    if (options.limit !== undefined) params.push(`limit=${Math.min(Math.max(options.limit, 1), 50)}`);
+    if (options.offset !== undefined) {
+      params.push(`offset=${Math.min(Math.max(options.offset, 0), 10_000)}`);
+    }
+    const query = params.length > 0 ? `?${params.join('&')}` : '';
+    return get<StatuteLinkedJudgmentsResponse>(
+      `/statutes/${encodeURIComponent(statuteId)}/linked-judgments${query}`,
+    );
+  },
 };

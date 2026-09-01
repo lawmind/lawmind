@@ -37,6 +37,36 @@ const STORAGE_KEY = 'lawmind.pendingDestination.v1';
 export const RESUME_WINDOW_MS = 30 * 60 * 1000;
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * HOW LONG "THE FIRST CAPTURE WINS" LASTS — and why it is not the resume window.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `capture` refuses to displace a destination it already holds, and the reason
+ * given in its own comment is narrow and correct: the guard renders a redirect,
+ * the router then settles through at least one more route, and a capture from
+ * that settling pass would overwrite the judgment the advocate asked for. That
+ * is a SAME-FRAME event.
+ *
+ * Until 1 September 2026 the refusal was bounded by {@link RESUME_WINDOW_MS} —
+ * thirty minutes — so the guard also ate real navigations. OBSERVED on a
+ * physical Galaxy S24 that day: signed in on Settings → Sign out (Settings is
+ * captured, correctly, as where they were) → follow a shared link to
+ * `/matter/<id>` → sign in → **lands on Settings**. The matter link the
+ * advocate actually followed was refused because a destination two minutes old
+ * was still "inside the window".
+ *
+ * It does not need a sign-out either: two shared links followed within half an
+ * hour resume the FIRST one, which is the same defect with no session change at
+ * all.
+ *
+ * So the settling guard gets its own width, sized to the thing it guards
+ * against. A router settling pass is frames; a person following a second link
+ * is seconds at the very least. Anything arriving after this is a NEW
+ * navigation and wins — which is what the store exists to honour.
+ */
+export const SETTLE_WINDOW_MS = 1_500;
+
+/**
  * Routes that must NEVER be captured as a destination.
  *
  * Capturing `/sign-in` would resume to the sign-in screen after signing in, and
@@ -106,16 +136,47 @@ export const usePendingDestination = create<PendingDestinationState>((set, get) 
   capture: (href) => {
     if (!isCapturableDestination(href)) return;
     /**
-     * THE FIRST CAPTURE WINS WITHIN A SINGLE BOUNCE.
+     * THE FIRST CAPTURE WINS WITHIN A SINGLE BOUNCE — and a bounce is frames,
+     * not half an hour. See {@link SETTLE_WINDOW_MS}.
      *
      * The guard renders a redirect, the router then settles on `/sign-in`, and
      * a second capture from that settling pass would overwrite the judgment the
      * advocate actually asked for. `isCapturableDestination` already refuses
      * `/sign-in` itself, and this keeps any other intermediate route from
      * displacing a live one.
+     *
+     * Anything later is a real navigation the advocate performed, and it wins.
+     * Refusing it was how a link they followed lost to the screen they happened
+     * to be on when their session ended.
      */
     const current = get().held;
-    if (current && Date.now() - current.capturedAt < RESUME_WINDOW_MS) return;
+    if (current) {
+      /**
+       * ───────────────────────────────────────────────────────────────────────
+       * THE SAME DESTINATION AGAIN IS NOT A NEW NAVIGATION. THIS MUST COME
+       * FIRST, AND IT IS NOT AN OPTIMISATION.
+       * ───────────────────────────────────────────────────────────────────────
+       *
+       * `AuthBoundary` calls `capture(href)` from an effect for as long as the
+       * gate is held, and anything that re-renders it calls again with the SAME
+       * href. Under the old thirty-minute refusal those repeats were swallowed
+       * by accident — the guard never let a second capture through at all — so
+       * nothing depended on this being stated.
+       *
+       * Narrowing the guard to a settle window exposed it immediately: every
+       * repeat past 1.5s wrote the store, every write re-rendered the
+       * subscribers that read `held`, and the device answered with
+       * **"Maximum update depth exceeded"** on the very first run. Observed on
+       * the Galaxy S24, 1 September 2026, before this line existed.
+       *
+       * It is also correct on its own terms and not merely a loop guard:
+       * re-capturing an unchanged destination would restart its expiry, so a
+       * sign-in screen left open would keep a stale link alive forever — the
+       * exact thing {@link RESUME_WINDOW_MS} exists to prevent.
+       */
+      if (current.href === href) return;
+      if (Date.now() - current.capturedAt < SETTLE_WINDOW_MS) return;
+    }
     const held = { href, capturedAt: Date.now() };
     set({ held });
     void persist(held);
