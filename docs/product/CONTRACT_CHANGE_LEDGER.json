@@ -13,8 +13,8 @@
     "frozenBy": "NEW3, 29 August 2026",
     "note": "The R12 file is FROZEN and is not edited. Amendments live in docs/product/RCC_V1_API_CONTRACT_R13_AMENDMENT.md and are numbered here. The wire `contract` integer stays 1 because every amendment below is additive or semantic; nothing is removed or narrowed."
   },
-  "currentVersion": "R15",
-  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R15_AMENDMENT.md",
+  "currentVersion": "R16",
+  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
   "measurementBackend": {
     "gitSha": "f3b31c963dd19741b7a849d8a007d42aa1b9bfb1",
     "base": "http://127.0.0.1:3011",
@@ -728,20 +728,60 @@
       "claimImpact": "none. UNSUPPORTED_CLAIMS stays 0.",
       "releasedToRCC": true,
       "rccConsumed": false
+    },
+    {
+      "id": "CCR-LCC-R20-01",
+      "new3LedgerId": "CCR-2026-09-01-17",
+      "filedVia": "LCC R20 at ed622657 and bus 1688; RCC R18 at 2bb737e6 and buses 1689/1690. Adjudicated by NEW3 R17 from current-v1 contract, route, client, and database-identity source at HEAD ed6226570a2fa03a5d012a2046cc557b3225a31a.",
+      "endpoint": "Current-v1 authenticated create writes: POST /judgments/:id/annotations, POST /matters, POST /matters/:id/events, POST /me/data-requests, POST /verify/confirm, and POST /me/training-consent",
+      "missing": "These create operations have no durable request identity. A lost response, client replay, or concurrent duplicate can therefore create more than one logical mutation. Annotation reproduction is evidence of the general reliability gap, not a reason to deduplicate annotation content.",
+      "decision": "AMEND",
+      "transport": "Optional HTTP request header Idempotency-Key",
+      "scope": "authenticated principal + uppercase HTTP method + canonical route template + exact Idempotency-Key",
+      "requestFingerprint": "REQUIRED over normalized validated body, bound path parameters, and operation-significant query parameters. Authentication, Idempotency-Key, tracing, and transport headers are excluded.",
+      "sameRequest": "Same scope and same fingerprint returns the same logical mutation/result, including after a lost response.",
+      "mismatch": "Same scope and key with a different fingerprint is refused with HTTP 409 and code IDEMPOTENCY_KEY_REUSE_MISMATCH; it performs no mutation.",
+      "concurrency": "A database uniqueness boundary selects one executor. A duplicate waits and replays the stored result; if its request budget expires first it receives HTTP 409 IDEMPOTENCY_IN_PROGRESS with Retry-After: 1 and may retry. It never performs a second mutation.",
+      "compatibility": "The header is optional. Absence preserves legacy behavior for the compatibility window. Existing current-v1 body identities clientKey and idempotencyKey remain accepted on the operations that already contract them.",
+      "prohibition": "No content or semantic deduplication by annotation text, quote, paragraph, date, CNR, authority, matter title, or other domain content.",
+      "naturalIdentityExclusions": "POST /matters/:id/authorities is protected by its live database uniqueness identity. POST /citations/copies is protected by authenticated user plus required clientKey. Neither receives a second competing identity contract in R16.",
+      "failureSemantics": "Validation failure before mutation does not consume the key. Server failure before mutation rolls back and releases the claim. The durable mutation and completed replay result commit atomically; a retry after an unknown/lost response replays the success.",
+      "schemaDelta": "Additive request metadata only at the contract layer: optional Idempotency-Key. Durable implementation requires LCC persistence and uniqueness work, but R16 does not prescribe per-domain columns or authorize a database migration by NEW3.",
+      "semanticDelta": "Current-v1 authenticated create writes gain an opt-in exactly-one-logical-mutation retry contract while requests without the header retain their legacy behavior.",
+      "capabilityImpact": "none. No capability state changes and V1_CAPABILITY_REGISTRY_R15.json remains current.",
+      "claimImpact": "R16 separately marks static nightly citator cadence copy unsupported without runtime evidence; V1_CLAIMS_REGISTER_R15.md records the exact RCC removal instruction.",
+      "backendOwner": "LCC",
+      "clientOwner": "RCC after release",
+      "releaseGate": "UNRELEASED. LCC must implement durable persistence, database uniqueness, atomic result recording, and conformance tests; NEW3 must independently accept the evidence before RCC may rely on the header.",
+      "severity": "P1",
+      "userTruthImpact": "Without request identity, retrying a user write can create duplicate private records or append duplicate durable events while the UI appears to have performed one action.",
+      "openAs": "OPEN_IMPLEMENTATION",
+      "relatedRelease": "R16",
+      "filedBy": "LCC",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-09-01",
+      "priorVersion": "R15",
+      "newVersion": "R16",
+      "CONTRACT_REVISION": "R16",
+      "WIRE_PROTOCOL_VERSION": 1,
+      "WIRE_BREAKING_CHANGE": "NO",
+      "MIN_SUPPORTED_CONTRACT": 1,
+      "releasedToRCC": false,
+      "rccConsumed": false
     }
   ],
   "counts": {
-    "received": 16,
-    "amended": 9,
+    "received": 17,
+    "amended": 10,
     "deferred": 4,
     "rejectedWithAlternative": 1,
     "engineeringDefectRoutedToLCC": 2,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R15, 1 September 2026. R14 recorded 12 received / 7 amended / 3 deferred / 1 rejected-with-alternative / 1 engineering defect. R15 adds four: CCR-LCC-XS-01 (AMEND, the only substantive wire change), CCR-LCC-XS-02 (DEFER, folded into CCR-NEW3-XS-01, plus a second engineering defect routed to LCC at recheck.ts:83), CCR-LCC-XS-03 (AMEND, documentation only) and CCR-LCC-XS-04 (NO_CHANGE on the wire, AMEND on the record). Two of the three AMENDs move no byte on any wire."
+    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive, backward compatible, and unreleased pending LCC implementation evidence and NEW3 acceptance."
   },
   "wireProtocolVersion": 1,
-  "contractRevisionVsWireVersion": "R15 is the FIFTH product-contract revision and the wire integer is still 1. R15 makes the distinction explicit in its own numbers block: CONTRACT_REVISION=R15, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. A document revision and a wire-protocol break are different events and R15 is only the first.",
+  "contractRevisionVsWireVersion": "R16 is the SIXTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R16, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The optional Idempotency-Key header is additive request metadata; it neither removes nor narrows a current request shape. R16 is unreleased pending implementation evidence and acceptance.",
   "revisionIdentities": {
     "R12": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R12.md",
@@ -760,13 +800,25 @@
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md",
       "sha256": "542e21e5fe4e59ead48d79134ed3c354f613460fd81d2a7535581e3bcfd81dc7",
       "gitBlob": "ed5826cc04a0b9af7e7b4a3243abd619c7ec297f",
-      "state": "CURRENT",
+      "state": "FROZEN prior revision",
       "procedure": "The release seal for the already-amended R14 fields was appended on 2026-08-31 after committed LCC implementation was verified. BOTH identities were then recomputed from the committed artifact at NEW3 commit 996791fa. The file does not contain a hash of itself and no R15 was created.",
       "verifyWith": "sha256sum docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md ; git rev-parse HEAD:docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md"
+    },
+    "R15": {
+      "artifact": "docs/product/RCC_V1_API_CONTRACT_R15_AMENDMENT.md",
+      "sha256": "fd6d158829d928ec354bb0311b5b4f79d068c0f57fb3d396775424908ca668c6",
+      "gitBlob": "de68f743683ffe5f23e34dbde6e6471c2c506d38",
+      "state": "FROZEN prior revision",
+      "note": "R15 remains immutable. Its recorded SHA-256 and Git blob identity refer to the committed artifact inherited by R16."
+    },
+    "R16": {
+      "artifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
+      "state": "CURRENT_UNRELEASED",
+      "note": "R16 is the current NEW3 decision artifact but is not released to RCC. Record immutable SHA-256 and Git blob identities only after LCC implementation evidence passes independent NEW3 acceptance; do not write a self-referential pre-release seal."
     }
   },
   "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R15.json",
-  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R14.md",
+  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R15.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
     "observedVia": "committed source read at HEAD, plus the committed Hono app executed in-process to observe GET /release/capabilities under seven selector forms",
