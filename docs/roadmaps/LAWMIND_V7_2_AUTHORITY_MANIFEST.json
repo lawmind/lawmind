@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-09-01",
+  "supersedes": {
+    "roadmap": "LAWMIND_MASTER_ROADMAP_V7_1.md",
+    "prompts": "LAWMIND_SPRINT_PROMPTS_V2.md"
+  },
+  "files": {
+    "LAWMIND_MASTER_ROADMAP_V7_2.md": {
+      "bytes": 41064,
+      "sha256": "99a25cb4ffed2bf88e15f11501aa3593d203422dda1193750bdcb677b956a254"
+    },
+    "LAWMIND_SPRINT_PROMPTS_V3.md": {
+      "bytes": 36688,
+      "sha256": "c6becbf97bede0e9b055bbe30d2d30c6687a8a0d31afac7b01078bffdb086e31"
+    },
+    "LAWMIND_V7_2_DEEP_RESEARCH_MEMO.md": {
+      "bytes": 14891,
+      "sha256": "285a9114aa72bcc1bdf55efca871d8a33ef67326b3e5080d56ad801469e7768c"
+    }
+  }
+}
