@@ -70,6 +70,10 @@ const NON_SERVING = new Map([
   ['search/bench.ts', 'benchmark harness — measures the ranker, renders nothing to an advocate'],
   ['search/retrieval-regression-cli.ts', 'CLI regression runner, developer-facing output only'],
   [
+    'search/sparse-quality-cli.ts',
+    'CLI quality battery — writes developer evidence, renders nothing to an advocate',
+  ],
+  [
     'search/overruled-retrieval-audit-cli.ts',
     'CLI audit over known-overruled judgments, developer-facing output only',
   ],
