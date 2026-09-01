@@ -1,0 +1,93 @@
+{
+  "artifact": "NEW2_R22_PREFLIGHT_ADVERSARIAL",
+  "unchanged": {
+    "ok": true,
+    "refusals": []
+  },
+  "attacks": [
+    {
+      "name": "DUPLICATE_ID",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "CONFLICTING_DISPOSITIONS",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "INVALID_REPLACEMENT_NULL_SHAPE",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:TO_NULL_WITH_REPLACEMENT:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "MANIFEST_INVALID:MISSING_TARGET_HOLDER_SET:2025MLHC1"
+      ]
+    },
+    {
+      "name": "WRONG_OLD_VALUE",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "MISSING_ROW",
+      "result": "REFUSED",
+      "refusals": [
+        "MISSING_ROW:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "LIVE_CANDIDATE_COUNT_DRIFT"
+      ]
+    },
+    {
+      "name": "CHANGED_SOURCE_HASH",
+      "result": "REFUSED",
+      "refusals": [
+        "SOURCE_CONTENT_HASH_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "POPULATION_HASH_MISMATCH",
+      "result": "REFUSED",
+      "refusals": [
+        "POPULATION_HASH_MISMATCH"
+      ]
+    },
+    {
+      "name": "ALREADY_CORRECTED_ROW",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:031df629-04a9-4c1e-a4f5-10fbc2924f2a",
+        "ALREADY_CORRECTED_ROW:031df629-04a9-4c1e-a4f5-10fbc2924f2a"
+      ]
+    },
+    {
+      "name": "ALREADY_NULL_TO_NULL",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "ALREADY_NULL_TO_NULL:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "UNEXPLAINED_EXISTING_TARGET_HOLDER",
+      "result": "REFUSED",
+      "refusals": [
+        "TARGET_HOLDER_CONFLICT:2024PHHC001398",
+        "TARGET_HOLDER_CONFLICT_DRIFT:2024PHHC001398"
+      ]
+    },
+    {
+      "name": "UNEXPLAINED_MANY_TO_ONE_TARGET",
+      "result": "REFUSED",
+      "refusals": [
+        "UNEXPLAINED_MANY_TO_ONE_TARGET:2026MLHC717DB"
+      ]
+    }
+  ],
+  "result": "PASS_11_OF_11_REFUSED",
+  "writes": 0
+}

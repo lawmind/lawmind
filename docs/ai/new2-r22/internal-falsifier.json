@@ -1,0 +1,43 @@
+{
+  "artifact": "NEW2_R22_INTERNAL_FALSIFIER",
+  "attacks": [
+    {
+      "class": "PHHC_SEVEN",
+      "result": "7/7 retained as deterministic TO_NULL"
+    },
+    {
+      "class": "RAJASTHAN",
+      "result": "6 source-damaged rows remain outside population"
+    },
+    {
+      "class": "BOMBAY",
+      "result": "394 furniture/source-damaged rows remain outside population"
+    },
+    {
+      "class": "FOREIGN_CITATION",
+      "result": "Seven PHHC foreign-precedent tokens remain TO_NULL"
+    },
+    {
+      "class": "SHORT_ORDER_MULTIPLE_CITATIONS",
+      "result": "R21 graph adversarial fixtures retained; parser unchanged"
+    },
+    {
+      "class": "DB_FB",
+      "result": "13 safe suffix replacements; 29 ownership quarantine; 2 many-to-one HOLD"
+    },
+    {
+      "class": "COMMON_ORDER_405_384",
+      "result": "27 candidates quarantined; no ownership forced"
+    },
+    {
+      "class": "TARGET_HOLDER_CONFLICT",
+      "result": "All non-null safe rows classify NO_EXISTING_HOLDER"
+    }
+  ],
+  "falseNull": 0,
+  "falseReplace": 0,
+  "falseSuffixReplace": 0,
+  "internalGate": "PASS",
+  "independentAuthorization": false,
+  "bulkApply": "HOLD"
+}

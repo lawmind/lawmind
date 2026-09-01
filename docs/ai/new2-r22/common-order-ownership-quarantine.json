@@ -1,0 +1,2318 @@
+{
+  "artifact": "COMMON_ORDER_OWNERSHIP_QUARANTINE",
+  "rows": 29,
+  "verdict": "AMBIGUOUS_UNLESS_DETERMINISTICALLY_PROVEN",
+  "contentHashIdentityInference": false,
+  "records": [
+    {
+      "judgmentId": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+      "cnr": "MLHC010000362025",
+      "caseNumber": "MC(WA)/7/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000362025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000362025_1_2025-05-19.pdf",
+      "sourceContentHash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:411-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#093f1c76-f235-4896-bb34-ecdc13f09e5e",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:411-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "1336fc3b-ee59-42de-828b-f10687d840ed",
+      "cnr": "MLHC010000902025",
+      "caseNumber": "MC(WA)/18/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000902025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000902025_1_2025-05-19.pdf",
+      "sourceContentHash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:414-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#1336fc3b-ee59-42de-828b-f10687d840ed",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:414-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "1c0e2f86-0c69-470c-807c-09d0127cf726",
+      "cnr": "MLHC010001212025",
+      "caseNumber": "MC(WA)/27/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001212025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001212025_1_2025-05-19.pdf",
+      "sourceContentHash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:418-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#1c0e2f86-0c69-470c-807c-09d0127cf726",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:418-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+      "cnr": "MLHC010000872025",
+      "caseNumber": "MC(WA)/15/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000872025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000872025_1_2025-05-19.pdf",
+      "sourceContentHash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:413-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:413-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "362f404c-8329-4e09-905c-0c4e4c5994e2",
+      "cnr": "MLHC010000962025",
+      "caseNumber": "MC(WA)/23/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000962025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000962025_1_2025-05-19.pdf",
+      "sourceContentHash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:419-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#362f404c-8329-4e09-905c-0c4e4c5994e2",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:419-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "369edfb8-c738-411c-96fc-77e814bde7c3",
+      "cnr": "MLHC010000862025",
+      "caseNumber": "MC(WA)/14/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000862025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000862025_1_2025-05-19.pdf",
+      "sourceContentHash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:412-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#369edfb8-c738-411c-96fc-77e814bde7c3",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:412-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+      "cnr": "MLHC010000942025",
+      "caseNumber": "MC(WA)/22/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000942025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000942025_1_2025-05-19.pdf",
+      "sourceContentHash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:417-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:417-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+      "cnr": "MLHC010012742023",
+      "caseNumber": "Crl.A./30/2023",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=17_21/bench=meghalaya/MLHC010012742023_1_2026-05-18.pdf",
+      "sourceArtifact": "data/pdf/year=2026/court=17_21/bench=meghalaya/MLHC010012742023_1_2026-05-18.pdf",
+      "sourceContentHash": "721372fe5c6e963a6867f804a74defbe63638842a8daf47084462e1b3524c03e",
+      "firstPrintedToken": "2026:MLHC:476-DB",
+      "secondPrintedToken": "2026:MLHC:477-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 938,
+          "rawSecondAt": 954,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1962,
+          "rawSecondAt": 1978,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3156,
+          "rawSecondAt": 3172,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 4,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 4061,
+          "rawSecondAt": 4077,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 5,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 5244,
+          "rawSecondAt": 5260,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 6,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 6340,
+          "rawSecondAt": 6356,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 7,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 7516,
+          "rawSecondAt": 7532,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 8,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 8696,
+          "rawSecondAt": 8712,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 9,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 10,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 11,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 12,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 13,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 14,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 15,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 16,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 17,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 17,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": []
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "30 of 2020",
+          "30 of 2020",
+          "10656 of 2025",
+          "30 of 2020",
+          "10656 of 2025",
+          "30 of 2020",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+        "retainedWindow": "roved for Yes reporting in Law journals etc.: ii) Whether approved for publication Yes in press: Serial No.01 Daily List2026:MLHC:476-DB2026:MLHC:477-DB Page 2 of 17 JUDGMENT: (per the Hon’ble, the Chief Justice) By this appeal, the appellant has impugned ",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "531984d2-c3ed-48af-a011-3a005bb68111",
+      "cnr": "MLHC010000852025",
+      "caseNumber": "MC(WA)/13/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000852025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000852025_1_2025-05-19.pdf",
+      "sourceContentHash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:412-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#531984d2-c3ed-48af-a011-3a005bb68111",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:412-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "693edabf-ebf4-430a-bd99-fd4132ae11c2",
+      "cnr": "MLHC010000232025",
+      "caseNumber": "MC(WA)/1/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000232025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000232025_1_2025-05-19.pdf",
+      "sourceContentHash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:408-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#693edabf-ebf4-430a-bd99-fd4132ae11c2",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:408-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "6bd431b1-50dd-4781-9c63-19fc18b64289",
+      "cnr": "MLHC010000912025",
+      "caseNumber": "MC(WA)/19/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000912025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000912025_1_2025-05-19.pdf",
+      "sourceContentHash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:415-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#6bd431b1-50dd-4781-9c63-19fc18b64289",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:415-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+      "cnr": "MLHC010000922025",
+      "caseNumber": "MC(WA)/20/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000922025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000922025_1_2025-05-19.pdf",
+      "sourceContentHash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:415-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:415-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+      "cnr": "MLHC010000932025",
+      "caseNumber": "MC(WA)/21/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000932025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000932025_1_2025-05-19.pdf",
+      "sourceContentHash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:417-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:417-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "7ebbf954-1255-480c-a750-0fe24c42349a",
+      "cnr": "MLHC010000372025",
+      "caseNumber": "MC(WA)/8/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000372025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000372025_1_2025-05-19.pdf",
+      "sourceContentHash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:411-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#7ebbf954-1255-480c-a750-0fe24c42349a",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:411-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "897be712-7475-49a8-ba10-ec1bca844181",
+      "cnr": "MLHC010000882025",
+      "caseNumber": "MC(WA)/16/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000882025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000882025_1_2025-05-19.pdf",
+      "sourceContentHash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:413-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#897be712-7475-49a8-ba10-ec1bca844181",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:413-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "94d609a4-fbcb-498e-aeb2-7481cf000a23",
+      "cnr": "MLHC010000972025",
+      "caseNumber": "MC(WA)/24/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000972025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000972025_1_2025-05-19.pdf",
+      "sourceContentHash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:419-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#94d609a4-fbcb-498e-aeb2-7481cf000a23",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:419-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "97386fd5-d3e4-4efd-8e77-17a315b5df80",
+      "cnr": "MLHC010000352025",
+      "caseNumber": "MC(WA)/6/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000352025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000352025_1_2025-05-19.pdf",
+      "sourceContentHash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:410-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#97386fd5-d3e4-4efd-8e77-17a315b5df80",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:410-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+      "cnr": "MLHC010000242025",
+      "caseNumber": "MC(WA)/2/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000242025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000242025_1_2025-05-19.pdf",
+      "sourceContentHash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:408-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:408-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "a4d66317-cede-4d97-9e8f-ab115924ec08",
+      "cnr": "MLHC010000332025",
+      "caseNumber": "MC(WA)/5/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000332025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000332025_1_2025-05-19.pdf",
+      "sourceContentHash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:410-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#a4d66317-cede-4d97-9e8f-ab115924ec08",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:410-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+      "cnr": "MLHC010004432025",
+      "caseNumber": "MC(FA)/5/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010004432025_1_2025-05-14.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010004432025_1_2025-05-14.pdf",
+      "sourceContentHash": "601de8adfc85f0b7b8fa4220277113a19fe8feb54cecd28eefd216d638860451",
+      "firstPrintedToken": "2025:MLHC:384-DB",
+      "secondPrintedToken": "2025:MLHC:390-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 896,
+          "rawSecondAt": 912,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1131,
+          "rawSecondAt": 1147,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 2,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "8c26ed90-ebae-49c4-bde1-2ac501b87d33"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "12\nof 2025",
+          "12\nof 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+        "retainedWindow": "25 along with Cont. Cas (C) No. 12 of 2025] be listed on 19th May, 2025 as previously directed. Serial No. 05 Daily List2025:MLHC:384-DB2025:MLHC:390-DB Page 2 of 2 All interim orders will continue till disposal of the appeal or until further orders, which",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "add8896a-6d16-41ee-b02a-40fed3224216",
+      "cnr": "MLHC010015892024",
+      "caseNumber": "MC(WA)/96/2024",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015892024_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015892024_1_2025-05-19.pdf",
+      "sourceContentHash": "e6909a97bcb339f7572dfcde6957b465f8a99f2e707c657185a4fd865c30e86e",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:406-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#add8896a-6d16-41ee-b02a-40fed3224216",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:406-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+      "cnr": "MLHC010001012025",
+      "caseNumber": "MC(WA)/26/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001012025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001012025_1_2025-05-19.pdf",
+      "sourceContentHash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:420-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:420-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "c45c8329-66a6-4240-be57-724befa9e6ff",
+      "cnr": "MLHC010015932024",
+      "caseNumber": "MC(WA)/97/2024",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015932024_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015932024_1_2025-05-19.pdf",
+      "sourceContentHash": "5f12b69193bc4dee0ad00e01eed7c0537855a4e41f89bc1083d42098747fe5a8",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:407-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#c45c8329-66a6-4240-be57-724befa9e6ff",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:407-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "cbb34ae7-b643-46b3-a046-19a746a8907e",
+      "cnr": "MLHC010000252025",
+      "caseNumber": "MC(WA)/3/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000252025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000252025_1_2025-05-19.pdf",
+      "sourceContentHash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:409-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#cbb34ae7-b643-46b3-a046-19a746a8907e",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:409-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "d7411ed4-78b2-4521-bbf1-86b199dadb1e",
+      "cnr": "MLHC010001222025",
+      "caseNumber": "MC(WA)/28/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001222025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001222025_1_2025-05-19.pdf",
+      "sourceContentHash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:418-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "27 of 2025",
+          "78 of\n2024",
+          "27 of 2025",
+          "78 of\n2024",
+          "27 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#d7411ed4-78b2-4521-bbf1-86b199dadb1e",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:418-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "db52fe55-a7d3-4379-b058-8902c91466ab",
+      "cnr": "MLHC010000992025",
+      "caseNumber": "MC(WA)/25/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000992025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000992025_1_2025-05-19.pdf",
+      "sourceContentHash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:420-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#db52fe55-a7d3-4379-b058-8902c91466ab",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:420-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "e773ad2b-6d02-440f-9e71-18e269739d9e",
+      "cnr": "MLHC010000892025",
+      "caseNumber": "MC(WA)/17/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000892025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000892025_1_2025-05-19.pdf",
+      "sourceContentHash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:414-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#e773ad2b-6d02-440f-9e71-18e269739d9e",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:414-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "ec0c134a-9f90-4a78-9154-1039f30d1abe",
+      "cnr": "MLHC010011512023",
+      "caseNumber": "Crl.A./23/2023",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2026/court=17_21/bench=meghalaya/MLHC010011512023_1_2026-05-18.pdf",
+      "sourceArtifact": "data/pdf/year=2026/court=17_21/bench=meghalaya/MLHC010011512023_1_2026-05-18.pdf",
+      "sourceContentHash": "721372fe5c6e963a6867f804a74defbe63638842a8daf47084462e1b3524c03e",
+      "firstPrintedToken": "2026:MLHC:476-DB",
+      "secondPrintedToken": "2026:MLHC:477-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 938,
+          "rawSecondAt": 954,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1962,
+          "rawSecondAt": 1978,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3156,
+          "rawSecondAt": 3172,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 4,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 4061,
+          "rawSecondAt": 4077,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 5,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 5244,
+          "rawSecondAt": 5260,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 6,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 6340,
+          "rawSecondAt": 6356,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 7,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 7516,
+          "rawSecondAt": 7532,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 8,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 8696,
+          "rawSecondAt": 8712,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 9,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 10,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 11,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 12,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 13,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 14,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 15,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 16,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        },
+        {
+          "occurrenceOrdinal": 17,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": null,
+          "rawSecondAt": null,
+          "rawOffsetStatus": "NOT_FROZEN_BY_R21"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 17,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": []
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": false,
+        "ownIdentityPresent": false,
+        "foreignCaseNumberSignals": [
+          "30 of 2023",
+          "30 of 2020",
+          "30 of 2020",
+          "10656 of 2025",
+          "30 of 2020",
+          "10656 of 2025",
+          "30 of 2020",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025",
+          "10656 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#ec0c134a-9f90-4a78-9154-1039f30d1abe",
+        "retainedWindow": "roved for Yes reporting in Law journals etc.: ii) Whether approved for publication Yes in press: Serial No.01 Daily List2026:MLHC:476-DB2026:MLHC:477-DB Page 2 of 17 JUDGMENT: (per the Hon’ble, the Chief Justice) By this appeal, the appellant has impugned ",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    },
+    {
+      "judgmentId": "f8760958-5025-489f-888a-d824cbfe63e2",
+      "cnr": "MLHC010000262025",
+      "caseNumber": "MC(WA)/4/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000262025_1_2025-05-19.pdf",
+      "sourceArtifact": "data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000262025_1_2025-05-19.pdf",
+      "sourceContentHash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5",
+      "firstPrintedToken": "2025:MLHC:405-DB",
+      "secondPrintedToken": "2025:MLHC:409-DB",
+      "positions": [
+        {
+          "occurrenceOrdinal": 1,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 1161,
+          "rawSecondAt": 1177,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 2,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 2452,
+          "rawSecondAt": 2468,
+          "rawOffsetStatus": "RETAINED_R19"
+        },
+        {
+          "occurrenceOrdinal": 3,
+          "firstTokenPosition": "FIRST",
+          "secondTokenPosition": "SECOND",
+          "rawFirstAt": 3632,
+          "rawSecondAt": 3648,
+          "rawOffsetStatus": "RETAINED_R19"
+        }
+      ],
+      "rowLevelRepeat": {
+        "pairCount": 3,
+        "repeated": true,
+        "firstEqualsSecond": false
+      },
+      "existingHolders": {
+        "firstPrintedToken": {
+          "status": "KNOWN_FROM_R21_TARGET_HOLDER_SNAPSHOT",
+          "judgmentIds": [
+            "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251"
+          ]
+        },
+        "secondPrintedToken": {
+          "status": "NOT_CAPTURED_IN_R21_TARGET_HOLDER_SNAPSHOT_NO_DB_OR_NETWORK_USED",
+          "judgmentIds": null
+        }
+      },
+      "connectedMatterEvidence": {
+        "ownCaseNumberPresent": true,
+        "ownIdentityPresent": true,
+        "foreignCaseNumberSignals": [
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025",
+          "78 of\n2024",
+          "28 of 2025"
+        ]
+      },
+      "knownCommonOrderEvidence": {
+        "evidencePointer": "docs/ai/new2-r19/db-suffix-rows.jsonl#f8760958-5025-489f-888a-d824cbfe63e2",
+        "retainedWindow": "State of Meghalaya vs. Loka Paswet & ors. State of Meghalaya vs. Winfrithstar Nongtdu & ors. Serial Nos. 1-15 Daily List2025:MLHC:405-DB2025:MLHC:409-DB Page 2 of 3 State of Meghalaya vs. Wanlana Shadap & ors. State of Meghalaya vs. Dilbok Singh & ors. Sta",
+        "directlyConcatenatedDifferentTokens": true,
+        "contentHashUsedAsIdentityInference": false
+      },
+      "ownershipVerdict": "AMBIGUOUS",
+      "mutationAuthorized": false
+    }
+  ]
+}

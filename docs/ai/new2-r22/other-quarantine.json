@@ -1,0 +1,30 @@
+{
+  "artifact": "NEW2_R22_OTHER_QUARANTINE",
+  "rows": 2,
+  "records": [
+    {
+      "judgmentId": "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+      "cnr": "DLHC010448732023",
+      "caseNumber": "MAT.APP.(F.C.)/330/2023",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=7_26/bench=dhcdb/DLHC010448732023_1_2025-11-26.pdf",
+      "sourceContentHash": "f7cbd9d41b1f7a88f4c8ea059f83898153075f8979f5d321e5bdf736080fc7ee",
+      "oldValue": "2025:DHC:8491",
+      "proposedReplacement": "2025:DHC:8491-DB",
+      "reason": "UNEXPLAINED_MANY_TO_ONE_TARGET",
+      "evidence": "Two different Delhi orders, dates and source hashes target 2025:DHC:8491-DB; no retained common-order proof joins them.",
+      "ownershipVerdict": "HOLD"
+    },
+    {
+      "judgmentId": "928a8788-3a7a-429d-8ff7-92e3cfa24d89",
+      "cnr": "DLHC010269762025",
+      "caseNumber": "MAT.APP.(F.C.)/166/2025",
+      "sourceUrl": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=7_26/bench=dhcdb/DLHC010269762025_1_2025-10-31.pdf",
+      "sourceContentHash": "350bfb77f894090d3372e09ba92e5eb7472029910a1c6e356ac48ff6d2ee324d",
+      "oldValue": "2025:DHC:8491",
+      "proposedReplacement": "2025:DHC:8491-DB",
+      "reason": "UNEXPLAINED_MANY_TO_ONE_TARGET",
+      "evidence": "Two different Delhi orders, dates and source hashes target 2025:DHC:8491-DB; no retained common-order proof joins them.",
+      "ownershipVerdict": "HOLD"
+    }
+  ]
+}

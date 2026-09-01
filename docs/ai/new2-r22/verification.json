@@ -1,0 +1,52 @@
+{
+  "artifact": "NEW2_R22_BUILD_VERIFICATION",
+  "r21HashVerified": {
+    "expected": "5b9d001a39dc00af830335a14772d1d039cd38a4826601e34ba787c9eccc80b0",
+    "recomputed": "5b9d001a39dc00af830335a14772d1d039cd38a4826601e34ba787c9eccc80b0",
+    "candidateFileSha256": "0be53ff094a06d8f1c835b955476966f46cf38f563abe87056887ae4f31084da",
+    "pass": true
+  },
+  "populationId": "NEW2-R22-SAFE-f55e2ba64b75772f",
+  "populationHash": "f55e2ba64b75772fe33e568e7707b453227dcdb18c67a966a7ae5ff776bafd33",
+  "counts": {
+    "DETERMINISTIC_TO_NULL": 441,
+    "DETERMINISTIC_TO_REPLACE": 86,
+    "DETERMINISTIC_SUFFIX_REPLACE": 13
+  },
+  "commonOrderQuarantineRows": 29,
+  "otherQuarantineRows": 2,
+  "sourceUniverseId": "SOURCE-CONCATENATED-MENTION-542be3f68d84a8bd",
+  "sourceUniverseRawOffsets": {
+    "retained": 120,
+    "notFrozenByR21": 114
+  },
+  "preflightAttacks": 11,
+  "commands": [
+    {
+      "command": "pnpm --filter @lawmind/ingest exec tsx --test --test-concurrency=1 src/correction-preflight.test.ts src/citation-graph-occurrence.test.ts src/citations.test.ts src/citation-boundary-parity.test.ts",
+      "result": "PASS_109_OF_109"
+    },
+    {
+      "command": "pnpm typecheck (services/ingest)",
+      "result": "PASS_NO_ERRORS"
+    },
+    {
+      "command": "prettier --check correction-preflight source/test and n2-r22-build.mts",
+      "result": "PASS"
+    },
+    {
+      "command": "eslint exact R22-owned source paths",
+      "result": "PASS_NO_ISSUES"
+    }
+  ],
+  "canonicalRowsChanged": 0,
+  "edgesChanged": 0,
+  "aliasesChanged": 0,
+  "migrations": 0,
+  "networkUsed": false,
+  "databaseUsed": false,
+  "new1Interrupted": false,
+  "readyForIndependentAudit": true,
+  "readyForWrite": false,
+  "citationBulkApply": "HOLD"
+}

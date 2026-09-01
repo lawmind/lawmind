@@ -1,0 +1,23 @@
+{
+  "artifact": "NEW2_R22_IMMUTABLE_ARTIFACT_MANIFEST",
+  "populationId": "NEW2-R22-SAFE-f55e2ba64b75772f",
+  "populationHash": "f55e2ba64b75772fe33e568e7707b453227dcdb18c67a966a7ae5ff776bafd33",
+  "sourceUniverseId": "SOURCE-CONCATENATED-MENTION-542be3f68d84a8bd",
+  "r21HashVerified": "5b9d001a39dc00af830335a14772d1d039cd38a4826601e34ba787c9eccc80b0",
+  "files": {
+    "r22-safe-population.json": "5981d53b4b37df3d5711c69c9c74748d09ba9776260c81a89d59e2bc5c7d859c",
+    "r22-preflight-manifest.json": "8de818274fded5641663243090261cdb72e81aec7c1ed729ef6151c30c5ff58d",
+    "preflight-adversarial.json": "e059aabdfb480b5e5b9f6fe06242b2afad36aeafbeb88c6ceb77182cce0054a7",
+    "common-order-ownership-quarantine.json": "4f9d61b8e8612cd2e39fd501ea2ad46ccf5716a996c470b371e0a8e9c2cf6844",
+    "other-quarantine.json": "fc4f0ec79f63df75f88f4170019b64f938c6d05bcc11720cf2608c1a9861c9d6",
+    "source-concatenated-mention-universe.json": "09a162b8e30bc6cf84214a71cf2182c713fe3cb10a211178f3c5678855682aba",
+    "internal-falsifier.json": "2eb49a959288efa2ffa7e6e07016eedba799c2298db351650bdff132390ad056",
+    "verification.json": "e70facacebabc71fad2255b2bfe17e066d2902779ee4a80a3764d98b0568711e"
+  },
+  "mutationLedger": {
+    "canonicalRows": 0,
+    "edges": 0,
+    "aliases": 0,
+    "migrations": 0
+  }
+}
