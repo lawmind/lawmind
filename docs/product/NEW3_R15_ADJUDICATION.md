@@ -552,7 +552,9 @@ OWNER      RCC
 ## 8 · IMPLEMENTATION DEFECTS THAT NEED NO FOUNDER DESIGN
 
 ```
-RCC_IMPLEMENTATION_ONLY_COUNT = 7
+RCC_IMPLEMENTATION_ONLY_COUNT = 8
+  from this table:  I1 · I3 · I4 · I5 · I6 · I7      (I2 is NOT one — it is design item D-3)
+  from §7:          L1 (gate the route) · L5 (guard the dev routes)
 ```
 
 | # | defect | verified at HEAD | class |
