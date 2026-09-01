@@ -90,6 +90,7 @@ endpoint.
 |---|---|
 | `GET /statutes` | BUILT |
 | `GET /statutes/sections` | BUILT |
+| `GET /statutes/:statuteId/linked-judgments` | BUILT |
 | `GET /corpus/coverage` | BUILT |
 | `GET /corpus/freshness` | BUILT |
 | `GET /corpus/freshness/object` | BUILT |
@@ -1116,6 +1117,92 @@ DELETE /annotations/:annotationId                    → { ok }
 Annotations are private to the user. When `matterId` is set they follow the
 matter's sharing rules (PD-3, PD-4) — a note is private by default and shareable
 per note, never shared implicitly by attaching it to a shared matter.
+
+## Statute-linked judgments — LCC owns · ADDITIVE 1 September 2026 · **HELD, NOT RELEASED**
+
+NEW3 R16 `R16-RCC-08`. An ADDITION beside `/statutes` and `/statutes/sections`,
+not a change to either. **The route answers 409 `CAPABILITY_DISABLED` unless
+`STATUTE_LINKED_JUDGMENTS_ROUTE=enabled` is set in the server environment**, and
+it is not set anywhere. `STATUTE_LINKED_REGISTRY_STATE` remains `POST_V1` on iOS,
+Android and web; the capability registry is unchanged; there is no navigation to
+this surface. RCC builds against it behind its own gate, and nothing ships until
+NEW3 accepts the evidence.
+
+```
+GET /statutes/:statuteId/linked-judgments
+      ?sectionId | ?sectionNumber        -- one or neither, never both
+      &evidence=resolver_confirmed | structural_unreviewed   (default: confirmed)
+      &limit=1..50 (20)  &offset=0..10000 (0)
+
+  → { act: { statuteId, shortTitle, hindiTitle, actNumber, actYear,
+             enactmentDate, enforcementDate, sourceUrl, heldSectionCount,
+             repealRecorded },
+      section: { sectionId, sectionNumber, heading, sourceUrl } | null,
+      scope: "section" | "act",
+      correspondence: { available, reason },
+      evidence, relationship, semantics, ordering,
+      links: [ { judgmentId, caseTitle, neutralCitation, court, judgmentDate,
+                 caseNumber, caseType,
+                 overruledStatus, overruledStatusStored, precedentialEffect,
+                 canAddToMatter, unappliedTreatment, treatmentAttribution,
+                 link: { actNamedInJudgment[], sectionNumbers[], occurrences,
+                         firstOffset, resolutionState, resolutionReason[],
+                         resolvedAt, evidence } } ],
+      page: { limit, offset, returned, hasMore },
+      withheld: { byResolutionState, chronologyRefusedOnThisPage },
+      coverage: { note },
+      asOf }
+```
+
+**`relationship` is `cites_statute_reference` and it is the whole claim.** The
+route says a judgment's text carries a structurally extracted reference to this
+Act or section. It does NOT say the section applied, was interpreted, or was
+decided under — `semantics` carries that sentence on the wire so the client
+renders the server's words rather than a designer's.
+
+**Two evidence tiers, and the default is empty today.** `resolver_confirmed`
+returns only references the exact-date resolver classified `linked_exact` or
+`linked_chronology_permitted`. Measured 1 September 2026 the corpus holds **zero**
+of either: of 905,944 references, 905,853 carry a NULL `resolution_state` and the
+only 91 the resolver has written are refusals. `SCHEMA_TRUTH.md` is explicit that
+NULL *"never"* means a confirmed link, so the default tier is honestly empty.
+`structural_unreviewed` additionally returns the NULL population, labels every row
+`evidence: "structural_unreviewed"`, and returns `resolutionState: null` rather
+than inventing provenance.
+
+**Nothing is silently dropped.** `withheld.byResolutionState` counts, per ground,
+the references the requested tier excluded — references and distinct judgments.
+An empty `links` with a populated `withheld` and an empty `links` with an empty
+`withheld` are different sentences, and the client must render them differently.
+
+**Errors are about what we HOLD, never about what exists.** `STATUTE_NOT_FOUND`
+and `SECTION_NOT_FOUND` (404) say we do not hold the Act or the section, and the
+section error carries `heldSectionCount`. `SECTION_NOT_IN_ACT` (404) is returned
+when a `sectionId` belongs to a different Act — a mismatched pair must not read as
+an empty result. Two section identities at once is a 400, never a silent choice.
+
+**`repealRecorded` is `null`, never `false`.** `statutes` has no repeal column, so
+"is this Act in force" is a question this database cannot answer, and `false`
+would be a claim about the law.
+
+**`correspondence.available` is `false`.** IPC→BNS / CrPC→BNSS / Evidence→BSA
+correspondence stays `DISABLED` in the registry, and a section query is never
+widened to a predecessor's or successor's case law.
+
+**Identity is the judgment's own primary key.** `judgment_statute_refs` holds one
+row per Act SPELLING, so CrPC s.482 is 42,697 references over 40,134 judgments;
+the route groups on `judgment_id` and returns the spellings as evidence. It never
+groups on case title, citation or content hash — a neutral citation names several
+connected matters, and connected matters are distinct judgments.
+
+**Currentness is the canonical derivation, batched.** `overruledStatus` is the
+derived banner and `overruledStatusStored` the raw column, exactly as `/search`
+returns them, through the one `precedential-effect.ts` policy layer. A page costs
+a constant six queries regardless of `limit`, asserted by a test.
+
+**Ordering is `occurrences DESC, judgmentId` and is not relevance.** `occurrences`
+is how often the judgment names the provision. Paging is exact: no row repeats and
+none is skipped.
 
 ## Matters — LCC owns
 ```

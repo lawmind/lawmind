@@ -1,0 +1,243 @@
+{
+  "measuredAt": "2026-09-01T11:58:55.466Z",
+  "route": "GET /statutes/:statuteId/linked-judgments",
+  "otherActiveBackends": {
+    "before": 0,
+    "after": 0
+  },
+  "referenceCensus": [
+    {
+      "state": "unclassified",
+      "n": 905853,
+      "with_statute_id": 703768
+    },
+    {
+      "state": "refused_pre_enactment",
+      "n": 49,
+      "with_statute_id": 0
+    },
+    {
+      "state": "unresolved_pre_commencement",
+      "n": 42,
+      "with_statute_id": 0
+    }
+  ],
+  "anachronisticLinkedRows": {
+    "by_enactment_date": 0
+  },
+  "latency": [
+    {
+      "act": "The Code of Criminal Procedure, 1973",
+      "section": "439",
+      "candidatePopulationJudgments": 69895,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 72538,
+      "p50Ms": 137,
+      "p95Ms": 150,
+      "samples": [100, 136, 86, 150, 150, 138, 137]
+    },
+    {
+      "act": "The Code of Criminal Procedure, 1973",
+      "section": "439",
+      "candidatePopulationJudgments": 69895,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 613,
+      "p95Ms": 680,
+      "samples": [355, 399, 330, 662, 613, 687, 680]
+    },
+    {
+      "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+      "section": "528",
+      "candidatePopulationJudgments": 33509,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 34928,
+      "p50Ms": 106,
+      "p95Ms": 107,
+      "samples": [108, 105, 105, 106, 106, 107, 104]
+    },
+    {
+      "act": "The Bharatiya Nagarik Suraksha Sanhita, 2023",
+      "section": "528",
+      "candidatePopulationJudgments": 33509,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 352,
+      "p95Ms": 369,
+      "samples": [327, 352, 334, 343, 386, 366, 369]
+    },
+    {
+      "act": "The Code of Civil Procedure, 1908",
+      "section": "151",
+      "candidatePopulationJudgments": 29602,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 30068,
+      "p50Ms": 80,
+      "p95Ms": 89,
+      "samples": [84, 90, 89, 80, 78, 79, 80]
+    },
+    {
+      "act": "The Code of Civil Procedure, 1908",
+      "section": "151",
+      "candidatePopulationJudgments": 29602,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 258,
+      "p95Ms": 262,
+      "samples": [265, 262, 258, 257, 258, 256, 257]
+    },
+    {
+      "act": "The Negotiable Instruments Act, 1881",
+      "section": "138",
+      "candidatePopulationJudgments": 11574,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 13732,
+      "p50Ms": 36,
+      "p95Ms": 36,
+      "samples": [34, 35, 36, 35, 36, 36, 36]
+    },
+    {
+      "act": "The Negotiable Instruments Act, 1881",
+      "section": "138",
+      "candidatePopulationJudgments": 11574,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 116,
+      "p95Ms": 120,
+      "samples": [117, 116, 124, 120, 111, 111, 110]
+    },
+    {
+      "act": "The Indian Penal Code, 1860",
+      "section": "34",
+      "candidatePopulationJudgments": 10593,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 11447,
+      "p50Ms": 68,
+      "p95Ms": 69,
+      "samples": [69, 68, 67, 69, 68, 68, 68]
+    },
+    {
+      "act": "The Indian Penal Code, 1860",
+      "section": "34",
+      "candidatePopulationJudgments": 10593,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 176,
+      "p95Ms": 179,
+      "samples": [179, 176, 183, 176, 172, 172, 173]
+    },
+    {
+      "act": "The Limitation Act, 1963",
+      "section": "5",
+      "candidatePopulationJudgments": 7544,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 7999,
+      "p50Ms": 23,
+      "p95Ms": 24,
+      "samples": [24, 24, 23, 23, 22, 23, 21]
+    },
+    {
+      "act": "The Limitation Act, 1963",
+      "section": "5",
+      "candidatePopulationJudgments": 7544,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 73,
+      "p95Ms": 73,
+      "samples": [79, 71, 73, 71, 72, 73, 73]
+    },
+    {
+      "act": "The Motor Vehicles Act, 1988",
+      "section": "173",
+      "candidatePopulationJudgments": 5837,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 5923,
+      "p50Ms": 22,
+      "p95Ms": 22,
+      "samples": [23, 22, 21, 22, 22, 22, 21]
+    },
+    {
+      "act": "The Motor Vehicles Act, 1988",
+      "section": "173",
+      "candidatePopulationJudgments": 5837,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 65,
+      "p95Ms": 66,
+      "samples": [69, 64, 65, 66, 65, 64, 64]
+    },
+    {
+      "act": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+      "section": "37",
+      "candidatePopulationJudgments": 5117,
+      "evidence": "resolver_confirmed",
+      "returned": 0,
+      "withheldReferences": 5119,
+      "p50Ms": 19,
+      "p95Ms": 20,
+      "samples": [18, 19, 18, 16, 19, 21, 20]
+    },
+    {
+      "act": "The Narcotic Drugs and Psychotropic Substances Act, 1985",
+      "section": "37",
+      "candidatePopulationJudgments": 5117,
+      "evidence": "structural_unreviewed",
+      "returned": 20,
+      "withheldReferences": 0,
+      "p50Ms": 55,
+      "p95Ms": 56,
+      "samples": [62, 55, 56, 56, 54, 55, 55]
+    }
+  ],
+  "pagePlan": [
+    "Limit  (cost=26626.01..26626.06 rows=21 width=60) (actual time=101.370..105.116 rows=21.00 loops=1)",
+    "  Buffers: shared hit=18580",
+    "  ->  Sort  (cost=26626.01..26629.49 rows=1393 width=60) (actual time=101.369..105.114 rows=21.00 loops=1)",
+    "        Sort Key: (sum(occurrences)) DESC, judgment_id",
+    "        Sort Method: top-N heapsort  Memory: 26kB",
+    "        Buffers: shared hit=18580",
+    "        ->  GroupAggregate  (cost=26388.45..26588.45 rows=1393 width=60) (actual time=53.949..95.726 rows=69895.00 loops=1)",
+    "              Group Key: judgment_id",
+    "              Buffers: shared hit=18580",
+    "              ->  Gather Merge  (cost=26388.45..26553.60 rows=1396 width=43) (actual time=53.939..67.802 rows=72538.00 loops=1)",
+    "                    Workers Planned: 3",
+    "                    Workers Launched: 3",
+    "                    Buffers: shared hit=18580",
+    "                    ->  Sort  (cost=25388.41..25389.53 rows=450 width=43) (actual time=38.699..39.241 rows=18134.50 loops=4)",
+    "                          Sort Key: judgment_id, resolution_state",
+    "                          Sort Method: quicksort  Memory: 1509kB",
+    "                          Buffers: shared hit=18580",
+    "                          Worker 0:  Sort Method: quicksort  Memory: 1488kB",
+    "                          Worker 1:  Sort Method: quicksort  Memory: 1446kB",
+    "                          Worker 2:  Sort Method: quicksort  Memory: 1464kB",
+    "                          ->  Parallel Bitmap Heap Scan on judgment_statute_refs r  (cost=2631.96..25368.58 rows=450 width=43) (actual time=2.751..35.726 rows=18134.50 loops=4)",
+    "                                Recheck Cond: (statute_id = '0019baad-090a-4777-a62a-f2a12339664e'::uuid)",
+    "                                Filter: (((resolution_state IS NULL) OR (resolution_state = ANY ('{linked_exact,linked_chronology_permitted}'::text[]))) AND (upper(section_number) = '439'::text))",
+    "                                Rows Removed by Filter: 51370",
+    "                                Heap Blocks: exact=6504",
+    "                                Buffers: shared hit=18535",
+    "                                Worker 0:  Heap Blocks: exact=4101",
+    "                                Worker 1:  Heap Blocks: exact=3671",
+    "                                Worker 2:  Heap Blocks: exact=3897",
+    "                                ->  Bitmap Index Scan on judgment_statute_refs_statute_idx  (cost=0.00..2631.61 rows=279251 width=0) (actual time=7.005..7.005 rows=279432.00 loops=1)",
+    "                                      Index Cond: (statute_id = '0019baad-090a-4777-a62a-f2a12339664e'::uuid)",
+    "                                      Index Searches: 1",
+    "                                      Buffers: shared hit=299",
+    "Planning Time: 0.112 ms",
+    "Execution Time: 105.350 ms"
+  ]
+}

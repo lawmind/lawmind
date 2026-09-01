@@ -154,6 +154,11 @@ import { getCorpusCoverage } from './corpus/coverage.ts';
 import { getCorpusFreshness } from './corpus/freshness.ts';
 import { buildFreshnessObject } from './corpus/freshness-object.ts';
 import { listSections, listStatutes, sectionQuery } from './statutes/route.ts';
+import {
+  getLinkedJudgments,
+  linkedJudgmentsParams,
+  linkedJudgmentsQuery,
+} from './statutes/linked-judgments.ts';
 import { validate } from './validate.ts';
 
 export type AppDeps = {
@@ -823,6 +828,23 @@ export function createApp(deps: AppDeps) {
     app.get('/statutes', (c) => listStatutes(c, sql));
     app.get('/statutes/sections', validate('query', sectionQuery), (c) =>
       listSections(c, sql, c.req.valid('query')),
+    );
+    /**
+     * Statute-linked judgments — NEW3 R16 `R16-RCC-08`, LCC R19.
+     *
+     * Mounted, and REFUSED unless `STATUTE_LINKED_JUDGMENTS_ROUTE=enabled`. It
+     * is backend evidence for NEW3's acceptance, not a released surface: the
+     * capability registry is unchanged, `STATUTE_LINKED_REGISTRY_STATE` stays
+     * `POST_V1` on every platform, and there is no navigation to it.
+     *
+     * An ADDITION to the frozen contract, beside `/statutes` and
+     * `/statutes/sections`, not a change to either.
+     */
+    app.get(
+      '/statutes/:statuteId/linked-judgments',
+      validate('param', linkedJudgmentsParams),
+      validate('query', linkedJudgmentsQuery),
+      (c) => getLinkedJudgments(c, sql, c.req.valid('param').statuteId, c.req.valid('query')),
     );
   }
 
