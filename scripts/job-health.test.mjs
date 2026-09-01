@@ -33,7 +33,7 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -83,6 +83,14 @@ function runHealth(registryPath, obsPath) {
   );
   return JSON.parse(out);
 }
+
+/**
+ * A pid that is not alive. Windows hands out pids well below this, and the tool
+ * treats "not in the sweep" identically however the number was chosen -- so if
+ * this ever did collide with a live process the fixture degrades to the
+ * recycled-pid case, which is asserted separately and expects the same verdict.
+ */
+const DEAD_PID = 4194301;
 
 const stranger = livingStranger();
 if (!stranger) {
@@ -138,6 +146,48 @@ writeFileSync(
     },
     // A cadence job naming a scheduled task that does not exist. Nothing will
     // ever fire it, and "no process" must not be mistaken for "between ticks".
+    /**
+     * THE 1 SEP SHAPE: the wrapper pid is gone and the work is advancing.
+     *
+     * On 1 Sep 2026 this tool reported `new1-coarse-walk` and
+     * `new1-coarse-telemetry` FAILED, and PAGED, 42 seconds after reading a
+     * receipt that recorded GPU util 99% and 8,176 new vectors in the closing
+     * window. The pid it was looking for was a cmd.exe wrapper that had exited;
+     * the worker underneath it never stopped.
+     *
+     * The probe points at a real repo file and the prior observation records 0,
+     * so the delta is the whole file and ADVANCING is deterministic -- it does
+     * not depend on anything actually running while the test does.
+     */
+    {
+      ...base,
+      job_id: 'wrapper-exited-but-producing',
+      pid: DEAD_PID,
+      pid_created_at: '2026-08-21T15:58:34.0000000+04:00',
+      output_probe: { kind: 'lines', label: 'receipts', path: 'PRODUCT_BRIEF.md' },
+    },
+    // The same claim, but the pid was RECYCLED into a live stranger rather than
+    // simply vanishing. Recycling must not become a second route to a false
+    // death certificate now that plain absence is closed.
+    {
+      ...base,
+      job_id: 'recycled-but-producing',
+      pid: stranger.pid,
+      pid_created_at: '2026-08-21T15:58:34.0000000+04:00',
+      output_probe: { kind: 'lines', label: 'receipts', path: 'PRODUCT_BRIEF.md' },
+    },
+    /**
+     * The control. Absent AND genuinely silent: the probe is measured, flat
+     * against the recorded prior, and its file has not been written for weeks.
+     * This one MUST still be FAILED, or the fix has simply abolished the state.
+     */
+    {
+      ...base,
+      job_id: 'wrapper-exited-and-silent',
+      pid: DEAD_PID,
+      pid_created_at: '2026-08-21T15:58:34.0000000+04:00',
+      output_probe: { kind: 'lines', label: 'receipts', path: 'BUILD_GUIDE.md' },
+    },
     {
       job_id: 'cadence-orphaned',
       owner_lane: 'LCC',
@@ -154,7 +204,35 @@ writeFileSync(
     .map((o) => JSON.stringify(o))
     .join('\n') + '\n',
 );
-writeFileSync(observations, '');
+/**
+ * The prior reading each delta is measured against.
+ *
+ * `wrapper-exited-but-producing` and `recycled-but-producing` record 0, so the
+ * next reading is the whole file and the probe is unambiguously ADVANCING.
+ * `wrapper-exited-and-silent` records the EXACT current line count, so its delta
+ * is 0 -- and because BUILD_GUIDE.md has not been touched in weeks, its mtime
+ * puts it past the freshness bound too. Flat AND old is the only shape that may
+ * still be called dead.
+ */
+const silentCount = readFileSync(join(REPO, 'BUILD_GUIDE.md'), 'utf8')
+  .split('\n')
+  .filter((l) => l.trim()).length;
+writeFileSync(
+  observations,
+  [
+    { job_id: 'wrapper-exited-but-producing', observed_at: '2026-09-01T00:00:00.000Z', output_label: 'receipts', output_value: 0 },
+    { job_id: 'recycled-but-producing', observed_at: '2026-09-01T00:00:00.000Z', output_label: 'receipts', output_value: 0 },
+    {
+      job_id: 'wrapper-exited-and-silent',
+      observed_at: '2026-09-01T00:00:00.000Z',
+      output_label: 'receipts',
+      output_value: silentCount,
+      last_output_change_at: '2026-08-01T00:00:00.000Z',
+    },
+  ]
+    .map((o) => JSON.stringify(o))
+    .join('\n') + '\n',
+);
 
 console.log(`job-health identity regression — stranger pid ${stranger.pid} born ${stranger.created}`);
 
@@ -162,12 +240,36 @@ try {
   const report = runHealth(registry, observations);
   const by = new Map(report.jobs.map((j) => [j.job_id, j]));
 
+  /**
+   * AMENDED 1 Sep 2026. The assertion used to require state === FAILED.
+   *
+   * What this test protects is that a recycled pid is REFUSED as an identity and
+   * never reads as healthy. It does NOT get to decide that a refused identity
+   * proves the job is dead -- these fixtures declare no output probe, so nothing
+   * about their progress was measured, and this file own doctrine is that
+   * unmeasured and zero are opposite facts. FAILED is now reserved for absence
+   * that was CONFIRMED against a measured, stale probe; unmeasured absence is
+   * STALE_REGISTRATION. The refusal is unchanged; only the name of the honest
+   * answer moved.
+   */
+  const HEALTHY_STATES = ['RUNNING_PROGRESSING', 'RUNNING_BY_PROGRESS', 'STARTING', 'IDLE_CAUGHT_UP'];
+
   const noBirth = by.get('recycled-no-birthtime');
   check(
     'a live pid with NO recorded creation time and a mismatched command is REFUSED',
-    noBirth?.state === 'FAILED' && noBirth?.identity === 'PID_RECYCLED',
+    noBirth?.state === 'STALE_REGISTRATION' && noBirth?.identity === 'PID_RECYCLED',
     `got state=${noBirth?.state} identity=${noBirth?.identity} — this is the 23660 defect; ` +
       'it must never read RUNNING, STARTING or RUNNING_PROGRESSING',
+  );
+  check(
+    'a refused identity never reads as healthy',
+    !HEALTHY_STATES.includes(noBirth?.state),
+    `got state=${noBirth?.state}`,
+  );
+  check(
+    'an unmeasured absence does not authorise a restart',
+    noBirth?.restart_safe === false,
+    `restart_safe=${noBirth?.restart_safe} blockers=${JSON.stringify(noBirth?.restart_blockers)}`,
   );
   check(
     'the refusal says WHY, naming the process that actually holds the pid',
@@ -178,7 +280,7 @@ try {
   const wrongBirth = by.get('recycled-wrong-birthtime');
   check(
     'a live pid with a DISAGREEING creation time is REFUSED',
-    wrongBirth?.state === 'FAILED' && wrongBirth?.identity === 'PID_RECYCLED',
+    wrongBirth?.state === 'STALE_REGISTRATION' && wrongBirth?.identity === 'PID_RECYCLED',
     `got state=${wrongBirth?.state} identity=${wrongBirth?.identity}`,
   );
 
@@ -201,9 +303,59 @@ try {
     `got state=${cadence?.state} why="${cadence?.why}" — nothing will ever fire it`,
   );
 
+  // ── the 1 Sep false-failure regression ───────────────────────────────────
+
+  const producing = by.get('wrapper-exited-but-producing');
+  check(
+    'a job whose wrapper pid EXITED is not FAILED while its durable output advances',
+    producing?.state === 'RUNNING_BY_PROGRESS',
+    `got state=${producing?.state} delta=${producing?.output_delta} why="${producing?.why}" — ` +
+      'this is the 1 Sep defect: FAILED and PAGED on a job producing 32,400 vectors/hour',
+  );
+  check(
+    'the progressing verdict names the durable evidence it rests on',
+    /durable output moved/.test(producing?.why ?? ''),
+    `why="${producing?.why}"`,
+  );
+  check(
+    'a progressing job is NEVER a restart candidate',
+    producing?.restart_safe === false,
+    `restart_safe=${producing?.restart_safe} — restarting this would have killed live work`,
+  );
+
+  const recycledProducing = by.get('recycled-but-producing');
+  check(
+    'a RECYCLED pid is not FAILED either while durable output advances',
+    recycledProducing?.state === 'RUNNING_BY_PROGRESS',
+    `got state=${recycledProducing?.state} why="${recycledProducing?.why}"`,
+  );
+  check(
+    'and it still refuses the recycled pid as an identity',
+    recycledProducing?.identity === 'PID_RECYCLED',
+    `identity=${recycledProducing?.identity} — progress must not launder a wrong identity`,
+  );
+
+  const silent = by.get('wrapper-exited-and-silent');
+  check(
+    'absent AND measurably silent is still FAILED — the state was not abolished',
+    silent?.state === 'FAILED',
+    `got state=${silent?.state} delta=${silent?.output_delta} why="${silent?.why}"`,
+  );
+  check(
+    'the death claim says it was confirmed, not merely observed absent',
+    /Confirmed: absent AND not producing/.test(silent?.why ?? ''),
+    `why="${silent?.why}"`,
+  );
+
+  check(
+    'every job carries a restart-safety verdict, so the answer is auditable either way',
+    report.jobs.every((j) => typeof j.restart_safe === 'boolean'),
+    'a row with no restart_safe field lets a caller invent its own answer',
+  );
+
   check(
     'every job carries an instance id, so a pid alone is never the identity',
-    report.jobs.filter((j) => j.pid).every((j) => Boolean(j.instance)),
+    report.jobs.filter((j) => j.pid && j.pid_alive).every((j) => Boolean(j.instance)),
     'a row with a pid and no instance id has nothing a recycled pid could fail to match',
   );
 } finally {

@@ -51,7 +51,7 @@
  * worktree, and a rewrite is a lost-update race.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * THE SEVEN STATES
+ * THE STATES
  * ─────────────────────────────────────────────────────────────────────────────
  *
  *   RUNNING_PROGRESSING  process alive AND its checkpoint moved inside the
@@ -65,8 +65,22 @@
  *   STOPPED              not running, and that is expected: FINISHED, or
  *                        deliberately STOPPED, or the pid was recycled into
  *                        somebody else's process.
- *   FAILED               the registry declares it RUNNING and the process is
- *                        NOT there. Nobody stopped it on purpose.
+ *   RUNNING_BY_PROGRESS  no process could be identified -- the wrapper pid
+ *                        exited, or was recycled, or the registration is simply
+ *                        old -- AND the declared durable output is advancing.
+ *                        The work is real; the REGISTRATION is what is wrong.
+ *                        Added 1 Sep 2026, after this tool PAGED four times on
+ *                        jobs that were producing 32,400 vectors an hour.
+ *   STALE_REGISTRATION   no process could be identified and NOTHING was
+ *                        measured. Death is unproven. It needs attention and it
+ *                        authorises nothing -- on this box Win32_Process returns
+ *                        an empty CommandLine for scheduled-task workers, so
+ *                        identity-by-signature cannot fire and absence on its
+ *                        own proves nothing at all.
+ *   FAILED               the registry declares it RUNNING, no process is there,
+ *                        AND its declared output was measured, is flat, and has
+ *                        been silent past PROGRESS_FRESH_MS. Confirmed, not
+ *                        merely observed absent. Nobody stopped it on purpose.
  *   UNKNOWN              the probe itself failed, or a live LawMind process
  *                        matches no registry job at all. A failed probe is not
  *                        evidence of death and is never reported as one.
@@ -115,6 +129,21 @@ const OBSERVATIONS = resolve(REPO, argOf('observations', join('.agents', 'jobs',
 
 /** A process younger than this with no progress reading is STARTING, not stalled. */
 const STARTING_GRACE_MS = 5 * 60 * 1000;
+
+/**
+ * How fresh a durable-output reading must be to outrank an ABSENT process.
+ *
+ * 45 minutes, derived rather than chosen. The slowest declared receipt cadence
+ * on this box is the 15-minute coarse-walk telemetry tick, and a bound that
+ * accuses on ONE missed tick turns ordinary jitter into a death certificate.
+ * Three ticks is the first interval that cannot be explained by a slow window,
+ * a GPU batch running long, or the box simply being busy.
+ *
+ * This is the documented bound the restart-safety rule refers to: nothing is
+ * called dead, and no restart is ever recommended, until durable output has
+ * been silent for longer than this.
+ */
+const PROGRESS_FRESH_MS = 45 * 60 * 1000;
 
 /**
  * Default stall window. Deliberately generous: the GPU walk writes a checkpoint
@@ -544,7 +573,7 @@ async function outputProbe(job, prev, now, enabled) {
   const prevValue = prev?.output_value ?? null;
   const prevAt = prev?.last_output_change_at ? Date.parse(prev.last_output_change_at) : null;
 
-  const settle = (value) => {
+  const settle = (value, sourceAt = null) => {
     if (value === null || value === undefined) {
       return { declared: true, measured: false, label, value: null, delta: null, why: 'probe returned nothing' };
     }
@@ -557,6 +586,7 @@ async function outputProbe(job, prev, now, enabled) {
       value: Number(value),
       delta,
       lastOutputAt: changed ? now : prevAt,
+      sourceAt,
     };
   };
 
@@ -564,9 +594,19 @@ async function outputProbe(job, prev, now, enabled) {
     if (spec.kind === 'lines' || spec.kind === 'bytes') {
       const p = resolve(REPO, spec.path);
       if (!existsSync(p)) return settle(0);
-      if (spec.kind === 'bytes') return settle(statSync(p).size);
+      /**
+       * The file mtime, carried alongside the count.
+       *
+       * Without it freshness needs TWO observations, and two observations taken
+       * a minute apart make a healthy 15-minute receipt cadence look flat: the
+       * delta is 0 because nothing was due yet, not because nothing is working.
+       * The mtime answers "when did this last actually write" from a SINGLE
+       * reading, which is the question a job liveness verdict turns on.
+       */
+      const st = statSync(p);
+      if (spec.kind === 'bytes') return settle(st.size, st.mtimeMs);
       const body = readFileSync(p, 'utf8');
-      return settle(body.split('\n').filter((l) => l.trim()).length);
+      return settle(body.split('\n').filter((l) => l.trim()).length, st.mtimeMs);
     }
     if (spec.kind === 'sql') {
       if (!enabled) {
@@ -846,6 +886,204 @@ function isEmptyShell(proc, sweep) {
 // the state machine
 // ───────────────────────────────────────────────────────────────────────────
 
+/**
+ * ---------------------------------------------------------------------------
+ * PROGRESS OUTRANKS THE PROCESS TABLE
+ * ---------------------------------------------------------------------------
+ *
+ * Measured 1 Sep 2026. This is the defect these functions exist to fix.
+ *
+ * At 17:58:06Z this tool reported `new1-coarse-walk` and `new1-coarse-telemetry`
+ * as FAILED, and PAGED on both. At 17:57:24Z -- forty-two seconds earlier -- the
+ * telemetry receipt this tool had ALREADY READ recorded GPU util 99%, 8,176 new
+ * vectors in the closing 15-minute window, and the worklist advancing 127 -> 128
+ * -> 129 of 447. The resource lease agreed with the receipts and not with the
+ * pager: HEAVY_BOX read HELD, HEALTHY_BY_PROGRESS, "session pid is gone, but the
+ * durable output metric moved 4m ago".
+ *
+ * Two causes, and only the second is this tool being wrong:
+ *
+ *   1. Identity by command signature is STRUCTURALLY UNAVAILABLE on this box.
+ *      Win32_Process returns an EMPTY CommandLine for scheduled-task workers --
+ *      11 of 11 live LawMind descendants sampled by hand, and this tool own
+ *      sweep reported "353 processes, 1 LawMind". So the designed fallback for a
+ *      wrapper that exited cannot fire, and every job whose recorded pid is gone
+ *      falls straight through to "no process matches".
+ *
+ *   2. `classify` returned FAILED on process absence BEFORE consulting the
+ *      durable-output probe, even when that probe was MEASURED and non-zero.
+ *      The evidence was in hand and discarded by statement order.
+ *
+ * The first is an environment limit this tool cannot remove. The second is a bug,
+ * and fixing it makes the first survivable -- which is the point: a wrapper pid
+ * is a NAME, and durable rows are the WORK. When the name is missing and the work
+ * is visibly advancing, the honest verdict is that the REGISTRATION is stale, not
+ * that the job is dead.
+ *
+ * Three verdicts, kept apart because they authorise different actions:
+ *
+ *   ADVANCING   the probe moved, or its source wrote, inside PROGRESS_FRESH_MS.
+ *               Positive evidence of work. Outranks an absent process.
+ *   STALE       measured, flat, and last written longer ago than the bound. The
+ *               only reading that may support a death claim.
+ *   UNMEASURED  nothing was measured. NOT evidence in either direction. This
+ *               file own rule applied to itself: unmeasured and zero are
+ *               opposite facts.
+ */
+function durableProgress(out, now) {
+  if (!out || !out.declared) {
+    return { verdict: "UNMEASURED", why: "no durable output probe is declared for this job" };
+  }
+  if (!out.measured) {
+    return { verdict: "UNMEASURED", why: out.why ?? "declared output probe was not measured" };
+  }
+  const label = out.label ?? "output";
+  if (out.delta !== null && out.delta > 0) {
+    return {
+      verdict: "ADVANCING",
+      why: `durable output moved: ${label} +${out.delta} (now ${out.value})`,
+      ageMs: 0,
+    };
+  }
+  // A flat delta is not silence. The source may simply not have been due to write.
+  const at = out.sourceAt ?? out.lastOutputAt ?? null;
+  if (at === null) {
+    if (out.delta === null) {
+      return {
+        verdict: "UNMEASURED",
+        why: `${label}=${out.value}, first reading and no source timestamp -- nothing to difference against`,
+      };
+    }
+    return {
+      verdict: "UNMEASURED",
+      why: `${label} flat at ${out.value}, and this probe reports no timestamp -- flatness alone cannot date the silence`,
+    };
+  }
+  const ageMs = now - at;
+  const boundM = Math.round(PROGRESS_FRESH_MS / 60000);
+  if (ageMs <= PROGRESS_FRESH_MS) {
+    return {
+      verdict: "ADVANCING",
+      why: `${label} last wrote ${Math.round(ageMs / 60000)}m ago (now ${out.value}), inside the ${boundM}m freshness bound`,
+      ageMs,
+    };
+  }
+  return {
+    verdict: "STALE",
+    why: `${label} flat at ${out.value} and last wrote ${Math.round(ageMs / 60000)}m ago, past the ${boundM}m bound`,
+    ageMs,
+  };
+}
+
+/**
+ * Does a resource lease vouch for this lane by DURABLE PROGRESS right now?
+ *
+ * Read as a restart VETO, never as proof that this particular job is alive. A
+ * lease is lane-scoped and its `jobId` is routinely null, so a fresh HEAVY_BOX
+ * lease held by NEW1 proves NEW1 is doing heavy work -- not WHICH NEW1 job is
+ * doing it. That is enough to forbid a takeover and not enough to call a job
+ * healthy, and the two are deliberately not collapsed.
+ */
+function leaseProgressVouches(ownerLane, now) {
+  const dir = resolve(REPO, ".agents", "bus", "leases");
+  if (!ownerLane || !existsSync(dir)) return null;
+  let names;
+  try { names = readdirSync(dir); } catch { return null; }
+  for (const f of names) {
+    if (!f.endsWith(".json")) continue;
+    let lease;
+    try { lease = JSON.parse(readFileSync(join(dir, f), "utf8")); } catch { continue; }
+    if (lease.state !== "HELD") continue;
+    if (String(lease.holder || "").toUpperCase() !== String(ownerLane).toUpperCase()) continue;
+    if (lease.livenessSource !== "durable-progress") continue;
+    const at = lease.lastProgressAt ? Date.parse(lease.lastProgressAt) : null;
+    if (at === null || Number.isNaN(at)) continue;
+    if (now - at > PROGRESS_FRESH_MS) continue;
+    return {
+      domain: lease.domain ?? f.slice(0, -5),
+      ageMs: now - at,
+      output: lease.currentOutput ?? null,
+    };
+  }
+  return null;
+}
+/**
+ * ---------------------------------------------------------------------------
+ * MAY ANYTHING RESTART OR TAKE OVER THIS JOB?
+ * ---------------------------------------------------------------------------
+ *
+ * Four conditions, ALL required, and a fifth rule above them: an UNKNOWN answer
+ * counts as NOT SAFE. This is a unanimity gate, not a score -- on 1 Sep 2026 the
+ * previous logic would have justified restarting five jobs that were between
+ * them producing 32,400 vectors an hour, on the strength of a single missing pid.
+ *
+ *   1. DURABLE PROGRESS STALE   the declared output was MEASURED, is flat, and
+ *                               last wrote longer ago than PROGRESS_FRESH_MS.
+ *                               Unmeasured is NOT stale -- it is unknown.
+ *   2. RECEIPT / LOG STALE      the checkpoint or log fingerprint has not moved
+ *                               inside the job own stall window.
+ *   3. NO PROCESS DESCENDANT    no process was identified by pid, by creation
+ *                               time, by signature, or by rediscovery.
+ *   4. LEASE NOT VOUCHING       no resource lease held by this job lane is
+ *                               currently healthy-by-progress.
+ *
+ * Condition 4 is why a lease is read here at all. A lease is lane-scoped, so it
+ * can never promote a job to healthy -- but a lane visibly holding the box on
+ * durable progress is more than enough to forbid a takeover.
+ *
+ * This function NEVER restarts anything. It reports whether a restart would be
+ * defensible, and names every condition that is not met so the refusal can be
+ * argued with rather than believed.
+ */
+function restartSafety(job, proc, prog, fp, prev, now) {
+  const stallMs = STALL_WINDOW_MS[job.job_id] ?? DEFAULT_STALL_MS;
+  const lastProgressAt = progressSince(fp, prev, now);
+  const lease = leaseProgressVouches(job.owner_lane, now);
+
+  const conditions = [
+    {
+      name: 'durable progress stale',
+      met: prog.verdict === 'STALE',
+      detail:
+        prog.verdict === 'STALE'
+          ? prog.why
+          : prog.verdict === 'ADVANCING'
+            ? `NOT met — ${prog.why}`
+            : `NOT met — progress is UNMEASURED (${prog.why}); unknown is not stale`,
+    },
+    {
+      name: 'receipt/log stale',
+      met: lastProgressAt !== null && now - lastProgressAt > stallMs,
+      detail:
+        lastProgressAt === null
+          ? 'NOT met — no progress reading exists to age; a first reading is not staleness'
+          : now - lastProgressAt > stallMs
+            ? `checkpoint/log last moved ${Math.round((now - lastProgressAt) / 60000)}m ago (window ${Math.round(stallMs / 60000)}m)`
+            : `NOT met — checkpoint/log moved ${Math.round((now - lastProgressAt) / 60000)}m ago, inside the ${Math.round(stallMs / 60000)}m window`,
+    },
+    {
+      name: 'no process descendant',
+      met: !proc.alive,
+      detail: proc.alive
+        ? `NOT met — a process is identified (${proc.identity}, pid ${proc.pid})`
+        : `no process identified (${proc.identity})`,
+    },
+    {
+      name: 'lease not healthy-by-progress',
+      met: lease === null,
+      detail: lease
+        ? `NOT met — ${job.owner_lane} holds ${lease.domain} on durable progress, last moved ${Math.round(lease.ageMs / 60000)}m ago (output ${lease.output})`
+        : `no lease held by ${job.owner_lane ?? 'this lane'} is healthy-by-progress`,
+    },
+  ];
+
+  const blockers = conditions.filter((c) => !c.met);
+  return {
+    safe: blockers.length === 0,
+    conditions,
+    blockers: blockers.map((c) => `${c.name}: ${c.detail}`),
+  };
+}
 function classify(job, proc, fp, prev, now, out, caughtUp, sweep, startup) {
   const declared = String(job.status || 'UNKNOWN').toUpperCase();
 
@@ -859,20 +1097,68 @@ function classify(job, proc, fp, prev, now, out, caughtUp, sweep, startup) {
   // LCC's own ten-minute pager as FAILED for nine minutes out of every ten.
   if (job.kind === 'cadence') return classifyCadence(job, prev, now, out, startup);
 
+  /**
+   * ABSENCE OF A PROCESS IS NOT ABSENCE OF WORK.
+   *
+   * This block runs BEFORE the pid and identity verdicts, and that ordering IS
+   * the fix. A job is not FAILED merely because a wrapper pid exited, a pid was
+   * recycled, a lane session is unbound, or a registration went stale -- not if
+   * its own declared durable output is advancing right now.
+   *
+   * Three outcomes, none of which invents a RUNNING state without evidence:
+   *
+   *   RUNNING_BY_PROGRESS  no process could be identified, and the declared
+   *                        durable output is measurably advancing. The work is
+   *                        real; the REGISTRATION is what is wrong.
+   *   STALE_REGISTRATION   no process, and nothing measured. Death is UNPROVEN.
+   *                        Needs attention; authorises nothing.
+   *   FAILED               no process, and output measured, flat and stale past
+   *                        the documented bound. The only path to a death claim.
+   */
+  const absent = !proc.alive || proc.identity === 'PID_RECYCLED';
+  if (absent && !TERMINAL.has(declared)) {
+    const prog = durableProgress(out, now);
+    const how = proc.identity === 'PID_RECYCLED'
+      ? `pid ${proc.pid} is now a DIFFERENT process (${proc.name}, born ${proc.createdAt}); identity refused`
+      : 'no process matches by pid or by command signature';
+    if (prog.verdict === 'ADVANCING') {
+      return {
+        state: 'RUNNING_BY_PROGRESS',
+        why:
+          `${how} -- but ${prog.why}. The registration is stale; the work is not. ` +
+          'Re-register the live instance. Do NOT restart it and do NOT take its resource over.',
+      };
+    }
+    if (prog.verdict === 'UNMEASURED') {
+      return {
+        state: 'STALE_REGISTRATION',
+        why:
+          `${how}, and progress is UNMEASURED (${prog.why}). Death is UNPROVEN: on this box ` +
+          'Win32_Process returns an empty CommandLine for scheduled-task workers, so ' +
+          'signature identity cannot fire and absence proves nothing. Re-run with ' +
+          '--with-output to settle it.',
+      };
+    }
+    return {
+      state: 'FAILED',
+      why: `${how}, and ${prog.why}. Confirmed: absent AND not producing.`,
+    };
+  }
+
+
+  // Absence with a NON-terminal declaration was decided above, by progress.
+  // What is left here is absence a lane already expected, which is just STOPPED.
   if (proc.identity === 'PID_RECYCLED') {
     return {
-      state: TERMINAL.has(declared) ? 'STOPPED' : 'FAILED',
+      state: 'STOPPED',
       why:
-        `pid ${proc.pid} is now a DIFFERENT process (${proc.name}, born ${proc.createdAt}) — ` +
-        `recorded start ${job.pid_created_at || 'unrecorded'}, declared command "${String(job.command || '').slice(0, 60)}". ` +
+        `declared ${declared}; pid ${proc.pid} is now a DIFFERENT process (${proc.name}, born ` +
+        `${proc.createdAt}) — recorded start ${job.pid_created_at || 'unrecorded'}. ` +
         'Identity refused: a recycled pid is not this job.',
     };
   }
 
-  if (!proc.alive) {
-    if (TERMINAL.has(declared)) return { state: 'STOPPED', why: `declared ${declared}` };
-    return { state: 'FAILED', why: `declared ${declared} but no process matches by pid or by command signature` };
-  }
+  if (!proc.alive) return { state: 'STOPPED', why: `declared ${declared}` };
 
   // A shell whose batch returned. Alive, and finished — which is a different
   // fact from alive-and-stuck, and the two want opposite responses.
@@ -1344,7 +1630,15 @@ function listDir(dir) {
  * project the most time while looking healthy, and the whole point of naming it
  * is that somebody sees it.
  */
-const ATTENTION = new Set(['FAILED', 'RUNNING_STALLED', 'RUNNING_REPLAYING', 'UNKNOWN']);
+/**
+ * `STALE_REGISTRATION` belongs here and `RUNNING_BY_PROGRESS` does not.
+ *
+ * A stale registration is unfinished business -- death is unproven and somebody
+ * has to either measure it or re-register it. A job advancing under a stale
+ * registration is doing its work; naming it every run would train the reader to
+ * skim the list, and a skimmed list is the same as no list.
+ */
+const ATTENTION = new Set(['FAILED', 'RUNNING_STALLED', 'RUNNING_REPLAYING', 'STALE_REGISTRATION', 'UNKNOWN']);
 
 /**
  * R7 §8 LCC-P0 item 6: "add alert condition for critical process alive/GPU busy
@@ -1359,6 +1653,19 @@ function pageable(r) {
   if (!r.critical) return null;
   if (r.state === 'FAILED') {
     return { severity: 'PAGE', reason: `critical job ${r.job_id} declared RUNNING and is not there — ${r.why}` };
+  }
+  /**
+   * A stale registration WARNs; it never pages.
+   *
+   * Paging on it is the 1 Sep false alarm in a new costume: four PAGEs on jobs
+   * that were producing 32,400 vectors an hour. Absence that cannot be measured
+   * is a gap in the evidence, and a pager is for facts, not for gaps.
+   */
+  if (r.state === 'STALE_REGISTRATION') {
+    return {
+      severity: 'WARN',
+      reason: `critical job ${r.job_id} has no identifiable process and no measured progress — ${r.why}`,
+    };
   }
   if (r.state === 'RUNNING_STALLED') {
     return { severity: 'PAGE', reason: `critical job ${r.job_id} is alive and nothing has moved — ${r.why}` };
@@ -1535,6 +1842,12 @@ async function main() {
     const caughtUp = await caughtUpProbe(job, withOutput);
     const verdict = classify(job, proc, fp, prev, now, out, caughtUp, sweep, startup);
     const lastProgressAt = progressSince(fp, prev, now);
+    // Computed for every job, including the healthy ones: the interesting
+    // question is not only "may I restart this" but "would this tool have said
+    // yes", and that is only auditable if the answer is recorded either way.
+    const restart = job.kind === 'cadence'
+      ? { safe: false, conditions: [], blockers: ['cadence job: owned by its scheduler, never restarted by hand'] }
+      : restartSafety(job, proc, durableProgress(out, now), fp, prev, now);
 
     const declaredProgressAt = job.last_verified_progress?.at
       ? Date.parse(job.last_verified_progress.at)
@@ -1579,6 +1892,8 @@ async function main() {
       resource_class: job.resource_class ?? null,
       critical: isCritical(job),
       why: verdict.why,
+      restart_safe: restart.safe,
+      restart_blockers: restart.blockers,
       command: job.command ?? null,
       parent: osProc?.ParentProcessId ?? null,
       registry_line: job._line,
@@ -1672,6 +1987,10 @@ async function main() {
         state: shell ? 'STOPPED' : 'UNKNOWN',
         heartbeat: '-',
         progress: '-',
+        // Nobody declared this process, so nobody can say what restarting it
+        // would mean. An undeclared thing is never a restart candidate.
+        restart_safe: false,
+        restart_blockers: ['unregistered: no job declares this process, so no restart is defined for it'],
         output_value: null,
         output_delta: null,
         output_state: 'NOT_DECLARED',
@@ -1738,6 +2057,13 @@ async function main() {
       for (const r of attention) {
         console.log(`  ${r.state.padEnd(20)} ${r.job_id}${r.pid ? ' pid ' + r.pid : ''} — ${r.why}`);
         if (r.command) console.log(`      ${String(r.command).slice(0, 170)}`);
+        // The verdict a reader is about to act on, stated rather than implied.
+        if (r.restart_safe) {
+          console.log(`      RESTART: defensible — all four conditions met.`);
+        } else if (r.restart_blockers && r.restart_blockers.length) {
+          console.log(`      RESTART: NOT SAFE — ${r.restart_blockers.length} condition(s) refuse it:`);
+          for (const b of r.restart_blockers) console.log(`        - ${b}`);
+        }
       }
       console.log('');
     }

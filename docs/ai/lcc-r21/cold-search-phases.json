@@ -1,0 +1,48 @@
+{
+  "measuredAt": "2026-09-01T18:30:00Z",
+  "box": "XC (local); Postgres local, judgments 151 GB / 18,752,608 est rows",
+  "contention": {
+    "verdict": "ISOLATED_ENOUGH for the database, CONTENDED on the box",
+    "activeBackendsExcludingProbe": 0,
+    "note": "NEW1's coarse walk held the GPU at 99% throughout and its DB client sat idle between batches. A concurrent jest suite ran during the control-plane phase. Every figure below is therefore an UPPER bound, never a production number.",
+    "new1Interrupted": false
+  },
+  "harnessLimit": "embedQuery returns null, so the route's dense arm does not run inside the app harness. It is measured separately under denseArmIsolated.",
+  "totals": { "coldP50Ms": 266, "coldP95Ms": 1054, "coldMaxMs": 1148, "warmP50Ms": 31, "warmP95Ms": 491, "warmMaxMs": 511 },
+  "perClassColdMs": {
+    "exact-citation": [85, 207], "cnr": [198], "case-number": [278],
+    "filtered-lexical": [1148], "research": [383], "broad-refused": [85],
+    "case-name-common": [261], "case-name-distinct": [270], "party-plain": [940]
+  },
+  "denseArmIsolated": {
+    "judgment_chunks": { "ef40": [194, 2, 2], "ef200": [465, 4, 4], "index": "hnsw vector_cosine_ops PRESENT" },
+    "new1_tranche_passages": { "ef40": [175, 2, 2], "ef200": [345, 5, 4], "index": "hnsw vector_cosine_ops PRESENT" },
+    "note": "Random unit vector at depth 2000. Latency only; no relevance claim."
+  },
+  "dominantPhase": {
+    "name": "lexical/sparse ranked retrieval (retrieve.ts:875 df-scored CTE)",
+    "coldMs": 1025, "warmMs": 473,
+    "explainExecutionTimeMs": 473.499,
+    "buffers": "shared hit=321128, read=0 (fully cached)",
+    "plan": "BitmapAnd(judgments_full_text_idx -> 125,093 rows, judgments_court_idx -> 2,276,107 rows) -> Bitmap Heap Scan 9,744 rows over 41,847 heap blocks, Rows Removed by Index Recheck 33,555 -> top-N heapsort on ts_rank",
+    "readAs": "The court predicate contributes a 2.27M-entry bitmap (176 ms, 2,610 buffers) purely to intersect a 125k-entry one, and the bitmap goes lossy so the heap recheck re-reads 33,555 rows. Both are index/plan shape, not code."
+  },
+  "paragraphFallbackCost": {
+    "material": false,
+    "measuredMs": [6, 11, 28, 31, 39, 136],
+    "why": "retrieve.ts:2534 ts_rank(to_tsvector(paragraph_text)) is bounded by p.judgment_id = ANY(<page ids>) and judgment_paragraphs_judgment_idx drives it. It never exceeded 136 ms of a 940-1148 ms request. Checked rather than assumed."
+  },
+  "coldTimeoutNotReproduced": {
+    "reported": "POST /search duration_ms 15243 on a physical Galaxy S24 (RCC bus 1690)",
+    "reproducedHere": false,
+    "worstObservedMs": 1148,
+    "arithmetic": "15243 is the 15,000 ms research-pool statement_timeout plus overhead, not a query that merely ran long. retrieve.ts catches 57014 (QUERY_CANCELED) and marks the arm degraded, so such a request still returns 200.",
+    "notExcluded": [
+      "the deployed (Railway) database rather than this box",
+      "research-pool queueing: RESEARCH_POOL_MAX is 6, and wait time in the pool is not covered by statement_timeout"
+    ],
+    "nextAction": "No new instrumentation is needed. route.ts:337 already logs degraded[] beside latencyMs. Pull the production log line for that request id: a non-empty degraded[] names the arm that hit the cap; an empty one means the time went to pool queueing, not to a statement."
+  },
+  "timeoutChanged": false,
+  "migrationExecuted": false
+}
