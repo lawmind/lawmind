@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { AttributionNote } from '../../components/AttributionNote';
 import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
@@ -179,6 +180,21 @@ function DraftCitationRow({
       {existence.kind === 'unconfirmed' ? <CitationMark label="Not confirmed" tone="unconfirmed" /> : null}
       {moved.kind === 'moved' ? (
         <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
+      ) : null}
+      {/*
+        WHO SAID THE LAW MOVED, for a citation already attached to a draft —
+        NEW3 R16 `R16-RCC-01`. `services/api/src/documents/route.ts` sends a
+        literal `'UNKNOWN'` rather than omitting the key, so absence here means
+        an older server rather than an absence of adverse treatment; either way
+        `AttributionNote` renders nothing for absence.
+
+        UNDER THE MARK, NEVER INSTEAD OF IT. The chip is the warning; this is
+        the footnote saying on whose word it was raised. Neither changes what
+        `citationRender` decided, and PD-8 is untouched — nothing here is
+        written into the document or exported with it.
+      */}
+      {moved.kind === 'moved' ? (
+        <AttributionNote attribution={citation.treatmentAttribution} />
       ) : null}
       {/*
         THE UNRESOLVED ROW SAYS WHAT IT DOES NOT KNOW.

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { useWindowDimensions } from 'react-native';
+import { Platform, useWindowDimensions } from 'react-native';
 
 import { ResearchWorkspace } from './ResearchWorkspace';
 import { api } from '../../api/client';
@@ -181,6 +181,129 @@ describe('at desktop width', () => {
   it('one pixel below it, the phone layout', async () => {
     atWidth(size.researchTwoPane - 1);
     await render(<ResearchWorkspace />);
+    expect(screen.queryByText(/Open a judgment to read it here/)).toBeNull();
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * KEYBOARD — NEW3 R16 `R16-RCC-06`.
+ *
+ * Escape backs out of ONE authority. The layout exists so the results survive
+ * the read, and the commonest desktop reflex for "close what I just opened" is
+ * Escape; without it the only way out of a pane is a mouse trip to a back link,
+ * which is the hand movement the two-pane layout was built to remove.
+ *
+ * ── WHY THE LISTENER IS CAPTURED RATHER THAN THE EVENT DISPATCHED ───────────
+ *
+ * The React Native jest environment has a `window` object but no
+ * `KeyboardEvent` and no `dispatchEvent` — it is not jsdom. So the test spies
+ * on the registration, takes the handler the component installed, and calls it.
+ * That is a weaker instrument than a real event and it is worth saying so: it
+ * proves the handler is registered, keyed on Escape, and pops one level. It
+ * cannot prove the browser delivers the event, and only a physical desktop pass
+ * can.
+ *
+ * ── AND WHY `Platform.OS` IS FORCED ─────────────────────────────────────────
+ *
+ * The gate in the component is `Platform.OS === 'web'`, which is the correct
+ * gate — there is no `window` to listen on elsewhere, and a wide tablet has no
+ * Escape key. Under jest-expo `Platform.OS` is `'ios'`, so without this the
+ * listener is never installed and a test asserting its absence would pass for
+ * the wrong reason.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('the keyboard, at desktop width', () => {
+  const originalOS = Platform.OS;
+  let handlers: ((e: { key: string }) => void)[] = [];
+
+  /*
+    `window` EXISTS IN THIS ENVIRONMENT BUT CARRIES NO EVENT API — it is the
+    React Native environment, not jsdom, so there is nothing to spy ON and the
+    two methods are installed rather than mocked. Removed again afterwards so a
+    later file cannot accidentally depend on them being here.
+  */
+  const target = window as unknown as Record<string, unknown>;
+
+  beforeEach(() => {
+    atWidth(DESKTOP);
+    Object.defineProperty(Platform, 'OS', { value: 'web', configurable: true });
+    handlers = [];
+    target.addEventListener = (type: string, handler: unknown) => {
+      if (type === 'keydown') handlers.push(handler as (e: { key: string }) => void);
+    };
+    target.removeEventListener = (type: string, handler: unknown) => {
+      if (type === 'keydown') handlers = handlers.filter((h) => h !== handler);
+    };
+  });
+
+  afterEach(() => {
+    Object.defineProperty(Platform, 'OS', { value: originalOS, configurable: true });
+    /*
+      LEFT AS NO-OPS, NOT DELETED. React Native Testing Library's automatic
+      cleanup is registered at the top level, so it unmounts AFTER this hook —
+      and the effect's teardown calls `removeEventListener` on the way out.
+      Deleting it here made the unmount throw, which failed the test that had
+      already passed its assertions.
+    */
+    target.addEventListener = () => {};
+    target.removeEventListener = () => {};
+  });
+
+  afterAll(() => {
+    delete target.addEventListener;
+    delete target.removeEventListener;
+  });
+
+  const pressEscape = () => {
+    for (const h of handlers) h({ key: 'Escape' });
+  };
+
+  it('closes the open authority and leaves the results untouched', async () => {
+    await render(<ResearchWorkspace />);
+    await runSearch();
+
+    const first = MOCK_RESULTS[0]!;
+    await fireEvent.press(await screen.findByText(first.caseTitle));
+    await waitFor(() => expect(screen.queryByText(/Open a judgment to read it here/)).toBeNull());
+    expect(handlers.length).toBeGreaterThan(0);
+
+    await waitFor(() => {
+      pressEscape();
+    });
+
+    // The pane is empty again…
+    expect(await screen.findByText(/Open a judgment to read it here/)).toBeTruthy();
+    // …and the results never moved, which is the property the whole layout is for.
+    expect(screen.getByText(first.caseTitle)).toBeTruthy();
+    // Never out of the workspace — that is what a back BUTTON would have to avoid too.
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  /**
+   * NOTHING OPEN, NOTHING BOUND. A listener that swallowed Escape with nothing
+   * to close would be a keyboard dead end for whatever sits above this surface
+   * — the command palette binds its own Escape, and a sheet binds its own.
+   */
+  it('binds no key handler while the pane is empty', async () => {
+    await render(<ResearchWorkspace />);
+    await runSearch();
+
+    expect(screen.getByText(/Open a judgment to read it here/)).toBeTruthy();
+    expect(handlers).toHaveLength(0);
+  });
+
+  /** A key that is not Escape is ignored rather than treated as a back. */
+  it('ignores every other key', async () => {
+    await render(<ResearchWorkspace />);
+    await runSearch();
+
+    const first = MOCK_RESULTS[0]!;
+    await fireEvent.press(await screen.findByText(first.caseTitle));
+    await waitFor(() => expect(screen.queryByText(/Open a judgment to read it here/)).toBeNull());
+
+    for (const h of handlers) h({ key: 'k' });
+
     expect(screen.queryByText(/Open a judgment to read it here/)).toBeNull();
   });
 });

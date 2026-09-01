@@ -22,6 +22,7 @@ import { haptics } from '../../theme/haptics';
 import { formatJudgmentDate } from '../../theme/judgmentDate';
 import { color, radius, space, state } from '../../theme/tokens';
 import { AuthoritiesPanel, useAuthorities } from './AuthoritiesPanel';
+import { AttributionNote } from '../../components/AttributionNote';
 import { MatterPicker } from './MatterPicker';
 import { BodyTextWithheld, SourceTrustBlock } from './SourceTrustBlock';
 import { ReadingView } from './ReadingView';
@@ -396,6 +397,14 @@ export function JudgmentScreen({
               Good-law status as of {moved.asOf}
             </Text>
           ) : null}
+          {/*
+            WHO SAID SO — OD-14 layer 4, inside the band that says the law
+            moved and never in place of it. The band's claim is unchanged by
+            it: a reporter-attributed set-aside is shown exactly as loudly as
+            a court-attributed one, because `overruledStatus` decides the
+            warning and this decides only the wording beneath it.
+          */}
+          <AttributionNote attribution={judgment.treatmentAttribution} tone="onDanger" />
           {replacement ? (
             <Pressable
               accessibilityRole="button"
@@ -483,6 +492,7 @@ export function JudgmentScreen({
                 Good-law status as of {moved.asOf}
               </Text>
             ) : null}
+            <AttributionNote attribution={judgment.treatmentAttribution} />
           </View>
         ) : null}
 
@@ -492,12 +502,15 @@ export function JudgmentScreen({
           simply needs to know before they stand up.
         */}
         {moved.kind === 'moved' && moved.band === 'none' ? (
-          <View style={styles.doubtedRow}>
-            <Clock color={color.inkFaint} size={16} strokeWidth={1.5} />
-            <Text variant="ui" style={styles.muted}>
-              {moved.headline}
-            </Text>
-          </View>
+          <>
+            <View style={styles.doubtedRow}>
+              <Clock color={color.inkFaint} size={16} strokeWidth={1.5} />
+              <Text variant="ui" style={styles.muted}>
+                {moved.headline}
+              </Text>
+            </View>
+            <AttributionNote attribution={judgment.treatmentAttribution} />
+          </>
         ) : null}
 
         {/*
@@ -763,6 +776,18 @@ export function JudgmentScreen({
         ("into which matter?") and gets the same sheet rather than a second one.
       */}
       <MatterPicker
+        /*
+          WHAT THIS PICKER WAS OPENED TO SAVE — NEW3 R16 `R16-RCC-04`. Held
+          only if the advocate leaves for the create form, and performed against
+          the matter that form makes. Without it the empty case pushed
+          `/matter/new` and lost the save silently.
+        */
+        intent={{
+          kind: 'authority',
+          judgmentId: judgment.judgmentId,
+          caseTitle: judgment.caseTitle,
+          ...(citationCheckId ? { citationCheckId } : {}),
+        }}
         onDismiss={() => setPickerOpen(false)}
         onPick={(matterId) => {
           setPickerOpen(false);

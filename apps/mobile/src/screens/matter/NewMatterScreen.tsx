@@ -7,6 +7,7 @@ import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
+import { usePendingSave, type PendingSaveResult } from '../../state/pendingSave';
 import { usePractice } from '../../state/practice';
 import { color, radius, space } from '../../theme/tokens';
 
@@ -29,6 +30,27 @@ import { color, radius, space } from '../../theme/tokens';
  * accepted as any object. `{ description }` is this screen's own choice of
  * shape (`api/contract.ts`'s `Matter.parties` note), not something the
  * server requires.
+ *
+ * ── IT FINISHES A SAVE THAT STARTED SOMEWHERE ELSE ──────────────────────────
+ *
+ * NEW3 R16 §8, `R16-RCC-04`: `CREATE_THEN_AUTO_SAVE_PENDING_AUTHORITY`.
+ *
+ * When an advocate reached this form from `MatterPicker`'s empty state, they
+ * were part-way through saving an authority or a passage. That intent is held in
+ * `state/pendingSave.ts` and is performed here, against the id `POST /matters`
+ * just returned.
+ *
+ * TWO OUTCOMES AND THEY ARE RENDERED DIFFERENTLY, which is the whole point:
+ *
+ *   BOTH SUCCEEDED   → open the new matter. The authority is in it.
+ *   MATTER ONLY      → STAY HERE and say so, with a retry. The matter exists and
+ *                      the save does not, and that is a partial result, not a
+ *                      success. Navigating away with a cheerful toast is how an
+ *                      advocate ends up believing an authority is on a file it
+ *                      is not on.
+ *
+ * A form reached directly from Matters holds no intent and behaves exactly as
+ * it always has — create, then open.
  */
 
 const CASE_TYPES = [
@@ -65,6 +87,17 @@ export function NewMatterScreen({
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const refresh = usePractice((s) => s.refresh);
+  const heldSave = usePendingSave((s) => s.held);
+  const runHeldSave = usePendingSave((s) => s.runFor);
+  const clearHeldSave = usePendingSave((s) => s.clear);
+  /**
+   * THE PARTIAL RESULT. Set only when the matter was created and the held save
+   * was not — the id is kept so a retry has something to save INTO, and so the
+   * advocate can still open the matter that does exist.
+   */
+  const [partial, setPartial] = useState<{ matterId: string; result: PendingSaveResult } | null>(
+    null,
+  );
 
   async function submit() {
     if (!caseTitle.trim()) return setError('Give the matter a title.');
@@ -93,7 +126,40 @@ export function NewMatterScreen({
       return;
     }
     void refresh();
-    onCreated(res.data.matter.matterId);
+
+    const matterId = res.data.matter.matterId;
+
+    /*
+      THE HELD SAVE, AGAINST THE MATTER THAT NOW EXISTS. `runFor` returns null
+      when nothing was held, which is the ordinary path from Matters — and a
+      null is NOT a failure, so it falls through to the same navigation this
+      screen has always done.
+    */
+    const held = await runHeldSave(matterId);
+    if (held !== null && held.kind === 'failed') {
+      setPartial({ matterId, result: held });
+      return;
+    }
+
+    onCreated(matterId);
+  }
+
+  /**
+   * RETRY THE SAVE, NOT THE MATTER. The matter is already created; creating a
+   * second one would be the obvious wrong repair. The intent is still held —
+   * `pendingSave` clears it only on success — so this simply runs it again.
+   *
+   * For an AUTHORITY this is free: the server answers 200 for a judgment already
+   * saved. For an ANNOTATION there is no server-side idempotency, so the store's
+   * single-flight latch is what stops a double tap here becoming two rows.
+   */
+  async function retryHeldSave() {
+    if (!partial || saving) return;
+    setSaving(true);
+    const again = await runHeldSave(partial.matterId);
+    setSaving(false);
+    if (again === null || again.kind === 'saved') return onCreated(partial.matterId);
+    setPartial({ matterId: partial.matterId, result: again });
   }
 
   return (
@@ -109,6 +175,20 @@ export function NewMatterScreen({
         <Text variant="uiStrong" scale="title">
           Add a matter
         </Text>
+
+        {/*
+          SAYS WHAT IS WAITING ON THIS FORM. An advocate who arrived here from a
+          save has a reason to finish it, and stating the reason is also what
+          makes the outcome legible afterwards — a confirmation that names an
+          authority nobody was told about reads as a non-sequitur.
+        */}
+        {heldSave && !partial ? (
+          <Text variant="ui" style={styles.pending}>
+            {heldSave.kind === 'authority'
+              ? `${heldSave.caseTitle} will be saved to this matter once it exists.`
+              : `Your marked passage from ${heldSave.caseTitle} will be saved to this matter once it exists.`}
+          </Text>
+        ) : null}
 
         <Input label="Case title" onChangeText={setCaseTitle} placeholder="State v. Ramesh Kumar" value={caseTitle} />
         <Input label="Court" onChangeText={setCourt} placeholder="Delhi High Court" value={court} />
@@ -150,7 +230,44 @@ export function NewMatterScreen({
           </Text>
         ) : null}
 
-        <Button label={saving ? 'Saving…' : 'Add matter'} onPress={submit} disabled={saving} />
+        {partial ? (
+          /*
+            THE MATTER EXISTS AND THE SAVE DOES NOT. Stated in that order,
+            because the first half is a fact the advocate must not be allowed to
+            miss — otherwise they retry by creating a SECOND matter.
+
+            The server's message is rendered verbatim beneath it: on
+            `set_aside` it names the judgment that replaced this one, which is
+            the actionable half of the refusal and is not ours to reword.
+          */
+          <View style={styles.partial}>
+            <Text variant="uiStrong">The matter was created. {partial.result.caseTitle} was not saved to it.</Text>
+            <Text variant="ui" style={styles.partialReason}>
+              {partial.result.kind === 'failed' ? partial.result.message : ''}
+            </Text>
+            <Button
+              disabled={saving}
+              label={saving ? 'Saving…' : 'Try saving it again'}
+              onPress={() => void retryHeldSave()}
+            />
+            <Button
+              label="Open the matter without it"
+              variant="secondary"
+              onPress={() => {
+                /*
+                  ABANDONING THE SAVE IS AN EXPLICIT ACT, and it is the only
+                  other way out of this state. The intent is cleared HERE rather
+                  than on navigation, so backing out of this screen by any other
+                  route leaves it held and retryable.
+                */
+                clearHeldSave();
+                onCreated(partial.matterId);
+              }}
+            />
+          </View>
+        ) : (
+          <Button label={saving ? 'Saving…' : 'Add matter'} onPress={submit} disabled={saving} />
+        )}
       </ScrollView>
     </Screen>
   );
@@ -199,4 +316,18 @@ const styles = StyleSheet.create({
   segmentOn: { backgroundColor: color.ink, borderColor: color.ink },
   segmentOnLabel: { color: color.card },
   error: { color: color.oxblood },
+  pending: { color: color.inkMuted },
+  /**
+   * Neutral ink with a dashed edge — the house style for OUR uncertainty. This
+   * is not the law having moved and carries no amber; it is a write of ours
+   * that did not land.
+   */
+  partial: {
+    gap: space.xs,
+    padding: space.sm,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: color.ink,
+  },
+  partialReason: { color: color.inkMuted },
 });

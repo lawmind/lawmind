@@ -5,6 +5,7 @@ import { Pressable } from '../../components/Pressable';
 import { Sheet } from '../../components/Sheet';
 import { Text } from '../../components/Text';
 import type { Matter } from '../../api/contract';
+import { usePendingSave, type PendingSaveIntent } from '../../state/pendingSave';
 import { usePractice } from '../../state/practice';
 import { color, space } from '../../theme/tokens';
 
@@ -20,17 +21,42 @@ import { color, space } from '../../theme/tokens';
  * are joined per matter on every read. A general saved list would be a store
  * nothing writes and nothing reads, and offering to save into it would be the
  * kind of promise this product exists not to make.
+ *
+ * ── THE EMPTY CASE CARRIES THE SAVE ACROSS, 1 September 2026 ────────────────
+ *
+ * NEW3 R16 §8, `R16-RCC-04`: `CREATE_THEN_AUTO_SAVE_PENDING_AUTHORITY`.
+ *
+ * "Create a matter" used to push `/matter/new` and DROP the thing being saved.
+ * An advocate saving their first authority — the population with no matters, by
+ * definition — followed the only route this sheet offered and lost the save
+ * silently. The intent is now held (`state/pendingSave.ts`) and performed
+ * against the new matter's id.
+ *
+ * STILL NOT A GLOBAL SAVED LIST. What is held is an INTENT, on this device, for
+ * minutes, destroyed the moment it is performed or abandoned. `intent` is
+ * optional so a caller that has not adopted it behaves exactly as before —
+ * pushing the form and holding nothing.
  */
 export function MatterPicker({
   visible,
   onDismiss,
   onPick,
+  intent,
 }: {
   visible: boolean;
   onDismiss: () => void;
   onPick: (matterId: string) => void;
+  /**
+   * WHAT THIS SHEET WAS OPENED TO SAVE, for the empty case only.
+   *
+   * Captured when — and only when — the advocate leaves for the create form, so
+   * a picker that is opened and dismissed holds nothing. Omit it and "Create a
+   * matter" behaves exactly as it did before: a push, and no held intent.
+   */
+  intent?: PendingSaveIntent;
 }) {
   const matters = usePractice((s) => s.matters);
+  const capture = usePendingSave((s) => s.capture);
   /**
    * THE PICKER OWNS THIS DESTINATION RATHER THAN TAKING IT AS A PROP.
    *
@@ -50,12 +76,19 @@ export function MatterPicker({
       {matters.length === 0 ? (
         <View style={styles.emptyBlock}>
           <Text variant="ui" style={styles.empty}>
-            No matters yet. A saved authority belongs to a matter, so there is one to make
-            first.
+            {intent
+              ? 'No matters yet. A saved authority belongs to a matter — make one and this will be saved to it.'
+              : 'No matters yet. A saved authority belongs to a matter, so there is one to make first.'}
           </Text>
           <Pressable
             accessibilityRole="button"
             onPress={() => {
+              /*
+                CAPTURED HERE, not when the sheet opened. Opening a picker and
+                changing your mind must leave nothing behind; leaving for the
+                create form is the moment the intent becomes real.
+              */
+              if (intent) capture(intent);
               onDismiss();
               router.push('/matter/new' as never);
             }}

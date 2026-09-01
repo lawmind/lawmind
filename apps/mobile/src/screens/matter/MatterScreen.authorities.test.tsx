@@ -98,6 +98,7 @@ const draw = async (onOpenJudgment = jest.fn()) => {
       onOpenCounterArguments={() => {}}
       onOpenJudgment={onOpenJudgment}
       onOpenPremiumPlans={() => {}}
+      onManage={() => {}}
       onRecordAdjournment={() => {}}
       onSendClientUpdate={() => {}}
       onShare={() => {}}

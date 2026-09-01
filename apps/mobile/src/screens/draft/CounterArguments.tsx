@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
+import { AttributionNote } from '../../components/AttributionNote';
 import { CitationMark, movedTone } from '../../components/CitationMark';
 import { Text } from '../../components/Text';
 import { citationDisplay } from '../../citation/citationDisplay';
@@ -142,6 +143,15 @@ export function CounterArguments({ data }: { data: CounterArgumentsResponse }) {
             <Text variant="ui" style={styles.excludedReason}>
               {exclusionReason(x)}
             </Text>
+            {/*
+              An authority kept OUT of an argument on a law reporter's editorial
+              note is exactly the exclusion an advocate might want to challenge,
+              and they cannot challenge what they cannot see — `counter.ts`
+              sends the field on excluded rows for that reason. Every row here
+              carries `reason: 'set_aside'`, so the moved fact is established
+              and the note is qualifying it rather than raising it.
+            */}
+            <AttributionNote attribution={x.treatmentAttribution} />
           </View>
         </View>
       ))}
@@ -210,6 +220,21 @@ function Authority({ authority }: { authority: CounterAuthority }) {
         <Text variant="ui" style={styles.doubtedLine}>
           {moved.headline}
         </Text>
+      ) : null}
+
+      {/*
+        WHO SAID THE LAW MOVED — NEW3 R16 `R16-RCC-01`, and it is load-bearing
+        HERE in particular. This is the screen an advocate reads while preparing
+        to argue AGAINST these authorities, and "a reporter records that this was
+        overruled" is a very different thing to walk into court with than "the
+        Supreme Court held it was".
+
+        GATED ON THE MOVED MARK, never on the value: an authority the law has not
+        moved on carries `UNKNOWN` from an empty edge list, and a note about
+        unrecorded adverse treatment there would invent a doubt.
+      */}
+      {moved.kind === 'moved' ? (
+        <AttributionNote attribution={authority.treatmentAttribution} />
       ) : null}
 
       {/*

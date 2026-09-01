@@ -1006,6 +1006,17 @@ export function SearchScreen({
         unlike the briefing, which belongs to exactly one and asks nothing.
       */}
       <MatterPicker
+        /* The held intent for the empty case — see `state/pendingSave.ts`. */
+        {...(saveFor
+          ? {
+              intent: {
+                kind: 'authority' as const,
+                judgmentId: saveFor.judgmentId,
+                caseTitle: saveFor.caseTitle,
+                ...(saveFor.citationCheckId ? { citationCheckId: saveFor.citationCheckId } : {}),
+              },
+            }
+          : {})}
         onDismiss={() => setSaveFor(null)}
         onPick={(matterId) => {
           const target = saveFor;

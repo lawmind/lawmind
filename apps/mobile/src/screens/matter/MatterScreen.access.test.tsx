@@ -70,6 +70,7 @@ const draw = async (access: MatterAccess | undefined, onOpenPremiumPlans = jest.
       onOpenCounterArguments={() => {}}
       onOpenJudgment={() => {}}
       onOpenPremiumPlans={onOpenPremiumPlans}
+      onManage={() => {}}
       onRecordAdjournment={() => {}}
       onSendClientUpdate={() => {}}
       onShare={() => {}}

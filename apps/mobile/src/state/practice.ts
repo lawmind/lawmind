@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { api } from '../api/client';
-import type { BriefingListItem, Matter } from '../api/contract';
+import type { BriefingListItem, Matter, MatterStatus } from '../api/contract';
 import {
   daysFromCivil,
   daysUntil,
@@ -66,6 +66,47 @@ type PracticeState = {
     iso: string,
     purpose: string,
   ) => Promise<{ purposeRecorded: boolean }>;
+  /**
+   * EDIT THE CONTRACTED FIELDS OF A MATTER — NEW3 R16 `R16-RCC-02`, D-2.
+   *
+   * NOT OPTIMISTIC, and that is the difference from `setNextHearingDate`
+   * above. A hearing date is heard in open court and is true whether or not we
+   * reach a server, so it lands locally first. A corrected case title is a
+   * correction TO OUR RECORD and has no existence outside it — showing it as
+   * applied while the write failed would leave an advocate believing they had
+   * fixed a title that is still wrong, and they would find out by reading it in
+   * a filing.
+   *
+   * Returns the server's own message on failure so the screen can render it
+   * verbatim rather than inventing a generic line.
+   */
+  editMatter: (
+    matterId: string,
+    patch: MatterPatch,
+  ) => Promise<{ ok: true } | { ok: false; message: string }>;
+};
+
+/**
+ * EXACTLY WHAT `PATCH /matters/:id` ACCEPTS, AND NOTHING ELSE.
+ *
+ * Read off `patchMatterBody` in `services/api/src/matters/route.ts` and its
+ * UPDATE statement on 1 September 2026, not off the design pack: **the founder
+ * design's D-2 lists `caseType` and `parties` as patchable and they are
+ * not** — the zod body has no such keys and the SQL writes no such columns, so
+ * offering either would be an edit that silently does nothing. They are set at
+ * creation and are identity for now; changing that is a CCR.
+ *
+ * `nextHearingDate: null` CLEARS the date and `undefined` leaves it alone.
+ * The server draws that distinction explicitly and so does this type.
+ */
+export type MatterPatch = {
+  caseTitle?: string;
+  cnrNumber?: string | null;
+  court?: string;
+  clientName?: string;
+  ourSide?: Matter['ourSide'];
+  nextHearingDate?: string | null;
+  status?: MatterStatus;
 };
 
 /**
@@ -210,7 +251,61 @@ export const usePractice = create<PracticeState>((set, get) => ({
 
     return { purposeRecorded: res.ok };
   },
+
+  editMatter: async (matterId, patch) => {
+    const res = await api.updateMatter(matterId, patch);
+    if (!res.ok) return { ok: false, message: res.error.message };
+
+    /*
+      THE SERVER'S ROW REPLACES OURS WHOLESALE rather than being merged into it.
+      `shapeMatter()` returns every column, so a merge could only ever
+      reintroduce a stale field — and `status` in particular must come from
+      the row that was actually written, because it decides what the morning
+      shows.
+    */
+    const reconciled = get().matters.map((m) => (m.matterId === matterId ? res.data.matter : m));
+    set({ matters: reconciled });
+    void writeCache(MATTERS_KEY, reconciled);
+    return { ok: true };
+  },
 }));
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE MATTER'S STATE, READ IN ONE PLACE.
+ *
+ * `status` is `notNull` in the schema and sent on every row, but a matter
+ * rehydrated from a cache written by an older build carries none. Absent is
+ * ACTIVE — the conservative reading, because the alternative is a matter
+ * silently vanishing from an advocate's morning after an app update.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+export function matterStatus(matter: Matter): MatterStatus {
+  return matter.status ?? 'active';
+}
+
+/**
+ * IS THIS MATTER PART OF THE WORKING CALENDAR?
+ *
+ * D-2's user job, in its own words: *"This matter is disposed and I do not want
+ * it on my list every morning."* Disposal and archiving are the two ways an
+ * advocate says a matter is finished with, and both take it off the surfaces
+ * that answer "what is coming" — Today, the cause list, the briefing sweep and
+ * the Matters list's own dated sections.
+ *
+ * WHAT IT DOES NOT TOUCH, deliberately:
+ *
+ *   · The matter itself, its timeline, its saved authorities and its shares.
+ *     Archiving is not deletion and nothing on this path may read as it.
+ *   · CITATOR ALERTS. An authority saved inside an archived matter can still be
+ *     set aside, and the advocate who filed on it still needs to know. Alerts
+ *     are a different subsystem (`state/alerts.ts`) reading a different set of
+ *     rows, and this predicate is deliberately not applied to them — NEW3 R16
+ *     records `CITATOR_ALERT_REGRESSION = NO` and it stays no.
+ */
+export function isInCaseload(matter: Matter): boolean {
+  return matterStatus(matter) === 'active';
+}
 
 /* ---------------------------------------------------------------- selectors */
 
@@ -226,6 +321,8 @@ export type ListedMatter = { matter: Matter; date: CivilDate; daysAway: number }
 export function upcoming(matters: Matter[], today: CivilDate = todayCivil()): ListedMatter[] {
   const out: ListedMatter[] = [];
   for (const matter of matters) {
+    // A disposed or archived matter is not what is coming. See `isInCaseload`.
+    if (!isInCaseload(matter)) continue;
     if (!matter.nextHearingDate) continue;
     const date = parseCivilDate(matter.nextHearingDate);
     if (!date) continue;
@@ -240,6 +337,13 @@ export function upcoming(matters: Matter[], today: CivilDate = todayCivil()): Li
 export function overdue(matters: Matter[], today: CivilDate = todayCivil()): ListedMatter[] {
   const out: ListedMatter[] = [];
   for (const matter of matters) {
+    /*
+      AND ESPECIALLY HERE. "The recorded date has passed — record the next one"
+      is a prompt to act, and a disposed matter's last hearing date has passed
+      by definition. Without this, disposing a matter would MOVE it from the
+      listed section into a nagging one rather than off the list.
+    */
+    if (!isInCaseload(matter)) continue;
     if (!matter.nextHearingDate) continue;
     const date = parseCivilDate(matter.nextHearingDate);
     if (!date) continue;

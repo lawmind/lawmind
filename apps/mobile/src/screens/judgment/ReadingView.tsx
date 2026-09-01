@@ -878,6 +878,26 @@ export function ReadingView({
       />
 
       <MatterPicker
+        /*
+          THE PASSAGE, IDENTIFIED EXACTLY — NEW3 R16 §8 asks for "the exact
+          passage/highlight identity and quote". Both paragraph fields travel:
+          the NUMBER is what a filing cites and is null on an unnumbered
+          judgment, the INDEX is where it sits on screen. Neither substitutes
+          for the other; a fabricated paragraph number is the failure this
+          product exists to prevent.
+        */
+        {...(pickerFor
+          ? {
+              intent: {
+                kind: 'annotation' as const,
+                judgmentId: judgment.judgmentId,
+                caseTitle: judgment.caseTitle,
+                paragraphIndex: pickerFor.paragraphIndex,
+                paragraphNumber: pickerFor.paragraphNumber ?? null,
+                quote: pickerFor.text,
+              },
+            }
+          : {})}
         onDismiss={() => setPickerFor(null)}
         onPick={(matterId) => {
           if (pickerFor) void saveHighlight(pickerFor, matterId);

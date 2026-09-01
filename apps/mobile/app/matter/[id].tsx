@@ -26,6 +26,9 @@ export default function Route() {
           router.push({ pathname: '/judgment/[id]', params: { id: judgmentId } })
         }
         onRecordAdjournment={() => router.push({ pathname: '/adjournment/[id]', params: { id } })}
+        // `as never` for the same reason as the routes below it: the typed-route
+        // union is generated from the file tree at dev-server start.
+        onManage={() => router.push({ pathname: '/matter/manage', params: { id } } as never)}
         onOpenPremiumPlans={() => router.push('/subscription' as never)}
         onSendClientUpdate={() => router.push({ pathname: '/client-update/[id]', params: { id } })}
         onShare={() =>

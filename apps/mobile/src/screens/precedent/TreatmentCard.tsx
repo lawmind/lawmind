@@ -5,6 +5,8 @@ import { Text } from '../../components/Text';
 import type { Treatment, TreatmentRelationship } from '../../api/contract';
 import { citationDisplay } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
+import { attributionApplies } from '../../citation/treatmentAttribution';
+import { AttributionNote } from '../../components/AttributionNote';
 import { color, radius, space, state } from '../../theme/tokens';
 
 /**
@@ -185,6 +187,25 @@ export function TreatmentCard({
         <Text variant="legal" style={styles.evidence}>
           “{treatment.evidence}”
         </Text>
+      ) : null}
+
+      {/*
+        WHO THE EVIDENCE ABOVE CAME FROM — OD-14 layer 4, NEW3 R16.
+
+        THIS IS THE SHARPEST CASE FOR THE WHOLE LAYER. Until now a law
+        reporter's editorial headnote and the later court's own reasoning
+        rendered IDENTICALLY on this card, side by side, in a list whose entire
+        purpose is to show an advocate how the law moved — and 95.62% of these
+        rows are the reporter.
+
+        GATED ON THE RELATIONSHIP, not on the value. The server derives
+        `UNKNOWN` for every non-adverse edge, so a `followed` row carries it,
+        and printing the unknown line there would raise a doubt about an
+        authority nobody has doubted. `attributionApplies` holds the same three
+        relationships the server's own filter does.
+      */}
+      {attributionApplies(treatment.relationship) ? (
+        <AttributionNote attribution={treatment.treatmentAttribution} />
       ) : null}
 
       {/*

@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Text } from '../../components/Text';
@@ -112,6 +112,40 @@ export function ResearchWorkspace() {
 
   const push = useCallback((pane: Pane) => setStack((s) => [...s, pane]), []);
   const pop = useCallback(() => setStack((s) => s.slice(0, -1)), []);
+
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * ESCAPE BACKS OUT OF ONE AUTHORITY — NEW3 R16 `R16-RCC-06`.
+   *
+   * The one keyboard affordance this surface earns, and the reason it is this
+   * one: the whole layout exists so the results survive the read, and the
+   * commonest desktop reflex for "close what I just opened" is Escape. Without
+   * it the only way out of a pane is a mouse trip to a back link, which is the
+   * hand movement the two-pane layout was built to remove.
+   *
+   * IT POPS ONE LEVEL, NEVER THE WHOLE STACK. Backing out of an authority
+   * opened from a citation returns to the authority that cited it, exactly as
+   * the on-screen back does — a key that emptied the pane would discard a trail
+   * an advocate built deliberately.
+   *
+   * NOT BOUND WHEN THE PANE IS EMPTY, so Escape stays available to whatever is
+   * above it (the command palette binds its own, and a sheet its own). A
+   * listener that swallowed Escape with nothing to close would be a keyboard
+   * dead end.
+   *
+   * WEB ONLY, and `Platform.OS === 'web'` is the correct gate rather than a
+   * width test: there is no `window` to listen on elsewhere, and a wide
+   * tablet has no Escape key to press.
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+  useEffect(() => {
+    if (Platform.OS !== 'web' || stack.length === 0) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') pop();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [stack.length, pop]);
 
   const openFromSearch = useCallback(
     (target: OpenJudgmentTarget) => {

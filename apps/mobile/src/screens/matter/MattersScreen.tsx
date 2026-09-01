@@ -10,7 +10,7 @@ import { SectionRule } from '../../components/SectionRule';
 import { Text } from '../../components/Text';
 import type { Matter } from '../../api/contract';
 import { describeCacheAge } from '../../state/offlineCache';
-import { overdue, upcoming, usePractice } from '../../state/practice';
+import { isInCaseload, matterStatus, overdue, upcoming, usePractice } from '../../state/practice';
 import { useSession } from '../../state/session';
 import { describeHearingDate, formatGutter, todayCivil } from '../../theme/hearingDate';
 import { color, space } from '../../theme/tokens';
@@ -50,7 +50,25 @@ export function MattersScreen({
   const today = useMemo(() => todayCivil(), []);
   const listed = useMemo(() => upcoming(matters, today), [matters, today]);
   const missed = useMemo(() => overdue(matters, today), [matters, today]);
-  const undated = useMemo(() => matters.filter((m) => !m.nextHearingDate), [matters]);
+  const undated = useMemo(
+    () => matters.filter((m) => isInCaseload(m) && !m.nextHearingDate),
+    [matters],
+  );
+  /**
+   * WHERE AN ARCHIVED MATTER CAN BE FOUND AFTERWARDS — founder design D-2 names
+   * this as REQUIRED_INFORMATION, and it is the half that keeps archiving from
+   * reading as deletion. A matter that leaves the morning must still be
+   * somewhere, or the advocate has no way to know it was not destroyed.
+   *
+   * BENEATH EVERYTHING, UNDER ITS OWN RULE, AND NOT COLLAPSED BY DEFAULT. It is
+   * a short list by nature; hiding it behind a disclosure would be hiding the
+   * evidence that nothing was lost.
+   *
+   * DISPOSED AND ARCHIVED SIT TOGETHER because the question this section
+   * answers is "where did it go", which is the same question for both. Each row
+   * says which of the two it is rather than the section deciding for it.
+   */
+  const finished = useMemo(() => matters.filter((m) => !isInCaseload(m)), [matters]);
 
   /**
    * `identity_only` — signed in, onboarding abandoned before a `users` row
@@ -154,6 +172,21 @@ export function MattersScreen({
                 matter={matter}
                 onPress={() => open(matter.matterId)}
                 subtitle={matter.court}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        {finished.length > 0 ? (
+          <View style={styles.block}>
+            <SectionRule label="No longer on your list" />
+            {finished.map((matter) => (
+              <Row
+                key={matter.matterId}
+                gutter="—"
+                matter={matter}
+                onPress={() => open(matter.matterId)}
+                subtitle={`${matterStatus(matter) === 'disposed' ? 'Disposed' : 'Archived'} · ${matter.court}`}
               />
             ))}
           </View>

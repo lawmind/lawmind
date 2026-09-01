@@ -14,6 +14,8 @@ import type {
   CitationCopy,
   ClientPlatform,
   CorpusCoverage,
+  CorpusFreshness,
+  CorpusFreshnessObject,
   CounterArgumentsResponse,
   CourtLookupResult,
   CurrentTerms,
@@ -444,6 +446,24 @@ export const api = {
    * this is never cached here either. Public route, no auth.
    */
   corpusCoverage: () => get<CorpusCoverage>('/corpus/coverage'),
+
+  /**
+   * HOW CURRENT THE CORPUS IS — mounted since R8, called by nothing until
+   * 1 September 2026 (founder design D-5, NEW3 R16 `R16-RCC-03`).
+   *
+   * The response carries TWO lag numbers and the registry's rule is to quote
+   * both or neither. `screens/settings/corpusFreshness.ts` is where that rule
+   * lives; nothing else may read `naive.lagDays` on its own.
+   */
+  corpusFreshness: () => get<CorpusFreshness>('/corpus/freshness'),
+
+  /**
+   * The published upstream-parity observation — how far behind the SOURCE we
+   * are, which nothing computed from our own rows can answer. A SEPARATE call
+   * because it is a separate question and because it may be unavailable on its
+   * own: a failure here says so and never degrades the two lags above.
+   */
+  corpusFreshnessObject: () => get<CorpusFreshnessObject>('/corpus/freshness/object'),
 
   /**
    * PD-8 — consent, recorded with its VERSION and never inferred from any other

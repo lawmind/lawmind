@@ -102,6 +102,7 @@ export function MatterScreen({
   onOpenCounterArguments,
   onOpenJudgment,
   onRecordAdjournment,
+  onManage,
   onOpenPremiumPlans,
   onSendClientUpdate,
   onShare,
@@ -122,6 +123,13 @@ export function MatterScreen({
   /** Opens a saved authority. The matter file is a route INTO the law, not a dead list. */
   onOpenJudgment: (judgmentId: string) => void;
   onRecordAdjournment: () => void;
+  /**
+   * MANAGE — edit the contracted fields, and dispose or archive. NEW3 R16
+   * `R16-RCC-02`, founder design D-2. Owner-only at the call site below,
+   * because `PATCH /matters/:id` carries `WHERE user_id = $me` and a
+   * sharee's write answers 404.
+   */
+  onManage: () => void;
   /** Existing plan surface; no purchase is implied or attempted here. */
   onOpenPremiumPlans?: () => void;
   onSendClientUpdate: () => void;
@@ -416,6 +424,17 @@ export function MatterScreen({
           ) : null}
           {isOwner ? (
             <>
+              {/*
+                A MATTER WAS IMMUTABLE UNTIL NOW except for its next hearing
+                date — `updateMatter` had exactly one call site, with exactly
+                one field. "I typed the case title wrong" had no answer, and
+                neither did "this is disposed and I do not want it on my list
+                every morning". Founder design D-2; NEW3 R16 `R16-RCC-02`.
+
+                Secondary, and below the event button. Managing a matter is
+                housekeeping; recording what happened at a hearing is the work.
+              */}
+              <Button label="Manage this matter" variant="secondary" onPress={onManage} />
               <Button
                 label="Send update to client"
                 variant="secondary"

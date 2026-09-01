@@ -148,19 +148,33 @@ export function CauseListScreen() {
                 </Text>
               </Pressable>
 
-              <Pressable
-                style={[styles.outcome, styles.outcomeSecondary]}
-                onPress={() => {
-                  const id = open.matter.matterId;
-                  setOpen(null);
-                  router.push({ pathname: '/matter/[id]', params: { id } });
-                }}
-              >
-                <Text variant="uiStrong">Heard</Text>
-                <Text variant="ui" style={styles.muted}>
-                  order reserved
-                </Text>
-              </Pressable>
+              {/*
+                "HEARD — ORDER RESERVED" WAS REMOVED, 1 September 2026. NEW3 R16
+                `R16-RCC-05`; founder design D-3, which names removal as an
+                acceptable answer to its own brief.
+
+                IT LOOKED LIKE AN OUTCOME AND RECORDED NOTHING. The button
+                pushed `/matter/[id]` and was byte-for-byte the same
+                destination as "Open the matter" below it — so an advocate
+                standing in a corridor tapped what read as "record what
+                happened", landed on the matter, and had recorded no outcome at
+                all. That is the same class of harm as the adjournment purpose
+                that was selectable and never sent, and it is why D-3's own
+                truth state reads: IF IT IS NOT PERSISTED, IT MUST NOT BE
+                OFFERED.
+
+                NOTHING WAS INVENTED IN ITS PLACE, and that is the other half of
+                the decision. There is no `outcome` concept and no "order
+                reserved" state anywhere in the schema —
+                `POST /matters/:id/events` takes
+                `{hearing, order, filing, note}` and nothing else — so
+                recording one would need a contract change, which NEW3 R16
+                declines: D-3 is `NOT_REQUIRED_AFTER_R15`. An order-reserved
+                matter also has no next date, and D-3 forbids fabricating one.
+
+                The matter is still one tap away, under its own honest label.
+                Restore an outcome button WITH a persistence path, never before.
+              */}
             </View>
 
             {/*
@@ -296,7 +310,6 @@ const styles = StyleSheet.create({
   outcomePrimary: { backgroundColor: color.oxblood, borderColor: color.oxblood },
   outcomePrimaryLabel: { color: color.card },
   outcomePrimarySub: { color: color.parchment },
-  outcomeSecondary: { backgroundColor: color.card, borderColor: color.ink },
 
   sheetLink: {
     minHeight: TARGET,

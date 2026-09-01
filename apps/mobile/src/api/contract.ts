@@ -39,6 +39,39 @@ export type VerificationState = 'verified' | 'unverified' | 'failed';
 export type VerifiedBySource = 'corpus' | 'public_x2' | 'ecourts' | 'ecourts_bulk' | 'none';
 export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubted';
 /**
+ * OD-14 LAYER 4 — **WHO** said the law moved. NEW3 R16 `R16-RCC-01`.
+ *
+ * A SEPARATE CONCEPT FROM EVERY NEIGHBOUR IT SITS BESIDE, and that is the whole
+ * reason it exists as its own field. `verificationState` answers "does this
+ * authority exist", `overruledStatus` answers "has the law moved", and this
+ * answers "on whose word". Three different questions from three different
+ * sources; collapsing any two produces a claim we cannot support.
+ *
+ * `services/api/src/judgments/precedential-effect.ts` derives it from
+ * `judgment_citations.treatment_provenance` and ranks COURT > REPORTER >
+ * UNKNOWN > DEFECTIVE. **95.62% of what drives LAW MOVED is a law reporter's
+ * headnote and 3.65% is the later court's own reasoning**, so the difference is
+ * not a rounding detail: "a reporter records that this was overruled" is a very
+ * different thing to walk into court with than "the Supreme Court held it was".
+ *
+ * ONLY `COURT` MAY BE WORDED AS A HOLDING — `mayStateAsHolding()` in
+ * `citation/treatmentAttribution.ts`, this client's single copy of that rule.
+ * `REPORTER` is attributed to the reporter. `DEFECTIVE` and `UNKNOWN` are never
+ * promoted into evidence of anything.
+ *
+ * ADDITIVE AND OPTIONAL EVERYWHERE. It never changes a banner, never changes
+ * `canAddToMatter`, and absence means "nothing was said about who", never
+ * "nobody". A route that does not send it renders no attribution line at all.
+ *
+ * IT IS NOT ON `SearchResult`, DELIBERATELY. `services/api/src/search/route.ts`
+ * DROPS the field from both the structured and hybrid result projections even
+ * though `retrieve.ts` computes it — NEW3 R16 §4 records that asymmetry as
+ * deferred and LCC-owned. Declaring it on a search row would be this client
+ * inventing a field the search wire has never carried, and every consumer would
+ * then read `undefined` and print an attribution nobody sent.
+ */
+export type TreatmentAttribution = 'COURT' | 'REPORTER' | 'DEFECTIVE' | 'UNKNOWN';
+/**
  * OD-14, resolved 21 Aug 2026 — `services/api/src/judgments/precedential-effect.ts`.
  * The finer fact underneath `overruledStatus`: EIGHT values against the wire
  * enum's four, because `set_aside` alone cannot distinguish "this decision was
@@ -490,6 +523,16 @@ export type JudgmentDetail = Omit<
     /** TRUE only when this ROW carries recorded provenance. Branch on this. */
     recorded: boolean;
   };
+  /**
+   * OD-14 LAYER 4 — WHO said the law moved, for the authority being read.
+   * `services/api/src/judgments/route.ts` emits it on every response.
+   *
+   * ON THIS TYPE AND NOT ON `SearchResult`, even though this type is built
+   * from that one. The judgment route emits it; the search route drops it.
+   * Putting it on the `Omit<SearchResult, …>` base would silently declare it
+   * on every search row too — see the union's own note.
+   */
+  treatmentAttribution?: TreatmentAttribution;
 };
 
 /* --------------------------------------------------- treatment and precedent */
@@ -575,6 +618,17 @@ export type Treatment = {
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus;
   asOf: string;
+  /**
+   * WHO said it, on the row that says WHAT was said —
+   * `services/api/src/judgments/treatment.ts`, derived per row from that
+   * row's own `treatment_provenance`.
+   *
+   * The sharpest case for the whole layer: on this screen a reporter's
+   * editorial headnote and the later court's own reasoning rendered
+   * IDENTICALLY, side by side, in a list whose entire purpose is to show an
+   * advocate how the law moved.
+   */
+  treatmentAttribution?: TreatmentAttribution;
 };
 
 export type TreatmentResponse = {
@@ -874,6 +928,16 @@ export type CounterAuthority = {
   overruledNote?: string | null;
   overruledByJudgmentId?: string | null;
   asOf: string;
+  /**
+   * WHO said the law moved — `services/api/src/arguments/counter.ts`, passed
+   * straight through from `retrieve.ts` rather than re-derived, because two
+   * derivations of one fact is how this screen and the search results end up
+   * disagreeing about a single authority.
+   *
+   * Load-bearing HERE in particular: this is the screen an advocate reads
+   * while preparing to argue AGAINST these authorities.
+   */
+  treatmentAttribution?: TreatmentAttribution;
 };
 
 export type CounterArgument = {
@@ -924,6 +988,13 @@ export type ExcludedAuthority = {
    * assert. `exclusionReason` below reads it for exactly that case.
    */
   precedentialEffect?: PrecedentialEffect;
+  /**
+   * Excluded rows carry it too, and the server says why: an authority kept
+   * OUT of an argument on a reporter's editorial note is exactly the
+   * exclusion an advocate might want to challenge, and they cannot
+   * challenge what they cannot see.
+   */
+  treatmentAttribution?: TreatmentAttribution;
 };
 
 /**
@@ -1789,6 +1860,87 @@ export type CorpusCoverage = {
  * withdrawable as easily as it was given. The two must never be collected
  * together or inferred from one another.
  */
+/**
+ * `GET /corpus/freshness` — HOW CURRENT THE LAW WE HOLD ACTUALLY IS.
+ *
+ * Mounted since R8, consumed by nothing until 1 September 2026. Founder design
+ * D-5; NEW3 R16 `R16-RCC-03`. Only the fields this client renders are declared
+ * — the response also carries per-month grading, per-court failure activity and
+ * an eCourts block, and declaring shapes nothing reads is how a type becomes a
+ * promise about a wire nobody checked.
+ *
+ * ── TWO LAG NUMBERS, AND QUOTING ONE IS THE WHOLE HAZARD ────────────────────
+ *
+ * `V1_CAPABILITY_REGISTRY_R15.json` states it as a RULE, not a preference:
+ * **quote both or neither.** `naive.lagDays` is `max(judgment_date)` and on
+ * 25 August 2026 it read "eight days behind" on a corpus that was fifty-six —
+ * August held 480 judgments against a 117,332/month baseline, so it had a newest
+ * date and no coverage. `legalCurrency.lagDays` is a completeness ratio against
+ * a trailing baseline and is the honest one.
+ *
+ * The naive number is carried and LABELLED rather than hidden, because it is
+ * what anybody computes for themselves in one query, and the only way to stop it
+ * being believed is to show it losing.
+ */
+export type CorpusFreshness = {
+  computedAt: string;
+  /**
+   * THE NUMBER NOBODY SHOULD ACT ON, carried so it can be seen losing.
+   * `lagDays` is null when the corpus holds no dated judgment at all.
+   */
+  naive: {
+    newestJudgmentDate: string | null;
+    lagDays: number | null;
+    /** The server's own sentence about why this reading is wrong. Rendered verbatim. */
+    reading: string;
+  };
+  /**
+   * THE HONEST READING. `dataAsOf` is the last day of the newest month at or
+   * above 60% of the trailing baseline — a claim about a whole month, because
+   * nothing finer was measured. Null, with a null `lagDays`, when NO month
+   * clears the floor: that is "we cannot state a currency", never "current".
+   */
+  legalCurrency: {
+    dataAsOf: string | null;
+    lagDays: number | null;
+    honestFrontierMonth: string | null;
+    baselineDocumentsPerMonth: number;
+  };
+  /**
+   * THE SERVER'S OWN CAVEATS, RENDERED VERBATIM AND NEVER SUMMARISED. They
+   * include the two facts a reader most needs and we have no basis to write
+   * ourselves: the 0.6/0.1 thresholds are ours and are not validated against any
+   * court's publication calendar, and `hc_ingest_ledger` holds failures only.
+   */
+  caveats: string[];
+};
+
+/**
+ * `GET /corpus/freshness/object` — THE PUBLISHED UPSTREAM-PARITY OBSERVATION.
+ *
+ * A DIFFERENT QUESTION FROM THE ROUTE ABOVE, and the reason both are consumed.
+ * `/corpus/freshness` measures what WE hold against our own trailing baseline;
+ * this projects NEW2's walk of the SOURCE and can therefore say how far behind
+ * the upstream we are, which nothing computed from our own rows ever could.
+ *
+ * `sourceUnavailableCount` is documents the source itself would not serve — a
+ * gap that is not ours and is not recoverable by ingesting harder. It is stated
+ * as its own number rather than folded into completeness, because "we have not
+ * fetched it" and "it cannot be fetched" are different facts.
+ */
+export type CorpusFreshnessObject = {
+  publicationGeneration: string;
+  publishedAt: string;
+  /** When NEW2 walked the source. NOT when we answered the request. */
+  upstreamMeasuredAt: string;
+  latestUpstreamDecisionDate: string | null;
+  latestLocalDecisionDate: string | null;
+  /** Null where the observation could not state one. Never rendered as zero. */
+  sourceLagDays: number | null;
+  upstreamLocalCompleteness: number | null;
+  sourceUnavailableCount: number;
+};
+
 export type TrainingConsent = {
   /** Both server-side columns set. Never inferred from silence. */
   granted: boolean;
@@ -1882,13 +2034,35 @@ export type Matter = {
    * construction.
    */
   access?: MatterAccess;
-  /** Sent by `shapeMatter()`, undeclared until 11 Aug 2026. Nothing reads them yet. */
-  status?: string;
+  /**
+   * THE MATTER'S LIFECYCLE STATE — narrowed from `string` 1 September 2026.
+   * NEW3 R16 `R16-RCC-02`, founder design D-2.
+   *
+   * Three values and no more. `packages/db/src/schema.ts` declares
+   * `matter_status` as a Postgres ENUM of exactly `{active, disposed,
+   * archived}`, the column is `notNull`, and `patchMatterBody` accepts the
+   * same three — so unlike `precedentialEffect` this is NOT an open-ended
+   * server-widened field, and narrowing it cannot be outrun by a deploy. A
+   * fourth value would be a migration and a contract change together.
+   *
+   * OPTIONAL because `shapeMatter()` sends it on every row but a matter
+   * assembled from cache by an older build may not carry one. Absent is treated
+   * as `active` at the one place that decides — `state/practice.ts`'s
+   * `matterStatus()` — never at each call site.
+   *
+   * THERE IS NO "ON HOLD" AND NO DELETED STATE. The founder design shows an
+   * "On hold" control; no enum value, column or route accepts it, and NEW3 R16
+   * `R16-RCC-X02` holds it out of the build. Archiving is not deletion: the
+   * row, its events, its saved authorities and its shares all survive.
+   */
+  status?: MatterStatus;
   source?: string;
   createdAt?: string;
 };
 
 /** `owner` writes; `shared` reads. `none` never reaches a client — it 404s. */
+export type MatterStatus = 'active' | 'disposed' | 'archived';
+
 export type MatterAccess = 'owner' | 'shared';
 
 /**
@@ -2120,6 +2294,13 @@ export type DraftCitation = {
   verificationState: VerificationState;
   verifiedBySource: VerifiedBySource;
   overruledStatus: OverruledStatus | null;
+  /**
+   * WHO said the law moved, for a citation attached to a draft —
+   * `services/api/src/documents/route.ts`. That route sends a literal
+   * `'UNKNOWN'` rather than omitting the key when nothing is recorded, so
+   * absence here means an older server, not an absence of adverse treatment.
+   */
+  treatmentAttribution?: TreatmentAttribution;
 };
 
 /**
