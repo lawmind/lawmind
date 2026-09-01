@@ -1,0 +1,11 @@
+{
+ "cursor": "2026UHC999",
+ "cursorId": "2b006bb6-7101-451e-a708-dd741dd468e7",
+ "batchesDone": 451,
+ "counts": {
+  "ROWS_SCANNED": 1350954,
+  "STORED_PLAIN_SUFFIX_GLUED": 43,
+  "STORED_PLAIN_SUFFIX_WITH_BOUNDARY": 9
+ },
+ "at": "2026-09-01T03:49:46.644Z"
+}

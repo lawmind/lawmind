@@ -1,0 +1,108 @@
+{
+ "artifact": "NEW2_R19_DETERMINISTIC_CORRECTION_CANDIDATE",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T04:08:06.913Z",
+ "naming": "CANDIDATE, deliberately. Not an apply population, not authorised, not safe-to-apply. Possible disposition is ELIGIBLE_FOR_SEPARATE_CORRECTION_AUDIT and nothing beyond it.",
+ "EXISTING_CORRECTIONS_APPLIED": "NO",
+ "CITATION_BULK_APPLY": "HOLD",
+ "FINAL_CITATION_FALSIFIER_RUN": "NO",
+ "DB_MIGRATION": "NONE",
+ "input": {
+  "r18PopulationId": "NEW2-R18-EXISTING-9679cff06d0e6404",
+  "r18PopulationHash": "9679cff06d0e6404ac10481695f1ee4858f8f625755537a75086dcb981f303c9",
+  "r18Rows": 20556
+ },
+ "populationId": "NEW2-R19-EXISTING-cbb193df4e42269e",
+ "populationHash": "cbb193df4e42269e952dcc8236ebf5ff4afc0659118699b801fb3cd316400d84",
+ "hashConstruction": "sha256 over the newline-joined identity lines `judgmentId:current>proposed`, the construction R17 and R18 used",
+ "rowsFile": "r19-candidate-population.jsonl",
+ "rowsFileSha256": "b3f7ad7e72496faa28af01c1c4445ea0b2dcc2ea014803f359346cbbfcfbd027",
+ "size": 571,
+ "counts": {
+  "NO_ACTION": 19985,
+  "NO_ACTION :: PROVEN_FOREIGN_TO_DOCUMENT": 3696,
+  "NO_ACTION :: SOURCE_DAMAGE": 394,
+  "NO_ACTION :: NO_SAFE_OWN_BUT_NOT_PROVEN_WRONG": 12027,
+  "NO_ACTION :: TIED_OWN_ID_CANDIDATES": 730,
+  "DETERMINISTIC_TO_NULL": 434,
+  "DETERMINISTIC_TO_NULL :: PROVEN_NOT_A_CITATION": 434,
+  "NO_ACTION :: CURRENT_VALUE_SUPPORTED_BY_OWN_CASE_NUMBER": 2056,
+  "NO_ACTION :: PROVEN_FOREIGN_TO_DOCUMENT_UNCORROBORATED": 272,
+  "NO_ACTION :: NULL_AMBIGUOUS": 126,
+  "NO_ACTION :: REPLACE_UNTESTABLE": 12,
+  "NO_ACTION :: TEXT_IDENTITY_MISMATCH": 265,
+  "NO_ACTION :: PROVEN_EXTRACTION_FALSE_OWN": 294,
+  "DETERMINISTIC_TO_REPLACE": 86,
+  "DETERMINISTIC_TO_REPLACE :: PROVEN_REPLACEMENT": 86,
+  "NO_ACTION :: REPLACE_AMBIGUOUS": 99,
+  "DB_SUFFIX_QUARANTINE": 51,
+  "DB_SUFFIX_QUARANTINE :: TIED_OWN_ID_CANDIDATES": 9,
+  "DB_SUFFIX_QUARANTINE :: AMBIGUOUS_WEAK_TIER": 41,
+  "NO_ACTION :: CURRENT_VALUE_PROVEN_CORRECT": 2,
+  "NO_ACTION :: SCAN_DAMAGE_CONFLICT": 6,
+  "NO_ACTION :: SCAN_DAMAGE_CONFLICT_REPAIR_DIRECTION": 3,
+  "NO_ACTION :: SOURCE_GENUINE_FOREIGN_CITATION_CARRIED": 3,
+  "DB_SUFFIX_QUARANTINE :: REPLACE_DB_SUFFIX_QUARANTINE": 1
+ },
+ "blindValidationPerRule": {
+  "C7_REFUSAL_ONLY": {
+   "adjudicated": 26,
+   "falseDestructive": 0
+  },
+  "C2a_FOREIGN_CNR_CORROBORATED": {
+   "adjudicated": 45,
+   "falseDestructive": 17
+  },
+  "D1_MONTH_IN_SERIES_POSITION": {
+   "adjudicated": 40,
+   "falseDestructive": 0
+  },
+  "C2b_FOREIGN_CNR_UNCORROBORATED": {
+   "adjudicated": 15,
+   "falseDestructive": 12
+  },
+  "R4b_TWO_SIDED_CASE_NUMBER": {
+   "adjudicated": 48,
+   "falseDestructive": 0
+  },
+  "C3_CITED_PRECEDENT_LEAD": {
+   "adjudicated": 20,
+   "falseDestructive": 7
+  },
+  "C5_OWN_IDENTITY_ABSENT": {
+   "adjudicated": 5,
+   "falseDestructive": 0
+  },
+  "R4a_TWO_SIDED_CNR": {
+   "adjudicated": 5,
+   "falseDestructive": 0
+  },
+  "C6_COMPETING_CITATIONS": {
+   "adjudicated": 5,
+   "falseDestructive": 0
+  },
+  "R2_SERIES_TOKEN_SCAN_CONFLICT": {
+   "adjudicated": 9,
+   "falseDestructive": 0
+  },
+  "C1b_OWN_CASE_NUMBER_BESIDE_STORED": {
+   "adjudicated": 22,
+   "falseDestructive": 0
+  },
+  "R5_NO_TWO_SIDED_PROOF": {
+   "adjudicated": 16,
+   "falseDestructive": 0
+  }
+ },
+ "dispositionRules": {
+  "DETERMINISTIC_TO_NULL": [
+   "D1_MONTH_IN_SERIES_POSITION"
+  ],
+  "DETERMINISTIC_TO_REPLACE": [
+   "R4a_TWO_SIDED_CNR",
+   "R4b_TWO_SIDED_CASE_NUMBER"
+  ],
+  "DB_SUFFIX_QUARANTINE": "every row in db-suffix-rows.jsonl, plus the one REPLACE whose proposal differs from the stored value only by a printed -DB suffix",
+  "NO_ACTION": "everything else, including all three rules the prediction-blind reading refuted"
+ }
+}

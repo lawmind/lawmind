@@ -1,0 +1,160 @@
+{"token":"B001","answer":"OWN","why":"Bombay page-stamp form at the foot of the order; the only citation in the document and nothing disowns it"}
+{"token":"B002","answer":"ANOTHER_CASE","why":"header pairs the citation with CNR CGHC010371032019 and case MAC No. 2235 of 2019; this row is MAC/2032/2019, CNR CGHC010369452019"}
+{"token":"B003","answer":"OWN","why":"header CNR differs but the body's stated Case No. is Cont.Cas(C)/576/2025, which is this row"}
+{"token":"B004","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:18 is a despatch date stamp, no court series"}
+{"token":"B005","answer":"OWN","why":"body Case No. I.A.(Civil)/1711/2025 matches this row"}
+{"token":"B006","answer":"ANOTHER_CASE","why":"cause list prints CRM-M-45798-2023 with 128708 and CRM-M-45820-2023 with 128709; this row is 45820, so its own is 128709"}
+{"token":"B007","answer":"CANNOT_TELL","why":"Rajasthan stamp names [CW-18814/2023] but the body treats CW 13548/2023 as a petition before the same court on the same day; connected-order or wrong-document cannot be separated here"}
+{"token":"B008","answer":"CITED_PRECEDENT","why":"printed inside 'in the case of Jakir Hussain vs State of NCT of Delhi, (2026:DHC:519)'"}
+{"token":"B009","answer":"OWN","why":"body Crl.Pet./557/2024 matches this row"}
+{"token":"B010","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:16 is a date stamp"}
+{"token":"B011","answer":"ANOTHER_CASE","why":"numbered list pairs CWP-6452-1993 with 024938; this row is CWP/27470/2016"}
+{"token":"B012","answer":"OWN","why":"body WP(C) No. 630(AP) of 2023 matches this row"}
+{"token":"B013","answer":"ANOTHER_CASE","why":"stamp carries CNR UKHC010108332023 and case WPMS/1957/2023; this row is WPMS/1464/2023"}
+{"token":"B014","answer":"CITED_PRECEDENT","why":"'reported in 2024:MHC:1405 (Neutral Citation of Madras High Court)'"}
+{"token":"B015","answer":"OWN","why":"Bombay page-stamp form, only citation, speaking-to-minutes order of this application"}
+{"token":"B016","answer":"ANOTHER_CASE","why":"header CNR CGHC010248322026 and case MCRC No. 6036 of 2026; this row is MCRC/6225/2026"}
+{"token":"B017","answer":"NOT_A_CITATION","why":"2012:JANUARY:23 is a date stamp"}
+{"token":"B018","answer":"OWN","why":"body Case : Crl.M.C./775/2014 matches this row"}
+{"token":"B019","answer":"OWN","why":"page stamp carries this row's own file name 4.BA 2138-23.doc"}
+{"token":"B020","answer":"OWN","why":"document is headed 'WA No.730 of 2025 and other connected matters' and this row is a connected WA of the same date; one common order, one citation"}
+{"token":"B021","answer":"ANOTHER_CASE","why":"header CNR CGHC010228402026 and case MCRC No. 5470 of 2026; this row is MCRC/5710/2026"}
+{"token":"B022","answer":"OWN","why":"body Case : I.A.(Civil)/3029/2024 matches this row"}
+{"token":"B023","answer":"ANOTHER_CASE","why":"header names WP(C)/1380/2025 with CNR GAHC010050692025; this row is WP(C)/5229/2024 and nothing in view says connected"}
+{"token":"B024","answer":"CITED_PRECEDENT","why":"'This Court in Writ-C No.718 of 2025 ... reported in 2025:AHC-LKO:32272-DB, has observed'"}
+{"token":"B025","answer":"ANOTHER_CASE","why":"header names CRP/68/2023 with CNR GAHC010131962023; this row is CRP/73/2023"}
+{"token":"B026","answer":"CITED_PRECEDENT","why":"'relied on the coordinate Bench judgment ... Neutral Citation No. - 2024:AHC:31108-DB'"}
+{"token":"B027","answer":"NOT_A_CITATION","why":"2011:SEPTEMBER:26 is a date stamp"}
+{"token":"B028","answer":"CITED_PRECEDENT","why":"'reported in 2024:MHC:1405 (Neutral Citation of Madras High Court)'"}
+{"token":"B029","answer":"CITED_PRECEDENT","why":"'Neutral Citation No. - 2024:AHC:31108-DB' introducing another judgment"}
+{"token":"B030","answer":"OWN","why":"Rajasthan stamp reads [2024:RJ-JP:10347] [CMA-5957/2011] — this row's own case; the IW-JP and N-JP forms in the same document are scans of the same number"}
+{"token":"B031","answer":"OWN","why":"page stamp carries 27.20revn, this row's own case"}
+{"token":"B032","answer":"OWN","why":"page stamp carries F.A. 2763-2023.odt, this row's own case"}
+{"token":"B033","answer":"ANOTHER_CASE","why":"document heads WPS No. 6429 of 2025 and prints five citations for a batch; this row is WPS/6559/2025 and its own is one of the others"}
+{"token":"B034","answer":"OWN","why":"page stamp carries the document's own file name 903sa206.94.odt, the second appeal this civil application sits in"}
+{"token":"B035","answer":"OWN","why":"Bombay page-stamp form, only citation in a one-page order"}
+{"token":"B036","answer":"CANNOT_TELL","why":"an I.A. heard in Crl.Rev.P./186/2023; the header names the parent revision, not the application, so parent-case and foreign-document cannot be separated"}
+{"token":"B037","answer":"OWN","why":"stamp reads [2023:FU-JP:22105] with S.B. Civil Writ Petition No. 19876/2018 — this row; FU-JP and IU-JP are scans of the same number"}
+{"token":"B038","answer":"OWN","why":"stamp file name 'WP-526-2023 and others.odt' is a common order and this row is WP/527/2023"}
+{"token":"B039","answer":"OWN","why":"body Case No.: WP(C)/5416/2025 matches this row"}
+{"token":"B040","answer":"CANNOT_TELL","why":"stamp file name WP-9956-2022.doc is a different petition and nothing in view marks a batch"}
+{"token":"B041","answer":"ANOTHER_CASE","why":"header pairs CRM-M-24150-2023 with 123495 and CRM-M-30153-2023 with 123498; this row is 30153"}
+{"token":"B042","answer":"OWN","why":"stamp file 906.WP.7866.21.odt heading a batch that lists WP 13679 of 2021 and others; this row is WP/13672/2021 of the same batch"}
+{"token":"B043","answer":"ANOTHER_CASE","why":"header CNR CGHC010348422024 and CRA No. 1883 of 2024 with five batch citations; this row is CRA/2605/2025"}
+{"token":"B044","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/15452/1999, another entry"}
+{"token":"B045","answer":"OWN","why":"header braces name W.P.(S) Nos. 5173/2017, 5182 of 2017 and 5188 of 2017 against ONE citation; 5182/2017 is this row"}
+{"token":"B046","answer":"CITED_PRECEDENT","why":"'This Court in Writ-C No.718 of 2025 ... reported in 2025:AHC-LKO:32272-DB'"}
+{"token":"B047","answer":"ANOTHER_CASE","why":"header CNR GAHC010200772004 and MACApp./146/2004; this row is MACApp./160/2004"}
+{"token":"B048","answer":"OWN","why":"body Case No. : I.A.(Crl.)/628/2024 In Crl.Pet./312/2024 matches this row"}
+{"token":"B049","answer":"OWN","why":"stamp reads 40 CA 10914 OF 2023, this row's own case"}
+{"token":"B050","answer":"CANNOT_TELL","why":"body names Application No. 6516 of 2024 and the stamp file is CA-6513; this row is CA/6510/2024 and the batch extent is not visible"}
+{"token":"B051","answer":"OWN","why":"body Case No. : WP(C)/3734/2016 matches this row"}
+{"token":"B052","answer":"ANOTHER_CASE","why":"header pairs CWP-14097-2024 with 089491 and CWP-14132-2024 with 089492; this row is 14132"}
+{"token":"B053","answer":"OWN","why":"printed in the masthead above the court name and the CRL.MC caption"}
+{"token":"B054","answer":"ANOTHER_CASE","why":"header pairs CRM-M-697-2024 with 042914 and CRM-M-815-2024 with 043177; this row is 815"}
+{"token":"B055","answer":"CITED_PRECEDENT","why":"'reported in 2024:MHC:1405 (Neutral Citation of Madras High Court)'"}
+{"token":"B056","answer":"OWN","why":"stamp file 1-WP-15524-2019+.odt is this row's own case"}
+{"token":"B057","answer":"ANOTHER_CASE","why":"document heads WPS No. 5851 of 2025 and prints three batch citations; this row is WPS/5919/2025"}
+{"token":"B058","answer":"ANOTHER_CASE","why":"header CNR CGHC010023112022 and WPS No. 439 of 2022; this row is WPC/2169/2022"}
+{"token":"B059","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/13067/2020"}
+{"token":"B060","answer":"OWN","why":"stamp file 925-MCA 372-2023.odt is this row's own case"}
+{"token":"B061","answer":"ANOTHER_CASE","why":"header pairs CRM-M-23126-2023 with 111416, not 111414 which belongs to CRM-M-12639-2023"}
+{"token":"B062","answer":"ANOTHER_CASE","why":"header CRA No. 1883 of 2024 carries 26821-DB; this row is CRA/1926/2024 and the batch prints 26822-26825"}
+{"token":"B063","answer":"ANOTHER_CASE","why":"header CNR CGHC010256562026 and WPS No. 5114 of 2026; this row is WPS/5142/2026"}
+{"token":"B064","answer":"CITED_PRECEDENT","why":"'we have considered and dealt with the same in Writ Tax No. 3964 of 2025 ... Neutral Citation No. - 2025:AHC:179271-DB'"}
+{"token":"B065","answer":"OWN","why":"body I.A.(Crl.)/430/2025 matches this row"}
+{"token":"B066","answer":"NOT_A_CITATION","why":"2011:AUGUST:10 is a date stamp"}
+{"token":"B067","answer":"OWN","why":"body Case No. : WP(C)/6015/2019 matches this row"}
+{"token":"B068","answer":"ANOTHER_CASE","why":"body Cont.Cas(C)/24/2025 with CNR GAHC010009802025; this row is Cont.Cas(C)/31/2025"}
+{"token":"B069","answer":"ANOTHER_CASE","why":"list pairs CWP-14385-2020 with 179597; this row is CWP/16683/2020 and its own is one of 179598-179601"}
+{"token":"B070","answer":"OWN","why":"'Both these appeals arise out of the same judgment' — CRLA 69/2002 and this row's CRLA/72/2002 under one common judgment and one citation"}
+{"token":"B071","answer":"ANOTHER_CASE","why":"document heads WPS No. 9085 of 2025; this row is WPS/9104/2025"}
+{"token":"B072","answer":"OWN","why":"Rajasthan masthead stamp on an S.B. Criminal Revision, this row's own type; KJ-JP is a scan of the same number"}
+{"token":"B073","answer":"ANOTHER_CASE","why":"document heads WPS No. 6142 of 2025; this row is WPS/6212/2025"}
+{"token":"B074","answer":"ANOTHER_CASE","why":"list pairs CWP-14385-2020 with 179597; this row is CWP/16390/2020"}
+{"token":"B075","answer":"CITED_PRECEDENT","why":"'in view of the Judgment in Municipal Corporation of Delhi v. Krishan Kumar & Ors., 2025:DHC:321-DB'"}
+{"token":"B076","answer":"ANOTHER_CASE","why":"body Bail Appln./1926/2026 with CNR GAHC010143552026; this row is AB/1580/2026"}
+{"token":"B077","answer":"CANNOT_TELL","why":"body names MFA/1/2014, which may be the parent appeal this misc. case sits in; parent and foreign cannot be separated here"}
+{"token":"B078","answer":"ANOTHER_CASE","why":"body WP(C)/4138/2024 with CNR GAHC010166082024; this row is WP(C)/4140/2024 and no batch marker is printed"}
+{"token":"B079","answer":"OWN","why":"body Case No. : I.A.(Civil)/768/2024 matches this row"}
+{"token":"B080","answer":"OWN","why":"body Case No. : WP(C)/5066/2016 matches this row"}
+{"token":"B081","answer":"CITED_PRECEDENT","why":"'covered by the judgment of this Court in the case of Manoj Kumar Vs. State of U.P. [2026:AHC-LKO:31073-DB]'"}
+{"token":"B082","answer":"ANOTHER_CASE","why":"body WP(C)/7551/2023 with CNR GAHC010289002023; this row is Cont.Cas(C)/130/2024"}
+{"token":"B083","answer":"OWN","why":"order sheet names WPSS No.1605, this row's own case, immediately after the stamp"}
+{"token":"B084","answer":"CITED_PRECEDENT","why":"'Writ Tax No.855 of 2024 [Ola Fleet Technologies Private Ltd vs State of U.P and 2 Ors; 2024:AHC:116559-DB]'"}
+{"token":"B085","answer":"ANOTHER_CASE","why":"body Bail Appln./2111/2025 with CNR GAHC010141762025; this row is Bail Appln./2065/2025"}
+{"token":"B086","answer":"OWN","why":"body Case No. : I.A.(Crl.)/167/2025 matches this row"}
+{"token":"B087","answer":"ANOTHER_CASE","why":"body WP(C)/2136/2024 with CNR GAHC010077922024; this row is WP(C)/2653/2024"}
+{"token":"B088","answer":"CITED_PRECEDENT","why":"'This Court in Writ-C No.718 of 2025 ... reported in 2025:AHC-LKO:32272-DB, has observed'"}
+{"token":"B089","answer":"OWN","why":"page stamp reads 19 ca 1773 2025, this row's own case"}
+{"token":"B090","answer":"OWN","why":"the citing phrase belongs to a case reported in 2016 (3) Mh.L.J. 457; the 2025 neutral citation between them is this document's side stamp, carried with its file name ca 12969.24+.odt"}
+{"token":"B091","answer":"NOT_A_CITATION","why":"2012:JANUARY:20 is a date stamp"}
+{"token":"B092","answer":"OWN","why":"printed in the masthead above the court name and the WP(C) caption"}
+{"token":"B093","answer":"NOT_A_CITATION","why":"2011:DECEMBER:16 is a date stamp"}
+{"token":"B094","answer":"ANOTHER_CASE","why":"body WP(C)/3422/2023 with CNR GAHC010128532023; this row is WP(C)/4259/2023"}
+{"token":"B095","answer":"OWN","why":"page stamp reads Appeal 555-2020.odt, this row's own case"}
+{"token":"B096","answer":"OWN","why":"the citing phrase introduces a case reported at 2010 (6) Mh.L.J. 401; the neutral citation interleaved between them is this document's side stamp, printed with wp 7444.24 — this row"}
+{"token":"B097","answer":"ANOTHER_CASE","why":"body WP(C)/2303/2025 with CNR GAHC010079242025; this row is WP(C)/4345/2023"}
+{"token":"B098","answer":"OWN","why":"stamp file 908-ca-5243-2025.odt heads a group of matters and the body says so; this row is CA/5242/2025 of that group"}
+{"token":"B099","answer":"ANOTHER_CASE","why":"body I.A.(Civil)/1842/2017 with CNR GAHC010130642025; this row is I.A.(Civil)/3407/2019"}
+{"token":"B100","answer":"OWN","why":"the citing phrase belongs to a case reported at 2016 (3) Mh.L.J. 457; the neutral citation between them is the side stamp, printed with ca 12969.24+.odt — this row"}
+{"token":"B101","answer":"CANNOT_TELL","why":"order sheet header names WPMS/317/2026 with its own CNR, but the body decides 'these writ petitions' together; one-citation-per-case and common-order readings both fit"}
+{"token":"B102","answer":"ANOTHER_CASE","why":"header CNR CGHC010281482026 and WPC No. 3804 of 2026; this row is WPC/3822/2026"}
+{"token":"B103","answer":"ANOTHER_CASE","why":"body WP(C)/2639/2014 with CNR GAHC010225652014; this row is WP(C)/2704/2017"}
+{"token":"B104","answer":"CANNOT_TELL","why":"same batch document as another row in this pack (WP-9956-2022.doc); the stamp names neither this row nor a visible batch marker"}
+{"token":"B105","answer":"ANOTHER_CASE","why":"header CRA No. 1883 of 2024 carries 26821-DB; this row is CRA/1901/2024 and the batch prints 26822-26825"}
+{"token":"B106","answer":"OWN","why":"stamp file 32-CA 1840-2025+.odt carries this row's own application number 1840"}
+{"token":"B107","answer":"OWN","why":"stamp file 916.2026APPLN.odt is this row's own case"}
+{"token":"B108","answer":"OWN","why":"body I.A.(Civil)/3611/2024 matches this row"}
+{"token":"B109","answer":"OWN","why":"body Case No. : I.A.(Civil)/2041/2024 matches this row; the document prints the citation with a -DB suffix"}
+{"token":"B110","answer":"ANOTHER_CASE","why":"header pairs CWP-11036-2018 with 001381 and CWP-32236-2018 with 001396; this row is 32236"}
+{"token":"B111","answer":"OWN","why":"stamp file 4144.24crapln etc — a criminal-application batch this row belongs to"}
+{"token":"B112","answer":"CITED_PRECEDENT","why":"'reported in 2024:MHC:1405 (Neutral Citation of Madras High Court)'"}
+{"token":"B113","answer":"CITED_PRECEDENT","why":"'Reliance is placed upon the judgment of this Court in the case of Nisha v. State of U.P. & Anr.; 2025:AHC-LKO:14840'"}
+{"token":"B114","answer":"OWN","why":"stamp file 923-ca-2265-2025 is this row's own case"}
+{"token":"B115","answer":"OWN","why":"stamp reads CA - Sr. Nos. 7 to 16, a civil-application batch this row belongs to"}
+{"token":"B116","answer":"ANOTHER_CASE","why":"header CNR CGHC010212242018 and WPS No. 4706 of 2018; this row is WPS/4707/2018 and no batch marker is printed"}
+{"token":"B117","answer":"ANOTHER_CASE","why":"numbered list pairs CWP No.23467 of 2021 with 164674; this row is CWP/24996/2021"}
+{"token":"B118","answer":"CITED_PRECEDENT","why":"'This Court in Writ-C No.718 of 2025 ... reported in 2025:AHC-LKO:32272-DB, has observed'"}
+{"token":"B119","answer":"OWN","why":"body Case No: WP(C)/1924/2021 matches this row"}
+{"token":"B120","answer":"OWN","why":"body Case No. : WP(C)/379/2023 matches this row"}
+{"token":"B121","answer":"NOT_A_CITATION","why":"2011:DECEMBER:21 is a date stamp"}
+{"token":"B122","answer":"OWN","why":"stamp file 917wp3623-25grup carries this row's own petition number"}
+{"token":"B123","answer":"ANOTHER_CASE","why":"body WP(C)/7914/2017 with CNR GAHC010058362017; this row is WP(C)/4626/2017"}
+{"token":"B124","answer":"OWN","why":"stamp file ca-5627-2023 is this row's own case"}
+{"token":"B125","answer":"OWN","why":"Rajasthan masthead stamp [2023:RJ-JP:21226] on this row's own document; EU-JP is a scan of the same number"}
+{"token":"B126","answer":"OWN","why":"body lists Cont. Petition No. 549 of 2024 — this row — inside the batch the stamp file 9 to 11.odt names"}
+{"token":"B127","answer":"OWN","why":"stamp reads 944 CA5022 2023, this row's own case"}
+{"token":"B128","answer":"ANOTHER_CASE","why":"body WP(C)/7/2025 with CNR GAHC020000192025; this row is WP(C)/67/2023"}
+{"token":"B129","answer":"OWN","why":"stamp file 17-WP.6564.2024.doc heads a batch the body lists (WP 6660, 6669 of 2024); this row is WP/6665/2024"}
+{"token":"B130","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/2485/2020"}
+{"token":"B131","answer":"OWN","why":"body AB/820/2026 matches this row"}
+{"token":"B132","answer":"OWN","why":"body Case No. : I.A.(Civil)/1231/2024 matches this row"}
+{"token":"B133","answer":"OWN","why":"body Case No. : I.A.(Civil)/68/2026 matches this row"}
+{"token":"B134","answer":"CITED_PRECEDENT","why":"'relied on the coordinate Bench judgment of this Court in M/s Shubham Steel Traders ... Neutral Citation No.- 2024:AHC:31108-DB'"}
+{"token":"B135","answer":"CANNOT_TELL","why":"body names RFA/29/2010, which may be the appeal this cross-objection sits in"}
+{"token":"B136","answer":"ANOTHER_CASE","why":"stamp pairs CRM-M-35233-2024 with 106610 and CRM-M-34281-2024 with 106612; this row is 34281"}
+{"token":"B137","answer":"CANNOT_TELL","why":"stamp file 139.2026.odt names APEAL/139/2026 and the body shows a batch; this row is APEAL/99/2026 and its membership is not visible"}
+{"token":"B138","answer":"CITED_PRECEDENT","why":"'reported in 2024:MHC:1405 (Neutral Citation of Madras High Court)'"}
+{"token":"B139","answer":"OWN","why":"stamp file 'Sr. Nos.27 to 31.doc' is a five-appeal batch; this row is one first appeal of that group"}
+{"token":"B140","answer":"ANOTHER_CASE","why":"header CRA No. 1883 of 2024 carries 26821-DB; this row is CRA/1924/2024"}
+{"token":"B141","answer":"OWN","why":"body Case No. : Cont.Cas(C)/311/2025 matches this row"}
+{"token":"B142","answer":"OWN","why":"stamp file 51-ca-12639-2024-stay.odt is this row's own case"}
+{"token":"B143","answer":"NOT_A_CITATION","why":"2011:JUNE:27 is a date stamp"}
+{"token":"B144","answer":"OWN","why":"Bombay page-stamp form at the foot of a one-page order, only citation"}
+{"token":"B145","answer":"CANNOT_TELL","why":"the retained text has lost most of its consonants; nothing in it can carry evidence"}
+{"token":"B146","answer":"OWN","why":"body Case No. : AB/2887/2025 matches this row"}
+{"token":"B147","answer":"CANNOT_TELL","why":"body names PIL/57/2021, which may be the PIL this interlocutory application sits in"}
+{"token":"B148","answer":"CITED_PRECEDENT","why":"'we have considered and dealt with the same in Writ Tax No. 3964 of 2025 ... 2025:AHC:179271-DB'"}
+{"token":"B149","answer":"OWN","why":"body Case No : I.A.(Civil)/431/2025 matches this row"}
+{"token":"B150","answer":"ANOTHER_CASE","why":"header CNR CGHC010265192022 and WPS No. 5704 of 2022; this row is WPS/7712/2022"}
+{"token":"B151","answer":"OWN","why":"page stamp at the foot of a one-page order, only citation"}
+{"token":"B152","answer":"OWN","why":"body Case No. : I.A.(Crl.)/1132/2024 matches this row"}
+{"token":"B153","answer":"ANOTHER_CASE","why":"header CNR GAHC010130642025 and I.A.(Civil)/1842/2017; this row is I.A.(Civil)/1841/2017 and Gauhati prints the case number of the copy it stamps"}
+{"token":"B154","answer":"OWN","why":"the header names this row's case explicitly as 'Linked Case : WP(C)/1117/2024' of the order it stamps"}
+{"token":"B155","answer":"ANOTHER_CASE","why":"header CNR UKHC010145022026 and WPSS/2190/2026; this row is WPSS/2199/2026"}
+{"token":"B156","answer":"CITED_PRECEDENT","why":"'relied on the coordinate Bench judgment ... Neutral Citation No. - 2024:AHC:31108-DB'"}
+{"token":"B157","answer":"OWN","why":"stamp reads [2023:RJ-JP:24252] with S.B. Civil Writ Petition No. 14523/2017 — this row; EU-JP is a scan of the same number"}
+{"token":"B158","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:18 is a date stamp"}
+{"token":"B159","answer":"CANNOT_TELL","why":"header names CRLR/129/2016 but the body disposes 'these revisions' arising out of cross-cases; one-citation-per-case and common-order readings both fit"}
+{"token":"B160","answer":"OWN","why":"body Case No. : WP(C)/339/2022 matches this row"}

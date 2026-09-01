@@ -1,0 +1,96 @@
+{"token":"C001","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/2527/2023"}
+{"token":"C002","answer":"ANOTHER_CASE","why":"document heads WPS No. 6230 of 2025 and prints a batch of citations; this row is WPS/6782/2025"}
+{"token":"C003","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/707/2022"}
+{"token":"C004","answer":"NOT_A_CITATION","why":"2011:AUGUST:03 is a despatch date stamp"}
+{"token":"C005","answer":"OWN","why":"stamp file 930.Cri.WP-1292-2024.odt is this row's own case"}
+{"token":"C006","answer":"NOT_A_CITATION","why":"2012:FEB:27 is a date stamp"}
+{"token":"C007","answer":"NOT_A_CITATION","why":"2011:AUGUST:26 is a date stamp"}
+{"token":"C008","answer":"NOT_A_CITATION","why":"2011:AUGUST:23 is a date stamp"}
+{"token":"C009","answer":"ANOTHER_CASE","why":"list pairs CWP-23733-2021 with 164678, not 164674 which belongs to CWP No.23467 of 2021"}
+{"token":"C010","answer":"NOT_A_CITATION","why":"2011:DEC:10 is a date stamp"}
+{"token":"C011","answer":"CANNOT_TELL","why":"stamp file 906.WP.7866.21.odt heads a 2021 batch; this row is WP/9556/2025 and its membership is not visible"}
+{"token":"C012","answer":"NOT_A_CITATION","why":"2011:DECEMBER:23 is a date stamp"}
+{"token":"C013","answer":"OWN","why":"stamp file 903-wp-6143-2026.odt is this row's own case"}
+{"token":"C014","answer":"NOT_A_CITATION","why":"2011:SEPTEMBER:26 is a date stamp"}
+{"token":"C015","answer":"ANOTHER_CASE","why":"list pairs CWP-14385-2020 with 179597; this row is CWP/17116/2020"}
+{"token":"C016","answer":"NOT_A_CITATION","why":"2011:SEPTEMBER:29 is a date stamp"}
+{"token":"C017","answer":"NOT_A_CITATION","why":"2011:AUGUST:30 is a date stamp"}
+{"token":"C018","answer":"ANOTHER_CASE","why":"header pairs CWP-14173-2024 with 089493; the stored 089491 belongs to CWP-14097-2024"}
+{"token":"C019","answer":"NOT_A_CITATION","why":"2011:MARCH:30 is a date stamp"}
+{"token":"C020","answer":"NOT_A_CITATION","why":"2011:DECEMBER:02 is a date stamp"}
+{"token":"C021","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:12 is a date stamp"}
+{"token":"C022","answer":"ANOTHER_CASE","why":"header pairs RSA-1297-1987 with 049627; the stored 049626 belongs to RSA-1296-1987"}
+{"token":"C023","answer":"ANOTHER_CASE","why":"header pairs CRM-M-14907-2023 with 129146; the stored 129141 belongs to CRM-M-12991-2023"}
+{"token":"C024","answer":"ANOTHER_CASE","why":"Rajasthan stamp reads [CW-11616/2014]; this row is CW/8715/2014"}
+{"token":"C025","answer":"ANOTHER_CASE","why":"stamp names CWP No.6334 of 2024 with 045292 and the body gives each connected petition its own citation; this row is CWP/6866/2024"}
+{"token":"C026","answer":"ANOTHER_CASE","why":"list pairs CWP-15622-2020 with 179598; the stored 179597 belongs to CWP-14385-2020"}
+{"token":"C027","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:18 is a date stamp"}
+{"token":"C028","answer":"NOT_A_CITATION","why":"2011:MAY:09 is a date stamp"}
+{"token":"C029","answer":"ANOTHER_CASE","why":"list pairs CWP-14385-2020 with 179597; this row is CWP/16343/2020"}
+{"token":"C030","answer":"ANOTHER_CASE","why":"stamp pairs CRM-M-35076-2023 with 111415; the stored 111414 belongs to CRM-M-12639-2023"}
+{"token":"C031","answer":"OWN","why":"stamp reads FA 502/2003 & Ors., this row's own appeal heading its batch"}
+{"token":"C032","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/27058/2022"}
+{"token":"C033","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/12777/2005"}
+{"token":"C034","answer":"OWN","why":"stamp file 92-wp-12576-2024.odt is this row's own case"}
+{"token":"C035","answer":"NOT_A_CITATION","why":"2011:OCTOBER:10 is a date stamp"}
+{"token":"C036","answer":"ANOTHER_CASE","why":"stamp names FAO No.657 of 1988 with 049362 and the batch prints 049364 and 049366; this row is FAO/658/1988"}
+{"token":"C037","answer":"OWN","why":"stamp [2024:EU-JP:5228] with the case number scanned as KW-26120241; the same document prints the clean 2024:RJ-JP:5228, so the stored value is a damaged rendering of this document's own citation"}
+{"token":"C038","answer":"ANOTHER_CASE","why":"stamp pairs CR No.6896 of 2016 with 104308; the stored 104301 belongs to SAO No.23 of 2016"}
+{"token":"C039","answer":"OWN","why":"stamp file 2031.2024ABA+.odt marks an anticipatory-bail batch this row belongs to"}
+{"token":"C040","answer":"OWN","why":"'Special Appeal No. 389 of 2025 ... Neutral Citation No. - 2025:AHC:89690-DB' — this row's own case named beside it"}
+{"token":"C041","answer":"OWN","why":"stamp reads ACB-159-2024, this row's own case"}
+{"token":"C042","answer":"ANOTHER_CASE","why":"stamp names CWP-17154-2021 with 030782 and the connected cases print 030786 and 030788; this row is CWP/21568/2021"}
+{"token":"C043","answer":"ANOTHER_CASE","why":"document heads WPS No. 8630 of 2025 and prints a batch; this row is WPS/8681/2025"}
+{"token":"C044","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/15966/2023"}
+{"token":"C045","answer":"OWN","why":"stamp file 56-wp-2062-2025.odt is this row's own case"}
+{"token":"C046","answer":"CANNOT_TELL","why":"stamp file 917(ii).CA-12338-2011.doc heads a batch whose visible members do not include CA 12653 of 2011"}
+{"token":"C047","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/3510/2023"}
+{"token":"C048","answer":"ANOTHER_CASE","why":"document heads WPS No. 8814 of 2025 and prints a batch; this row is WPS/8884/2025"}
+{"token":"C049","answer":"NOT_A_CITATION","why":"2011:SEPTEMBER:30 is a date stamp"}
+{"token":"C050","answer":"NOT_A_CITATION","why":"2011:DECEMBER:23 is a date stamp"}
+{"token":"C051","answer":"OWN","why":"stamp reads 15 WP NO. 291 OF 2025, this row's own case"}
+{"token":"C052","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:18 is a date stamp"}
+{"token":"C053","answer":"NOT_A_CITATION","why":"2011:DECEMBER:23 is a date stamp"}
+{"token":"C054","answer":"ANOTHER_CASE","why":"document heads WPS No. 5593 of 2025 and prints a batch; this row is WPS/5687/2025"}
+{"token":"C055","answer":"ANOTHER_CASE","why":"stamp names FAO No.472 of 1991 with 037700; this row is FAO/1494/1993 and the connected matter carries 037698"}
+{"token":"C056","answer":"OWN","why":"'Criminal Appeal No.2012 of 2010 ... Neutral Citation No. - 2023:AHC:161707-DB' — this row's own case named beside it"}
+{"token":"C057","answer":"ANOTHER_CASE","why":"list pairs CWP-14385-2020 with 179597; this row is CWP/14813/2020"}
+{"token":"C058","answer":"ANOTHER_CASE","why":"document heads WPS No. 8711 of 2025 and prints a batch; this row is WPS/9577/2025"}
+{"token":"C059","answer":"ANOTHER_CASE","why":"header pairs CWP-17089-2022 with 095394; the stored 095391 belongs to CWP-7273-2022"}
+{"token":"C060","answer":"ANOTHER_CASE","why":"stamp names CWP No. 19699 of 2016 with 157750; this row is CWP/23745/2018 and the connected matter carries 157751"}
+{"token":"C061","answer":"ANOTHER_CASE","why":"header pairs CWP-2988-2025 with 068737; the stored 068728 belongs to CWP-2983-2025"}
+{"token":"C062","answer":"ANOTHER_CASE","why":"list pairs CWP-6452-1993 with 024938; this row is CWP/11939/2019"}
+{"token":"C063","answer":"ANOTHER_CASE","why":"header pairs RSA-2318-1989 with 035579; the stored 035578 belongs to RSA-2317-1989"}
+{"token":"C064","answer":"ANOTHER_CASE","why":"list gives CWP-21368-2023 Citation No. 2025:PHHC:058672; this row is CWP/8848/2020 and the batch prints 058687 and 058691"}
+{"token":"C065","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:17 is a date stamp"}
+{"token":"C066","answer":"OWN","why":"stamp [2023:EU-JP:41491] on S.B. Criminal Revision Petition No. 899/2020 — this row; the clean 2023:RJ-JP:41491 in the same document shows the stored value is a damaged rendering of its own citation"}
+{"token":"C067","answer":"ANOTHER_CASE","why":"header pairs CWP-16488-2025 with 078011; the stored 078016 belongs to CWP-16439-2025"}
+{"token":"C068","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/24125/2021"}
+{"token":"C069","answer":"NOT_A_CITATION","why":"2011:NOV:18 is a date stamp"}
+{"token":"C070","answer":"NOT_A_CITATION","why":"2011:AUGUST:30 is a date stamp"}
+{"token":"C071","answer":"ANOTHER_CASE","why":"header pairs CR No.1664 of 2020 with 146802; the stored 146797 belongs to CR No.1662 of 2020"}
+{"token":"C072","answer":"NOT_A_CITATION","why":"2011:FEBRUARY:23 is a date stamp"}
+{"token":"C073","answer":"ANOTHER_CASE","why":"header pairs RSA-2363-2000 with 023419; the stored 023415 belongs to CWP-5200-1993"}
+{"token":"C074","answer":"NOT_A_CITATION","why":"2011:MARCH:23 is a date stamp"}
+{"token":"C075","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/1989/2022"}
+{"token":"C076","answer":"OWN","why":"stamp file 901- Cri. Appln. No.4113-2022.odt is this row's own case"}
+{"token":"C077","answer":"CITED_PRECEDENT","why":"'we have considered and dealt with the same in Writ Tax No. 3964 of 2025 ... 2025:AHC:179271-DB'"}
+{"token":"C078","answer":"ANOTHER_CASE","why":"header pairs CRM-M-8779-2024 with 047486; the stored 047483 belongs to CRM-M-8829-2024"}
+{"token":"C079","answer":"NOT_A_CITATION","why":"2011:NOVEMBER:16 is a date stamp"}
+{"token":"C080","answer":"OWN","why":"stamp [2024:RJ-JP:16616] on S.B. Civil Miscellaneous Appeal No. 6504/2016 — this row; RT-JP is a scan of the same number"}
+{"token":"C081","answer":"NOT_A_CITATION","why":"2011:DECEMBER:23 is a date stamp"}
+{"token":"C082","answer":"ANOTHER_CASE","why":"header pairs CWP-37983-2018 with 001398; the stored 001381 belongs to CWP-11036-2018"}
+{"token":"C083","answer":"NOT_A_CITATION","why":"2011:AUGUST:23 is a date stamp"}
+{"token":"C084","answer":"OWN","why":"stamp reads '914 to 917 - CA.1938.2023' and item 917 is CIVIL APPLICATION NO. 1940 OF 2023 — this row"}
+{"token":"C085","answer":"NOT_A_CITATION","why":"2011:AUGUST:16 is a date stamp"}
+{"token":"C086","answer":"NOT_A_CITATION","why":"2011:DECEMBER:22 is a date stamp"}
+{"token":"C087","answer":"OWN","why":"stamp [2023:FU-JP:21738] on S.B. Civil Writ Petition No. 18734/2018 — this row; the clean 2023:RJ-JP:21738 is in the same document"}
+{"token":"C088","answer":"ANOTHER_CASE","why":"header pairs CWP-16149-2018 with 001404; the stored 001381 belongs to CWP-11036-2018"}
+{"token":"C089","answer":"OWN","why":"stamp reads 38 CA 12781 OF 2025, this row's own case"}
+{"token":"C090","answer":"ANOTHER_CASE","why":"header pairs CRM-M-15135-2024 with 047488; the stored 047483 belongs to CRM-M-8829-2024"}
+{"token":"C091","answer":"ANOTHER_CASE","why":"list pairs CWP No.23467 of 2021 with 164674; this row is CWP/15343/2023"}
+{"token":"C092","answer":"ANOTHER_CASE","why":"document heads WPS No. 6230 of 2025 and prints a batch; this row is WPS/6705/2025"}
+{"token":"C093","answer":"ANOTHER_CASE","why":"stamp pairs CRM-M-26528-2024 with 074774; the stored 074773 belongs to CRM-M-24559-2024"}
+{"token":"C094","answer":"ANOTHER_CASE","why":"document heads WPS No. 8814 of 2025 and prints a batch; this row is WPS/8901/2025"}
+{"token":"C095","answer":"OWN","why":"header reads 'MAC No. 1731 of 2019 & MAC No. 2094 of 2019' against one citation; MAC/1731/2019 is this row"}
+{"token":"C096","answer":"NOT_A_CITATION","why":"2011:DECEMBER:19 is a date stamp"}

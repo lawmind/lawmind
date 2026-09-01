@@ -1,0 +1,77 @@
+{
+ "artifact": "NEW2_R19_BLIND_SCORE_ROUND_2",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T04:06:59.092Z",
+ "method": "the pack was read and answered with the rule, the R18 class and the proposed value absent; blind-key.json was joined only after blind-answers.jsonl was complete",
+ "items": 96,
+ "answerCounts": {
+  "ANOTHER_CASE": 45,
+  "NOT_A_CITATION": 30,
+  "OWN": 18,
+  "CANNOT_TELL": 2,
+  "CITED_PRECEDENT": 1
+ },
+ "matrix": {
+  "R4b_TWO_SIDED_CASE_NUMBER :: ANOTHER_CASE": 36,
+  "R5_NO_TWO_SIDED_PROOF :: ANOTHER_CASE": 8,
+  "D1_MONTH_IN_SERIES_POSITION :: NOT_A_CITATION": 30,
+  "C1b_OWN_CASE_NUMBER_BESIDE_STORED :: OWN": 12,
+  "C7_REFUSAL_ONLY :: CANNOT_TELL": 2,
+  "C7_REFUSAL_ONLY :: ANOTHER_CASE": 1,
+  "R2_SERIES_TOKEN_SCAN_CONFLICT :: OWN": 4,
+  "C7_REFUSAL_ONLY :: OWN": 2,
+  "C7_REFUSAL_ONLY :: CITED_PRECEDENT": 1
+ },
+ "byRule": {
+  "R4b_TWO_SIDED_CASE_NUMBER": {
+   "agree": 36,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 36
+  },
+  "R5_NO_TWO_SIDED_PROOF": {
+   "agree": 0,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 8,
+   "n": 8
+  },
+  "D1_MONTH_IN_SERIES_POSITION": {
+   "agree": 30,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 30
+  },
+  "C1b_OWN_CASE_NUMBER_BESIDE_STORED": {
+   "agree": 12,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 12
+  },
+  "C7_REFUSAL_ONLY": {
+   "agree": 2,
+   "falseDestructive": 0,
+   "untestable": 2,
+   "recallLoss": 2,
+   "n": 6
+  },
+  "R2_SERIES_TOKEN_SCAN_CONFLICT": {
+   "agree": 4,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 4
+  }
+ },
+ "FALSE_NULL": 0,
+ "FALSE_REPLACE": 0,
+ "AMBIGUOUS": {
+  "C7_REFUSAL_ONLY": 2
+ },
+ "UNTESTABLE": 2,
+ "falseDestructiveRows": [],
+ "EXISTING_CORRECTION_GATE": "PASS"
+}

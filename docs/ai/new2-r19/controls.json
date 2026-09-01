@@ -1,0 +1,830 @@
+{
+ "artifact": "NEW2_R19_CONTROLS",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T04:42:19.881Z",
+ "adjacencyWindow": 60,
+ "connectedMatterControl": {
+  "question": "C2 nulls a row because the CNR beside its citation belongs to another judgment storing the same citation. A common order looks identical. Are the two rows the same source document?",
+  "rowsTested": 3968,
+  "counts": {
+   "C2a_FOREIGN_CNR_CORROBORATED::SAME_SOURCE_DOCUMENT": 2402,
+   "C2b_FOREIGN_CNR_UNCORROBORATED::SAME_DATE_DIFFERENT_DOCUMENT": 262,
+   "C2a_FOREIGN_CNR_CORROBORATED::SAME_DATE_DIFFERENT_DOCUMENT": 1283,
+   "C2b_FOREIGN_CNR_UNCORROBORATED::DIFFERENT_DOCUMENT": 10,
+   "C2a_FOREIGN_CNR_CORROBORATED::DIFFERENT_DOCUMENT": 11
+  },
+  "sameSourceDocumentRows": 2402,
+  "examples": [
+   {
+    "judgmentId": "00004f1e-922e-4356-a357-0c5d916d7021",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:31884",
+    "leadCnrs": [
+     "CGHC010321382024"
+    ]
+   },
+   {
+    "judgmentId": "0013b257-461c-4461-adfc-da1b57bfadbf",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:30941",
+    "leadCnrs": [
+     "CGHC010277842026"
+    ]
+   },
+   {
+    "judgmentId": "00296295-28ba-4bbf-a19d-2d2833846b73",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:GAU-AS:5719",
+    "leadCnrs": [
+     "GAHC010066262026"
+    ]
+   },
+   {
+    "judgmentId": "003d10d2-22c7-47b8-9661-aa8e02bffca8",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:30737",
+    "leadCnrs": [
+     "CGHC010309672018"
+    ]
+   },
+   {
+    "judgmentId": "0055b285-c8b6-4ea3-9e1a-04ba05ad7569",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:GAU-AS:4804",
+    "leadCnrs": [
+     "GAHC010050692025"
+    ]
+   },
+   {
+    "judgmentId": "00848c13-1842-4973-b04b-5d3cfd170b48",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2025:GAU-AS:8386-DB",
+    "leadCnrs": [
+     "GAHC010270052022"
+    ]
+   },
+   {
+    "judgmentId": "009b31b0-f824-42c7-a64e-85e4d3bed050",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:30868",
+    "leadCnrs": [
+     "CGHC010094672020"
+    ]
+   },
+   {
+    "judgmentId": "00eaf90c-b5ae-4036-b044-a3880424df31",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2024:GAU-AS:9683",
+    "leadCnrs": [
+     "GAHC010013122022"
+    ]
+   },
+   {
+    "judgmentId": "010a1154-b786-49a9-8beb-4cb7c425c1e0",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:31585",
+    "leadCnrs": [
+     "CGHC010274772026"
+    ]
+   },
+   {
+    "judgmentId": "011d2725-c3af-4b77-b3b5-7e8e842f2340",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2024:GAU-AS:11017-DB",
+    "leadCnrs": [
+     "GAHC010098472023"
+    ]
+   },
+   {
+    "judgmentId": "013ded43-db83-46ea-9755-d18e6ac6037c",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2025:GAU-NL:247",
+    "leadCnrs": [
+     "GAHC020001942018"
+    ]
+   },
+   {
+    "judgmentId": "0175979f-01be-4085-9d88-ae5c313d3483",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2024:GAU-AS:12055",
+    "leadCnrs": [
+     "GAHC010219872024"
+    ]
+   },
+   {
+    "judgmentId": "018c0e34-dfb6-4853-a7ee-7402f92647fb",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:2946",
+    "leadCnrs": [
+     "CGHC010187752026"
+    ]
+   },
+   {
+    "judgmentId": "01a02f51-09c6-4ef0-a997-97b9233bd95a",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:31585",
+    "leadCnrs": [
+     "CGHC010274772026"
+    ]
+   },
+   {
+    "judgmentId": "01e704c0-fc11-49d0-8942-9a25da101a45",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:30868",
+    "leadCnrs": [
+     "CGHC010094672020"
+    ]
+   },
+   {
+    "judgmentId": "01effe32-74ce-4f65-a29c-35c5e17dee51",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:29607",
+    "leadCnrs": [
+     "CGHC010174712022"
+    ]
+   },
+   {
+    "judgmentId": "02320334-9790-4e08-ab0f-e738362ff195",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:UHC:5658",
+    "leadCnrs": [
+     "UKHC010078262019"
+    ]
+   },
+   {
+    "judgmentId": "024cb008-eb22-4b56-b103-533112336fb5",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:30737",
+    "leadCnrs": [
+     "CGHC010309672018"
+    ]
+   },
+   {
+    "judgmentId": "027eb63b-e097-416d-ba26-b0089e7db3e4",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:GAU-NL:205-DB",
+    "leadCnrs": [
+     "GAHC020003942025"
+    ]
+   },
+   {
+    "judgmentId": "02a1e2b3-bb13-4cd7-bb2e-8e6f45257732",
+    "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+    "stored": "2026:CGHC:31983",
+    "leadCnrs": [
+     "CGHC010104952023"
+    ]
+   }
+  ]
+ },
+ "negativeControl": {
+  "question": "do the destructive NULL rules fire on rows R18 classified UNCHANGED_CONFIRMED — where the rule that wrote the value and the rule that replaced it agree?",
+  "populationSampled": 5722,
+  "byCourt": {
+   "High Court Of Rajasthan": 449,
+   "Bombay High Court": 594,
+   "Allahabad High Court": 1813,
+   "High Court Of Chhattisgarh": 842,
+   "High Court of Karnataka": 481,
+   "High Court of Punjab and Haryana": 77,
+   "High Court of Jharkhand": 102,
+   "High Court of Himachal Pradesh": 53,
+   "High Court of Uttarakhand": 640,
+   "High Court of Kerala": 24,
+   "Gauhati High Court": 543,
+   "High Court of Delhi": 3,
+   "High Court of Meghalaya": 1,
+   "Madras High Court": 100
+  },
+  "sampling": "random primary-key start points, slab 25, plus 24 targeted probes for each of the six courts carrying the most destructive nulls",
+  "counts": {
+   "NO_RULE": 5663,
+   "C2a": 4,
+   "High Court of Uttarakhand::C2a": 4,
+   "C3": 55,
+   "Madras High Court::C3": 54,
+   "Bombay High Court::C3": 1
+  },
+  "firings": [
+   {
+    "judgmentId": "8240b8ac-c0f9-480e-a2c1-a3a31305dfa8",
+    "court": "High Court of Uttarakhand",
+    "caseNumber": "WPSS/889/2026",
+    "cnr": "UKHC010046052026",
+    "stored": "2026:UHC:7049",
+    "rule": "C2a",
+    "leadCnrs": [
+     "UKHC010016612026",
+     "UKHC010016612026",
+     "UKHC010016612026",
+     "UKHC010016612026",
+     "UKHC010016612026",
+     "UKHC010016612026"
+    ],
+    "window": "UKHC010016612026 2026:UHC:7049 HIGH COURT OF UTTARAKHAND AT NAINITAL Writ Petition Service Single No.321 of 2026 10th August, 2026 Prasoon Nautiyal ………..Petitioner Versus State of "
+   },
+   {
+    "judgmentId": "1faad52b-549b-472f-99f5-cd40478d4ac5",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/905/2022",
+    "cnr": "HCMA010510502022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "20dab5e6-b94f-4a9c-9d4f-140b596d71c5",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1457/2022",
+    "cnr": "HCMA010918882022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "2474df4a-1771-4908-af8c-836d77f455c9",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2750/2019",
+    "cnr": "HCMA010312902019",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutra Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenance orders under Section 24"
+   },
+   {
+    "judgmentId": "29e81950-d8ff-4c5e-b1be-a6d3178e9591",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/431/2019",
+    "cnr": "HCMA010068752019",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "2a460255-3e7a-4f56-9393-f1ef0483a383",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/895/2023",
+    "cnr": "HCMA010457022023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "2a7bacbb-63e7-4cd1-9d92-6cbe76023a9a",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1830/2022",
+    "cnr": "HCMA011156102022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "bf8bdf12-28a6-44e3-bbc5-83377bdc79ce",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1944/2022",
+    "cnr": "HCMA011231152022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "bfe422b5-3080-4b91-9550-aa930fcfcf39",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1220/2023",
+    "cnr": "HCMA010480172023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "c278ab08-e154-4fa1-9287-d0a1866f2955",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/583/2023",
+    "cnr": "HCMA010398172023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "c5ef43c5-f895-42eb-93bd-f8765abc1a7d",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/10/2023",
+    "cnr": "HCMA011770692022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "abb3e8e2-dff1-4698-a824-47b1b1f946e0",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/637/2018",
+    "cnr": "HCMA010757162018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "ad5a1201-49be-4209-89cf-bebe2f295d50",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/3218/2021",
+    "cnr": "HCMA011383852021",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "b17d98a9-de3f-4849-a34f-71054af189cf",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/506/2022",
+    "cnr": "HCMA010312282022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "b4d27c05-316f-48c8-b91d-39b6844fc0f9",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2543/2022",
+    "cnr": "HCMA011452782022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "nce. 3. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against Page Nos.2/5https://www.mhc.tn.gov.in/judis "
+   },
+   {
+    "judgmentId": "710a1d17-0da3-49b5-8d58-987054ad0eb9",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2536/2022",
+    "cnr": "HCMA011629772022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "7298d83e-5cc2-4a3c-a1f8-87eacf48c68c",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/905/2023",
+    "cnr": "HCMA010133272023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "72eb7e4e-9372-4ae4-bccd-0ed4cb284728",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/3183/2021",
+    "cnr": "HCMA011291312021",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "768ba108-f6dc-4601-b15e-6d83c2095f4b",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2571/2023",
+    "cnr": "HCMA011864162023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "7a6aad92-8f0e-4da1-a835-0294604fc780",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2557/2022",
+    "cnr": "HCMA011692282022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "e606fe64-c632-4a76-abf1-e7b02acf0302",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/4488/2019",
+    "cnr": "HCMA010783742019",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "ebe675b1-9677-4e5f-a1cc-4758edfa5b34",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2011/2022",
+    "cnr": "HCMA011069732022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "9dac2602-261d-4ace-8daf-42e0e7a34759",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/895/2022",
+    "cnr": "HCMA010403102022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "a2f7164c-9019-4f51-94af-f6ccd15c898a",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2157/2021",
+    "cnr": "HCMA010810502021",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "a2fe6e18-0001-434e-8d39-15b561aacb19",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2022/2023",
+    "cnr": "HCMA011354932023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "04459538-9ef7-4293-b5ba-6678a82f2dc9",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/163/2018",
+    "cnr": "HCMA010518432018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "nce. 3. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Page Nos.2/5https://www.mhc.tn.gov.in/judis C.M.A.No.163 of 2018 Court} and 2024 Live Law (Mad) 126 inter alia held "
+   },
+   {
+    "judgmentId": "05dffb7b-ee7c-401f-b4fd-092dafd6af0e",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1774/2022",
+    "cnr": "HCMA011083902022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "085a3f55-b3cf-4892-98e7-df0f68eecb28",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2602/2016",
+    "cnr": "HCMA010183662016",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "0a51b16a-92e7-4d26-8b3a-f40acf35146a",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2474/2017",
+    "cnr": "HCMA011796952017",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "8357c445-1673-4df7-9221-1cc0005b79a2",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2618/2022",
+    "cnr": "HCMA011874972022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "878eeb81-65c8-4a7d-ab3d-8f576950c478",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2459/2022",
+    "cnr": "HCMA011784372022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "8866eb0d-0a3f-45d1-afbb-98e7cca3431b",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1799/2021",
+    "cnr": "HCMA010706792021",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "ef36afed-bb36-407e-a2d4-c18bac046c27",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1881/2020",
+    "cnr": "HCMA011173702020",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "f32f0f12-7934-486e-9c14-4f20ff37b02e",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1942/2022",
+    "cnr": "HCMA011336262022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "f3d2ff31-0e6a-4b22-b830-05cda2274f8d",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1366/2020",
+    "cnr": "HCMA013016662015",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "412a10e2-ba7e-4a88-9b2f-8bb00935b0e8",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/927/2020",
+    "cnr": "HCMA010075562020",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "4274ce68-4c83-42d6-96cc-669ccf124492",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1605/2022",
+    "cnr": "HCMA010679582022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "43a0e2e8-ea31-4c90-8ced-166cba5aef7d",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2239/2022",
+    "cnr": "HCMA011567582022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "4f41c7c1-af10-4a8e-959c-2c7d87134207",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/490/2023",
+    "cnr": "HCMA010300732023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "508807e8-3ed8-43a3-acc2-b5633c8c87b1",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/26/2023",
+    "cnr": "HCMA012124222022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "536c83f8-1fa0-432d-92bd-be0a73905803",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/70/2023",
+    "cnr": "HCMA012120672022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "34e382d5-538d-4c15-a3f7-123f277164f0",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2042/2018",
+    "cnr": "HCMA010641282018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "34e6a5ef-ca20-4f71-9ad6-e737a4236882",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2208/2023",
+    "cnr": "HCMA011590262023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "35a3fd3d-9c82-4f2b-b94a-48301decdbb9",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1957/2022",
+    "cnr": "HCMA010129462020",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "37f123af-774e-4af5-9f25-0d577317d6fd",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/614/2023",
+    "cnr": "HCMA010398602023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "5b3d819c-3d3b-4a24-bf3b-11fd2c2857f6",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1862/2022",
+    "cnr": "HCMA011206302022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "5c31f469-6db6-4796-b23a-3702dc290df7",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1793/2018",
+    "cnr": "HCMA010577092018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "5cfe8b90-81fe-417a-8cd8-18dd3b0c4ada",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/884/2022",
+    "cnr": "HCMA010532092022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "1cf495a3-ecf2-405d-b0f6-dd3fc8db9297",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1539/2023",
+    "cnr": "HCMA010843102023",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "819edc14-1871-412b-8ba5-aebfe39458c5",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/797/2022",
+    "cnr": "HCMA010325662022",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "6232bf60-0a46-4464-9d3a-1f576cbd0b83",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1113/2018",
+    "cnr": "HCMA010187782018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "6457522e-2718-4173-9312-51b5335584ee",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/162/2018",
+    "cnr": "HCMA010513692018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "675ecfc4-cd52-4e7b-8e43-431806a4e9a5",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1229/2017",
+    "cnr": "HCMA011546042017",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "b5de6e74-16c2-4cad-aacb-aa6a570d2ec4",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/2836/2016",
+    "cnr": "HCMA010204242016",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "8f99f3f1-8964-4476-a5a1-0cfc104f5b30",
+    "court": "Madras High Court",
+    "caseNumber": "CMA/1716/2019",
+    "cnr": "HCMA013546092018",
+    "stored": "2024:MHC:1405",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": "ty}. 2. This Court vide a detailed common judgment/order dated 21.03.2024 in S.Menaka v. K.S.K.Nepolian Socraties and other cases {Batch} reported in 2024:MHC:1405 {Neutral Citation of Madras High Court} and 2024 Live Law (Mad) 126 inter alia held that appeals against pendente lite maintenance/interim maintenanc"
+   },
+   {
+    "judgmentId": "2eb8178a-d0bf-4f67-bd8c-5254287085bc",
+    "court": "High Court of Uttarakhand",
+    "caseNumber": "WPMS/1907/2026",
+    "cnr": "UKHC010107622026",
+    "stored": "2026:UHC:5359",
+    "rule": "C2a",
+    "leadCnrs": [
+     "UKHC010105602026",
+     "UKHC010105602026",
+     "UKHC010105602026"
+    ],
+    "window": "UKHC010105602026 2026:UHC:5359 SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS WPMS/1870/202"
+   },
+   {
+    "judgmentId": "73f87f24-e2c1-4376-a540-084787f2802a",
+    "court": "High Court of Uttarakhand",
+    "caseNumber": "WPSB/69/2023",
+    "cnr": "UKHC010023542023",
+    "stored": "2026:UHC:5461-DB",
+    "rule": "C2a",
+    "leadCnrs": [
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022",
+     "UKHC010092042022"
+    ],
+    "window": "UKHC010092042022 2026:UHC:5461-DB JUDGMENT RESERVED ON: 15.06.2026 JUDGMENT DELIVERED ON: 07.07.2026 IN THE HIGH COURT OF UTTARAKHAND AT NAINITAL THE HON’BLE CHIEF JUSTICE MR. MANOJ K"
+   },
+   {
+    "judgmentId": "b8f1c42f-ecb4-47a0-8518-978df5eea455",
+    "court": "High Court of Uttarakhand",
+    "caseNumber": "WPSS/87/2019",
+    "cnr": "UKHC010005932019",
+    "stored": "2026:UHC:6968-DB",
+    "rule": "C2a",
+    "leadCnrs": [
+     "UKHC010005842019",
+     "UKHC010005842019",
+     "UKHC010005842019",
+     "UKHC010005842019",
+     "UKHC010005842019",
+     "UKHC010005842019",
+     "UKHC010005842019"
+    ],
+    "window": "UKHC010005842019 2026:UHC:6968-DB HIGH COURT OF UTTARAKHAND AT NAINITAL Writ Petition (SS) No. 94 of 2019 Ramesh Chandra Pant --Petitioner Versus State of Uttarakhand and others --Res"
+   },
+   {
+    "judgmentId": "67084b6d-ab77-4135-ac1b-137449f4f147",
+    "court": "Bombay High Court",
+    "caseNumber": "BA/3745/2023",
+    "cnr": "HCBM010533142023",
+    "stored": "2024:BHC-AS:7732",
+    "rule": "C3",
+    "leadCnrs": [],
+    "window": " accused No.7. The applicant was arrested on 25.06.2023. On 08.11.2023 this Court passed the following order in respect of the co-accused – Kiran 1/4 2024:BHC-AS:7732 PMB 920.ba.3745-23.doc Sunil Gawali which reads thus :- “2. This is an application for bail in respect of the offence punishable under Sections 302, "
+   }
+  ],
+  "firingTotal": 59
+ }
+}

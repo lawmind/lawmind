@@ -1,0 +1,2794 @@
+{
+ "artifact": "NEW2_R19_BLIND_PACK",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T03:55:56.832Z",
+ "note": "verdict, rule, R18 class and proposed value are ABSENT by construction. The key that maps tokens back to rows is written separately to blind-key.json and must not be read before the answers are written.",
+ "items": 160,
+ "answerVocabulary": [
+  "OWN",
+  "ANOTHER_CASE",
+  "CITED_PRECEDENT",
+  "NOT_A_CITATION",
+  "CANNOT_TELL"
+ ],
+ "pack": [
+  {
+   "token": "B001",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/7010/2024",
+   "cnrFromMetadata": "HCBM030246652024",
+   "judgmentDate": "2024-07-09",
+   "documentLength": 811,
+   "citationStoredOnThisRow": "2024:BHC-AUG:13794-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "within 90 days from today. 3. In view of the above, this Writ Petition is disposed off. [ Y. G. KHOBRAGADE, J. ] [ RAVINDRA V. GHUGE, J. ] SMS 1 of 1 2024:BHC-AUG:13794-DB"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B002",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "MAC/2032/2019",
+   "cnrFromMetadata": "CGHC010369452019",
+   "judgmentDate": "2026-08-12",
+   "documentLength": 3584,
+   "citationStoredOnThisRow": "2026:CGHC:35912",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010371032019 2026:CGHC:35912 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR MAC No. 2235 of 2019 1 - Sukaluram @ Sukalu S/o Sukaluram @ Sukalu Aged About 28 Years S/o Budhram Gawde,"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B003",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Cont.Cas(C)/576/2025",
+   "cnrFromMetadata": "GAHC010237882025",
+   "judgmentDate": "2026-03-15",
+   "documentLength": 3473,
+   "citationStoredOnThisRow": "2026:GAU-AS:3809",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010237842025 2026:GAU-AS:3809 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Cont.Cas(C)/576/2025 PRASANNA HASNU S/O- LATE L. HAS"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B004",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/13124/2011",
+   "cnrFromMetadata": "HCMD011485722011",
+   "judgmentDate": "2011-11-18",
+   "documentLength": 1771,
+   "citationStoredOnThisRow": "2011:NOVEMBER:18",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "District Manager, Tamil Nadu State Marketing Corporation Ltd., Konam,Nagercoil,Kanyakumari District. 1CC TO MR. MRS. PRABHU, ADVOCATE, SR: 40482: DM::2011:NOVEMBER:18:: W.P.(MD)NO.13124 of 2011 1P:3C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B005",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/1711/2025",
+   "cnrFromMetadata": "GAHC010109462025",
+   "judgmentDate": "2025-05-29",
+   "documentLength": 1227,
+   "citationStoredOnThisRow": "2025:GAU-AS:6960",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010091032025 2025:GAU-AS:6960 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/1711/2025 AFIYA BEGAM BARBHUIYA W/O LT R"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B006",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CRM-M/45820/2023",
+   "cnrFromMetadata": "PHHC011182312023",
+   "judgmentDate": "2023-10-04",
+   "documentLength": 8064,
+   "citationStoredOnThisRow": "2023:PHHC:128708",
+   "timesPrintedInDocument": 4,
+   "contextAroundEachPrinting": [
+    "CRM-M-45798-2023 (O&M) 2023:PHHC:128708 CRM-M-45820-2023 (O&M) 2023:PHHC:128709 Page 1 of 4 231 (2 cases) IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision: 04.10.2023 ",
+    " Kumar's motorcycle, brandished a weapon, and VANDANA 2023.10.05 10:06 I attest to the accuracy and integrity of this document CRM-M-45798-2023 (O&M) 2023:PHHC:128708 CRM-M-45820-2023 (O&M) 2023:PHHC:128709 Page 2 of 4 began assaulting both Parveen Kumar and his son. They also forcibly took Sumit Kumar's Apple iPho",
+    "y accused as a result of a personal vendetta. VANDANA 2023.10.05 10:06 I attest to the accuracy and integrity of this document CRM-M-45798-2023 (O&M) 2023:PHHC:128708 CRM-M-45820-2023 (O&M) 2023:PHHC:128709 Page 3 of 4 4.2 The counsel for the petitioners also points out that nothing incriminating has been recovered"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:PHHC:128709",
+     "timesPrinted": 4
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B007",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CW/13548/2023",
+   "cnrFromMetadata": "RJHC010643172023",
+   "judgmentDate": "2024-07-08",
+   "documentLength": 2701,
+   "citationStoredOnThisRow": "2024:RJ-JD:27329",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "[2024:RJ-JD:27329] HIGH COURT OF JUDICATURE FOR RAJASTHAN AT JODHPUR S.B. Civil Writ Petition No. 18814/2023 1. Sukhveer Verma S/o Shri Manohar Lal, Aged About 28 Year",
+    "3) HON'BLE MS. JUSTICE REKHA BORANA Order 08/07/2024 1. In pursuance to order dated 04.07.2024, both the counsels have completed their instructions. [2024:RJ-JD:27329] (2 of 2) [CW-18814/2023] Learned counsel Mr. Bhadu appearing for the petitioner father (in Civil Writ Petition No.13548/2023) submits that the paren"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B008",
+   "court": "High Court of Delhi",
+   "caseNumberFromMetadata": "BAIL APPLN./5067/2025",
+   "cnrFromMetadata": "DLHC011064872025",
+   "judgmentDate": "2026-04-27",
+   "documentLength": 6094,
+   "citationStoredOnThisRow": "2026:DHC:519",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "s recorded from the investigation file. Those observations from the judgment dated 21.01.2026 in the case of Jakir Hussain vs State of NCT of Delhi, (2026:DHC:519) are extracted below: “5. Having examined the FIR, I also examined the investigation file. Initially, Arbaz was taken to Satyawadi Raja Harish Chandr"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B009",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Crl.Pet./557/2024",
+   "cnrFromMetadata": "GAHC010093872024",
+   "judgmentDate": "2025-05-25",
+   "documentLength": 9421,
+   "citationStoredOnThisRow": "2025:GAU-AS:6633",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/6 GAHC010221722024 2025:GAU-AS:6633 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Crl.Pet./557/2024 SAUMENDRA SARMAH S/O LT. GIRINDRA NATH SARMAH"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B010",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CRL OP(MD)/10224/2011",
+   "cnrFromMetadata": "HCMD011210132011",
+   "judgmentDate": "2011-10-29",
+   "documentLength": 1488,
+   "citationStoredOnThisRow": "2011:NOVEMBER:16",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "spector of Police, Kulachal Police Station, Kanyakumari district. 2.The Additional Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM:2011:NOVEMBER:16:: Crl.O.P.(md).No.10224 of 2011 1P:3C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B011",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/27470/2016",
+   "cnrFromMetadata": "PHHC010933792016",
+   "judgmentDate": "2024-02-16",
+   "documentLength": 24060,
+   "citationStoredOnThisRow": "2024:PHHC:024938",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "-1993 along with connected petitions 1 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.201 Date of Decision: 16.02.2024 1) CWP-6452-1993 2024:PHHC:024938 Ram Phal Singh and others .... Petitioners Versus State of Haryana and another ... Respondents 2) CWP-19113-1997 2024:PHHC:024939 Rajbir Singh Kuhar "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:024939",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024941",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024944",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024945",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B012",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/630/2023",
+   "cnrFromMetadata": "GAHC040017642023",
+   "judgmentDate": "2025-11-18",
+   "documentLength": 15096,
+   "citationStoredOnThisRow": "2025:GAU-AP:1312",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/11 GAHC040006632023 2025:GAU-AP:1312 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) WP(C) No. 630(AP) of 2023 Padi Grayu .......... Petitioner. - V"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B013",
+   "court": "High Court of Uttarakhand",
+   "caseNumberFromMetadata": "WPMS/1464/2023",
+   "cnrFromMetadata": "UKHC010077282023",
+   "judgmentDate": "2026-08-19",
+   "documentLength": 905,
+   "citationStoredOnThisRow": "2026:UHC:7491",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "UKHC010108332023 2026:UHC:7491 SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS WPMS/1957/202",
+    "made by learned counsel for the petitioners, writ petitions are dismissed as withdrawn. (Manoj Kumar Tiwari, J.) 19.08.2026 Mahinder UKHC010108332023 2026:UHC:7491"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B014",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CMA/450/2024",
+   "cnrFromMetadata": "HCMA010322442024",
+   "judgmentDate": "2024-10-14",
+   "documentLength": 2784,
+   "citationStoredOnThisRow": "2024:MHC:1405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".2024, the Division Bench of this Court, after referring to the judgment of S.Menaka v. K.S.K. Nepolian Socraties and other cases (Batch) reported in 2024:MHC:1405 (Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held that as against the interlocutory applications/ interim maintenance, only Ci"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B015",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "ABA/1400/2024",
+   "cnrFromMetadata": "HCBM030316822024",
+   "judgmentDate": "2025-01-31",
+   "documentLength": 1713,
+   "citationStoredOnThisRow": "2025:BHC-AUG:2907",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "pon mentioning, taken on board for speaking to minutes in order dated 31.01.2025. 2. Learned Counsel for the Applicant submits that Umesh PAGE 1 OF 2 2025:BHC-AUG:2907 This Order is Speaking to Minutes order of order dated // P-4.odt though this Hon’ble Court is pleased to allow the all Applications, inadvertently o"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B016",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "MCRC/6225/2026",
+   "cnrFromMetadata": "CGHC010264152026",
+   "judgmentDate": "2026-07-19",
+   "documentLength": 7007,
+   "citationStoredOnThisRow": "2026:CGHC:30807",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010248322026 2026:CGHC:30807 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR MCRC No. 6036 of 2026 Kishan Kumar S/o Pramod Kumar Aged About 20 Years R/o Ghachi Colony Bhagat Ki Kothi"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2026:CGHC:30811",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B017",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CRL OP(MD)/17173/2011",
+   "cnrFromMetadata": "HCMD011287572011",
+   "judgmentDate": "2012-01-18",
+   "documentLength": 1196,
+   "citationStoredOnThisRow": "2012:JANUARY:23",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " INSPECTOR OF POLICE, ALL WOMEN POLICE STATION, KARAIKUDI, SIVAGANGAI DIST 2 THE ADDL.PUBLIC PROSECUTOR MADURAI BENCH OF MADRAS HIGH COURT MADURAI DM:2012:JANUARY:23:: ORDER IN CRL OP(MD) No.17173 of 2011 Date :18/01/2012 1P:3C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B018",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Crl.M.C./775/2014",
+   "cnrFromMetadata": "GAHC010014402014",
+   "judgmentDate": "2025-11-03",
+   "documentLength": 704,
+   "citationStoredOnThisRow": "2025:GAU-AS:15081",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010014422014 2025:GAU-AS:15081 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case : Crl.M.C./775/2014 CHANDRA KUMAR DUTTA S/O LT. BANESWAR D"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B019",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "BA/2138/2023",
+   "cnrFromMetadata": "HCBM010330642023",
+   "judgmentDate": "2023-11-09",
+   "documentLength": 5485,
+   "citationStoredOnThisRow": "2023:BHC-AS:34525",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "the informant submitted that an order dated 7/2/2023 passed by this Court in Criminal Bail Application No.2184/2022 and Criminal Bail Application 1/5 2023:BHC-AS:34525 Diksha Rane 4.BA 2138-23.doc No.2059/2022 in respect of the co-accused nos. 1 and 3 is challenged before the Hon’ble Supreme Court. It is submitted t"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B020",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WA/798/2025",
+   "cnrFromMetadata": "CGHC010437362025",
+   "judgmentDate": "2025-11-05",
+   "documentLength": 42609,
+   "citationStoredOnThisRow": "2025:CGHC:54054-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 WA No.730 of 2025 and other connected matters 2025:CGHC:54054-DB NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WA No. 730 of 2025 State Of Chhattisgarh Through The Secretary, General Administration Department, Mantra"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B021",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "MCRC/5710/2026",
+   "cnrFromMetadata": "CGHC010235642026",
+   "judgmentDate": "2026-07-05",
+   "documentLength": 14013,
+   "citationStoredOnThisRow": "2026:CGHC:27870",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010228402026 2026:CGHC:27870 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR MCRC No. 5470 of 2026 1 - Fatte Singh Yadav S/o Shobhit Ram Yadav Aged About 23 Years R/o Bital, Police S"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B022",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/3029/2024",
+   "cnrFromMetadata": "GAHC010192902024",
+   "judgmentDate": "2025-05-13",
+   "documentLength": 27484,
+   "citationStoredOnThisRow": "2025:GAU-AS:6166",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/28 GAHC010061842025 2025:GAU-AS:6166 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Case : I.A.(Civil)/3029/2024 POWER GRID CORPORATION "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B023",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/5229/2024",
+   "cnrFromMetadata": "GAHC010210942024",
+   "judgmentDate": "2026-03-31",
+   "documentLength": 221655,
+   "citationStoredOnThisRow": "2026:GAU-AS:4804",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/181 GAHC010050692025 2026:GAU-AS:4804 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/1380/2025 AOICHARJYA JIBON BARUAH S/O APURBA J"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B024",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WRIC/5385/2026",
+   "cnrFromMetadata": "UPHC020403992026",
+   "judgmentDate": "2026-05-21",
+   "documentLength": 3778,
+   "citationStoredOnThisRow": "2025:AHC-LKO:32272",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ation - Amethi, District – Amethi. 6. This Court in Writ-C No.718 of 2025: Anil Kumar Vs. State of U.P. and others, and connected matters reported in 2025:AHC-LKO:32272- DB, has observed that where there is a criminal case that is pending against a person, the Character Certificate issued by the Superintendent of Pol"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B025",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "CRP/73/2023",
+   "cnrFromMetadata": "GAHC010131952023",
+   "judgmentDate": "2025-03-24",
+   "documentLength": 52227,
+   "citationStoredOnThisRow": "2025:GAU-AS:3810",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/52 GAHC010131962023 2025:GAU-AS:3810 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : CRP/68/2023 NORTH EAST TRANSMISSION COMPANY LIMITED "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B026",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/1193/2025",
+   "cnrFromMetadata": "UPHC020840772025",
+   "judgmentDate": "2025-11-10",
+   "documentLength": 3035,
+   "citationStoredOnThisRow": "2024:AHC:31108",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "titioner has relied on the coordinate Bench judgment of this Court in M/s Shubham Steel Traders Vs. State of U.P. and Another, Neutral Citation No. - 2024:AHC:31108- DB. The relevant extract of the said judgement is provided below:- \"8. Thus relying on Coordinate Bench decision of this Court in M/S Videocon D2H L"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2014:AHC:60699-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B027",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/10331/2011",
+   "cnrFromMetadata": "HCMD011455732011",
+   "judgmentDate": "2011-09-12",
+   "documentLength": 2649,
+   "citationStoredOnThisRow": "2011:SEPTEMBER:26",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ai. 3. The Tahsildar, Usilampatti Taluk, Madurai District. 1CC TO MR. BABU RAJENDRAN, ADVOCATE, SR: 30868: 1CC TO THE SPL. GOVT PLEADER SR: 31114 DM::2011:SEPTEMBER:26:: W.P(MD)No.10331 of 2011 1P;6C:; 12.09.2011https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B028",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CMA/586/2022",
+   "cnrFromMetadata": "HCMA010337302022",
+   "judgmentDate": "2024-10-17",
+   "documentLength": 2797,
+   "citationStoredOnThisRow": "2024:MHC:1405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".2024, the Division Bench of this Court, after referring to the judgment of S.Menaka v. K.S.K. Nepolian Socraties and other cases (Batch) reported in 2024:MHC:1405 (Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held that as against the interlocutory applications/ interim maintenance, only Ci"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B029",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/4453/2025",
+   "cnrFromMetadata": "UPHC014693852025",
+   "judgmentDate": "2025-09-16",
+   "documentLength": 2684,
+   "citationStoredOnThisRow": "2024:AHC:31108",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "titioner has relied on the coordinate Bench judgment of this Court in M/s Shubham Steel Traders Vs. State of U.P. and Another; Neutral Citation No. - 2024:AHC:31108- DB). The relevant extract of the said judgement is provided below :- \"8. Thus relying on Coordinate Bench decision of this Court in M/S Videocon D2H"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2014:AHC:60699-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B030",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CMA/5957/2011",
+   "cnrFromMetadata": "RJHC020503472010",
+   "judgmentDate": "2024-02-28",
+   "documentLength": 6375,
+   "citationStoredOnThisRow": "2024:RJ-JP:10347",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "d counsel for the parties, it has come to notice that despite service of notice upon appellant she remained absent and did not participated in the > [2024:RJ-JP:10347] [CMA-5957/20111 proceedings before the lear I. The award was passed on 03.04.2007. 4. A perusal indicated that the appellant after notice of executi"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:IW-JP:10347",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:N-JP:10347",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B031",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "REVN/27/2020",
+   "cnrFromMetadata": "HCBM030413962019",
+   "judgmentDate": "2026-08-24",
+   "documentLength": 7116,
+   "citationStoredOnThisRow": "2026:BHC-AUG:38724",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "rder dated 10/03/2014, passed by the learned Chief Judicial Magistrate, Jalgaon in RCC No.223/2010, thereby acquitting respondent Nos.1 and 2/accused.2026:BHC-AUG:38724 27.20revn (2) 3. According to learned Advocate for the applicant, he is the original complainant and has filed complaint against respondent No.1 and "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B032",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "FA/2763/2023",
+   "cnrFromMetadata": "HCBM030053052023",
+   "judgmentDate": "2025-11-07",
+   "documentLength": 17297,
+   "citationStoredOnThisRow": "2025:BHC-AUG:30445-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " Occ. Agriculture, All R/o Babhalgaon Tq. & Dist. Latur ..Appellants (Original Claimant) VERSUS 1. The State of Maharashtra, Through Collector, Latur 2025:BHC-AUG:30445-DB (2) F.A. 2763-2023.odt 2. The Executive Engineer, Minor Irrigation (Local Sector) Division, Latur. .. Respondents WITH FIRST APPEAL NO. 2764 OF 2023 "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B033",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/6559/2025",
+   "cnrFromMetadata": "CGHC010251862025",
+   "judgmentDate": "2025-07-06",
+   "documentLength": 30771,
+   "citationStoredOnThisRow": "2025:CGHC:30842",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 2025:CGHC:30842 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 6429 of 2025 1 - Rajesh Kumar Thakur S/o Late Bahal Singh Thakur Aged About 57 Years Chowkidar (C"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:CGHC:30843",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:CGHC:30844",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:CGHC:30834",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:CGHC:30836",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B034",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/3043/1995",
+   "cnrFromMetadata": "HCBM030011101995",
+   "judgmentDate": "2025-12-02",
+   "documentLength": 1842,
+   "citationStoredOnThisRow": "2025:BHC-AUG:33301-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ssary instructions. 2. Accordingly, today on instructions and in view of para 3 of the judgment in ‘ Laxmi Chand and others Vs Gram Panchayat, 1 of 2 2025:BHC-AUG:33301-DB (2) 903sa206.94.odt Kararia and others reported in AIR 1996 SC 523’, the learned advocate for the appellant seeks leave to withdraw the appeal with l"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B035",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/2657/2024",
+   "cnrFromMetadata": "HCBM030065292024",
+   "judgmentDate": "2024-03-08",
+   "documentLength": 927,
+   "citationStoredOnThisRow": "2024:BHC-AUG:5084-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "these Petitions. 2. In view of the above statement, these Writ Petitions are disposed off. (R. M. JOSHI, J) (RAVINDRA V. GHUGE, J) Malani Page 1 of 1 2024:BHC-AUG:5084-DB"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B036",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Crl.)/147/2024",
+   "cnrFromMetadata": "GAHC010025542024",
+   "judgmentDate": "2024-08-29",
+   "documentLength": 5811,
+   "citationStoredOnThisRow": "2024:GAU-AS:8541",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/5 GAHC010099882023 2024:GAU-AS:8541 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Crl.Rev.P./186/2023 BIREN SUTRADHAR S/O LATE KHUSIMO"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B037",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CW/19876/2018",
+   "cnrFromMetadata": "RJHC020813322018",
+   "judgmentDate": "2023-09-12",
+   "documentLength": 1558,
+   "citationStoredOnThisRow": "2023:FU-JP:22105",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "[2023:FU-JP:22105] ,3~.+\\ frtrv,, -2 .@&cc,. $- +.?,* 3 HIGH COURT OF JUDIGAWURE FOR RAJASTHANii'\"i\";P. BENCH~&&AIPURau; ,+.mi3 S.B. Civil Writ Petition No. 19876f2018"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:IU-JP:22105",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B038",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/527/2023",
+   "cnrFromMetadata": "HCBM030466712022",
+   "judgmentDate": "2024-03-21",
+   "documentLength": 5955,
+   "citationStoredOnThisRow": "2024:BHC-AUG:6591-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "t. Nanded. .. PETITIONERS VERSUS 1. The State of Maharashtra, Through the Principal Secretary, School Education Department, Mantralaya, Mumbai-32. [1]2024:BHC-AUG:6591-DB WP-526-2023 and others.odt 2. The Deputy Director of Education, Latur Region, Latur. 3. Shri. Lal Bahadur Shashtri Shikshan Sanstha, A/P :- Umri, Tq."
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B039",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/5416/2025",
+   "cnrFromMetadata": "GAHC010203922025",
+   "judgmentDate": "2025-11-18",
+   "documentLength": 3088,
+   "citationStoredOnThisRow": "2025:GAU-AS:14549",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/4 GAHC010219132025 2025:GAU-AS:14549 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No.: WP(C)/5416/2025 M/S ASEAN AGENCIES REPRESENTED BY ITS"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B040",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/11119/2022",
+   "cnrFromMetadata": "HCBM010367522022",
+   "judgmentDate": "2024-03-01",
+   "documentLength": 2538,
+   "citationStoredOnThisRow": "2024:BHC-AS:10089-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " covered by the recent judgment of this Court in Godrej Industries Ltd. V/s. The Assistant Commissioner of Income Tax, Circle 14(1)(2), Gauri Gaekwad 2024:BHC-AS:10089-DB 2/2 AS 946& Ors.WP-9956-2022.doc Mumbai and Ors.1 Counsel for respondents agree. 2 Therefore, impugned orders passed under Section 148A(d) of the Inc"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B041",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CRM-M/30153/2023",
+   "cnrFromMetadata": "PHHC010777242023",
+   "judgmentDate": "2023-09-20",
+   "documentLength": 17100,
+   "citationStoredOnThisRow": "2023:PHHC:123495",
+   "timesPrintedInDocument": 8,
+   "contextAroundEachPrinting": [
+    "2023:PHHC:123495 2023:PHHC:123498 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH **** 1. CRM-M-24150-2023 Roshan Lal . . . . Petitioner Vs. State of Haryana . ",
+    "ction 27-A of the NDPS act was added later on). VIVEK PAHWA 2023.09.21 12:18 I attest to the accuracy and integrity of this document CRM-M-24150-2023 2023:PHHC:123495 CRM-M-30153-2023 2023:PHHC:123498 Page 2 of 10 Prosecution case: 2. (i) As per separate status reports filed by the respondent/State in both the case",
+    " as well as Firoz Khan were taken into custody. VIVEK PAHWA 2023.09.21 12:18 I attest to the accuracy and integrity of this document CRM-M-24150-2023 2023:PHHC:123495 CRM-M-30153-2023 2023:PHHC:123498 Page 3 of 10 (iii) On 31.10.2020, case property was produced before the ld. Duty Magistrate, who drew the samples f"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:PHHC:123498",
+     "timesPrinted": 10
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B042",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/13672/2021",
+   "cnrFromMetadata": "HCBM030203402021",
+   "judgmentDate": "2025-08-08",
+   "documentLength": 45529,
+   "citationStoredOnThisRow": "2025:BHC-AUG:21354-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Jain Through General Power Of Attorney Holder Sachin Dagadulal Jain VERSUS The National Highway Authority Of India Through Its Project Director & Anr.2025:BHC-AUG:21354-DB 2 906.WP.7866.21.odt 916 WRIT PETITION NO. 13679 OF 2021 Shilpa Rajendra Shinde VERSUS The National Highway Authority Of India Through Its Project Di"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B043",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "CRA/2605/2025",
+   "cnrFromMetadata": "CGHC010527392025",
+   "judgmentDate": "2026-06-30",
+   "documentLength": 108176,
+   "citationStoredOnThisRow": "2026:CGHC:26821-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010348422024 2026:CGHC:26821-DB AFR HIGH COURT OF CHHATTISGARH AT BILASPUR CRA No. 1883 of 2024 Dorilal S/o Badan Singh Aged About 35 Years R/o House No. 183, Vishan Ganj, Mathura, "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2026:CGHC:26822-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26823-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26825-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26824-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B044",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/15452/1999",
+   "cnrFromMetadata": "PHHC010217851999",
+   "judgmentDate": "2024-02-16",
+   "documentLength": 24060,
+   "citationStoredOnThisRow": "2024:PHHC:024938",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "-1993 along with connected petitions 1 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.201 Date of Decision: 16.02.2024 1) CWP-6452-1993 2024:PHHC:024938 Ram Phal Singh and others .... Petitioners Versus State of Haryana and another ... Respondents 2) CWP-19113-1997 2024:PHHC:024939 Rajbir Singh Kuhar "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:024939",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024941",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024944",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024945",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B045",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/5182/2017",
+   "cnrFromMetadata": "CGHC010103442017",
+   "judgmentDate": "2025-02-20",
+   "documentLength": 6545,
+   "citationStoredOnThisRow": "2025:CGHC:9246",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page 1 of 5 {W.P.(S)Nos.5173/2017, 5182 of 2017 & 5188 of 2017} 2025:CGHC:9246 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5173 of 2017 Rupram Dewangan, S/o late Bodhi Ram Dewangan, Aged about 48 years, Posted as a Watch"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B046",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WRIC/3907/2026",
+   "cnrFromMetadata": "UPHC020290542026",
+   "judgmentDate": "2026-04-29",
+   "documentLength": 2808,
+   "citationStoredOnThisRow": "2025:AHC-LKO:32272-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "tomatically guilty of any offence. 5. This Court in Writ-C No.718 of 2025: Anil Kumar Vs. State of U.P. and others, and connected matters reported in 2025:AHC-LKO:32272-DB, has observed that where there is a criminal case that is pending against a person, the character certificate issued by the Superintendent of Police "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B047",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "MACApp./160/2004",
+   "cnrFromMetadata": "GAHC010001502004",
+   "judgmentDate": "2026-08-12",
+   "documentLength": 34402,
+   "citationStoredOnThisRow": "2026:GAU-AS:11594",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/25 GAHC010200772004 2026:GAU-AS:11594 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : MACApp./146/2004 NATIONAL INSURANCE CO LTD HAVING IT"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B048",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Crl.)/628/2024",
+   "cnrFromMetadata": "GAHC010120372024",
+   "judgmentDate": "2025-03-10",
+   "documentLength": 1053,
+   "citationStoredOnThisRow": "2025:GAU-AS:3510",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010038352024 2025:GAU-AS:3510 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Crl.)/628/2024 In Crl.Pet./312/2024 M/S THE GEN"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B049",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/10914/2023",
+   "cnrFromMetadata": "HCBM030339892023",
+   "judgmentDate": "2025-11-12",
+   "documentLength": 5581,
+   "citationStoredOnThisRow": "2025:BHC-AUG:31103",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "E ENGINEER, IRRIGATION DEPARTMENT STRENGTHENING DIVISION OMERGA VERSUS GAJENDRA RAMCHANDRA VIBHUTE … CORAM : SHAILESH P. BRAHME, J. DATE : 12.11.2025 2025:BHC-AUG:31103 ( 2 ) 40 CA 10914 OF 2023 PER COURT :- 1. Heard both sides. 2. Applicant seeks to implead himself in the First appeal, which is preferred against jud"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B050",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/6510/2024",
+   "cnrFromMetadata": "HCBM030247282024",
+   "judgmentDate": "2024-08-02",
+   "documentLength": 1779,
+   "citationStoredOnThisRow": "2024:BHC-AUG:16646",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "APPLICATION NO. 6516 OF 2024 IN FAST/9502/2019 SHIVRAM S/O BHAURAM HAJARE AND ANOTHER VERSUS THE STATE OF MAHARASHTRA THROUGH COLLECTOR OSMANABAD SVH 2024:BHC-AUG:16646 2 908-CA-6513-4.odt AND OTHERS ... Mr. Pravin B. Rakhunde, Advocate for Applicant Mr. S.B. Jadhav, AGP for Respondents/State ... CORAM : NITIN B. SUR"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B051",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/3734/2016",
+   "cnrFromMetadata": "GAHC010113942016",
+   "judgmentDate": "2026-07-28",
+   "documentLength": 3719,
+   "citationStoredOnThisRow": "2026:GAU-AS:10458",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/4 GAHC010018812016 2026:GAU-AS:10458 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/3734/2016 NATIONAL BOARDS LTD. FORMERLY ASSAM "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B052",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/14132/2024",
+   "cnrFromMetadata": "PHHC010766472024",
+   "judgmentDate": "2025-07-21",
+   "documentLength": 9437,
+   "citationStoredOnThisRow": "2025:PHHC:089491",
+   "timesPrintedInDocument": 8,
+   "contextAroundEachPrinting": [
+    "CWP-14097-2024 (O/M) -1- 2025:PHHC:089491 CWP-14132-2024 (O/M) 2025:PHHC:089492 CWP-14173-2024 (O/M) 2025:PHHC:089493 122, 124, 125 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date ",
+    "73-2024 (O/M) 2025:PHHC:089493 122, 124, 125 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision : 21.07.2025 CWP-14097-2024 (O/M) 2025:PHHC:089491 Krishna Devi through her legal heirs and another ...... Petitioners Versus Financial Commissioner (Appeals), Punjab and others ...... Respondents CWP",
+    "titioners under Section 151 Civil Procedure Code for placing on record certain documents as Annexure P-13 and Annexure P-14. CWP-14097-2024 (O/M) -2- 2025:PHHC:089491 CWP-14132-2024 (O/M) 2025:PHHC:089492 CWP-14173-2024 (O/M) 2025:PHHC:089493 For the reasons mentioned in application, same is allowed and documents ("
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:PHHC:089492",
+     "timesPrinted": 8
+    },
+    {
+     "citation": "2025:PHHC:089493",
+     "timesPrinted": 8
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B053",
+   "court": "High Court of Kerala",
+   "caseNumberFromMetadata": "Crl.MC/6918/2024",
+   "cnrFromMetadata": "KLHC011313302024",
+   "judgmentDate": "2025-04-03",
+   "documentLength": 5339,
+   "citationStoredOnThisRow": "2025:KER:12610",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "2025:KER:12610 IN THE HIGH COURT OF KERALA AT ERNAKULAM PRESENT THE HONOURABLE MR.JUSTICE V.G.ARUN THURSDAY, THE 3RD DAY OF APRIL 2025 / 13TH CHAITHRA, 1947 CRL.MC "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:KER:30684",
+     "timesPrinted": 5
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B054",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CRM-M/815/2024",
+   "cnrFromMetadata": "PHHC011687292023",
+   "judgmentDate": "2024-04-01",
+   "documentLength": 3759,
+   "citationStoredOnThisRow": "2024:PHHC:042914",
+   "timesPrintedInDocument": 3,
+   "contextAroundEachPrinting": [
+    "CRM-M-697-2024 2024:PHHC:042914 CRM-M-815-2024 2024:PHHC:043177 220 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Date of decision : 01.04.2024 CRM-M-697-2024 SUNITA GARG ..",
+    "sel for the petitioner further submits that it \u0001 Deepak Kumar 2024.04.02 18:11 I attest to the accuracy and integrity of this document CRM-M-697-2024 2024:PHHC:042914 CRM-M-815-2024 2024:PHHC:043177 is a case wherein the final question would be as to whether the petitioners are the victims or the culprits. Notice o",
+    "cident that involves commission of an offence. \u0002 Deepak Kumar 2024.04.02 18:11 I attest to the accuracy and integrity of this document CRM-M-697-2024 2024:PHHC:042914 CRM-M-815-2024 2024:PHHC:043177 5. This order does not in any manner limit or restrict the rights or duties of the police or investigating agency to "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:043177",
+     "timesPrinted": 3
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B055",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CMA/2180/2022",
+   "cnrFromMetadata": "HCMA010815322019",
+   "judgmentDate": "2024-10-17",
+   "documentLength": 2704,
+   "citationStoredOnThisRow": "2024:MHC:1405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".2024, the Division Bench of this Court, after referring to the judgment of S.Menaka v. K.S.K. Nepolian Socraties and other cases (Batch) reported in 2024:MHC:1405 (Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held that as against the interlocutory applications/ interim maintenance, only Ci"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B056",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/15524/2019",
+   "cnrFromMetadata": "HCBM030518162019",
+   "judgmentDate": "2024-03-04",
+   "documentLength": 1552,
+   "citationStoredOnThisRow": "2024:BHC-AUG:5304-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "e Hon’ble Supreme Court is dealing with the issue as to whether TET is compulsory to all the schools inclusive of the minor institutions. Page 1 of 2 2024:BHC-AUG:5304-DB 1-WP-15524-2019+.odt 3. in view of the above, this Writ Petition is disposed off. The Petitioners shall tender their affidavit undertaking as is obse"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B057",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/5919/2025",
+   "cnrFromMetadata": "CGHC010252412025",
+   "judgmentDate": "2025-06-26",
+   "documentLength": 4886,
+   "citationStoredOnThisRow": "2025:CGHC:28408",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 2025:CGHC:28408 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5851 of 2025 1 - Smt. Sangeeta Minj W/o Rajkumaar Aged About 37 Years Posted As Teacher (L.B.) At"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:CGHC:28414",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:CGHC:28418",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B058",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPC/2169/2022",
+   "cnrFromMetadata": "CGHC010155132022",
+   "judgmentDate": "2026-07-08",
+   "documentLength": 7786,
+   "citationStoredOnThisRow": "2026:CGHC:28479",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010023112022 2026:CGHC:28479 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 439 of 2022 1 - Surekha Barapatre W/o B.K. Barapatre Aged About 62 Years Retired Office Superinte"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B059",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/13067/2020",
+   "cnrFromMetadata": "PHHC010659392020",
+   "judgmentDate": "2024-02-16",
+   "documentLength": 24060,
+   "citationStoredOnThisRow": "2024:PHHC:024938",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "-1993 along with connected petitions 1 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.201 Date of Decision: 16.02.2024 1) CWP-6452-1993 2024:PHHC:024938 Ram Phal Singh and others .... Petitioners Versus State of Haryana and another ... Respondents 2) CWP-19113-1997 2024:PHHC:024939 Rajbir Singh Kuhar "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:024939",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024941",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024944",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024945",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B060",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "MCA/372/2023",
+   "cnrFromMetadata": "HCBM030387532023",
+   "judgmentDate": "2025-11-21",
+   "documentLength": 3132,
+   "citationStoredOnThisRow": "2025:BHC-AUG:32188",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "laces is about 464 kms. There are already two proceedings filed, one under the Protection of Women from Domestic Violence Act (for short “D.V. 1 of 3 2025:BHC-AUG:32188 2 925-MCA 372-2023.odt Act”) and one for judicial separation filed by the wife in the Court at Sangali. Therefore, the learned advocate for the appli"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B061",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CRM-M/23126/2023",
+   "cnrFromMetadata": "PHHC010594322023",
+   "judgmentDate": "2023-08-23",
+   "documentLength": 32986,
+   "citationStoredOnThisRow": "2023:PHHC:111414",
+   "timesPrintedInDocument": 8,
+   "contextAroundEachPrinting": [
+    "2023:PHHC:111414 2023:PHHC:111415 2023:PHHC:111416 2023:PHHC:111417 2023:PHHC:111419 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH **** 1. CRM-M-12639-2023 Ra",
+    "*** CORAM: HON’BLE MR JUSTICE DEEPAK GUPTA **** VIVEK PAHWA 2023.08.28 18:15 I attest to the accuracy and integrity of this document CRM-M-12639-2023 2023:PHHC:111414 CRM-M-35076-2023 2023:PHHC:111415 CRM-M-23126-2023 2023:PHHC:111416 CRM-M-13056-2023 2023:PHHC:111417 CRM-M-31064-2023 2023:PHHC:111419 Page 2 of 18 ",
+    "lted in recovery of 29,920 intoxicating tablets VIVEK PAHWA 2023.08.28 18:15 I attest to the accuracy and integrity of this document CRM-M-12639-2023 2023:PHHC:111414 CRM-M-35076-2023 2023:PHHC:111415 CRM-M-23126-2023 2023:PHHC:111416 CRM-M-13056-2023 2023:PHHC:111417 CRM-M-31064-2023 2023:PHHC:111419 Page 3 of 18 "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:PHHC:111415",
+     "timesPrinted": 18
+    },
+    {
+     "citation": "2023:PHHC:111416",
+     "timesPrinted": 18
+    },
+    {
+     "citation": "2023:PHHC:111417",
+     "timesPrinted": 18
+    },
+    {
+     "citation": "2023:PHHC:111419",
+     "timesPrinted": 18
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B062",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "CRA/1926/2024",
+   "cnrFromMetadata": "CGHC010351582024",
+   "judgmentDate": "2026-06-30",
+   "documentLength": 108176,
+   "citationStoredOnThisRow": "2026:CGHC:26821-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010348422024 2026:CGHC:26821-DB AFR HIGH COURT OF CHHATTISGARH AT BILASPUR CRA No. 1883 of 2024 Dorilal S/o Badan Singh Aged About 35 Years R/o House No. 183, Vishan Ganj, Mathura, "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2026:CGHC:26822-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26823-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26825-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26824-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B063",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/5142/2026",
+   "cnrFromMetadata": "CGHC010256532026",
+   "judgmentDate": "2026-07-07",
+   "documentLength": 6882,
+   "citationStoredOnThisRow": "2026:CGHC:28113",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010256562026 2026:CGHC:28113 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5114 of 2026 Manharan Lal Yadav S/o Late Nandu Ram Yadav Aged About 74 Years Retired Dak Runner P"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B064",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/5678/2025",
+   "cnrFromMetadata": "UPHC015745552025",
+   "judgmentDate": "2025-10-29",
+   "documentLength": 2692,
+   "citationStoredOnThisRow": "2025:AHC:179271-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "rily, we have considered and dealt with the same in Writ Tax No. 3964 of 2025 (M/s Riya Construction vs State of U.P. & 3 Ors, Neutral Citation No. - 2025:AHC:179271-DB, dated 09.10.2025. Additionally, it has been submitted by learned counsel for the respondents that at present the petitioner's first appeal has also "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B065",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Crl.)/430/2025",
+   "cnrFromMetadata": "GAHC010088352025",
+   "judgmentDate": "2025-05-21",
+   "documentLength": 1181,
+   "citationStoredOnThisRow": "2025:GAU-AS:6491",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010103822025 2025:GAU-AS:6491 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) I.A.(Crl.)/430/2025 KULDEEP YADAV SON OF AUSAN SINGH RESIDENT O"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B066",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CRL OP(MD)/9881/2011",
+   "cnrFromMetadata": "HCMD011381362011",
+   "judgmentDate": "2011-08-03",
+   "documentLength": 2327,
+   "citationStoredOnThisRow": "2011:AUGUST:10",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ce, Trichy. 2.The Inspector of Police, Airport Police Station, Trichy. 3.The Addl Public Prosecutor, Madurai Bench of Madras High Court, Madurai. DM::2011:AUGUST:10:: Crl.O.P.(MD)No.9881 of 2011 03.08.2011 1P:;4C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B067",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/6015/2019",
+   "cnrFromMetadata": "GAHC010194152019",
+   "judgmentDate": "2025-03-24",
+   "documentLength": 1753,
+   "citationStoredOnThisRow": "2025:GAU-AS:3353",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010160062022 2025:GAU-AS:3353 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/6015/2019 NARAYAN DEBNATH AND 3 ORS. S/O- LT H"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B068",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Cont.Cas(C)/31/2025",
+   "cnrFromMetadata": "GAHC010009832025",
+   "judgmentDate": "2025-04-03",
+   "documentLength": 11842,
+   "citationStoredOnThisRow": "2025:GAU-AS:4126",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/13 GAHC010009802025 2025:GAU-AS:4126 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Cont.Cas(C)/24/2025 NIZAM UDDIN AHMED S/O MASEB ALI,"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B069",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/16683/2020",
+   "cnrFromMetadata": "PHHC010822452020",
+   "judgmentDate": "2025-11-14",
+   "documentLength": 2001,
+   "citationStoredOnThisRow": "2025:PHHC:179597",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1. CWP-14385-2020 (O/M) 2025:PHHC:179597 M/s Jai Bajrangbali Rice Mills and others Petitioners Versus State of Punjab and others …Respondents 2. CWP-15622-2020 (O/M) 2025:PHHC:179598 M/s Jai"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:PHHC:179598",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179599",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179600",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179601",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B070",
+   "court": "Orissa High Court",
+   "caseNumberFromMetadata": "CRLA/72/2002",
+   "cnrFromMetadata": "ODHC010014112002",
+   "judgmentDate": "2026-08-13",
+   "documentLength": 20257,
+   "citationStoredOnThisRow": "2026:OHC:32-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "____________________ CORAM: THE HONOURABLE MR. JUSTICE MANASH RANJAN PATHAK THE HONOURABLE MR. JUSTICE SASHIKANTA MISHRACRLA/69/2002 ODHC010292732002 2026:OHC:32-DB Page 2 of 20 Date of Hearing :28.07.2026 :: Date of Judgment:13.08.2026 SASHIKANTA MISHRA, J. Both these appeals arise out of the same judgment and t"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B071",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/9104/2025",
+   "cnrFromMetadata": "CGHC010322842025",
+   "judgmentDate": "2025-08-04",
+   "documentLength": 5011,
+   "citationStoredOnThisRow": "2025:CGHC:38668",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 2025:CGHC:38668 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 9085 of 2025 1 - Ramesh Kumar Bhagat S/o. Late Bukharam Bhagat, Aged About 56 Years R/o. Village-"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:CGHC:38670",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:CGHC:38766",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B072",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CRLR/900/2023",
+   "cnrFromMetadata": "RJHC020508162023",
+   "judgmentDate": "2023-08-11",
+   "documentLength": 2010,
+   "citationStoredOnThisRow": "2023:RJ-JP:39854",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "[2023:RJ-JP:39854] ,\\.,t.*%~~:cvrsfi ;:- ' 9, ?;. 'i4?&*v .% H~GH COURT O$ JUDIORKUREi ,ir%ii FOR RAJASTHAN BENCH&$AIPURhdLlir p3** ,<*?<. S.B. Criminal Revision Petit"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:KJ-JP:39854",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B073",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/6212/2025",
+   "cnrFromMetadata": "CGHC010243242025",
+   "judgmentDate": "2025-06-24",
+   "documentLength": 3841,
+   "citationStoredOnThisRow": "2025:CGHC:27857",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 2025:CGHC:27857 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 6142 of 2025 1 - Ramdeen Sidar S/o Nakulram Sidar Aged About 39 Years Posted As Assistant Teacher"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:CGHC:27900",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B074",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/16390/2020",
+   "cnrFromMetadata": "PHHC010810052020",
+   "judgmentDate": "2025-11-14",
+   "documentLength": 2001,
+   "citationStoredOnThisRow": "2025:PHHC:179597",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1. CWP-14385-2020 (O/M) 2025:PHHC:179597 M/s Jai Bajrangbali Rice Mills and others Petitioners Versus State of Punjab and others …Respondents 2. CWP-15622-2020 (O/M) 2025:PHHC:179598 M/s Jai"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:PHHC:179598",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179599",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179600",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2025:PHHC:179601",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B075",
+   "court": "High Court of Delhi",
+   "caseNumberFromMetadata": "LPA/437/2025",
+   "cnrFromMetadata": "DLHC010445322025",
+   "judgmentDate": "2025-07-16",
+   "documentLength": 2498,
+   "citationStoredOnThisRow": "2025:DHC:321-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "out to challenge this Order. The same may even not be maintainable in view of the Judgment in Municipal Corporation of Delhi v. Krishan Kumar & Ors., 2025:DHC:321-DB. However, keeping in view the facts and circumstances of the case, we direct that on the appellant depositing the entire awarded amount, inclusive of"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B076",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "AB/1580/2026",
+   "cnrFromMetadata": "GAHC010142992026",
+   "judgmentDate": "2026-07-27",
+   "documentLength": 851,
+   "citationStoredOnThisRow": "2026:GAU-AS:10304",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010143552026 2026:GAU-AS:10304 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Bail Appln./1926/2026 ARFAN ALI S/O MD. MAFIJUDDIN R"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B077",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "MC/2/2014",
+   "cnrFromMetadata": "GAHC010041732014",
+   "judgmentDate": "2025-09-12",
+   "documentLength": 1676,
+   "citationStoredOnThisRow": "2025:GAU-AS:12509",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010184052014 2025:GAU-AS:12509 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : MFA/1/2014 NEW INDIA ASSURANCE CO. LTD. HAVING ITS R"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B078",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/4140/2024",
+   "cnrFromMetadata": "GAHC010166092024",
+   "judgmentDate": "2025-04-29",
+   "documentLength": 23107,
+   "citationStoredOnThisRow": "2025:GAU-AS:5257",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/25 GAHC010166082024 2025:GAU-AS:5257 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/4138/2024 PAHARITA BORUAH KAKOTI AND 41 ORS D/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B079",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/768/2024",
+   "cnrFromMetadata": "GAHC010032002024",
+   "judgmentDate": "2026-02-10",
+   "documentLength": 869,
+   "citationStoredOnThisRow": "2026:GAU-AS:1870",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010023422026 2026:GAU-AS:1870 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/768/2024 SANJAY AGARWAL SON OF SRI ASHOK"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B080",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/5066/2016",
+   "cnrFromMetadata": "GAHC010023582016",
+   "judgmentDate": "2026-05-11",
+   "documentLength": 15622,
+   "citationStoredOnThisRow": "2026:GAU-AS:6754",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/10 GAHC010044252017 2026:GAU-AS:6754 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/5066/2016 DIMBESWAR BARUA and 5 ORS S/O. CHAMP"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B081",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "HABC/144/2026",
+   "cnrFromMetadata": "UPHC020328732026",
+   "judgmentDate": "2026-05-04",
+   "documentLength": 4026,
+   "citationStoredOnThisRow": "2026:AHC-LKO:31073-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "sensus at the bar that the matter in issue is squarely covered by the judgment of this Court in the case of Manoj Kumar Vs. State of U.P. and Others [2026:AHC-LKO:31073-DB]. 6. Considering the aforesaid, the writ petition is allowed. A writ of habeas corpus is issued declaring the arrest of the petitioner as illegal. Th"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B082",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Cont.Cas(C)/130/2024",
+   "cnrFromMetadata": "GAHC010050242024",
+   "judgmentDate": "2025-09-01",
+   "documentLength": 22290,
+   "citationStoredOnThisRow": "2025:GAU-AS:11793",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/15 GAHC010289002023 2025:GAU-AS:11793 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/7551/2023 BAHARUL ISLAM S/O- LATE SOLEMAN ALI,"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B083",
+   "court": "High Court of Uttarakhand",
+   "caseNumberFromMetadata": "WPSS/1605/2026",
+   "cnrFromMetadata": "UKHC010105772026",
+   "judgmentDate": "2026-06-17",
+   "documentLength": 3541,
+   "citationStoredOnThisRow": "2026:UHC:5022",
+   "timesPrintedInDocument": 3,
+   "contextAroundEachPrinting": [
+    "UKHC010105812026 2026:UHC:5022SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS WPSS No.1605 o",
+    "s contended that the competent authority failed to consider the petitioner's application before finalizing the transfer exercise and UKHC010105812026 2026:UHC:5022 thereby acted arbitrarily and contrary to the provisions governing annual transfers. It is further submitted that the petitioner had specifically poi",
+    "ing calculation of service in difficult areas were not considered before issuance of the transfer order. However, mere pendency of a UKHC010105812026 2026:UHC:5022 representation or a request for posting at a station of choice does not create any enforceable right in favour of an employee nor does it invalidate "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B084",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/1179/2025",
+   "cnrFromMetadata": "UPHC020842572025",
+   "judgmentDate": "2025-10-17",
+   "documentLength": 5440,
+   "citationStoredOnThisRow": "2024:AHC:116559-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " issue was dealt by the Division Bench of this Court passed in Writ Tax No.855 of 2024 [Ola Fleet Technologies Private Ltd vs State of U.P and 2 Ors; 2024:AHC:116559-DB]. Versus Counsel for Petitioner(s) : Saurabh Srivastava, Girish Chandra Sinha Counsel for Respondent(s) : C.S.C. Chaudharee Nafees Ahmad And Anr. ..."
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:AHC:115008-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B085",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Bail Appln./2065/2025",
+   "cnrFromMetadata": "GAHC010138842025",
+   "judgmentDate": "2025-06-26",
+   "documentLength": 3412,
+   "citationStoredOnThisRow": "2025:GAU-AS:8760",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/5 GAHC010141762025 2025:GAU-AS:8760 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Bail Appln./2111/2025 SAMSUL ALOM SON OF ABDUL AZIZ "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B086",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Crl.)/167/2025",
+   "cnrFromMetadata": "GAHC010028232025",
+   "judgmentDate": "2026-02-03",
+   "documentLength": 1282,
+   "citationStoredOnThisRow": "2026:GAU-AS:1529",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010168662024 2026:GAU-AS:1529 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Crl.)/167/2025 MD SHAH ALOM ALIAS SHWAHALAM S/O"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B087",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/2653/2024",
+   "cnrFromMetadata": "GAHC010092872024",
+   "judgmentDate": "2025-04-10",
+   "documentLength": 9888,
+   "citationStoredOnThisRow": "2025:GAU-AS:4620",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/8 GAHC010077922024 2025:GAU-AS:4620 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/2136/2024 TANKESWAR NATH S/O- LATE UMESH CHAND"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B088",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WRIC/11608/2025",
+   "cnrFromMetadata": "UPHC020943242025",
+   "judgmentDate": "2025-12-09",
+   "documentLength": 2927,
+   "citationStoredOnThisRow": "2025:AHC-LKO:32272",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ich And Another .....Respondent(s) 5. This Court in Writ-C No.718 of 2025: Anil Kumar Vs. State of U.P. and others, and connected matters reported in 2025:AHC-LKO:32272- DB, has observed that where there is a criminal case that is pending against a person, the Character Certificate issued by the Superintendent of Pol"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B089",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/1773/2025",
+   "cnrFromMetadata": "HCBM030027082025",
+   "judgmentDate": "2025-03-03",
+   "documentLength": 2383,
+   "citationStoredOnThisRow": "2025:BHC-AUG:6489",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "the amount accordingly. 2. In view of the above, Civil Application No. 5560 of 2023 is allowed by confirming the impugned order dated 21.06.2023. 1/3 2025:BHC-AUG:6489 19 ca 1773 2025 The impugned order shall operate till final disposal of the appeal, subject to right of the respondents/land owners to seek withdrawa"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B090",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/10941/2024",
+   "cnrFromMetadata": "HCBM030025832024",
+   "judgmentDate": "2025-04-01",
+   "documentLength": 1871,
+   "citationStoredOnThisRow": "2025:BHC-AUG:9894",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "section 11 of the Land Acquisition Act, which is covered by judgment in case of State Of Mah.Thr.Sub.Divisional vs Kailash Shiva Rangari, reported in 2025:BHC-AUG:9894 2 ca 12969.24+.odt 2016 (3) Mh.L.J. 457. He further invites attention of this Court to the reasons as stated in the application. Perusal of the reaso"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B091",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/3347/2011",
+   "cnrFromMetadata": "HCMD011526722011",
+   "judgmentDate": "2012-01-05",
+   "documentLength": 2075,
+   "citationStoredOnThisRow": "2012:JANUARY:20",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Acquisition, Adi Dravidar Welfare, Madurai. 5.The District Adi Dravidar and Tribal Welfare Officer, Madurai. 1CC TO THE SPL. GOVT PLEADER SR: 548: DM:2012:JANUARY:20:: Order made in W.P.(MD)No.3347 of 2011 Dated:- 05.01.2012 1P:7C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B092",
+   "court": "High Court of Kerala",
+   "caseNumberFromMetadata": "WP(C)/20216/2023",
+   "cnrFromMetadata": "KLHC010442232023",
+   "judgmentDate": "2025-03-19",
+   "documentLength": 1615,
+   "citationStoredOnThisRow": "2025:KER:23206",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "2025:KER:23206 IN THE HIGH COURT OF KERALA AT ERNAKULAM PRESENT THE HONOURABLE MR.JUSTICE C.S.DIAS WEDNESDAY, THE 19TH DAY OF MARCH 2025 / 28TH PHALGUNA, 1946 WP(C)"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2025:KER:23203",
+     "timesPrinted": 2
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B093",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/13580/2011",
+   "cnrFromMetadata": "HCMD011490402011",
+   "judgmentDate": "2011-12-07",
+   "documentLength": 2772,
+   "citationStoredOnThisRow": "2011:DECEMBER:16",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " To The Senior Post Master, Head Post Office,(Near Sethupathy High School), Simmakkal, Madurai. 1CC TO MR. S. YASER ARAFATH, ADVOCATE, SR: 42735: DM::2011:DECEMBER:16:: W.P(MD)No.13580 of 2011 07.12.2011 2P:3C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B094",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/4259/2023",
+   "cnrFromMetadata": "GAHC010144222023",
+   "judgmentDate": "2025-09-15",
+   "documentLength": 66047,
+   "citationStoredOnThisRow": "2025:GAU-AS:12653",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/55 GAHC010128532023 2025:GAU-AS:12653 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/3422/2023 THE STATE TRANSPORT WORKERS ASSOCIAT"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B095",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "APEAL/555/2020",
+   "cnrFromMetadata": "HCBM030250202020",
+   "judgmentDate": "2025-09-12",
+   "documentLength": 18676,
+   "citationStoredOnThisRow": "2025:BHC-AUG:24733-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "the learned trial Judge in Sessions Case No. 4 of 2015, vide judgment and order dated 17.02.2020. The appellant was initially charged for the offence 2025:BHC-AUG:24733-DB ..2.. Appeal 555-2020.odt punishable under Sections 302, 498-A, 323 and 504 of the Indian Penal Code. However, the learned trial Judge has acquitted "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B096",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/7444/2024",
+   "cnrFromMetadata": "HCBM030265942024",
+   "judgmentDate": "2024-07-18",
+   "documentLength": 2173,
+   "citationStoredOnThisRow": "2024:BHC-AUG:14656-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "llowing the decision in the matter of Apoorva D/o Vinay Nichale Vs. Divisional Caste Certificate Scrutiny Committee No. 1 and others reported in 2010 2024:BHC-AUG:14656-DB 2 wp 7444.24 (6) Mh. L. J. 401, sister of the petitioner was directed to be issued with the certificate of validity subject to final outcome of the m"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B097",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/4345/2023",
+   "cnrFromMetadata": "GAHC010166382023",
+   "judgmentDate": "2025-08-12",
+   "documentLength": 106742,
+   "citationStoredOnThisRow": "2025:GAU-AS:10770",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/119 GAHC010079242025 2025:GAU-AS:10770 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/2303/2025 AMARENDRA SARMA S/O- LATE PRAFULLA S"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B098",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/5242/2025",
+   "cnrFromMetadata": "HCBM030102742025",
+   "judgmentDate": "2025-05-06",
+   "documentLength": 2914,
+   "citationStoredOnThisRow": "2025:BHC-AUG:13490",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "is Court to order dated 24.10.2024 passed in group of matters in Civil Application No.11332 of 2024 in First Appeal No.1444 of 2023 and contends that 2025:BHC-AUG:13490 908-ca-5243-2025.odt (2) in appeals arising out of same acquisition, this Court permitted withdrawal of 75% of compensation amount. Out of that, 50% "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B099",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/3407/2019",
+   "cnrFromMetadata": "GAHC010216482019",
+   "judgmentDate": "2026-04-06",
+   "documentLength": 19666,
+   "citationStoredOnThisRow": "2026:GAU-AS:5131",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/25 GAHC010130642025 2026:GAU-AS:5131 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/1842/2017 BANA LATA DEVI and 6 ORS VERSU"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B100",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/12969/2024",
+   "cnrFromMetadata": "HCBM030025732024",
+   "judgmentDate": "2025-04-01",
+   "documentLength": 1871,
+   "citationStoredOnThisRow": "2025:BHC-AUG:9893",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "section 11 of the Land Acquisition Act, which is covered by judgment in case of State Of Mah.Thr.Sub.Divisional vs Kailash Shiva Rangari, reported in 2025:BHC-AUG:9893 2 ca 12969.24+.odt 2016 (3) Mh.L.J. 457. He further invites attention of this Court to the reasons as stated in the application. Perusal of the reaso"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B101",
+   "court": "High Court of Uttarakhand",
+   "caseNumberFromMetadata": "WPMS/290/2026",
+   "cnrFromMetadata": "UKHC010018242026",
+   "judgmentDate": "2026-08-04",
+   "documentLength": 1838,
+   "citationStoredOnThisRow": "2026:UHC:6882",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "UKHC010020112026 2026:UHC:6882 SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS WPMS/317/2026",
+    "for the petitioner submits that identical issue was decided by this Court in Writ Petition (MS) No. 7 of 2025, therefore, these writ UKHC010020112026 2026:UHC:6882 petitions also deserve to be decided in terms of that judgment. 4. The writ petitions are, accordingly, decided in terms of judgment dated 08.10.2025"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B102",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPC/3822/2026",
+   "cnrFromMetadata": "CGHC010270432026",
+   "judgmentDate": "2026-07-22",
+   "documentLength": 16866,
+   "citationStoredOnThisRow": "2026:CGHC:31405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010281482026 2026:CGHC:31405 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPC No. 3804 of 2026 Shailendra Parihar S/o Ravendra Singh Parihar Aged About 40 Years R/o House No.10/49"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B103",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/2704/2017",
+   "cnrFromMetadata": "GAHC010128612017",
+   "judgmentDate": "2025-03-25",
+   "documentLength": 19687,
+   "citationStoredOnThisRow": "2025:GAU-AS:3537",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/16 GAHC010225652014 2025:GAU-AS:3537 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/2639/2014 SMT. BULBULI BORGOHAIN D/O LT. BIREN"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B104",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/11226/2022",
+   "cnrFromMetadata": "HCBM010361202022",
+   "judgmentDate": "2024-03-01",
+   "documentLength": 2538,
+   "citationStoredOnThisRow": "2024:BHC-AS:10089-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " covered by the recent judgment of this Court in Godrej Industries Ltd. V/s. The Assistant Commissioner of Income Tax, Circle 14(1)(2), Gauri Gaekwad 2024:BHC-AS:10089-DB 2/2 AS 946& Ors.WP-9956-2022.doc Mumbai and Ors.1 Counsel for respondents agree. 2 Therefore, impugned orders passed under Section 148A(d) of the Inc"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B105",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "CRA/1901/2024",
+   "cnrFromMetadata": "CGHC010357452024",
+   "judgmentDate": "2026-06-30",
+   "documentLength": 108176,
+   "citationStoredOnThisRow": "2026:CGHC:26821-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010348422024 2026:CGHC:26821-DB AFR HIGH COURT OF CHHATTISGARH AT BILASPUR CRA No. 1883 of 2024 Dorilal S/o Badan Singh Aged About 35 Years R/o House No. 183, Vishan Ganj, Mathura, "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2026:CGHC:26822-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26823-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26825-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26824-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B106",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/1840/2012",
+   "cnrFromMetadata": "HCBM030402002011",
+   "judgmentDate": "2025-08-06",
+   "documentLength": 2359,
+   "citationStoredOnThisRow": "2025:BHC-AUG:21244",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "R. Surwase, Advocate for the Applicant. Mr. R. B. Dhaware, AGP for Respondent/State. WITH CIVIL APPLICATION NO. 1842 OF 2012 IN FAST/3200/2011 1 of 3 2025:BHC-AUG:21244 2 32-CA 1840-2025+.odt Executive Engineer, Minor Irrigation Division, Latur under Godawari Marathwada Irrigation Development Corporation, Aurangabad "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B107",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "APPLN/916/2026",
+   "cnrFromMetadata": "HCBM030092992026",
+   "judgmentDate": "2026-04-30",
+   "documentLength": 5137,
+   "citationStoredOnThisRow": "2026:BHC-AUG:20803-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "vidence. The prosecution has failed to prove motive. Extra-judicial confession is wrongly relied upon by the trial Court, though all the witnesses to 2026:BHC-AUG:20803-DB 2 916.2026APPLN.odt whom the alleged extra judicial confession is given have not supported the prosecution case. Applicant has completed 21 years of "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B108",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/3611/2024",
+   "cnrFromMetadata": "GAHC010246602024",
+   "judgmentDate": "2025-04-03",
+   "documentLength": 1518,
+   "citationStoredOnThisRow": "2025:GAU-AS:8020",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010174602016 2025:GAU-AS:8020 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) I.A.(Civil)/3611/2024 M/S COTTON COUNTY RETAIL LTD. FORMERLY KN"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B109",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/2041/2024",
+   "cnrFromMetadata": "GAHC010026302024",
+   "judgmentDate": "2025-02-18",
+   "documentLength": 868,
+   "citationStoredOnThisRow": "2025:GAU-AS:1804",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010023532024 2025:GAU-AS:1804- DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/2041/2024 COMMISSIONER OF CUSTOMS (P"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B110",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/32236/2018",
+   "cnrFromMetadata": "PHHC011350012018",
+   "judgmentDate": "2024-01-08",
+   "documentLength": 1880,
+   "citationStoredOnThisRow": "2024:PHHC:001381",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "CWP-11036-2018 2024:PHHC:001381 CWP-32236-2018 2024:PHHC:001396 CWP-37983-2018 2024:PHHC:001398 CWP-30452-2019 2024:PHHC:001402 CWP-16149-2018 2024:PHHC:001404 IN THE HIGH COURT OF ",
+    "tate of Haryana and others …Respondent(s) With PAYAL 2024.01.11 10:17 I attest to the accuracy and authenticity of this order/judgment CWP-11036-2018 2024:PHHC:001381 CWP-32236-2018 2024:PHHC:001396 CWP-37983-2018 2024:PHHC:001398 CWP-30452-2019 2024:PHHC:001402 CWP-16149-2018 2024:PHHC:001404 210/5 CWP-16149-2018 "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:001396",
+     "timesPrinted": 2
+    },
+    {
+     "citation": "2024:PHHC:001398",
+     "timesPrinted": 2
+    },
+    {
+     "citation": "2024:PHHC:001402",
+     "timesPrinted": 2
+    },
+    {
+     "citation": "2024:PHHC:001404",
+     "timesPrinted": 2
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B111",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "APPLN/4168/2024",
+   "cnrFromMetadata": "HCBM030390812024",
+   "judgmentDate": "2024-10-07",
+   "documentLength": 2311,
+   "citationStoredOnThisRow": "2024:BHC-AUG:24328",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ND OTHERS. …. Mr L. V. Sangit, Advocate for Applicant Mr S. J. Salunke, Advocate for Respondent No.1 Mr P. K. Lakhotiya, A.P.P. for Respondents/State 2024:BHC-AUG:24328 4144.24crapln etc (2) AND CRIMINAL APPLICATION NO. 4150 OF 2024 IN ABA/1634/2024 BHIVAJI DAULATRAO DOIFODE VERSUS SHRIKANT PANDITRAO PATIL AND OTHERS"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B112",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CMA/1566/2022",
+   "cnrFromMetadata": "HCMA010903342022",
+   "judgmentDate": "2024-10-15",
+   "documentLength": 2793,
+   "citationStoredOnThisRow": "2024:MHC:1405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".2024, the Division Bench of this Court, after referring to the judgment of S.Menaka v. K.S.K. Nepolian Socraties and other cases (Batch) reported in 2024:MHC:1405 (Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held that as against the interlocutory applications/ interim maintenance, only Ci"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B113",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "A482/297/2026",
+   "cnrFromMetadata": "UPHC020026072026",
+   "judgmentDate": "2026-02-18",
+   "documentLength": 1591,
+   "citationStoredOnThisRow": "2025:AHC-LKO:14840",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "erms of the Rules framed under the Gangsters Act. 3. Reliance is placed upon the judgment of this Court in the case of Nisha v. State of U.P. & Anr.; 2025:AHC-LKO:14840. 4. Perusal of the gang chart clearly reveals that there was no application of mind and signatures were recorded on different dates. 5. Following the"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B114",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/2265/2025",
+   "cnrFromMetadata": "HCBM030037922025",
+   "judgmentDate": "2025-02-28",
+   "documentLength": 3054,
+   "citationStoredOnThisRow": "2025:BHC-AUG:6086",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " the said Civil Application were not removed. Now, therefore, the present Civil Application is filed challenging order dated 22.09.2021 passed by the 2025:BHC-AUG:6086 2 923-ca-2265-2025 learned Registrar(Judicial) refusing registration of Civil Application Stamp No.6630 of 2020. 3. For the reasons mentioned in the "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B115",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/4163/2025",
+   "cnrFromMetadata": "HCBM030140152025",
+   "judgmentDate": "2025-04-17",
+   "documentLength": 3443,
+   "citationStoredOnThisRow": "2025:BHC-AUG:11285",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "algaon And Anr. … Mr. Madhav R. Jadhav, Advocate h/f Mr. Abhijit S. More, Advocate for Applicants Mr. S. S. Dande, AGP for Respondent No. 1 … AND 1/4 2025:BHC-AUG:11285 CA - Sr. Nos. 7 to 16 10 CIVIL APPLICATION NO. 4152 OF 2025 IN FA/762/2025 Govinda Fulchand Teli Versus The Collector, Through Special Land Acquisiti"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B116",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/4707/2018",
+   "cnrFromMetadata": "CGHC010211452018",
+   "judgmentDate": "2026-08-12",
+   "documentLength": 53635,
+   "citationStoredOnThisRow": "2026:CGHC:35894",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010212242018 2026:CGHC:35894 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 4706 of 2018 1 - Rakesh Kumar Tripathi S/o Tamshiromani Tripathi, Aged About 39 Years R/o Ward No"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B117",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/24996/2021",
+   "cnrFromMetadata": "PHHC011146262021",
+   "judgmentDate": "2023-12-18",
+   "documentLength": 22722,
+   "citationStoredOnThisRow": "2023:PHHC:164674",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ith connected petitions 1 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.248 Date of Decision: 18.12.2023 1) CWP No.23467 of 2021 (O&M) 2023:PHHC:164674 Reetu Devi and others .... Petitioners Versus State of Haryana and others ... Respondents 2) CWP-23733-2021 2023:PHHC:164678 Sunil Kumar .... Petitio"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:PHHC:164678",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2023:PHHC:164679",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2023:PHHC:164682",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2023:PHHC:164684",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B118",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WRIC/8297/2025",
+   "cnrFromMetadata": "UPHC020656222025",
+   "judgmentDate": "2025-08-28",
+   "documentLength": 2925,
+   "citationStoredOnThisRow": "2025:AHC-LKO:32272",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ko. And 3 Others .....Respondent(s) 5. This Court in Writ-C No.718 of 2025:Anil Kumar Vs. State of U.P. and others, and connected matters reported in 2025:AHC-LKO:32272- DB, has observed that where there is a criminal case that is pending against a person, the Character Certificate issued by the Superintendent of Pol"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B119",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/1924/2021",
+   "cnrFromMetadata": "GAHC010037012021",
+   "judgmentDate": "2024-08-18",
+   "documentLength": 18077,
+   "citationStoredOnThisRow": "2024:GAU-AS:8170",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/13 GAHC010047172021 2024:GAU-AS:8170 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No: WP(C)/1924/2021 RAM PRABESH MAHATO AND 11 ORS S/O- SHR"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B120",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/379/2023",
+   "cnrFromMetadata": "GAHC010009902023",
+   "judgmentDate": "2025-06-03",
+   "documentLength": 5444,
+   "citationStoredOnThisRow": "2025:GAU-AS:7318",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/5 GAHC010199992022 2025:GAU-AS:7318 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/379/2023 JINTU RONGHANG S/O- BOLI RONGHANG R/O"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B121",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CRL OP(MD)/11615/2011",
+   "cnrFromMetadata": "HCMD011225942011",
+   "judgmentDate": "2011-12-20",
+   "documentLength": 2880,
+   "citationStoredOnThisRow": "2011:DECEMBER:21",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " OF MADRAS HIGH COURT MADURAI 4 THE INSPECTOR OF POLICE DISTRICT CRIME BRANCH P.S., DINDIGUL DISTRICT. 1. CC to M/S. A.RAJA Advocate SR.No.44751: DM::2011:DECEMBER:21:: ORDER IN CRL OP(MD) No.11615 of 2011 Date :20/12/2011 2P;6C::https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B122",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/3623/2025",
+   "cnrFromMetadata": "HCBM030040552025",
+   "judgmentDate": "2025-03-19",
+   "documentLength": 2937,
+   "citationStoredOnThisRow": "2025:BHC-AUG:8380-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ND OTHERS VERSUS THE STATE OF MAHARASHTRA THROUGH ITS SECRETARY AND OTHERS AND 80 WRIT PETITION NO. 1419 OF 2025 MADHAV BABURAO RAJGIRWAD Page 1 of 3 2025:BHC-AUG:8380-DB 917wp3623-25grup VERSUS THE STATE OF MAHARASHTRA THROUGH ITS SECRETARY AND OTHERS AND 81 WRIT PETITION NO. 1425 OF 2025 MAROTI GANESHRAO BAKWAD VERSU"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B123",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/4626/2017",
+   "cnrFromMetadata": "GAHC010136332017",
+   "judgmentDate": "2026-06-22",
+   "documentLength": 51004,
+   "citationStoredOnThisRow": "2026:GAU-AS:9326",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/45 GAHC010058362017 2026:GAU-AS:9326 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/7914/2017 DILIP KARMAKAR and 25 ORS. ASSTT TEA"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B124",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/5627/2023",
+   "cnrFromMetadata": "HCBM030179872023",
+   "judgmentDate": "2025-03-19",
+   "documentLength": 1116,
+   "citationStoredOnThisRow": "2025:BHC-AUG:9299",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " Executive Engineer, Minor Irrigation Division, Osmanabad and Ors. VERSUS Laxman Dattu Mohite ….. CORAM : ROHIT W. JOSHI, J. DATED : 28TH MARCH, 2025 2025:BHC-AUG:9299 2 ca-5627-2023 PER COURT :- . Not on board. Upon being mentioned, taken on board. 2. Time for depositing the amount is extended by period of one week"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B125",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CW/47/2005",
+   "cnrFromMetadata": "RJHC020422052004",
+   "judgmentDate": "2023-08-31",
+   "documentLength": 4967,
+   "citationStoredOnThisRow": "2023:RJ-JP:21226",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "an, Kota. 4. Director of Pension And Pensioners Welfare Rajasthan, Pension Bhawan, Vidhyut Marg, Jyoti Nagar, Jaipur. ----Respondents <\\,,.%ael<:*r. [2023:RJ-JP:21226] -9(2:OQ) '%, * %ed,Cz &$> a*.,s..=,.3* *q&V&9 For Petitioner(s) : Mr. Sanjay Mehrishi For Respondent(s) : Dr. Vivek Tyagi-Dy.G.C. HON'BLE MR. JUSTIC"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:EU-JP:21226",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B126",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CP/549/2024",
+   "cnrFromMetadata": "HCBM030229782024",
+   "judgmentDate": "2024-09-18",
+   "documentLength": 5049,
+   "citationStoredOnThisRow": "2024:BHC-AUG:21950",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    " Shri. Deelip Swami & Ors WITH CONT. PETITION NO. 546 OF 2024 IN WP/3113/2022 Devidas S/o Masu Pure VERSUS Shri. Deelip Swami & Ors Umesh PAGE 1 of 6 2024:BHC-AUG:21950 9 to 11.odt WITH CONT. PETITION NO. 549 OF 2024 IN WP/3111/2022 Sakhahari S/o Devrao Chopade Died VERSUS Shri. Deelip Swami & Ors WITH CONT. PETITION"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B127",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/5022/2023",
+   "cnrFromMetadata": "HCBM030032922023",
+   "judgmentDate": "2025-04-04",
+   "documentLength": 1717,
+   "citationStoredOnThisRow": "2025:BHC-AUG:10203",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "done the delay, I am allowing the application for condonation of delay in view of the order relied upon by the learned counsel for the applicant. 1/2 2025:BHC-AUG:10203 944 CA5022 2023 3. However, having regard to the inordinate delay in filing the appeal, it will be appropriate to impose cost of Rs. 10,000/- to be p"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B128",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/67/2023",
+   "cnrFromMetadata": "GAHC020001552023",
+   "judgmentDate": "2025-11-02",
+   "documentLength": 95339,
+   "citationStoredOnThisRow": "2025:GAU-NL:530",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/98 GAHC020000192025 2025:GAU-NL:530 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) KOHIMA BENCH Case No. : WP(C)/7/2025 SMTI. KETHONO SAVINO D/O L"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B129",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/6665/2024",
+   "cnrFromMetadata": "HCBM010232772024",
+   "judgmentDate": "2024-05-08",
+   "documentLength": 6864,
+   "citationStoredOnThisRow": "2024:BHC-AS:21645-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "pondents WITH WRIT PETITION NO.6660 OF 2024 Dnyanoday Shikshanak Mandal & Anr. ..Petitioners Vs. The State of Maharashtra & Ors. ..Respondents 1 of 5 2024:BHC-AS:21645-DB Sayyed 17-WP.6564.2024.doc WITH WRIT PETITION NO.6669 OF 2024 Shriram Dnyanpeeth Vashi Throught its President & Anr. ..Petitioners Vs. The State of M"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B130",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CWP/2485/2020",
+   "cnrFromMetadata": "PHHC010095952020",
+   "judgmentDate": "2024-02-16",
+   "documentLength": 24060,
+   "citationStoredOnThisRow": "2024:PHHC:024938",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "-1993 along with connected petitions 1 IN THE HIGH COURT OF PUNJAB AND HARYANA AT CHANDIGARH Sr. No.201 Date of Decision: 16.02.2024 1) CWP-6452-1993 2024:PHHC:024938 Ram Phal Singh and others .... Petitioners Versus State of Haryana and another ... Respondents 2) CWP-19113-1997 2024:PHHC:024939 Rajbir Singh Kuhar "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:024939",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024941",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024944",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2024:PHHC:024945",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B131",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "AB/820/2026",
+   "cnrFromMetadata": "GAHC010078062026",
+   "judgmentDate": "2026-05-14",
+   "documentLength": 991,
+   "citationStoredOnThisRow": "2026:GAU-AS:6744",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010087792026 2026:GAU-AS:6744 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) AB/820/2026 PARESH BORAH S/O SONARAM BORAH R/O BALI CHAPORI GAO"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B132",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/1231/2024",
+   "cnrFromMetadata": "GAHC010070672024",
+   "judgmentDate": "2025-03-04",
+   "documentLength": 1043,
+   "citationStoredOnThisRow": "2025:GAU-AS:2369",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010070662024 2025:GAU-AS:2369 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/1231/2024 NUR NEHAR KHATUN W/O LATE SAHA"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B133",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/68/2026",
+   "cnrFromMetadata": "GAHC020002672026",
+   "judgmentDate": "2026-06-22",
+   "documentLength": 1980,
+   "citationStoredOnThisRow": "2026:GAU-NL:377-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC020007792025 2026:GAU-NL:377-DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) KOHIMA BENCH Case No. : I.A.(Civil)/68/2026 THE STATE OF NAGALA"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B134",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/1348/2025",
+   "cnrFromMetadata": "UPHC020916982025",
+   "judgmentDate": "2025-11-26",
+   "documentLength": 2819,
+   "citationStoredOnThisRow": "2024:AHC:31108-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "etitioner has relied on the coordinate Bench judgment of this Court in M/s Shubham Steel Traders Vs. State of U.P. and Another, Neutral Citation No.- 2024:AHC:31108-DB. The relevant extract of the said judgement is provided below:- \"8. Thus relying on Coordinate Bench decision of this Court in M/S Videocon D2H Limit"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2014:AHC:60699-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B135",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "CO/2/2011",
+   "cnrFromMetadata": "GAHC010161002011",
+   "judgmentDate": "2025-06-26",
+   "documentLength": 15590,
+   "citationStoredOnThisRow": "2025:GAU-AS:8775",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/14 GAHC010106932010 2025:GAU-AS:8775- DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : RFA/29/2010 ON THE DEATH OF REDWANUL HOQUE LASKA"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B136",
+   "court": "High Court of Punjab and Haryana",
+   "caseNumberFromMetadata": "CRM-M/34281/2024",
+   "cnrFromMetadata": "PHHC010910862024",
+   "judgmentDate": "2024-08-20",
+   "documentLength": 5416,
+   "citationStoredOnThisRow": "2024:PHHC:106610",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "fficers of DRI Unit on 08.09.2021. On knocking the main Sarita Rani 2024.08.20 06:47 I attest to the accuracy of this document/order CRM-M-35233-2024 2024:PHHC:106610 CRM-M-34281-2024 2024:PHHC:106612 - 2 - door, one person, who introduced himself as Shivam Singh, came out and informed about the purpose of visit wi",
+    "by complainant – DRI, only 01 had been examined so far. Sarita Rani 2024.08.20 06:47 I attest to the accuracy of this document/order CRM-M-35233-2024 2024:PHHC:106610 CRM-M-34281-2024 2024:PHHC:106612 - 3 - 7. The custody cer$ficates of both the pe$$oners would indicate that both of them are in custody since 09.09."
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2024:PHHC:106612",
+     "timesPrinted": 2
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B137",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "APEAL/99/2026",
+   "cnrFromMetadata": "HCBM030056272026",
+   "judgmentDate": "2026-03-26",
+   "documentLength": 13574,
+   "citationStoredOnThisRow": "2026:BHC-AUG:16447-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "F 2026 IN APEAL/139/2026 Ajay Nanasaheb Mhaske And Another VERSUS The State Of Maharashtra And Another ... Advocate for Applicants : Mr. Ghanekar N.S.2026:BHC-AUG:16447-DB 2 139.2026.odt APP for Respondent/State : Mr.M.A. Aher Advocate for Respondent no.2 : Mr. V.D. Sapkal, Sr. Advocate i/b Mr.A.D. Khedkar WITH CRIMINAL"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B138",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "CMA/949/2020",
+   "cnrFromMetadata": "HCMA010392842020",
+   "judgmentDate": "2024-10-14",
+   "documentLength": 2846,
+   "citationStoredOnThisRow": "2024:MHC:1405",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".2024, the Division Bench of this Court, after referring to the judgment of S.Menaka v. K.S.K. Nepolian Socraties and other cases (Batch) reported in 2024:MHC:1405 (Neutral Citation of Madras High Court) and 2024 Live Law (Mad) 126 held that as against the interlocutory applications/ interim maintenance, only Ci"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B139",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "FA/997/2006",
+   "cnrFromMetadata": "HCBM010346072005",
+   "judgmentDate": "2026-06-25",
+   "documentLength": 1684,
+   "citationStoredOnThisRow": "2026:BHC-AS:26098",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    ".Appellant/Applicant Versus Ramchandra Dinkar Govari ...Respondent AND (31) FIRST APPEAL NO.2062 OF 2006 The State of Maharashtra ...Appellant 1 of 2 2026:BHC-AS:26098 Sayyed Sr. Nos.27 to 31.doc Versus Manik Kana Kawale and Parshuram Kana Kawale Through their constituted Attorney Abid Kurbanhusain Daruwala ...Respo"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B140",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "CRA/1924/2024",
+   "cnrFromMetadata": "CGHC010370882024",
+   "judgmentDate": "2026-06-30",
+   "documentLength": 108176,
+   "citationStoredOnThisRow": "2026:CGHC:26821-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010348422024 2026:CGHC:26821-DB AFR HIGH COURT OF CHHATTISGARH AT BILASPUR CRA No. 1883 of 2024 Dorilal S/o Badan Singh Aged About 35 Years R/o House No. 183, Vishan Ganj, Mathura, "
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2026:CGHC:26822-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26823-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26825-DB",
+     "timesPrinted": 1
+    },
+    {
+     "citation": "2026:CGHC:26824-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B141",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "Cont.Cas(C)/311/2025",
+   "cnrFromMetadata": "GAHC010116302025",
+   "judgmentDate": "2026-04-06",
+   "documentLength": 2874,
+   "citationStoredOnThisRow": "2026:GAU-AS:5104",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010069312026 2026:GAU-AS:5104 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : Cont.Cas(C)/311/2025 PAWALI BORO W/O- LATE KUHIRAM B"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B142",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/12639/2024",
+   "cnrFromMetadata": "HCBM030402872024",
+   "judgmentDate": "2025-02-27",
+   "documentLength": 1730,
+   "citationStoredOnThisRow": "2025:BHC-AUG:5737",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "NGINEER, SEENA KOLEGAON PROJECT, PARANDA, DIST. OSMANABAD. VERSUS MADHUKAR BABURAO MISKIN AND ORS … Mr. Gulab Balbhim Rajale, Advocate for Applicant. 2025:BHC-AUG:5737 (2) 51-ca-12639-2024-stay.odt Mr. D. B. Bhange, AGP for Respondents-State. ... CORAM : S. G. CHAPALGAONKAR, J. DATED : 27th FEBRUARY, 2025. P.C.:- 1."
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B143",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/2912/2011",
+   "cnrFromMetadata": "HCMD011522112011",
+   "judgmentDate": "2011-06-13",
+   "documentLength": 2145,
+   "citationStoredOnThisRow": "2011:JUNE:27",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "t officer, Rajakkamangalam Palavilai, Kanyakumari District. 1CC TO THE SPL. GOVT PLEADER SR: 18524: 1CC TO MR. M. RAJARAJAN, ADVOCATE, SR: 181894: DM:2011:JUNE:27:: W.P.(MD) No.2912 of 2011 1P:8C:: 13.06.2011https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B144",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "CA/7810/2024",
+   "cnrFromMetadata": "HCBM030254972024",
+   "judgmentDate": "2024-08-23",
+   "documentLength": 600,
+   "citationStoredOnThisRow": "2024:BHC-AUG:19715-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "his Civil Application. 2. The Civil Application is disposed off as withdrawn. ( Y. G. KHOBRAGADE, J. ) ( RAVINDRA V. GHUGE, J. ) JPChavan Page 1 of 1 2024:BHC-AUG:19715-DB"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B145",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "FA/1242/2026",
+   "cnrFromMetadata": "HCBM030494012025",
+   "judgmentDate": "2026-05-05",
+   "documentLength": 1550,
+   "citationStoredOnThisRow": "2026:BHC-AUG:20269",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "quisi i n c fr m he a e f p ssessi n n view f ju gmen lai wn by ull ench in he ma er f a e f aharash ra Vs Kailash hiva angari [ ( m ) ], in eres is /2026:BHC-AUG:20269 payable fr m he a e f awar , heref re, pass f ll wing r er : (i) irs appeals are all we par ly (ii) he resp n en s/claiman s are en i le receive in e"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B146",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "AB/2887/2025",
+   "cnrFromMetadata": "GAHC010268942025",
+   "judgmentDate": "2026-01-05",
+   "documentLength": 3518,
+   "citationStoredOnThisRow": "2026:GAU-AS:172",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/4 GAHC010283422025 2026:GAU-AS:172 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : AB/2887/2025 AYUB KHAN CHAUDHURY AND ANR S/O LT SOLE"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B147",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/3242/2024",
+   "cnrFromMetadata": "GAHC010217032024",
+   "judgmentDate": "2026-06-08",
+   "documentLength": 2801,
+   "citationStoredOnThisRow": "2026:GAU-AS:8115-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010142362021 2026:GAU-AS:8115-DB THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : PIL/57/2021 CHIRIYAKHANA PATHA JYESTHO NAGARIK SANSH"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B148",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/5353/2025",
+   "cnrFromMetadata": "UPHC015346432025",
+   "judgmentDate": "2025-10-12",
+   "documentLength": 2762,
+   "citationStoredOnThisRow": "2025:AHC:179271-DB",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "rily, we have considered and dealt with the same in Writ Tax No. 3964 of 2025 (M/s Riya Construction vs State of U.P. & 3 Ors, Neutral Citation No. - 2025:AHC:179271-DB, dated 09.10.2025. 4. Facts being similar, writ petition is allowed and the impugned order is set aside, subject to the petitioner depositing Rs. 22,"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B149",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/431/2025",
+   "cnrFromMetadata": "GAHC010022552025",
+   "judgmentDate": "2026-05-26",
+   "documentLength": 3258,
+   "citationStoredOnThisRow": "2026:GAU-AS:7487",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/4 GAHC010022592025 2026:GAU-AS:7487 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No : I.A.(Civil)/431/2025 HELENA SAIKIA AND ORS W/O- LT MA"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B150",
+   "court": "High Court Of Chhattisgarh",
+   "caseNumberFromMetadata": "WPS/7712/2022",
+   "cnrFromMetadata": "CGHC010354172022",
+   "judgmentDate": "2026-07-06",
+   "documentLength": 2043,
+   "citationStoredOnThisRow": "2026:CGHC:27910",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "1 CGHC010265192022 2026:CGHC:27910 NAFR HIGH COURT OF CHHATTISGARH AT BILASPUR WPS No. 5704 of 2022 1 - Ramesh Kumar Yadav S/o Shri Ramdev Yadav Aged About 31 Years Presently Posted As"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B151",
+   "court": "Bombay High Court",
+   "caseNumberFromMetadata": "WP/13754/2025",
+   "cnrFromMetadata": "HCBM030440972025",
+   "judgmentDate": "2025-12-03",
+   "documentLength": 774,
+   "citationStoredOnThisRow": "2025:BHC-AUG:33650",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "infructuous, with liberty to the petitioner to file appeal, challenging the final order passed in Civil M.A.No.236/2024. [ARUN R. PEDNEKER] JUDGE DDC 2025:BHC-AUG:33650"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B152",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Crl.)/1132/2024",
+   "cnrFromMetadata": "GAHC010245282024",
+   "judgmentDate": "2024-12-01",
+   "documentLength": 1063,
+   "citationStoredOnThisRow": "2024:GAU-AS:12150",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/2 GAHC010194812024 2024:GAU-AS:12150 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Crl.)/1132/2024 NAYAN DEY S/O NARAYAN CHANDRA D"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B153",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "I.A.(Civil)/1841/2017",
+   "cnrFromMetadata": "GAHC010130872017",
+   "judgmentDate": "2026-04-06",
+   "documentLength": 19666,
+   "citationStoredOnThisRow": "2026:GAU-AS:5131",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/25 GAHC010130642025 2026:GAU-AS:5131 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : I.A.(Civil)/1842/2017 BANA LATA DEVI and 6 ORS VERSU"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B154",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/1117/2024",
+   "cnrFromMetadata": "GAHC010042492024",
+   "judgmentDate": "2025-06-11",
+   "documentLength": 30697,
+   "citationStoredOnThisRow": "2025:GAU-AS:7720",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/16 GAHC010042512024 2025:GAU-AS:7720 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Linked Case : WP(C)/1117/2024 CITY LINK EXPRESS ALU GODAM GALI "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B155",
+   "court": "High Court of Uttarakhand",
+   "caseNumberFromMetadata": "WPSS/2199/2026",
+   "cnrFromMetadata": "UKHC010145222026",
+   "judgmentDate": "2026-08-17",
+   "documentLength": 3137,
+   "citationStoredOnThisRow": "2026:UHC:7382",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "UKHC010145022026 2026:UHC:7382 SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS WPSS/2190/202",
+    "nd the benefit of the minimum of the pay scale to the post of Staff Nurse (now Nursing Officer) to the petitioner from the date when UKHC010145022026 2026:UHC:7382 the similarly situated persons were granted the benefit vide Government Order dated 02.07.2026. 5. Learned counsel for the petitioner relies upon Gov"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B156",
+   "court": "Allahabad High Court",
+   "caseNumberFromMetadata": "WTAX/1143/2025",
+   "cnrFromMetadata": "UPHC020825322025",
+   "judgmentDate": "2025-10-16",
+   "documentLength": 2720,
+   "citationStoredOnThisRow": "2024:AHC:31108",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "titioner has relied on the coordinate Bench judgment of this Court in M/s Shubham Steel Traders Vs. State of U.P. and Another; Neutral Citation No. - 2024:AHC:31108- DB). The relevant extract of the said judgement is provided below :- \"8. Thus relying on Coordinate Bench decision of this Court in M/S Videocon D2H"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2014:AHC:60699-DB",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B157",
+   "court": "High Court Of Rajasthan",
+   "caseNumberFromMetadata": "CW/14523/2017",
+   "cnrFromMetadata": "RJHC020571652017",
+   "judgmentDate": "2023-09-21",
+   "documentLength": 2805,
+   "citationStoredOnThisRow": "2023:RJ-JP:24252",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "[2023:RJ-JP:24252] .,Ft.%-f!~t+,, \";@*\"\", 2 HIGH COURT OF JUDI&%JURE FOR RAJASTHANiijt!,~ BENCH@^5 v JAIPUR ristr.;* s.'B.Civil Writ Petition No. 1452312017 Sunil Kuma"
+   ],
+   "otherCitationsPrintedInThisDocument": [
+    {
+     "citation": "2023:EU-JP:24252",
+     "timesPrinted": 1
+    }
+   ],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B158",
+   "court": "Madras High Court",
+   "caseNumberFromMetadata": "WP(MD)/13078/2011",
+   "cnrFromMetadata": "HCMD011485242011",
+   "judgmentDate": "2011-11-17",
+   "documentLength": 2809,
+   "citationStoredOnThisRow": "2011:NOVEMBER:18",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "ent, Construction and Maintenance,TVS Tolgate,Trichy - 20 1CC TO MR. N. ANANDAKUMAR, ADVOCATE, SR: 40293: 1CC TO THE SPL. GOVT PLEADER SR: 40349: DM::2011:NOVEMBER:18:: W.P.(MD).No.13078 of 2011 And M.P.(MD).No. 1 of 2011 1P:5C: 17.11.2011https://hcservices.ecourts.gov.in/hcservices/"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B159",
+   "court": "High Court of Uttarakhand",
+   "caseNumberFromMetadata": "CRLR/111/2016",
+   "cnrFromMetadata": "UKHC010006402016",
+   "judgmentDate": "2026-08-04",
+   "documentLength": 1547,
+   "citationStoredOnThisRow": "2026:UHC:6814",
+   "timesPrintedInDocument": 2,
+   "contextAroundEachPrinting": [
+    "UKHC010011912016 2026:UHC:6814 SL. No. Date Office Notes, reports, orders or proceedings or directions and Registrar’s order with Signatures COURT’S OR JUDGE’S ORDERS CRLR/129/2016",
+    "to the present revisions arise out of cross-cases lodged by the respective parties against each other, and in view of the settlement UKHC010011912016 2026:UHC:6814 arrived at between them, no surviving grievance remains for adjudication in these revisions. 4. In view of the submissions advanced by learned counse"
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  },
+  {
+   "token": "B160",
+   "court": "Gauhati High Court",
+   "caseNumberFromMetadata": "WP(C)/339/2022",
+   "cnrFromMetadata": "GAHC010226802021",
+   "judgmentDate": "2025-07-22",
+   "documentLength": 2477,
+   "citationStoredOnThisRow": "2025:GAU-AS:9454",
+   "timesPrintedInDocument": 1,
+   "contextAroundEachPrinting": [
+    "Page No.# 1/3 GAHC010051762022 2025:GAU-AS:9454 THE GAUHATI HIGH COURT (HIGH COURT OF ASSAM, NAGALAND, MIZORAM AND ARUNACHAL PRADESH) Case No. : WP(C)/339/2022 JALJALI RIVER BRIDGE COMMITTEE AND 2 "
+   ],
+   "otherCitationsPrintedInThisDocument": [],
+   "question": "Is the citation stored on this row this document’s OWN neutral citation? Answer OWN | ANOTHER_CASE | CITED_PRECEDENT | NOT_A_CITATION | CANNOT_TELL."
+  }
+ ]
+}

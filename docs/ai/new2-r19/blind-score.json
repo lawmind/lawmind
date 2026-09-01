@@ -1,0 +1,387 @@
+{
+ "artifact": "NEW2_R19_BLIND_SCORE",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T04:02:42.936Z",
+ "method": "the pack was read and answered with the rule, the R18 class and the proposed value absent; blind-key.json was joined only after blind-answers.jsonl was complete",
+ "items": 160,
+ "answerCounts": {
+  "OWN": 70,
+  "ANOTHER_CASE": 48,
+  "NOT_A_CITATION": 10,
+  "CANNOT_TELL": 12,
+  "CITED_PRECEDENT": 20
+ },
+ "matrix": {
+  "C7_REFUSAL_ONLY :: OWN": 15,
+  "C2a_FOREIGN_CNR_CORROBORATED :: ANOTHER_CASE": 23,
+  "C2a_FOREIGN_CNR_CORROBORATED :: OWN": 17,
+  "D1_MONTH_IN_SERIES_POSITION :: NOT_A_CITATION": 10,
+  "C2b_FOREIGN_CNR_UNCORROBORATED :: OWN": 12,
+  "R4b_TWO_SIDED_CASE_NUMBER :: ANOTHER_CASE": 12,
+  "C7_REFUSAL_ONLY :: CANNOT_TELL": 3,
+  "C3_CITED_PRECEDENT_LEAD :: CITED_PRECEDENT": 13,
+  "C5_OWN_IDENTITY_ABSENT :: OWN": 2,
+  "R4a_TWO_SIDED_CNR :: ANOTHER_CASE": 5,
+  "C6_COMPETING_CITATIONS :: CITED_PRECEDENT": 5,
+  "R2_SERIES_TOKEN_SCAN_CONFLICT :: OWN": 5,
+  "C1b_OWN_CASE_NUMBER_BESIDE_STORED :: OWN": 10,
+  "R5_NO_TWO_SIDED_PROOF :: ANOTHER_CASE": 6,
+  "C3_CITED_PRECEDENT_LEAD :: OWN": 7,
+  "C2a_FOREIGN_CNR_CORROBORATED :: CANNOT_TELL": 5,
+  "C5_OWN_IDENTITY_ABSENT :: CANNOT_TELL": 3,
+  "R5_NO_TWO_SIDED_PROOF :: OWN": 2,
+  "C7_REFUSAL_ONLY :: CITED_PRECEDENT": 2,
+  "C2b_FOREIGN_CNR_UNCORROBORATED :: ANOTHER_CASE": 2,
+  "C2b_FOREIGN_CNR_UNCORROBORATED :: CANNOT_TELL": 1
+ },
+ "byRule": {
+  "C7_REFUSAL_ONLY": {
+   "agree": 15,
+   "falseDestructive": 0,
+   "untestable": 3,
+   "recallLoss": 2,
+   "n": 20
+  },
+  "C2a_FOREIGN_CNR_CORROBORATED": {
+   "agree": 23,
+   "falseDestructive": 17,
+   "untestable": 5,
+   "recallLoss": 0,
+   "n": 45
+  },
+  "D1_MONTH_IN_SERIES_POSITION": {
+   "agree": 10,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 10
+  },
+  "C2b_FOREIGN_CNR_UNCORROBORATED": {
+   "agree": 2,
+   "falseDestructive": 12,
+   "untestable": 1,
+   "recallLoss": 0,
+   "n": 15
+  },
+  "R4b_TWO_SIDED_CASE_NUMBER": {
+   "agree": 12,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 12
+  },
+  "C3_CITED_PRECEDENT_LEAD": {
+   "agree": 13,
+   "falseDestructive": 7,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 20
+  },
+  "C5_OWN_IDENTITY_ABSENT": {
+   "agree": 2,
+   "falseDestructive": 0,
+   "untestable": 3,
+   "recallLoss": 0,
+   "n": 5
+  },
+  "R4a_TWO_SIDED_CNR": {
+   "agree": 5,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 5
+  },
+  "C6_COMPETING_CITATIONS": {
+   "agree": 0,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 5,
+   "n": 5
+  },
+  "R2_SERIES_TOKEN_SCAN_CONFLICT": {
+   "agree": 5,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 5
+  },
+  "C1b_OWN_CASE_NUMBER_BESIDE_STORED": {
+   "agree": 10,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 0,
+   "n": 10
+  },
+  "R5_NO_TWO_SIDED_PROOF": {
+   "agree": 2,
+   "falseDestructive": 0,
+   "untestable": 0,
+   "recallLoss": 6,
+   "n": 8
+  }
+ },
+ "FALSE_NULL": 36,
+ "FALSE_REPLACE": 0,
+ "AMBIGUOUS": {
+  "C7_REFUSAL_ONLY": 3,
+  "C2a_FOREIGN_CNR_CORROBORATED": 5,
+  "C5_OWN_IDENTITY_ABSENT": 3,
+  "C2b_FOREIGN_CNR_UNCORROBORATED": 1
+ },
+ "UNTESTABLE": 12,
+ "falseDestructiveRows": [
+  {
+   "token": "B003",
+   "judgmentId": "175b6f8f-e569-47e7-868c-38c07dd8e7d4",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "header CNR differs but the body's stated Case No. is Cont.Cas(C)/576/2025, which is this row"
+  },
+  {
+   "token": "B005",
+   "judgmentId": "7b8a5a4b-c8df-4c9b-bbb3-f8237d5490ee",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. I.A.(Civil)/1711/2025 matches this row"
+  },
+  {
+   "token": "B009",
+   "judgmentId": "a2287244-bb28-4030-9da7-70842bc067ce",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Crl.Pet./557/2024 matches this row"
+  },
+  {
+   "token": "B012",
+   "judgmentId": "1343e27e-89a3-4109-8122-a40224eef2af",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body WP(C) No. 630(AP) of 2023 matches this row"
+  },
+  {
+   "token": "B018",
+   "judgmentId": "726fa254-11e3-4f62-83c6-ac3a7813645b",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case : Crl.M.C./775/2014 matches this row"
+  },
+  {
+   "token": "B022",
+   "judgmentId": "eba1f15e-e640-460e-af0a-04221fc4977a",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case : I.A.(Civil)/3029/2024 matches this row"
+  },
+  {
+   "token": "B034",
+   "judgmentId": "5146c8e8-631e-49c2-a7a5-723b146d35ef",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "page stamp carries the document's own file name 903sa206.94.odt, the second appeal this civil application sits in"
+  },
+  {
+   "token": "B039",
+   "judgmentId": "eb0154d9-47ee-44ba-9f7a-4636d11a7134",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No.: WP(C)/5416/2025 matches this row"
+  },
+  {
+   "token": "B048",
+   "judgmentId": "6ba823fc-7450-469b-aabc-bc05ae7d5491",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Crl.)/628/2024 In Crl.Pet./312/2024 matches this row"
+  },
+  {
+   "token": "B051",
+   "judgmentId": "1a54aa23-8665-4508-8701-16ff21d7a7fc",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : WP(C)/3734/2016 matches this row"
+  },
+  {
+   "token": "B065",
+   "judgmentId": "8909656a-491d-462a-bc90-25ae2553411e",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body I.A.(Crl.)/430/2025 matches this row"
+  },
+  {
+   "token": "B067",
+   "judgmentId": "a83d102b-d1f0-40dc-8aec-00e0b71efc64",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : WP(C)/6015/2019 matches this row"
+  },
+  {
+   "token": "B070",
+   "judgmentId": "a5f9eb7b-a82b-4911-a863-aaafffbb8396",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "'Both these appeals arise out of the same judgment' — CRLA 69/2002 and this row's CRLA/72/2002 under one common judgment and one citation"
+  },
+  {
+   "token": "B079",
+   "judgmentId": "f4c3bef5-deda-4a0f-833f-41929847f35e",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Civil)/768/2024 matches this row"
+  },
+  {
+   "token": "B080",
+   "judgmentId": "6ec444a6-ce88-4314-9602-f95815fe6925",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : WP(C)/5066/2016 matches this row"
+  },
+  {
+   "token": "B083",
+   "judgmentId": "af9d7412-1ad0-41c4-97cf-1dd369a32689",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "order sheet names WPSS No.1605, this row's own case, immediately after the stamp"
+  },
+  {
+   "token": "B086",
+   "judgmentId": "41c52ea9-0d39-4edd-b327-71df409427e3",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Crl.)/167/2025 matches this row"
+  },
+  {
+   "token": "B090",
+   "judgmentId": "e09c4793-c4fa-402b-aca5-3a8aa89e78b5",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "the citing phrase belongs to a case reported in 2016 (3) Mh.L.J. 457; the 2025 neutral citation between them is this document's side stamp, carried with its file name ca 12969.24+.odt"
+  },
+  {
+   "token": "B096",
+   "judgmentId": "80e95523-a6e3-400c-b45d-a38d1873eae3",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "the citing phrase introduces a case reported at 2010 (6) Mh.L.J. 401; the neutral citation interleaved between them is this document's side stamp, printed with wp 7444.24 — this row"
+  },
+  {
+   "token": "B100",
+   "judgmentId": "73f16143-409f-4432-a950-1f16884ab49b",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "the citing phrase belongs to a case reported at 2016 (3) Mh.L.J. 457; the neutral citation between them is the side stamp, printed with ca 12969.24+.odt — this row"
+  },
+  {
+   "token": "B107",
+   "judgmentId": "893cf8c2-47d0-46b9-977c-81590a3d6107",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "stamp file 916.2026APPLN.odt is this row's own case"
+  },
+  {
+   "token": "B108",
+   "judgmentId": "44787c76-15bb-4284-a89d-a5cdcd588a0a",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body I.A.(Civil)/3611/2024 matches this row"
+  },
+  {
+   "token": "B109",
+   "judgmentId": "4689b795-1b23-47c0-b60b-03f2e8d5f271",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Civil)/2041/2024 matches this row; the document prints the citation with a -DB suffix"
+  },
+  {
+   "token": "B119",
+   "judgmentId": "e536cc64-89ff-428a-b746-a02d9af51c01",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No: WP(C)/1924/2021 matches this row"
+  },
+  {
+   "token": "B120",
+   "judgmentId": "6d46b3c9-cf6d-4571-94a6-0084efbfb162",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : WP(C)/379/2023 matches this row"
+  },
+  {
+   "token": "B127",
+   "judgmentId": "acb50f18-432a-40e9-9d43-193247b8bb62",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "stamp reads 944 CA5022 2023, this row's own case"
+  },
+  {
+   "token": "B131",
+   "judgmentId": "57629e89-929f-4a09-a208-57fc30b835d8",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body AB/820/2026 matches this row"
+  },
+  {
+   "token": "B132",
+   "judgmentId": "94ba6401-5444-4cb4-9b48-c71fa2346b7a",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Civil)/1231/2024 matches this row"
+  },
+  {
+   "token": "B133",
+   "judgmentId": "8141d4cb-08a6-4ba1-bb1c-8fe0c5412439",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Civil)/68/2026 matches this row"
+  },
+  {
+   "token": "B141",
+   "judgmentId": "f6ff7e05-df1b-4a82-89dd-710ab6003db8",
+   "rule": "C2b_FOREIGN_CNR_UNCORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : Cont.Cas(C)/311/2025 matches this row"
+  },
+  {
+   "token": "B146",
+   "judgmentId": "35417628-a962-426e-a1d8-0e7ed31d5bfe",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : AB/2887/2025 matches this row"
+  },
+  {
+   "token": "B149",
+   "judgmentId": "4fccbd69-9ae9-442e-b2b4-15721823307d",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No : I.A.(Civil)/431/2025 matches this row"
+  },
+  {
+   "token": "B151",
+   "judgmentId": "3483ac06-7e20-4b07-954d-7736e5b120cf",
+   "rule": "C3_CITED_PRECEDENT_LEAD",
+   "blindAnswer": "OWN",
+   "why": "page stamp at the foot of a one-page order, only citation"
+  },
+  {
+   "token": "B152",
+   "judgmentId": "b4a6a7b3-fcc7-4b45-8e1a-3802b3af96ba",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : I.A.(Crl.)/1132/2024 matches this row"
+  },
+  {
+   "token": "B154",
+   "judgmentId": "f9650f6f-7054-4f99-b9cc-d654b0db6bca",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "the header names this row's case explicitly as 'Linked Case : WP(C)/1117/2024' of the order it stamps"
+  },
+  {
+   "token": "B160",
+   "judgmentId": "42e05ce9-808a-4f51-98c1-6ce3ac49c36b",
+   "rule": "C2a_FOREIGN_CNR_CORROBORATED",
+   "blindAnswer": "OWN",
+   "why": "body Case No. : WP(C)/339/2022 matches this row"
+  }
+ ],
+ "EXISTING_CORRECTION_GATE": "FAIL"
+}

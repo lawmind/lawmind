@@ -1,0 +1,486 @@
+{
+ "artifact": "NEW2_R19_BLIND_KEY_ROUND_2",
+ "takenAt": "2026-09-01T04:04:52.498Z",
+ "key": [
+  {
+   "token": "C001",
+   "judgmentId": "e9810af2-eafc-4279-8834-b80ffb2f2746",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C002",
+   "judgmentId": "c6eee5b2-9916-4bc1-8847-6eca2fe47c7b",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C003",
+   "judgmentId": "ca61be8b-8bc2-4731-8542-466d540db036",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C004",
+   "judgmentId": "984e1273-db26-4e0e-b98c-862aec4ff2db",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C005",
+   "judgmentId": "b3cae393-0469-4f91-b9a5-964c11b200b9",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C006",
+   "judgmentId": "778ea094-b79b-45d2-99e6-82cb611792f4",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C007",
+   "judgmentId": "52e42389-0a38-4fde-a6bb-9a85dd8a319d",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C008",
+   "judgmentId": "5ea81de1-c419-4859-bd9d-663601719c8a",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C009",
+   "judgmentId": "2f2fd321-a01f-4dba-aa23-7f6a47c73e5d",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C010",
+   "judgmentId": "a474ae0f-d99b-4909-8ad1-20e9ffb861ff",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C011",
+   "judgmentId": "1059c6f5-8454-47eb-aaf2-2733cee5cc05",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C012",
+   "judgmentId": "e8c5083f-7f1f-4afc-a546-f2f8ae482cd7",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C013",
+   "judgmentId": "c557a5f3-0108-4ee8-af1e-ae88795fddf3",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C014",
+   "judgmentId": "09e24e35-2e0a-4814-88d5-4fc6dfc7f98c",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C015",
+   "judgmentId": "eaaaddac-5b74-4393-888b-d6847bf553b2",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C016",
+   "judgmentId": "b3b1b9f2-224b-4a1b-bb7f-f2c66c84c3f5",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C017",
+   "judgmentId": "438d710f-5412-4fb8-85af-1820544848fe",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C018",
+   "judgmentId": "1960e54b-5659-41c0-975c-fd04397978cc",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C019",
+   "judgmentId": "33945ef7-b70a-4c2e-a941-f4eb7a5f2577",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C020",
+   "judgmentId": "4fa0e8fe-04e0-41c0-9c5a-e473d15dfcaf",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C021",
+   "judgmentId": "c6697428-a63d-462a-8295-1be1b46bd6ac",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C022",
+   "judgmentId": "8b373a6f-f05a-419a-9af9-04da65426745",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C023",
+   "judgmentId": "f965289c-6102-4a91-895b-ba203c26c57c",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C024",
+   "judgmentId": "109439fd-bf7a-4768-8b62-39e7caab9793",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C025",
+   "judgmentId": "6123ccc6-5fde-425f-af4d-9fafb2ce9169",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C026",
+   "judgmentId": "cf538c62-ba06-48d1-97b9-5809dadc7e5e",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C027",
+   "judgmentId": "2a1babdd-4796-43a8-b656-160e5cfb5b24",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C028",
+   "judgmentId": "ccce4c00-84d8-4cc5-baba-f95a5a620b18",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C029",
+   "judgmentId": "dca199e9-019b-4121-a430-d68f7d51f9f5",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C030",
+   "judgmentId": "1c4bab07-e6d8-482c-808d-f8038c65d0d6",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C031",
+   "judgmentId": "c850b251-837a-422f-b431-d8848a7da071",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C032",
+   "judgmentId": "072732ae-bec6-4076-ad51-7c230378063f",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C033",
+   "judgmentId": "63a177bd-428f-4456-adba-3e0c6b5306e2",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C034",
+   "judgmentId": "20ff4fa2-c590-4db1-a32d-d349eb5ad73c",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C035",
+   "judgmentId": "4b608c80-2525-4234-9804-e9487730a4da",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C036",
+   "judgmentId": "6d110e4d-5c30-4ef4-81e4-b7a9cdbcfc5a",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C037",
+   "judgmentId": "828dee37-e56d-4857-97ae-48771b684f85",
+   "rule": "R2_SERIES_TOKEN_SCAN_CONFLICT"
+  },
+  {
+   "token": "C038",
+   "judgmentId": "abe60d46-99a8-4206-974a-bc06ad2dc35e",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C039",
+   "judgmentId": "7d79312e-c280-4f8d-b044-60b620cbad5c",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C040",
+   "judgmentId": "0a3a2279-30a4-45e5-b546-014561c822e3",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C041",
+   "judgmentId": "3865c6e8-b261-4305-a856-6bbc0ea78768",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C042",
+   "judgmentId": "faad84f8-42f2-4bc0-aaaf-6699a01dff96",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C043",
+   "judgmentId": "f03fef0d-944a-4f1f-a1c5-ac4937aaeafa",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C044",
+   "judgmentId": "b3941b02-6b74-4153-8388-27ff0f91d9df",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C045",
+   "judgmentId": "17370d51-b331-4111-85b9-ce0fd1dcf1fd",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C046",
+   "judgmentId": "da519db9-c81a-44b4-9dd4-d450ffe93221",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C047",
+   "judgmentId": "e60b672a-87ff-41bf-8eb3-6ffdf08fb177",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C048",
+   "judgmentId": "9a9453d2-5e75-41ab-a216-13dd18c0b58d",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C049",
+   "judgmentId": "fa136d3f-56ca-4be1-b2b3-bda8267301ff",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C050",
+   "judgmentId": "4f63d65f-c750-45e1-a54d-83d2629c7b16",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C051",
+   "judgmentId": "7bb90330-d3d1-4b8b-8e46-abd1bfa7aa3d",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C052",
+   "judgmentId": "4f1ce720-540b-4dd2-9da6-97e2acac0dc6",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C053",
+   "judgmentId": "8682f927-a2e2-49bd-9a31-bb6a95f5505d",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C054",
+   "judgmentId": "75d42a75-8b56-4727-8bd2-c1634b4ea041",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C055",
+   "judgmentId": "6918ce01-56e6-4748-a0db-d68ec593aff1",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C056",
+   "judgmentId": "b65fb985-c817-4be3-b8c1-af88d5171d0b",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C057",
+   "judgmentId": "6161073a-f525-466d-b693-434d14a8b65f",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C058",
+   "judgmentId": "074ff62b-c0a3-46a5-b2c9-aac862332301",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C059",
+   "judgmentId": "116a8db9-47e7-4469-9f1f-efe62021bbbb",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C060",
+   "judgmentId": "f8952a27-d63f-4e5d-8d25-d1ca43aefb0d",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C061",
+   "judgmentId": "95b7b60b-9da0-4c8c-8bca-c7a9e53a9290",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C062",
+   "judgmentId": "fc17d5f6-eeb5-45fa-a31f-e48c59ea12ad",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C063",
+   "judgmentId": "b782b15a-788c-4b0a-a252-8c780aaeff41",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C064",
+   "judgmentId": "14e203bc-c338-4afc-9245-614deacc21f9",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C065",
+   "judgmentId": "98eed48c-9ac1-42af-9b5d-c2e16517c920",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C066",
+   "judgmentId": "693a7131-5646-4b04-8972-989fa817f9b9",
+   "rule": "R2_SERIES_TOKEN_SCAN_CONFLICT"
+  },
+  {
+   "token": "C067",
+   "judgmentId": "bd488e23-2b7c-4044-ac1e-63249c6fc724",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C068",
+   "judgmentId": "1c1c0284-70e9-4000-933a-97a8bf39e795",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C069",
+   "judgmentId": "43def408-92a0-4522-90ca-d8245086978c",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C070",
+   "judgmentId": "5c3fafc6-9382-4ddd-a1eb-b57d06fe560a",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C071",
+   "judgmentId": "a89c52e7-401a-4e28-a275-39533cb5235f",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C072",
+   "judgmentId": "cbf51068-2abd-4cd3-adcc-4674c1f9b4f6",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C073",
+   "judgmentId": "65226725-7f37-44c3-8205-40b49e6f7527",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C074",
+   "judgmentId": "8705b257-0fe8-49cf-8f28-c612c877a493",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C075",
+   "judgmentId": "443c4f40-dca2-4dd2-92d9-cbec8ce394ac",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C076",
+   "judgmentId": "fee576c8-a665-4566-b52f-14ff19ab9a49",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C077",
+   "judgmentId": "fd75b89c-3e66-4317-826e-662dc269cdbb",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C078",
+   "judgmentId": "6bcc328c-cba2-4d15-9353-153810fe0aa8",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C079",
+   "judgmentId": "dbbe8dcf-1b48-47d4-b36b-70ec186507de",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C080",
+   "judgmentId": "b551b7b4-749e-4e91-b1c8-da6bc0b1334f",
+   "rule": "R2_SERIES_TOKEN_SCAN_CONFLICT"
+  },
+  {
+   "token": "C081",
+   "judgmentId": "476507aa-f1ca-4d5f-8ca1-ff333947a658",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C082",
+   "judgmentId": "031df629-04a9-4c1e-a4f5-10fbc2924f2a",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C083",
+   "judgmentId": "be1a9c92-c7b9-4be4-84be-57c9862b4c0e",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C084",
+   "judgmentId": "03df655f-5044-4d04-9174-0abdea3490e4",
+   "rule": "C7_REFUSAL_ONLY"
+  },
+  {
+   "token": "C085",
+   "judgmentId": "95243d2e-9b8e-4619-84d4-e49dd8b9bda2",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C086",
+   "judgmentId": "a70ade39-e035-4173-a0ee-b0d315d0f9fc",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  },
+  {
+   "token": "C087",
+   "judgmentId": "3842b125-3318-40f0-a43c-d1607bfab032",
+   "rule": "R2_SERIES_TOKEN_SCAN_CONFLICT"
+  },
+  {
+   "token": "C088",
+   "judgmentId": "f8ed1e61-73a0-4eb3-aab0-fee0952b3c75",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C089",
+   "judgmentId": "358cddec-44d9-44bd-a317-eaa4a8fe2f1b",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C090",
+   "judgmentId": "0cee5fb4-cb69-4722-8a7d-7f936851f0b6",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C091",
+   "judgmentId": "4084c51c-43e0-4500-9c14-8bd2cd7aa1d3",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C092",
+   "judgmentId": "6c975d9c-7c91-4b53-bc96-ca8d9a265915",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C093",
+   "judgmentId": "d00049e4-2de7-450c-8190-7cc351a1d0cd",
+   "rule": "R4b_TWO_SIDED_CASE_NUMBER"
+  },
+  {
+   "token": "C094",
+   "judgmentId": "594598ee-4233-4b96-87f9-6b177429db8b",
+   "rule": "R5_NO_TWO_SIDED_PROOF"
+  },
+  {
+   "token": "C095",
+   "judgmentId": "5f46daa0-a095-4290-9f49-d6faa21759ee",
+   "rule": "C1b_OWN_CASE_NUMBER_BESIDE_STORED"
+  },
+  {
+   "token": "C096",
+   "judgmentId": "071aa4ed-d160-4493-b22c-709ec7f92de5",
+   "rule": "D1_MONTH_IN_SERIES_POSITION"
+  }
+ ]
+}
