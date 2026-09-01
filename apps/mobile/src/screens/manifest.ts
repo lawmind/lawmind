@@ -979,7 +979,7 @@ export const SCREENS: readonly ScreenEntry[] = [
     route: '/s/citator-alerts-in-the-briefing',
     canvas: '11c',
     render: 'renders/60-citator-alerts@2x.png',
-    notes: 'Batched nightly, four triggers',
+    notes: 'Batched, four triggers',
     designed: true,
   },
   {

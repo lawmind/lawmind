@@ -21,9 +21,9 @@ import { color, space, state } from '../../theme/tokens';
  *
  * It opens with SAFE TO FILE, not with our process. The advocate does not care
  * how many tiers we ran; they care whether the thing is safe to put in front of
- * a judge. The sources come second, and the last line is the promise that
- * matters: this is re-checked nightly, and a change reaches them before the
- * hearing.
+ * a judge. The sources come second, and the last line says only what the tiers
+ * above established and why the sheet is worth re-opening. It promises no
+ * cadence, no notification and no continuing standing — see the closing comment.
  *
  * `verified_by_source` surfaces HERE and in the admin monitor, and nowhere else.
  * It no longer qualifies a badge, because there is no badge to qualify.
@@ -183,12 +183,42 @@ export function VerificationSheet({
         )}
 
         {/*
-          Verification is permanent; good-law status is not. The re-check is the
-          promise that matters, and it is why `overruled_status` is read live at
-          render on every surface and never cached.
+          NO CADENCE PROMISE LIVES HERE, AND THAT IS THE POINT.
+
+          Until 1 Sep 2026 this line read "Re-checked every night. If this
+          changes before your hearing, you will be told." NEW3 R17 adjudicated
+          it STATIC_NIGHTLY_COPY = REQUIRES_RUNTIME_EVIDENCE (bus 1692): a
+          committed cron schedule proves CONFIGURATION, not a deployed
+          successful execution, not a check of THIS authority, and not alert
+          eligibility for THIS viewer. Three separate facts, none of them in
+          evidence, all of them implied by one sentence.
+
+          NO REPLACEMENT TIMESTAMP EITHER. The contract serves no citator
+          `lastCheckedAt`, and `asOf`, the citation-existence `checkedAt`, build
+          time and the cron file are all forbidden substitutes — each answers a
+          different question and would read as the answer to this one. So the
+          sentence carries only what is true without a runtime read: the reason
+          the status above is worth re-opening, and no undertaking to reach out.
+          When a recheck timestamp is contracted from the deployed scheduler
+          this becomes `Last checked {lastCheckedAt}.`, and only then.
+
+          IT ALSO MAKES NO FORWARD GOOD-LAW CLAIM. The first draft of this
+          replacement said "whether this is still good law is not", and
+          `routeGates.test.ts` rejected it — `treatment.good_law_claim` is
+          DISABLED_NOT_READY, so a sentence about an authority's continuing
+          standing is exactly the claim that gate exists to stop. What is said
+          instead is what the tiers above actually establish (the judgment
+          exists and says what it says) and the reason to look again (a later
+          court can change its standing), neither of which asserts the current
+          answer.
+
+          `overruled_status` is still read live at render on every surface and
+          never cached. That rule is unchanged; what changed is that we no
+          longer claim a schedule on top of it.
         */}
         <Text variant="ui" style={styles.promise}>
-          Re-checked every night. If this changes before your hearing, you will be told.
+          What we confirmed is that this judgment exists and says what it says. A later court can
+          change its standing at any time, so open this again before you file.
         </Text>
 
         <Button label="Close" onPress={onDismiss} variant="secondary" />
