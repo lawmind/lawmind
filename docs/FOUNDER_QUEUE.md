@@ -179,6 +179,50 @@ new one.
 
 ---
 
+### [OPEN — NEEDS AN ACCOUNT AND ONE BUILD, NOT A DECISION] FQ-APPLE-TOOLCHAIN — the iOS build toolchain is not pinned anywhere, so nobody can prove it meets Apple's floor · RCC · 2 Sep 2026
+
+**Needs:** an Apple Developer Program enrolment and one EAS iOS build actually
+run, so the Xcode / iOS-SDK versions behind our production profile become an
+observed fact rather than an assumption.
+
+**What was found.** V7.2 §10.2: since **28 April 2026** every App Store Connect
+upload must be built with **Xcode 26+** on the **iOS 26 SDK+**. Checking what
+this repo actually configures:
+
+- `apps/mobile/eas.json` has **no `image` key on any profile**, production
+  included. EAS therefore picks its own default image at build time, and that
+  default is not recorded here.
+- There is **no `apps/mobile/ios/` native project** — iOS has never been
+  prebuilt or built on this workstation (`docs/MIGRATION_WINDOWS.md` line 156
+  said so in S0 and it is still true).
+- `.github/workflows/ci.yml` runs no iOS job.
+
+So the answer is not "below the requirement". It is **unknown**, and unknowable
+locally: `APPLE_UPLOAD_READY = UNKNOWN`. V7.2 §10.2 says in terms *"do not infer
+compliance solely from local JavaScript package versions"*, and Expo's
+documentation saying SDK 57 *can* use Xcode 26 is not evidence that our builds
+*do*.
+
+**Why it is not a blocker.** Nothing on the client waits for it. Android is
+proven ready in the same round (`targetSdkVersion="36"` read out of the merged
+release manifest), the app builds and runs on device, and every iOS-facing
+product decision — the party-search platform switch, the account-deletion route
+— is already built and served.
+
+**Cost if never resolved.** The first App Store upload is the moment we discover
+it, under launch pressure, which is exactly the failure V7.2 §12 lists as
+"API36/Xcode26 deadline discovered during submission".
+
+**Where it plugs in.** `apps/mobile/eas.json` → `build.production.ios.image`.
+Pinning a value would make the toolchain reproducible and auditable, and it is
+deliberately **not** done in this round: the valid image identifiers are an EAS-
+side fact this workstation cannot verify, and inventing a config value from
+memory is the one thing `CLAUDE.md` §7 forbids outright. One `eas build
+--platform ios --profile production` prints the image, the Xcode version and the
+SDK version in its own log; that log is the evidence, and pinning follows it.
+
+---
+
 ### [OPEN — NOT A BLOCKER, A ONE-LINE DECISION ON YOUR OWN RULE] FQ-ATTRIBUTION-TEXT — `CLAUDE.md` §6a breaks the rule §6a states · LCC · 30 Aug 2026
 
 **Needs:** your call on which half of one paragraph is right. No credential, no
