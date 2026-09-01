@@ -108,6 +108,11 @@ export type RetrievalOutcomeReason =
   | 'ambiguous_identity'
   /** An arm exceeded its statement budget. */
   | 'timeout'
+  /**
+   * An arm this query needed was not run because the capability registry
+   * disables it for this platform or release. Not an absence of law.
+   */
+  | 'capability_disabled'
   /** A date this answer depends on is suspect or unknown. */
   | 'date_unreliable'
   /** The source behind this answer has not refreshed inside its expected band. */
@@ -216,6 +221,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
   const reasons: RetrievalOutcomeReason[] = [];
   const timedOut = input.degradedArms.some((a) => TIMEOUT_ARMS.has(a));
   const sparseRefused = input.degradedArms.includes('sparse_unbounded');
+  const capabilityDisabled = input.degradedArms.includes('party_name_disabled');
   const semanticDependent = input.semanticDependent ?? true;
   const semanticMissing =
     semanticDependent && (!input.semanticAvailable || !input.semanticIndexSufficient);
@@ -229,6 +235,7 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
     reasons.push('ambiguous_identity');
     if (timedOut) reasons.push('timeout');
     if (sparseRefused) reasons.push('sparse_unbounded');
+    if (capabilityDisabled) reasons.push('capability_disabled');
     return {
       state: 'review_required',
       reasons,
@@ -244,12 +251,13 @@ export function deriveRetrievalOutcome(input: RetrievalOutcomeInput): RetrievalO
   // ── 2. Everything that makes coverage unknown, gathered before it is judged ──
   if (sparseRefused) reasons.push('sparse_unbounded');
   if (timedOut) reasons.push('timeout');
+  if (capabilityDisabled) reasons.push('capability_disabled');
   if (semanticMissing) reasons.push('semantic_index_insufficient');
   if ((input.withheldUnsafeBody ?? 0) > 0) reasons.push('unsafe_body');
   if (input.dateUnreliable) reasons.push('date_unreliable');
   if (input.sourceStale) reasons.push('source_stale');
 
-  const couldNotLookProperly = sparseRefused || timedOut || semanticMissing;
+  const couldNotLookProperly = sparseRefused || timedOut || capabilityDisabled || semanticMissing;
 
   // ── 3. Zero results ──
   //

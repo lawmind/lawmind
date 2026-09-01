@@ -65,6 +65,109 @@ describe('the empty screen that says "there is no law on this"', () => {
   });
 });
 
+describe('a required capability arm that never ran', () => {
+  it('is coverage_unknown, not an abstention claiming that we searched', () => {
+    const outcome = deriveRetrievalOutcome(
+      base({
+        resultCount: 0,
+        degradedArms: ['party_name_disabled'],
+        semanticAvailable: true,
+        semanticIndexSufficient: true,
+      }),
+    );
+
+    assert.equal(outcome.state, 'coverage_unknown');
+    assert.deepEqual(outcome.reasons, ['capability_disabled']);
+    assert.notEqual(outcome.state, 'abstained');
+  });
+
+  it('an enabled arm that ran and found zero keeps the existing honest-empty result', () => {
+    const outcome = deriveRetrievalOutcome(base({ resultCount: 0 }));
+    assert.equal(outcome.state, 'abstained');
+    assert.deepEqual(outcome.reasons, ['low_relevance']);
+  });
+
+  it('an enabled arm with real results stays answered', () => {
+    const outcome = deriveRetrievalOutcome(base({ resultCount: 3 }));
+    assert.equal(outcome.state, 'answered');
+    assert.equal(outcome.reasons.includes('capability_disabled'), false);
+  });
+
+  it('semantic insufficiency does not invent a disabled capability', () => {
+    const outcome = deriveRetrievalOutcome(base({ semanticIndexSufficient: false }));
+    assert.equal(outcome.state, 'degraded');
+    assert.ok(outcome.reasons.includes('semantic_index_insufficient'));
+    assert.equal(outcome.reasons.includes('capability_disabled'), false);
+  });
+
+  for (const queryClass of ['exact citation', 'CNR', 'case number']) {
+    it(`${queryClass} remains usable without an unrelated semantic capability`, () => {
+      const outcome = deriveRetrievalOutcome(
+        base({
+          semanticAvailable: false,
+          semanticIndexSufficient: false,
+          semanticDependent: false,
+        }),
+      );
+      assert.equal(outcome.state, 'answered');
+      assert.equal(outcome.exactIdentityUsable, true);
+      assert.equal(outcome.reasons.includes('capability_disabled'), false);
+    });
+  }
+
+  it('a query with no party intent does not acquire capability_disabled', () => {
+    const outcome = deriveRetrievalOutcome(base({ resultCount: 0, degradedArms: [] }));
+    assert.equal(outcome.state, 'abstained');
+    assert.equal(outcome.reasons.includes('capability_disabled'), false);
+  });
+
+  it('a timeout stays distinct from a disabled capability', () => {
+    const outcome = deriveRetrievalOutcome(
+      base({ resultCount: 0, degradedArms: ['dense_timeout'] }),
+    );
+    assert.equal(outcome.state, 'coverage_unknown');
+    assert.ok(outcome.reasons.includes('timeout'));
+    assert.equal(outcome.reasons.includes('capability_disabled'), false);
+  });
+
+  it('carries multiple applicable reasons without assigning meaning to their order', () => {
+    const outcome = deriveRetrievalOutcome(
+      base({
+        degradedArms: ['party_name_disabled', 'sparse_timeout', 'sparse_unbounded'],
+        semanticAvailable: false,
+        withheldUnsafeBody: 2,
+      }),
+    );
+    assert.equal(outcome.state, 'degraded');
+    assert.deepEqual(
+      new Set(outcome.reasons),
+      new Set([
+        'capability_disabled',
+        'timeout',
+        'sparse_unbounded',
+        'semantic_index_insufficient',
+        'unsafe_body',
+      ]),
+    );
+  });
+
+  it('deduplicates repeated reports of the same disabled arm and timeout class', () => {
+    const outcome = deriveRetrievalOutcome(
+      base({
+        degradedArms: [
+          'party_name_disabled',
+          'party_name_disabled',
+          'dense_timeout',
+          'dense_timeout',
+        ],
+      }),
+    );
+    assert.equal(outcome.reasons.filter((reason) => reason === 'capability_disabled').length, 1);
+    assert.equal(outcome.reasons.filter((reason) => reason === 'timeout').length, 1);
+    assert.equal(new Set(outcome.reasons).size, outcome.reasons.length);
+  });
+});
+
 describe('array length is never confidence', () => {
   /**
    * The other direction, and the one that is easier to get wrong because the

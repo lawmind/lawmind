@@ -30,7 +30,6 @@ import {
 import { classifyQuery } from './query-shape.ts';
 import { answerStructured } from './structured.ts';
 import {
-  precedentialEffect,
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
@@ -41,7 +40,11 @@ import {
   type TreatmentProvenance,
 } from '../judgments/precedential-effect.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
-import { partyNameArmPermitted, platformFromRequest, semanticArmPermitted } from '../release/enforce.ts';
+import {
+  partyNameArmPermitted,
+  platformFromRequest,
+  semanticArmPermitted,
+} from '../release/enforce.ts';
 
 /**
  * The derived precedential layers for a page of structured hits, in ONE query.
@@ -126,7 +129,6 @@ const isoDate = z
       parsed.getUTCFullYear() === y && parsed.getUTCMonth() === m - 1 && parsed.getUTCDate() === d
     );
   }, 'not a real calendar date');
-
 
 /**
  * ───────────────────────────────────────────────────────────────────────────
@@ -304,6 +306,12 @@ export type SearchDeps = {
   admission?: Admission | undefined;
   /** Null when the embedding model is unavailable — search degrades to lexical only. */
   embedQuery: (text: string) => Promise<string | null>;
+  /**
+   * Test-only resolver for exercising a disabled platform arm through the real
+   * route. Production omits it and always reads the shipped capability registry.
+   */
+  partyNameArmPermitted?:
+    ((platform: ReturnType<typeof platformFromRequest>) => boolean) | undefined;
   /** Absent until auth ships in S5. See the note where `searches` is written. */
   userId?: string | undefined;
 };
@@ -703,7 +711,9 @@ async function runSearch(
       if (!degraded.includes(arm)) degraded.push(arm);
       logger.warn(
         { arm, query_chars: body.query.length },
-        'search arm exceeded its statement budget — results are incomplete',
+        arm === 'party_name_disabled'
+          ? 'search arm disabled by platform capability — results are incomplete'
+          : 'search arm exceeded its statement budget — results are incomplete',
       );
     },
     offset,
@@ -711,7 +721,9 @@ async function runSearch(
     // §9.5. Resolved from the request's own platform, so an iOS build can lose
     // the party arm without any other client losing anything, and without
     // `/search` refusing — exact case number, CNR and citation are untouched.
-    { partyNameArm: partyNameArmPermitted(platformFromRequest(c)) },
+    {
+      partyNameArm: (deps.partyNameArmPermitted ?? partyNameArmPermitted)(platformFromRequest(c)),
+    },
   );
   const hasMore = retrieved.length > pageSize;
   if (hasMore) retrieved.length = pageSize;

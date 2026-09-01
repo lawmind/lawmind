@@ -31,6 +31,9 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+import type { Sql } from 'postgres';
+
+import { createApp } from '../app.ts';
 import {
   PLATFORM_CAPABILITY_OVERRIDES,
   capabilityRegistry,
@@ -53,20 +56,31 @@ describe('platform resolution', () => {
 
   it('resolves an absent or unrecognised platform to unknown, never to a real one', () => {
     for (const raw of [null, undefined, '', 'ipados', 'desktop', 'ios;android', 'unknown']) {
-      assert.equal(parsePlatform(raw), 'unknown', `${String(raw)} must not resolve to a real platform`);
+      assert.equal(
+        parsePlatform(raw),
+        'unknown',
+        `${String(raw)} must not resolve to a real platform`,
+      );
     }
   });
 
   it('an unknown platform gets the release-wide set — every existing client is unchanged', () => {
     for (const name of Object.keys(RELEASE_CAPABILITIES) as (keyof typeof RELEASE_CAPABILITIES)[]) {
-      assert.equal(capabilityStateForPlatform(name, 'unknown'), RELEASE_CAPABILITIES[name].state, name);
+      assert.equal(
+        capabilityStateForPlatform(name, 'unknown'),
+        RELEASE_CAPABILITIES[name].state,
+        name,
+      );
     }
   });
 });
 
 describe('the party-name capability', () => {
   it('is registered, so a claims register can be checked against it', () => {
-    assert.ok(RELEASE_CAPABILITIES['search.party_name'], 'search.party_name must exist in the registry');
+    assert.ok(
+      RELEASE_CAPABILITIES['search.party_name'],
+      'search.party_name must exist in the registry',
+    );
   });
 
   it('is reachable on every platform in this release — the switch ships unflipped', () => {
@@ -83,7 +97,11 @@ describe('the party-name capability', () => {
   it('the per-platform registry answers for the platform asked, and names what it narrowed', () => {
     const wide = capabilityRegistry();
     const ios = capabilityRegistry('ios');
-    assert.equal('platform' in wide, false, 'the release-wide shape is unchanged for callers that send nothing');
+    assert.equal(
+      'platform' in wide,
+      false,
+      'the release-wide shape is unchanged for callers that send nothing',
+    );
     assert.equal((ios as { platform: string }).platform, 'ios');
     assert.deepEqual((ios as { platformOverrides: string[] }).platformOverrides, []);
   });
@@ -141,6 +159,45 @@ describe('what the switch must never take with it', () => {
   });
 });
 
+describe('POST /search with a test-only disabled party arm', () => {
+  it('serialises capability_disabled through intent, routing and empty retrieval', async () => {
+    const seenPlatforms: string[] = [];
+    const sql = ((strings: TemplateStringsArray) => {
+      const source = strings.join(' ');
+      return Promise.resolve(source.includes('count(*)') ? [{ n: 0 }] : []);
+    }) as unknown as Sql;
+    const app = createApp({
+      ping: async () => {},
+      search: {
+        sql,
+        embedQuery: async () => null,
+        partyNameArmPermitted: (platform) => {
+          seenPlatforms.push(platform);
+          return false;
+        },
+      },
+    });
+
+    const response = await app.request('/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-lawmind-platform': 'ios' },
+      body: JSON.stringify({ query: 'SATENDER KUMAR ANTIL', language: 'en' }),
+    });
+    assert.equal(response.status, 200);
+    const body = (await response.json()) as {
+      data: {
+        degraded: string[];
+        retrievalOutcome: { state: string; reasons: string[]; contractVersion: number };
+      };
+    };
+    assert.deepEqual(seenPlatforms, ['ios']);
+    assert.ok(body.data.degraded.includes('party_name_disabled'));
+    assert.equal(body.data.retrievalOutcome.state, 'coverage_unknown');
+    assert.ok(body.data.retrievalOutcome.reasons.includes('capability_disabled'));
+    assert.equal(body.data.retrievalOutcome.contractVersion, 1);
+  });
+});
+
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  * NO PERSON-CENTRIC SURFACE EXISTS — READ FROM THE SOURCE TREE
@@ -190,9 +247,14 @@ describe('no person-centric route exists', () => {
       for (const m of body.matchAll(ROUTE_RE)) {
         const path = m[2] ?? '';
         if (!path.startsWith('/')) continue;
-        if (FORBIDDEN.some((re) => re.test(path))) found.push(`${relative(SRC, file)}  ${m[1]} ${path}`);
+        if (FORBIDDEN.some((re) => re.test(path)))
+          found.push(`${relative(SRC, file)}  ${m[1]} ${path}`);
       }
     }
-    assert.deepEqual(found, [], `person-centric routes are forbidden by product rules 10 and 11:\n${found.join('\n')}`);
+    assert.deepEqual(
+      found,
+      [],
+      `person-centric routes are forbidden by product rules 10 and 11:\n${found.join('\n')}`,
+    );
   });
 });

@@ -20,7 +20,7 @@ import { after, before, describe, it } from 'node:test';
 
 import postgres from 'postgres';
 
-import { runRecheck } from './recheck.ts';
+import { currentRenderedStatus, runRecheck } from './recheck.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 3, onnotice: () => {} });
 const TAG = 'test-recheck';
@@ -28,6 +28,21 @@ const TAG = 'test-recheck';
 let userId = '';
 let judgmentId = '';
 let matterId = '';
+
+describe('recheck treatment-layer parity', () => {
+  it('does not call a derived none banner stale because the stored status is set_aside', () => {
+    const shownStatus = 'none';
+    const storedStatus = 'set_aside';
+    const currentStatus = currentRenderedStatus({
+      storedStatus,
+      edges: [{ relationship: 'overruled', provenance: 'MODALITY_DEFECT' }],
+    });
+
+    assert.notEqual(shownStatus, storedStatus, 'the old cross-layer comparison selects this row');
+    assert.equal(currentStatus, 'none');
+    assert.equal(shownStatus, currentStatus, 'same-layer comparison correctly sees no divergence');
+  });
+});
 
 describe('overruled re-check', () => {
   before(async () => {

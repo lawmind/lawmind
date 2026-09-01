@@ -476,6 +476,7 @@ describe('latency is not a trust state', () => {
       [],
       ['sparse_timeout'],
       ['sparse_unbounded'],
+      ['party_name_disabled'],
       ['dense_timeout', 'sparse_unbounded'],
     ];
     let abstentions = 0;
@@ -534,51 +535,26 @@ describe('latency is not a trust state', () => {
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * A LATENT CONFLATION, PINNED WHERE IT IS RATHER THAN QUIETLY CORRECTED
+ * A DISABLED CAPABILITY IS A DID-NOT-LOOK FACT
  * ─────────────────────────────────────────────────────────────────────────────
  *
  * `party_name_disabled` is a `DegradedArm` — the party-name arm was NOT RUN
  * because the capability registry disables it for the requesting platform
  * (R14 §A4.9, roadmap v7.1 §9.5). It is a *we did not look* fact.
  *
- * **`deriveRetrievalOutcome` cannot see it.** It is not in `TIMEOUT_ARMS`, it is
- * not `sparse_unbounded`, and there is no reason value for "a capability was
- * disabled". So it contributes nothing to `couldNotLookProperly` and produces no
- * reason of its own: `retrievalOutcome` says nothing at all about the party arm,
- * and only `degraded[]` carries the fact.
- *
- * **Unreachable today, twice over**, which is why it is pinned and not fixed:
- *
- *   1. `platformOverrides` is empty on every platform, so `search.party_name`
- *      resolves ENABLED everywhere and the arm is never disabled (R14 §A4.7 —
- *      *"adding a row to the override map IS flipping the switch"*, and NEW3 bus
- *      1608 holds the switch under an activation guard);
- *   2. even with the switch flipped, `SEMANTIC_INDEX_SUFFICIENT` is `false`, so a
- *      party query — which is not exact-identity-shaped — lands in
- *      `coverage_unknown` anyway, by the semantic default rather than by anything
- *      knowing about the party arm.
- *
- * So the honest verdict is masked by a conservative default **that exists to be
- * removed**. The day NEW1 publishes an accepted retrieval path and that constant
- * flips, an advocate searching a party name on a platform where the arm is off
- * is told `abstained` — *we looked and found nothing* — about an arm that was
- * never run. That is the exact failure `outcome.ts` was written to prevent, and
- * it arrives as a consequence of a GOOD event.
- *
- * Correcting it needs a new `RetrievalOutcomeReason` (the type forbids a
- * non-`answered` state with no reason), which is a contract change. Filed to
- * NEW3 as `CCR-LCC-XS-01`. **The assertions below pin the wrong answer on
- * purpose** — when the CCR lands, this block fails, and updating it is the
- * deliberate act that records the fix.
+ * R15 B1 adds `capability_disabled` and makes this arm contribute to
+ * `couldNotLookProperly`. The release override remains empty; these assertions
+ * exercise the derivation independently so a later activation cannot turn an
+ * arm that never ran into an honest-empty claim.
  */
-describe('LATENT — a disabled capability is invisible to the outcome derivation', () => {
+describe('a disabled capability is visible to the outcome derivation', () => {
   const partyOff = {
     resultCount: 0,
     degradedArms: ['party_name_disabled'],
     semanticAvailable: true,
   };
 
-  it('is masked today by the conservative semantic default, not by being handled', () => {
+  it('keeps both applicable reasons under the conservative semantic default', () => {
     const out = deriveRetrievalOutcome({
       ...partyOff,
       semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
@@ -586,22 +562,21 @@ describe('LATENT — a disabled capability is invisible to the outcome derivatio
     });
     assert.equal(SEMANTIC_INDEX_SUFFICIENT, false, 'the mask IS this constant');
     assert.equal(out.state, 'coverage_unknown');
-    // The right answer for the wrong reason: nothing here mentions the party arm.
-    assert.deepEqual(out.reasons, ['semantic_index_insufficient']);
+    assert.deepEqual(
+      new Set(out.reasons),
+      new Set(['capability_disabled', 'semantic_index_insufficient']),
+    );
   });
 
-  it('PINNED WRONG: with semantic sufficiency, the same request reads as an honest empty', () => {
+  it('with semantic sufficiency, the disabled arm is still coverage_unknown', () => {
     const out = deriveRetrievalOutcome({
       ...partyOff,
       semanticIndexSufficient: true,
       semanticDependent: true,
     });
-    assert.equal(
-      out.state,
-      'abstained',
-      'if this now reads coverage_unknown, CCR-LCC-XS-01 has landed — update this pin',
-    );
-    assert.deepEqual(out.reasons, ['low_relevance']);
+    assert.equal(out.state, 'coverage_unknown');
+    assert.deepEqual(out.reasons, ['capability_disabled']);
+    assert.notEqual(out.state, 'abstained');
   });
 
   it('and `emptyBecause` does not fire for it either, so the empty screen has no remedy', () => {
