@@ -1,0 +1,256 @@
+{
+  "round": "LCC-R17",
+  "title": "Neutral-citation token-boundary parity between the NEW2 ingest extractor and every API canonicalization path",
+  "date": "2026-09-01",
+  "headStart": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+  "dependencies": {
+    "new2R18": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+    "citationBulkApply": "HOLD",
+    "networkUsed": false,
+    "dbWrites": 0,
+    "dbMigrations": 0
+  },
+  "rootCause": {
+    "id": "LCC_SUFFIX_ROOT_CAUSE",
+    "file": "services/ingest/src/citations.ts",
+    "line": 108,
+    "owner": "NEW2",
+    "regexAtHead": "/\\b(\\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\\d{1,6})(?:-(?:DB|FB))?\\b/g",
+    "regexCorrected": "/\\b(\\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\\d{1,6})\\b(?:-(?:DB|FB))?/g",
+    "mechanism": "The word boundary sits AFTER the optional -DB/-FB group. On \"2025:DHC:8491-DBThis\", B followed by T is not a word boundary, so the -DB alternative fails; the group is optional so it matches EMPTY, and the trailing \\b then succeeds at the position after 8491, because a digit followed by a hyphen IS a boundary. The regex never errors — it returns a different, valid-looking citation key.",
+    "byteIdenticalToNew2Defect": true,
+    "note": "This is the SAME regex NEW2 R18 fixed in services/ingest/src/harvest/hc-load.ts. R18 deliberately left this second copy: changing it moves judgment_citations.normalised_citation, i.e. the edge key space, while CITATION_BULK_APPLY = HOLD."
+  },
+  "canonicalizerInventory": [
+    {
+      "canonicalizerPath": "services/ingest/src/citations.ts :: extractCitations + normaliseCitation",
+      "layer": "TOKEN EXTRACTION from free text",
+      "owner": "NEW2",
+      "callers": [
+        "services/api/src/search/query-shape.ts:281 classifyQuery -> the /search routing decision",
+        "services/api/src/search/structured.ts:171 bareCitationAsField (via classifyQuery/warrantsExactLookup)",
+        "services/api/src/search/qlang/parse.ts:351 cite: field value check",
+        "services/api/src/judgments/citations.ts:74 paragraph-level citation display",
+        "services/ingest citation edge extraction -> judgment_citations.normalised_citation"
+      ],
+      "beforeBehavior": "Drops a valid -DB/-FB suffix whenever the citation is immediately followed by a word character.",
+      "parityWithNew2Extractor": "DIVERGENT on the glued class only. 3 of 27 frozen control cases.",
+      "lccOwned": false
+    },
+    {
+      "canonicalizerPath": "services/api/src/search/query-shape.ts :: citationLookupKey",
+      "layer": "KEY NORMALISATION of an already-extracted token",
+      "owner": "LCC",
+      "callers": [
+        "services/api/src/citations/resolver.ts:315 canonicalKeyFor",
+        "services/api/src/search/retrieve.ts:1176 exactCitation",
+        "services/api/src/search/qlang/compile.ts:207 citationMatchFragment",
+        "services/api/src/judgments/citations.ts:76"
+      ],
+      "beforeBehavior": "upper-case, strip every non-alphanumeric. Faithful to whatever token it is handed.",
+      "parityWithNew2Extractor": "PARITY. Mirrored in SQL by judgments_neutral_citation_key and lawmind_citation_keys; services/api/src/preflight.ts asserts JS and SQL agree.",
+      "lccOwned": true,
+      "defective": false
+    },
+    {
+      "canonicalizerPath": "services/api/src/citations/resolver.ts :: canonicalKeyFor",
+      "layer": "REFUSAL GATE over a normalised key",
+      "owner": "LCC",
+      "callers": [
+        "resolveBatch",
+        "resolver-dryrun-cli",
+        "cohort",
+        "fanout"
+      ],
+      "beforeBehavior": "placeholder patterns, length bounds, despatch-stamp refusal, digit+letter requirement. Does not decide where a token ends.",
+      "parityWithNew2Extractor": "NOT APPLICABLE - a different layer. Verified faithful: 2025:DHC:8491-DB -> 2025DHC8491DB, 2025:DHC:8491 -> 2025DHC8491.",
+      "lccOwned": true,
+      "defective": false
+    },
+    {
+      "canonicalizerPath": "services/api/src/documents/route.ts:86 extractCitationSpans",
+      "layer": "PD-7 LOCK - which spans a user may not edit away",
+      "owner": "LCC",
+      "beforeBehavior": "Patterns cover INSC and the reporter series ONLY. Returns [] for EVERY High Court neutral form - plain, -DB, and glued alike.",
+      "parityWithNew2Extractor": "OUT OF SCOPE FOR THIS DEFECT - it cannot carry the boundary bug because it has no YEAR:COURT:NUMBER pattern at all. Separate COVERAGE gap, reported not fixed.",
+      "lccOwned": true,
+      "defective": false,
+      "separateFinding": "LCC-R17-F2"
+    },
+    {
+      "canonicalizerPath": "services/api/src/search/hyde.ts:99 CITATION_SHAPES / stripInventedCitations",
+      "layer": "REMOVAL of model-generated citation spans",
+      "owner": "LCC",
+      "beforeBehavior": "Same four reporter/INSC shapes. Leaves a High Court neutral citation intact in generated text.",
+      "parityWithNew2Extractor": "OUT OF SCOPE, same reason. Separate coverage gap.",
+      "lccOwned": true,
+      "defective": false,
+      "separateFinding": "LCC-R17-F3"
+    },
+    {
+      "canonicalizerPath": "judgment_citation_aliases :: alias_key",
+      "layer": "ALIAS LOOKUP KEY",
+      "owner": "NEW2 (written by services/ingest concordance CLIs)",
+      "beforeBehavior": "alias_key is citationLookupKey over an AIR/SCC reporter citation.",
+      "parityWithNew2Extractor": "UNAFFECTED BY CONSTRUCTION. Migration 0027 constrains alias_reporter to IN ('AIR','SCC'); a neutral citation can never become an alias row.",
+      "lccOwned": false,
+      "defective": false
+    },
+    {
+      "canonicalizerPath": "judgment_citation_keys :: citation_key",
+      "layer": "RESOLVER INDEX",
+      "owner": "NEW2 (services/ingest/src/citation-keys-cli.ts)",
+      "beforeBehavior": "source='neutral' mirrors judgments.neutral_citation, which hc-load.ts writes - the extractor NEW2 R18 already corrected for future extraction. source='reporter'/'alias' are reporter forms.",
+      "parityWithNew2Extractor": "The neutral arm inherits whatever judgments.neutral_citation holds; existing rows are NEW2 R18's frozen correction population, not LCC's to move.",
+      "lccOwned": false,
+      "defective": false
+    }
+  ],
+  "parityMatrix": {
+    "controlSetSize": 27,
+    "frozen": true,
+    "covers": [
+      "plain neutral citations",
+      "valid -DB suffix",
+      "valid -FB suffix",
+      "hyphenated COURT token (KHC-D) - not a suffix",
+      "citation immediately followed by prose (the glued class)",
+      "punctuation (full stop, comma, parentheses)",
+      "whitespace (space, tab)",
+      "line breaks (LF and CRLF)",
+      "multiple citations in one string",
+      "malformed candidates (no number, no year, lowercase)",
+      "negative controls (-SB, -Crl.A., over-long number, despatch stamp, prose, AIR/SCC/SCR reporter forms)"
+    ],
+    "PARITY_DISAGREEMENTS_BEFORE": 3,
+    "PARITY_DISAGREEMENTS_AFTER": 3,
+    "PARITY_DISAGREEMENTS_AFTER_NOTE": "UNCHANGED BY THIS ROUND, AND DELIBERATELY. The single shared extractor is NEW2-owned and NEW2 held it on purpose. LCC has no independent parser to correct, and duplicating one is forbidden by query-shape.ts's own contract.",
+    "disagreements": [
+      {
+        "input": "2025:DHC:8491-DBThis Court held",
+        "ingest": "2025:DHC:8491-DB",
+        "api": "2025:DHC:8491",
+        "class": "GLUED_SUFFIX"
+      },
+      {
+        "input": "2023:AHC:111864-DBNeutral Citation",
+        "ingest": "2023:AHC:111864-DB",
+        "api": "2023:AHC:111864",
+        "class": "GLUED_SUFFIX"
+      },
+      {
+        "input": "2023:AHC:152051-FBOrder",
+        "ingest": "2023:AHC:152051-FB",
+        "api": "2023:AHC:152051",
+        "class": "GLUED_SUFFIX"
+      }
+    ],
+    "documentedLayerDifferences": [
+      {
+        "input": "2025:DHC:8491-DB and 2025:DHC:8492",
+        "ingest": "null (neutralCitationFrom REFUSES when the page prints two)",
+        "api": "2025:DHC:8491-DB (extractCitations returns both; the classifier takes the first)",
+        "verdict": "NOT A DEFECT. neutralCitationFrom answers 'what is THIS document's own citation'; extractCitations answers 'what citations appear in this text'. Forcing byte identity would make search refuse valid queries or make ingest guess an identity it cannot prove."
+      }
+    ]
+  },
+  "proposedFixValidatedInIsolation": {
+    "method": "The R18 boundary was applied to an ISOLATED COPY of services/ingest/src/citations.ts in a scratch directory and run beside the committed module over the frozen control set. The tracked file was never modified.",
+    "occurrencesOfOldBoundaryInFile": 1,
+    "CLOSED": 3,
+    "REGRESSED": 0,
+    "STILL_OPEN": 0,
+    "negativeControlsMoved": 0,
+    "normaliseCitationUnchanged": true,
+    "verdict": "The one-line boundary move closes every LCC parity hole and moves nothing else on this control set. Handed to NEW2 as evidence; NEW2 owns the write because it moves the edge key space."
+  },
+  "existingKeySpace": {
+    "measuredReadOnly": "2026-09-01",
+    "concurrentActiveBackendsDuringMeasurement": 0,
+    "canonicalJudgmentCitations": {
+      "note": "judgments.neutral_citation is written by hc-load.ts, NOT by the defective extractor. Already NEW2 R18's frozen population. Out of LCC scope.",
+      "neutralEndingDbFb": 210791
+    },
+    "resolvedCitationEdges": {
+      "table": "judgment_citations",
+      "totalRows": 22408376,
+      "neutralFormRows": 1376237,
+      "neutralWithDbFbSuffix": 216318,
+      "neutralWithoutSuffix_UPPER_BOUND": 1159919,
+      "neutralResolved": 19314,
+      "neutralUnsuffixedAndResolved_THE_FALSE_PIN_EXPOSURE": 15290,
+      "deterministicFingerprint_sameCitingJudgmentEmittedBothXandXDB": {
+        "splitPairs": 83,
+        "distinctCitations": 33,
+        "distinctCitingJudgments": 83
+      },
+      "corpusWideSplitFormCitations": 158,
+      "rawTextRetainsGlue": 0,
+      "evidenceColumnPopulatedOnNeutralRows": 0,
+      "honestBound": "1,159,919 is an UPPER BOUND, not an estimate. citation_text stores the regex's own match[0], already truncated, and evidence is NULL on all 1,376,237 neutral rows - so the glue is NOT recoverable from the edge row. The only deterministic in-database signal is the 83 split pairs / 158 corpus-wide split citations, and even those include genuine cases where a court printed both forms. Settling the true figure requires re-reading source text, which is NEW2's population walk, not LCC's."
+    },
+    "unresolvedReferences": {
+      "neutralFormUnresolved": 1356923,
+      "neutralUnsuffixedUnresolved": 1144629
+    },
+    "aliases": {
+      "ALIASES_SCANNED": 4394,
+      "ALIASES_POTENTIALLY_AFFECTED": 0,
+      "byReporter": {
+        "AIR": 335,
+        "SCC": 4059
+      },
+      "matchingHcNeutralForm": 0,
+      "why": "Migration 0027: CHECK (alias_reporter IN ('AIR','SCC')). Not a sample - a constraint. A neutral citation cannot be an alias row.",
+      "CURRENT_EDGES_POTENTIALLY_AFFECTED_VIA_ALIAS_PATH": 0,
+      "aliasProvenanceAffected": false,
+      "resolvedEdgeIdentityAffectedViaAlias": false
+    },
+    "judgmentCitationKeys": {
+      "alias": 4394,
+      "neutral": 1388764,
+      "reporter": 38352,
+      "neutralEndingDbFb": 210791,
+      "note": "neutralEndingDbFb matches judgments.neutral_citation exactly (210,791 both sides), confirming this table is a faithful mirror of hc-load's output and carries no independent exposure."
+    },
+    "citationChecks": {
+      "totalRows": 16875,
+      "neutralFormClaimed": 1736,
+      "endingDbFb": 261,
+      "note": "citation_checks is an append-only audit of what was SHOWN to a user. Not a key space to correct, and not rewritable."
+    },
+    "citationKeyFrontier": 1,
+    "citationKeyDirty": 0,
+    "mutationsPerformed": 0
+  },
+  "separateFindings": [
+    {
+      "id": "LCC-R17-F2",
+      "severity": "REPORTED_NOT_FIXED",
+      "file": "services/api/src/documents/route.ts:86 extractCitationSpans",
+      "finding": "The PD-7 lock cannot see a High Court neutral citation at all. Measured: extractCitationSpans('2025:DHC:8491-DB') === [], and the same for the plain and glued forms. Its own comment says 'This function IS the PD-7 lock, so a form it cannot see is a citation the advocate can edit or remove without the server raising a 422' - the false negative it calls the dangerous direction.",
+      "whyNotFixedHere": "It is a coverage gap, not a token-boundary parity defect. Fixing it broadens citation syntax on a user-facing integrity surface, which this round's instructions forbid doing on guesswork, and it needs its own evidence and its own failure-first test.",
+      "recommendation": "Own LCC round. Reuse the frozen control set in this artifact."
+    },
+    {
+      "id": "LCC-R17-F3",
+      "severity": "REPORTED_NOT_FIXED",
+      "file": "services/api/src/search/hyde.ts:99 CITATION_SHAPES / stripInventedCitations",
+      "finding": "Same four shapes, same blindness: a model-generated High Court neutral citation is not stripped from generated text. Measured: stripInventedCitations('2025:DHC:8491-DB') returns the string unchanged.",
+      "whyNotFixedHere": "Same reason as F2, and the two should be corrected together since they are the same closed set written twice.",
+      "recommendation": "Pair with LCC-R17-F2."
+    }
+  ],
+  "finalState": {
+    "LCC_SUFFIX_DEFECT_REPRODUCED": "YES",
+    "CONTRACT_CHANGE_REQUIRED": "NO",
+    "RESOLVER_READY_FOR_INDEPENDENT_RETEST": "NO",
+    "RESOLVER_READY_REASON": "The round's own bar requires that no known parser divergence remains in currently exercised citation paths. Three remain, in the shared NEW2-owned extractor, and they are exercised by /search on every bare-citation query. The suffix defect is therefore reproduced and located but NOT corrected, because the only correct correction is a NEW2 write.",
+    "CITATION_BULK_APPLY": "HOLD",
+    "FINAL_FALSIFIER_RUN": "NO",
+    "DB_SUFFIX_CROSS_SYSTEM_PARITY": "PENDING",
+    "EXISTING_CORRECTIONS_APPLIED": "NO",
+    "citationEdgesApplied": 0,
+    "canonicalJudgmentCorrections": 0
+  }
+}
