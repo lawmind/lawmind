@@ -1,0 +1,27 @@
+{
+  "artifact": "NEW2_R23_IMMUTABLE_ARTIFACT_MANIFEST",
+  "populationId": "NEW2-R23-SAFE-e5caecc2b05a4d04",
+  "populationHash": "e5caecc2b05a4d047291f4b2bad45e108b6a7135006da502cced8d5b6ab990b4",
+  "parentPopulationId": "NEW2-R22-SAFE-f55e2ba64b75772f",
+  "parentPopulationHash": "f55e2ba64b75772fe33e568e7707b453227dcdb18c67a966a7ae5ff776bafd33",
+  "lineageHash": "26bc8f8e6a663ba756eff8f442ec1273ca89f7f38d91bc7e9b6435eea7e37718",
+  "files": {
+    "r23-safe-population.json": "b78ac7364075d5fa77da2ae7236bc634a1bf0821ab89ba7515f6392d91f0349b",
+    "r23-preflight-manifest.json": "e9a3b717f6c3565b0497c2c20d953c881f7963a911b82004f755663ff144f300",
+    "preflight-adversarial.json": "28e36b1f644c943b3a1c22b9346ed17c5f55824b6cff857d1878bf311e231c83",
+    "hhc-ambiguous-suffix-quarantine.json": "c249f96ed8fb1369ce2e8ae74cdb90b6ac9d16b54369ff386dcbf87fa619c9de",
+    "quarantine-census.json": "a662c9e2760599debb4fc67263ed753e6fddaff512632d7840adf927f09760f5",
+    "deferred-technical-debt.json": "63980207efaccc5e7e382a477cc772849f75a028f0fea212c6649e29e1efc91f",
+    "lineage.json": "26bc8f8e6a663ba756eff8f442ec1273ca89f7f38d91bc7e9b6435eea7e37718",
+    "verification.json": "6b5b810d1a584b044a76d0146289eb8e317f798129e1e12adad8dcb12474624d"
+  },
+  "mutationLedger": {
+    "canonicalRows": 0,
+    "edges": 0,
+    "aliases": 0,
+    "migrations": 0
+  },
+  "readyForR23DeltaAudit": true,
+  "readyForWrite": false,
+  "citationBulkApply": "HOLD"
+}

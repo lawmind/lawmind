@@ -1,0 +1,45 @@
+{
+  "artifact": "NEW2_R23_BUILD_VERIFICATION",
+  "r22HashVerified": {
+    "expected": "f55e2ba64b75772fe33e568e7707b453227dcdb18c67a966a7ae5ff776bafd33",
+    "recomputed": "f55e2ba64b75772fe33e568e7707b453227dcdb18c67a966a7ae5ff776bafd33",
+    "artifactBytesVerified": 8,
+    "pass": true
+  },
+  "r22Counts": {
+    "total": 540,
+    "toNull": 441,
+    "toReplace": 86,
+    "toSuffixReplace": 13
+  },
+  "populationId": "NEW2-R23-SAFE-e5caecc2b05a4d04",
+  "populationHash": "e5caecc2b05a4d047291f4b2bad45e108b6a7135006da502cced8d5b6ab990b4",
+  "counts": {
+    "DETERMINISTIC_TO_NULL": 441,
+    "DETERMINISTIC_TO_REPLACE": 86,
+    "DETERMINISTIC_SUFFIX_REPLACE": 12
+  },
+  "total": 539,
+  "r22MinusOneExact": true,
+  "rowFieldsChangedFromParent": 0,
+  "quarantine": {
+    "commonOrder": 29,
+    "delhi": 2,
+    "hhcAmbiguousSuffix": 1,
+    "total": 32
+  },
+  "currentDrift": "NO_DRIFT",
+  "targetHolderGate": "PASS",
+  "preflightAttacks": 16,
+  "canonicalRowsChanged": 0,
+  "edgesChanged": 0,
+  "aliasesChanged": 0,
+  "migrations": 0,
+  "networkUsed": false,
+  "databaseUsed": true,
+  "databaseAccess": "READ_ONLY_LOCAL_LOOPBACK",
+  "new1Interrupted": false,
+  "readyForR23DeltaAudit": true,
+  "readyForWrite": false,
+  "citationBulkApply": "HOLD"
+}

@@ -1,0 +1,25 @@
+{
+  "artifact": "NEW2_R23_DEFERRED_TECHNICAL_DEBT",
+  "note": "Recorded, not fixed here. Every R23 SAFE replacement target classifies NO_EXISTING_HOLDER and never reaches the generic common-order family branch, so none of these invalidates this population.",
+  "items": [
+    {
+      "id": "DEBT-COMMON-ORDER-EVIDENCE-PRECISION",
+      "finding": "Common-order evidence pointers can be insufficiently precise.",
+      "owner": "citation-edge / common-order work",
+      "affectsR23": false
+    },
+    {
+      "id": "DEBT-VERIFIED-COMMON-ORDER-FAMILY-PREFLIGHT",
+      "finding": "The VERIFIED_COMMON_ORDER_FAMILY generic preflight branch only checks that an evidence pointer is non-empty.",
+      "evidence": "services/ingest/src/correction-preflight.ts — the VERIFIED_COMMON_ORDER_FAMILY case tests row.evidencePointer truthiness and nothing else.",
+      "owner": "citation-edge / common-order work",
+      "affectsR23": false
+    },
+    {
+      "id": "DEBT-R21-CONCATENATED-SOURCE-COUNTS",
+      "finding": "R21 concatenated-source diagnostic counts have narrative inconsistencies.",
+      "owner": "citation-edge / common-order work",
+      "affectsR23": false
+    }
+  ]
+}

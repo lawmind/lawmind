@@ -1,0 +1,26 @@
+{
+  "artifact": "NEW2_R23_HHC_AMBIGUOUS_SUFFIX_QUARANTINE",
+  "rows": 1,
+  "quarantineClass": "AMBIGUOUS_SUFFIX_OWNERSHIP_TWO_SIDED_PROOF_MISSING",
+  "records": [
+    {
+      "judgmentId": "ae156e65-5871-48f3-8dc8-93a5c7e172dc",
+      "r22Disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+      "oldValue": "2024:HHC:17024",
+      "r22ProposedReplacement": "2024:HHC:17024-DB",
+      "sourceIdentity": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2024/court=2_5/bench=cmis/HPHC010148182020_1_2024-11-06.pdf",
+      "sourceContentHash": "1821bbff560b60a40bff84c2aa79b9725c210e2defd84d606e285b7f685fa426",
+      "evidenceClass": "SUFFIX_REPLACEMENT_CONFIRMED",
+      "evidencePointer": "docs/ai/new2-r19/r19-candidate-population.jsonl#ae156e65-5871-48f3-8dc8-93a5c7e172dc",
+      "parentRowHash": "b01dac9d9b386c17808fbee6de21fdd31b039e7bf5aa65ea3c00c9723ddef2c1",
+      "independentAuditVerdict": "AMBIGUOUS",
+      "independentAuditReason": "The document prints a clean bare 2024:HHC:17024 own-form citation, while DB running stamps suggest a suffixed form, but the required two-sided standard does not prove the stored bare value false.",
+      "ownershipInferenceUsed": {
+        "suffixFrequency": false,
+        "siblingHhcConvention": false,
+        "contentHashIdentity": false
+      },
+      "mutationAuthorized": false
+    }
+  ]
+}

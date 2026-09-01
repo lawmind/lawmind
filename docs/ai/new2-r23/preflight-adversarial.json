@@ -1,0 +1,148 @@
+{
+  "artifact": "NEW2_R23_PREFLIGHT_ADVERSARIAL",
+  "unchanged": {
+    "ok": true,
+    "refusals": []
+  },
+  "attacks": [
+    {
+      "name": "DUPLICATE_ID",
+      "expected": "MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "CONFLICTING_DISPOSITIONS",
+      "expected": "MANIFEST_INVALID:CONFLICTING_DISPOSITIONS",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "MANIFEST_INVALID:DUPLICATE_CONFLICTING_MANIFEST_RECORD:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "MANIFEST_INVALID:CONFLICTING_DISPOSITIONS:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "MANIFEST_INVALID:MISSING_TARGET_HOLDER_SET:2099MLHC1"
+      ]
+    },
+    {
+      "name": "TO_NULL_WITH_REPLACEMENT",
+      "expected": "MANIFEST_INVALID:TO_NULL_WITH_REPLACEMENT",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:TO_NULL_WITH_REPLACEMENT:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "MANIFEST_INVALID:MISSING_TARGET_HOLDER_SET:2099MLHC2"
+      ]
+    },
+    {
+      "name": "REPLACEMENT_WITH_NULL",
+      "expected": "MANIFEST_INVALID:REPLACEMENT_WITH_NULL",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:REPLACEMENT_WITH_NULL:031df629-04a9-4c1e-a4f5-10fbc2924f2a"
+      ]
+    },
+    {
+      "name": "REPLACEMENT_EQUALS_OLD",
+      "expected": "MANIFEST_INVALID:REPLACEMENT_EQUALS_OLD",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:REPLACEMENT_EQUALS_OLD:031df629-04a9-4c1e-a4f5-10fbc2924f2a",
+        "MANIFEST_INVALID:MISSING_TARGET_HOLDER_SET:2024PHHC001381"
+      ]
+    },
+    {
+      "name": "UNKNOWN_DISPOSITION",
+      "expected": "MANIFEST_INVALID:UNEXPECTED_DISPOSITION",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:UNEXPECTED_DISPOSITION:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "MISSING_SOURCE_HASH",
+      "expected": "MANIFEST_INVALID:MISSING_SOURCE_HASH",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:MISSING_SOURCE_HASH:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "MALFORMED_CITATION",
+      "expected": "MANIFEST_INVALID:MALFORMED_CANONICAL_CITATION",
+      "result": "REFUSED",
+      "refusals": [
+        "MANIFEST_INVALID:MALFORMED_CANONICAL_CITATION:002e9843-bc7d-4f13-8699-2f31851d5980:OLD"
+      ]
+    },
+    {
+      "name": "WRONG_POPULATION_HASH",
+      "expected": "POPULATION_HASH_MISMATCH",
+      "result": "REFUSED",
+      "refusals": [
+        "POPULATION_HASH_MISMATCH"
+      ]
+    },
+    {
+      "name": "CHANGED_OLD_VALUE",
+      "expected": "OLD_VALUE_DRIFT",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "MISSING_ROW",
+      "expected": "MISSING_ROW",
+      "result": "REFUSED",
+      "refusals": [
+        "MISSING_ROW:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "LIVE_CANDIDATE_COUNT_DRIFT"
+      ]
+    },
+    {
+      "name": "CHANGED_SOURCE_HASH",
+      "expected": "SOURCE_CONTENT_HASH_DRIFT",
+      "result": "REFUSED",
+      "refusals": [
+        "SOURCE_CONTENT_HASH_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "ALREADY_CORRECTED",
+      "expected": "ALREADY_CORRECTED_ROW",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:031df629-04a9-4c1e-a4f5-10fbc2924f2a",
+        "ALREADY_CORRECTED_ROW:031df629-04a9-4c1e-a4f5-10fbc2924f2a"
+      ]
+    },
+    {
+      "name": "ALREADY_NULL_TO_NULL",
+      "expected": "ALREADY_NULL_TO_NULL",
+      "result": "REFUSED",
+      "refusals": [
+        "OLD_VALUE_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980",
+        "ALREADY_NULL_TO_NULL:002e9843-bc7d-4f13-8699-2f31851d5980"
+      ]
+    },
+    {
+      "name": "TARGET_HOLDER_CONFLICT",
+      "expected": "TARGET_HOLDER_CONFLICT",
+      "result": "REFUSED",
+      "refusals": [
+        "TARGET_HOLDER_CONFLICT:2024PHHC001398",
+        "TARGET_HOLDER_CONFLICT_DRIFT:2024PHHC001398"
+      ]
+    },
+    {
+      "name": "UNEXPLAINED_MANY_TO_ONE_TARGET",
+      "expected": "UNEXPLAINED_MANY_TO_ONE_TARGET",
+      "result": "REFUSED",
+      "refusals": [
+        "UNEXPLAINED_MANY_TO_ONE_TARGET:2026MLHC717DB"
+      ]
+    }
+  ],
+  "result": "PASS_16_OF_16_REFUSED",
+  "writes": 0
+}
