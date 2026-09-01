@@ -42,7 +42,12 @@
  */
 import type postgres from 'postgres';
 
-import { citationKeys, detectTreatment, extractCitations } from './citations.ts';
+import {
+  citationKeys,
+  classifyCitationGraphOccurrence,
+  detectTreatment,
+  extractCitations,
+} from './citations.ts';
 import { installCrashGuard } from './crash-guard.ts';
 import { openDb } from './db-host.ts';
 
@@ -190,7 +195,16 @@ async function rescan(
       for (const c of found) {
         if (known.has(c.normalised)) continue;
         const target = index.get(c.normalised);
-        const citedId = target && target !== judgment.id ? target : null;
+        // Exact canonical self identity and exact common-order page furniture
+        // are source metadata, not outgoing citation-graph evidence. The parser
+        // still returns both tokens for exact citation lookup.
+        if (
+          target === judgment.id ||
+          classifyCitationGraphOccurrence(judgment.full_text, c) === 'COMMON_ORDER_PAGE_FURNITURE'
+        ) {
+          continue;
+        }
+        const citedId = target || null;
         const { relationship, evidence } = detectTreatment(
           judgment.full_text,
           c.offset + c.raw.length,
@@ -374,8 +388,14 @@ async function main(): Promise<void> {
 
         for (const c of found) {
           const target = index.get(c.normalised);
+          if (
+            target === judgment.id ||
+            classifyCitationGraphOccurrence(judgment.full_text, c) === 'COMMON_ORDER_PAGE_FURNITURE'
+          ) {
+            continue;
+          }
           // '' marks an ambiguous form; treat it as unresolved rather than guess.
-          const citedId = target && target !== judgment.id ? target : null;
+          const citedId = target || null;
           // Measured from the END of the citation: the court's annotation always
           // trails its entry.
           const { relationship, evidence } = detectTreatment(

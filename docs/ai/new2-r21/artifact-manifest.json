@@ -1,0 +1,23 @@
+{
+ "artifact": "NEW2_R21_ARTIFACT_MANIFEST",
+ "takenAt": "2026-09-01T12:12:04.148Z",
+ "populationId": "NEW2-R21-EXISTING-5b9d001a39dc00af",
+ "populationHash": "5b9d001a39dc00af830335a14772d1d039cd38a4826601e34ba787c9eccc80b0",
+ "candidateFileSha256": "0be53ff094a06d8f1c835b955476966f46cf38f563abe87056887ae4f31084da",
+ "r19HashVerified": "cbb193df4e42269e952dcc8236ebf5ff4afc0659118699b801fb3cd316400d84",
+ "r20HashVerified": "3cc2c5452e49a9232e33e476674ca9f4c2f68701b178d2c3a7e658b636ce3c34",
+ "gates": {
+  "sevenFalseSuffix": "PASS_7_OF_7_REPRODUCED",
+  "edgeGuard": "PASS_2_OF_2_FALSE_PINS_BLOCKED_0_TRUE_OUTGOING_BLOCKED",
+  "preflight": "PASS_4_OF_4_DRIFT_CASES_REFUSED",
+  "internalFalsifier": "PASS",
+  "noLongerResolve": "BLOCKED_10_OF_11",
+  "leadingBoundary": "BLOCKED_INDEPENDENT_COUNT_CONTRADICTION"
+ },
+ "mutations": {
+  "existingRows": 0,
+  "edges": 0,
+  "aliases": 0,
+  "migrations": 0
+ }
+}

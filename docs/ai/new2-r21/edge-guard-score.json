@@ -1,0 +1,8 @@
+{
+ "artifact": "NEW2_R21_EDGE_GUARD_SCORE",
+ "knownFalsePinBlocked": "2/2",
+ "trueOutgoingEdgeWronglyBlocked": 0,
+ "ambiguous": 0,
+ "untestable": 0,
+ "guardGate": "PASS"
+}

@@ -1,0 +1,1194 @@
+{
+ "artifact": "NEW2_R21_LEADING_BOUNDARY_AFFECTED_UNIVERSE",
+ "universeId": "NEW2-R21-LEADING-a1ec85dbce2d9ed0",
+ "universeHash": "a1ec85dbce2d9ed02d206bc2304e3da3acd69f73510e9f85e8ccd95c5d91cbb8",
+ "rows": 37,
+ "distinctSecondTokens": 21,
+ "independentDistinctSecondTokensClaim": 29,
+ "countStatus": "CONTRADICTION_INDEPENDENT_29_VS_REPRODUCED_LITERAL_TOKEN_COUNT",
+ "secondTokens": [
+  "2025:MLHC:347-DB",
+  "2025:MLHC:390-DB",
+  "2025:MLHC:406-DB",
+  "2025:MLHC:407-DB",
+  "2025:MLHC:408-DB",
+  "2025:MLHC:409-DB",
+  "2025:MLHC:410-DB",
+  "2025:MLHC:411-DB",
+  "2025:MLHC:412-DB",
+  "2025:MLHC:413-DB",
+  "2025:MLHC:414-DB",
+  "2025:MLHC:415-DB",
+  "2025:MLHC:417-DB",
+  "2025:MLHC:418-DB",
+  "2025:MLHC:419-DB",
+  "2025:MLHC:420-DB",
+  "2026:MLHC:448-DB",
+  "2026:MLHC:477-DB",
+  "2026:MLHC:717-DB",
+  "2026:MLHC:741-DB",
+  "2026:MLHC:903-DB"
+ ],
+ "evidence": [
+  {
+   "judgmentId": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+   "contentHash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "0efb2c57-94db-40e6-958f-6d274ed07fc4",
+   "contentHash": "98584e8284b39795715b131d0b11d95b6faaf2d742521fa801dc54240ac9eba1",
+   "pairs": [
+    {
+     "first": "2025:MLHC:347-DB",
+     "missedSecond": "2025:MLHC:347-DB"
+    },
+    {
+     "first": "2025:MLHC:347-DB",
+     "missedSecond": "2025:MLHC:347-DB"
+    },
+    {
+     "first": "2025:MLHC:347-DB",
+     "missedSecond": "2025:MLHC:347-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "0fad6b9c-6ca0-4575-bcd0-e49576be6242",
+   "contentHash": "fd6026daa4baa4623d84ba0b09468b9855a49cd94b5238ba450f73a9759a9604",
+   "pairs": [
+    {
+     "first": "2026:MLHC:448-DB",
+     "missedSecond": "2026:MLHC:448-DB"
+    },
+    {
+     "first": "2026:MLHC:448-DB",
+     "missedSecond": "2026:MLHC:448-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "1336fc3b-ee59-42de-828b-f10687d840ed",
+   "contentHash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "14e6f4e1-29c5-423e-b41c-990fce02bc1e",
+   "contentHash": "68c482e2df9b74ab43efff596ca247f5c1b19d0592a25145d99409cd1f2a6c2e",
+   "pairs": [
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "1c0e2f86-0c69-470c-807c-09d0127cf726",
+   "contentHash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+   "contentHash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "362f404c-8329-4e09-905c-0c4e4c5994e2",
+   "contentHash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "369edfb8-c738-411c-96fc-77e814bde7c3",
+   "contentHash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+   "contentHash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+   "contentHash": "721372fe5c6e963a6867f804a74defbe63638842a8daf47084462e1b3524c03e",
+   "pairs": [
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "531984d2-c3ed-48af-a011-3a005bb68111",
+   "contentHash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:412-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "56ff15f7-9714-4f00-b244-7f70bf0be6fe",
+   "contentHash": "fd6026daa4baa4623d84ba0b09468b9855a49cd94b5238ba450f73a9759a9604",
+   "pairs": [
+    {
+     "first": "2026:MLHC:448-DB",
+     "missedSecond": "2026:MLHC:448-DB"
+    },
+    {
+     "first": "2026:MLHC:448-DB",
+     "missedSecond": "2026:MLHC:448-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "625b28c9-bb07-4459-a72b-3800ad0d81fc",
+   "contentHash": "68c482e2df9b74ab43efff596ca247f5c1b19d0592a25145d99409cd1f2a6c2e",
+   "pairs": [
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "693edabf-ebf4-430a-bd99-fd4132ae11c2",
+   "contentHash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "6bd431b1-50dd-4781-9c63-19fc18b64289",
+   "contentHash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+   "contentHash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:415-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+   "contentHash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:417-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "7ebbf954-1255-480c-a750-0fe24c42349a",
+   "contentHash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:411-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "897be712-7475-49a8-ba10-ec1bca844181",
+   "contentHash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:413-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "94d609a4-fbcb-498e-aeb2-7481cf000a23",
+   "contentHash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:419-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "97386fd5-d3e4-4efd-8e77-17a315b5df80",
+   "contentHash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+   "contentHash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:408-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "a4d66317-cede-4d97-9e8f-ab115924ec08",
+   "contentHash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:410-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "a6224a37-e963-41c4-b512-2792e677cecd",
+   "contentHash": "68c482e2df9b74ab43efff596ca247f5c1b19d0592a25145d99409cd1f2a6c2e",
+   "pairs": [
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    },
+    {
+     "first": "2026:MLHC:717-DB",
+     "missedSecond": "2026:MLHC:717-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+   "contentHash": "601de8adfc85f0b7b8fa4220277113a19fe8feb54cecd28eefd216d638860451",
+   "pairs": [
+    {
+     "first": "2025:MLHC:384-DB",
+     "missedSecond": "2025:MLHC:390-DB"
+    },
+    {
+     "first": "2025:MLHC:384-DB",
+     "missedSecond": "2025:MLHC:390-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "add8896a-6d16-41ee-b02a-40fed3224216",
+   "contentHash": "e6909a97bcb339f7572dfcde6957b465f8a99f2e707c657185a4fd865c30e86e",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:406-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:406-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:406-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+   "contentHash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "c45c8329-66a6-4240-be57-724befa9e6ff",
+   "contentHash": "5f12b69193bc4dee0ad00e01eed7c0537855a4e41f89bc1083d42098747fe5a8",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:407-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:407-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:407-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "cbb34ae7-b643-46b3-a046-19a746a8907e",
+   "contentHash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "d7411ed4-78b2-4521-bbf1-86b199dadb1e",
+   "contentHash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:418-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "d991f604-ad0b-4c62-833b-66d2f1189506",
+   "contentHash": "85fc51b6bbcab43c4321291c60e5afabdab7b113e44c2441793b45c8d6755667",
+   "pairs": [
+    {
+     "first": "2026:MLHC:741-DB",
+     "missedSecond": "2026:MLHC:741-DB"
+    },
+    {
+     "first": "2026:MLHC:741-DB",
+     "missedSecond": "2026:MLHC:741-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "db52fe55-a7d3-4379-b058-8902c91466ab",
+   "contentHash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:420-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "e773ad2b-6d02-440f-9e71-18e269739d9e",
+   "contentHash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:414-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "ec0c134a-9f90-4a78-9154-1039f30d1abe",
+   "contentHash": "721372fe5c6e963a6867f804a74defbe63638842a8daf47084462e1b3524c03e",
+   "pairs": [
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    },
+    {
+     "first": "2026:MLHC:476-DB",
+     "missedSecond": "2026:MLHC:477-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "f5ff66b0-d641-4265-bc18-11db6f3d6fa0",
+   "contentHash": "04dc66443ee2f4e975746a3183b7feeb24f71db9d40733700604840fa147ed86",
+   "pairs": [
+    {
+     "first": "2026:MLHC:903-DB",
+     "missedSecond": "2026:MLHC:903-DB"
+    },
+    {
+     "first": "2026:MLHC:903-DB",
+     "missedSecond": "2026:MLHC:903-DB"
+    },
+    {
+     "first": "2026:MLHC:903-DB",
+     "missedSecond": "2026:MLHC:903-DB"
+    }
+   ]
+  },
+  {
+   "judgmentId": "f8760958-5025-489f-888a-d824cbfe63e2",
+   "contentHash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5",
+   "pairs": [
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    },
+    {
+     "first": "2025:MLHC:405-DB",
+     "missedSecond": "2025:MLHC:409-DB"
+    }
+   ]
+  }
+ ],
+ "status": "MEASURE_ONLY_NOT_FIXED_IN_R21",
+ "contaminatedCorrectionAudit": false
+}

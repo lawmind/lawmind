@@ -1,0 +1,47 @@
+{
+ "artifact": "NEW2_R21_WRITE_TIME_PREFLIGHT_DRY_RUN",
+ "populationId": "NEW2-R21-EXISTING-5b9d001a39dc00af",
+ "frozenFrontier": {
+  "createdAt": "2026-08-31 14:09:11.196548+00",
+  "judgmentId": "b66f80ad-7cea-4d85-bd94-b8980ad30873"
+ },
+ "protectedRows": 571,
+ "protectedProposedKeys": 100,
+ "unchanged": {
+  "ok": true,
+  "refusals": []
+ },
+ "driftRefusalTests": [
+  {
+   "name": "ALTERED_OLD_VALUE",
+   "result": "REFUSED",
+   "refusals": [
+    "OLD_VALUE_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+   ]
+  },
+  {
+   "name": "MISSING_ROW",
+   "result": "REFUSED",
+   "refusals": [
+    "MISSING_ROW:002e9843-bc7d-4f13-8699-2f31851d5980",
+    "LIVE_CANDIDATE_COUNT_DRIFT"
+   ]
+  },
+  {
+   "name": "CHANGED_SOURCE_HASH",
+   "result": "REFUSED",
+   "refusals": [
+    "SOURCE_CONTENT_HASH_DRIFT:002e9843-bc7d-4f13-8699-2f31851d5980"
+   ]
+  },
+  {
+   "name": "POPULATION_HASH_MISMATCH",
+   "result": "REFUSED",
+   "refusals": [
+    "POPULATION_HASH_MISMATCH"
+   ]
+  }
+ ],
+ "result": "PASS_4_OF_4_REFUSED",
+ "writes": 0
+}

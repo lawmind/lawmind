@@ -1,0 +1,54 @@
+{
+  "artifact": "NEW2_R21_VERIFICATION",
+  "commands": [
+    {
+      "scope": "R21 evaluation, citation candidate, and R20 boundary regression",
+      "command": "pnpm --filter @lawmind/ingest exec tsx --test --test-concurrency=1 src/citation-graph-occurrence.test.ts src/correction-preflight.test.ts src/citations.test.ts src/citation-boundary-parity.test.ts",
+      "tests": 103,
+      "passed": 103,
+      "failed": 0
+    },
+    {
+      "scope": "shared citation/search pure regressions",
+      "command": "pnpm exec tsx --test --test-concurrency=1 selected search/citation/cohort/source-strength/judgment-citation tests",
+      "tests": 161,
+      "passed": 161,
+      "failed": 0
+    },
+    {
+      "scope": "ingest typecheck",
+      "command": "pnpm typecheck from services/ingest",
+      "result": "PASS_NO_ERRORS"
+    },
+    {
+      "scope": "API typecheck",
+      "command": "pnpm typecheck from services/api",
+      "result": "PASS_NO_ERRORS"
+    },
+    {
+      "scope": "owned source lint",
+      "command": "eslint exact R21-owned source paths",
+      "result": "PASS"
+    },
+    {
+      "scope": "new standalone R21 source formatting",
+      "command": "prettier --check builder, graph test, preflight module and preflight test",
+      "result": "PASS",
+      "existingTouchedFiles": "citations.ts and citations-cli.ts retain their pre-existing formatting to avoid unrelated mechanical churn"
+    }
+  ],
+  "broaderDbIntegrationAttempt": {
+    "result": "NOT_A_CODE_FAILURE",
+    "testsReported": 229,
+    "passed": 172,
+    "failed": 35,
+    "cancelled": 22,
+    "reason": "DB-backed API fixtures attempted the unconfigured local PostgreSQL default and failed authentication for user Xerxus.",
+    "retryAgainstLiveDatabase": "REFUSED",
+    "whyNoRetry": "Those tests create and mutate fixtures. R21 allows read-only live-DB evidence and zero canonical/edge/alias writes, so production credentials were not supplied to a mutating test suite."
+  },
+  "citationHarness": {
+    "result": "NOT_RUN",
+    "reason": "No external network is allowed and NEW1 holds HEAVY_BOX; R21 instead ran the pure shared citation contract regressions and bounded read-only database evidence."
+  }
+}

@@ -1,0 +1,48 @@
+{
+ "artifact": "NEW2_R21_INTERNAL_FALSIFIER",
+ "attacks": [
+  {
+   "attack": "seven PHHC precedent-owned suffixes",
+   "result": "7 reclassified to deterministic NULL"
+  },
+  {
+   "attack": "Rajasthan scan damage",
+   "result": "6 remain outside candidate"
+  },
+  {
+   "attack": "Bombay furniture/source damage",
+   "result": "394 remain outside candidate"
+  },
+  {
+   "attack": "tied candidates",
+   "result": "only exhaustively audited DB/FB suffix rows entered; seven false suffixes removed"
+  },
+  {
+   "attack": "foreign citations",
+   "result": "not promoted by similarity; PHHC retained windows forced seven NULLs"
+  },
+  {
+   "attack": "short orders and multiple citations",
+   "result": "graph guard adversarial ALLOW fixtures passed"
+  },
+  {
+   "attack": "DB/FB suffixes",
+   "result": "44 confirmed rows only"
+  },
+  {
+   "attack": "common-order Meghalaya",
+   "result": "2 false pins blocked at graph interpretation only"
+  },
+  {
+   "attack": "source-damaged cases",
+   "result": "remain outside correction candidate"
+  }
+ ],
+ "falseNull": 0,
+ "falseReplace": 0,
+ "falseSuffixReplace": 0,
+ "internalGate": "PASS",
+ "independentAuthorization": false,
+ "finalIndependentFalsifierRun": false,
+ "bulkApply": "HOLD"
+}

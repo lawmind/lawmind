@@ -1,0 +1,88 @@
+{
+ "artifact": "NEW2_R21_SEVEN_FALSE_SUFFIX_REPRODUCTION",
+ "method": "Retained R19 source windows were evaluated without using the independent conclusion as a row selector: PHHC suffix rows require no own-CNR/case adjacency plus explicit precedent-attribution language.",
+ "phhcSuffixRowsExamined": 8,
+ "reproduced": 7,
+ "reclassifiedToNull": 7,
+ "excluded": 0,
+ "retainedTrueOwnSuffix": [
+  {
+   "judgmentId": "073d9ef5-744c-4376-8a86-35314ed9d7b7",
+   "classification": "SUFFIX_REPLACEMENT_CONFIRMED",
+   "ownCaseNumberAdjacent": true,
+   "window": " State counsel on instructions TEJWINDER SINGH 2023.06.09 20:27 I attest to the accuracy and integrity of this document 2023:PHHC:081753-DB CRWP-5499-2023 -2- from ASI Zorawar Singh, P.S. Sadar Nakodar, District Jalandhar submits that factum of marriage of si"
+  }
+ ],
+ "rows": [
+  {
+   "judgmentId": "0a6acaa1-ba77-4893-8a69-e7a0e9a2f7ab",
+   "currentStoredNeutralCitation": "2026:PHHC:027747",
+   "rejectedSuffix": "2026:PHHC:027747-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": " the petitioner has placed reliance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. ounsel does not dispute either the facts ",
+   "sourceObjectKey": "data/pdf/year=2026/court=3_22/bench=phhc/PHHC011139732026_1_2026-07-15.pdf"
+  },
+  {
+   "judgmentId": "64b75430-4755-475e-9bed-931f9418a71f",
+   "currentStoredNeutralCitation": "2024:PHHC:147654",
+   "rejectedSuffix": "2024:PHHC:147654-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": "by the Division Bench of Rakesh Das Vs. State of Haryana and another passed in CRM 2023 on 12.11.2024 (Neutral Citation 2024:PHHC:147654-DB), the instant petition seeking quashing of FIR based on partial compromise is not maintainable. IN THE HIGH COURT OF PU",
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010077152025_1_2025-04-01.pdf"
+  },
+  {
+   "judgmentId": "6805abd3-1809-4713-b9ff-f625fa4b44db",
+   "currentStoredNeutralCitation": "2024:PHHC:147654",
+   "rejectedSuffix": "2024:PHHC:147654-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": "of the Division Bench judgment of this Court passed in ‘Rakesh Das Vs. State of Haryana and another’, Neutral Citation: 2024:PHHC:147654-DB. (SUMEET GOEL) JUDGE Yes/No Yes/No ……Petitioner(s) ……Respondent(s) Learned counsel appearing for the petitioner, seeks ",
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC010150602024_1_2025-08-25.pdf"
+  },
+  {
+   "judgmentId": "896967ad-9347-4b6a-aee9-d0d5d8c4ae3c",
+   "currentStoredNeutralCitation": "2026:PHHC:027747",
+   "rejectedSuffix": "2026:PHHC:027747-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": " the petitioner has placed reliance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. Learned State counsel does not dispute ei",
+   "sourceObjectKey": "data/pdf/year=2026/court=3_22/bench=phhc/PHHC010875452026_1_2026-07-10.pdf"
+  },
+  {
+   "judgmentId": "9bfbd1da-b820-4d9f-83f8-a50b77394e2e",
+   "currentStoredNeutralCitation": "2024:PHHC:147654",
+   "rejectedSuffix": "2024:PHHC:147654-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": "of the Division Bench judgment of this Court passed in ‘Rakesh Das Vs. State of Haryana and another’, Neutral Citation: 2024:PHHC:147654-DB. (SUMEET GOEL) JUDGE Yes/No Yes/No ……Petitioner(s) ……Respondent(s) Learned counsel appearing for the petitioners, seeks",
+   "sourceObjectKey": "data/pdf/year=2025/court=3_22/bench=phhc/PHHC011236162024_1_2025-08-25.pdf"
+  },
+  {
+   "judgmentId": "abba5069-d5b5-41a8-8dae-db54ffa12e45",
+   "currentStoredNeutralCitation": "2026:PHHC:027747",
+   "rejectedSuffix": "2026:PHHC:027747-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": " the petitioner has placed reliance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. for the respondents does not dispute eith",
+   "sourceObjectKey": "data/pdf/year=2026/court=3_22/bench=phhc/PHHC011195962026_1_2026-07-23.pdf"
+  },
+  {
+   "judgmentId": "c2f6cca9-752f-4f8c-9f89-fcf37cd2176e",
+   "currentStoredNeutralCitation": "2026:PHHC:027747",
+   "rejectedSuffix": "2026:PHHC:027747-DB",
+   "classification": "CURRENT_FALSE_OWN_NULL_CONFIRMED",
+   "ownCnrAdjacent": false,
+   "ownCaseNumberAdjacent": false,
+   "deterministicWindow": " the petitioner has placed reliance upon the M/s Bansal Casting, S.K. Enterprises M/s Shree Ram Industries V/s State of 2026:PHHC:027747-DB to submit that in such circumstances, the impugned order cannot be sustained. Learned State counsel does not dispute ei",
+   "sourceObjectKey": "data/pdf/year=2026/court=3_22/bench=phhc/PHHC011196522026_1_2026-07-23.pdf"
+  }
+ ]
+}

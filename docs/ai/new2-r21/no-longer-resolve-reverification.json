@@ -1,0 +1,219 @@
+{
+ "artifact": "NEW2_R21_NO_LONGER_RESOLVE_REVERIFICATION",
+ "reverified": "10/11",
+ "rows": [
+  {
+   "old": "2025:MLHC:347",
+   "new": "2025:MLHC:347-DB",
+   "holderIds": [
+    "0efb2c57-94db-40e6-958f-6d274ed07fc4"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "0efb2c57-94db-40e6-958f-6d274ed07fc4",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2025:MLHC:347-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2026:MLHC:448",
+   "new": "2026:MLHC:448-DB",
+   "holderIds": [
+    "0fad6b9c-6ca0-4575-bcd0-e49576be6242",
+    "56ff15f7-9714-4f00-b244-7f70bf0be6fe"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "0fad6b9c-6ca0-4575-bcd0-e49576be6242",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:448-DB"
+    },
+    {
+     "judgmentId": "56ff15f7-9714-4f00-b244-7f70bf0be6fe",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:448-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2024:HHC:12882",
+   "new": "2024:HHC:12882-DB",
+   "holderIds": [
+    "11300f56-5fe6-44f2-abb5-659ddc393178"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "11300f56-5fe6-44f2-abb5-659ddc393178",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2024:HHC:12882-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2026:MLHC:717",
+   "new": "2026:MLHC:717-DB",
+   "holderIds": [
+    "14e6f4e1-29c5-423e-b41c-990fce02bc1e",
+    "625b28c9-bb07-4459-a72b-3800ad0d81fc",
+    "a6224a37-e963-41c4-b512-2792e677cecd"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "14e6f4e1-29c5-423e-b41c-990fce02bc1e",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:717-DB"
+    },
+    {
+     "judgmentId": "625b28c9-bb07-4459-a72b-3800ad0d81fc",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:717-DB"
+    },
+    {
+     "judgmentId": "a6224a37-e963-41c4-b512-2792e677cecd",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:717-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2025:DHC:8491",
+   "new": "2025:DHC:8491-DB",
+   "holderIds": [
+    "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+    "928a8788-3a7a-429d-8ff7-92e3cfa24d89"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "4389bd2e-a0f1-44e9-a66d-5a4340d1a0c2",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2025:DHC:8491-DB"
+    },
+    {
+     "judgmentId": "928a8788-3a7a-429d-8ff7-92e3cfa24d89",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2025:DHC:8491-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2026:MLHC:476",
+   "new": "2026:MLHC:476-DB",
+   "holderIds": [
+    "4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+    "ec0c134a-9f90-4a78-9154-1039f30d1abe"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "4554f9de-d6d1-497f-9632-bc6756c8a8b2",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:476-DB"
+    },
+    {
+     "judgmentId": "ec0c134a-9f90-4a78-9154-1039f30d1abe",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:476-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2023:AHC:111864",
+   "new": "2023:AHC:111864-DB",
+   "holderIds": [
+    "cfd18fe3-c878-4640-b070-dcf66fcb181a"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "cfd18fe3-c878-4640-b070-dcf66fcb181a",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2023:AHC:111864-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2026:MLHC:741",
+   "new": "2026:MLHC:741-DB",
+   "holderIds": [
+    "d991f604-ad0b-4c62-833b-66d2f1189506"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "d991f604-ad0b-4c62-833b-66d2f1189506",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:741-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2026:DHC:433",
+   "new": "2026:DHC:433-DB",
+   "holderIds": [
+    "e6ee45a9-de4d-41d9-84c7-92c0a53cc1b3"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "e6ee45a9-de4d-41d9-84c7-92c0a53cc1b3",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:DHC:433-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  },
+  {
+   "old": "2023:PHHC:080381",
+   "new": "2023:PHHC:080381-DB",
+   "holderIds": [
+    "efa0c025-0f2a-40ed-822e-69a79aae74ef"
+   ],
+   "candidateCorrections": [],
+   "expectedToResolveAfterCanonicalCorrection": false,
+   "blocker": "OLD_KEY_HOLDER_OUTSIDE_R21_CORRECTION_CANDIDATE"
+  },
+  {
+   "old": "2026:MLHC:903",
+   "new": "2026:MLHC:903-DB",
+   "holderIds": [
+    "f5ff66b0-d641-4265-bc18-11db6f3d6fa0"
+   ],
+   "candidateCorrections": [
+    {
+     "judgmentId": "f5ff66b0-d641-4265-bc18-11db6f3d6fa0",
+     "disposition": "DETERMINISTIC_SUFFIX_REPLACE",
+     "replacement": "2026:MLHC:903-DB"
+    }
+   ],
+   "expectedToResolveAfterCanonicalCorrection": true,
+   "blocker": null
+  }
+ ],
+ "blockers": [
+  {
+   "old": "2023:PHHC:080381",
+   "new": "2023:PHHC:080381-DB",
+   "holderIds": [
+    "efa0c025-0f2a-40ed-822e-69a79aae74ef"
+   ],
+   "candidateCorrections": [],
+   "expectedToResolveAfterCanonicalCorrection": false,
+   "blocker": "OLD_KEY_HOLDER_OUTSIDE_R21_CORRECTION_CANDIDATE"
+  }
+ ],
+ "storageMutations": 0
+}

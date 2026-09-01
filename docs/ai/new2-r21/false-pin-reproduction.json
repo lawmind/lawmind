@@ -1,0 +1,36 @@
+{
+ "artifact": "NEW2_R21_COMMON_ORDER_FALSE_PIN_REPRODUCTION",
+ "cases": [
+  {
+   "sourceJudgmentId": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+   "oldToken": "2025:MLHC:405",
+   "newToken": "2025:MLHC:405-DB",
+   "retainedTail": "2025:MLHC:411-DB\nPage 2 ",
+   "parserResult": "2025:MLHC:405-DB",
+   "parserSemantics": "UNCHANGED_EXACT_PRINTED_TOKEN",
+   "oldHolders": 26,
+   "newHolders": 1,
+   "oldAndNewHolderOverlap": 0,
+   "reproducedResolutionClass": "RESOLVES_TO_A_DIFFERENT_JUDGMENT",
+   "graphDisposition": "COMMON_ORDER_PAGE_FURNITURE",
+   "falsePinReproduced": true
+  },
+  {
+   "sourceJudgmentId": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+   "oldToken": "2025:MLHC:384",
+   "newToken": "2025:MLHC:384-DB",
+   "retainedTail": "2025:MLHC:390-DB\nPage 2 ",
+   "parserResult": "2025:MLHC:384-DB",
+   "parserSemantics": "UNCHANGED_EXACT_PRINTED_TOKEN",
+   "oldHolders": 1,
+   "newHolders": 1,
+   "oldAndNewHolderOverlap": 0,
+   "reproducedResolutionClass": "RESOLVES_TO_A_DIFFERENT_JUDGMENT",
+   "graphDisposition": "COMMON_ORDER_PAGE_FURNITURE",
+   "falsePinReproduced": true
+  }
+ ],
+ "falseNewPin1Reproduced": true,
+ "falseNewPin2Reproduced": true,
+ "exactCitationSearchChanged": false
+}

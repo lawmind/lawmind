@@ -255,6 +255,42 @@ export function extractCitations(text: string): ExtractedCitation[] {
   return [...seen.values()].sort((a, b) => a.offset - b.offset);
 }
 
+export type CitationGraphOccurrenceDisposition =
+  'OUTGOING_CITATION_CANDIDATE' | 'COMMON_ORDER_PAGE_FURNITURE';
+
+const HC_NEUTRAL_TOKEN = String.raw`\d{4}:[A-Z]{2,10}(?:-[A-Z]{1,3})?:\d{1,6}(?:-(?:DB|FB))?`;
+const DIRECTLY_FOLLOWED_BY_COMMON_ORDER_STAMP = new RegExp(
+  `^(?:${HC_NEUTRAL_TOKEN})+[ \\t]*\\r?\\nPage[ \\t]+\\d+\\b`,
+);
+const DIRECTLY_PRECEDED_BY_COMMON_ORDER_STAMP = new RegExp(`(?:${HC_NEUTRAL_TOKEN})$`);
+const PAGE_LINE_AFTER = /^[ \t]*\r?\nPage[ \t]+\d+\b/;
+
+/**
+ * Decide whether one correctly parsed token is graph evidence.
+ *
+ * Exact citation search still calls `extractCitations` directly and is therefore
+ * unchanged. This classifier is only for the judgment-to-judgment graph writer.
+ * It rejects the exact Meghalaya common-order stamp shape reproduced in NEW2
+ * R21: two or more neutral citations concatenated without a separator, followed
+ * by the source page label. Court/date/title similarity is deliberately absent.
+ */
+export function classifyCitationGraphOccurrence(
+  text: string,
+  citation: ExtractedCitation,
+): CitationGraphOccurrenceDisposition {
+  const before = text.slice(Math.max(0, citation.offset - 80), citation.offset);
+  const after = text.slice(
+    citation.offset + citation.raw.length,
+    citation.offset + citation.raw.length + 200,
+  );
+  const firstInStamp = DIRECTLY_FOLLOWED_BY_COMMON_ORDER_STAMP.test(after);
+  const laterInStamp =
+    DIRECTLY_PRECEDED_BY_COMMON_ORDER_STAMP.test(before) && PAGE_LINE_AFTER.test(after);
+  return firstInStamp || laterInStamp
+    ? 'COMMON_ORDER_PAGE_FURNITURE'
+    : 'OUTGOING_CITATION_CANDIDATE';
+}
+
 /**
  * The court's OWN annotation of how it treated an authority.
  *

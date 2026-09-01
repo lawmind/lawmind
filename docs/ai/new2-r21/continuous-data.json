@@ -1,0 +1,92 @@
+{
+ "artifact": "NEW2_R21_CONTINUOUS_DATA_READ_ONLY_SNAPSHOT",
+ "measuredAt": "2026-09-01T12:12:04.146Z",
+ "newJudgmentsSinceR20KeySpace": {
+  "count": 0,
+  "newest_local_decision": null,
+  "newest_created_at": null
+ },
+ "accountedPercentCurrent": "UNKNOWN",
+ "actuallyHeldPercentCurrent": "UNKNOWN",
+ "reasonCoverageUnknown": "No current same-denominator parity walk was run while NEW1 holds HEAVY_BOX.",
+ "latestCompletedDailyReceipt": {
+  "cycle": "2026-08-31-180002",
+  "startedAt": "2026-08-31T14:00:02.1101864Z",
+  "endedAt": "2026-08-31T14:19:01.5549347Z",
+  "outcome": "ok",
+  "host": "XC",
+  "pid": 27836,
+  "invocation": "delta",
+  "scopes": [
+   "hc-boot-19_16-y2026",
+   "hc-boot-19_16",
+   "hc-boot-7_26",
+   "hc-boot-9_13",
+   "hc-boot-27_1-y2026",
+   "hc-boot-27_1",
+   "hc-boot-18_6",
+   "hc-boot-28_2",
+   "hc-boot-22_18",
+   "hc-boot-24_17",
+   "hc-boot-36_29"
+  ],
+  "sciHomepageJudgmentDelta": true,
+  "scopesOwned": 11,
+  "sourceUnavailableRevalidation": true,
+  "observed": {
+   "manifestTakenAt": "2026-08-31T14:00:02.313Z",
+   "aws_open_data_hc": {
+    "objects": 1494,
+    "new": 0,
+    "grown": 14,
+    "shrunk": 6,
+    "bytesWaiting": 289933,
+    "newestUpstreamWrite": "2026-08-31T08:32:08.000Z"
+   },
+   "aws_open_data_sc": {
+    "objects": 77,
+    "new": 77,
+    "grown": 0,
+    "shrunk": 0,
+    "bytesWaiting": 48563942,
+    "newestUpstreamWrite": "2026-08-30T19:23:42.000Z"
+   },
+   "ledgerTakenAt": "2026-08-31T14:16:48.943Z",
+   "sources": [
+    {
+     "source": "aws_open_data_hc",
+     "heldDocuments": 18721484,
+     "newestLocalDecision": "2026-08-29",
+     "honestLagDays": 61,
+     "lastSuccessfulIngest": "2026-08-31 14:07:04.321061+00"
+    },
+    {
+     "source": "aws_open_data_sc",
+     "heldDocuments": 38352,
+     "newestLocalDecision": "2026-08-04",
+     "honestLagDays": 122,
+     "lastSuccessfulIngest": "2026-08-28 02:08:53.800477+00"
+    },
+    {
+     "source": "ecourts",
+     "heldDocuments": 0,
+     "newestLocalDecision": null,
+     "honestLagDays": null,
+     "lastSuccessfulIngest": null
+    }
+   ],
+   "resolverRiskReplay": {
+    "ran": true,
+    "generatedAt": "2026-08-31T14:16:24.008Z",
+    "mode": "WRITE",
+    "records": 406,
+    "falseUniqueRate": 0,
+    "freshnessState": "CURRENT",
+    "frontierAt": "2026-08-30 14:05:19.255799+00"
+   }
+  }
+ },
+ "clusteredFailuresInLatestReceipt": [],
+ "contradictionPreserved": "The latest daily receipt heldDocuments count and the older parity-matrix held count use different scopes/times; neither is converted into the other.",
+ "new1Interrupted": false
+}

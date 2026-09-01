@@ -1,0 +1,24 @@
+{
+ "artifact": "NEW2_R21_EXISTING_CITATION_CORRECTION_CANDIDATE",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T12:12:04.120Z",
+ "populationId": "NEW2-R21-EXISTING-5b9d001a39dc00af",
+ "populationHash": "5b9d001a39dc00af830335a14772d1d039cd38a4826601e34ba787c9eccc80b0",
+ "hashConstruction": "correctionPopulationHash: sorted row identity including judgment, source identity/hash, expected old value, disposition and proposed replacement",
+ "inputHashes": {
+  "r19": "cbb193df4e42269e952dcc8236ebf5ff4afc0659118699b801fb3cd316400d84",
+  "r20": "3cc2c5452e49a9232e33e476674ca9f4c2f68701b178d2c3a7e658b636ce3c34"
+ },
+ "candidateCount": 571,
+ "counts": {
+  "DETERMINISTIC_SUFFIX_REPLACE": 44,
+  "DETERMINISTIC_TO_NULL": 441,
+  "DETERMINISTIC_TO_REPLACE": 86,
+  "EXCLUDED_AMBIGUOUS": 0,
+  "EXCLUDED_UNTESTABLE": 0
+ },
+ "naming": "CORRECTION_CANDIDATE only; not an apply or authorised population.",
+ "EXISTING_ROWS_CHANGED": 0,
+ "CITATION_BULK_APPLY": "HOLD",
+ "FINAL_APPLY_AUTHORIZATION": "NO"
+}

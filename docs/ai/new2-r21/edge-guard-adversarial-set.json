@@ -1,0 +1,157 @@
+{
+ "artifact": "NEW2_R21_EDGE_GUARD_ADVERSARIAL_SET",
+ "rule": "Block only exact canonical self-identity or exact concatenated neutral-token sequence followed by a Page N line.",
+ "forbiddenSignals": [
+  "court similarity",
+  "date similarity",
+  "title similarity",
+  "party similarity",
+  "semantic similarity"
+ ],
+ "fixtures": [
+  {
+   "id": "known-false-405",
+   "category": "known_false_pin",
+   "text": "2025:MLHC:405-DB2025:MLHC:411-DB\nPage 2",
+   "token": "2025:MLHC:405-DB",
+   "sourceId": "s1",
+   "targetId": "t1",
+   "expected": "BLOCK",
+   "reason": "COMMON_ORDER_PAGE_FURNITURE",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "known-false-384",
+   "category": "known_false_pin",
+   "text": "2025:MLHC:384-DB2025:MLHC:390-DB\r\nPage 2",
+   "token": "2025:MLHC:384-DB",
+   "sourceId": "s2",
+   "targetId": "t2",
+   "expected": "BLOCK",
+   "reason": "COMMON_ORDER_PAGE_FURNITURE",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "true-suffix",
+   "category": "true_outgoing_suffixed",
+   "text": "Relied on 2026:PHHC:027747-DB to submit that",
+   "token": "2026:PHHC:027747-DB",
+   "sourceId": "s3",
+   "targetId": "t3",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  },
+  {
+   "id": "foreign",
+   "category": "foreign_citation_reference",
+   "text": "See foreign authority 2025:DHC:8491-DB.",
+   "token": "2025:DHC:8491-DB",
+   "sourceId": "s4",
+   "targetId": "t4",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  },
+  {
+   "id": "short",
+   "category": "short_order",
+   "text": "Order: followed 2023:PHHC:081753-DB.",
+   "token": "2023:PHHC:081753-DB",
+   "sourceId": "s5",
+   "targetId": "t5",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  },
+  {
+   "id": "common",
+   "category": "common_order",
+   "text": "2025:MLHC:405-DB2025:MLHC:414-DB\nPage 9",
+   "token": "2025:MLHC:405-DB",
+   "sourceId": "s6",
+   "targetId": "t6",
+   "expected": "BLOCK",
+   "reason": "COMMON_ORDER_PAGE_FURNITURE",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "multiple",
+   "category": "multiple_case_order",
+   "text": "2025:MLHC:405-DB2025:MLHC:420-DB\nPage 3",
+   "token": "2025:MLHC:405-DB",
+   "sourceId": "s7",
+   "targetId": "t7",
+   "expected": "BLOCK",
+   "reason": "COMMON_ORDER_PAGE_FURNITURE",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "header",
+   "category": "page_header_footer",
+   "text": "Header\n2024:DHC:9465-DB\nordinary header text",
+   "token": "2024:DHC:9465-DB",
+   "sourceId": "s8",
+   "targetId": "t8",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  },
+  {
+   "id": "prose",
+   "category": "ordinary_prose",
+   "text": "The court distinguished 2024:DHC:5183-DB on facts.",
+   "token": "2024:DHC:5183-DB",
+   "sourceId": "s9",
+   "targetId": "t9",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  },
+  {
+   "id": "self",
+   "category": "self_citation",
+   "text": "Neutral Citation: 2023:PHHC:081753-DB",
+   "token": "2023:PHHC:081753-DB",
+   "sourceId": "same",
+   "targetId": "same",
+   "expected": "BLOCK",
+   "reason": "CANONICAL_SELF_IDENTITY",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "connected",
+   "category": "connected_matter",
+   "text": "2025:MLHC:405-DB2025:MLHC:417-DB\nPage 5",
+   "token": "2025:MLHC:405-DB",
+   "sourceId": "s10",
+   "targetId": "t10",
+   "expected": "BLOCK",
+   "reason": "COMMON_ORDER_PAGE_FURNITURE",
+   "prediction": "BLOCK",
+   "correct": true
+  },
+  {
+   "id": "fb",
+   "category": "db_fb_citation",
+   "text": "The Full Bench in 2024:DHC:5183-FB controls.",
+   "token": "2024:DHC:5183-FB",
+   "sourceId": "s11",
+   "targetId": "t11",
+   "expected": "ALLOW",
+   "reason": "OUTGOING_CITATION_CANDIDATE",
+   "prediction": "ALLOW",
+   "correct": true
+  }
+ ]
+}

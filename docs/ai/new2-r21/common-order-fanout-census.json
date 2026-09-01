@@ -1,0 +1,258 @@
+{
+ "artifact": "NEW2_R21_COMMON_ORDER_FANOUT_CENSUS",
+ "commonOrderFanoutClassRequired": true,
+ "primaryClass": {
+  "token": "2025:MLHC:405",
+  "rows": 26,
+  "distinctCnrs": 26,
+  "keysAffected": 2
+ },
+ "reproducedPairScope": {
+  "distinctRows": 29,
+  "keysAffected": 4
+ },
+ "interpretation": "Distinct connected matters/CNRs; not duplicate ingestion and not eligible for identity collapse.",
+ "holdersByKey": {
+  "2025MLHC405": [
+   {
+    "citation_key": "2025MLHC405",
+    "id": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+    "cnr": "MLHC010000362025",
+    "case_number": "MC(WA)/7/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000362025_1_2025-05-19.pdf",
+    "content_hash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "1336fc3b-ee59-42de-828b-f10687d840ed",
+    "cnr": "MLHC010000902025",
+    "case_number": "MC(WA)/18/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000902025_1_2025-05-19.pdf",
+    "content_hash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "1c0e2f86-0c69-470c-807c-09d0127cf726",
+    "cnr": "MLHC010001212025",
+    "case_number": "MC(WA)/27/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001212025_1_2025-05-19.pdf",
+    "content_hash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "1eb33054-a5fc-46d3-b2a5-a5753a53c0aa",
+    "cnr": "MLHC010000872025",
+    "case_number": "MC(WA)/15/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000872025_1_2025-05-19.pdf",
+    "content_hash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "362f404c-8329-4e09-905c-0c4e4c5994e2",
+    "cnr": "MLHC010000962025",
+    "case_number": "MC(WA)/23/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000962025_1_2025-05-19.pdf",
+    "content_hash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "369edfb8-c738-411c-96fc-77e814bde7c3",
+    "cnr": "MLHC010000862025",
+    "case_number": "MC(WA)/14/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000862025_1_2025-05-19.pdf",
+    "content_hash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "3b836854-6128-4c8e-b67f-a5d5dcaaf38e",
+    "cnr": "MLHC010000942025",
+    "case_number": "MC(WA)/22/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000942025_1_2025-05-19.pdf",
+    "content_hash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "531984d2-c3ed-48af-a011-3a005bb68111",
+    "cnr": "MLHC010000852025",
+    "case_number": "MC(WA)/13/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000852025_1_2025-05-19.pdf",
+    "content_hash": "a32c9d5e38b097672cc3260fc084c8926de42839e89cf0e4b2b7792f1aafb322"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "693edabf-ebf4-430a-bd99-fd4132ae11c2",
+    "cnr": "MLHC010000232025",
+    "case_number": "MC(WA)/1/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000232025_1_2025-05-19.pdf",
+    "content_hash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "6bd431b1-50dd-4781-9c63-19fc18b64289",
+    "cnr": "MLHC010000912025",
+    "case_number": "MC(WA)/19/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000912025_1_2025-05-19.pdf",
+    "content_hash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "73ba0f35-a29f-44b2-8437-d4568f4d0c4b",
+    "cnr": "MLHC010000922025",
+    "case_number": "MC(WA)/20/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000922025_1_2025-05-19.pdf",
+    "content_hash": "fb58c38b1899551db4500b2531acf1747c44e42c37fb64c3e1fdf0c8a08c8f34"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "7aac8b71-39c5-4270-a0e9-8bfc5dc2d45b",
+    "cnr": "MLHC010000932025",
+    "case_number": "MC(WA)/21/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000932025_1_2025-05-19.pdf",
+    "content_hash": "5e9ff46abad45d81fde9516ebf67d06ed85579a0a6c0da61dfc31d475f561a5f"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "7ebbf954-1255-480c-a750-0fe24c42349a",
+    "cnr": "MLHC010000372025",
+    "case_number": "MC(WA)/8/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000372025_1_2025-05-19.pdf",
+    "content_hash": "340cbd06388b6c07c14d49be2e746cfb58718d267d9e9e6735d9a082d561b62e"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "897be712-7475-49a8-ba10-ec1bca844181",
+    "cnr": "MLHC010000882025",
+    "case_number": "MC(WA)/16/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000882025_1_2025-05-19.pdf",
+    "content_hash": "beab71b29cdd9a1cb893836bb5da5e2f434100925fb6a3972b3e7477eefab925"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "94d609a4-fbcb-498e-aeb2-7481cf000a23",
+    "cnr": "MLHC010000972025",
+    "case_number": "MC(WA)/24/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000972025_1_2025-05-19.pdf",
+    "content_hash": "bf30cb9721d7d8e242ff0bdeae2b1548cfc48944c135b1a321a2aa08b58f7676"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "97386fd5-d3e4-4efd-8e77-17a315b5df80",
+    "cnr": "MLHC010000352025",
+    "case_number": "MC(WA)/6/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000352025_1_2025-05-19.pdf",
+    "content_hash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "9cbc67fc-2c0a-4d24-b213-3bd8d1601824",
+    "cnr": "MLHC010000242025",
+    "case_number": "MC(WA)/2/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000242025_1_2025-05-19.pdf",
+    "content_hash": "8dcd1080bc0f20a20e03298927edeb745b645b7b03789bcb11c697d3afacf66b"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "a4d66317-cede-4d97-9e8f-ab115924ec08",
+    "cnr": "MLHC010000332025",
+    "case_number": "MC(WA)/5/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000332025_1_2025-05-19.pdf",
+    "content_hash": "532e2d3c77d376fa274cffc917f57996aed466f0805c7667bbe0299ba138996c"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "add8896a-6d16-41ee-b02a-40fed3224216",
+    "cnr": "MLHC010015892024",
+    "case_number": "MC(WA)/96/2024",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015892024_1_2025-05-19.pdf",
+    "content_hash": "e6909a97bcb339f7572dfcde6957b465f8a99f2e707c657185a4fd865c30e86e"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "bdf69914-a9ef-4df3-8ebf-0ff6ceffbd0b",
+    "cnr": "MLHC010001012025",
+    "case_number": "MC(WA)/26/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001012025_1_2025-05-19.pdf",
+    "content_hash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "c45c8329-66a6-4240-be57-724befa9e6ff",
+    "cnr": "MLHC010015932024",
+    "case_number": "MC(WA)/97/2024",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010015932024_1_2025-05-19.pdf",
+    "content_hash": "5f12b69193bc4dee0ad00e01eed7c0537855a4e41f89bc1083d42098747fe5a8"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "cbb34ae7-b643-46b3-a046-19a746a8907e",
+    "cnr": "MLHC010000252025",
+    "case_number": "MC(WA)/3/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000252025_1_2025-05-19.pdf",
+    "content_hash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "d7411ed4-78b2-4521-bbf1-86b199dadb1e",
+    "cnr": "MLHC010001222025",
+    "case_number": "MC(WA)/28/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010001222025_1_2025-05-19.pdf",
+    "content_hash": "97c095f4a26c0539d6a880c59351b955994f75b654b92eafbab6f8ed7e1e2880"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "db52fe55-a7d3-4379-b058-8902c91466ab",
+    "cnr": "MLHC010000992025",
+    "case_number": "MC(WA)/25/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000992025_1_2025-05-19.pdf",
+    "content_hash": "150ee7e02ff2cb307de456a81df59e92ba58b5f06aafe35088055253f4250c42"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "e773ad2b-6d02-440f-9e71-18e269739d9e",
+    "cnr": "MLHC010000892025",
+    "case_number": "MC(WA)/17/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000892025_1_2025-05-19.pdf",
+    "content_hash": "93f5ad461bd41e669f6113e668dddad4b98327cd0edcbe8c6b43a860868b2f56"
+   },
+   {
+    "citation_key": "2025MLHC405",
+    "id": "f8760958-5025-489f-888a-d824cbfe63e2",
+    "cnr": "MLHC010000262025",
+    "case_number": "MC(WA)/4/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010000262025_1_2025-05-19.pdf",
+    "content_hash": "96fafcf432b4a61b2a44f2f211bcc408a13b3071d4f1d86eb97ed96448ad37b5"
+   }
+  ],
+  "2025MLHC405DB": [
+   {
+    "citation_key": "2025MLHC405DB",
+    "id": "7b7b9d51-b4ce-4d0b-8cb5-e24d07ea3251",
+    "cnr": "MLHC010014382024",
+    "case_number": "MC(WA)/78/2024",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010014382024_1_2025-05-19.pdf",
+    "content_hash": "c4b2f8f11f440a8a314976f9aee7d019a8166c462847d1d73246b6ecf7a6a147"
+   }
+  ],
+  "2025MLHC384": [
+   {
+    "citation_key": "2025MLHC384",
+    "id": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+    "cnr": "MLHC010004432025",
+    "case_number": "MC(FA)/5/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010004432025_1_2025-05-14.pdf",
+    "content_hash": "601de8adfc85f0b7b8fa4220277113a19fe8feb54cecd28eefd216d638860451"
+   }
+  ],
+  "2025MLHC384DB": [
+   {
+    "citation_key": "2025MLHC384DB",
+    "id": "8c26ed90-ebae-49c4-bde1-2ac501b87d33",
+    "cnr": "MLHC010003422025",
+    "case_number": "MC(FA)/3/2025",
+    "source_url": "https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com/data/pdf/year=2025/court=17_21/bench=meghalaya/MLHC010003422025_1_2025-05-14.pdf",
+    "content_hash": "23a72a9c49c7bcc49e1e681efb7d32953900045cfaf667af4d43f938ca1e571e"
+   }
+  ]
+ },
+ "canonicalIdentityMutations": 0
+}
