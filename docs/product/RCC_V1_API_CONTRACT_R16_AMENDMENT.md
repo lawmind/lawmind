@@ -1,6 +1,8 @@
 # RCC v1 API CONTRACT — R16 AMENDMENT
 
-**Status:** `RCC_API_CONTRACT = R16`, **not yet released to RCC**.
+**Status:** `RCC_API_CONTRACT = R16`, **not yet released to RCC** — but client
+implementation and testing are authorized as of NEW3 R18, 2 September 2026. See
+§8.1; the two are different states and the difference is the point.
 **Prior revision:** `R15`,
 [`RCC_V1_API_CONTRACT_R15_AMENDMENT.md`](RCC_V1_API_CONTRACT_R15_AMENDMENT.md).
 R12–R15 remain on disk and are not edited. **Amended by:** NEW3, 1 September
@@ -20,6 +22,7 @@ WIRE_PROTOCOL_VERSION  = 1
 WIRE_BREAKING_CHANGE   = NO
 MIN_SUPPORTED_CONTRACT = 1
 RELEASED_TO_RCC        = NO
+CLIENT_CONSUMPTION     = AUTHORIZED FOR IMPLEMENTATION AND TESTING  (NEW3 R18, 2 Sep 2026 — §8.1)
 ```
 
 R16 adds optional request metadata. It removes, renames, retypes and narrows
@@ -186,12 +189,69 @@ capabilities and evidence sets remain separate.
 ## 8 · Release gates and non-actions
 
 ```text
-LCC_IMPLEMENTATION        = PENDING
-DB_MIGRATION              = REQUIRED_BY_LCC, NOT_RUN_BY_NEW3
-RCC_CONSUMPTION           = PENDING_RELEASE
-INDEPENDENT_VERIFICATION  = PENDING
+LCC_IMPLEMENTATION        = DONE at e325ed9f
+DB_MIGRATION              = 0100_api_idempotency_records, APPLIED, NOT_RUN_BY_NEW3
+INDEPENDENT_VERIFICATION  = PASS  (NEW3 R18, 2 September 2026)
+RCC_CONSUMPTION           = AUTHORIZED FOR IMPLEMENTATION AND TESTING
+RELEASE_STATE             = UNRELEASED
 PARTY_OVERRIDE_ACTIVATED  = NO
 ```
+
+### 8.1 · Lifecycle — amended 2 September 2026, NEW3 R18
+
+R16 §6 made release depend on client evidence while bus 1697 made client work
+depend on release. That is one lifecycle expressed as two values when it needs
+three. The third value is added here; the wire is untouched, and **no R17 was
+opened** — implementation lifecycle is not a wire change.
+
+```text
+R16_BACKEND_ACCEPTANCE            = PASS
+R16_CLIENT_CONSUMPTION_AUTHORIZED = YES
+R16_RELEASED                      = NO
+```
+
+* **`R16_CLIENT_CONSUMPTION_AUTHORIZED = YES`** — the backend is accepted as
+  conformant against this document. RCC may implement and test the
+  `Idempotency-Key` header now. The wire shape will not move underneath that
+  work; if it ever must, that is a new adjudicated revision and RCC is told
+  first. This **supersedes the DO-NOT-CONSUME condition in bus 1697, for
+  implementation and testing only.**
+* **`R16_RELEASED = NO`** — R16 is not product-current. No release note, no
+  store copy, no capability row and no claim anywhere may state that
+  duplicate-safe writes are a property of this product. A shipped build may
+  carry the code and may not carry the promise.
+
+Final release still requires RCC implementation evidence and a NEW3 final
+acceptance. This authorization moves the gate, not the guarantee.
+
+Acceptance evidence, independently measured rather than accepted from LCC's
+report: [`../ai/new3-r18/r16-independent-acceptance.json`](../ai/new3-r18/r16-independent-acceptance.json)
+and [`NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md`](NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md).
+
+### 8.2 · Retention, still undecided on purpose
+
+```text
+IDEMPOTENCY_RETENTION_CLASS = C_SPRINT4_PRIVACY_OPERATIONS_ITEM
+```
+
+Not a release blocker. The design stores no `in_progress` row, so nothing breaks
+by being kept, and `eraseUser` deletes the table by `user_id`. But the stored
+success body carries the advocate's own words, so an unbounded hold is not
+acceptable indefinitely either. The semantic requirement is in
+`NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md` §4. **No TTL is to be
+invented in the meantime**; its absence is a recorded decision.
+
+### 8.3 · Two contract clauses whose tests are structurally unreachable
+
+Recorded here so a future round inherits the obligation rather than the silence.
+
+* §1's "after surrounding whitespace is rejected" cannot be exercised: the
+  Headers API strips it before dispatch. The clause is **not withdrawn** — it
+  states the intended semantics and the implementation's visible-ASCII class
+  enforces them. Interior whitespace is refused and is tested.
+* §3's method scoping has no behavioural test because all six scoped routes are
+  POST. `method` is a column of the uniqueness boundary. The first non-POST
+  scoped route must bring the test with it.
 
 R16 does not activate the party iOS override, release a held capability, change a
 capability state, change a claims state other than the citator cadence copy, or

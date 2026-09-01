@@ -1,0 +1,273 @@
+{
+  "round": "NEW3 R18",
+  "date": "2026-09-02",
+  "headStart": "13f558d19f45cb81cacad7f535c7bf3649e5b01d",
+  "ancestryVerified": {
+    "13f558d1": "ANCESTOR",
+    "be25a95b": "ANCESTOR",
+    "2e6c148a": "ANCESTOR"
+  },
+  "principle": "Nothing here is copied from LCC or RCC reports. Every value was read from committed source, from the live development database, or from a command run in this round.",
+  "r16BackendAcceptance": "PASS",
+  "databaseObserved": {
+    "table": "api_idempotency_records",
+    "present": true,
+    "uniqueIndex": "api_idempotency_records_scope_key_unique ON (user_id, method, route, idempotency_key)",
+    "constraintTrigger": {
+      "name": "api_idempotency_records_complete_at_commit",
+      "deferrable": true,
+      "initiallyDeferred": true
+    },
+    "foreignKeys": [
+      "user_id -> users(id)"
+    ],
+    "canonicalLegalDataCoupling": "NONE",
+    "checks": [
+      "outcome IN ('success','refusal')",
+      "response_status BETWEEN 100 AND 599"
+    ]
+  },
+  "conformanceSuiteRerun": {
+    "command": "tsx --test --test-concurrency=1 src/idempotency.test.ts",
+    "tests": 23,
+    "pass": 23,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 11371,
+    "whySkippedMatters": "Every test is guarded by skipUnlessMigrated. A database without migration 0100 would have produced a clean run of nothing. skipped=0 proves the assertions executed."
+  },
+  "sixScopedCreates": [
+    "POST /judgments/:id/annotations",
+    "POST /matters",
+    "POST /matters/:id/events",
+    "POST /me/data-requests",
+    "POST /verify/confirm",
+    "POST /me/training-consent"
+  ],
+  "sixScopedCreatesVerifiedFrom": "services/api/src/app.ts - six withIdempotency mount sites, each naming its canonical route template explicitly rather than reading it from the router",
+  "naturallyIdempotentUnchanged": {
+    "POST /matters/:id/authorities": "live (matter_id, judgment_id) partial unique index in 0032_matter_authorities.sql; not in e325ed9f file list",
+    "POST /citations/copies": "citation_copies_user_client_key_unique UNIQUE (user_id, client_key) in 0017_citation_copies.sql; not in e325ed9f file list"
+  },
+  "acceptedGaps": [
+    {
+      "id": "WHITESPACE_CLAUSE",
+      "state": "SEMANTICALLY_SATISFIED_TRANSPORT_UNREACHABLE",
+      "reason": "The Headers API strips surrounding whitespace before dispatch, so no client can produce a padded value for the server to refuse. The key pattern enforces the semantics regardless. Interior whitespace is refused and is tested."
+    },
+    {
+      "id": "METHOD_SCOPING_UNTESTED",
+      "state": "STRUCTURALLY_UNREACHABLE",
+      "reason": "method is a column of the unique index, but all six scoped routes are POST, so there is no second method to collide with. Recorded so the first non-POST scoped route inherits the obligation."
+    }
+  ],
+  "lifecycle": {
+    "R16_BACKEND_ACCEPTANCE": "PASS",
+    "R16_CLIENT_CONSUMPTION_AUTHORIZED": "YES",
+    "R16_RELEASED": "NO",
+    "CONTRACT_REVISION": "R16",
+    "WIRE_PROTOCOL": 1,
+    "WIRE_BREAKING_CHANGE": "NO",
+    "MIN_SUPPORTED_CONTRACT": 1,
+    "newRevisionOpened": "NONE - implementation lifecycle is not a wire change"
+  },
+  "idempotencyRetention": {
+    "class": "C_SPRINT4_PRIVACY_OPERATIONS_ITEM",
+    "requirementIsSemanticOnly": true,
+    "noTtlInvented": true
+  },
+  "statuteLinkRemeasurement": {
+    "judgment_statute_refs_total": 907426,
+    "carrying_statute_id": 703768,
+    "resolution_state_null": 907335,
+    "refused_pre_enactment": 49,
+    "unresolved_pre_commencement": 42,
+    "linked_exact": 0,
+    "linked_chronology_permitted": 0,
+    "anachronistic_before_enactment_date": 0,
+    "anachronistic_before_act_year": 0,
+    "anachronistic_before_enforcement_date": 0,
+    "verdict": "LCC bus 1682 reproduces exactly. The registry 1,723 anachronistic links do not reproduce at this HEAD on any predicate. Recorded as an open provenance question, not as a closure, and not as a finding that FIFTH was wrong."
+  },
+  "androidApi36": {
+    "ready": "YES",
+    "source": "apps/mobile/android/app/build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml",
+    "targetSdkVersion": 36,
+    "minSdkVersion": 24,
+    "corroboration": "react-native gradle/libs.versions.toml: targetSdk 36, compileSdk 36, minSdk 24"
+  },
+  "appleToolchain": {
+    "class": "GATE_D_STORE_BLOCKER",
+    "easJsonProductionImage": null,
+    "iosNativeProjectPresent": false,
+    "iosCiJobPresent": false,
+    "nextEvidence": "a configured production build image in eas.json whose Xcode/iOS SDK versions are readable, or an actual production build log naming Xcode 26+ / iOS 26 SDK+",
+    "noImageInvented": true,
+    "paidInfraRequiredToAnswerLocalV1": false
+  },
+  "iosPartySearch": {
+    "current": "ON_BY_INHERITANCE",
+    "measured": "PLATFORM_CAPABILITY_OVERRIDES = {} in services/api/src/release/capabilities.ts; search.party_name is ENABLED release-wide",
+    "decision": "A_ACTIVATE_IOS_OFF_NOW",
+    "priorProhibition": {
+      "ccr": "CCR-NEW3-S2F-01 (ledger CCR-2026-08-30-11)",
+      "guard": "PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT",
+      "whyItExisted": "retrievalOutcome could not say an arm was administratively switched off, so a suppressed party query with zero results derived abstained + low_relevance - byte-identical to an honest zero. Activating before the derivation was corrected would have turned a latent P1 into a live P0.",
+      "note": "This round's first pass reasoned from V7.2 10.5 alone and would have silently reopened this settled decision. The question is not whether policy wants OFF; it is whether the guard has lifted."
+    },
+    "guardSequenceR15B1_7": [
+      {
+        "step": 1,
+        "what": "NEW3 contract defining the reason value",
+        "state": "DONE",
+        "evidence": "R15 section B1 contracts capability_disabled"
+      },
+      {
+        "step": 2,
+        "what": "LCC implementation",
+        "state": "DONE",
+        "evidence": "outcome.ts:115 types capability_disabled; outcome.ts:260 makes party_name_disabled contribute to couldNotLookProperly"
+      },
+      {
+        "step": 3,
+        "what": "the deliberately pinned-wrong test updated",
+        "state": "DONE",
+        "evidence": "trust-state-cross-surface.test.ts:577 now asserts coverage_unknown + ['capability_disabled'] and notEqual('abstained'); outcome.test.ts carries the exact required case; party-search-platform.test.ts:163 serialises it through a real route"
+      },
+      {
+        "step": 4,
+        "what": "RCC consumption confirmed, no code change",
+        "state": "DONE",
+        "evidence": "searchTruth.ts:126 classifySearch returns party_disabled on partyArmDisabled(degraded) OR capabilityArmDisabled(retrievalOutcome), first branch"
+      },
+      {
+        "step": 5,
+        "what": "independent verification by a lane other than the implementer",
+        "state": "DONE_IN_THIS_ROUND",
+        "evidence": "NEW3 is neither implementer. Observed: services/api outcome.test.ts + party-search-platform.test.ts + trust-state-cross-surface.test.ts = 81 tests, 81 pass, 0 fail, 0 skipped. apps/mobile searchTruth.test.ts = 25 tests, 25 pass."
+      },
+      {
+        "step": 6,
+        "what": "a PLATFORM_CAPABILITY_OVERRIDES row may be added",
+        "state": "NOW_AUTHORIZED",
+        "evidence": "NEW3 R18 explicit authorization"
+      }
+    ],
+    "decisiveAssertionsNowPassing": [
+      "{party_name_disabled, 0 results, semanticIndexSufficient:true} -> coverage_unknown, ['capability_disabled'], NOT abstained",
+      "{no degraded arms, 0 results} -> abstained, ['low_relevance'] - the honest zero, unchanged",
+      "{results>0, party arm suppressed} -> degraded, safeForGeneration false"
+    ],
+    "degradePathVerifiedEndToEnd": [
+      "search/route.ts:653 partyNameArm: partyNameArmPermitted(platformFromRequest(c))",
+      "release/enforce.ts partyNameArmPermitted -> isUserReachableOnPlatform('search.party_name', platform)",
+      "search/retrieve.ts partySuppressed -> onDegrade('party_name_disabled')",
+      "search/outcome.ts capabilityDisabled joins couldNotLookProperly",
+      "apps/mobile searchTruth.ts classifySearch ranks party_disabled first"
+    ],
+    "androidWebWeakened": "NO - the override is platform-keyed and capabilityStateForPlatform ignores any override that is not strictly narrower",
+    "handoffCost": "party-search-platform.test.ts asserts the switch ships unflipped on every platform. Activation breaks it. That assertion records a product decision, not a safety property, so it must be UPDATED deliberately in the same change to assert iOS narrowed and Android/web/unknown untouched. Deleting or weakening it is refused."
+  },
+  "staticCadence": {
+    "closed": "YES",
+    "sitesVerified": [
+      "apps/mobile/src/screens/judgment/VerificationSheet.tsx - sentence removed; only a comment recording the removal remains",
+      "apps/mobile/src/screens/manifest.ts row 78 citator-alerts-in-the-briefing - notes now 'Batched, four triggers'"
+    ],
+    "lastCheckedAtInvented": false
+  },
+  "slugRoute": {
+    "classification": "C_INTERNAL_SCREEN_MANIFEST_TOOL",
+    "decision": "DEV_GUARD",
+    "manifestRows": 98,
+    "redirectToRealScreen": 17,
+    "mountScreenShellInRelease": 81,
+    "carryingNotesProse": 54,
+    "notesActuallyRendered": 53,
+    "devGuardPresent": false,
+    "precedent": "app/gallery.tsx and app/directory.tsx carry __DEV__ guards for exactly this exposure",
+    "auditExemption": "r16Surfaces.test.ts skips manifest.ts by filename, so the cadence audit was structurally incapable of catching the row-78 claim",
+    "capabilityRow": null,
+    "acceptanceEvidence": null
+  },
+  "mattersParties": {
+    "classification": "A_API_IMPLEMENTATION_BUG_CONTRACT_ALREADY_STRUCTURED",
+    "contractChangeRequired": "NO",
+    "severity": "P1",
+    "probe": "docs/ai/new3-r18/probe-matters-parties.mts",
+    "observed": {
+      "POST /matters": {
+        "status": 201,
+        "partiesTypeof": "string",
+        "partiesDotDescription": "undefined"
+      },
+      "GET /matters/:id": {
+        "status": 200,
+        "partiesTypeof": "string",
+        "partiesDotDescription": "undefined"
+      },
+      "GET /matters": {
+        "partiesTypeof": "string"
+      },
+      "storedColumn": "jsonb_typeof(parties) = string"
+    },
+    "isolatedCause": {
+      "JSON.stringify(obj)::jsonb": "jsonb_typeof = string",
+      "sql.json(obj)": "jsonb_typeof = object"
+    },
+    "broaderThanReported": "LCC reported a POST response defect. The stored column is wrong, so every read path - GET /matters and GET /matters/:id - is wrong too, for every matter the current server has created.",
+    "userVisibleConsequence": "apps/mobile/src/screens/matter/MatterScreen.tsx:369 renders {matter.parties.description}, which is undefined against a string. No crash, no error state - the parties line silently loses the advocate's own case identity.",
+    "noServerTestAssertsThisShape": true,
+    "blocks": [
+      "FINAL_LOCAL_V1_ACCEPTANCE",
+      "REMOTE_ALPHA"
+    ],
+    "doesNotBlock": [
+      "RCC_R16_CLIENT_IMPLEMENTATION"
+    ]
+  },
+  "busDisposition": {
+    "1696": "ACKED",
+    "1695": "ACKED",
+    "1693": "ACKED",
+    "1679": "SUPERSEDED by NEW3_POST_R15_ACCEPTANCE_DELTA_R16.md at commit 5e0eb8c1, which cites 8f6b7e4",
+    "1682": "DEFERRED - evidence reproduced exactly; the release decision is deferred because statute.linked_judgments is POST_V1 with no current-v1 surface",
+    "1686": "SUPERSEDED by 8692bfb9 (cadence) and e325ed9f (annotation idempotency), with the disposed/archived definitions ACKED as written"
+  },
+  "localV1": {
+    "readyForFinalAcceptance": "NO",
+    "afterRccR16": "YES_AFTER_RCC_R16",
+    "localV1Blockers": [
+      "R16_CLIENT_IMPLEMENTATION",
+      "MATTERS_PARTIES_SHAPE",
+      "SLUG_ROUTE_REACHABILITY"
+    ],
+    "sprint4StoreBlockers": [
+      "IOS_PARTY_OVERRIDE",
+      "APPLE_TOOLCHAIN",
+      "BILLING_PBL8",
+      "SPRINT4_PRIVACY_LEGAL",
+      "IN_APP_ACCOUNT_DELETION"
+    ],
+    "postV1": [
+      "STATUTE_LINKED",
+      "MONITORING",
+      "DESKTOP_WORKSPACE"
+    ],
+    "nonblockingDebt": [
+      "IDEMPOTENCY_RETENTION",
+      "STATUTE_LINKED_REGISTRY_ROW_READS_LIMITED",
+      "R16_UNREACHABLE_TEST_CASES"
+    ]
+  },
+  "nonActions": {
+    "DB_MIGRATION": "NONE",
+    "NETWORK": "NONE",
+    "PAID_INFRA_CREATED": "NO",
+    "PAID_REMOTE_INFRA_AUTHORIZED": "NO",
+    "READY_FOR_REMOTE_SPEND_DECISION": "NOT_SET",
+    "CAPABILITY_REGISTRY_EDITED_BY_NEW3": "NO - the iOS override is a handoff to LCC, not an edit made here",
+    "FORBIDDEN_PATHS_TOUCHED": "NONE"
+  }
+}

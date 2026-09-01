@@ -361,22 +361,31 @@
       },
       "rccPosition": "RCC needs nothing. RCC Part B (HEAD acc478c3) reads `degraded[]`, not `retrievalOutcome`: `apps/mobile/src/screens/search/searchTruth.ts:53` exposes `partyArmDisabled()` and `classifySearch()` returns `party_disabled` BEFORE the refusal, timeout, coverage_unknown and empty branches. The phone surface is already truthful and is not asked to rebuild it.",
       "severitySubmittedByRCC": "n/a - not filed by RCC. RCC reported the client half and shipped it in Part B.",
-      "severityAdjudicatedByNEW3": "P1 LATENT - conditional P0. Not a current P0, and not downgraded: it becomes a P0 the instant the override is activated.",
+      "severityAdjudicatedByNEW3": "P1 LATENT - conditional P0. DISCHARGED 2 September 2026: the correction landed (R15 B1, LCC step 2, tests step 3, RCC step 4) and NEW3 performed the independent verification step 5. Activation is no longer a P0 risk because a suppressed zero now derives coverage_unknown rather than abstained/low_relevance.",
       "severityAdjudicationReason": "CONTRACT_CHANGE_CONTROL.md section 3 defines P0 as a surface that STATES OR IMPLIES SOMETHING FALSE about the law, a citation, or coverage. At HEAD no surface can state anything false here, because the code path that emits `party_name_disabled` is unreachable - the override map is empty and the capability is ENABLED release-wide, both observed. Promoting an unreachable branch to a current P0 would be as untrue as denying the defect. The contradiction is real, confirmed by execution, and guarded rather than counted.",
       "affectedSurface": "Any SERVER-SIDE consumer that honours `retrievalOutcome` as the one-place verdict - counterarguments, briefings, drafting, the saved-search feed. NOT the RCC search screen, which reads `degraded[]` directly and is already truthful.",
       "userTruthImpact": "None today - unreachable. On activation: a semantic-dependent consumer would be told `safeForGeneration: true` on a party_name query whose case-title probe never ran, and would argue from a result set missing the authority that would have been pinned first.",
       "CONTRACT_CHANGE_REQUIRED": "YES",
       "CURRENT_GATE_B_P0": "NO",
       "SAFE_TO_DEFER_UNTIL_BEFORE_OVERRIDE_ACTIVATION": "YES - and only with the binding activation guard below.",
-      "decision": "DEFER",
+      "decision": "DEFER, DISCHARGED 2026-09-02",
       "decidedBy": "NEW3",
       "decidedAt": "2026-08-30",
       "rationale": "DEFER, not AMEND, and the reason is mechanical. AMEND is reserved for a change that MUST LAND NOW under the current contract and gate truth. Nothing on any released surface is false: the branch cannot execute at HEAD. Creating R15 for an unreachable branch would increment the contract revision for a change NEW3 cannot implement (the fix is `services/**`), put the contract ahead of the server with no committed test holding it, and manufacture exactly the unnecessary revision this round was told not to create. R14 remains latest and its recorded identities are unchanged. What DEFER buys is paid for by the guard: activation is prohibited until the correction lands, and the correction is specified below precisely enough that the eventual AMEND is mechanical rather than a fresh adjudication.",
       "activationGuard": {
-        "PARTY_IOS_OVERRIDE_ACTIVATION": "BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT",
+        "PARTY_IOS_OVERRIDE_ACTIVATION": "UNBLOCKED",
         "scope": "Adding ANY row to `PLATFORM_CAPABILITY_OVERRIDES` that narrows `search.party_name` on any platform.",
         "liftsWhen": "ALL THREE land: (1) the contract amendment defining the new reason value; (2) the `deriveRetrievalOutcome` correction; (3) a committed test that fails if a suppressed party arm is reported as `answered` or as `abstained`/`low_relevance`.",
-        "note": "NEW3 does not modify backend configuration and did not. This guard is a product/change-control prohibition recorded in NEW3-owned artifacts; it is not a code lock. Until the test in (3) exists, nothing in CI would catch a violation - which is the whole reason the guard is written down rather than assumed."
+        "note": "NEW3 does not modify backend configuration and did not. This guard is a product/change-control prohibition recorded in NEW3-owned artifacts; it is not a code lock. Until the test in (3) exists, nothing in CI would catch a violation - which is the whole reason the guard is written down rather than assumed.",
+        "liftedBy": "NEW3 R18, 2 September 2026, at HEAD 13f558d1",
+        "liftEvidence": {
+          "step1": "DONE - R15 section B1 contracted capability_disabled",
+          "step2": "DONE - outcome.ts:115 types it; outcome.ts:260 makes party_name_disabled contribute to couldNotLookProperly",
+          "step3": "DONE - the pin B1.7 names by line, trust-state-cross-surface.test.ts:577, now asserts coverage_unknown + [capability_disabled] and notEqual(abstained); outcome.test.ts and party-search-platform.test.ts:163 corroborate",
+          "step4": "DONE - searchTruth.ts:126 classifySearch returns party_disabled on the degraded arm OR the retrievalOutcome reason, first branch",
+          "step5": "DONE IN THIS ROUND by NEW3, which implemented neither half. Observed: services/api 81 tests / 81 pass / 0 skipped across outcome, party-search-platform and trust-state-cross-surface; apps/mobile searchTruth 25 tests / 25 pass",
+          "step6": "NOW AUTHORIZED - see decisionR18"
+        }
       },
       "requiredCorrectionWhenLifted": {
         "note": "Specified now so the future AMEND is mechanical. This is NOT a revision and creates none.",
@@ -408,7 +417,17 @@
       "releasedToRCC": null,
       "rccConsumed": false,
       "guardEnforcementUpdate_30Aug": "CORRECTION TO THIS RECORD'S OWN EARLIER STATEMENT. When this CCR was filed it said 'no committed test would catch a violation'. That is NO LONGER TRUE and the record is corrected rather than left to age: `services/api/src/search/party-search-platform.test.ts:76-80` now asserts `assert.deepEqual(PLATFORM_CAPABILITY_OVERRIDES, {}, 'no capability is narrowed on any platform in this release; adding a row IS flipping the switch')`. OBSERVED at HEAD 784bab85, 17 tests, 17 pass. So ACTIVATION now breaks CI before it can land silently - the guard has teeth it did not have. WHAT IS STILL MISSING is condition (3) of `liftsWhen`: no test asserts that a SUPPRESSED party arm reports something truthful in `retrievalOutcome`. The activation guard therefore STANDS UNCHANGED; what improved is enforcement of the prohibition, not satisfaction of the correction.",
-      "reverifiedAtHead_30Aug": "PLATFORM_CAPABILITY_OVERRIDES = {} and search.party_name = ENABLED, both re-observed at HEAD 784bab85. outcome.ts is UNMODIFIED - TIMEOUT_ARMS still holds only sparse/dense/pin timeouts and `party_name_disabled` appears nowhere in it. LCC confirms on bus 1612 that it read the DEFER before touching anything and did not widen the response contract. PARTY_DEFER_STATE = INTACT. The override is NOT activated."
+      "reverifiedAtHead_30Aug": "PLATFORM_CAPABILITY_OVERRIDES = {} and search.party_name = ENABLED, both re-observed at HEAD 784bab85. outcome.ts is UNMODIFIED - TIMEOUT_ARMS still holds only sparse/dense/pin timeouts and `party_name_disabled` appears nowhere in it. LCC confirms on bus 1612 that it read the DEFER before touching anything and did not widen the response contract. PARTY_DEFER_STATE = INTACT. The override is NOT activated.",
+      "decisionR18": {
+        "decision": "ACTIVATE_IOS_OFF_NOW",
+        "decidedBy": "NEW3 R18",
+        "decidedAt": "2026-09-02",
+        "basis": "V7.2 section 10.5 records IOS_PARTY_SEARCH_SUBMISSION_DEFAULT = OFF unless NEW3 plus founder/counsel record a specific evidence-based decision to submit ON. No such record exists, so the served ON state is unauthorized rather than neutral. With the guard discharged, the ordinary product argument decides it.",
+        "handoff": "LCC adds exactly one row narrowing search.party_name to DISABLED on ios in PLATFORM_CAPABILITY_OVERRIDES.",
+        "mandatoryCoupledChange": "party-search-platform.test.ts asserts the switch ships unflipped on every platform and WILL break. It records a product decision, not a safety property, so it must be updated deliberately in the same change to assert iOS narrowed and android/web/unknown untouched. Deleting, weakening or incidentally repairing it is refused.",
+        "androidWebWeakened": "NO - platform-keyed override; capabilityStateForPlatform ignores any override that is not strictly narrower",
+        "reversible": "Delete the row if founder/counsel later record an ON decision."
+      }
     },
     {
       "id": "CCR-NEW3-XS-01",
@@ -752,7 +771,7 @@
       "claimImpact": "R16 separately marks static nightly citator cadence copy unsupported without runtime evidence; V1_CLAIMS_REGISTER_R15.md records the exact RCC removal instruction.",
       "backendOwner": "LCC",
       "clientOwner": "RCC after release",
-      "releaseGate": "UNRELEASED. LCC must implement durable persistence, database uniqueness, atomic result recording, and conformance tests; NEW3 must independently accept the evidence before RCC may rely on the header.",
+      "releaseGate": "Final R16 release requires RCC implementation evidence plus NEW3 final acceptance. R16_CLIENT_CONSUMPTION_AUTHORIZED=YES moves the gate, not the guarantee. Supersedes the DO-NOT-CONSUME condition in bus 1697 for implementation and testing only.",
       "severity": "P1",
       "userTruthImpact": "Without request identity, retrying a user write can create duplicate private records or append duplicate durable events while the UI appears to have performed one action.",
       "openAs": "OPEN_IMPLEMENTATION",
@@ -766,19 +785,75 @@
       "WIRE_PROTOCOL_VERSION": 1,
       "WIRE_BREAKING_CHANGE": "NO",
       "MIN_SUPPORTED_CONTRACT": 1,
-      "releasedToRCC": false,
-      "rccConsumed": false
+      "releasedToRCC": "NO",
+      "rccConsumed": "AUTHORIZED_FOR_IMPLEMENTATION_AND_TESTING",
+      "implementation": {
+        "commit": "e325ed9fffba7b7aa6b50c4506edd337aeb1e7f3",
+        "migration": "0100_api_idempotency_records.sql",
+        "ledgerTable": "api_idempotency_records",
+        "architecture": "ONE_GENERIC_LEDGER"
+      },
+      "independentVerification": {
+        "by": "NEW3 R18",
+        "at": "2026-09-02",
+        "head": "13f558d19f45cb81cacad7f535c7bf3649e5b01d",
+        "result": "PASS",
+        "method": "Schema, unique index, deferred constraint trigger and foreign keys read live from the database; the 23-test conformance suite re-run to 23 pass / 0 fail / 0 skipped. LCC report not accepted as evidence of itself.",
+        "evidence": "docs/ai/new3-r18/r16-independent-acceptance.json"
+      },
+      "clientConsumptionAuthorized": "YES",
+      "retention": {
+        "class": "C_SPRINT4_PRIVACY_OPERATIONS_ITEM",
+        "ttlInvented": false,
+        "requirement": "Semantic only, in NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md section 4: a bound derived from the real client retry horizon; expiry deletes the stored response body; an expired key behaves as a new key and never as a mismatch; the bound is documented in the privacy surface; backup retention is stated, not inherited."
+      }
+    },
+    {
+      "id": "CCR-NEW3-R18-01",
+      "new3LedgerId": "CCR-2026-09-02-18",
+      "filedVia": "LCC bus 1697 flagged it as a POST response defect. NEW3 R18 measured it independently at HEAD 13f558d1 and found it broader.",
+      "endpoint": "POST /matters, GET /matters, GET /matters/:id - field `parties`",
+      "decision": "NOT_A_CONTRACT_CHANGE_CONFORM_THE_IMPLEMENTATION",
+      "classification": "A_API_IMPLEMENTATION_BUG_CONTRACT_ALREADY_STRUCTURED",
+      "contractShape": "record - R12 section 1.7; request schema z.record(z.string(), z.unknown())",
+      "runtimeShape": "JSON-encoded string scalar, on write and on every read",
+      "rccExpectation": "object - { description: string }",
+      "cause": "matters/route.ts writes ${JSON.stringify(body.parties)}::jsonb; postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a string scalar. Isolated: JSON.stringify(obj)::jsonb gives jsonb_typeof=string, sql.json(obj) gives object.",
+      "userTruthImpact": "MatterScreen.tsx:369 renders {matter.parties.description}, undefined against a string. No crash and no error state - the parties line silently loses the advocate’s own case identity on the matter workspace.",
+      "severity": "P1",
+      "blocks": [
+        "FINAL_LOCAL_V1_ACCEPTANCE",
+        "REMOTE_ALPHA"
+      ],
+      "doesNotBlock": [
+        "RCC_R16_CLIENT_IMPLEMENTATION"
+      ],
+      "backendOwner": "LCC",
+      "clientOwner": "RCC - notify only; no client change, and no defensive JSON.parse",
+      "fix": [
+        "Write with sql.json(...), never JSON.stringify(...)::jsonb.",
+        "Backfill existing string-scalar rows; a code-only fix leaves two shapes coexisting in one column forever.",
+        "Add a server test asserting the SHAPE, not the round-trip. No server test asserts parties today, which is why this survived.",
+        "Acceptance check: jsonb_typeof(parties) = object for all rows."
+      ],
+      "CONTRACT_REVISION": "R16",
+      "WIRE_PROTOCOL_VERSION": 1,
+      "WIRE_BREAKING_CHANGE": "NO",
+      "MIN_SUPPORTED_CONTRACT": 1,
+      "decidedBy": "NEW3 R18",
+      "decidedAt": "2026-09-02",
+      "evidence": "docs/ai/new3-r18/matters-parties-observation.md, docs/ai/new3-r18/probe-matters-parties.mts"
     }
   ],
   "counts": {
-    "received": 17,
+    "received": 18,
     "amended": 10,
     "deferred": 4,
     "rejectedWithAlternative": 1,
-    "engineeringDefectRoutedToLCC": 2,
+    "engineeringDefectRoutedToLCC": 3,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive, backward compatible, and unreleased pending LCC implementation evidence and NEW3 acceptance."
+    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive, backward compatible, and unreleased pending LCC implementation evidence and NEW3 acceptance. R18, 2 September 2026, adds CCR-NEW3-R18-01: the POST/GET /matters `parties` field is served and STORED as a JSON-encoded string scalar against an already-structured contract. Conforming an implementation to an existing contract is not a contract change, so the revision, wire protocol and minimum supported contract are unmoved; it is routed to LCC as a P1 engineering defect."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R16 is the SIXTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R16, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The optional Idempotency-Key header is additive request metadata; it neither removes nor narrows a current request shape. R16 is unreleased pending implementation evidence and acceptance.",
@@ -813,31 +888,36 @@
     },
     "R16": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
-      "state": "CURRENT_UNRELEASED",
-      "note": "R16 is the current NEW3 decision artifact but is not released to RCC. Record immutable SHA-256 and Git blob identities only after LCC implementation evidence passes independent NEW3 acceptance; do not write a self-referential pre-release seal."
+      "state": "CURRENT_UNRELEASED_CLIENT_CONSUMPTION_AUTHORIZED",
+      "note": "NEW3 R18 accepted the backend independently on 2 September 2026 and authorized RCC implementation and testing. R16_RELEASED remains NO. Immutable SHA-256 and Git blob identities are still not written: the artifact was amended this round (section 8.1) and final release acceptance has not happened, so a seal now would be sealing a document that is still moving.",
+      "lifecycle": {
+        "R16_BACKEND_ACCEPTANCE": "PASS",
+        "R16_CLIENT_CONSUMPTION_AUTHORIZED": "YES",
+        "R16_RELEASED": "NO"
+      }
     }
   },
   "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R15.json",
-  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R15.md",
+  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R16.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
     "observedVia": "committed source read at HEAD, plus the committed Hono app executed in-process to observe GET /release/capabilities under seven selector forms",
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-08-31, NEW3 continuous-governance release reconciliation at HEAD 996791fa. Supersedes the 30 Aug seal only for CCR-RCC-S2-02 implementation and release state; no severity was reclassified.",
+    "recomputedAt": "2026-09-02, NEW3 R18 at HEAD 13f558d19f45cb81cacad7f535c7bf3649e5b01d. Supersedes the 31 August reconciliation for CCR-NEW3-S2F-01 only. No severity was reclassified; one deferred item was discharged by observation and one new P1 was received.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
-    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted, adjudicated P1, implemented by LCC and released to RCC without a new contract revision; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0.",
+    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted, adjudicated P1, implemented by LCC and released to RCC without a new contract revision; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0. UPDATED 2 September 2026: CCR-NEW3-S2F-01 is no longer latent - the correction landed and was independently verified, so activating the override can no longer produce the false-coverage P0 it was guarding against.",
     "ACCEPTANCE_P0_OPEN": 0,
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
     "IMPLEMENTATION_P0_OPEN": 0,
     "IMPLEMENTATION_P0_OPEN_items": [],
     "NON_GATE_P1_OPEN": 3,
     "NON_GATE_P1_OPEN_items": [
-      "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged by R14.",
-      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight; the schema requires no exhaustive enumeration. No new feature taxonomy was created in this round.",
-      "CCR-NEW3-S2F-01 - retrievalOutcome cannot represent an administratively suppressed retrieval arm. DEFERRED under PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. LCC-owned. Latent: the branch is unreachable at HEAD and activation now BREAKS a committed test (party-search-platform.test.ts:76-80). The correction itself is still owed."
+      "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged.",
+      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight.",
+      "CCR-NEW3-R18-01 - POST/GET /matters serves and STORES `parties` as a JSON-encoded string scalar against an already-structured contract. Routed to LCC as an engineering defect; not a contract change. Blocks final local-v1 acceptance."
     ],
     "closedInR14": [
       "P1-1 of R13 (rarestDf corpus-wide) - CLOSED as a semantic amendment, restated in R14 A8 and not reopened.",
@@ -899,6 +979,9 @@
       "webNotEnabled": "ZERO rows are ENABLED on web. Nothing was enabled because it appears in future roadmap scope.",
       "monitoringNotEnabled": "monitoring.user_product = DISABLED_NOT_READY. No polling frequency and no SLA appears anywhere.",
       "scope": "Registry and claims re-verified only to the depth these two numbers need. The acceptance suite was NOT rerun."
-    }
+    },
+    "closedInR18": [
+      "CCR-NEW3-S2F-01 - DISCHARGED. retrievalOutcome now represents an administratively suppressed arm (capability_disabled joining couldNotLookProperly), the pinned-wrong assertion is corrected, the client consumes it, and NEW3 performed the independent verification the guard required. PARTY_IOS_OVERRIDE_ACTIVATION = UNBLOCKED and activation is authorized."
+    ]
   }
 }
