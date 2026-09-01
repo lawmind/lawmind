@@ -13,8 +13,8 @@
     "frozenBy": "NEW3, 29 August 2026",
     "note": "The R12 file is FROZEN and is not edited. Amendments live in docs/product/RCC_V1_API_CONTRACT_R13_AMENDMENT.md and are numbered here. The wire `contract` integer stays 1 because every amendment below is additive or semantic; nothing is removed or narrowed."
   },
-  "currentVersion": "R14",
-  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md",
+  "currentVersion": "R15",
+  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R15_AMENDMENT.md",
   "measurementBackend": {
     "gitSha": "f3b31c963dd19741b7a849d8a007d42aa1b9bfb1",
     "base": "http://127.0.0.1:3011",
@@ -488,20 +488,260 @@
       "releasedToRCC": null,
       "rccConsumed": false,
       "relatedRelease": "R14 §A6.1. RCC_CONSUMED moved NO -> YES at 6f0d96bf (bus 1629) during this session, which is why this is decided now rather than at the release: the client half of the answer only came into existence at that commit."
+    },
+    {
+      "id": "CCR-LCC-XS-01",
+      "new3LedgerId": "CCR-2026-09-01-13",
+      "filedBy": "LCC",
+      "filedVia": "LCC trust-state contract exercise at b3ca71b2, bus 1654. Adjudicated by NEW3 1 September 2026 at HEAD e2a298e637721de68e02a0ae7419795a1c84cdbd. Full adjudication: docs/product/NEW3_R15_ADJUDICATION.md; amendment: docs/product/RCC_V1_API_CONTRACT_R15_AMENDMENT.md B1.",
+      "receivedAs": "RECEIVED",
+      "endpoint": "POST /search - retrievalOutcome.state and retrievalOutcome.reasons, in relation to degraded[\"party_name_disabled\"]",
+      "missing": "A RetrievalOutcomeReason meaning \"an arm this query needed was NOT RUN because a capability is disabled\". party_name_disabled is a DegradedArm that means the arm did not execute (retrieve.ts:2049; enforce.ts:107 - \"When false the arm does not run\"), and deriveRetrievalOutcome cannot see it: not in TIMEOUT_ARMS, not sparse_unbounded, not a contributor to couldNotLookProperly, and no reason value represents it.",
+      "observedAtHead": {
+        "head": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+        "derivation": "services/api/src/search/outcome.ts - TIMEOUT_ARMS = {sparse_timeout, dense_timeout, pin_timeout}; sparseRefused tests sparse_unbounded only; couldNotLookProperly = sparseRefused || timedOut || semanticMissing.",
+        "measuredByLCC": [
+          "party_name_disabled + 0 results + semanticIndexSufficient=false -> coverage_unknown [semantic_index_insufficient]",
+          "party_name_disabled + 0 results + semanticIndexSufficient=true -> abstained [low_relevance]"
+        ],
+        "whyAbstainedIsWrong": "outcome.ts defines abstained as \"We searched properly and are declining to offer these results as an answer... here we looked.\" It is the one state a client may render as \"we looked and found nothing\". Saying it about an arm that never ran is a false statement about the state of the law.",
+        "masksVerifiedIndependentlyByNEW3": [
+          "PLATFORM_CAPABILITY_OVERRIDES = {} in release/capabilities.ts - the empty literal IS the state of the switch",
+          "SEMANTIC_INDEX_SUFFICIENT = false in search/outcome.ts, whose own comment says to flip it when NEW1 publishes an accepted retrieval path"
+        ],
+        "whyItFiresLater": "Both masks exist to be REMOVED, and neither removal has any reason to consult outcome.ts. The wrong answer arrives as a consequence of two good events.",
+        "clientTypingObserved": "apps/mobile/src/api/contract.ts:1587 types reasons as string[] - no union, no exhaustive switch anywhere in apps/mobile/src. This is what makes the new value non-breaking, and it was observed rather than assumed."
+      },
+      "USER_TRUTH_CLASSIFICATION": "LATENT_FALSE_STATEMENT_ON_ACTIVATION",
+      "CONTRACT_CHANGE_REQUIRED": "YES",
+      "CURRENT_GATE_B_P0": "NO",
+      "decision": "AMEND",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-09-01",
+      "rationale": "AMEND, not DEFER and not NO_CHANGE. The distinction NOT_SEARCHED_BECAUSE_CAPABILITY_DISABLED vs SEARCHED_AND_FOUND_NOTHING is legal, not cosmetic. Not DEFER: unlike CCR-NEW3-XS-01, no client compensation exists or could exist - the client cannot know the derivation ignored the arm - and the trigger is not a rare data row but the deliberate removal of two guards that are both scheduled. Not NO_CHANGE: nothing in the current vocabulary carries the meaning, and overloading UNKNOWN, abstained or a zero-results value would discard knowledge the system deterministically has, at the one point where it is the entire content of the answer.",
+      "amendment": {
+        "newReasonValue": "capability_disabled",
+        "definition": "An arm this query needed was NOT RUN, because the capability registry disables it for this platform or release. Not a timeout, not a refusal to rank, not an absence of law. Zero results carrying this reason may never be rendered as \"no judgments matched\".",
+        "derivationChange": "party_name_disabled contributes to couldNotLookProperly: 0 results -> coverage_unknown, results -> degraded.",
+        "newState": "NONE. coverage_unknown already means \"We did not look, or could not look properly... This may never render as no results.\"",
+        "rejectedHalf": "LCC item 3 - extending emptyBecause with a second reason/remedy pair. REJECTED. LCC recommended against it and NEW3 agrees: two mechanisms for one message is the failure that produced four disagreeing optional fields and the reason outcome.ts exists.",
+        "untouched": [
+          "degraded[]",
+          "the state vocabulary",
+          "safeForGeneration",
+          "exactIdentityUsable",
+          "rarestDf",
+          "every citation, treatment and evidence field"
+        ]
+      },
+      "wireImpact": {
+        "field": "retrievalOutcome.reasons : string[]",
+        "change": "one additional possible VALUE",
+        "shape": "unchanged",
+        "removal": "none",
+        "rename": "none",
+        "retype": "none",
+        "narrowing": "none",
+        "WIRE_PROTOCOL_VERSION": 1,
+        "MIN_SUPPORTED_CONTRACT": 1,
+        "WIRE_BREAKING_CHANGE": "NO"
+      },
+      "rccImpact": "NONE, before or after. apps/mobile/src/screens/search/searchTruth.ts:81 already returns party_disabled keyed on degraded[] and ranks it above the refusal and above coverage_unknown. R14 A4.9 is consumed today. The disagreement is between two server-side statements.",
+      "releaseSequence": [
+        "1 NEW3 contract - DONE (R15 B1)",
+        "2 LCC implementation - PENDING",
+        "3 tests - PENDING, including updating the deliberately-wrong pin at judgments/trust-state-cross-surface.test.ts:577",
+        "4 RCC consumption - PENDING, no code change expected",
+        "5 independent verification by a lane other than the implementer - PENDING",
+        "6 party override activation - BLOCKED, a separate and separately authorised act"
+      ],
+      "partyOverrideState": "PARTY_IOS_OVERRIDE_ACTIVATION = BLOCKED_PENDING_RETRIEVAL_OUTCOME_CONTRACT. Completing steps 1-5 does not authorise step 6.",
+      "priorVersion": "R14",
+      "newVersion": "R15",
+      "schemaDelta": "none - no request or response shape moves",
+      "semanticDelta": "one added value in an open-ended reason list, plus one derivation input newly counted",
+      "capabilityImpact": "none. search.party_name stays ENABLED release-wide and PLATFORM_CAPABILITY_OVERRIDES stays {}.",
+      "claimImpact": "none. UNSUPPORTED_CLAIMS stays 0.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: build B1. Do not add a PLATFORM_CAPABILITY_OVERRIDES row as part of it. RCC: no change requested and none required.",
+      "openAs": "AMENDED_AWAITING_LCC_IMPLEMENTATION",
+      "releasedToRCC": false,
+      "rccConsumed": false,
+      "relatedRelease": "R15 B1"
+    },
+    {
+      "id": "CCR-LCC-XS-02",
+      "new3LedgerId": "CCR-2026-09-01-14",
+      "filedVia": "LCC trust-state exercise at b3ca71b2, bus 1654 item 3. Adjudicated at HEAD e2a298e637721de68e02a0ae7419795a1c84cdbd.",
+      "endpoint": "GET /citations/:citationCheckId - overruledStatus",
+      "missing": "Not a missing field. A FIFTH emission site for overruledStatus, absent from the R14 census, serving the STORED layer. citations/check.ts:123 serves r.overruled_status ?? r.overruled_status_shown - the joined stored column - beside overruledStatusShown, with no statement of which layer either carries.",
+      "observedAtHead": {
+        "head": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+        "reachability": "NOT USER-REACHABLE. apps/mobile/src/api/client.ts:904 is the only caller; UnverifiedCitationScreen.tsx and VerificationSheet.tsx are the only consumers; grepping both for \"overruled\" returns one prose comment and zero renders. Verified by NEW3 independently of LCC.",
+        "liveEvidence": "citation_checks matched to f83d0700 (T. R. CHALLAPPAN, 1975 INSC 212, stored set_aside / derived none): 8 rows, all shown_to_user=true, all document_id null, all surface judgment_detail. 4 carry overruled_status_shown=set_aside and 4 carry none. Read-only query by NEW3, 1 Sep 2026; reproduces LCC exactly.",
+        "correctedLayerMap": {
+          "derivedHere": [
+            "judgments/route.ts:402",
+            "search/retrieve.ts:2420",
+            "search/route.ts:557",
+            "search/route.ts:614",
+            "briefings/route.ts:255"
+          ],
+          "derivedUpstream": [
+            "search/saved.ts:292",
+            "arguments/counter.ts:212"
+          ],
+          "stored": [
+            "matters/authorities.ts:187",
+            "citations/check.ts:123"
+          ]
+        }
+      },
+      "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
+      "CONTRACT_CHANGE_REQUIRED": "NO",
+      "decision": "DEFER",
+      "rationale": "Folded into CCR-NEW3-XS-01 rather than adjudicated separately: same field name, same two layers, same unreachability, and the same act - a value change inside an unchanged type on a released route - that was deferred once already. Tested against all four of that DEFER exit conditions and NONE fires: the banner-upgrade class is still zero rows; no client other than MatterScreen.tsx renders MatterAuthority.overruledStatus, and CitationCheck is a different type nobody renders; the saved feed still has no consumer and no capability row; RCC has not proposed removing the override and confirmed at e52e61eb that it left it intact.",
+      "engineeringDefectRoutedToLCC": {
+        "where": "services/api/src/citations/recheck.ts:83",
+        "defect": "The nightly re-check selects rows where cc.overruled_status_shown IS DISTINCT FROM j.overruled_status::text - comparing the DERIVED banner (what the reader, search and counterargument surfaces write) against the STORED column. For an evidence_defect judgment the two legitimately differ, the row is selected as diverged, and applyOverruledChange fires with toStatus = stored. That is a FALSE LAW MOVED alert for a movement precedentialPolicy already decided did not happen - on the one colour the product reserves for exactly that meaning.",
+        "measuredReadOnly": {
+          "allShownRowsWhereShownNeqStored": 19,
+          "acrossJudgments": 5,
+          "everyOneShownNoneStoredSetAside": true,
+          "breakdown": [
+            "2010 INSC 843 = 12",
+            "1975 INSC 212 = 4",
+            "2012 INSC 547 = 1",
+            "2017 INSC 1009 = 1",
+            "2011 INSC 114 = 1"
+          ],
+          "layerConflation": 4,
+          "genuineStaleness": 15,
+          "rowsThePredicateSelectsToday": 0
+        },
+        "whyZeroToday": "The full WHERE clause additionally requires shown_to_user = true AND (an active-matter annotation OR an exported draft). The evidence_defect judgment sits in zero active matters and every row has document_id null. UNREACHABLE BY POPULATION, NOT BY CONSTRUCTION. The moment any advocate saves any of the five to an active matter, four fire correctly and one fires falsely.",
+        "contractChange": "NONE. Server-internal, no wire field, no client. Fix by comparing like-for-like layers.",
+        "severity": "P1-latent"
+      },
+      "capabilityImpact": "none.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: record the fifth surface; fix recheck.ts:83 as an engineering defect. Do not change the citations route. RCC: nothing.",
+      "openAs": "NON_GATE_P1_OPEN",
+      "reconsideredAt": "Gate C, 18 September 2026, with CCR-NEW3-XS-01",
+      "relatedRelease": "R15 B4",
+      "filedBy": "LCC",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-09-01",
+      "priorVersion": "R14",
+      "newVersion": "R15",
+      "CURRENT_GATE_B_P0": "NO",
+      "claimImpact": "none. UNSUPPORTED_CLAIMS stays 0.",
+      "releasedToRCC": true,
+      "rccConsumed": false
+    },
+    {
+      "id": "CCR-LCC-XS-03",
+      "new3LedgerId": "CCR-2026-09-01-15",
+      "filedVia": "LCC trust-state exercise at b3ca71b2, bus 1654 item 5. Adjudicated at HEAD e2a298e637721de68e02a0ae7419795a1c84cdbd.",
+      "endpoint": "GET /judgments/:id, GET /judgments/:id/treatment, POST /arguments/counter, the document routes - treatmentAttribution",
+      "missing": "Not a missing field. A FALSE STATEMENT IN THE PROSE ABOUT THE WIRE. R14 WHAT DID NOT CHANGE says treatment_provenance \"is still not on the wire\", and TRUST_STATE_PRODUCT_CONTRACT_V1 3.1 says a reporter annotation and a court in its own words \"render identically\". Both are true of the RAW COLUMN and false of the DERIVED class.",
+      "observedAtHead": {
+        "head": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+        "served": [
+          "judgments/route.ts:428",
+          "judgments/treatment.ts:166",
+          "arguments/counter.ts:232",
+          "arguments/counter.ts:252",
+          "documents/route.ts:274",
+          "documents/route.ts:384"
+        ],
+        "computedAndDiscarded": "search/retrieve.ts:2410 and :2425 compute treatmentAttribution for every structured hit; search/route.ts does not serve it.",
+        "client": "ZERO occurrences in apps/mobile/src. Not typed, not rendered.",
+        "values": "COURT | REPORTER | DEFECTIVE | UNKNOWN - precisely the reporter-versus-court distinction 3.1 describes as unavailable.",
+        "notABreach": "R12 1.3 already records treatmentAttribution in the judgment reader frozen key list."
+      },
+      "USER_TRUTH_CLASSIFICATION": "DOCUMENTATION_FALSE_PRODUCT_TRUE",
+      "CONTRACT_CHANGE_REQUIRED": "DOCUMENTATION ONLY",
+      "decision": "AMEND (documentation only)",
+      "rationale": "The prose is wrong and the conclusion it supports is right. Correcting the prose costs nothing and leaving it costs the next author, who would read R14 and conclude no wire field exists. No shape moves, no value moves, no client is affected.",
+      "defersNotReopened": "CCR-2026-08-30-05, the 3.1 treatment-provenance DEFER, is NOT reopened. Its product premise - the advocate cannot see who said so - is STILL TRUE, because apps/mobile/src renders none of it. What was wrong was the stated reason, not the conclusion. The interim constraints stand: reporter-class copy wherever a source is implied, and the words \"set aside\" blocked entirely per claims register B2c.",
+      "referredNotDecided": "search/route.ts computes treatmentAttribution and discards it while POST /arguments/counter serves it from the same retrieve.ts result - so the screen used to argue AGAINST an authority can say a reporter said the law moved and the screen used to FIND it cannot. Not adjudicated in R15: the field is optional on both routes, no client reads either, and the reporter-versus-court question is already scheduled at Gate C.",
+      "wireImpact": {
+        "change": "NONE",
+        "WIRE_PROTOCOL_VERSION": 1,
+        "MIN_SUPPORTED_CONTRACT": 1,
+        "WIRE_BREAKING_CHANGE": "NO"
+      },
+      "capabilityImpact": "none. treatment.resolved_signals stays LIMITED and treatment.good_law_claim stays DISABLED.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: none. RCC: informational - the field exists on four routes and you still must not render it while the 3.1 DEFER stands.",
+      "openAs": "CLOSED_DOCUMENTATION_CORRECTED",
+      "relatedRelease": "R15 B2",
+      "filedBy": "LCC",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-09-01",
+      "priorVersion": "R14",
+      "newVersion": "R15",
+      "CURRENT_GATE_B_P0": "NO",
+      "claimImpact": "none. UNSUPPORTED_CLAIMS stays 0.",
+      "releasedToRCC": true,
+      "rccConsumed": false
+    },
+    {
+      "id": "CCR-LCC-XS-04",
+      "new3LedgerId": "CCR-2026-09-01-16",
+      "filedVia": "LCC trust-state exercise at b3ca71b2, bus 1654 item 6. Adjudicated at HEAD e2a298e637721de68e02a0ae7419795a1c84cdbd.",
+      "endpoint": "GET /judgments/:id - the retained-source-artifact versus source-link distinction",
+      "missing": "TRUST_STATE_PRODUCT_CONTRACT_V1 section 1 records trust state 6 - SOURCE_LINK_ONLY is not retained evidence - as representable YES, on the evidence of judgment.source_evidence. That is a CAPABILITY NAME in V1_CAPABILITY_REGISTRY, not a wire field.",
+      "observedAtHead": {
+        "head": "e2a298e637721de68e02a0ae7419795a1c84cdbd",
+        "mechanism": "services/api/src/corpus/source-artifact-state.ts exports sourceArtifactState() returning sourceArtifactHeld, textState, fullTextEvidenceAvailable, generationEvidenceAvailable.",
+        "importers": "Its own test, and LCC new cross-surface test. NO ROUTE EMITS ANY OF THE FOUR FIELDS. Verified repo-wide by NEW3.",
+        "whatTheUIActuallySays": "apps/mobile/src/screens/judgment/SourceTrustBlock.tsx renders exactly two things about origin: \"Source - <court>\" and the action \"Open the court copy\". Both are LINK claims. The banned claim - verified from the retained official PDF - never appears.",
+        "population": "official_source_artifact holds 14,210 rows against 18,758,460 judgments = 0.07575%."
+      },
+      "DOES_CURRENT_R14_ALREADY_ALLOW_TRUTHFUL_UI": "YES",
+      "USER_HARM_IF_UNCHANGED": "NONE",
+      "USER_TRUTH_CLASSIFICATION": "TRUE_BY_PROHIBITION_NOT_BY_REPRESENTATION",
+      "CONTRACT_CHANGE_REQUIRED": "NO for the wire. DOCUMENTATION ONLY for the record.",
+      "decision": "NO_CHANGE (wire) + AMEND (record)",
+      "rationale": "A field is added when a CURRENT v1 user-facing truth distinction cannot otherwise be represented honestly. There is no such distinction: no v1 surface offers to tell an advocate whether we hold the bytes, and 0.07575% is not a per-document quality signal any honest surface would present. Adding sourceArtifactHeld to the wire because the backend computes it internally is exactly the move this declines - the internal existence of a value is not a reason to serve it.",
+      "recordCorrection": "Trust state 6 moves from \"representable YES\" to REPRESENTABLE = NO (PROTECTED_BY_PROHIBITION). The distinction is not on the wire and has no client type. It is protected by the banned-claim rule under judgment.source_evidence and by the fact that SourceTrustBlock.tsx makes only a link claim. CONSEQUENCE STATED: any future surface asserting we hold the original document requires a contract amendment first - it cannot be built on a field the wire does not carry. This joins states 7, 8 and 9, which section 5 already discloses as fixture-designed rather than evidenced; state 6 carried no such disclosure and now does.",
+      "wireImpact": {
+        "change": "NONE",
+        "fieldsAdded": 0,
+        "WIRE_PROTOCOL_VERSION": 1,
+        "MIN_SUPPORTED_CONTRACT": 1,
+        "WIRE_BREAKING_CHANGE": "NO"
+      },
+      "capabilityImpact": "none. judgment.source_evidence stays ENABLED_V1 on ios and android with its banned claim unchanged.",
+      "backendOwner": "LCC",
+      "handoff": "LCC: none. RCC: none - SourceTrustBlock.tsx is correct as written and must not start making a retention claim.",
+      "openAs": "CLOSED_DOCUMENTATION_CORRECTED",
+      "relatedRelease": "R15 B3",
+      "filedBy": "LCC",
+      "decidedBy": "NEW3",
+      "decidedAt": "2026-09-01",
+      "priorVersion": "R14",
+      "newVersion": "R15",
+      "CURRENT_GATE_B_P0": "NO",
+      "claimImpact": "none. UNSUPPORTED_CLAIMS stays 0.",
+      "releasedToRCC": true,
+      "rccConsumed": false
     }
   ],
   "counts": {
-    "received": 12,
-    "amended": 7,
-    "deferred": 3,
+    "received": 16,
+    "amended": 9,
+    "deferred": 4,
     "rejectedWithAlternative": 1,
-    "engineeringDefectRoutedToLCC": 1,
+    "engineeringDefectRoutedToLCC": 2,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R13 recorded 5 received / 0 P0 open. Those counts are SUPERSEDED, not carried: the four RCC Sprint-2 CCRs in apps/mobile/CONTRACT_CHANGE_REQUESTS.md had never been ledgered, so the R13 numbers described a ledger that was missing four rows. R14 recorded 10 received / 1 deferred. Superseded 30 Aug 2026 by the Sprint-2 final adjudication, which added CCR-NEW3-S2F-01 (DEFER). Superseded again 31 Aug 2026 by the cross-surface treatment adjudication, which added CCR-NEW3-XS-01 (DEFER)."
+    "note": "R15, 1 September 2026. R14 recorded 12 received / 7 amended / 3 deferred / 1 rejected-with-alternative / 1 engineering defect. R15 adds four: CCR-LCC-XS-01 (AMEND, the only substantive wire change), CCR-LCC-XS-02 (DEFER, folded into CCR-NEW3-XS-01, plus a second engineering defect routed to LCC at recheck.ts:83), CCR-LCC-XS-03 (AMEND, documentation only) and CCR-LCC-XS-04 (NO_CHANGE on the wire, AMEND on the record). Two of the three AMENDs move no byte on any wire."
   },
   "wireProtocolVersion": 1,
-  "contractRevisionVsWireVersion": "TWO DIFFERENT NUMBERS. CONTRACT_REVISION (R12 -> R13 -> R14) is the NEW3 governance revision of the contract document. WIRE_PROTOCOL_VERSION is the integer served at GET /version as `contract`, defined in services/api/src/contract-version.ts as bumped ONLY by a change a current client cannot ignore, with every within-version change ADDITIVE. R14's amendments are additive or semantic - an optional request selector, optional response fields, one added value on an open-ended string field, and stated meanings - so the wire integer STAYS 1 and minSupportedContract stays 1. No services/** change is required or made by this decision.",
+  "contractRevisionVsWireVersion": "R15 is the FIFTH product-contract revision and the wire integer is still 1. R15 makes the distinction explicit in its own numbers block: CONTRACT_REVISION=R15, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. A document revision and a wire-protocol break are different events and R15 is only the first.",
   "revisionIdentities": {
     "R12": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R12.md",
@@ -525,7 +765,7 @@
       "verifyWith": "sha256sum docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md ; git rev-parse HEAD:docs/product/RCC_V1_API_CONTRACT_R14_AMENDMENT.md"
     }
   },
-  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R14.json",
+  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R15.json",
   "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R14.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
