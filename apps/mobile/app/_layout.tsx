@@ -6,10 +6,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { AuthBoundary } from '../src/components/AuthBoundary';
 import { CommandPalette } from '../src/components/CommandPalette';
 import { useAppFonts } from '../src/theme/fonts';
 import { useCommandPalette } from '../src/state/commandPalette';
 import { useOutbox } from '../src/state/outbox';
+import { usePendingDestination } from '../src/state/pendingDestination';
 import { useReadingStore } from '../src/state/reading';
 import { useCapabilities } from '../src/state/capabilities';
 import { useSession } from '../src/state/session';
@@ -37,6 +39,7 @@ export default function RootLayout() {
   const hydrateOutbox = useOutbox((s) => s.hydrate);
   const flushOutbox = useOutbox((s) => s.flush);
   const hydrateSession = useSession((s) => s.hydrate);
+  const hydratePendingDestination = usePendingDestination((s) => s.hydrate);
   const fetchCapabilities = useCapabilities((s) => s.fetch);
 
   useEffect(() => {
@@ -77,6 +80,21 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrateSession();
   }, [hydrateSession]);
+
+  /**
+   * THE HELD LINK COMES OFF THE DEVICE BESIDE THE SESSION.
+   *
+   * The magic-link round trip leaves the app, and on Android returning through
+   * the deep link can be a COLD START — so the destination an advocate was
+   * bounced away from has to survive a process death, not just a re-render.
+   * Hydrated here rather than in `AuthBoundary` because the boundary is
+   * rendered by the router and `auth/verify.tsx` reads the same store the
+   * moment it lands; a hydrate owned by a component that may not be mounted yet
+   * is a race with the screen that consumes it.
+   */
+  useEffect(() => {
+    void hydratePendingDestination();
+  }, [hydratePendingDestination]);
   /**
    * WHAT THE SERVER STILL SERVES — `GET /release/capabilities`, read once at
    * launch. RCC_V1_API_CONTRACT_R12 §1.6 asks the client to read the registry
@@ -148,6 +166,14 @@ export default function RootLayout() {
       */}
       <StatusBar style="dark" />
       <QueryClientProvider client={queryClient}>
+        {/*
+          THE AUTH BOUNDARY WRAPS EVERY ROUTE, AND IT IS INSIDE THE QUERY
+          PROVIDER ON PURPOSE. A screen refused by the gate is never mounted, so
+          it never issues the query that would 401 — but the provider still has
+          to exist above it, because the screens that ARE rendered are its
+          children.
+        */}
+        <AuthBoundary>
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: color.paper },
@@ -160,6 +186,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack>
+        </AuthBoundary>
         {/* Mounted once, globally — a focused layer over whatever screen is live. */}
         <CommandPalette />
       </QueryClientProvider>

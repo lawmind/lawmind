@@ -160,9 +160,6 @@ export function ActReaderScreen({
         />
       )}
 
-      <Text variant="ui" style={styles.hint}>
-        Section numbers are anchors — tap one to link it.
-      </Text>
     </Screen>
   );
 }
@@ -191,10 +188,4 @@ const styles = StyleSheet.create({
   dimmed: { opacity: 0.5 },
   footnote: { color: color.inkFaint },
   currency: { color: color.inkMuted, paddingTop: space.sm },
-  hint: {
-    color: color.inkFaint,
-    textAlign: 'center',
-    paddingHorizontal: space.sm,
-    paddingBottom: space.xs,
-  },
 });

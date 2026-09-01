@@ -115,7 +115,7 @@ function applyFilters(
         r.overruledStatus === 'partly_set_aside' ||
         r.overruledStatus === 'doubted')
     ) {
-      hiddenBy = '"good law only"';
+      hiddenBy = '"exclude set aside or doubted"';
     }
 
     if (hiddenBy) hidden.push({ result: r, hiddenBy });

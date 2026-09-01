@@ -18,10 +18,28 @@ export default function NotFound() {
       <Stack.Screen options={{ title: 'Not found' }} />
       <EmptyState
         actions={[
-          { label: 'Open the screen inventory', onPress: () => router.replace('/directory') },
-          { label: 'Back to Today', onPress: () => router.replace('/today'), variant: 'tertiary' },
+          /*
+            THE INVENTORY IS A DEVELOPMENT AFFORDANCE AND IT SAYS SO NOW.
+            `/directory` had no `__DEV__` guard and this row was how anybody
+            reached it: a store build shipped a browsable list of every designed
+            and undesigned screen, one wrong link away. Both ends are guarded —
+            the route refuses in production, and the offer is not made.
+          */
+          ...(__DEV__
+            ? [
+                {
+                  label: 'Open the screen inventory',
+                  onPress: () => router.replace('/directory'),
+                },
+              ]
+            : []),
+          { label: 'Back to Today', onPress: () => router.replace('/today'), variant: 'tertiary' as const },
         ]}
-        body="No screen answers to that address. Every screen in this app is listed in the inventory."
+        body={
+          __DEV__
+            ? 'No screen answers to that address. Every screen in this app is listed in the inventory.'
+            : 'No screen answers to that address.'
+        }
         icon={Compass}
         title="That route does not exist"
       />

@@ -163,14 +163,17 @@ export function CauseListScreen() {
               </Pressable>
             </View>
 
-            <SheetLink
-              label="Open the briefing"
-              onPress={() => {
-                const id = open.matter.matterId;
-                setOpen(null);
-                router.push({ pathname: '/matter/[id]', params: { id, briefing: '1' } });
-              }}
-            />
+            {/*
+              "OPEN THE BRIEFING" IS NOT HERE, AND ITS ABSENCE IS DELIBERATE.
+              It pushed `/matter/[id]` with `briefing: '1'`, and `app/matter/[id].tsx`
+              reads only `id` — `MatterScreen` has no `briefing` param anywhere, so
+              the param was dropped and the link was byte-for-byte "Open the matter"
+              below. It was dead a second time over: `briefing` is
+              `DISABLED_NOT_READY` in `V1_SURFACE`, so the destination is held even
+              once the param is honoured. Restore this WITH the param when the
+              briefing surface opens; a link that quietly lands somewhere else is
+              worse than no link.
+            */}
             <SheetLink
               label="Open the matter"
               onPress={() => {

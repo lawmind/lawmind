@@ -5,6 +5,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '../../src/components/Button';
 import { Screen } from '../../src/components/Screen';
 import { Text } from '../../src/components/Text';
+import { usePendingDestination } from '../../src/state/pendingDestination';
 import { useSession } from '../../src/state/session';
 import { color, space } from '../../src/theme/tokens';
 
@@ -18,13 +19,22 @@ import { color, space } from '../../src/theme/tokens';
  * a NEW link, never the same one twice.
  *
  * On success it routes by what the server says exists, not by what we assume:
- * an identity with no profile goes to onboarding, a complete one goes to Today.
+ * an identity with no profile goes to onboarding, a complete one goes to WHERE
+ * THE ADVOCATE WAS TRYING TO GO.
+ *
+ * THE DESTINATION IS RESUMED HERE. This screen used to `router.replace('/today')`
+ * unconditionally, so an advocate who followed a link to a judgment, was bounced
+ * to sign in, and verified, landed on the morning screen — with the link already
+ * spent. `state/pendingDestination.ts` holds it on the device across the mail
+ * round trip and this consumes it exactly once. No held link, an expired one, or
+ * one captured for a route we refuse to resume, all fall back to Today.
  */
 export default function Route() {
   const router = useRouter();
   const { token } = useLocalSearchParams<{ token?: string }>();
   const verify = useSession((s) => s.verify);
   const status = useSession((s) => s.status);
+  const consume = usePendingDestination((s) => s.consume);
   const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,9 +53,18 @@ export default function Route() {
   }, [token, verify]);
 
   useEffect(() => {
-    if (status === 'signed_in') router.replace('/today');
+    /**
+     * CONSUMED ONLY ON `signed_in`, NEVER ON `identity_only`.
+     *
+     * An advocate with no profile is going to onboarding whatever they clicked,
+     * and consuming the destination here would spend it on a screen that cannot
+     * use it — the link would be gone by the time onboarding finished. The held
+     * link survives to `app/onboarding.tsx`, which resumes it after the profile
+     * exists.
+     */
+    if (status === 'signed_in') router.replace((consume() ?? '/today') as never);
     else if (status === 'identity_only') router.replace('/onboarding');
-  }, [status, router]);
+  }, [status, router, consume]);
 
   return (
     <>

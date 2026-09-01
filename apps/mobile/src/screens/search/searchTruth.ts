@@ -18,10 +18,15 @@ import type { DegradedArm, SearchResponse } from '../../api/contract';
  *                        so nothing was looked at. The remedy is more terms, or
  *                        ONE NAMED COURT and a shorter date range — R14 A7, and
  *                        the filter half is a correction to what R12 said.
- *   · `party_disabled` — THE BARE-PARTY-NAME ARM WAS SWITCHED OFF for this
+ *   · `party_disabled` — AN ARM THIS QUERY NEEDED WAS SWITCHED OFF for this
  *                        platform. Nothing timed out and nothing failed; a
  *                        capability was narrowed by the served registry, and the
- *                        exact-identity paths still work.
+ *                        exact-identity paths still work. Reached from EITHER
+ *                        `degraded: ['party_name_disabled']` or R15's
+ *                        `retrievalOutcome.reasons: ['capability_disabled']` —
+ *                        two statements of the same fact at different layers,
+ *                        and the second is the one that survives when the
+ *                        derivation stops being able to see the first.
  *   · `unknown`        — `retrievalOutcome.state === 'coverage_unknown'`. We did
  *                        not look, or could not look properly. This result set
  *                        is not a statement about the corpus.
@@ -40,6 +45,46 @@ export type SearchTruth =
 
 /** The arms that mean "we refused to rank", as opposed to "we ran out of time". */
 const REFUSAL_ARMS: readonly DegradedArm[] = ['sparse_unbounded'];
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `capability_disabled` — R15 §B1, LANDED SERVER-SIDE AT `90547174`.
+ *
+ * Read from the actual response path rather than from a summary:
+ * `services/api/src/search/outcome.ts` types it in `RetrievalOutcomeReason` and
+ * pushes it at both the `review_required` and the general branch, and
+ * `search/route.ts` calls `deriveRetrievalOutcome` on the answered path. So the
+ * value reaches this client.
+ *
+ * WHY IT IS CONSUMED AT ALL, when `degraded` already carries
+ * `party_name_disabled` and today is the only thing that produces it. Because
+ * both of the guards that keep the wrong answer unreachable are scheduled to be
+ * REMOVED: `PLATFORM_CAPABILITY_OVERRIDES` is an empty literal that exists to
+ * have a row added, and `SEMANTIC_INDEX_SUFFICIENT` is false and is meant to
+ * become true. When they go, a party query on a platform where the arm is off
+ * derives `abstained` with zero results — which every render rule in this
+ * product reads as "we looked, and there is nothing", about an arm that never
+ * ran. LCC pinned that wrong answer with a test so the fix would be deliberate.
+ * This is the client half of the fix, and it is in place before the guards move
+ * rather than after.
+ *
+ * THE WIRE STAYS `string[]` AND SO DOES THIS. `api/contract.ts` types
+ * `reasons` as `string[]` on purpose, and R15 adds a VALUE rather than a shape.
+ * Building an exhaustive local enum here would mean every future reason the
+ * server invents arrives as a type error in a shipped binary that cannot be
+ * updated — so this asks one question of the array and ignores everything else
+ * it does not recognise. An unknown reason therefore degrades to whatever the
+ * rest of the response already said, which is the safe direction: a state can
+ * only move AWAY from the honest empty, never towards it.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+const CAPABILITY_DISABLED = 'capability_disabled';
+
+export function capabilityArmDisabled(
+  outcome: { reasons?: readonly string[] } | undefined,
+): boolean {
+  return (outcome?.reasons ?? []).includes(CAPABILITY_DISABLED);
+}
 
 /**
  * WAS THE PARTY ARM SWITCHED OFF FOR THIS PLATFORM? — R14 A4.9.
@@ -78,7 +123,9 @@ export function classifySearch(data: Pick<
    * from other arms is still classified honestly; the screen decides separately
    * whether it has a list to show.
    */
-  if (partyArmDisabled(degraded)) return 'party_disabled';
+  if (partyArmDisabled(degraded) || capabilityArmDisabled(data.retrievalOutcome)) {
+    return 'party_disabled';
+  }
 
   // A refusal outranks everything else: nothing was ranked, so nothing that
   // follows from a ranking can be said.

@@ -49,7 +49,15 @@ import { color, radius, space } from '../../theme/tokens';
 /** `IMPLEMENTATION.md` §9d — "four 64px targets in the lower half". */
 const TARGET = 64;
 
-/** The purposes a next date is usually given for. Optional; defaults to the same one. */
+/**
+ * The purposes a next date is usually given for. Optional; defaults to the same
+ * one.
+ *
+ * UNTIL R16 THESE WERE DECORATIVE. The row rendered, the tap registered, the
+ * selection was held right here in component state — and `save()` sent only the
+ * date. `state/practice.ts#recordAdjournment` now writes the selection to the
+ * matter timeline as the court record it is.
+ */
 const PURPOSES = ['Same purpose', 'Arguments', 'Evidence', 'Orders'] as const;
 
 export function AdjournmentScreen({
@@ -65,7 +73,7 @@ export function AdjournmentScreen({
   onNextMatter?: () => void;
 }) {
   const matters = usePractice((s) => s.matters);
-  const setNextHearingDate = usePractice((s) => s.setNextHearingDate);
+  const recordAdjournment = usePractice((s) => s.recordAdjournment);
   const hydrate = usePractice((s) => s.hydrate);
 
   useEffect(() => {
@@ -88,18 +96,34 @@ export function AdjournmentScreen({
   const [selected, setSelected] = useState<string>(offers[1]?.iso ?? offers[0]?.iso ?? '');
   const [purpose, setPurpose] = useState<string>(PURPOSES[0]);
   const [saved, setSaved] = useState<string | null>(null);
+  /**
+   * THE PURPOSE HAS THREE STATES AND THE SCREEN SAYS WHICH.
+   *
+   * `null` — still in flight. `true` — the timeline write landed. `false` — it
+   * did not, and the purpose is NOT recorded anywhere. The date is unaffected in
+   * all three: it is a column on the matter and it is written locally first, so
+   * it is saved whatever the network did. Collapsing these into one "saved"
+   * would put us back where this screen started — telling an advocate we hold
+   * something we do not.
+   */
+  const [purposeRecorded, setPurposeRecorded] = useState<boolean | null>(null);
 
   const save = useCallback(() => {
     if (!selected) return;
     haptics.commit();
     /**
-     * NOT AWAITED, AND NO CONFIRMATION DIALOG. The store writes to the device
-     * synchronously and syncs after; making the advocate wait on a round trip in
-     * a building with no signal is the failure this screen exists to avoid.
+     * NOT AWAITED, AND NO CONFIRMATION DIALOG. The store writes the DATE to the
+     * device synchronously and syncs after; making the advocate wait on a round
+     * trip in a building with no signal is the failure this screen exists to
+     * avoid. The purpose resolves underneath the stamp and only then does its
+     * line appear — the confirmation is not held back for it.
      */
-    void setNextHearingDate(matterId, selected);
+    setPurposeRecorded(null);
+    void recordAdjournment(matterId, selected, purpose).then((r) =>
+      setPurposeRecorded(r.purposeRecorded),
+    );
     setSaved(selected);
-  }, [matterId, selected, setNextHearingDate]);
+  }, [matterId, selected, purpose, recordAdjournment]);
 
   if (saved) {
     const savedDate = offers.find((o) => o.iso === saved);
@@ -123,6 +147,24 @@ export function AdjournmentScreen({
           <Text variant="ui" style={styles.confirmBody}>
             The next hearing date is saved on this matter.
           </Text>
+
+          {/*
+            A SEPARATE SENTENCE FOR A SEPARATE GUARANTEE. The date above is
+            local-first and true offline. The purpose is a timeline write and is
+            not — so it gets its own line, and when the write did not land the
+            line says so rather than being silently absent, which would read as
+            "recorded" to anybody who did not count the lines.
+          */}
+          {purposeRecorded === true ? (
+            <Text variant="ui" style={styles.confirmBody}>
+              Recorded on the matter: {purpose.toLowerCase()}.
+            </Text>
+          ) : purposeRecorded === false ? (
+            <Text variant="ui" style={styles.confirmBody}>
+              The purpose was not recorded — that part needs a connection. The date is saved
+              either way.
+            </Text>
+          ) : null}
 
           <View style={styles.savedRow}>
             <Text variant="ui" style={styles.savedRowTitle}>
@@ -215,7 +257,8 @@ export function AdjournmentScreen({
           </Text>
         </Pressable>
         <Text variant="ui" style={styles.footerNote}>
-          Saved on this phone now. It syncs when you have signal.
+          The date saves on this phone now and syncs when you have signal. The purpose is
+          written to the matter when there is one.
         </Text>
       </View>
     </Screen>

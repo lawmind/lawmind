@@ -5,6 +5,7 @@ import type { BriefingListItem, Matter } from '../api/contract';
 import {
   daysFromCivil,
   daysUntil,
+  formatLong,
   parseCivilDate,
   todayCivil,
   type CivilDate,
@@ -55,7 +56,37 @@ type PracticeState = {
   loadBriefings: (matterId: string) => Promise<void>;
   /** Optimistic — the courtroom write lands locally first and syncs after. */
   setNextHearingDate: (matterId: string, iso: string | null) => Promise<void>;
+  /**
+   * The date AND the purpose it was given for. Returns whether the purpose
+   * actually reached the server, because the two halves have different
+   * guarantees and the screen may not claim the weaker one is the stronger.
+   */
+  recordAdjournment: (
+    matterId: string,
+    iso: string,
+    purpose: string,
+  ) => Promise<{ purposeRecorded: boolean }>;
 };
+
+/**
+ * THE COURT RECORD SENTENCE — NEW3 R15 §6 P3.
+ *
+ * `orderText`, not `notes`. A purpose given in open court is what the court
+ * said, and `orderText` is the half that travels with a share
+ * (`services/api/src/matters/route.ts`: "the court record. Always visible to a
+ * share"); `notes` is the advocate's own thinking and defaults to private, so
+ * putting the purpose there would hide from a co-counsel the one fact the
+ * hearing produced.
+ */
+export function adjournmentOrderText(iso: string, purpose: string): string {
+  const date = parseCivilDate(iso);
+  const on = date ? formatLong(date) : iso;
+  const trimmed = purpose.trim();
+  // "Same purpose" is a real answer and reads as a fragment inside a sentence;
+  // every other option is a noun that does not.
+  const forWhat = /^same purpose$/i.test(trimmed) ? 'the same purpose' : trimmed.toLowerCase();
+  return trimmed ? `Adjourned to ${on} for ${forWhat}.` : `Adjourned to ${on}.`;
+}
 
 export const usePractice = create<PracticeState>((set, get) => ({
   matters: [],
@@ -132,6 +163,52 @@ export const usePractice = create<PracticeState>((set, get) => ({
     // A failed write keeps the optimistic value. The advocate heard the date in
     // open court; our inability to reach a server does not unmake that fact, and
     // the refresh on next launch reconciles it.
+  },
+
+  /**
+   * ─────────────────────────────────────────────────────────────────────────
+   * THE PURPOSE IS A SECOND WRITE, AND IT IS NOT LOCAL-FIRST. Both halves of
+   * that sentence are load-bearing.
+   *
+   * The purpose row on `AdjournmentScreen` was a FALSE AFFORDANCE: it was
+   * rendered, it was selectable, the selection was held in component state, and
+   * `save()` sent only the date. An advocate selected "Evidence", saw the ink
+   * stamp and "the next hearing date is saved on this matter", and had recorded
+   * nothing — the same class of harm as an unconfirmed OCR date, and the reason
+   * this is a P0 rather than a missing feature.
+   *
+   * THE DATE IS A COLUMN; THE PURPOSE IS AN EVENT. `next_hearing_date` lives on
+   * `matters` and can be held optimistically because the store already owns the
+   * matter row. A purpose is a line in the timeline — `POST /matters/:id/events`
+   * — and this store holds no local timeline to write it into. Inventing one so
+   * the screen could claim success offline would be exactly the fake local
+   * persistence the round forbids: the advocate would be told the court record
+   * carries something it does not.
+   *
+   * SO THE ANSWER IS RETURNED RATHER THAN SWALLOWED. `purposeRecorded` is what
+   * the screen renders its second line from. The DATE is still saved either way
+   * and still says so; only the purpose sentence waits on the server, and when
+   * the server is not there the screen says the purpose was not recorded
+   * instead of implying it was.
+   *
+   * NOT AWAITED BY THE CALLER'S FIRST PAINT. `save()` shows the stamp
+   * immediately and this resolves underneath it, which is what keeps the
+   * one-tap-plus-save budget on a Redmi in a corridor.
+   * ─────────────────────────────────────────────────────────────────────────
+   */
+  recordAdjournment: async (matterId, iso, purpose) => {
+    await get().setNextHearingDate(matterId, iso);
+
+    const res = await api.addMatterEvent(matterId, {
+      eventDate: iso,
+      eventType: 'hearing',
+      orderText: adjournmentOrderText(iso, purpose),
+      // `notes` and `noteVisibility` are deliberately absent. PD-4 puts the
+      // default in the COLUMN, and sending nothing is how this client lets the
+      // column decide.
+    });
+
+    return { purposeRecorded: res.ok };
   },
 }));
 

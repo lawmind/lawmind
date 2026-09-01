@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { FolderOpen } from 'lucide-react-native';
 
 import { Button } from '../src/components/Button';
@@ -33,6 +33,12 @@ import { color, space } from '../src/theme/tokens';
  * it would be wrong too.
  *
  * Build scaffolding, not one of the 87.
+ *
+ * AND IT LEAVES THE BINARY. This carried no `__DEV__` guard, so a store build
+ * shipped the primitive gallery and its fixture data, reachable from any 404
+ * through the screen inventory. `__DEV__` is `false` in a release bundle and
+ * the minifier drops the dead branch, so in production this route answers with
+ * the same "that route does not exist" an unknown slug gets.
  */
 
 /** Devanagari and Latin on one line — citations stay English (PD-12). */
@@ -47,10 +53,19 @@ const LEGAL_QUOTE =
 
 export default function Gallery() {
   const { language, setLanguage } = useLanguageStore();
+  const notInProduction = !__DEV__;
   const [sheetOpen, setSheetOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [switched, setSwitched] = useState(true);
   const hindi = language === 'hi';
+
+  /*
+    AFTER THE HOOKS, NOT BEFORE THEM. An early return above `useState` would
+    change the hook count between builds, which is the one thing React will not
+    tolerate; `notInProduction` is computed as a plain value and branched on
+    here so the rule holds in both.
+  */
+  if (notInProduction) return <Redirect href="/+not-found" />;
 
   return (
     <Screen>

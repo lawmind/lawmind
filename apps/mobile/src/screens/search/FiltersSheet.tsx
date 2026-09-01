@@ -230,7 +230,18 @@ export function FiltersSheet({
             />
           }
           label="Exclude set aside or doubted"
-          subtitle="Good law only"
+          /*
+            NOT "GOOD LAW ONLY", WHICH IS THE CLAIM THIS PRODUCT DOES NOT MAKE.
+            `treatment.good_law_claim` is `DISABLED_NOT_READY`, and the reason is
+            in the registry's own note: "we show what later courts DID; we never
+            claim an authority is good law." Excluding what we have RECORDED as
+            set aside or doubted does not make the remainder good law — an
+            authority may have been overruled by a judgment we do not hold, or
+            doubted by a court whose source is behind. The label says what the
+            switch does; the subtitle now says what that leaves, which is a
+            smaller and true statement.
+          */
+          subtitle="Hides authorities we have recorded as set aside or doubted"
         />
 
         {/*

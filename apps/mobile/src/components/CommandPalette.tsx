@@ -126,6 +126,19 @@ export function CommandPalette() {
       : [];
 
     const recentRows: Row[] = recentItems
+      /*
+        RECENTS OBEY THE SAME GATE AS THE ACTION ABOVE THEM.
+
+        "Open drafts" was gated on `draftingEnabled` and the recent ROWS were
+        not, so a persisted `kind: 'draft'` entry — which can only exist as a
+        leftover from a build where drafting was open — offered `/document/[id]`
+        with no check. Nothing gated was ever reached: `document/[id].tsx` is
+        wrapped in `<CapabilityBoundary surface="drafting">` and the tap
+        redirected to `/today`. But the palette was advertising a destination
+        the app then silently refused, and the palette is phone-reachable from
+        Today. A held surface should be absent, not disappointing.
+      */
+      .filter((r) => r.kind !== 'draft' || draftingEnabled)
       .filter((r) => !q || r.title.toLowerCase().includes(q))
       .slice(0, q ? 6 : 5)
       .map((r) => ({

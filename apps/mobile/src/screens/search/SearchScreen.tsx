@@ -33,6 +33,7 @@ import { FiltersSheet } from './FiltersSheet';
 import {
   classifySearch,
   looksLikeBarePartyName,
+  capabilityArmDisabled,
   partyArmDisabled,
   type SearchTruth,
 } from './searchTruth';
@@ -184,6 +185,15 @@ export function SearchScreen({
    */
   const [degraded, setDegraded] = useState<DegradedArm[]>([]);
   /**
+   * THE RETRIEVAL OUTCOME'S REASONS, HELD SO THE BANNER CAN READ THEM — R15 §B1.
+   *
+   * `reasons` is `string[]` on the wire and stays `string[]` here. This screen
+   * asks it exactly one question, through `capabilityArmDisabled`; every other
+   * value it does not recognise is ignored rather than typed, so a reason the
+   * server adds after this binary ships cannot break it.
+   */
+  const [retrievalReasons, setRetrievalReasons] = useState<string[]>([]);
+  /**
    * A citation that legitimately identifies more than one judgment. The
    * ordinary result list is repurposed as a disambiguation — every row real
    * and verified, `total` naming the true count even where it exceeds what a
@@ -247,11 +257,20 @@ export function SearchScreen({
   const [emptyBecause, setEmptyBecause] = useState<SearchEmptyBecause | null>(null);
 
   /**
-   * WAS THE PARTY ARM SWITCHED OFF FOR THIS PLATFORM? — R14 A4.9. Read from the
-   * response, never from a local flag: the switch lives in the served capability
-   * registry, so a build cannot know its own state until the server answers.
+   * WAS THE PARTY ARM SWITCHED OFF FOR THIS PLATFORM? — R14 A4.9, R15 §B1.
+   * Read from the response, never from a local flag: the switch lives in the
+   * served capability registry, so a build cannot know its own state until the
+   * server answers.
+   *
+   * TWO SOURCES, ORed, AND THAT IS DELIBERATE. `degraded` carries the arm name
+   * and is authoritative today; `retrievalOutcome.reasons` carries R15's
+   * `capability_disabled` and is what survives once the derivation stops seeing
+   * the arm. Either one is enough — an OR can only move this towards saying an
+   * arm did not run, which is the direction that cannot produce a false "we
+   * looked and found nothing".
    */
-  const partyDisabled = partyArmDisabled(degraded);
+  const partyDisabled =
+    partyArmDisabled(degraded) || capabilityArmDisabled({ reasons: retrievalReasons });
 
   /**
    * CASE-FIRST. True when the query reads as a bare party name. Used ONLY to ask
@@ -282,6 +301,7 @@ export function SearchScreen({
       setFailure(null);
       setFailureOffline(false);
       setDegraded([]);
+      setRetrievalReasons([]);
       setAmbiguous(false);
       setHasMore(false);
       setPageNumber(1);
@@ -322,6 +342,7 @@ export function SearchScreen({
       setTotal(response.data.total ?? null);
       setUnpopulatedCourtCategories(response.data.unpopulatedCourtCategories ?? []);
       setDegraded(response.data.degraded ?? []);
+      setRetrievalReasons(response.data.retrievalOutcome?.reasons ?? []);
       setEmptyBecause(response.data.emptyBecause ?? null);
       setTruth(classifySearch(response.data));
       setAmbiguous(response.data.ambiguous ?? false);
@@ -338,7 +359,7 @@ export function SearchScreen({
         if (nextFilters.onlyVerified && r.verificationState !== 'verified') {
           removed.push({ result: r, hiddenBy: '"only verified authorities"' });
         } else if (nextFilters.excludeSetAsideOrDoubted && r.overruledStatus !== 'none') {
-          removed.push({ result: r, hiddenBy: '"good law only"' });
+          removed.push({ result: r, hiddenBy: '"exclude set aside or doubted"' });
         } else {
           kept.push(r);
         }
@@ -385,7 +406,7 @@ export function SearchScreen({
       if (filters.onlyVerified && r.verificationState !== 'verified') {
         removed.push({ result: r, hiddenBy: '"only verified authorities"' });
       } else if (filters.excludeSetAsideOrDoubted && r.overruledStatus !== 'none') {
-        removed.push({ result: r, hiddenBy: '"good law only"' });
+        removed.push({ result: r, hiddenBy: '"exclude set aside or doubted"' });
       } else {
         kept.push(r);
       }
@@ -564,6 +585,20 @@ export function SearchScreen({
       ) : phase === 'idle' ? (
         <View style={styles.list}>
           <EmptyState
+            /*
+              THE SECOND OF THE TWO BARE ACTS ENTRY POINTS — NEW3 R15 P6/I6.
+              `statute.lookup` is `ENABLED_V1` and `/acts` was reachable from
+              nothing at all. This is the right place for the other one: an
+              advocate who opens search wanting a SECTION rather than a
+              judgment is at this screen, and until now had no way to say so.
+            */
+            actions={[
+              {
+                label: 'Browse Bare Acts',
+                onPress: () => router.push('/acts' as never),
+                variant: 'secondary' as const,
+              },
+            ]}
             body="Ask the way you would ask a junior. Every citation you get back has been checked against the reported record before you see it."
             title="Search the corpus"
           />

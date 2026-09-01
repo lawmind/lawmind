@@ -11,6 +11,7 @@ export default function Route() {
       <Stack.Screen options={{ title: 'Settings' }} />
       <SettingsScreen
         onOpenAlerts={() => router.push('/alert-settings' as never)}
+        onOpenBareActs={() => router.push('/acts' as never)}
         onOpenCoverage={() => router.push('/coverage' as never)}
         onOpenTrainingConsent={() => router.push('/training-consent' as never)}
         onOpenDeleteAccount={() => router.push('/delete-account' as never)}

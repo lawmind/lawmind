@@ -41,12 +41,14 @@ import { color, space } from '../../theme/tokens';
  */
 export function SettingsScreen({
   onOpenAlerts,
+  onOpenBareActs,
   onOpenCoverage,
   onOpenTrainingConsent,
   onOpenDeleteAccount,
   onSignedOut,
 }: {
   onOpenAlerts: () => void;
+  onOpenBareActs: () => void;
   onOpenCoverage: () => void;
   onOpenTrainingConsent: () => void;
   onOpenDeleteAccount: () => void;
@@ -63,6 +65,23 @@ export function SettingsScreen({
 
         <Pressable onPress={onOpenAlerts} style={styles.row}>
           <Text variant="uiStrong">Alerts</Text>
+          <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
+        </Pressable>
+
+        {/*
+          BARE ACTS HAD NO ENTRY POINT AT ALL — NEW3 R15 P6/I6.
+          `BareActsScreen` and `ActReaderScreen` were built, `/acts` and
+          `/acts/[id]` were mounted, `statute.lookup` was `ENABLED_V1`, and
+          `GET /statutes` was live — and nothing in the app navigated there. The
+          only push to `/acts/[id]` came from `/acts` itself, which nothing
+          reached. A shipped v1 capability with no way in.
+
+          HERE AND THE SEARCH EMPTY STATE, NOT A FIFTH TAB. `DESIGN_SYSTEM.md`
+          fixes the bar at four, and moving it is a design decision rather than a
+          routing one.
+        */}
+        <Pressable onPress={onOpenBareActs} style={styles.row}>
+          <Text variant="uiStrong">Bare Acts</Text>
           <ChevronRight color={color.inkMuted} size={18} strokeWidth={1.5} />
         </Pressable>
 

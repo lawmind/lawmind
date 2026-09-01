@@ -1,4 +1,9 @@
-import { classifySearch, looksLikeBarePartyName, partyArmDisabled } from './searchTruth';
+import {
+  capabilityArmDisabled,
+  classifySearch,
+  looksLikeBarePartyName,
+  partyArmDisabled,
+} from './searchTruth';
 import type { SearchResponse, SearchResult } from '../../api/contract';
 
 const row = { judgmentId: 'j1' } as unknown as SearchResult;
@@ -164,5 +169,89 @@ describe('looksLikeBarePartyName', () => {
 
   it('is false for an empty query', () => {
     expect(looksLikeBarePartyName('   ')).toBe(false);
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * R15 §B1 — `capability_disabled`, the reason that outlives the arm.
+ *
+ * Verified on the actual response path, not from a summary: LCC landed it at
+ * `90547174`; `services/api/src/search/outcome.ts` types it in
+ * `RetrievalOutcomeReason` and pushes it on both branches, and `search/route.ts`
+ * calls `deriveRetrievalOutcome`.
+ *
+ * The failure this prevents: BOTH masks that make the wrong answer unreachable
+ * today are scheduled for removal — `PLATFORM_CAPABILITY_OVERRIDES` is an empty
+ * literal waiting for a row, and `SEMANTIC_INDEX_SUFFICIENT` is false and meant
+ * to become true. When they go, a party query on a platform where the arm is off
+ * derives `abstained` with zero results, and this screen would render an honest
+ * empty about an arm that never ran.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+describe('capability_disabled', () => {
+  const outcome = (reasons: string[], state = 'abstained') =>
+    response({
+      results: [],
+      retrievalOutcome: { state, reasons, safeForGeneration: false } as never,
+    });
+
+  it('is read off retrievalOutcome.reasons', () => {
+    expect(capabilityArmDisabled({ reasons: ['capability_disabled'] })).toBe(true);
+    expect(capabilityArmDisabled({ reasons: ['timeout'] })).toBe(false);
+    expect(capabilityArmDisabled({ reasons: [] })).toBe(false);
+    expect(capabilityArmDisabled(undefined)).toBe(false);
+  });
+
+  /**
+   * THE ONE THAT MATTERS. `abstained` is the ONLY state renderable as "no
+   * results", and this response carries it with zero rows — exactly the shape
+   * that would tell an advocate the corpus holds nothing.
+   */
+  it('an abstained zero carrying it is party_disabled, never empty', () => {
+    expect(classifySearch(outcome(['capability_disabled']))).toBe('party_disabled');
+    expect(classifySearch(outcome(['capability_disabled']))).not.toBe('empty');
+  });
+
+  it('still classifies without the degraded arm present at all', () => {
+    const both = outcome(['capability_disabled']);
+    expect(both.degraded).toBeUndefined();
+    expect(classifySearch(both)).toBe('party_disabled');
+  });
+
+  it('agrees with the degraded arm when both layers say it', () => {
+    const both = response({
+      results: [],
+      degraded: ['party_name_disabled'],
+      retrievalOutcome: {
+        state: 'coverage_unknown',
+        reasons: ['capability_disabled'],
+        safeForGeneration: false,
+      } as never,
+    });
+    expect(classifySearch(both)).toBe('party_disabled');
+  });
+
+  /**
+   * AN UNKNOWN FUTURE REASON DEGRADES SAFELY. The wire types `reasons` as
+   * `string[]` deliberately and R15 adds a VALUE, not a shape — so a reason the
+   * server invents after this binary ships must be ignored rather than crash it
+   * or change a state it says nothing about.
+   */
+  it('a reason this build has never heard of changes nothing', () => {
+    expect(capabilityArmDisabled({ reasons: ['some_future_reason_r19'] })).toBe(false);
+    expect(classifySearch(outcome(['some_future_reason_r19'], 'coverage_unknown'))).toBe('unknown');
+    expect(classifySearch(outcome(['some_future_reason_r19', 'capability_disabled']))).toBe(
+      'party_disabled',
+    );
+  });
+
+  /** And it does not fire on a search that simply answered. */
+  it('an answered search with results is untouched', () => {
+    const answered = response({
+      results: [row],
+      retrievalOutcome: { state: 'answered', reasons: [], safeForGeneration: true } as never,
+    });
+    expect(classifySearch(answered)).toBe('answered');
   });
 });

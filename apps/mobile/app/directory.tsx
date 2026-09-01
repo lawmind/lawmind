@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Link, Stack, type Href } from 'expo-router';
+import { type Href, Link, Redirect, Stack } from 'expo-router';
 
 import { Screen } from '../src/components/Screen';
 import { SectionRule } from '../src/components/SectionRule';
@@ -20,7 +20,18 @@ import { APP_SCREENS, screenGroups } from '../src/screens/manifest';
  * separate web app, and the 3 launch assets are App Store material with no route
  * at all — all three are in the same inventory, only one is on this phone.
  */
+/**
+ * BUILD SCAFFOLDING, AND IT LEAVES THE BINARY.
+ *
+ * This carried no `__DEV__` guard, so a store build shipped a browsable list of every designed and undesigned screen —
+ * reachable from any 404, because `+not-found` offered "Open the screen
+ * inventory" as a recovery action. `__DEV__` is `false` in a release bundle and
+ * the metro minifier drops the dead branch, so in production this route exists
+ * and answers with the same "that route does not exist" an unknown slug gets.
+ */
 export default function Directory() {
+  if (!__DEV__) return <Redirect href="/+not-found" />;
+
   return (
     <Screen>
       <Stack.Screen options={{ title: 'Screens' }} />
