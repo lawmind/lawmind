@@ -119,3 +119,7 @@ and later receipt holder counts are not converted into each other.
 
 The internal candidate gate passes with `FALSE_NULL = 0`, `FALSE_REPLACE = 0`,
 and `FALSE_SUFFIX_REPLACE = 0`, but that result is not independent authorization.
+
+Implementation and immutable evidence landed at
+`8e97e703a45b4ad01b4e1f4a424d992bdf28cb18`. Exact downstream handoffs are
+retained in `lcc-handoff.md` and `new3-handoff.md` and published on the lane bus.
