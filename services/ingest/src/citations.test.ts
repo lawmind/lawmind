@@ -322,3 +322,148 @@ describe('citationKeys', () => {
     assert.deepEqual(keys, []);
   });
 });
+
+/**
+ * NEW2 R20. THE `-DB` / `-FB` TOKEN BOUNDARY IN THE **SHARED** EXTRACTOR.
+ *
+ * This is the second copy of the defect NEW2 R18 fixed in `hc-load.ts`, and it
+ * is the copy every API citation-input path runs — `classifyQuery`, the bare
+ * structured lookup, `cite:` parsing, and paragraph-level citation display all
+ * reach it through `@lawmind/ingest/citations`. LCC R17 measured the divergence
+ * from the API side and could not close it, because closing it is a NEW2 write.
+ *
+ * THE MECHANISM. The rule read
+ *
+ *     /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})(?:-(?:DB|FB))?\b/g
+ *
+ * with the word boundary CLOSING THE OPTIONAL SUFFIX. On `2025:DHC:8491-DBThis`
+ * the `B|T` pair is not a word boundary, so the `-DB` alternative fails; the
+ * group is optional, so it matches EMPTY; and the `\b` then succeeds against the
+ * hyphen after `8491`, because a digit followed by a hyphen IS a boundary.
+ *
+ * The regex never errors. It returns a DIFFERENT, valid-looking citation key,
+ * and `2025:DHC:8491` and `2025:DHC:8491-DB` are two different keys. A silent
+ * wrong key is worse than a refusal here: `docs/CITATION_HARNESS.md` allows a
+ * citation to be shown unverified, and forbids showing a wrong one as anything.
+ *
+ * THE EXPECTED VALUE COMES FROM THE TOKEN GRAMMAR, NOT FROM WHICHEVER FUNCTION
+ * CURRENTLY WINS. `-DB` (division bench) and `-FB` (full bench) are printed by
+ * the issuing court as part of the neutral citation — the same two alternatives
+ * the rule already enumerates. Prose fused to the end of a token by a PDF text
+ * extractor is not part of the token, and it cannot retroactively shorten it.
+ *
+ * SCOPE. The boundary moves onto the NUMBER; nothing else changes. `-SB`, a
+ * case-type tail, the hyphenated COURT token `KHC-D` and an over-long number are
+ * negative controls and must not move. Measured exhaustively over the frozen
+ * affected universe in `docs/ai/new2-r20/`.
+ *
+ * FUTURE EXTRACTION ONLY. No stored citation, edge, alias or judgment is
+ * rewritten by this change. `CITATION_BULK_APPLY` stays HOLD.
+ */
+describe('extractCitations — the neutral-citation suffix boundary', () => {
+  const raw = (text: string) => extractCitations(text).map((c) => c.raw);
+
+  /** The failure-first cases. Observed RED at 90547174 before the rule moved. */
+  it('keeps a printed -DB when prose is glued straight onto it', () => {
+    assert.deepEqual(raw('2025:DHC:8491-DBThis Court held'), ['2025:DHC:8491-DB']);
+  });
+
+  it('keeps a printed -DB when the next label is glued onto it', () => {
+    // Sampled from judgment cfd18fe3-c878-4640-b070-dcf66fcb181a, Allahabad HC.
+    assert.deepEqual(
+      raw('2023:AHC:111864-DBNeutral Citation No. - 2023:AHC:111864-DB Reserved on 16.'),
+      ['2023:AHC:111864-DB'],
+    );
+  });
+
+  it('keeps a printed -FB when prose is glued straight onto it', () => {
+    assert.deepEqual(raw('2023:AHC:152051-FBOrder'), ['2023:AHC:152051-FB']);
+  });
+
+  it('keeps a printed -DB when a page number is glued onto it', () => {
+    // The commonest glue tail in the corpus after a concatenated next citation.
+    assert.deepEqual(raw('2025:CGHC:3148-DB2 issued by the'), ['2025:CGHC:3148-DB']);
+  });
+
+  /**
+   * THE RECALL GAP THIS FIX DOES NOT CLOSE, ASSERTED SO IT CANNOT BE MISREAD
+   * AS CLOSED.
+   *
+   * A concatenated NEXT citation is the commonest glue tail in the corpus — 88
+   * of the 138 occurrences NEW2 R18 measured. The boundary move recovers the
+   * FIRST citation's suffix and nothing more: the rule opens on `\b`, and
+   * between the `B` of `-DB` and the `2` of the next year there is no word
+   * boundary, so the second citation cannot be reached. It could not be reached
+   * before this change either.
+   *
+   * Recovering it needs the LEADING boundary relaxed, which is a change to the
+   * neutral-citation grammar rather than to a token boundary, and this module
+   * buys precision with recall on purpose. It is a separate finding with its own
+   * evidence, not a line to slip into a boundary fix.
+   */
+  it('recovers the first suffix but still cannot see a citation glued behind it', () => {
+    assert.deepEqual(raw('2026:MLHC:71-DB2026:MLHC:74-DB'), ['2026:MLHC:71-DB']);
+  });
+
+  it('gives the glued and the clean print of one citation a single key', () => {
+    // The defect's real cost: the same document yielded TWO keys for one
+    // citation, so one authority became two edges.
+    const found = extractCitations('2023:AHC:111864-DBHeld. See 2023:AHC:111864-DB again.');
+    assert.equal(found.length, 1);
+    assert.equal(found[0]?.normalised, '2023:AHC:111864-DB');
+  });
+
+  /** Separators that already worked, asserted so the move cannot cost them. */
+  for (const [text, why] of [
+    ['2025:DHC:8491-DB', 'isolated'],
+    ['2025:DHC:8491-DB ', 'trailing space'],
+    ['2025:DHC:8491-DB.', 'full stop'],
+    ['2025:DHC:8491-DB, and', 'comma'],
+    ['(2025:DHC:8491-DB)', 'parentheses'],
+    ['2025:DHC:8491-DB;', 'semicolon'],
+    ['2025:DHC:8491-DB\nThis Court', 'line feed'],
+    ['2025:DHC:8491-DB\r\nHeld', 'carriage return'],
+    ['2025:DHC:8491-DB\tHeld', 'tab'],
+    ['Neutral Citation No. - 2025:DHC:8491-DB', 'the printed label form'],
+  ] as const) {
+    it(`keeps the suffix that already survived: ${why}`, () => {
+      assert.deepEqual(raw(text), ['2025:DHC:8491-DB']);
+    });
+  }
+
+  /** Negative controls. Nothing here may gain a suffix it was never printed. */
+  for (const [text, expected, why] of [
+    ['2025:DHC:8491', '2025:DHC:8491', 'plain, no suffix printed'],
+    ['2023:AHC:152051', '2023:AHC:152051', 'plain, six-digit number'],
+    ['2023:KHC-D:1', '2023:KHC-D:1', 'a hyphenated COURT token is not a suffix'],
+    ['2026:PHHC:027747-DB', '2026:PHHC:027747-DB', 'zero-padded number keeps its suffix'],
+    ['2025:DHC:8491-SB', '2025:DHC:8491', '-SB is not one of the two real suffixes'],
+    ['2025:DHC:8491-Crl.A. 55 of 2025', '2025:DHC:8491', 'a case-type tail, not a suffix'],
+    ['2025:DHC:8491-D', '2025:DHC:8491', 'a truncated suffix is not a suffix'],
+    ['2025:DHC:8491- DB', '2025:DHC:8491', 'a spaced suffix is not the printed token'],
+  ] as const) {
+    it(`negative control unmoved: ${why}`, () => {
+      assert.deepEqual(raw(text), [expected]);
+    });
+  }
+
+  for (const [text, why] of [
+    ['x2025:DHC:8491', 'no leading word boundary'],
+    ['2025:DHC:84911234', 'a number too long for the series'],
+    ['2025:DHC:8491X', 'a letter fused to the number, with no suffix to find'],
+  ] as const) {
+    it(`still matches nothing: ${why}`, () => {
+      assert.deepEqual(raw(text), []);
+    });
+  }
+
+  it('leaves the Supreme Court and reporter families alone', () => {
+    assert.deepEqual(raw('2024 INSC 123'), ['2024 INSC 123']);
+    assert.deepEqual(raw('AIR 1973 SC 1461'), ['AIR 1973 SC 1461']);
+    assert.deepEqual(raw('(2019) 4 SCC 221'), ['(2019) 4 SCC 221']);
+  });
+
+  it('normalises a suffixed token without collapsing it onto the unsuffixed one', () => {
+    assert.notEqual(normaliseCitation('2025:DHC:8491-DB'), normaliseCitation('2025:DHC:8491'));
+  });
+});

@@ -177,3 +177,9 @@ docs/ai/new1-tier-a/passage-eval.checkpoint.jsonl
 # (existing-correction-population.jsonl and untestable-rows.jsonl), both of which
 # are committed, and it is regenerable from the committed checkpoint cursor.
 docs/ai/new2-r18/candidate-rows.jsonl
+
+# NEW2 R20. The affected-input universe: 1,148,519 judgment ids, 40 MB. Its
+# sha256 is recorded in affected-universe-checkpoint.json and count-reconciliation.json,
+# which is what makes the walk reproducible; the list itself is regenerable with
+# scripts/n2-r20-affected-universe.mts --phase=freeze.
+docs/ai/new2-r20/.affected-universe.txt

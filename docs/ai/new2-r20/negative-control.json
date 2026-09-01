@@ -1,0 +1,33 @@
+{
+ "artifact": "NEW2_R20_NEGATIVE_CONTROL",
+ "takenAt": "2026-09-01T06:37:17.145Z",
+ "seed": 20260901,
+ "prefilterSize": 1148519,
+ "A_faithfulness": {
+  "checked": 74,
+  "EDGE_PRESENT": 74,
+  "EDGE_MISSING": 0,
+  "NOT_IN_PREFILTER": 0,
+  "missing": []
+ },
+ "B1_textReadOutsidePrefilter": {
+  "SAMPLED": 20000,
+  "OUTSIDE": 18797,
+  "INSIDE_SKIPPED": 1203,
+  "PRECONDITION_MATCHED": 0,
+  "CHANGED": 0,
+  "slabs": 40,
+  "perSlab": 500,
+  "changes": []
+ },
+ "B2_wideOutsidePrefilter": {
+  "SAMPLED": 500000,
+  "OUTSIDE": 469327,
+  "INSIDE_SKIPPED": 30673,
+  "PRECONDITION_MATCHED": 12,
+  "CHANGED": 0,
+  "slabs": 100,
+  "perSlab": 5000,
+  "changes": []
+ }
+}

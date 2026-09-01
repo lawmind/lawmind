@@ -1,0 +1,294 @@
+{
+ "artifact": "NEW2_R20_KEY_SPACE",
+ "takenAt": "2026-09-01T06:36:24.641Z",
+ "scope": "FUTURE input against EXISTING keys. Nothing is rewritten by this round.",
+ "distinctTokenPairs": 34,
+ "counts": {
+  "NEITHER_FORM_RESOLVES": 13,
+  "RESOLVES_TO_A_DIFFERENT_JUDGMENT": 2,
+  "NO_LONGER_RESOLVES": 11,
+  "NEWLY_RESOLVES": 8
+ },
+ "rows": [
+  {
+   "old": "2024:DHC:5183",
+   "new": "2024:DHC:5183-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2025:MLHC:405",
+   "new": "2025:MLHC:405-DB",
+   "oldHolders": 26,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "RESOLVES_TO_A_DIFFERENT_JUDGMENT"
+  },
+  {
+   "old": "2024:DHC:9465",
+   "new": "2024:DHC:9465-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2025:MLHC:347",
+   "new": "2025:MLHC:347-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2026:MLHC:448",
+   "new": "2026:MLHC:448-DB",
+   "oldHolders": 2,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2024:HHC:12882",
+   "new": "2024:HHC:12882-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2026:MLHC:717",
+   "new": "2026:MLHC:717-DB",
+   "oldHolders": 3,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2024:HHC:16958",
+   "new": "2024:HHC:16958-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2024:FU-JP:3205",
+   "new": "2024:FU-JP:3205-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2014:DHC:6591",
+   "new": "2014:DHC:6591-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2024:DHC:7692",
+   "new": "2024:DHC:7692-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2024:DHC:6903",
+   "new": "2024:DHC:6903-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2025:DHC:8491",
+   "new": "2025:DHC:8491-DB",
+   "oldHolders": 2,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2026:HHC:30746",
+   "new": "2026:HHC:30746-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2026:MLHC:476",
+   "new": "2026:MLHC:476-DB",
+   "oldHolders": 2,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2025:KHC:11338",
+   "new": "2025:KHC:11338-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2006:DHC:18150",
+   "new": "2006:DHC:18150-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2024:AHC-LKO:56770",
+   "new": "2024:AHC-LKO:56770-DB",
+   "oldHolders": 0,
+   "newHolders": 2,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2025:HHC:2243",
+   "new": "2025:HHC:2243-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2018:DHC:270",
+   "new": "2018:DHC:270-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2018:DHC:3390",
+   "new": "2018:DHC:3390-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2025:MLHC:384",
+   "new": "2025:MLHC:384-DB",
+   "oldHolders": 1,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "RESOLVES_TO_A_DIFFERENT_JUDGMENT"
+  },
+  {
+   "old": "2024:DHC:4915",
+   "new": "2024:DHC:4915-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2024:HHC:12855",
+   "new": "2024:HHC:12855-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2025:HHC:22696",
+   "new": "2025:HHC:22696-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2024:DHC:426",
+   "new": "2024:DHC:426-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2024:HHC:12854",
+   "new": "2024:HHC:12854-DB",
+   "oldHolders": 0,
+   "newHolders": 1,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEWLY_RESOLVES"
+  },
+  {
+   "old": "2023:AHC:111864",
+   "new": "2023:AHC:111864-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2025:BHC-OS:19788",
+   "new": "2025:BHC-OS:19788-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2026:MLHC:741",
+   "new": "2026:MLHC:741-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2026:DHC:433",
+   "new": "2026:DHC:433-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2023:PHHC:080381",
+   "new": "2023:PHHC:080381-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  },
+  {
+   "old": "2024:DHC:5425",
+   "new": "2024:DHC:5425-DB",
+   "oldHolders": 0,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NEITHER_FORM_RESOLVES"
+  },
+  {
+   "old": "2026:MLHC:903",
+   "new": "2026:MLHC:903-DB",
+   "oldHolders": 1,
+   "newHolders": 0,
+   "newHoldersAlsoInOld": 0,
+   "klass": "NO_LONGER_RESOLVES"
+  }
+ ],
+ "aliases": {
+  "ALIASES_SCANNED": 4394,
+  "AIR": 335,
+  "SCC": 4059,
+  "NEUTRAL_SHAPED_ALIAS_KEYS": 0,
+  "constraint": "CHECK ((alias_reporter = ANY (ARRAY['AIR'::text, 'SCC'::text])))",
+  "ALIASES_CHANGED": 0
+ }
+}

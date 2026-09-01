@@ -104,8 +104,45 @@ const PATTERNS: readonly RegExp[] = [
    * Meghalaya circulars. **NOT yet observed in our own corpus** — the pass has
    * not reached 2023 — so this is verified against the issuing courts'
    * notices and not against our data. Recheck the first 2023 batch.
+   *
+   * ──────────────────────────────────────────────────────────────────────────
+   * NEW2 R20. THE WORD BOUNDARY MOVED OFF THE SUFFIX AND ONTO THE NUMBER
+   * ──────────────────────────────────────────────────────────────────────────
+   *
+   * It used to read `(?:-(?:DB|FB))?\b`. On `2025:DHC:8491-DBThis Court held`
+   * the `B|T` pair is not a word boundary, so the `-DB` alternative FAILS; the
+   * group is optional, so it matches EMPTY; and the `\b` then succeeds against
+   * the hyphen after `8491`, because a digit followed by a hyphen IS a
+   * boundary. The regex never errors — it silently returns a DIFFERENT,
+   * valid-looking citation key, and where the page also prints the citation
+   * cleanly the same document yields TWO keys for ONE authority.
+   *
+   * `-DB` (division bench) and `-FB` (full bench) are printed by the issuing
+   * court as part of the citation — the two alternatives this rule already
+   * enumerates. Prose fused onto the end of the token by a PDF text extractor
+   * is not part of the token and cannot retroactively shorten it.
+   *
+   * This is the SECOND copy of the defect. NEW2 R18 fixed the first, in
+   * `harvest/hc-load.ts`, and deliberately left this one: it feeds
+   * `judgment_citations.normalised_citation`, i.e. the edge key space, while
+   * `CITATION_BULK_APPLY = HOLD`. LCC R17 then showed this copy is the one
+   * every API citation-input path runs — `classifyQuery`, the bare structured
+   * lookup, `cite:` parsing and paragraph citation display all reach it
+   * through `@lawmind/ingest/citations` — so the divergence was live on
+   * `/search`, not only in ingest.
+   *
+   * Measured exhaustively over the frozen affected universe
+   * `NEW2-R20-SHARED-BOUNDARY` (`docs/ai/new2-r20/`): every document holding
+   * an unsuffixed neutral edge, which is a corpus-wide superset of what this
+   * move can touch. Not one negative control changes — `-SB`, a case-type
+   * tail, the hyphenated COURT token `KHC-D`, an over-long number, a spaced
+   * suffix — and no observed glue tail could be a longer real suffix.
+   *
+   * FUTURE EXTRACTION ONLY. No stored citation, edge, alias or judgment is
+   * rewritten by this change; the rows it would have read differently stay
+   * quarantined in NEW2 R18/R19.
    */
-  /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})(?:-(?:DB|FB))?\b/g,
+  /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})\b(?:-(?:DB|FB))?/g,
   // (2019) 4 SCC 221 · (2019) 4 S.C.C. 221 · [2000] 5 SCC 573
   /[[(](\d{4})[\])]\s*(\d{1,3})\s*S\.?\s?C\.?\s?C\.?\s*(\d{1,5})\b/g,
   // 1996 (4) SCC 362 — year first, the reports' own house style

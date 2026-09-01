@@ -1,0 +1,185 @@
+{
+ "artifact": "NEW2_R20_COUNT_RECONCILIATION",
+ "lane": "NEW2",
+ "takenAt": "2026-09-01T06:47:14.841Z",
+ "rule": "Never convert one denominator into another. Every count carries the question it answers.",
+ "metrics": [
+  {
+   "METRIC_NAME": "R19_DB_SUFFIX_EXISTING_ROWS",
+   "value": 52,
+   "TABLE_OR_SOURCE": "docs/ai/new2-r19/db-suffix-rows.jsonl",
+   "UNIT_OF_COUNT": "stored judgment row",
+   "DENOMINATOR": "52 observed while walking the 1,350,954 High Court rows carrying a stored neutral_citation",
+   "DEDUP_KEY": "judgments.id",
+   "FILTER": "stored value is the PLAIN form while the text prints a suffix",
+   "MEASURES": "STORED JUDGMENT IDENTITY"
+  },
+  {
+   "METRIC_NAME": "R19_DB_SUFFIX_QUARANTINE",
+   "value": 51,
+   "TABLE_OR_SOURCE": "NEW2_R19.md §6, cross-referenced to NEW2-R18-EXISTING-9679cff06d0e6404",
+   "UNIT_OF_COUNT": "stored judgment row INSIDE the R18 frozen correction population",
+   "DENOMINATOR": "20,556 rows in NEW2-R18-EXISTING-9679cff06d0e6404",
+   "DEDUP_KEY": "judgments.id",
+   "FILTER": "the 52 observed rows, minus the 1 that falls outside the frozen population",
+   "MEASURES": "STORED JUDGMENT IDENTITY, quarantined disposition"
+  },
+  {
+   "METRIC_NAME": "R18_MISSING_BOUNDARY_OCCURRENCES",
+   "value": 138,
+   "TABLE_OR_SOURCE": "docs/ai/new2-r18/db-suffix-defect.json",
+   "UNIT_OF_COUNT": "TEXT OCCURRENCE of a neutral citation",
+   "DENOMINATOR": "4575593 occurrences in 1350954 rows",
+   "DEDUP_KEY": "none — occurrences, not documents",
+   "FILTER": "the suffix is printed and the next character is a word character",
+   "MEASURES": "TEXT OCCURRENCE"
+  },
+  {
+   "METRIC_NAME": "LCC_SPLIT_PAIRS",
+   "value": 83,
+   "TABLE_OR_SOURCE": "judgment_citations",
+   "UNIT_OF_COUNT": "(citing judgment, citation base) pair emitting BOTH X and X-DB",
+   "DENOMINATOR": "1376237 neutral-form edge rows",
+   "DEDUP_KEY": "(citing_judgment_id, base)",
+   "FILTER": "neutral form only",
+   "MEASURES": "EXTRACTED CITATION ROWS — the one deterministic in-database fingerprint"
+  },
+  {
+   "METRIC_NAME": "LCC_DISTINCT_CITATIONS_IN_SPLIT_PAIRS",
+   "value": 33,
+   "TABLE_OR_SOURCE": "judgment_citations",
+   "UNIT_OF_COUNT": "distinct citation base appearing in a split pair",
+   "DENOMINATOR": "1376237 neutral-form edge rows",
+   "DEDUP_KEY": "base",
+   "FILTER": "neutral form only",
+   "MEASURES": "EXTRACTED CITATION ROWS"
+  },
+  {
+   "METRIC_NAME": "LCC_CORPUS_WIDE_SPLIT_FORM_CITATIONS",
+   "value": 158,
+   "TABLE_OR_SOURCE": "judgment_citations",
+   "UNIT_OF_COUNT": "distinct citation base for which BOTH forms exist anywhere in the corpus",
+   "DENOMINATOR": "1376237 neutral-form edge rows",
+   "DEDUP_KEY": "base",
+   "FILTER": "neutral form only, citing judgment ignored",
+   "MEASURES": "EXTRACTED CITATION ROWS"
+  },
+  {
+   "METRIC_NAME": "LCC_UNSUFFIXED_AND_RESOLVED_EXPOSURE_UPPER_BOUND",
+   "value": 15290,
+   "TABLE_OR_SOURCE": "judgment_citations",
+   "UNIT_OF_COUNT": "resolved edge row",
+   "DENOMINATOR": "22408376 edge rows total, 1376237 neutral, 19314 neutral and resolved",
+   "DEDUP_KEY": "judgment_citations.id",
+   "FILTER": "neutral, no suffix, cited_judgment_id NOT NULL",
+   "MEASURES": "RESOLVED EDGE. UPPER BOUND — citation_text stores the old rule match[0] and evidence is NULL on every neutral row, so the glue is not recoverable from the edge row"
+  },
+  {
+   "METRIC_NAME": "LCC_ALIASES_SCANNED",
+   "value": 4394,
+   "TABLE_OR_SOURCE": "judgment_citation_aliases",
+   "UNIT_OF_COUNT": "alias row",
+   "DENOMINATOR": "4394 alias rows",
+   "DEDUP_KEY": "alias_key (UNIQUE)",
+   "FILTER": "none",
+   "MEASURES": "ALIAS. Unaffected BY CONSTRUCTION: CHECK (alias_reporter IN (AIR, SCC)), and neutral-shaped alias keys = 0"
+  },
+  {
+   "METRIC_NAME": "R20_AFFECTED_UNIVERSE",
+   "value": 1148519,
+   "TABLE_OR_SOURCE": "judgment_citations -> judgments",
+   "UNIT_OF_COUNT": "document",
+   "DENOMINATOR": "18752608 estimated judgments; 18759868 distinct citing judgments carry at least one edge row, 16128279 of the 22408376 rows being the empty sentinel that proves the edge pass read a document and found nothing",
+   "DEDUP_KEY": "judgments.id",
+   "FILTER": "holds at least one UNSUFFIXED neutral edge row",
+   "MEASURES": "API/INGEST INPUT EXPOSURE — a corpus-wide superset of what the boundary move can touch"
+  },
+  {
+   "METRIC_NAME": "R20_PRECONDITION_MATCHED",
+   "value": 88,
+   "TABLE_OR_SOURCE": "judgments.full_text",
+   "UNIT_OF_COUNT": "document",
+   "DENOMINATOR": "1148519 documents in the frozen universe",
+   "DEDUP_KEY": "judgments.id",
+   "FILTER": "full_text ~ '[0-9]-(DB|FB)[0-9A-Za-z_]'",
+   "MEASURES": "API/INGEST INPUT EXPOSURE, necessary condition only"
+  },
+  {
+   "METRIC_NAME": "R20_DOCS_WITH_A_MOVED_TOKEN",
+   "value": 74,
+   "TABLE_OR_SOURCE": "judgments.full_text",
+   "UNIT_OF_COUNT": "document",
+   "DENOMINATOR": "1148519 documents in the frozen universe",
+   "DEDUP_KEY": "judgments.id",
+   "FILTER": "the shared extractor returns a different array under the corrected rule",
+   "MEASURES": "API/INGEST INPUT EXPOSURE, exhaustive over the universe"
+  },
+  {
+   "METRIC_NAME": "R20_CHANGED_TOKEN_OCCURRENCES",
+   "value": 160,
+   "TABLE_OR_SOURCE": "judgments.full_text",
+   "UNIT_OF_COUNT": "moved match position",
+   "DENOMINATOR": "88 documents that matched the necessary condition",
+   "DEDUP_KEY": "none — occurrences, not documents",
+   "FILTER": "old token !== new token at the same match index",
+   "MEASURES": "TEXT OCCURRENCE"
+  }
+ ],
+ "crossRoundOverlap": {
+  "question": "Why is R20 74 when R19 is 52 and R18 is 138? Three units, three populations.",
+  "R19_ROWS": 52,
+  "R19_BY_CLASS": {
+   "STORED_PLAIN_SUFFIX_GLUED": 43,
+   "STORED_PLAIN_SUFFIX_WITH_BOUNDARY": 9
+  },
+  "R20_DOCS_WITH_A_MOVED_TOKEN": 74,
+  "R20_DOCS_CARRYING_A_STORED_NEUTRAL_CITATION": 52,
+  "R20_DOCS_WITHOUT_ONE": 22,
+  "R19_ROWS_ALSO_IN_R20": 43,
+  "R19_ROWS_ALSO_IN_R20_BY_CLASS": {
+   "STORED_PLAIN_SUFFIX_GLUED": 43
+  },
+  "R19_ROWS_NOT_IN_R20_BY_CLASS": {
+   "STORED_PLAIN_SUFFIX_WITH_BOUNDARY": 9
+  },
+  "reading": [
+   "R19's 43 STORED_PLAIN_SUFFIX_GLUED rows are exactly the 43 documents R20 also finds — the same documents, reached by two independent routes.",
+   "R19's 9 STORED_PLAIN_SUFFIX_WITH_BOUNDARY rows are correctly ABSENT from R20: the suffixed form is printed with a proper boundary, so no glue exists and the shared extractor's output does not move. They are a stored-value defect, not a parser defect.",
+   "R20 adds 31 documents R19 never asked about — 9 that carry a stored citation unrelated to the glued token, and 22 that carry none at all. R19 asked whose stored identity is wrong; R20 asks whose extracted output moves.",
+   "R18 counted 138 OCCURRENCES over a 1,350,954-row own-citation population; R20 counts 160 moved match positions over a 1,148,519-document input population. Neither number converts into the other."
+  ]
+ },
+ "dbDerived": {
+  "edges": {
+   "total_rows": "22408376",
+   "sentinel_rows": "16128279",
+   "neutral_rows": "1376237",
+   "neutral_with_suffix": "216318",
+   "neutral_without_suffix": "1159919",
+   "neutral_resolved": "19314",
+   "neutral_unsuffixed_resolved": "15290",
+   "distinct_citing_unsuffixed": "1148519",
+   "distinct_citing_any": "18759868"
+  },
+  "fingerprint": {
+   "split_pairs": "83",
+   "distinct_citations": "33",
+   "distinct_citing_judgments": "83",
+   "corpus_wide_split": "158"
+  },
+  "aliases": {
+   "scanned": "4394",
+   "air": "335",
+   "scc": "4059",
+   "neutral_shaped": "0"
+  },
+  "judgments": {
+   "reltuples": "18752608"
+  }
+ },
+ "inputHashes": {
+  "affectedUniverse": "3cc2c5452e49a9232e33e476674ca9f4c2f68701b178d2c3a7e658b636ce3c34",
+  "affectedHits": "dcca5be3947a0b6f3250ab75c92cd6bd0d1b25dbdc4835c0ef04e3671a79240b",
+  "r19DbSuffixRows": "89b04122f5f0bd930b204c77f23794593b9b9a03087ca38f8517613822fb0000"
+ }
+}
