@@ -197,6 +197,18 @@ export async function createMatter(
   sql: Sql,
   userId: string | undefined,
   body: z.infer<typeof createMatterBody>,
+  /**
+   * Where the fire-and-forget activation write goes.
+   *
+   * Defaults to `sql`, so every existing caller is unchanged. It exists because
+   * `sql` may now be a TRANSACTION — `withIdempotency` hands the handler the
+   * same transaction the idempotency record commits in, which is the whole
+   * point — and a background write on a transaction handle runs after that
+   * transaction has committed, against a scope that no longer exists. The
+   * funnel metric is explicitly allowed to be lost; it is not allowed to take
+   * the matter with it.
+   */
+  pool: Sql = sql,
 ): Promise<Response> {
   const denied = requireUser(c, userId);
   if (denied) return denied;
@@ -218,7 +230,7 @@ export async function createMatter(
    * others were never wired, so `activation_events` was empty everywhere.
    */
   recordStepInBackground(
-    sql,
+    pool,
     userId!,
     'created_matter',
     (err) =>

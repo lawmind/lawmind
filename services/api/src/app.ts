@@ -160,6 +160,7 @@ import {
   linkedJudgmentsQuery,
 } from './statutes/linked-judgments.ts';
 import { validate } from './validate.ts';
+import { withIdempotency } from './idempotency.ts';
 
 export type AppDeps = {
   /** Injected so the health check can be exercised without a live server. */
@@ -361,14 +362,20 @@ export function createApp(deps: AppDeps) {
      * surface only: it is irreversible, it destroys rows other advocates'
      * shares depend on, and a mis-tap on a phone must not be able to do it.
      */
-    app.post('/me/data-requests', validate('json', dataRequestBody), async (c) =>
-      createDataRequest(
-        c,
-        auth.sql,
-        await profileIdFor(auth.sql, c.get('authId')),
-        c.req.valid('json'),
-      ),
-    );
+    /**
+     * R16 — `Idempotency-Key` is honoured here and on five other creates. It is
+     * OPTIONAL: a request without it behaves exactly as it did under R15.
+     * `idempotency.ts` holds the mechanism and the reasoning; the route template
+     * is passed as a literal rather than read from the router so that the scope a
+     * key lives in is answerable by reading this file.
+     */
+    app.post('/me/data-requests', validate('json', dataRequestBody), async (c) => {
+      const userId = await profileIdFor(auth.sql, c.get('authId'));
+      const body = c.req.valid('json');
+      return withIdempotency(c, auth.sql, { userId, route: '/me/data-requests', body }, (tx) =>
+        createDataRequest(c, tx, userId, body),
+      );
+    });
     app.get('/me/data-requests', async (c) =>
       listOwnDataRequests(c, auth.sql, await profileIdFor(auth.sql, c.get('authId'))),
     );
@@ -456,9 +463,19 @@ export function createApp(deps: AppDeps) {
     app.get('/judgments/:id/annotations', async (c) =>
       listAnnotations(c, sql, c.req.param('id'), await userFor(c)),
     );
-    app.post('/judgments/:id/annotations', validate('json', annotationBody), async (c) =>
-      createAnnotation(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
-    );
+    // R16. The judgment id is a PATH PARAMETER and so rides in the fingerprint:
+    // one key reused against a second judgment is a mismatch, not a replay.
+    app.post('/judgments/:id/annotations', validate('json', annotationBody), async (c) => {
+      const userId = await userFor(c);
+      const judgmentId = c.req.param('id');
+      const body = c.req.valid('json');
+      return withIdempotency(
+        c,
+        sql,
+        { userId, route: '/judgments/:id/annotations', params: { id: judgmentId }, body },
+        (tx) => createAnnotation(c, tx, judgmentId, userId, body),
+      );
+    });
     app.delete('/annotations/:annotationId', async (c) =>
       deleteAnnotation(c, sql, c.req.param('annotationId'), await userFor(c)),
     );
@@ -500,9 +517,16 @@ export function createApp(deps: AppDeps) {
     app.post('/verify/ecourts', validate('json', ecourtsRequest), (c) =>
       handleEcourts(c, c.req.valid('json')),
     );
-    app.post('/verify/confirm', validate('json', confirmRequest), async (c) =>
-      handleConfirm(c, sql, await userFor(c), c.req.valid('json')),
-    );
+    // R16. Tier 3 is still a human solving the CAPTCHA and vouching — nothing
+    // about idempotency touches that. It stops a retried vouch from appending a
+    // second permanent `citation_checks` row.
+    app.post('/verify/confirm', validate('json', confirmRequest), async (c) => {
+      const userId = await userFor(c);
+      const body = c.req.valid('json');
+      return withIdempotency(c, sql, { userId, route: '/verify/confirm', body }, (tx) =>
+        handleConfirm(c, tx, userId, body),
+      );
+    });
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
     app.get('/saved-searches', async (c) => listSavedSearches(c, sql, await userFor(c)));
@@ -639,18 +663,34 @@ export function createApp(deps: AppDeps) {
     // exist" and "is not yours" answer identically: a matter id that resolves is
     // itself a fact about another advocate's caseload.
     app.get('/matters', async (c) => listMatters(c, sql, await userFor(c)));
-    app.post('/matters', validate('json', createMatterBody), async (c) =>
-      createMatter(c, sql, await userFor(c), c.req.valid('json')),
-    );
+    // R16. `createMatter` takes the pool as a fifth argument so its funnel metric
+    // is not written on the transaction that is about to commit.
+    app.post('/matters', validate('json', createMatterBody), async (c) => {
+      const userId = await userFor(c);
+      const body = c.req.valid('json');
+      return withIdempotency(c, sql, { userId, route: '/matters', body }, (tx) =>
+        createMatter(c, tx, userId, body, sql),
+      );
+    });
     app.get('/matters/:id', async (c) => getMatter(c, sql, c.req.param('id'), await userFor(c)));
     app.patch('/matters/:id', validate('json', patchMatterBody), async (c) =>
       patchMatter(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // PD-4 — note_visibility defaults to private IN THE COLUMN. An omitted field
     // inserts the SQL keyword DEFAULT, never a value chosen in application code.
-    app.post('/matters/:id/events', validate('json', createEventBody), async (c) =>
-      createMatterEvent(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
-    );
+    // R16. Same key against two different matters is a mismatch: the matter id is
+    // a path parameter and both requests match this one route template.
+    app.post('/matters/:id/events', validate('json', createEventBody), async (c) => {
+      const userId = await userFor(c);
+      const matterId = c.req.param('id');
+      const body = c.req.valid('json');
+      return withIdempotency(
+        c,
+        sql,
+        { userId, route: '/matters/:id/events', params: { id: matterId }, body },
+        (tx) => createMatterEvent(c, tx, matterId, userId, body),
+      );
+    });
     // PD-3 — sharing is PER MATTER, BY INVITATION. There is no chamber-wide
     // endpoint and there must never be one: chamber-wide default sharing is a
     // conflicts hazard, since two advocates in one chamber can be on opposing
@@ -714,9 +754,16 @@ export function createApp(deps: AppDeps) {
      * approval, and it is not a support ticket.
      */
     app.get('/me/training-consent', async (c) => getTrainingConsent(c, sql, await userFor(c)));
-    app.post('/me/training-consent', validate('json', grantBody), async (c) =>
-      grantTrainingConsent(c, sql, await userFor(c), c.req.valid('json')),
-    );
+    // R16. A grant is a `users` update AND a `training_consent_events` append, so
+    // the handler opens its own transaction; under a key that becomes a savepoint
+    // inside this one. `atomically` is what makes both spellings work.
+    app.post('/me/training-consent', validate('json', grantBody), async (c) => {
+      const userId = await userFor(c);
+      const body = c.req.valid('json');
+      return withIdempotency(c, sql, { userId, route: '/me/training-consent', body }, (tx) =>
+        grantTrainingConsent(c, tx, userId, body),
+      );
+    });
     app.delete('/me/training-consent', async (c) =>
       withdrawTrainingConsent(c, sql, await userFor(c)),
     );

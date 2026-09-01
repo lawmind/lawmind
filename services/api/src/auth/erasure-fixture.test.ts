@@ -177,6 +177,15 @@ async function build(): Promise<Fixture> {
             VALUES (${userId}::uuid, ${matterId}::uuid, 'fixture query', 'en', 3, 'fixture')`;
   await sql`INSERT INTO training_consent_events (user_id, action, version)
             VALUES (${userId}::uuid, 'granted', 'v1')`;
+  /* R16. Written complete in ONE statement, which is also the shape the deferred
+   * completion trigger enforces at COMMIT: there is no half-written record to
+   * fixture, because there is no half-written record. */
+  await sql`INSERT INTO api_idempotency_records
+              (user_id, method, route, idempotency_key, request_fingerprint,
+               outcome, response_status, response_body, completed_at)
+            VALUES (${userId}::uuid, 'POST', '/matters',
+                    ${`fixture-${crypto.randomUUID()}`}, repeat('a', 64),
+                    'success', 201, ${sql.json({ fixture: true })}, now())`;
   await sql`INSERT INTO activation_events (user_id, step)
             VALUES (${userId}::uuid, 'first_successful_search')`;
   await sql`INSERT INTO experiment_assignments (user_id, experiment_id, variant)
@@ -231,6 +240,7 @@ const EXPECTED: { table: string; column: string; outcome: 'GONE' | 'DETACHED' | 
   { table: 'alerts', column: 'user_id', outcome: 'GONE', why: 'monitoring on their matters' },
   { table: 'citation_copies', column: 'user_id', outcome: 'GONE', why: 'what they cited and where' },
   { table: 'training_consent_events', column: 'user_id', outcome: 'GONE', why: 'consent about a person who no longer exists' },
+  { table: 'api_idempotency_records', column: 'user_id', outcome: 'GONE', why: "R16 replay results, which carry the advocate's own words back" },
   { table: 'activation_events', column: 'user_id', outcome: 'GONE', why: 'product funnel' },
   { table: 'experiment_assignments', column: 'user_id', outcome: 'GONE', why: 'experiment membership' },
   { table: 'experiment_exposures', column: 'user_id', outcome: 'GONE', why: 'experiment exposure' },

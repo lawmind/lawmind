@@ -50,6 +50,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
+import { atomically } from '../transaction.ts';
 import { isoColumn } from '../iso-time.ts';
 
 /**
@@ -153,7 +154,7 @@ export async function grantTrainingConsent(
     );
   }
 
-  const [row] = await sql.begin(async (tx) => {
+  const [row] = await atomically(sql, async (tx) => {
     const [updated] = await tx<ConsentRow[]>`
       UPDATE users
       SET training_consent_at = now(),
@@ -190,7 +191,7 @@ export async function withdrawTrainingConsent(
     return fail(c, 'AUTH_REQUIRED', 'training consent belongs to an advocate', 401);
   }
 
-  const result = await sql.begin(async (tx) => {
+  const result = await atomically(sql, async (tx) => {
     const [before] = await tx<ConsentRow[]>`
       SELECT ${tx.unsafe(isoColumn('training_consent_at'))} AS training_consent_at,
              training_consent_version

@@ -231,6 +231,16 @@ export async function eraseUser(
     await count('training_consent_events', tx`
       DELETE FROM training_consent_events WHERE user_id = ${userId}::uuid`);
     /**
+     * R16's idempotency ledger. It stores no request content — only a SHA-256
+     * fingerprint — but it does store the SUCCESS RESPONSE, and for an
+     * annotation or a matter that response carries the advocate's own words
+     * back. The contract requires the original body on replay (§4), so the copy
+     * is unavoidable; what is avoidable is leaving it behind. A closed account
+     * has nothing left to replay to.
+     */
+    await count('api_idempotency_records', tx`
+      DELETE FROM api_idempotency_records WHERE user_id = ${userId}::uuid`);
+    /**
      * ── ANALYTICS AND PREMIUM STATE, NAMED BECAUSE THEY WERE MISSED ──────────
      *
      * All seven tables below carry `user_id` and none of them appeared in this

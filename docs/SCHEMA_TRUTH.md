@@ -1708,6 +1708,57 @@ estimate pending an evaluation that has not been run, is the honest account.
 formula above. See `docs/FOUNDER_QUEUE.md` §`GET /admin/privacy/coverage`.
 See `PRIVACY_PII.md` — we never claim complete PII removal.
 
+## api_idempotency_records
+
+**Added 2 September 2026, migration 0100.** The whole of contract revision R16's
+persistence — one ledger for the six current-v1 authenticated creates that had no
+durable identity for the ATTEMPT, only for the resulting object:
+`POST /judgments/:id/annotations`, `POST /matters`, `POST /matters/:id/events`,
+`POST /me/data-requests`, `POST /verify/confirm`, `POST /me/training-consent`.
+
+`id` uuid pk · `user_id` uuid fk→users · `method` text · `route` text ·
+`idempotency_key` text · `request_fingerprint` text · `outcome` text null
+(success|refusal) · `response_status` integer null · `response_body` jsonb null ·
+`completed_at` timestamptz null
+
+Unique: `(user_id, method, route, idempotency_key)`. That index is not an
+optimisation — it is the executor election. `INSERT … ON CONFLICT DO NOTHING`
+blocks on a concurrent uncommitted duplicate and returns zero rows once the
+winner commits, so no application-level read-then-insert ever decides who runs.
+
+The four nullable columns are nullable for one statement only. The executor
+inserts the claim, does its domain write on the SAME transaction, then fills the
+result in; a deferred constraint trigger
+(`api_idempotency_records_complete_at_commit`) refuses at COMMIT to let a record
+become durable without one. **The trigger re-reads the row by id and does not
+trust `NEW`** — a deferred AFTER-INSERT trigger fires carrying the tuple as it
+was at insert time, so a guard written against `NEW` rejects every correct
+transaction. There is therefore no `in_progress` state on disk, no reaper and no
+TTL: a crashed executor rolls its claim back and the retry simply wins the
+insert. **`IDEMPOTENCY_RETENTION_POLICY = UNDECIDED_REQUIRES_NEW3`** — nothing
+prunes this table and nothing may start to without an adjudicated policy.
+
+`route` is the canonical TEMPLATE (`/matters/:id/events`), supplied as a literal
+by each mount site in `app.ts`. `request_fingerprint` is SHA-256 over the route
+parameters, the validated body and any operation-significant query values, with
+object keys sorted so field order and transport whitespace cannot change it.
+**It is not content de-duplication and must never become it**: the body is never
+stored, only hashed, and two identical annotations under two different keys are
+two intentional writes.
+
+`response_body` is the one duplication, and R16 §4 requires it — a replay returns
+the original success status and body including the original resource id and
+mutation timestamp, which a pointer cannot reproduce. Because that copy can carry
+the advocate's own words, `eraseUser` deletes by `user_id` and
+`erasure-fixture.test.ts` asserts the outcome GONE.
+
+No foreign key to `judgments` or any other canonical legal-data table, and that
+is deliberate: Gate C requires corpus rollback WITHOUT user/matter rollback, so
+the judgment id in the annotations route reaches this table only inside the
+opaque fingerprint and the replayed body.
+
+`services/api/src/idempotency.ts` · `docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md`
+
 ## auth_user · auth_session · auth_account · auth_verification
 
 **Added 7 Aug 2026, migration 0014.** better-auth's own tables. Their columns were

@@ -24,8 +24,7 @@
  * If the registrar ever asks whether we stayed inside the grant, the answer is a
  * query against `ecourts_fetch_ledger`, not a promise.
  */
-import type { Sql, TransactionSql } from 'postgres';
-
+import { atomically, type Db } from '../transaction.ts';
 import {
   AUTHORISATION,
   type EcourtsAuthorisation,
@@ -39,22 +38,14 @@ import {
  * `decide` be reused under the reservation lock instead of being reimplemented
  * beside it — two copies of the limiter is two limiters, and the second one
  * always drifts.
- */
-export type Db = Sql | TransactionSql;
-
-/**
- * Run `fn` in its own atomic unit, whether or not one is already open.
  *
- * A pool gives a transaction; inside a transaction the only nested atomic unit
- * Postgres offers is a savepoint. Callers that must be all-or-nothing —
- * reservation, and a whole page of listings — should not have to know which
- * they were handed, and a test that wraps the world in a rolled-back
- * transaction should not silently lose that guarantee.
+ * Both moved to `../transaction.ts` when R16's idempotency wrapper turned out to
+ * need the identical helper: by that same argument they must not be copied, and
+ * neither `idempotency.ts` nor `training/consent.ts` should have to import an
+ * eCourts authorisation guard to get one. Re-exported here so no court call site
+ * changes.
  */
-export async function atomically<T>(sql: Db, fn: (tx: TransactionSql) => Promise<T>): Promise<T> {
-  const run = 'begin' in sql ? sql.begin.bind(sql) : sql.savepoint.bind(sql);
-  return (await run((tx: TransactionSql) => fn(tx))) as unknown as T;
-}
+export { atomically, type Db } from '../transaction.ts';
 
 /** The kill-switch key. Fixed set — `docs/SCHEMA_TRUTH.md` §platform_config. */
 export const ECOURTS_KILL_SWITCH_KEY = 'ecourts_harvest';
