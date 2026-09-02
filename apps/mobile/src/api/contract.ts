@@ -1619,6 +1619,56 @@ export type MatterAuthority = {
   citableForUntouchedPropositions?: boolean;
 };
 
+/**
+ * A SAVED AUTHORITY WHOSE CORPUS TARGET THE SELECTED RELEASE DOES NOT CARRY —
+ * R17 §1, `docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md`. Shape read from
+ * `services/api/src/matters/authorities.ts:356-412` at INTEGRATION_BASE
+ * f0d1490c, not from the handoff that described it.
+ *
+ * SIX FIELDS AND NOTHING ELSE, and the absences are the point. There is no
+ * `caseTitle`, no citation, no `verificationState`, no `verifiedBySource`, no
+ * currentness, no treatment, no replacement and no source evidence — none of
+ * them can be read from the selected corpus generation, so none of them may be
+ * rendered. A title this client remembered from a previous read would be a
+ * citation surface asserting a fact the server has just refused to assert, and
+ * a stored legal state is the cached value `CITATION_HARNESS.md` forbids.
+ *
+ * EVERY FIELD HERE IS USER-OWNED. `authorityId`, `addedBy`, `addedAt` and
+ * `removedAt` live in the user database and do not change when the corpus does.
+ * That is why the row can be listed, and removed, while its target is missing.
+ *
+ * `corpus_unavailable` IS NOT `SOURCE_UNAVAILABLE`. That one means an upstream
+ * source could not be observed — an outage. This one means the active corpus
+ * generation does not contain this immutable target. Neither is a legal
+ * conclusion about the judgment, and this one may never render as an outage.
+ */
+export type MatterAuthorityUnavailable = {
+  authorityId: string;
+  judgmentId: string;
+  addedBy: string;
+  addedAt: string;
+  /** Non-null once removed, exactly as on a resolved row. */
+  removedAt: string | null;
+  availability: 'corpus_unavailable';
+};
+
+/**
+ * `GET /matters/:id/authorities`.
+ *
+ * `unavailableAuthorities` is OPTIONAL IN THE TYPE AND ALWAYS SENT BY AN R17
+ * SERVER, including `[]`. The optionality exists so this client can talk
+ * truthfully to an older R16 server, where a single database and a foreign key
+ * guaranteed every returned target resolved. It is not a licence to infer an
+ * old server from an empty array: R17 §1 and the route's own comment say the
+ * array is emitted unconditionally, so `[]` means "nothing unavailable" and
+ * carries no information about the server's revision.
+ */
+export type MatterAuthoritiesResponse = {
+  authorities: MatterAuthority[];
+  unavailableAuthorities?: MatterAuthorityUnavailable[];
+  asOf: string;
+};
+
 export type HiddenResult = {
   /** The whole row, not just its name — "show it anyway" must render a real card. */
   result: SearchResult;

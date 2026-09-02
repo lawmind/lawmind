@@ -30,6 +30,7 @@ import type {
   Matter,
   OverruledStatus,
   MatterAccess,
+  MatterAuthoritiesResponse,
   MatterAuthority,
   MatterEvent,
   MeResponse,
@@ -642,11 +643,16 @@ export const api = {
    * that is not a duplicated rule but the same rule enforced at both ends,
    * because a replayed request or a stale build bypasses the client one.
    */
+  /**
+   * R17 §1: the response also carries `unavailableAuthorities[]` — the saved
+   * rows whose immutable `judgmentId` the request-pinned corpus generation does
+   * not hold. An R17 server always sends it, `[]` included, so an empty array
+   * is "nothing unavailable" and never evidence of an older server.
+   */
   matterAuthorities: (matterId: string) =>
-    get<{ authorities: MatterAuthority[]; asOf: string }>(
-      `/matters/${encodeURIComponent(matterId)}/authorities`,
-      { auth: true },
-    ),
+    get<MatterAuthoritiesResponse>(`/matters/${encodeURIComponent(matterId)}/authorities`, {
+      auth: true,
+    }),
 
   /**
    * Deterministic premium preview only. The server flag defaults OFF and

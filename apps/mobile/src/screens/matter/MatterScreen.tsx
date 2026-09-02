@@ -14,7 +14,6 @@ import { api } from '../../api/client';
 import type {
   Matter,
   MatterAccess,
-  MatterAuthority,
   MatterBundleBriefing,
   MatterEvent,
   PremiumPreview,
@@ -25,6 +24,12 @@ import { citationRender } from '../../citation/renderState';
 import { treatmentRelationshipCopy } from '../../citation/treatmentRelationship';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { AddEventSheet } from './AddEventSheet';
+import { UnavailableAuthorityRow } from './UnavailableAuthorityRow';
+import {
+  liveSavedAuthorities,
+  mergeSavedAuthorities,
+  type SavedAuthorityRow,
+} from './savedAuthorities';
 import { usePractice } from '../../state/practice';
 import { useSurfaceEnabled } from '../../state/capabilities';
 import { useRecentItems } from '../../state/recentItems';
@@ -165,7 +170,7 @@ export function MatterScreen({
    * from `GET /matters/:id` and that route does not carry authorities. Fetching
    * it here keeps the client honest about which route owns what.
    */
-  const [authorities, setAuthorities] = useState<MatterAuthority[] | null>(null);
+  const [saved, setSaved] = useState<SavedAuthorityRow[] | null>(null);
   /**
    * Present only when the server's OFF-by-default premium_preview flag is on.
    * NOT_ENABLED, shared access and network failures all leave the core matter
@@ -190,9 +195,20 @@ export function MatterScreen({
     setCachedAt(null);
     setMissing(false);
 
-    setAuthorities(null);
+    setSaved(null);
     void api.matterAuthorities(matterId).then((r) => {
-      if (alive && r.ok) setAuthorities(r.data.authorities);
+      /**
+       * R17 §1 — BOTH ARRAYS, MERGED HERE AND NOWHERE ELSE, and the merge is
+       * derived from the response every time rather than accumulated across
+       * responses. That is what makes recovery free: when a later corpus
+       * generation carries the target again, the same `authorityId` comes back
+       * in `authorities[]` and this read simply produces a hydrated row. No
+       * reconciliation, no resave, and no stale shell to clear — the previous
+       * response is not consulted, so there is nothing to leak forward.
+       */
+      if (alive && r.ok) {
+        setSaved(mergeSavedAuthorities(r.data.authorities, r.data.unavailableAuthorities));
+      }
     });
 
     void readCache<MatterBundle>(matterCacheKey(matterId)).then((entry) => {
@@ -272,10 +288,21 @@ export function MatterScreen({
     const r = await api.removeAuthorityFromMatter(matterId, authorityId);
 
     if (r.ok) {
-      setAuthorities((current) =>
-        (current ?? []).map((a) =>
-          a.authorityId === authorityId ? { ...a, removedAt: r.data.removedAt } : a,
-        ),
+      /**
+       * The two arms are written out rather than spread through the union: a
+       * single spread over `SavedAuthorityRow` widens `authority` to the union
+       * of both shapes, and the row this screen renders would no longer know
+       * which one it is holding. `removedAt` is user-owned on both, so removal
+       * works identically whether or not the corpus can resolve the target —
+       * which is the point of it being a user-database-only write.
+       */
+      setSaved((current) =>
+        (current ?? []).map((row): SavedAuthorityRow => {
+          if (row.authorityId !== authorityId) return row;
+          return row.kind === 'available'
+            ? { ...row, authority: { ...row.authority, removedAt: r.data.removedAt } }
+            : { ...row, authority: { ...row.authority, removedAt: r.data.removedAt } };
+        }),
       );
     } else {
       setRemoveError(r.error.message);
@@ -284,6 +311,20 @@ export function MatterScreen({
   };
 
   const today = useMemo(() => todayCivil(), []);
+
+  /**
+   * WHAT THE SECTION DRAWS — both R17 arrays, merged, still-saved rows only.
+   *
+   * Derived rather than stored so there is exactly one place the two arrays
+   * become one list, and so the section's own visibility asks the same question
+   * the rows do: a matter whose ONLY saved authority is currently unresolvable
+   * still has a saved authority, and hiding the whole section would be the
+   * silent drop the harness forbids, one level up from a citation.
+   */
+  const liveAuthorities = useMemo(
+    () => (saved ? liveSavedAuthorities(saved) : []),
+    [saved],
+  );
 
   /**
    * THE STORE'S DATE WINS OVER THE FETCHED ONE.
@@ -515,138 +556,158 @@ export function MatterScreen({
           is in would be a worse answer to the same question. The row survives
           for the audit, which is where it belongs.
         */}
-        {authorities && authorities.some((a) => a.removedAt === null) ? (
+        {liveAuthorities.length > 0 ? (
           <View style={styles.section}>
             <SectionRule label="Authorities" />
 
-            {authorities
-              .filter((a) => a.removedAt === null)
-              .map((a) => {
-                const citation = citationDisplay(a);
-                /**
-                 * GOOD-LAW STATUS, LIVE — bus 0048/0049 landed `dd9871b`.
-                 * Same helper every other surface uses, never a second
-                 * opinion. `verificationState`/`verifiedBySource` are
-                 * `'verified'`/`'corpus'` by construction on this row, so
-                 * `existence` never draws here — declared anyway, the same
-                 * reason `BriefingAuthorityRow` does: the day this can carry
-                 * an authority resolved by another tier, nothing here has to
-                 * change for the mark to stay honest.
-                 */
-                const { moved } = citationRender({
-                  verificationState: a.verificationState,
-                  verifiedBySource: a.verifiedBySource,
-                  // An evidence defect is our parser's mistake, not moved law.
-                  // R14 requires no banner and no prohibition for that value.
-                  overruledStatus:
-                    a.precedentialEffect === 'evidence_defect' ? 'none' : a.overruledStatus,
-                  overruledNote: a.overruledNote,
-                  overruledParas: a.overruledParas,
-                  canAddToMatter: a.canAddToMatter,
-                });
+            {liveAuthorities.map((row) => {
+              /*
+                THE UNAVAILABLE SHELL IS DRAWN IN PLACE, in the same
+                `addedAt`-ordered list, not under a heading of its own. R17 §1
+                forbids omitting it from the rendered history, and a separate
+                section would answer a question the advocate did not ask — the
+                matter file's question is "what am I relying on", and the answer
+                does not change because our index cannot currently resolve one
+                of them.
+              */
+              if (row.kind === 'unavailable') {
                 return (
-                  <Pressable
-                    accessibilityLabel={`Open ${a.caseTitle}`}
-                    accessibilityRole="button"
-                    key={a.authorityId}
-                    onPress={() => onOpenJudgment(a.judgmentId)}
-                    style={[styles.row, moved.kind === 'moved' && styles.rowMoved]}
-                  >
-                    {/* All three moved states carry a chip, `doubted` included. */}
-                    {moved.kind === 'moved' ? (
-                      <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
-                    ) : null}
-                    <View style={styles.rowBody}>
-                      <Text
-                        variant="legal"
-                        scale="holding"
-                        style={
-                          moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined
-                        }
-                      >
-                        {a.caseTitle}
-                      </Text>
-                      {/*
-                        Through the one helper, like every other citation slot.
-                        A judgment saved from a High Court row carries none, and
-                        an empty line here would read as a rendering fault in
-                        the advocate's own case file.
-                      */}
-                      <Text opticalNudge variant="record" style={styles.muted}>
-                        {citation.text}
-                      </Text>
-                      {!citation.citable ? (
-                        <Text variant="ui" style={styles.uncitable}>
-                          {NO_CITATION_MARK}
-                        </Text>
-                      ) : null}
-
-                      {/* What still stands is stated first — the half still being relied on. */}
-                      {moved.kind === 'moved' && moved.whatStillStands ? (
-                        <Text variant="ui" style={styles.stillStands}>
-                          {moved.whatStillStands}
-                        </Text>
-                      ) : null}
-
-                      {moved.kind === 'moved' && moved.band === 'none' ? (
-                        <Text variant="ui" style={styles.doubtedLine}>
-                          {moved.headline}
-                        </Text>
-                      ) : null}
-
-                      {/* Named, not merely flagged — the server joins who displaced it. */}
-                      {a.overruledByTitle &&
-                      (moved.kind === 'moved' || a.precedentialEffect === 'evidence_defect') ? (
-                        <Text variant="ui" style={styles.overruledBy}>
-                          {treatmentRelationshipCopy(
-                            a.overruledByTitle,
-                            a.precedentialEffect,
-                          )}
-                        </Text>
-                      ) : null}
-
-                      {moved.kind === 'moved' &&
-                      a.citableForUntouchedPropositions === true &&
-                      (a.precedentialEffect === 'overruled' ||
-                        a.precedentialEffect === 'overruled_in_part') ? (
-                        <Text variant="ui" style={styles.stillStands}>
-                          Still citable for propositions the later judgment did not reach.
-                        </Text>
-                      ) : null}
-
-                      {/*
-                        TAKING ONE OUT — `DELETE /matters/:id/authorities/:id`,
-                        live since 10 Aug and unreachable until now.
-
-                        The list landed first and could only grow: an advocate
-                        who saved the wrong judgment, or one they later decided
-                        against, had no way to take it back out of their own
-                        case file. That is the same write-only shape the list
-                        itself was built to fix, one level down.
-
-                        NO CONFIRMATION STEP, and that is deliberate — removal
-                        sets a timestamp rather than deleting, exactly as
-                        revoking a share does, and this screen follows the
-                        precedent `MatterSharingScreen` already set. Saving it
-                        again restores the same row; the server answers 201 for
-                        a judgment brought back after removal.
-                      */}
-                      {isOwner ? (
-                        <Pressable
-                          accessibilityLabel={`Remove ${a.caseTitle} from this matter`}
-                          disabled={removing === a.authorityId}
-                          onPress={() => void removeAuthority(a.authorityId)}
-                          style={styles.removeAuthority}
-                        >
-                          <Text variant="ui" style={styles.removeAuthorityLabel}>
-                            {removing === a.authorityId ? 'Removing…' : 'Remove from this matter'}
-                          </Text>
-                        </Pressable>
-                      ) : null}
-                    </View>
-                  </Pressable>
+                  <UnavailableAuthorityRow
+                    authority={row.authority}
+                    canRemove={isOwner}
+                    key={row.authorityId}
+                    onRemove={() => void removeAuthority(row.authorityId)}
+                    removing={removing === row.authorityId}
+                  />
                 );
-              })}
+              }
+
+              const a = row.authority;
+              const citation = citationDisplay(a);
+              /**
+               * GOOD-LAW STATUS, LIVE — bus 0048/0049 landed `dd9871b`.
+               * Same helper every other surface uses, never a second
+               * opinion. `verificationState`/`verifiedBySource` are
+               * `'verified'`/`'corpus'` by construction on this row, so
+               * `existence` never draws here — declared anyway, the same
+               * reason `BriefingAuthorityRow` does: the day this can carry
+               * an authority resolved by another tier, nothing here has to
+               * change for the mark to stay honest.
+               */
+              const { moved } = citationRender({
+                verificationState: a.verificationState,
+                verifiedBySource: a.verifiedBySource,
+                // An evidence defect is our parser's mistake, not moved law.
+                // R14 requires no banner and no prohibition for that value.
+                overruledStatus:
+                  a.precedentialEffect === 'evidence_defect' ? 'none' : a.overruledStatus,
+                overruledNote: a.overruledNote,
+                overruledParas: a.overruledParas,
+                canAddToMatter: a.canAddToMatter,
+              });
+              return (
+                <Pressable
+                  accessibilityLabel={`Open ${a.caseTitle}`}
+                  accessibilityRole="button"
+                  key={a.authorityId}
+                  onPress={() => onOpenJudgment(a.judgmentId)}
+                  style={[styles.row, moved.kind === 'moved' && styles.rowMoved]}
+                >
+                  {/* All three moved states carry a chip, `doubted` included. */}
+                  {moved.kind === 'moved' ? (
+                    <CitationMark label={moved.chipLabel} tone={movedTone(moved.band)} />
+                  ) : null}
+                  <View style={styles.rowBody}>
+                    <Text
+                      variant="legal"
+                      scale="holding"
+                      style={
+                        moved.kind === 'moved' && moved.strikeTitle ? styles.struck : undefined
+                      }
+                    >
+                      {a.caseTitle}
+                    </Text>
+                    {/*
+                      Through the one helper, like every other citation slot.
+                      A judgment saved from a High Court row carries none, and
+                      an empty line here would read as a rendering fault in
+                      the advocate's own case file.
+                    */}
+                    <Text opticalNudge variant="record" style={styles.muted}>
+                      {citation.text}
+                    </Text>
+                    {!citation.citable ? (
+                      <Text variant="ui" style={styles.uncitable}>
+                        {NO_CITATION_MARK}
+                      </Text>
+                    ) : null}
+
+                    {/* What still stands is stated first — the half still being relied on. */}
+                    {moved.kind === 'moved' && moved.whatStillStands ? (
+                      <Text variant="ui" style={styles.stillStands}>
+                        {moved.whatStillStands}
+                      </Text>
+                    ) : null}
+
+                    {moved.kind === 'moved' && moved.band === 'none' ? (
+                      <Text variant="ui" style={styles.doubtedLine}>
+                        {moved.headline}
+                      </Text>
+                    ) : null}
+
+                    {/* Named, not merely flagged — the server joins who displaced it. */}
+                    {a.overruledByTitle &&
+                    (moved.kind === 'moved' || a.precedentialEffect === 'evidence_defect') ? (
+                      <Text variant="ui" style={styles.overruledBy}>
+                        {treatmentRelationshipCopy(
+                          a.overruledByTitle,
+                          a.precedentialEffect,
+                        )}
+                      </Text>
+                    ) : null}
+
+                    {moved.kind === 'moved' &&
+                    a.citableForUntouchedPropositions === true &&
+                    (a.precedentialEffect === 'overruled' ||
+                      a.precedentialEffect === 'overruled_in_part') ? (
+                      <Text variant="ui" style={styles.stillStands}>
+                        Still citable for propositions the later judgment did not reach.
+                      </Text>
+                    ) : null}
+
+                    {/*
+                      TAKING ONE OUT — `DELETE /matters/:id/authorities/:id`,
+                      live since 10 Aug and unreachable until now.
+
+                      The list landed first and could only grow: an advocate
+                      who saved the wrong judgment, or one they later decided
+                      against, had no way to take it back out of their own
+                      case file. That is the same write-only shape the list
+                      itself was built to fix, one level down.
+
+                      NO CONFIRMATION STEP, and that is deliberate — removal
+                      sets a timestamp rather than deleting, exactly as
+                      revoking a share does, and this screen follows the
+                      precedent `MatterSharingScreen` already set. Saving it
+                      again restores the same row; the server answers 201 for
+                      a judgment brought back after removal.
+                    */}
+                    {isOwner ? (
+                      <Pressable
+                        accessibilityLabel={`Remove ${a.caseTitle} from this matter`}
+                        disabled={removing === a.authorityId}
+                        onPress={() => void removeAuthority(a.authorityId)}
+                        style={styles.removeAuthority}
+                      >
+                        <Text variant="ui" style={styles.removeAuthorityLabel}>
+                          {removing === a.authorityId ? 'Removing…' : 'Remove from this matter'}
+                        </Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                </Pressable>
+              );
+            })}
 
             {/*
               A FAILED REMOVAL IS SAID, NEVER SWALLOWED. The row stays on
