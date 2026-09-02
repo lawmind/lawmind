@@ -767,14 +767,14 @@
       "failureSemantics": "Validation failure before mutation does not consume the key. Server failure before mutation rolls back and releases the claim. The durable mutation and completed replay result commit atomically; a retry after an unknown/lost response replays the success.",
       "schemaDelta": "Additive request metadata only at the contract layer: optional Idempotency-Key. Durable implementation requires LCC persistence and uniqueness work, but R16 does not prescribe per-domain columns or authorize a database migration by NEW3.",
       "semanticDelta": "Current-v1 authenticated create writes gain an opt-in exactly-one-logical-mutation retry contract while requests without the header retain their legacy behavior.",
-      "capabilityImpact": "none. No capability state changes and V1_CAPABILITY_REGISTRY_R15.json remains current.",
-      "claimImpact": "R16 separately marks static nightly citator cadence copy unsupported without runtime evidence; V1_CLAIMS_REGISTER_R15.md records the exact RCC removal instruction.",
+      "capabilityImpact": "No product capability state changes. V1_CAPABILITY_REGISTRY_R16.json supersedes R15 as the current snapshot and records the observed R8_3.5 platform resolution, including the active iOS-only party-name override.",
+      "claimImpact": "R16 separately marks static nightly citator cadence copy unsupported without runtime evidence; V1_CLAIMS_REGISTER_R16.md records the exact RCC removal instruction.",
       "backendOwner": "LCC",
       "clientOwner": "RCC after release",
-      "releaseGate": "Final R16 release requires RCC implementation evidence plus NEW3 final acceptance. R16_CLIENT_CONSUMPTION_AUTHORIZED=YES moves the gate, not the guarantee. Supersedes the DO-NOT-CONSUME condition in bus 1697 for implementation and testing only.",
+      "releaseGate": "SATISFIED 2 September 2026 by focused NEW3 R19 backend and RCC client acceptance. Physical Android current-v1 acceptance remains a separate local-release gate and is PENDING_DEVICE; it does not reopen the R16 contract release.",
       "severity": "P1",
       "userTruthImpact": "Without request identity, retrying a user write can create duplicate private records or append duplicate durable events while the UI appears to have performed one action.",
-      "openAs": "OPEN_IMPLEMENTATION",
+      "openAs": "CLOSED_RELEASED",
       "relatedRelease": "R16",
       "filedBy": "LCC",
       "decidedBy": "NEW3",
@@ -785,8 +785,8 @@
       "WIRE_PROTOCOL_VERSION": 1,
       "WIRE_BREAKING_CHANGE": "NO",
       "MIN_SUPPORTED_CONTRACT": 1,
-      "releasedToRCC": "NO",
-      "rccConsumed": "AUTHORIZED_FOR_IMPLEMENTATION_AND_TESTING",
+      "releasedToRCC": "YES",
+      "rccConsumed": "YES",
       "implementation": {
         "commit": "e325ed9fffba7b7aa6b50c4506edd337aeb1e7f3",
         "migration": "0100_api_idempotency_records.sql",
@@ -800,6 +800,14 @@
         "result": "PASS",
         "method": "Schema, unique index, deferred constraint trigger and foreign keys read live from the database; the 23-test conformance suite re-run to 23 pass / 0 fail / 0 skipped. LCC report not accepted as evidence of itself.",
         "evidence": "docs/ai/new3-r18/r16-independent-acceptance.json"
+      },
+      "clientAcceptance": {
+        "by": "NEW3 R19",
+        "at": "2026-09-02",
+        "implementationCommit": "9ab5ca82e0ab250d012108efba5d94baf369941d",
+        "result": "PASS",
+        "method": "Focused RCC mobile acceptance passed 125/125 tests across seven suites. Focused backend idempotency, matters, party-platform and release-capability acceptance completed with 0 failures, 0 cancellations and 0 skips against the loopback database.",
+        "evidence": "docs/ai/new3-r19/r19-focused-acceptance.json"
       },
       "clientConsumptionAuthorized": "YES",
       "retention": {
@@ -853,10 +861,10 @@
     "engineeringDefectRoutedToLCC": 3,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive, backward compatible, and unreleased pending LCC implementation evidence and NEW3 acceptance. R18, 2 September 2026, adds CCR-NEW3-R18-01: the POST/GET /matters `parties` field is served and STORED as a JSON-encoded string scalar against an already-structured contract. Conforming an implementation to an existing contract is not a contract change, so the revision, wire protocol and minimum supported contract are unmoved; it is routed to LCC as a P1 engineering defect."
+    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive and backward compatible. R18, 2 September 2026, adds CCR-NEW3-R18-01: the POST/GET /matters `parties` field was served and stored as a JSON-encoded string scalar against an already-structured contract; it was routed to LCC as a P1 engineering defect. NEW3 R19 independently accepted the focused backend and RCC client implementation, observed the parties correction and platform capability resolution, and released R16."
   },
   "wireProtocolVersion": 1,
-  "contractRevisionVsWireVersion": "R16 is the SIXTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R16, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The optional Idempotency-Key header is additive request metadata; it neither removes nor narrows a current request shape. R16 is unreleased pending implementation evidence and acceptance.",
+  "contractRevisionVsWireVersion": "R16 is the SIXTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R16, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The optional Idempotency-Key header is additive request metadata; it neither removes nor narrows a current request shape. R16 was released by NEW3 R19 on 2 September 2026 after focused backend and RCC client acceptance.",
   "revisionIdentities": {
     "R12": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R12.md",
@@ -888,16 +896,19 @@
     },
     "R16": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
-      "state": "CURRENT_UNRELEASED_CLIENT_CONSUMPTION_AUTHORIZED",
-      "note": "NEW3 R18 accepted the backend independently on 2 September 2026 and authorized RCC implementation and testing. R16_RELEASED remains NO. Immutable SHA-256 and Git blob identities are still not written: the artifact was amended this round (section 8.1) and final release acceptance has not happened, so a seal now would be sealing a document that is still moving.",
+      "sha256": "30e20206ba58cd581bd866f96067aa7eb98773115c7505cda80548d5404aa25a",
+      "gitBlob": "6e0dc3542abfa034c0c4841286aad44ede296dcb",
+      "state": "CURRENT_RELEASED",
+      "note": "NEW3 R18 independently accepted the backend and authorized RCC implementation and testing. NEW3 R19 independently accepted the focused RCC client implementation and released R16 on 2 September 2026. Physical Android current-v1 acceptance remains PENDING_DEVICE as a separate local-release gate.",
       "lifecycle": {
         "R16_BACKEND_ACCEPTANCE": "PASS",
         "R16_CLIENT_CONSUMPTION_AUTHORIZED": "YES",
-        "R16_RELEASED": "NO"
+        "R16_CLIENT_ACCEPTANCE": "PASS",
+        "R16_RELEASED": "YES"
       }
     }
   },
-  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R15.json",
+  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R16.json",
   "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R16.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
@@ -905,7 +916,7 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-09-02, NEW3 R18 at HEAD 13f558d19f45cb81cacad7f535c7bf3649e5b01d. Supersedes the 31 August reconciliation for CCR-NEW3-S2F-01 only. No severity was reclassified; one deferred item was discharged by observation and one new P1 was received.",
+    "recomputedAt": "2026-09-02, NEW3 R19 at HEAD b0ac15d167ceccd3656718b04b8d41f16127022e. Supersedes the NEW3 R18 reconciliation. No severity was reclassified; the matters.parties implementation defect and the party-override activation guard were discharged by focused observation, while physical Android current-v1 acceptance remains PENDING_DEVICE.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
     "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted, adjudicated P1, implemented by LCC and released to RCC without a new contract revision; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0. UPDATED 2 September 2026: CCR-NEW3-S2F-01 is no longer latent - the correction landed and was independently verified, so activating the override can no longer produce the false-coverage P0 it was guarding against.",
@@ -913,11 +924,10 @@
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
     "IMPLEMENTATION_P0_OPEN": 0,
     "IMPLEMENTATION_P0_OPEN_items": [],
-    "NON_GATE_P1_OPEN": 3,
+    "NON_GATE_P1_OPEN": 2,
     "NON_GATE_P1_OPEN_items": [
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged.",
-      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight.",
-      "CCR-NEW3-R18-01 - POST/GET /matters serves and STORES `parties` as a JSON-encoded string scalar against an already-structured contract. Routed to LCC as an engineering defect; not a contract change. Blocks final local-v1 acceptance."
+      "D6 backlog - the registry does not enumerate drafting or Hearing Pack rows. Absent by prohibition, not oversight."
     ],
     "closedInR14": [
       "P1-1 of R13 (rarestDf corpus-wide) - CLOSED as a semantic amendment, restated in R14 A8 and not reopened.",
@@ -926,11 +936,9 @@
       "CCR-RCC-S2-02 - IMPLEMENTED at LCC commit 24cf3623 and RELEASED_TO_RCC on 2026-08-31 after source and 21/21 test verification; RCC_CONSUMED remains NO."
     ],
     "CONDITIONAL_P0_GUARDED": {
-      "count": 1,
-      "items": [
-        "CCR-NEW3-S2F-01 - becomes a P0 the instant any narrowing row for `search.party_name` is added to PLATFORM_CAPABILITY_OVERRIDES. Not counted as a current P0 because the branch cannot execute at HEAD; not dissolved either, because the committed guard catches map activation but no test yet proves a truthful retrievalOutcome for a suppressed party arm."
-      ],
-      "why_this_bucket_exists": "So a latent defect is neither falsely promoted into a current P0 nor quietly lost. It is counted where it is true: guarded, and conditional on a configuration change nobody may make until the correction lands."
+      "count": 0,
+      "items": [],
+      "why_this_bucket_exists": "The bucket remains explicit so latent capability defects cannot be silently lost. It is empty in R19: the iOS party-name override is active, the focused route test proves truthful capability_disabled retrievalOutcome behaviour, and Android/web remain enabled."
     },
     "GATE_B_P0_OPEN": 0,
     "GATE_B_P0_OPEN_basis": "0. ACCEPTANCE 0, CONTRACT_CHANGE 0, IMPLEMENTATION 0. NOT counted as Gate-B P0, each for a stated reason rather than by omission: deferred hosting and unmeasured hosting (a FOUNDER decision, WAIVED != PASS, see hostingOverride); RCC consumption of the now-implemented and released saved-authority fields (not open backend implementation and not yet a public claim); the SCI evidence-location inconsistency (a documentation-consistency item, the PERMISSION is SATISFIED and untouched); backup-key escrow (FQ-BACKUP-KEY-ESCROW, a founder item); and unpushed commits. None of these is a current user-visible falsehood or a data-safety condition, which is the only thing that would make one a Gate-B P0.",
@@ -973,15 +981,20 @@
     },
     "capabilityAndClaimsTruth": {
       "ENABLED_WITHOUT_EVIDENCE": 0,
-      "basis": "All 30 rows of V1_CAPABILITY_REGISTRY_R14.json enumerated: 18 ENABLED_V1, 6 DISABLED_NOT_READY, 4 POST_V1, 1 INTERNAL_EXPERIMENTAL, 1 DISABLED_EXTERNAL_BLOCK. Every ENABLED row carries an evidenceArtifact and a non-empty evidenceState.",
+      "basis": "All 30 rows of V1_CAPABILITY_REGISTRY_R16.json enumerated: 17 ENABLED_V1, 6 DISABLED_NOT_READY, 5 POST_V1, 1 INTERNAL_EXPERIMENTAL, 1 DISABLED_EXTERNAL_BLOCK. Every ENABLED row carries an evidenceArtifact and a non-empty evidenceState. The iOS-only party-name runtime override is recorded separately from product intent.",
       "UNSUPPORTED_CLAIMS": 0,
-      "claimsBasis": "V1_CLAIMS_REGISTER_R14.md carries 11 BLOCKED claims - claims we are forbidden to make, unavailable on every platform. A blocked claim is a claim NOT made; it is not an unsupported one.",
+      "claimsBasis": "V1_CLAIMS_REGISTER_R16.md is current and carries the R14/R15 blocked-claim rules forward while closing the two reachable cadence sites. A blocked claim is a claim NOT made; it is not an unsupported one.",
       "webNotEnabled": "ZERO rows are ENABLED on web. Nothing was enabled because it appears in future roadmap scope.",
       "monitoringNotEnabled": "monitoring.user_product = DISABLED_NOT_READY. No polling frequency and no SLA appears anywhere.",
-      "scope": "Registry and claims re-verified only to the depth these two numbers need. The acceptance suite was NOT rerun."
+      "scope": "Registry and claims were re-verified to the depth these numbers need. Focused release, capability, idempotency, matters and RCC client tests were rerun; the broad 1000+ acceptance suite was intentionally not rerun."
     },
     "closedInR18": [
       "CCR-NEW3-S2F-01 - DISCHARGED. retrievalOutcome now represents an administratively suppressed arm (capability_disabled joining couldNotLookProperly), the pinned-wrong assertion is corrected, the client consumes it, and NEW3 performed the independent verification the guard required. PARTY_IOS_OVERRIDE_ACTIVATION = UNBLOCKED and activation is authorized."
+    ],
+    "closedInR19": [
+      "CCR-LCC-R20-01 - CLOSED_RELEASED. Focused backend acceptance and all seven focused RCC mobile suites passed; R16 is released with wire protocol 1 and minimum supported contract 1 unchanged.",
+      "CCR-NEW3-R18-01 - IMPLEMENTATION DEFECT CLOSED. Migration 0101 and focused matter-route/migration tests prove matters.parties is stored and returned as a JSONB object. Final physical mutation observation remains PENDING_DEVICE, so current-v1 functional acceptance is not promoted to YES.",
+      "CCR-NEW3-S2F-01 activation guard - DISCHARGED IN RUNTIME. iOS resolves search.party_name to DISABLED, Android/web resolve ENABLED, and focused route tests prove the suppressed arm reports capability_disabled truthfully."
     ]
   }
 }

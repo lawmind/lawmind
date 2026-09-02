@@ -1,8 +1,8 @@
 # RCC v1 API CONTRACT — R16 AMENDMENT
 
-**Status:** `RCC_API_CONTRACT = R16`, **not yet released to RCC** — but client
-implementation and testing are authorized as of NEW3 R18, 2 September 2026. See
-§8.1; the two are different states and the difference is the point.
+**Status:** `RCC_API_CONTRACT = R16`, **released** by NEW3 R19 on 2 September
+2026 after focused backend and client acceptance. See §8.1. Physical Android
+product acceptance remains a separate local-v1 gate and does not change the wire.
 **Prior revision:** `R15`,
 [`RCC_V1_API_CONTRACT_R15_AMENDMENT.md`](RCC_V1_API_CONTRACT_R15_AMENDMENT.md).
 R12–R15 remain on disk and are not edited. **Amended by:** NEW3, 1 September
@@ -193,8 +193,8 @@ LCC_IMPLEMENTATION        = DONE at e325ed9f
 DB_MIGRATION              = 0100_api_idempotency_records, APPLIED, NOT_RUN_BY_NEW3
 INDEPENDENT_VERIFICATION  = PASS  (NEW3 R18, 2 September 2026)
 RCC_CONSUMPTION           = AUTHORIZED FOR IMPLEMENTATION AND TESTING
-RELEASE_STATE             = UNRELEASED
-PARTY_OVERRIDE_ACTIVATED  = NO
+RELEASE_STATE             = RELEASED
+PARTY_OVERRIDE_ACTIVATED  = YES, IOS ONLY
 ```
 
 ### 8.1 · Lifecycle — amended 2 September 2026, NEW3 R18
@@ -207,7 +207,8 @@ opened** — implementation lifecycle is not a wire change.
 ```text
 R16_BACKEND_ACCEPTANCE            = PASS
 R16_CLIENT_CONSUMPTION_AUTHORIZED = YES
-R16_RELEASED                      = NO
+R16_CLIENT_ACCEPTANCE             = PASS
+R16_RELEASED                      = YES
 ```
 
 * **`R16_CLIENT_CONSUMPTION_AUTHORIZED = YES`** — the backend is accepted as
@@ -216,17 +217,22 @@ R16_RELEASED                      = NO
   work; if it ever must, that is a new adjudicated revision and RCC is told
   first. This **supersedes the DO-NOT-CONSUME condition in bus 1697, for
   implementation and testing only.**
-* **`R16_RELEASED = NO`** — R16 is not product-current. No release note, no
-  store copy, no capability row and no claim anywhere may state that
-  duplicate-safe writes are a property of this product. A shipped build may
-  carry the code and may not carry the promise.
+* **`R16_RELEASED = YES`** — RCC's implementation at `9ab5ca82` passed NEW3's
+  focused 125-test client slice, including the six scoped writes, key lifecycle,
+  `Retry-After`, terminal mismatch, authenticated confirmation, success-gated UI
+  and the negative header inventory. The focused loopback API slice passed with
+  0 failed / 0 cancelled / 0 skipped. Duplicate-safe writes may now be treated
+  as current R16 behaviour within the exact scope of this amendment.
 
-Final release still requires RCC implementation evidence and a NEW3 final
-acceptance. This authorization moves the gate, not the guarantee.
+The release gate is satisfied. Physical Android evidence remains required for
+final local-v1 functional acceptance, not for this wire release. No new wire
+integer or contract revision is created by that product gate.
 
 Acceptance evidence, independently measured rather than accepted from LCC's
 report: [`../ai/new3-r18/r16-independent-acceptance.json`](../ai/new3-r18/r16-independent-acceptance.json)
-and [`NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md`](NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md).
+and [`NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md`](NEW3_R18_R16_RELEASE_AND_LOCAL_V1_ADJUDICATION.md),
+plus the final focused client acceptance in
+[`../ai/new3-r19/r19-focused-acceptance.json`](../ai/new3-r19/r19-focused-acceptance.json).
 
 ### 8.2 · Retention, still undecided on purpose
 

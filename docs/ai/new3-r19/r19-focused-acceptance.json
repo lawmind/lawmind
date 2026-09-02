@@ -1,0 +1,143 @@
+{
+  "artifact": "NEW3_R19_FOCUSED_ACCEPTANCE",
+  "takenAt": "2026-09-02",
+  "lane": "NEW3",
+  "scope": "R16 focused acceptance, embedded integration seal, local API reachability, capability truth, and physical-Android availability",
+  "head": {
+    "start": "9ab5ca82e0ab250d012108efba5d94baf369941d",
+    "atEvidenceWrite": "b0ac15d167ceccd3656718b04b8d41f16127022e",
+    "advancedDuringRound": true,
+    "advanceWasRelevantToR16": false,
+    "advance": "8f0daacd and b0ac15d1, LCC R24 pool/rollback work"
+  },
+  "integrationSeal": {
+    "requiredAncestors": {
+      "f4439d58": true,
+      "b2de9e2c": true,
+      "9ab5ca82": true,
+      "13f558d1": true,
+      "d641fc6c": true
+    },
+    "migration0100Present": true,
+    "migration0101Present": true,
+    "r16BackendInHead": true,
+    "r16ClientInHead": true,
+    "iosPartyOverrideInHead": true,
+    "slugProductionGuardInHead": true
+  },
+  "device": {
+    "command": "adb devices -l",
+    "result": "NO_DEVICE",
+    "expectedPriorDeviceWasNotAssumed": true,
+    "androidLocalAcceptance": "PENDING_DEVICE",
+    "staleNetworkScanPerformed": false
+  },
+  "focusedTests": {
+    "mobile": {
+      "command": "pnpm --filter @lawmind/mobile exec jest src/api/attempt.test.ts src/api/client.idempotency.test.ts src/api/client.verifyConfirm.test.ts src/screens/doubleTap.test.tsx src/screens/routeGates.test.ts src/screens/settings/TrainingConsentScreen.test.tsx src/state/persistedAttempt.test.ts --runInBand",
+      "suites": 7,
+      "tests": 125,
+      "passed": 125,
+      "failed": 0
+    },
+    "api": {
+      "command": "pnpm --filter @lawmind/api exec tsx --test --test-concurrency=1 src/idempotency.test.ts src/matters/route.test.ts src/search/party-search-platform.test.ts src/release/capabilities.test.ts",
+      "database": "LOCAL_DATABASE_URL, loopback 127.0.0.1/lawmind",
+      "tests": 72,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "note": "The first invocation omitted DATABASE_URL and failed with PostgreSQL 28P01 before exercising the suites. The corrected loopback-bound invocation is the acceptance result."
+    },
+    "migration0101": {
+      "command": "pnpm --filter @lawmind/db exec tsx --test src/matters-parties-migration.test.ts",
+      "tests": 13,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  },
+  "r16ClientProperties": {
+    "sixCreateWritesCarryIdempotencyKey": "PASS",
+    "sameRetryReusesKey": "PASS",
+    "newIntentGetsNewKey": "PASS",
+    "inProgressPreservesKey": "PASS",
+    "retryAfterConsumed": "PASS",
+    "mismatchTerminal": "PASS",
+    "verificationConfirmationAuthenticated": "PASS",
+    "verificationUiWaitsForApiSuccess": "PASS",
+    "noHeaderOnSearchLookupsOrNaturallyIdempotentWrites": "PASS"
+  },
+  "localApi": {
+    "mode": "normal services/api start, development, loopback database",
+    "hostHealth": {
+      "status": 200,
+      "databaseReachable": true,
+      "databaseLatencyMs": 35
+    },
+    "serverLogObservedRequests": 4,
+    "deviceToServer": "PENDING_DEVICE",
+    "stoppedAfterProbe": true
+  },
+  "capabilities": {
+    "releaseCapabilitiesVersion": "RELEASE_CAPABILITIES_R8_3.5",
+    "partyName": {
+      "ios": {
+        "state": "DISABLED",
+        "platformOverrides": ["search.party_name"],
+        "retrievalOutcome": "coverage_unknown",
+        "reason": "capability_disabled"
+      },
+      "android": {
+        "state": "ENABLED",
+        "platformOverrides": []
+      },
+      "web": {
+        "state": "ENABLED",
+        "platformOverrides": []
+      }
+    },
+    "digestClassification": "MONITORING_ONLY_BLIND_SPOT_NOT_RUNTIME_AUTHORIZATION",
+    "digestBasis": "candidate.ts hashes capabilityRegistry() without a platform; runtime enforcement uses isUserReachableOnPlatform and the explicit override map. The version bump separately names the platform change."
+  },
+  "briefingsJsonb": {
+    "writerDefectConfirmedBySource": true,
+    "currentV1UserReachable": false,
+    "productCapability": "DISABLED_NOT_READY on ios/android/web",
+    "clientGate": "CapabilityBoundary redirects before mounting children or API effects",
+    "classification": "POST_V1_BACKLOG"
+  },
+  "physicalMatrix": {
+    "matterCreate": "PENDING_DEVICE",
+    "matterPartiesObject": "BACKEND_AND_MIGRATION_PASS_PHYSICAL_PENDING",
+    "eventDoubleTap": "PENDING_DEVICE",
+    "adjournmentDate": "PENDING_DEVICE",
+    "adjournmentPurpose": "PENDING_DEVICE",
+    "annotation": "PENDING_DEVICE",
+    "trainingConsentGrantWithdrawGrant": "PENDING_DEVICE",
+    "verificationConfirmation": "PENDING_DEVICE",
+    "dataRequest": "NOT_RUN_NO_DEVICE",
+    "authDeepLinkResume": "PENDING_DEVICE",
+    "crash": "PENDING_DEVICE",
+    "anr": "PENDING_DEVICE",
+    "oom": "PENDING_DEVICE"
+  },
+  "release": {
+    "contractRevision": "R16",
+    "wireProtocol": 1,
+    "wireBreakingChange": false,
+    "minSupportedContract": 1,
+    "r16BackendAccepted": true,
+    "r16ClientAccepted": true,
+    "r16Released": true
+  },
+  "finalLocalV1": {
+    "localCoreLoopComplete": true,
+    "currentV1RequiredSurfaceComplete": true,
+    "currentV1FunctionallyComplete": "PENDING_DEVICE",
+    "currentV1DesignComplete": true,
+    "currentCapabilityGatingComplete": true,
+    "readyForRemoteSpendDecision": false,
+    "paidRemoteInfraAuthorized": false
+  }
+}
