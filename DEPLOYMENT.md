@@ -132,7 +132,21 @@ LOG_LEVEL                 # pino level, defaults to info
 RAILWAY_GIT_COMMIT_SHA    # set by Railway; reported by GET /health
 GITHUB_SHA                # set by Actions; the CI equivalent of the above
 GIT_SHA                   # manual override for either
+SEARCH_POOL_PROBE         # "1" turns on the /search pool-wait measurement; OFF by default
 ```
+
+**`SEARCH_POOL_PROBE` is a diagnosis switch, not a setting to leave on.**
+`POST /search` always logs one `search_phase_timing` line per request naming
+every phase; `pool_wait_ms` is the one field that costs something to obtain, so
+it is `null` — meaning *not measured*, never zero — unless this is set. When it
+is set, the value is measured at `sql.reserve()` on the research pool: a real
+acquisition boundary, sampled immediately before retrieval, and on a cold pool it
+includes connection establishment. `services/api/src/search/timings.ts` is the
+authority on what the number is and what it is not.
+
+Turn it on for a window when a slow-search report needs explaining; turn it off
+after. The probe takes a connection out of the pool and puts it straight back,
+which under real contention costs the very queueing it is trying to measure.
 
 `GET /health` falls back to `git rev-parse HEAD` when none of the three SHA
 variables is set, and reports `unknown` only when that also fails. A health check
@@ -162,6 +176,23 @@ Drizzle, checked in, forward-only. Never edit an applied migration. Never
 ## Rollback
 Railway keeps prior deployments. Migrations do not auto-revert; a reverting
 migration is written by hand and reviewed.
+
+**A CORPUS rollback must not roll back user or matter data, and on a single
+shared database it would.** `release-restore-cli.ts` runs `TRUNCATE <table>
+CASCADE`, and `CASCADE` truncates every referencing table regardless of its
+`ON DELETE` rule — `NO ACTION` protects a DELETE, not a TRUNCATE. Measured
+against the current schema, restoring the seven-table corpus release would also
+empty 22 tables, `matter_authorities` among them.
+
+`services/api/src/ops/cascade-guard.ts` therefore refuses the restore before its
+first `TRUNCATE`, listing what would have been emptied. On a corpus-only target
+it finds nothing and says nothing. `--allow-cascade-into` overrides it and should
+be treated as a data-loss decision, not a flag.
+
+There is currently **no user/matter backup-and-restore path at all** — nothing
+writes `users`, `matters`, `matter_authorities`, `documents`,
+`judgment_annotations`, `drafts` or `briefings`. Corpus restore is built; the
+other half is not. `docs/ai/lcc-r24/corpus-rollback-separation.md`.
 
 ## Corpus ingest — not on Railway
 One-time batch on a rented GPU box. Embed, then load vectors into Railway
