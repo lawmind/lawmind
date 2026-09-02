@@ -44,6 +44,15 @@ export const refreshRequest = z.object({
 
 export type AuthDeps = {
   auth: Auth;
+  /**
+   * The USER role, and only ever that.
+   *
+   * Every table this file and its neighbours touch — `users`, `auth_user`,
+   * `auth_session`, `auth_account`, `auth_verification`, `refresh_tokens`,
+   * `data_requests` — is user-owned (`ops/db-roles.ts`). It was wired to the
+   * CORPUS handle at the composition root until R28, which is invisible on one
+   * database and means nobody can sign in on two.
+   */
   sql: Sql;
   secret: string;
 };

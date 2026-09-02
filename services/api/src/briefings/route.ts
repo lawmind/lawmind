@@ -148,13 +148,13 @@ function dateConfidence(r: BriefingRow) {
  * **This is the whole point of the module.** The blob was written last night; the
  * Supreme Court does not consult our sweep schedule before overruling something.
  */
-async function liveAuthorities(sql: Sql, content: BriefingContent) {
+async function liveAuthorities(corpusSql: Sql, content: BriefingContent) {
   const ids = (content?.blocks?.authorities ?? [])
     .map((a) => a.judgmentId)
     .filter((id): id is string => typeof id === 'string');
   if (ids.length === 0) return { authorities: [], states: [] as PrecedentialState[] };
 
-  const rows = await sql<
+  const rows = await corpusSql<
     {
       id: string;
       case_title: string;
@@ -201,7 +201,7 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
    * same reason as `search/route.ts`: a per-authority round trip inside a
    * request that already re-read every judgment is how a wedge screen gets slow.
    */
-  const state = await loadPrecedentialState(sql, ids);
+  const state = await loadPrecedentialState(corpusSql, ids);
 
   const byId = new Map(rows.map((r) => [r.id, r]));
   // Preserve the order the sweep chose, and NEVER silently drop an authority
@@ -292,11 +292,18 @@ async function liveAuthorities(sql: Sql, content: BriefingContent) {
   };
 }
 
+/**
+ * `sql` is the USER role: `briefings` and `matters` are the advocate's.
+ * `corpusSql` is what re-reads the authorities live, which is the entire point
+ * of the module — the blob was written last night and good-law status is never
+ * cached. It defaults to `sql` for single-database callers.
+ */
 export async function getBriefing(
   c: Context,
   sql: Sql,
   briefingId: string,
   userId: string | undefined,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   const denied = requireUser(c, userId);
   if (denied) return denied;
@@ -310,7 +317,7 @@ export async function getBriefing(
   if (!row) return fail(c, 'NOT_FOUND', 'no briefing with that id', 404);
 
   const content = parseContent(row.content);
-  const live = await liveAuthorities(sql, content);
+  const live = await liveAuthorities(corpusSql, content);
 
   /**
    * ───────────────────────────────────────────────────────────────────────────

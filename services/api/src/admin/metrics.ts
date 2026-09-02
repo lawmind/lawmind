@@ -51,6 +51,12 @@ import type { Admission } from '../search/admission.ts';
 
 export type MetricsDeps = {
   admission?: Admission | undefined;
+  /**
+   * The CORPUS role, for the single corpus-freshness read in an otherwise
+   * user-owned monitor. Optional and defaulting to the handle passed alongside
+   * it, which is what single-database mode is.
+   */
+  corpusSql?: Sql | undefined;
 };
 
 type Alert = { severity: 'page' | 'watch'; rule: string; detail: string };
@@ -328,7 +334,7 @@ export async function collectMetrics(
      * anything about the law — the note in `as-at.ts` on
      * `overruled_status_changed_at` makes the same distinction.
      */
-    const [freshness] = await sql<{ hours: string | null }[]>`
+    const [freshness] = await (deps.corpusSql ?? sql)<{ hours: string | null }[]>`
       SELECT EXTRACT(EPOCH FROM (now() - max(created_at))) / 3600 AS hours FROM judgments`;
     const ageHours = Number(freshness?.hours ?? 0);
     add('releaseDataAgeHours', ageHours, `newest corpus row was written ${Math.round(ageHours)}h ago`);
@@ -672,6 +678,11 @@ export async function collectMetrics(
  * The route. Renders the collector, and turns a collector that cannot run into
  * a 503 rather than a 500 — a metrics endpoint that fails during an incident is
  * worse than useless.
+ */
+/**
+ * `sql` is the USER role. The monitor counts matters, briefings and searches —
+ * every one of them user-owned — plus one corpus freshness read, which
+ * {@link MetricsDeps.corpusSql} supplies and which defaults to `sql`.
  */
 export async function getMetrics(
   c: Context,

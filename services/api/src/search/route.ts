@@ -312,6 +312,14 @@ const RESULT_LIMIT = 5;
  * Bookkeeping writes (`searches`, `citation_checks`) deliberately stay on the
  * CORE pool: they are small, they are transactional, and they must not queue
  * behind the rankers whose results they are recording.
+ *
+ * They also stay on the USER ROLE, which is a different axis and was wrong here
+ * until R28. `searches` and `citation_checks` are both user-owned
+ * (`ops/db-roles.ts`) — a search is an advocate's activity and a citation check
+ * is the permanent record that a citation was confirmed for them. Writing them
+ * through `deps.sql` worked on one database and answered
+ * `relation "citation_checks" does not exist` on every single `/search` the
+ * moment the roles were pulled apart.
  */
 export async function handleSearch(
   c: Context,
@@ -373,7 +381,7 @@ export async function handleSearch(
       { ...deps.admission.stats(), query_chars: body.query.length },
       'search refused at the admission gate — research capacity is full',
     );
-    recordSearchEvent(deps.sql, {
+    recordSearchEvent(deps.userSql ?? deps.sql, {
       queryClass: 'refused',
       queryChars: body.query.length,
       latencyMs: Math.round(performance.now() - started),
@@ -441,7 +449,7 @@ export async function handleSearch(
      * measured too: an error path that vanishes from the metrics is how a 5xx
      * spike stays invisible.
      */
-    recordSearchEvent(deps.sql, {
+    recordSearchEvent(deps.userSql ?? deps.sql, {
       queryClass: outcome.queryClass,
       queryChars: body.query.length,
       latencyMs: Math.round(performance.now() - started),
@@ -502,7 +510,7 @@ export async function handleSearch(
      * not wait on a metric, and must never fail because of one.
      */
     if (c.res.status < 400 && outcome.resultCount > 0) {
-      recordStepForAuthIdInBackground(deps.sql, c.get('authId'), 'first_successful_search', (err) =>
+      recordStepForAuthIdInBackground(deps.userSql ?? deps.sql, c.get('authId'), 'first_successful_search', (err) =>
         logger.error(
           { request_id: c.get('requestId'), err, step: 'first_successful_search' },
           'activation step not recorded',
@@ -927,9 +935,15 @@ async function runSearch(
   // row is written only when a user is present and `searchId` is null otherwise.
   // RCC: `searchId` can be null until auth lands.
   let searchId: string | null = null;
+  /**
+   * The USER role for the two bookkeeping writes below, defaulting to the corpus
+   * handle so single-database mode — and every test and CLI passing one handle —
+   * is unchanged. See `ops/db-roles.ts`.
+   */
+  const bookkeepingSql = deps.userSql ?? deps.sql;
   const bookkeepingAt = performance.now();
   if (deps.userId) {
-    const [searchRow] = await deps.sql<{ id: string }[]>`
+    const [searchRow] = await bookkeepingSql<{ id: string }[]>`
       INSERT INTO searches (user_id, matter_id, query_text, query_language, results_returned, model_used)
       VALUES (${deps.userId}, ${body.matterId ?? null}, ${body.query}, ${body.language},
               ${retrieved.length}, ${queryVector ? 'bge-m3' : 'lexical-only'})
@@ -955,8 +969,8 @@ async function runSearch(
    */
   let checkIds: (string | null)[] = retrieved.map(() => null);
   if (retrieved.length > 0) {
-    const inserted = await deps.sql<{ id: string }[]>`
-      INSERT INTO citation_checks ${deps.sql(
+    const inserted = await bookkeepingSql<{ id: string }[]>`
+      INSERT INTO citation_checks ${bookkeepingSql(
         retrieved.map((r) => ({
           search_id: searchId,
           citation_claimed: r.neutralCitation ?? r.reporterCitations[0] ?? r.caseTitle,

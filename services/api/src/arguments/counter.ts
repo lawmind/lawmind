@@ -32,9 +32,20 @@ export const counterRequest = z.object({
 
 export type CounterDeps = {
   /**
-   * The CORE handle. Used for the citation_checks writes and nothing expensive.
+   * The CORE handle, CORPUS role. The ranker's small lookups.
    */
   sql: Sql;
+  /**
+   * The USER role, for the `citation_checks` write below.
+   *
+   * Optional and defaulting to {@link sql}, which is exactly what
+   * single-database mode is. Under the physical split it is the difference
+   * between a counter-argument that records what it showed and one that throws
+   * `relation "citation_checks" does not exist` — and a surface that renders a
+   * citation without recording it is invisible to both the silent-drop and the
+   * stale-overruled metric. `docs/CITATION_HARNESS.md`.
+   */
+  userSql?: Sql | undefined;
   /**
    * The pool the RANKER runs on, and the reason this type gained a field.
    *
@@ -165,8 +176,9 @@ export async function handleCounter(
   // user and must be recorded, or silent-drop rate stops measuring anything.
   const all = [...usable, ...excluded];
   if (all.length > 0) {
-    await deps.sql`
-      INSERT INTO citation_checks ${deps.sql(
+    const bookkeepingSql = deps.userSql ?? deps.sql;
+    await bookkeepingSql`
+      INSERT INTO citation_checks ${bookkeepingSql(
         all.map((r) => ({
           search_id: null,
           citation_claimed: r.neutralCitation ?? r.reporterCitations[0] ?? r.caseTitle,

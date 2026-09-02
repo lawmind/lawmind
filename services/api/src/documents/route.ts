@@ -184,19 +184,26 @@ export async function patchDocument(
  * This is the ONLY way a citation enters or changes in a document, and it is why
  * `PATCH` can safely reject every textual edit.
  */
+/**
+ * `sql` is the USER role — `documents` and `citation_checks` are the
+ * advocate's. `corpusSql` answers the two corpus questions: does this judgment
+ * exist in the request-pinned generation, and what is its live precedential
+ * effect. It defaults to `sql` for single-database callers.
+ */
 export async function addDocumentCitation(
   c: Context,
   sql: Sql,
   documentId: string,
   userId: string | undefined,
   body: z.infer<typeof addCitationBody>,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
   if (!(await ownedDocument(sql, documentId, userId))) {
     return fail(c, 'NOT_FOUND', 'no document with that id', 404);
   }
 
-  const [judgment] = await sql<
+  const [judgment] = await corpusSql<
     { id: string; case_title: string; neutral_citation: string | null; overruled_status: string }[]
   >`
     SELECT id, case_title, neutral_citation, overruled_status
@@ -226,7 +233,7 @@ export async function addDocumentCitation(
    * is false for exactly the two effects that refuse add-to-matter, so the two
    * surfaces cannot diverge.
    */
-  const treatment = await loadOnePrecedentialState(sql, body.judgmentId);
+  const treatment = await loadOnePrecedentialState(corpusSql, body.judgmentId);
   if (treatment && !treatment.policy.citableForUntouchedPropositions) {
     const what =
       treatment.effect === 'set_aside'
@@ -519,10 +526,14 @@ export async function getDocument(
   sql: Sql,
   documentId: string,
   userId: string | undefined,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
   if (!(await ownedDocument(sql, documentId, userId))) {
     return fail(c, 'NOT_FOUND', 'no document with that id', 404);
   }
-  return ok(c, { document: await readDocument(sql, documentId) });
+  /* `readDocument` has taken a corpus handle since the batched hydration
+   * landed; until R28 nothing ever passed one, so the batched read ran against
+   * the user role and found no `judgments` table at all. */
+  return ok(c, { document: await readDocument(sql, documentId, corpusSql) });
 }

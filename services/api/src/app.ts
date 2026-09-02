@@ -407,6 +407,29 @@ export function createApp(deps: AppDeps) {
     const sql = search.sql;
     const userSql = search.userSql ?? search.sql;
     /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * WHICH HANDLE A ROUTE GETS IS NOW A DECISION, NOT A DEFAULT
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * R28. Until this round `sql` was passed to every route below and the two
+     * names existed for four of them. That is invisible on one database and
+     * total on two: measured against a physically split pair with each role's
+     * tables removed from the other, thirteen of the current-v1 routes answered
+     * `500` naming a missing relation — `matters`, `documents`,
+     * `saved_searches`, `judgment_annotations`, `citation_checks`, `users` —
+     * including `GET /matters`, `POST /matters`, `/search` and every admin
+     * surface, because `requireAdmin` reads `users`.
+     *
+     * The rule below is mechanical and `ops/db-roles.ts` is the authority for
+     * it: a handler is passed `userSql` when the tables it owns are user
+     * tables, `sql` when they are corpus tables, and BOTH — user handle first,
+     * corpus handle trailing — when it genuinely needs the two. There is no
+     * fallback: a handler given the wrong one fails, loudly, which is the point.
+     * `scripts/lcc-db-role-audit.mjs` derives the roles each module needs
+     * straight from its SQL, and `db-role-wiring.test.ts` fails when a module
+     * appears that nothing here has decided about.
+     */
+    /**
      * The profile id for the caller, or undefined.
      *
      * Routes below own data that belongs to an advocate, not to an email address,
@@ -440,7 +463,10 @@ export function createApp(deps: AppDeps) {
      * authentication has no way to BE an admin; those tests already assert the
      * unauthenticated behaviour of these routes.
      */
-    if (deps.auth) app.use('/admin/*', requireAdmin(sql));
+    /* `users` is a USER table, so the gate protecting every admin route was
+     * itself the first thing to fail under the split — every `/admin/*` route
+     * answered 500 before its handler ran. */
+    if (deps.auth) app.use('/admin/*', requireAdmin(userSql));
 
     /**
      * P5.B for the expensive half. `search/admission.ts` caps how many searches
@@ -470,7 +496,7 @@ export function createApp(deps: AppDeps) {
     // The reading view's route. Without it a judgment found by search could not
     // be opened, and the reading view could only be exercised against fixtures.
     app.get('/judgments/:id', validate('param', judgmentParams), (c) =>
-      getJudgment(c, sql, c.req.valid('param').id),
+      getJudgment(c, sql, c.req.valid('param').id, userSql),
     );
     // Treatment analysis and the precedent graph. Both read judgment_citations
     // and state what courts DID — never what a court will do.
@@ -488,7 +514,7 @@ export function createApp(deps: AppDeps) {
     // never on position — a re-ingest that moves a paragraph must not silently
     // relocate an advocate's note.
     app.get('/judgments/:id/annotations', async (c) =>
-      listAnnotations(c, sql, c.req.param('id'), await userFor(c)),
+      listAnnotations(c, userSql, c.req.param('id'), await userFor(c)),
     );
     // R16. The judgment id is a PATH PARAMETER and so rides in the fingerprint:
     // one key reused against a second judgment is a mismatch, not a replay.
@@ -496,9 +522,13 @@ export function createApp(deps: AppDeps) {
       const userId = await userFor(c);
       const judgmentId = c.req.param('id');
       const body = c.req.valid('json');
+      /* `api_idempotency_records` is a USER table, and the transaction the
+       * handler runs inside is therefore a USER transaction. The corpus handle
+       * rides alongside it rather than inside it — there is no cross-database
+       * transaction and R28 does not invent one. */
       return withIdempotency(
         c,
-        sql,
+        userSql,
         {
           authId: c.get('authId'),
           userId,
@@ -506,11 +536,11 @@ export function createApp(deps: AppDeps) {
           params: { id: judgmentId },
           body,
         },
-        (tx) => createAnnotation(c, tx, judgmentId, userId, body),
+        (tx) => createAnnotation(c, tx, judgmentId, userId, body, sql),
       );
     });
     app.delete('/annotations/:annotationId', async (c) =>
-      deleteAnnotation(c, sql, c.req.param('annotationId'), await userFor(c)),
+      deleteAnnotation(c, userSql, c.req.param('annotationId'), await userFor(c)),
     );
     // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
     // authorities are excluded AND named, never silently dropped.
@@ -525,6 +555,9 @@ export function createApp(deps: AppDeps) {
         c,
         {
           sql,
+          /* The `citation_checks` write. Corpus for the ranker, user for the
+           * record of what it showed. */
+          userSql,
           // The SAME isolation /search gets. Until now this route ran the same
           // ranker on the core pool with no admission slot — see CounterDeps.
           researchSql: search.researchSql,
@@ -543,7 +576,7 @@ export function createApp(deps: AppDeps) {
     // the authority moves. Offered in EVERY state including set_aside — refusing
     // the copy would destroy the only record that could reach them.
     app.post('/citations/copies', validate('json', copyRequest), async (c) =>
-      recordCopy(c, sql, await userFor(c), c.req.valid('json')),
+      recordCopy(c, userSql, await userFor(c), c.req.valid('json'), sql),
     );
     // Tier 3 — the eCourts door. We hand over a URL and the text to paste; the
     // advocate solves the CAPTCHA. Nothing here ever fetches from eCourts.
@@ -558,30 +591,32 @@ export function createApp(deps: AppDeps) {
       const body = c.req.valid('json');
       return withIdempotency(
         c,
-        sql,
+        userSql,
         { authId: c.get('authId'), userId, route: '/verify/confirm', body },
-        (tx) => handleConfirm(c, tx, userId, body),
+        (tx) => handleConfirm(c, tx, userId, body, sql),
       );
     });
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
-    app.get('/saved-searches', async (c) => listSavedSearches(c, sql, await userFor(c)));
+    app.get('/saved-searches', async (c) => listSavedSearches(c, userSql, await userFor(c)));
     app.post('/saved-searches', validate('json', savedSearchBody), async (c) =>
-      createSavedSearch(c, sql, await userFor(c), c.req.valid('json')),
+      createSavedSearch(c, userSql, await userFor(c), c.req.valid('json')),
     );
     app.delete('/saved-searches/:id', async (c) =>
-      deleteSavedSearch(c, sql, c.req.param('id'), await userFor(c)),
+      deleteSavedSearch(c, userSql, c.req.param('id'), await userFor(c)),
     );
     app.get('/saved-searches/:id/feed', validate('query', feedQuery), async (c) =>
       getSavedSearchFeed(
         c,
-        sql,
+        userSql,
         c.req.param('id'),
         await userFor(c),
         c.req.valid('query'),
         search.embedQuery,
         /* The third caller of hybridSearch, and the last one to get the gate. */
         search.admission,
+        /* ...and the ranker it calls runs on the CORPUS role. */
+        sql,
       ),
     );
     // Cause list sync health. Built now and useful before a single cause list
@@ -602,30 +637,30 @@ export function createApp(deps: AppDeps) {
     // nightly re-check calls; see admin/disputes.ts for why that must stay one
     // implementation.
     app.get('/admin/disputes', validate('query', disputesQuery), async (c) =>
-      listDisputes(c, sql, await userFor(c), c.req.valid('query')),
+      listDisputes(c, userSql, await userFor(c), c.req.valid('query')),
     );
     app.get('/admin/disputes/:id', async (c) =>
-      getDispute(c, sql, c.req.param('id'), await userFor(c)),
+      getDispute(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
     app.post('/admin/disputes/:id/uphold', validate('json', upholdBody), async (c) =>
-      uphold(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      uphold(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.post('/admin/disputes/:id/reject', validate('json', rejectBody), async (c) =>
-      reject(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      reject(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Platform controls — maintenance, kill switches (SIX, not five —
     // admin/platform.ts's module note), feature flags. Every write here is an
     // audit write first: config and ledger move in one transaction or neither
     // does.
-    app.get('/admin/platform', async (c) => getPlatform(c, sql, await userFor(c)));
+    app.get('/admin/platform', async (c) => getPlatform(c, userSql, await userFor(c)));
     app.post('/admin/platform/maintenance', validate('json', maintenanceBody), async (c) =>
-      setMaintenance(c, sql, await userFor(c), c.req.valid('json')),
+      setMaintenance(c, userSql, await userFor(c), c.req.valid('json')),
     );
     app.post('/admin/platform/kill-switches/:key', validate('json', killSwitchBody), async (c) =>
-      setKillSwitch(c, sql, c.req.param('key'), await userFor(c), c.req.valid('json')),
+      setKillSwitch(c, userSql, c.req.param('key'), await userFor(c), c.req.valid('json')),
     );
     app.post('/admin/platform/flags/:key', validate('json', flagBody), async (c) =>
-      setFlag(c, sql, c.req.param('key'), await userFor(c), c.req.valid('json')),
+      setFlag(c, userSql, c.req.param('key'), await userFor(c), c.req.valid('json')),
     );
     /**
      * Operational truth a machine can read — `admin/metrics.ts`.
@@ -636,10 +671,12 @@ export function createApp(deps: AppDeps) {
      * simple as curl+jq is a complete alerting system and no thresholds have to
      * be duplicated into a vendor we have not bought.
      */
-    app.get('/admin/metrics', (c) => getMetrics(c, sql, { admission: search.admission }));
+    app.get('/admin/metrics', (c) =>
+      getMetrics(c, userSql, { admission: search.admission, corpusSql: sql }),
+    );
     // The audit ledger — read-only, append-only at the database level.
     app.get('/admin/audit', validate('query', auditQuery), async (c) =>
-      listAudit(c, sql, await userFor(c), c.req.valid('query')),
+      listAudit(c, userSql, await userFor(c), c.req.valid('query')),
     );
     // The citation monitor — production aggregates of the harness metrics.
     app.get('/admin/citations', validate('query', citationsMonitorQuery), async (c) =>
@@ -650,55 +687,55 @@ export function createApp(deps: AppDeps) {
     // No pusher: an operator reconciling at 3pm must not light up phones; the
     // alert rows are still written, which is the durable truth either way.
     app.post('/admin/overruled-rechecks/run', async (c) =>
-      runOverruledRecheck(c, sql, await userFor(c)),
+      runOverruledRecheck(c, userSql, await userFor(c), sql),
     );
     // No LLM has ever been called from this codebase — see the module note.
     // This reports the true, empty state, not a placeholder.
     app.get('/admin/llm-costs', validate('query', llmCostsQuery), async (c) =>
-      getLlmCosts(c, sql, await userFor(c), c.req.valid('query')),
+      getLlmCosts(c, userSql, await userFor(c), c.req.valid('query')),
     );
     // POST /ocr/jobs is still SPECCED, so this queue is honestly empty today.
     app.get('/admin/ocr-queue', validate('query', ocrQueueQuery), async (c) =>
-      listOcrQueue(c, sql, await userFor(c), c.req.valid('query')),
+      listOcrQueue(c, userSql, await userFor(c), c.req.valid('query')),
     );
     // PD-2 — enrolment is a credential, not a gate. This endpoint moves
     // enrolment_status and nothing else; nothing in this codebase reads that
     // column to permit or deny a request.
     app.get('/admin/users', validate('query', usersQuery), async (c) =>
-      listUsers(c, sql, await userFor(c), c.req.valid('query')),
+      listUsers(c, userSql, await userFor(c), c.req.valid('query')),
     );
     app.patch('/admin/users/:id/enrolment', validate('json', enrolmentBody), async (c) =>
-      patchEnrolment(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      patchEnrolment(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // DPDP Act obligations — "a visible clock per request." No creation
     // endpoint is specced or built; intake is out of this surface's scope.
     // GET /admin/privacy/coverage is deliberately NOT here — see
     // admin/data-requests.ts's module note and docs/FOUNDER_QUEUE.md.
     app.get('/admin/data-requests', validate('query', dataRequestsQuery), async (c) =>
-      listDataRequests(c, sql, await userFor(c), c.req.valid('query')),
+      listDataRequests(c, userSql, await userFor(c), c.req.valid('query')),
     );
     app.post(
       '/admin/data-requests/:id/complete',
       validate('json', completeRequestBody),
       async (c) =>
-        completeDataRequest(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+        completeDataRequest(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.post('/admin/data-requests/:id/refuse', validate('json', refuseRequestBody), async (c) =>
-      refuseDataRequest(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      refuseDataRequest(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // The irreversible one. Deliberately NOT the same verb as `complete` —
     // see admin/data-requests.ts. Requires a reason, writes audit_log inside the
     // same transaction as the deletes, and RETURNS the R2 keys it could not
     // reach so nobody can report an erasure complete while the files remain.
     app.post('/admin/data-requests/:id/erase', validate('json', eraseRequestBody), async (c) =>
-      executeErasure(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      executeErasure(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // Matters — the retention moat, and what a briefing hangs off. Every
     // statement scopes by user_id in its own WHERE clause rather than through a
     // separate ownership lookup, so there is no path that forgets it. "Does not
     // exist" and "is not yours" answer identically: a matter id that resolves is
     // itself a fact about another advocate's caseload.
-    app.get('/matters', async (c) => listMatters(c, sql, await userFor(c)));
+    app.get('/matters', async (c) => listMatters(c, userSql, await userFor(c)));
     // R16. `createMatter` takes the pool as a fifth argument so its funnel metric
     // is not written on the transaction that is about to commit.
     app.post('/matters', validate('json', createMatterBody), async (c) => {
@@ -706,14 +743,20 @@ export function createApp(deps: AppDeps) {
       const body = c.req.valid('json');
       return withIdempotency(
         c,
-        sql,
+        userSql,
         { authId: c.get('authId'), userId, route: '/matters', body },
-        (tx) => createMatter(c, tx, userId, body, sql),
+        /* The fifth argument is the POOL the fire-and-forget activation write
+         * goes to, and it is the USER pool: `activation_events` is user-owned.
+         * It was `sql` — the corpus handle — which on a split deployment made
+         * the funnel write throw against a database with no such table. */
+        (tx) => createMatter(c, tx, userId, body, userSql),
       );
     });
-    app.get('/matters/:id', async (c) => getMatter(c, sql, c.req.param('id'), await userFor(c)));
+    app.get('/matters/:id', async (c) =>
+      getMatter(c, userSql, c.req.param('id'), await userFor(c)),
+    );
     app.patch('/matters/:id', validate('json', patchMatterBody), async (c) =>
-      patchMatter(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      patchMatter(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // PD-4 — note_visibility defaults to private IN THE COLUMN. An omitted field
     // inserts the SQL keyword DEFAULT, never a value chosen in application code.
@@ -725,7 +768,7 @@ export function createApp(deps: AppDeps) {
       const body = c.req.valid('json');
       return withIdempotency(
         c,
-        sql,
+        userSql,
         {
           authId: c.get('authId'),
           userId,
@@ -741,20 +784,20 @@ export function createApp(deps: AppDeps) {
     // conflicts hazard, since two advocates in one chamber can be on opposing
     // sides of related matters. Revocation is a timestamp, never a delete.
     app.get('/matters/:id/shares', async (c) =>
-      listShares(c, sql, c.req.param('id'), await userFor(c)),
+      listShares(c, userSql, c.req.param('id'), await userFor(c)),
     );
     app.post('/matters/:id/shares', validate('json', shareBody), async (c) =>
-      createShare(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      createShare(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.delete('/matters/:id/shares/:shareId', async (c) =>
-      revokeShare(c, sql, c.req.param('id'), c.req.param('shareId'), await userFor(c)),
+      revokeShare(c, userSql, c.req.param('id'), c.req.param('shareId'), await userFor(c)),
     );
     // PD-4 — per note, reversibly. The court record always travels; what the
     // advocate thinks about it does not, until they say so.
     app.patch('/matters/:id/events/:eventId', validate('json', eventVisibilityBody), async (c) =>
       setEventVisibility(
         c,
-        sql,
+        userSql,
         c.req.param('id'),
         c.req.param('eventId'),
         await userFor(c),
@@ -782,13 +825,13 @@ export function createApp(deps: AppDeps) {
       listAlerts(c, userSql, await userFor(c), c.req.valid('query'), sql),
     );
     app.post('/alerts/:id/read', async (c) =>
-      markAlertRead(c, sql, c.req.param('id'), await userFor(c)),
+      markAlertRead(c, userSql, c.req.param('id'), await userFor(c)),
     );
     // Trigger 2 (filed_citation_moved) has no settings key and cannot be
     // disabled — .strict() on the body schema rejects any attempt to send one.
-    app.get('/me/alert-settings', async (c) => getAlertSettings(c, sql, await userFor(c)));
+    app.get('/me/alert-settings', async (c) => getAlertSettings(c, userSql, await userFor(c)));
     app.patch('/me/alert-settings', validate('json', alertSettingsBody), async (c) =>
-      patchAlertSettings(c, sql, await userFor(c), c.req.valid('json')),
+      patchAlertSettings(c, userSql, await userFor(c), c.req.valid('json')),
     );
     /**
      * Training consent — SEPARATE from the PD-8 onboarding consent above, per
@@ -798,7 +841,9 @@ export function createApp(deps: AppDeps) {
      * as easy as granting. It is one call on the same path, it needs nobody's
      * approval, and it is not a support ticket.
      */
-    app.get('/me/training-consent', async (c) => getTrainingConsent(c, sql, await userFor(c)));
+    app.get('/me/training-consent', async (c) =>
+      getTrainingConsent(c, userSql, await userFor(c)),
+    );
     // R16. A grant is a `users` update AND a `training_consent_events` append, so
     // the handler opens its own transaction; under a key that becomes a savepoint
     // inside this one. `atomically` is what makes both spellings work.
@@ -807,27 +852,27 @@ export function createApp(deps: AppDeps) {
       const body = c.req.valid('json');
       return withIdempotency(
         c,
-        sql,
+        userSql,
         { authId: c.get('authId'), userId, route: '/me/training-consent', body },
         (tx) =>
         grantTrainingConsent(c, tx, userId, body),
       );
     });
     app.delete('/me/training-consent', async (c) =>
-      withdrawTrainingConsent(c, sql, await userFor(c)),
+      withdrawTrainingConsent(c, userSql, await userFor(c)),
     );
     // The 24-hour briefing — the wedge. `overruled_status` is re-read LIVE on
     // every render and is never served from the cached content: a briefing is
     // read standing outside court, which is the worst moment to be shown law
     // that moved after last night's sweep.
     app.get('/briefings/:id', async (c) =>
-      getBriefing(c, sql, c.req.param('id'), await userFor(c)),
+      getBriefing(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
     app.get('/matters/:id/briefings', async (c) =>
-      listMatterBriefings(c, sql, c.req.param('id'), await userFor(c)),
+      listMatterBriefings(c, userSql, c.req.param('id'), await userFor(c)),
     );
     app.post('/briefings/:id/opened', async (c) =>
-      markBriefingOpened(c, sql, c.req.param('id'), await userFor(c)),
+      markBriefingOpened(c, userSql, c.req.param('id'), await userFor(c)),
     );
     // The vendor-agnostic court adapter. Returns available:false today and the
     // client falls back to the manual form — which is FIRST-CLASS (PD-12), not a
@@ -857,9 +902,9 @@ export function createApp(deps: AppDeps) {
      * app can believe things because it is stale, jailbroken, or replaying a
      * receipt.
      */
-    app.get('/me/entitlements', async (c) => getEntitlements(c, sql, await userFor(c)));
+    app.get('/me/entitlements', async (c) => getEntitlements(c, userSql, await userFor(c)));
     app.get('/matters/:id/premium-preview', async (c) =>
-      getPremiumPreview(c, sql, c.req.param('id'), await userFor(c)),
+      getPremiumPreview(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
     app.post('/premium/jobs', validate('json', startJobBody), async (c) =>
       // R8.3 §5.4/§5.6. Premium generation is not required for LIMITED V1 and
@@ -868,32 +913,32 @@ export function createApp(deps: AppDeps) {
       // still be polled and cancelled, and refusing those would strand a job a
       // user started before the freeze.
       refuseIfDisabled(c, 'generation.premium_jobs') ??
-      (await postPremiumJob(c, sql, await userFor(c), c.req.valid('json'))),
+      (await postPremiumJob(c, userSql, await userFor(c), c.req.valid('json'))),
     );
     app.get('/premium/jobs/:id', async (c) =>
-      getPremiumJob(c, sql, c.req.param('id'), await userFor(c)),
+      getPremiumJob(c, userSql, c.req.param('id'), await userFor(c)),
     );
     app.post('/premium/jobs/:id/cancel', async (c) =>
-      cancelPremiumJob(c, sql, c.req.param('id'), await userFor(c)),
+      cancelPremiumJob(c, userSql, c.req.param('id'), await userFor(c)),
     );
     app.get('/documents/types', (c) => listDocumentTypes(c));
     // The advocate's drafts, newest first. ADDITIVE — the Drafts tab could not
     // list anything because GET /documents/:id needs an id the client had no
     // way to obtain.
-    app.get('/documents', async (c) => listDocuments(c, sql, await userFor(c)));
+    app.get('/documents', async (c) => listDocuments(c, userSql, await userFor(c)));
     app.get('/documents/:id', async (c) =>
-      getDocument(c, sql, c.req.param('id'), await userFor(c)),
+      getDocument(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
     app.patch('/documents/:id', validate('json', patchDocumentBody), async (c) =>
-      patchDocument(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      patchDocument(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.post('/documents/:id/citations', validate('json', addCitationBody), async (c) =>
-      addDocumentCitation(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      addDocumentCitation(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json'), sql),
     );
     app.delete('/documents/:id/citations/:citationCheckId', async (c) =>
       removeDocumentCitation(
         c,
-        sql,
+        userSql,
         c.req.param('id'),
         c.req.param('citationCheckId'),
         await userFor(c),

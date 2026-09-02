@@ -64,7 +64,27 @@ type JudgmentRow = {
   overruled_note: string | null;
 };
 
-export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Response> {
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * TWO ROLES, AND THE CORPUS ONE IS THE ONE THIS ROUTE IS NAMED AFTER
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The judgment, its treatment edges and its paragraphs are CORPUS. The
+ * `citation_checks` row this route writes, and the activation step it records,
+ * are USER — a record of what was shown to an advocate, which
+ * `CITATION_HARNESS.md` requires to outlive any corpus rollback.
+ *
+ * `userSql` is trailing and defaults to `sql`, so single-database mode and
+ * every existing caller are unchanged. Under the split it is the difference
+ * between a working reading view and `relation "citation_checks" does not
+ * exist` on every judgment opened.
+ */
+export async function getJudgment(
+  c: Context,
+  sql: Sql,
+  id: string,
+  userSql: Sql = sql,
+): Promise<Response> {
   const [row] = await sql<JudgmentRow[]>`
     SELECT id, case_title, neutral_citation, reporter_citations, court, bench,
            -- ::text keeps this a calendar date. The column is a date; the driver
@@ -228,7 +248,7 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
   // reason it is written on search: silent-drop and stale-overruled are computed
   // from these rows, and a surface that renders a citation without recording it
   // is invisible to both metrics.
-  await sql`
+  await userSql`
     INSERT INTO citation_checks
       (search_id, citation_claimed, judgment_id_matched, verification_state,
        verified_by_source, shown_to_user, overruled_status_shown, surface)
@@ -245,7 +265,7 @@ export async function getJudgment(c: Context, sql: Sql, id: string): Promise<Res
    * Only reached after the 404, so a bad id counts nothing.
    */
   recordStepForAuthIdInBackground(
-    sql,
+    userSql,
     c.get('authId'),
     'opened_primary_authority',
     (err) =>

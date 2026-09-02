@@ -71,11 +71,17 @@ export async function getEntitlements(
  * No generation, no model call, no retrieval. See `preview.ts` for why that
  * boundary is the whole design rather than an optimisation.
  */
+/**
+ * `sql` is the USER role — the flag, the matter, the funnel step. `corpusSql`
+ * is what `hearingPackPreview` counts authorities against, and it has taken a
+ * corpus handle since it was written; nothing passed one until R28.
+ */
 export async function getPremiumPreview(
   c: Context,
   sql: Sql,
   matterId: string,
   userId: string | undefined,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign-in required', 401);
   if (!(await premiumEnabled(sql, PREMIUM_FLAGS.premium_preview))) {
@@ -102,7 +108,7 @@ export async function getPremiumPreview(
       ),
   );
 
-  return ok(c, await hearingPackPreview(sql, matterId));
+  return ok(c, await hearingPackPreview(sql, matterId, corpusSql));
 }
 
 /** `POST /premium/jobs` — the only path that may spend model time on a user's behalf. */

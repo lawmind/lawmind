@@ -123,11 +123,17 @@ export async function listDisputes(
   return ok(c, { disputes: rows.map(shape), falseVerifiedRate: await falseVerifiedRate(sql) });
 }
 
+/**
+ * `sql` is the USER role: a dispute, the citation check behind it and the
+ * copies that carried it are all an advocate's. `corpusSql` is the ONE corpus
+ * read — the judgment the dispute is about. Defaults to `sql`.
+ */
 export async function getDispute(
   c: Context,
   sql: Sql,
   id: string,
   userId: string | undefined,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'disputes are a privileged surface', 401);
 
@@ -142,7 +148,7 @@ export async function getDispute(
     ? await sql`SELECT * FROM citation_checks WHERE id = ${dispute.citation_check_id}`
     : [null];
   const [judgment] = dispute.judgment_id
-    ? await sql`SELECT * FROM judgments WHERE id = ${dispute.judgment_id}`
+    ? await corpusSql`SELECT * FROM judgments WHERE id = ${dispute.judgment_id}`
     : [null];
 
   // A PREVIEW, not a write — same population `applyOverruledChange` would

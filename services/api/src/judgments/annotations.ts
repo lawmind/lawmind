@@ -92,17 +92,28 @@ export async function listAnnotations(
   return ok(c, { annotations: rows.map(shape) });
 }
 
+/**
+ * `sql` is the USER role — `judgment_annotations` is an advocate's own work.
+ * `corpusSql` reads the judgment and its precedential state, and defaults to
+ * `sql` so single-database callers are unchanged.
+ *
+ * The two are genuinely different questions. Whether this judgment may be added
+ * to a matter is a fact about published law, read live from the corpus on every
+ * request; the note itself belongs to the advocate and must survive any corpus
+ * rollback.
+ */
 export async function createAnnotation(
   c: Context,
   sql: Sql,
   judgmentId: string,
   userId: string | undefined,
   body: z.infer<typeof annotationBody>,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
-  const [judgment] = await sql<{ id: string; overruled_status: string; case_title: string }[]>`
+  const [judgment] = await corpusSql<{ id: string; overruled_status: string; case_title: string }[]>`
     -- Read LIVE, never cached. Verification is permanent; good-law status is not,
     -- and a judgment that was fine to add last week may not be today.
     SELECT id, overruled_status, case_title FROM judgments WHERE id = ${judgmentId}`;
@@ -150,9 +161,9 @@ export async function createAnnotation(
    * direction.
    */
   if (body.matterId) {
-    const state = await loadOnePrecedentialState(sql, judgmentId);
+    const state = await loadOnePrecedentialState(corpusSql, judgmentId);
     if (state && state.policy.addToMatter === 'refuse') {
-      const [overruler] = await sql<{ case_title: string; neutral_citation: string | null }[]>`
+      const [overruler] = await corpusSql<{ case_title: string; neutral_citation: string | null }[]>`
         SELECT o.case_title, o.neutral_citation
         FROM judgments j LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id
         WHERE j.id = ${judgmentId} AND o.id IS NOT NULL`;

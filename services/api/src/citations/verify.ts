@@ -76,11 +76,21 @@ export function handleEcourts(c: Context, body: z.infer<typeof ecourtsRequest>):
  * allowed to lie. Auth ships in S5; until then this answers honestly rather than
  * accepting unattributed confirmations.
  */
+/**
+ * `sql` is the USER role — a Tier 3 confirmation is a permanent
+ * `citation_checks` row attributable to one advocate, and
+ * `CITATION_HARNESS.md` holds verification to be permanent while good-law
+ * status is not. `corpusSql` reads the judgment being vouched for.
+ *
+ * The split does not change what Tier 3 IS: this module still holds no HTTP
+ * client, a human still solves the CAPTCHA, and the test asserting both stays.
+ */
 export async function handleConfirm(
   c: Context,
   sql: Sql,
   userId: string | undefined,
   body: z.infer<typeof confirmRequest>,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) {
     return fail(
@@ -93,7 +103,7 @@ export async function handleConfirm(
 
   // The judgment must exist. Confirming a citation against an id we do not hold
   // would cache a claim about a judgment we cannot render.
-  const [judgment] = await sql<{ id: string; overruled_status: string }[]>`
+  const [judgment] = await corpusSql<{ id: string; overruled_status: string }[]>`
     SELECT id, overruled_status FROM judgments WHERE id = ${body.judgmentId}`;
   if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
 

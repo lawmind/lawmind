@@ -182,6 +182,12 @@ export async function getSavedSearchFeed(
    * contract.
    */
   admission?: { acquire: () => Promise<{ release: () => void } | null> } | undefined,
+  /**
+   * The CORPUS role, for the ranker only. `saved_searches` is user-owned and
+   * everything else in this file reads or writes it; the feed's ONE corpus act is
+   * re-running the saved query. Defaults to `sql` for single-database callers.
+   */
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   const denied = requireUser(c, userId);
   if (denied) return denied;
@@ -236,7 +242,7 @@ export async function getSavedSearchFeed(
     const vector = semanticArmPermitted() ? await embedQuery(saved.query_text) : null;
     semanticAvailable = vector !== null;
     results = await hybridSearch(
-      sql,
+      corpusSql,
       saved.query_text,
       vector,
       saved.filters ?? {},

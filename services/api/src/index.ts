@@ -206,8 +206,15 @@ const mailer = mailerFrom(
 logger.info({ mail_transport: mailer.name }, 'mail transport selected');
 
 const authSecret = env.authSecret();
+/**
+ * better-auth's own tables are USER tables — `auth_user`, `auth_session`,
+ * `auth_account`, `auth_verification` are all in `ops/db-roles.ts` under
+ * identity. Constructing it on the corpus handle worked for as long as the two
+ * roles were one database and would have made a split deployment unable to
+ * authenticate a single request.
+ */
 const auth = createAuth({
-  sql: rawSql,
+  sql: userSql,
   secret: authSecret,
   baseUrl: env.authBaseUrl(),
   mailer,
@@ -218,7 +225,7 @@ const app = createApp({
     await db.execute(sql`SELECT 1`);
   },
   search: { sql: rawSql, userSql, researchSql: pools.research, admission, embedQuery },
-  auth: { auth, sql: rawSql, secret: authSecret },
+  auth: { auth, sql: userSql, secret: authSecret },
 });
 
 serve({ fetch: app.fetch, port: env.port }, (info) => {

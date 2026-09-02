@@ -64,11 +64,18 @@ export const copyRequest = z.object({
   clientKey: z.string().min(1).max(200),
 });
 
+/**
+ * `sql` is the USER role — `citation_copies` is the record that this advocate
+ * took this citation out of the app, and it is the only thing that can warn them
+ * later, so it must outlive any corpus rollback. `corpusSql` reads the live
+ * good-law status, and defaults to `sql` for single-database callers.
+ */
 export async function recordCopy(
   c: Context,
   sql: Sql,
   userId: string | undefined,
   body: z.infer<typeof copyRequest>,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) {
     return fail(
@@ -86,7 +93,7 @@ export async function recordCopy(
    * true. A client-supplied status could be stale or wrong, and this row's whole
    * purpose is to be the evidence behind a later warning.
    */
-  const [judgment] = await sql<{ overruled_status: string }[]>`
+  const [judgment] = await corpusSql<{ overruled_status: string }[]>`
     SELECT overruled_status FROM judgments WHERE id = ${body.judgmentId}`;
   if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
 

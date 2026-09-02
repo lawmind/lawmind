@@ -32,10 +32,17 @@ import type { Sql } from 'postgres';
 import { runRecheck } from '../citations/recheck.ts';
 import { fail, ok } from '../envelope.ts';
 
+/**
+ * `sql` is the USER role: the audience this reads — `citation_checks` rows an
+ * advocate was actually shown — and the `citation_fanouts`/`alerts` it writes
+ * are all user-owned. `corpusSql` is where the good-law status is re-read from,
+ * and defaults to `sql`.
+ */
 export async function runOverruledRecheck(
   c: Context,
   sql: Sql,
   userId: string | undefined,
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) {
     return fail(
@@ -46,7 +53,7 @@ export async function runOverruledRecheck(
     );
   }
 
-  const result = await runRecheck(sql);
+  const result = await runRecheck(sql, undefined, corpusSql);
 
   return ok(c, {
     checked: result.checked,
