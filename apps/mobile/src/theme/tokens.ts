@@ -35,8 +35,40 @@ export const color = {
   ink: '#141B2D',
   /** Body secondary, supporting copy. */
   inkMuted: '#5A6478',
-  /** Citations, dates, metadata, eyebrows. Reference, not emphasis. */
-  inkFaint: '#8A8578',
+  /**
+   * Citations, dates, metadata, eyebrows. Reference, not emphasis.
+   *
+   * ───────────────────────────────────────────────────────────────────────────
+   * `#8A8578` -> `#747064`, 2 September 2026. IT FAILED WCAG AA AND IT IS TEXT.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `scripts/check-sunlight.mjs` had been exiting 1 on exactly two pairs, and
+   * only these two, since before RCC R22: `inkFaint` on paper at 3.53:1 and on
+   * card at 3.68:1, against the 4.5:1 floor the script sources from WCAG AA for
+   * body text at NORMAL brightness. Not the washed-out figures — those are
+   * printed for a human and deliberately not gated.
+   *
+   * IT IS NOT DECORATION AND IT IS NOT A DISABLED STATE, which is what would
+   * have exempted it. `components/Text.tsx` gives this colour to the `record`
+   * and `eyebrow` variants, and those are the citation line, the neutral
+   * citation, the hearing date, the `asOf` stamp and the CNR — the smallest
+   * type in the app carrying the most precise facts in it, read in a corridor,
+   * on a cheap panel, at noon. The check's own row name says so: "Citations and
+   * dates".
+   *
+   * DARKENED ALONG ITS OWN HUE, NOT REPLACED. The channel ratios are unchanged
+   * (138:133:120 -> 116:112:100), so it is the same warm grey a step down: 4.74:1
+   * on paper, 4.95:1 on card. The three-step hierarchy that makes the palette
+   * legible survives with room to spare — `ink` 16.4:1, `inkMuted` 5.70:1,
+   * `inkFaint` 4.74:1 — and nothing else in the palette moved.
+   *
+   * `design/DESIGN_SYSTEM.md` line 43 and line 258, and the `PALETTE` set in
+   * `scripts/check-design-rules.mjs`, still carry the old literal. Both are
+   * outside this lane's paths; the exact edit is in the NEW3 handoff for this
+   * round. Neither is load-bearing on the app: `check-design-rules` scans
+   * RENDERS for stray hexes, and no render gained one here.
+   */
+  inkFaint: '#747064',
 
   /** Card edges, section divisions. */
   rule: '#DAD6CB',

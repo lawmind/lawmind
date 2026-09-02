@@ -38,9 +38,43 @@ import { color, radius, space } from '../../theme/tokens';
  * deleting those would remove evidence other people rely on. Uploaded
  * documents in R2 are a separate credential the API does not hold — disclosed
  * as a residual risk, never claimed as handled.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * IT SERVES AN ADVOCATE WITH NO PROFILE — 2 September 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `identity_only` is a real account: a verified email, a name on `auth_user`, an
+ * IP address and user-agent per session, magic-link artifacts keyed by the email
+ * with nothing to cascade from, and a hashed token family. All of it is personal
+ * data under DPDP whether or not anyone finished onboarding, and until LCC R26
+ * (`ab4b4989`) there was no way to ask for it back.
+ *
+ * There is NO SECOND SCREEN for them and no different flow — NEW3 bus 1728 §6.
+ * This one screen serves both, and the only thing that changes is where the
+ * confirmation email is read from: `profile.email` for an advocate who has one,
+ * the session's `identityEmail` for one who does not. The confirmation step
+ * itself STAYS. It is data we already hold, so it costs the advocate nothing,
+ * and it is the only thing standing between a mis-tap and an erasure request.
+ *
+ * NOTHING HERE CREATES A PROFILE. Not as a prerequisite, not silently, not to
+ * make the copy above read better. `eraseUser` reaches the identity rows without
+ * one, and manufacturing personal data as the price of erasing personal data is
+ * the defect this closes rather than a step in it.
  */
-export function DeleteAccountScreen({ onBack }: { onBack: () => void }) {
+export function DeleteAccountScreen({
+  onBack,
+  backLabel = 'Settings',
+}: {
+  onBack: () => void;
+  /**
+   * Where back actually goes. An `identity_only` advocate arrives from
+   * onboarding, not from Settings, and a link that names a screen they have
+   * never seen is a small lie on a screen that cannot afford one.
+   */
+  backLabel?: string;
+}) {
   const profile = useSession((s) => s.profile);
+  const identityEmail = useSession((s) => s.identityEmail);
   const [requests, setRequests] = useState<DataRequest[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [confirmText, setConfirmText] = useState('');
@@ -64,7 +98,16 @@ export function DeleteAccountScreen({ onBack }: { onBack: () => void }) {
   );
   const lastErasure = requests?.filter((r) => r.kind === 'erasure')[0] ?? null;
 
-  const expectedEmail = (profile?.email ?? '').trim().toLowerCase();
+  /**
+   * THE PROFILE FIRST, THE IDENTITY SECOND, AND NEVER A PLACEHOLDER.
+   *
+   * For a signed-in advocate the two say the same thing. For `identity_only`
+   * the profile is `null` and the identity is the only email this account has.
+   * If BOTH are absent — a cold launch with no cached email and no signal — the
+   * screen says so and refuses rather than accepting any typed string: matching
+   * against nothing would turn the confirmation into a formality.
+   */
+  const expectedEmail = (profile?.email ?? identityEmail ?? '').trim().toLowerCase();
   const confirmed = expectedEmail.length > 0 && confirmText.trim().toLowerCase() === expectedEmail;
 
   /**
@@ -105,7 +148,7 @@ export function DeleteAccountScreen({ onBack }: { onBack: () => void }) {
       <ScrollView contentContainerStyle={styles.body}>
         <Pressable onPress={onBack} style={styles.back}>
           <Text variant="ui" style={styles.link}>
-            ‹ Settings
+            {`‹ ${backLabel}`}
           </Text>
         </Pressable>
 
@@ -170,9 +213,20 @@ export function DeleteAccountScreen({ onBack }: { onBack: () => void }) {
               autoCorrect={false}
               keyboardType="email-address"
               onChangeText={setConfirmText}
-              placeholder={profile?.email ?? 'you@example.com'}
+              placeholder={profile?.email ?? identityEmail ?? 'you@example.com'}
               value={confirmText}
             />
+            {/*
+              We cannot ask somebody to confirm an address we do not have. This
+              is the offline cold-start case, and saying so beats a button that
+              is disabled for a reason nothing on screen explains.
+            */}
+            {expectedEmail.length === 0 ? (
+              <Text variant="ui" style={styles.muted}>
+                We could not read the email on your account. Reconnect and open this screen again —
+                nothing has been sent.
+              </Text>
+            ) : null}
 
             <Button
               disabled={!confirmed || working}

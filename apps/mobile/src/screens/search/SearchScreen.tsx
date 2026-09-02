@@ -24,6 +24,7 @@ import {
 import { api } from '../../api/client';
 import { DEFAULT_FILTERS } from '../../api/mock';
 import { attentionCount } from '../../citation/renderState';
+import { saveAuthorityOutcome } from '../../citation/saveAuthorityOutcome';
 import { useLanguage, useLanguageStore } from '../../state/language';
 import { color, radius, space } from '../../theme/tokens';
 import { MatterPicker } from '../judgment/MatterPicker';
@@ -1030,17 +1031,29 @@ export function SearchScreen({
               ...(target.citationCheckId ? { citationCheckId: target.citationCheckId } : {}),
             })
             .then((r) => {
-              if (r.ok) {
+              /*
+                R17 §1 write, narrowed in one place. The server's message travels
+                VERBATIM for a deliberate refusal — on `set_aside` it names the
+                replacement judgment, which is the actionable half — and is
+                replaced for the two corpus states, where the wire's sentence
+                ("no judgment with that id") asserts a fact about the law that
+                the absence of a row in one corpus release does not establish.
+              */
+              const outcome = saveAuthorityOutcome(r);
+              if (outcome.kind === 'saved') {
                 setSaved(target.judgmentId);
                 haptics.commit();
-              } else {
-                /*
-                  The server's message VERBATIM. On `set_aside` it names the
-                  replacement judgment, which is the actionable half of the
-                  refusal — rewording it would drop exactly that.
-                */
-                setSaveError(r.error.message);
+                return;
               }
+              if (outcome.kind === 'already_saved_unavailable') {
+                // Saved — already, and by them. Shown as information, not as a
+                // failure, and not as a fresh confirmation of a save that did
+                // not just happen.
+                haptics.commit();
+                setSaveError(outcome.message);
+                return;
+              }
+              setSaveError(outcome.message);
             });
         }}
         visible={saveFor !== null}

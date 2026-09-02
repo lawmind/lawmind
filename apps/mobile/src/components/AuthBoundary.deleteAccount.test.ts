@@ -1,68 +1,87 @@
 import { authDecision } from './AuthBoundary';
 
 /**
- * WHO CAN REACH ACCOUNT DELETION, AND THE ONE WHO CANNOT.
+ * WHO CAN REACH ACCOUNT DELETION — AND, SINCE 2 SEPTEMBER 2026, THAT IS EVERY
+ * ADVOCATE WHO HAS AN ACCOUNT.
  *
  * Apple's guideline 5.1.1(v) is about the ACCOUNT: an app that lets someone
  * create one must let them start deleting it from inside the app. Lawmind does
  * — `/delete-account` posts `{ kind: 'erasure' }` to `POST /me/data-requests`
- * and an operator completes it. That path works for a signed-in advocate and is
- * covered by `screens/settings/DeleteAccountScreen.test.tsx`.
+ * and an operator completes it. The signed-in path is covered by
+ * `screens/settings/DeleteAccountScreen.test.tsx`.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * `identity_only` IS AN ACCOUNT THAT CANNOT ASK TO BE DELETED — AND THE REASON
- * IS ON THE SERVER, NOT HERE
+ * THE PIN THAT USED TO BE HERE, AND WHY IT IS GONE
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * An advocate who followed a magic link and then abandoned onboarding is
- * `identity_only`: real auth identity, real tokens, no `users` row. The gate
- * sends every route except onboarding and the auth routes to `/onboarding`, so
- * `/delete-account` is unreachable for them.
+ * This file previously asserted the OPPOSITE for `identity_only` — an advocate
+ * who followed a magic link and abandoned onboarding: real auth identity, real
+ * tokens, no `users` row. It was pinned deliberately and it was right at the
+ * time. `POST /me/data-requests` resolved its caller with `profileIdFor`
+ * (`SELECT id FROM users WHERE auth_id = …`), got `undefined`, and refused —
+ * `AUTH_REQUIRED` in `auth/data-requests.ts`, rewritten by `resolveAuthFailure`
+ * in `envelope.ts` to `403 PROFILE_INCOMPLETE` on the way out, because the
+ * caller DID have an `authId`. So the wire status was 403, not the 401 the
+ * source line reads, and either way the screen would have been a confirm box
+ * that refused every time. A deletion path that reliably fails is worse than
+ * one that is honestly not there yet.
  *
- * OPENING THE ROUTE WOULD NOT FIX IT, AND THAT IS THE POINT OF THIS TEST.
- * `app.ts:373` resolves the caller with `profileIdFor(sql, authId)`, which is
- * `SELECT id FROM users WHERE auth_id = …` (`auth/middleware.ts:54-61`) and
- * returns `undefined` when no `users` row exists. `createDataRequest` answers a
- * missing id with `401 AUTH_REQUIRED` before it reads anything
- * (`auth/data-requests.ts`). So an `identity_only` advocate let through to this
- * screen would get a confirm box that 401s every time — a deletion path that
- * reliably fails is worse than a route that honestly is not there yet.
+ * The old note said whoever opened the route must come here, read this, and
+ * delete the assertion deliberately, AFTER the endpoint could serve a caller
+ * with no `users` row. That is what happened. LCC R26 landed `ab4b4989` and the
+ * endpoint was re-read at HEAD rather than taken from the handoff:
+ * `createDataRequest` now refuses only a caller with no `authId` at all, inserts
+ * `user_id` as NULL, and `GET /me/data-requests` resolves the same principal so
+ * the advocate can see the request they just made.
  *
- * The fix is a server one and it is filed, not invented here: RCC does not
- * write `services/**`, and faking deletion for a population the endpoint
- * refuses would be the exact failure `CLAUDE.md` §7 names.
- *
- * WHAT THIS TEST IS FOR. It fails the moment someone adds `/delete-account` to
- * `IDENTITY_ONLY_ROUTES` — which is the right change to make, but only AFTER
- * the endpoint can serve a caller with no `users` row. Whoever makes it must
- * come here, read this, and delete the assertion deliberately. That is the
- * whole mechanism.
+ * WHAT REPLACES THE PIN. The refusal that must survive is the one for a caller
+ * with NO identity — signed out. That is asserted below, and it is the only
+ * remaining wall on this route.
  */
 
 const DELETE_ROUTE = '/delete-account';
 
-describe('account deletion is reachable for the advocate the endpoint can serve', () => {
+describe('account deletion is reachable for every advocate who has an account', () => {
   it('mounts for a signed-in advocate', () => {
     const d = authDecision('signed_in', DELETE_ROUTE);
     expect(d.render).toBe('children');
     expect(d.redirectTo).toBeNull();
   });
 
+  /**
+   * THE CHANGE. `identity_only` is an account — `auth_user` holds the email and
+   * name, `auth_session` an IP address and user-agent per session,
+   * `auth_verification` magic-link artifacts keyed by the email with no foreign
+   * key to cascade from, `refresh_tokens` a hashed family. All personal data
+   * under DPDP whether or not onboarding finished.
+   */
+  it('mounts for identity_only, with no detour through onboarding', () => {
+    const d = authDecision('identity_only', DELETE_ROUTE);
+    expect(d.render).toBe('children');
+    expect(d.redirectTo).toBeNull();
+    // Not merely "does not redirect to /onboarding" — nothing is held, because
+    // there is nothing to come back from.
+    expect(d.hold).toBe(false);
+  });
+
+  /**
+   * ONBOARDING IS STILL THE DESTINATION FOR EVERYTHING ELSE. Opening one route
+   * must not open the app: an `identity_only` advocate still cannot reach the
+   * matter file, search, or the drafts tab.
+   */
+  it.each(['/today', '/matter/m1', '/settings', '/search'])(
+    'still sends identity_only from %s to onboarding',
+    (route) => {
+      const d = authDecision('identity_only', route);
+      expect(d.render).toBe('nothing');
+      expect(d.redirectTo).toBe('/onboarding');
+    },
+  );
+
   it('is behind the sign-in wall when signed out — an account is needed to delete one', () => {
     const d = authDecision('signed_out', DELETE_ROUTE);
     expect(d.render).toBe('nothing');
     expect(d.redirectTo).toBe('/sign-in');
-  });
-
-  /**
-   * PINNED DELIBERATELY. See the module note: this is a known gap whose repair
-   * is on the server, and opening the route before that repair lands would ship
-   * a confirm box that 401s.
-   */
-  it('is NOT open to identity_only, because POST /me/data-requests would 401', () => {
-    const d = authDecision('identity_only', DELETE_ROUTE);
-    expect(d.render).toBe('nothing');
-    expect(d.redirectTo).toBe('/onboarding');
   });
 
   /**

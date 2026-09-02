@@ -34,7 +34,31 @@ import { color, radius, space } from '../../theme/tokens';
  * screen must not become the first one that does.
  * ─────────────────────────────────────────────────────────────────────────────
  */
-export function OnboardingScreen({ onDone }: { onDone: () => void }) {
+export function OnboardingScreen({
+  onDone,
+  onDeleteAccount,
+}: {
+  onDone: () => void;
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE ACCOUNT THAT ALREADY EXISTS CAN ASK TO BE DELETED FROM HERE.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * An advocate on this screen is `identity_only`: verified email, real tokens,
+   * no `users` row — and `AuthBoundary` renders them nothing else. Apple
+   * 5.1.1(v) asks that an account which can be created can be deleted from
+   * inside the app, and DPDP asks the same thing for a better reason. Both are
+   * satisfied by a route the advocate can actually reach, so the link lives on
+   * the one screen they can see.
+   *
+   * IT IS A LINK TO THE EXISTING SCREEN, NOT A SECOND DELETION FLOW — NEW3 bus
+   * 1728 §6. Nothing about this screen's own job changes: no field is added, no
+   * step is added, and finishing onboarding is still the primary action.
+   *
+   * Optional so the identity step still renders in a test that does not care.
+   */
+  onDeleteAccount?: (() => void) | undefined;
+}) {
   const completeProfile = useSession((s) => s.completeProfile);
   const profile = useSession((s) => s.profile);
 
@@ -126,6 +150,24 @@ export function OnboardingScreen({ onDone }: { onDone: () => void }) {
             label={saving ? 'Saving…' : 'Continue'}
             onPress={() => void submitIdentity()}
           />
+
+          {/*
+            Quiet, and present. It is not an alternative to onboarding and must
+            not compete with the primary action — but an advocate who decided
+            against Lawmind halfway through must not have to finish signing up
+            in order to leave.
+          */}
+          {onDeleteAccount ? (
+            <Pressable
+              accessibilityLabel="Delete the account you already have"
+              onPress={onDeleteAccount}
+              style={styles.deleteAccount}
+            >
+              <Text variant="ui" style={styles.deleteAccountLabel}>
+                Delete my account instead
+              </Text>
+            </Pressable>
+          ) : null}
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
@@ -272,6 +314,10 @@ function ConsentStep({ onAccepted }: { onAccepted: () => void }) {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   body: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
+
+  /** 44pt, the tap-target floor this app holds everywhere. */
+  deleteAccount: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
+  deleteAccountLabel: { color: color.oxblood },
 
   termsEyebrow: { color: color.oxblood },
   oxbloodRule: { height: 2, backgroundColor: color.oxblood },

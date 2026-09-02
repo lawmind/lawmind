@@ -23,7 +23,17 @@ export default function Route() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false, gestureEnabled: false }} />
-      <OnboardingScreen onDone={() => router.replace((consume() ?? '/today') as never)} />
+      {/*
+        THE WAY OUT. Apple 5.1.1(v) asks that an account which can be created can
+        be deleted FROM INSIDE THE APP, and for an `identity_only` advocate this
+        is the only screen the gate renders — so if the link is not here, the
+        deletion path exists and is unreachable, which is the same as not
+        existing. `push`, not `replace`: onboarding is still where they were.
+      */}
+      <OnboardingScreen
+        onDeleteAccount={() => router.push('/delete-account' as never)}
+        onDone={() => router.replace((consume() ?? '/today') as never)}
+      />
     </>
   );
 }

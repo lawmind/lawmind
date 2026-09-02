@@ -1669,6 +1669,31 @@ export type MatterAuthoritiesResponse = {
   asOf: string;
 };
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `POST /matters/:id/authorities` — R17 §1 write.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * TWO SUCCESS SHAPES, AND THE SECOND ONE IS NOT AN ERROR. The write validates
+ * the target against the request-pinned active corpus generation before it
+ * touches the user database:
+ *
+ *   target present                        `{ authority }`, 201 new / 200 already
+ *   target absent, this row already saved `{ unavailableAuthority }`, 200
+ *   target absent, nothing saved yet      `409 CORPUS_TARGET_UNAVAILABLE`
+ *
+ * The middle case exists so an advocate's ALREADY-SATISFIED save is not turned
+ * into a fresh refusal by a corpus generation that moved underneath it. Nothing
+ * mutates; the row is the one they already had.
+ *
+ * A DISCRIMINATED UNION RATHER THAN AN OPTIONAL FIELD, so a call site cannot
+ * read `.authority` off the shell and get `undefined` where a case title was
+ * expected. `citation/saveAuthorityOutcome.ts` is the one place it is narrowed.
+ */
+export type AddAuthorityResponse =
+  | { authority: MatterAuthority; unavailableAuthority?: undefined }
+  | { unavailableAuthority: MatterAuthorityUnavailable; authority?: undefined };
+
 export type HiddenResult = {
   /** The whole row, not just its name — "show it anyway" must render a real card. */
   result: SearchResult;

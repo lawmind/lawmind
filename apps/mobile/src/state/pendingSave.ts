@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 import { newAttemptKey, runAttempt } from '../api/attempt';
 import { api } from '../api/client';
+import { saveAuthorityOutcome } from '../citation/saveAuthorityOutcome';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -143,7 +144,25 @@ export type PendingSave = PendingSaveIntent & { capturedAt: number; attemptKey: 
 export type PendingSaveResult =
   | { kind: 'saved'; caseTitle: string }
   /** The matter exists; the save does not. Shown as exactly that, with a retry. */
-  | { kind: 'failed'; caseTitle: string; message: string };
+  | { kind: 'failed'; caseTitle: string; message: string }
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE MATTER EXISTS, THE SAVE DOES NOT, AND RETRYING CANNOT HELP — R17 §1.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * A third outcome rather than a flag on `failed`, because the only action
+   * `failed` offers is the one action this state must NOT offer. The corpus
+   * generation this request pinned does not carry the target; pressing "try
+   * again" mints a second intentional mutation against a reason that has not
+   * changed, and it will keep not changing until a different generation is
+   * active. A retry button that is guaranteed to fail is a worse answer than no
+   * retry button.
+   *
+   * It is not a claim about the judgment. `saveAuthorityOutcome.ts` holds the
+   * one sentence this state is allowed to say, and the reason the sentence is
+   * ours rather than the server's.
+   */
+  | { kind: 'corpus_unavailable'; caseTitle: string; message: string };
 
 type PendingSaveState = {
   held: PendingSave | null;
@@ -255,34 +274,66 @@ export const usePendingSave = create<PendingSaveState>((set, get) => ({
     set({ running: true });
 
     try {
-      const res =
-        held.kind === 'authority'
-          ? await api.addAuthorityToMatter({
+      /*
+        THE AUTHORITY BRANCH ANSWERS IN THREE STATES, NOT TWO — R17 §1 write, so
+        it is narrowed here rather than folded into the shared `res.ok` below.
+
+        `already_saved_unavailable` is the one that would be got wrong by
+        accident: the server answers `200 { unavailableAuthority }` when this
+        exact row is ALREADY saved and its target is not in the pinned corpus
+        generation. Nothing mutated and nothing is owed — the advocate's save
+        happened. Treating it as a failure would hold an intent that is already
+        satisfied and offer a retry for work that is done, and treating it as an
+        ordinary save would let the caller claim a hydrated authority the server
+        just declined to describe.
+      */
+      if (held.kind === 'authority') {
+        const outcome = saveAuthorityOutcome(
+          await api.addAuthorityToMatter({
+            matterId,
+            judgmentId: held.judgmentId,
+            ...(held.citationCheckId ? { citationCheckId: held.citationCheckId } : {}),
+          }),
+        );
+
+        if (outcome.kind === 'corpus_unavailable') {
+          /*
+            HELD, like any other failure — the advocate may still want it, and a
+            later corpus generation makes it savable with no action from them.
+            What changes is only that the screen must not offer a retry.
+          */
+          return { kind: 'corpus_unavailable', caseTitle: held.caseTitle, message: outcome.message };
+        }
+        if (outcome.kind === 'refused') {
+          return { kind: 'failed', caseTitle: held.caseTitle, message: outcome.message };
+        }
+
+        // `saved` and `already_saved_unavailable` are both the row existing.
+        set({ held: null });
+        void persist(null);
+        return { kind: 'saved', caseTitle: held.caseTitle };
+      }
+
+      /*
+        THE PERSISTED KEY, REUSED. This is the retry the annotation path has
+        never had cover for: the note above said "the residual case this CANNOT
+        cover is a request the server completed whose response never arrived —
+        closing that needs a server-side key, which is LCC's and is not invented
+        here." LCC built it (R16, e325ed9f) and this is that case closed. The
+        latch above still stops the double tap; the key stops the lost response.
+      */
+      const res = await runAttempt(held.attemptKey, (key) =>
+          api.createAnnotation(
+            held.judgmentId,
+            {
+              paragraphNumber: held.paragraphNumber,
+              paragraphIndex: held.paragraphIndex,
+              quote: held.quote,
               matterId,
-              judgmentId: held.judgmentId,
-              ...(held.citationCheckId ? { citationCheckId: held.citationCheckId } : {}),
-            })
-          : /*
-              THE PERSISTED KEY, REUSED. This is the retry the annotation path
-              has never had cover for: the note above said "the residual case
-              this CANNOT cover is a request the server completed whose response
-              never arrived — closing that needs a server-side key, which is
-              LCC's and is not invented here." LCC built it (R16, e325ed9f) and
-              this is that case closed. The latch below still stops the double
-              tap; the key stops the lost response.
-            */
-            await runAttempt(held.attemptKey, (key) =>
-              api.createAnnotation(
-                held.judgmentId,
-                {
-                  paragraphNumber: held.paragraphNumber,
-                  paragraphIndex: held.paragraphIndex,
-                  quote: held.quote,
-                  matterId,
-                },
-                key,
-              ),
-            );
+            },
+            key,
+          ),
+        );
 
       if (!res.ok) {
         /*
@@ -291,8 +342,9 @@ export const usePendingSave = create<PendingSaveState>((set, get) => ({
           would turn a visible partial into a silent loss — the exact defect
           this store was written to end.
 
-          The server's message travels verbatim: on `set_aside` it names the
-          judgment that replaced this one, which is the actionable half.
+          The server's message travels verbatim. This is the ANNOTATION path and
+          it has no corpus-availability state to classify: the target is the
+          advocate's own quote from a judgment they are already reading.
         */
         return { kind: 'failed', caseTitle: held.caseTitle, message: res.error.message };
       }

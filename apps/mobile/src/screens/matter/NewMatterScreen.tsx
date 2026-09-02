@@ -302,13 +302,31 @@ export function NewMatterScreen({
           <View style={styles.partial}>
             <Text variant="uiStrong">The matter was created. {partial.result.caseTitle} was not saved to it.</Text>
             <Text variant="ui" style={styles.partialReason}>
-              {partial.result.kind === 'failed' ? partial.result.message : ''}
+              {partial.result.kind === 'saved' ? '' : partial.result.message}
             </Text>
-            <Button
-              disabled={saving}
-              label={saving ? 'Saving…' : 'Try saving it again'}
-              onPress={() => void retryHeldSave()}
-            />
+            {/*
+              NO RETRY FOR `corpus_unavailable` — R17 §1 write.
+
+              Every other failure here is worth pressing again: a dropped
+              connection, a 500, a refusal the advocate can act on. This one is
+              not. The corpus generation this request pinned does not carry the
+              target, and that does not change because somebody taps a button —
+              it changes when a different generation is activated, which is not
+              an action available on this screen or to this advocate. Offering
+              the button anyway would be offering a guaranteed failure, twice,
+              in the minutes before a hearing.
+
+              The intent stays HELD either way, so a later generation makes it
+              savable with nothing to redo. What is withdrawn is only the
+              promise that trying now would help.
+            */}
+            {partial.result.kind === 'corpus_unavailable' ? null : (
+              <Button
+                disabled={saving}
+                label={saving ? 'Saving…' : 'Try saving it again'}
+                onPress={() => void retryHeldSave()}
+              />
+            )}
             <Button
               label="Open the matter without it"
               variant="secondary"

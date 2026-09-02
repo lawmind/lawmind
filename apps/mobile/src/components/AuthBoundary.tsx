@@ -41,8 +41,33 @@ const SIGNED_OUT_ROUTES = ['/sign-in', '/auth/verify'] as const;
  * Renderable with tokens but no profile. `/onboarding` is the destination for
  * that state, and the two above stay open so a spent link and a re-sign-in both
  * have somewhere to land.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `/delete-account` JOINED THIS LIST ON 2 SEPTEMBER 2026, AND ONLY BECAUSE THE
+ * SERVER MOVED FIRST.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `AuthBoundary.deleteAccount.test.ts` pinned the opposite until today, on
+ * reasoning that was correct at the time: `POST /me/data-requests` resolved its
+ * caller with `profileIdFor` and answered an advocate with no `users` row
+ * `AUTH_REQUIRED` — rewritten to `403 PROFILE_INCOMPLETE` by `resolveAuthFailure`
+ * before it left the server — so letting them in would have shipped a confirm box
+ * that refused every time. A deletion path that reliably fails is worse than one
+ * that is honestly not there yet.
+ *
+ * LCC R26 (`ab4b4989`) made the route principal-aware, read here at HEAD in
+ * `services/api/src/auth/data-requests.ts` rather than taken from the handoff:
+ * `createDataRequest` now refuses only on a missing `authId`, inserts
+ * `user_id` as NULL, and `GET /me/data-requests` resolves the same principal so
+ * the advocate can see the request they just made.
+ *
+ * NO PROFILE IS CREATED AS THE PRICE OF ERASURE — not by this gate, not by the
+ * screen, not silently by the server. Demanding a name and a phone number before
+ * an advocate may ask to be forgotten is the DPDP defect, not the fix for it, and
+ * it is why the answer here is one entry in this array rather than a detour
+ * through `/onboarding`.
  */
-const IDENTITY_ONLY_ROUTES = ['/onboarding', ...SIGNED_OUT_ROUTES] as const;
+const IDENTITY_ONLY_ROUTES = ['/onboarding', '/delete-account', ...SIGNED_OUT_ROUTES] as const;
 
 function isOneOf(pathname: string, routes: readonly string[]): boolean {
   return routes.some((r) => pathname === r || pathname.startsWith(`${r}/`));

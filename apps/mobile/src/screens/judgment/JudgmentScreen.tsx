@@ -15,6 +15,7 @@ import { api } from '../../api/client';
 import type { JudgmentDetail } from '../../api/contract';
 import { citationCopyText, citationDisplay } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
+import { saveAuthorityOutcome } from '../../citation/saveAuthorityOutcome';
 import { newClientKey, useOutbox } from '../../state/outbox';
 import { judgmentCacheKey, readCache, writeCache } from '../../state/offlineCache';
 import { useRecentItems } from '../../state/recentItems';
@@ -795,14 +796,25 @@ export function JudgmentScreen({
           void api
             .addAuthorityToMatter({ matterId, judgmentId: judgment.judgmentId, citationCheckId })
             .then((r) => {
-              if (r.ok) {
+              /*
+                R17 §1 write. `saveAuthorityOutcome` decides what may be said:
+                the server's own words for a deliberate refusal (on `set_aside`
+                it names the replacement judgment, which is the actionable part
+                and is not ours to reword), and OUR sentence for the two corpus
+                states, because the wire's absent-target message asserts that no
+                such judgment exists and that is a claim about the law.
+              */
+              const outcome = saveAuthorityOutcome(r);
+              if (outcome.kind === 'saved' || outcome.kind === 'already_saved_unavailable') {
                 setSaved(true);
                 haptics.commit();
-              } else {
-                // The server's message, verbatim — on `set_aside` it names the
-                // replacement judgment, which is the actionable part.
-                setSaveError(r.error.message);
+                // The already-saved shell still tells the advocate why nothing
+                // about the judgment is shown. It is not an error and it is not
+                // silent either.
+                if (outcome.kind === 'already_saved_unavailable') setSaveError(outcome.message);
+                return;
               }
+              setSaveError(outcome.message);
             });
         }}
         visible={pickerOpen}

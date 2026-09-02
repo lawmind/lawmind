@@ -9,6 +9,7 @@ import { Text } from '../../components/Text';
 import { api } from '../../api/client';
 import type { Briefing } from '../../api/contract';
 import { citationRender } from '../../citation/renderState';
+import { saveAuthorityOutcome } from '../../citation/saveAuthorityOutcome';
 import { describeCacheAge, readCache, writeCache } from '../../state/offlineCache';
 import { haptics } from '../../theme/haptics';
 import { describeHearingDate, formatLong, parseCivilDate, todayCivil } from '../../theme/hearingDate';
@@ -133,15 +134,27 @@ export function BriefingScreen({
     if (saves[judgmentId]?.saving || saves[judgmentId]?.saved) return;
     setSaves((s) => ({ ...s, [judgmentId]: { saving: true, saved: false, error: null } }));
 
-    const r = await api.addAuthorityToMatter({ matterId, judgmentId });
+    /*
+      R17 §1 write. A deliberate refusal keeps the server's words; the two corpus
+      states get this client's single sentence, because the wire still answers an
+      absent target with "no judgment with that id" and a briefing is read minutes
+      before a hearing — the worst possible moment to be told an authority does
+      not exist when what moved was our index.
+    */
+    const outcome = saveAuthorityOutcome(await api.addAuthorityToMatter({ matterId, judgmentId }));
+    const saved = outcome.kind === 'saved' || outcome.kind === 'already_saved_unavailable';
 
     setSaves((s) => ({
       ...s,
-      [judgmentId]: r.ok
-        ? { saving: false, saved: true, error: null }
-        : { saving: false, saved: false, error: r.error.message },
+      [judgmentId]: {
+        saving: false,
+        saved,
+        // The already-saved shell is a saved row WITH something to say. Both
+        // halves are kept rather than collapsing it into a silent success.
+        error: outcome.kind === 'saved' ? null : outcome.message,
+      },
     }));
-    if (r.ok) haptics.commit();
+    if (saved) haptics.commit();
   };
 
   const today = useMemo(() => todayCivil(), []);

@@ -33,6 +33,27 @@ import type { MeResponse, Profile } from '../api/contract';
 
 const TOKENS_KEY = 'lawmind.session.tokens.v1';
 const PROFILE_KEY = 'lawmind.session.profile.v1';
+/**
+ * THE EMAIL ON THE AUTH IDENTITY, WHICH EXISTS BEFORE A PROFILE DOES.
+ *
+ * `GET /me` has always sent `user.email` at the top level, beside
+ * `profileComplete`, and this store threw it away on the `identity_only` branch
+ * because nothing needed it. Something does now: `/delete-account` asks the
+ * advocate to type their own email to confirm, and for an advocate with no
+ * `users` row the profile that used to supply it is `null`. Without this the
+ * screen opens, the confirm box can never match, and the button is disabled
+ * forever — a deletion path that is reachable and impossible, which is the same
+ * failure as one that 403s, wearing better clothes.
+ *
+ * IT IS DATA WE ALREADY HOLD (`auth_user.email`, `SCHEMA_TRUTH.md`), never
+ * something the advocate is asked for again. That is the whole point: erasure
+ * must not cost more personal data than the account already contains.
+ *
+ * Stored beside the profile for the reason the profile is stored — the app opens
+ * in court buildings and a launch that blocks on `GET /me` shows a spinner where
+ * a spinner is useless.
+ */
+const IDENTITY_EMAIL_KEY = 'lawmind.session.identityEmail.v1';
 
 type Tokens = { accessToken: string; refreshToken: string };
 
@@ -50,6 +71,12 @@ type SessionState = {
   status: SessionStatus;
   tokens: Tokens | null;
   profile: Profile | null;
+  /**
+   * The verified email on the auth identity. Present for `identity_only` as
+   * well as `signed_in`, which is the only reason it is a separate field: for a
+   * signed-in advocate `profile.email` says the same thing.
+   */
+  identityEmail: string | null;
   /**
    * Set when the session ended because the SERVER rejected it rather than
    * because the advocate asked. The sign-in screen says so — an advocate who was
@@ -96,14 +123,16 @@ export const useSession = create<SessionState>((set, get) => ({
   status: 'unknown',
   tokens: null,
   profile: null,
+  identityEmail: null,
   endedByServer: false,
 
   hydrate: async () => {
     const tokens = await readJson<Tokens>(TOKENS_KEY);
     const profile = await readJson<Profile>(PROFILE_KEY);
+    const identityEmail = await readJson<string>(IDENTITY_EMAIL_KEY);
 
     if (!tokens) {
-      set({ status: 'signed_out', tokens: null, profile: null });
+      set({ status: 'signed_out', tokens: null, profile: null, identityEmail: null });
       return;
     }
 
@@ -119,6 +148,7 @@ export const useSession = create<SessionState>((set, get) => ({
     set({
       tokens,
       profile,
+      identityEmail: profile?.email ?? identityEmail,
       status: profile ? 'signed_in' : 'identity_only',
     });
 
@@ -182,14 +212,18 @@ export const useSession = create<SessionState>((set, get) => ({
      * looked like.
      */
     const { user } = res.data;
+    // Recorded in BOTH branches. The identity's email is the one fact about this
+    // account that survives having no profile, and `/delete-account` is the
+    // surface that needs it precisely when the profile is null.
+    await writeJson(IDENTITY_EMAIL_KEY, user.email);
     if (!user.profileComplete) {
       await writeJson(PROFILE_KEY, null);
-      set({ profile: null, status: 'identity_only' });
+      set({ profile: null, identityEmail: user.email, status: 'identity_only' });
       return;
     }
 
     await writeJson(PROFILE_KEY, user.profile);
-    set({ profile: user.profile, status: 'signed_in' });
+    set({ profile: user.profile, identityEmail: user.email ?? user.profile.email, status: 'signed_in' });
   },
 
   completeProfile: async (input) => {
@@ -204,7 +238,7 @@ export const useSession = create<SessionState>((set, get) => ({
 
     // `PATCH /me` also wraps under `user` — `res.data.user`, not `res.data.profile`.
     await writeJson(PROFILE_KEY, res.data.user);
-    set({ profile: res.data.user, status: 'signed_in' });
+    set({ profile: res.data.user, identityEmail: res.data.user.email, status: 'signed_in' });
     return { ok: true };
   },
 
@@ -229,7 +263,14 @@ export const useSession = create<SessionState>((set, get) => ({
     void api.signOut();
     await writeJson(TOKENS_KEY, null);
     await writeJson(PROFILE_KEY, null);
-    set({ status: 'signed_out', tokens: null, profile: null, endedByServer: false });
+    await writeJson(IDENTITY_EMAIL_KEY, null);
+    set({
+      status: 'signed_out',
+      tokens: null,
+      profile: null,
+      identityEmail: null,
+      endedByServer: false,
+    });
   },
 }));
 
@@ -269,10 +310,12 @@ registerAuthBridge({
             status: 'signed_out',
             tokens: null,
             profile: null,
+            identityEmail: null,
             endedByServer: true,
           });
           void writeJson(TOKENS_KEY, null);
           void writeJson(PROFILE_KEY, null);
+          void writeJson(IDENTITY_EMAIL_KEY, null);
         }
         return false;
       }
@@ -289,6 +332,12 @@ registerAuthBridge({
   },
 
   onSessionLost: () => {
-    useSession.setState({ status: 'signed_out', tokens: null, profile: null, endedByServer: true });
+    useSession.setState({
+      status: 'signed_out',
+      tokens: null,
+      profile: null,
+      identityEmail: null,
+      endedByServer: true,
+    });
   },
 });

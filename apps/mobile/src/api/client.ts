@@ -31,6 +31,7 @@ import type {
   OverruledStatus,
   MatterAccess,
   MatterAuthoritiesResponse,
+  AddAuthorityResponse,
   MatterAuthority,
   MatterEvent,
   MeResponse,
@@ -676,7 +677,14 @@ export const api = {
     judgmentId: string;
     citationCheckId?: string | undefined;
   }) =>
-    send<{ authority: MatterAuthority }>(
+    /*
+      TWO SUCCESS SHAPES SINCE R17 §1: `{ authority }` when the pinned corpus
+      generation resolves the target, `{ unavailableAuthority }` when it does not
+      and this exact row is already saved. `citation/saveAuthorityOutcome.ts` is
+      the only place that narrows it — a call site reading `.authority` off the
+      shell would get `undefined` where a case title was expected.
+    */
+    send<AddAuthorityResponse>(
       `/matters/${encodeURIComponent(args.matterId)}/authorities`,
       {
         judgmentId: args.judgmentId,
