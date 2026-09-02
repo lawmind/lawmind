@@ -13,8 +13,8 @@
     "frozenBy": "NEW3, 29 August 2026",
     "note": "The R12 file is FROZEN and is not edited. Amendments live in docs/product/RCC_V1_API_CONTRACT_R13_AMENDMENT.md and are numbered here. The wire `contract` integer stays 1 because every amendment below is additive or semantic; nothing is removed or narrowed."
   },
-  "currentVersion": "R16",
-  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
+  "currentVersion": "R17",
+  "currentVersionArtifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
   "measurementBackend": {
     "gitSha": "f3b31c963dd19741b7a849d8a007d42aa1b9bfb1",
     "base": "http://127.0.0.1:3011",
@@ -606,14 +606,8 @@
             "search/route.ts:614",
             "briefings/route.ts:255"
           ],
-          "derivedUpstream": [
-            "search/saved.ts:292",
-            "arguments/counter.ts:212"
-          ],
-          "stored": [
-            "matters/authorities.ts:187",
-            "citations/check.ts:123"
-          ]
+          "derivedUpstream": ["search/saved.ts:292", "arguments/counter.ts:212"],
+          "stored": ["matters/authorities.ts:187", "citations/check.ts:123"]
         }
       },
       "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
@@ -829,13 +823,8 @@
       "cause": "matters/route.ts writes ${JSON.stringify(body.parties)}::jsonb; postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a string scalar. Isolated: JSON.stringify(obj)::jsonb gives jsonb_typeof=string, sql.json(obj) gives object.",
       "userTruthImpact": "MatterScreen.tsx:369 renders {matter.parties.description}, undefined against a string. No crash and no error state - the parties line silently loses the advocate’s own case identity on the matter workspace.",
       "severity": "P1",
-      "blocks": [
-        "FINAL_LOCAL_V1_ACCEPTANCE",
-        "REMOTE_ALPHA"
-      ],
-      "doesNotBlock": [
-        "RCC_R16_CLIENT_IMPLEMENTATION"
-      ],
+      "blocks": ["FINAL_LOCAL_V1_ACCEPTANCE", "REMOTE_ALPHA"],
+      "doesNotBlock": ["RCC_R16_CLIENT_IMPLEMENTATION"],
       "backendOwner": "LCC",
       "clientOwner": "RCC - notify only; no client change, and no defensive JSON.parse",
       "fix": [
@@ -851,20 +840,71 @@
       "decidedBy": "NEW3 R18",
       "decidedAt": "2026-09-02",
       "evidence": "docs/ai/new3-r18/matters-parties-observation.md, docs/ai/new3-r18/probe-matters-parties.mts"
+    },
+    {
+      "id": "CCR-LCC-R24-01",
+      "new3LedgerId": "CCR-2026-09-02-19",
+      "filedVia": "LCC bus 1721 measured the physical split gap, seven cross-role foreign keys, nine serving JOINs, a saved-authority target that can outlive its corpus row, and a structured lexical query returning a generic 503 with empty degraded reasons.",
+      "endpoints": [
+        "GET /matters/:id/authorities",
+        "POST /matters/:id/authorities",
+        "POST /search"
+      ],
+      "decision": "AMEND",
+      "classification": "GATE_C_FOUNDATION_ADDITIVE_CONTRACT",
+      "severity": "P0",
+      "blockingGate": "GATE_C_FOUNDATION",
+      "requiresAck": true,
+      "contractArtifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
+      "contractShape": {
+        "savedAuthority": "Keep the R16 MatterAuthority object unchanged. Add optional unavailableAuthorities[] to the list envelope; each shell carries authorityId, judgmentId, addedBy, addedAt, removedAt and availability=corpus_unavailable only.",
+        "missingNewTarget": "409 CORPUS_TARGET_UNAVAILABLE and no insert; absence from the active corpus generation is not a no-such-judgment conclusion.",
+        "restoration": "The same saved row returns to authorities[] automatically when a later active generation contains its immutable judgmentId; no user write or resave.",
+        "qlangUnbounded": "HTTP 200; results empty for the refused structured operation; degraded includes sparse_unbounded; retrievalOutcome is coverage_unknown; existing emptyBecause; no trusted total.",
+        "qlangTimeout": "HTTP 200; results empty for the aborted structured operation; degraded includes sparse_timeout; retrievalOutcome is coverage_unknown; no trusted total and no generic TIMEOUT 503."
+      },
+      "architecture": {
+        "crossDbReferenceModel": "SOFT_CORPUS_REFERENCE",
+        "corpusReleaseModel": "IMMUTABLE_BLUE_GREEN_CORPUS_GENERATION",
+        "corpusRollbackModel": "ACTIVE_GENERATION_SWITCH",
+        "userDbMutatedByCorpusRollback": false,
+        "distributedTransactionRequired": false,
+        "qlangSharedSparseFenceRequired": true,
+        "ginFuzzySearchLimitAllowed": false
+      },
+      "existingVocabulary": {
+        "sourceUnavailableReused": false,
+        "reason": "SOURCE_UNAVAILABLE describes an upstream source observation failure. corpus_unavailable describes absence of an immutable target from the selected corpus generation. Neither is a legal conclusion."
+      },
+      "implementation": {
+        "lcc": "PENDING",
+        "rcc": "PENDING",
+        "independentNew3Acceptance": "PENDING",
+        "released": false,
+        "activationGuard": "PHYSICAL_DB_SPLIT_BLOCKED_UNTIL_LCC_RCC_AND_NEW3_PASS"
+      },
+      "CONTRACT_REVISION": "R17",
+      "WIRE_PROTOCOL_VERSION": 1,
+      "WIRE_BREAKING_CHANGE": "NO",
+      "MIN_SUPPORTED_CONTRACT": 1,
+      "decidedBy": "NEW3 R20",
+      "decidedAt": "2026-09-02",
+      "earlyHandoff": ".agents/bus/1723--NEW3-to-LCC--gate-c-foundation-frozen-soft-corpus-references-.md",
+      "evidence": "docs/product/NEW3_R20_GATE_C_FOUNDATION_CONTRACT.md; docs/ai/lcc-r24/remote-db-split-readiness.md; docs/ai/lcc-r24/corpus-rollback-separation.md; docs/ai/lcc-r24/gate-s1-findings.md"
     }
   ],
   "counts": {
-    "received": 18,
-    "amended": 10,
+    "received": 19,
+    "amended": 11,
     "deferred": 4,
     "rejectedWithAlternative": 1,
     "engineeringDefectRoutedToLCC": 3,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R16, 1 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 adds CCR-LCC-R20-01 (AMEND): an optional Idempotency-Key request-metadata convention for current-v1 authenticated create writes lacking natural database identity. It is additive and backward compatible. R18, 2 September 2026, adds CCR-NEW3-R18-01: the POST/GET /matters `parties` field was served and stored as a JSON-encoded string scalar against an already-structured contract; it was routed to LCC as a P1 engineering defect. NEW3 R19 independently accepted the focused backend and RCC client implementation, observed the parties correction and platform capability resolution, and released R16."
+    "note": "R17, 2 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 added CCR-LCC-R20-01 (AMEND), and R18 added CCR-NEW3-R18-01 (engineering defect); NEW3 R19 released R16. R17 adds CCR-LCC-R24-01 (AMEND): the additive unavailable-authority shell and existing truthful sparse outcome vocabulary for qlang, backed by soft corpus references and immutable blue/green generations. R17 is frozen but not released or implemented."
   },
   "wireProtocolVersion": 1,
-  "contractRevisionVsWireVersion": "R16 is the SIXTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R16, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The optional Idempotency-Key header is additive request metadata; it neither removes nor narrows a current request shape. R16 was released by NEW3 R19 on 2 September 2026 after focused backend and RCC client acceptance.",
+  "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The new list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object is unchanged. R16 remains the latest released revision while R17 implementation, RCC consumption and independent acceptance are pending.",
   "revisionIdentities": {
     "R12": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R12.md",
@@ -906,6 +946,19 @@
         "R16_CLIENT_ACCEPTANCE": "PASS",
         "R16_RELEASED": "YES"
       }
+    },
+    "R17": {
+      "artifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
+      "sha256": "c6be4e92ee2ca6fc9e80b04db4c60da505929efd5afece4212348af5b9de2382",
+      "gitBlob": "d5c77776a0f532fbd233891f98608d09e49c9758",
+      "state": "FROZEN_PENDING_IMPLEMENTATION_NOT_RELEASED",
+      "note": "NEW3 R20 froze the smallest additive missing-target and qlang truth contract. LCC and RCC implementation plus independent NEW3 acceptance are required before release or physical split activation.",
+      "lifecycle": {
+        "R17_LCC_IMPLEMENTATION": "PENDING",
+        "R17_RCC_CONSUMPTION": "PENDING",
+        "R17_INDEPENDENT_ACCEPTANCE": "PENDING",
+        "R17_RELEASED": "NO"
+      }
     }
   },
   "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R16.json",
@@ -916,14 +969,16 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-09-02, NEW3 R19 at HEAD b0ac15d167ceccd3656718b04b8d41f16127022e. Supersedes the NEW3 R18 reconciliation. No severity was reclassified; the matters.parties implementation defect and the party-override activation guard were discharged by focused observation, while physical Android current-v1 acceptance remains PENDING_DEVICE.",
+    "recomputedAt": "2026-09-02, NEW3 R20 from HEAD 75a84804c09be058f9d7b20f3d60e4845ec7f729. Supersedes the NEW3 R19 reconciliation for Gate-C foundation status. R16 remains released; R17 is frozen and pending implementation. Physical Android current-v1 acceptance remains PENDING_DEVICE.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
-    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an open P0 requiring a contract change. CCR-RCC-S2-01 was P0-submitted and is adjudicated P1 and resolved; CCR-RCC-S2-02 was P0-submitted, adjudicated P1, implemented by LCC and released to RCC without a new contract revision; CCR-RCC-S2-03 is a P0 that is UPHELD but is not a contract change. CCR-NEW3-S2F-01 is a CONFIRMED contract gap adjudicated P1-LATENT and DEFERRED under a binding activation guard: at HEAD the emitting branch is unreachable (PLATFORM_CAPABILITY_OVERRIDES is {} and search.party_name is ENABLED release-wide, both observed), so no surface can state anything false and it is not a current P0. UPDATED 2 September 2026: CCR-NEW3-S2F-01 is no longer latent - the correction landed and was independently verified, so activating the override can no longer produce the false-coverage P0 it was guarding against.",
+    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an undecided P0 requiring a product decision. CCR-LCC-R24-01 is P0 and AMENDed into frozen R17; its remaining work is implementation and acceptance, not an open semantic choice. Earlier R16 and party-capability items remain resolved as recorded.",
     "ACCEPTANCE_P0_OPEN": 0,
     "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
-    "IMPLEMENTATION_P0_OPEN": 0,
-    "IMPLEMENTATION_P0_OPEN_items": [],
+    "IMPLEMENTATION_P0_OPEN": 1,
+    "IMPLEMENTATION_P0_OPEN_items": [
+      "CCR-LCC-R24-01 / R17 - LCC server implementation, RCC consumption and independent NEW3 acceptance are required before physical database split activation. No-spend local implementation is authorized."
+    ],
     "NON_GATE_P1_OPEN": 2,
     "NON_GATE_P1_OPEN_items": [
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged.",
@@ -995,6 +1050,9 @@
       "CCR-LCC-R20-01 - CLOSED_RELEASED. Focused backend acceptance and all seven focused RCC mobile suites passed; R16 is released with wire protocol 1 and minimum supported contract 1 unchanged.",
       "CCR-NEW3-R18-01 - IMPLEMENTATION DEFECT CLOSED. Migration 0101 and focused matter-route/migration tests prove matters.parties is stored and returned as a JSONB object. Final physical mutation observation remains PENDING_DEVICE, so current-v1 functional acceptance is not promoted to YES.",
       "CCR-NEW3-S2F-01 activation guard - DISCHARGED IN RUNTIME. iOS resolves search.party_name to DISABLED, Android/web resolve ENABLED, and focused route tests prove the suppressed arm reports capability_disabled truthfully."
+    ],
+    "openedInR20": [
+      "CCR-LCC-R24-01 - R17 FROZEN, IMPLEMENTATION P0 OPEN. Soft corpus references, an additive corpus_unavailable saved-authority shell, immutable generation switching, the shared qlang sparse fence and truthful unbounded/timeout outcomes are decided. Physical split activation remains blocked until implementation and acceptance pass."
     ]
   }
 }
