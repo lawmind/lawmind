@@ -18,6 +18,12 @@ module.exports = {
   ...expoPreset,
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
   /**
+   * `e2e/` boots the real API and needs a live Postgres. It is a separate
+   * project (`jest.e2e.config.js`) precisely so that `pnpm test` stays a
+   * statement about this code rather than about this machine.
+   */
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/e2e/'],
+  /**
    * The preset's `transformIgnorePatterns` is used AS IS — replacing it drops
    * `@react-native/js-polyfills` and the suite fails to parse before a single
    * assertion runs. Icons are handled by replacement instead; see

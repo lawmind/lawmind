@@ -56,6 +56,7 @@
     "typecheck": "tsc --noEmit",
     "check:hex": "node scripts/check-hex.mjs",
     "test": "jest",
+    "test:e2e": "jest --config jest.e2e.config.js",
     "check:sunlight": "node scripts/check-sunlight.mjs",
     "check:build-image": "jest src/config/easBuildImage.test.ts",
     "device:android": "eas build --profile preview --platform android",

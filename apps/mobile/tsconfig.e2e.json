@@ -1,0 +1,25 @@
+{
+  "//": [
+    "The e2e harness type-checks separately from the app.",
+    "",
+    "The app's own `tsc --noEmit` is a release gate and its `types` list is",
+    "deliberately `['jest']` — no Node globals, because nothing that ships may",
+    "reach for one. The harness is Node tooling and needs them, so it gets its",
+    "own config and `tsconfig.json` excludes `e2e/`. The shipping gate is then",
+    "exactly what it was before this directory existed.",
+    "",
+    "`e2e/server/` is excluded here as well, and only because of what it imports:",
+    "`boot.mts` reaches into `services/api` and `packages/auth`, which compile",
+    "under their own configs with Node lib settings. Pulling that graph through a",
+    "React Native lib set reports errors in `packages/storage` — a lane this one",
+    "may not edit, about code this round never touched. The boot script is",
+    "verified by running it, which is the only way its database work could be",
+    "verified anyway."
+  ],
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  },
+  "include": ["e2e/**/*.ts", "e2e/**/*.tsx"],
+  "exclude": ["e2e/server"]
+}
