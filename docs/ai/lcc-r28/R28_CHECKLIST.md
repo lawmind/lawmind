@@ -19,7 +19,7 @@
 | G17 | G | Search non-regression: one Gate-S1 suite, p95 <= 3000 ms, C3 smoke | DONE |
 | H18 | H | Required zeroes (cross-role FKs, SQL joins, FDW, dblink, distributed tx, fallback) | DONE |
 | I19 | I | High-signal suites, typecheck, owned lint | DONE |
-| I20 | I | Commit under GIT_COMMIT lease, send NEW3 + RCC handoffs | TODO |
+| I20 | I | Commit under GIT_COMMIT lease, send NEW3 + RCC handoffs | DONE |
 
 ## What the matrix measured
 
