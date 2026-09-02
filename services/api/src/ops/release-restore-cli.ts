@@ -32,6 +32,13 @@ import { pipeline } from 'node:stream/promises';
 import postgres from 'postgres';
 
 import { cascadeVictims, type ForeignKeyEdge } from './cascade-guard.ts';
+import {
+  activationDecision,
+  readStatistics,
+  runSearchSmoke,
+  smokeVerdict,
+  statisticsVerdict,
+} from '../release/activation.ts';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -865,11 +872,133 @@ async function main(): Promise<void> {
     findings: findings.length,
     verdict: mismatches === 0 ? 'RESTORE_VERIFIED' : 'RESTORE_FAILED',
   });
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * ACTIVATION IS A THIRD VERDICT, AND A VERIFIED RESTORE DOES NOT IMPLY IT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Everything above answers *did every row arrive intact*. Nothing above
+   * answers *can this generation serve a search*, and the two come apart in the
+   * ordinary case: the `ANALYZE` a few lines up is the only thing standing
+   * between a byte-perfect restore and a planner that costs every table as
+   * empty. So the ANALYZE is now PROVED rather than assumed — `pg_statistic` is
+   * read back, because the planner reads that and not `last_analyze` — and the
+   * real retrieval functions are run against the generation before it may be
+   * activated.
+   *
+   * `release/activation.ts` holds the rule and its reasoning. This file stays the
+   * one place a release is landed and verified; a second orchestrator is exactly
+   * what would let "restored" and "activated" drift apart.
+   *
+   * `--skip-activation-gate` does not make a generation activatable. It records
+   * `ACTIVATION = REFUSE (gate skipped)`, so skipping is visible in the artifact
+   * rather than indistinguishable from passing.
+   */
+  const gateSkipped = argv.includes('--skip-activation-gate');
+  const stats = gateSkipped ? [] : await readStatistics(sql);
+  const statistics = statisticsVerdict(stats);
+  const probes = gateSkipped ? [] : await runSearchSmoke(sql).catch((err: unknown) => {
+    /* A smoke that could not even start is a smoke that did not pass. It must
+     * never fall through to an empty probe list that reads as "nothing failed". */
+    trace('search_smoke_unavailable', { why: err instanceof Error ? err.message : String(err) });
+    return [
+      {
+        name: 'search smoke',
+        query: '',
+        ms: 0,
+        results: 0,
+        degraded: [] as string[],
+        outcome: 'threw',
+        error: err instanceof Error ? err.message : String(err),
+      },
+    ];
+  });
+  const smoke = smokeVerdict(probes);
+  const decision = activationDecision({
+    restoreVerified: mismatches === 0,
+    statistics,
+    smoke,
+  });
+
+  trace('statistics', {
+    tables: stats.map((s) => ({
+      t: s.table,
+      hasRows: s.hasRows,
+      bytes: s.sizeBytes,
+      plannerRows: s.plannerRowEstimate,
+      pgStatistic: s.statisticRows,
+      lastAnalyze: s.lastAnalyze,
+      lastAutoanalyze: s.lastAutoanalyze,
+    })),
+    ready: statistics.ready,
+  });
+  trace('search_smoke', {
+    probes: probes.map((p) => ({ name: p.name, ms: p.ms, n: p.results, outcome: p.outcome, error: p.error })),
+    ready: smoke.ready,
+    slowestMs: smoke.slowestMs,
+  });
+  trace('activation', { verdict: decision.verdict, reasons: decision.reasons, gateSkipped });
+
+  console.log('\noptimizer statistics (the planner reads pg_statistic, not last_analyze):\n');
+  for (const s of stats) {
+    console.log(
+      `  ${s.table.padEnd(28)} rows ${(s.hasRows === null ? 'ABSENT' : s.hasRows ? 'yes' : 'empty').padStart(6)}  bytes ${String(s.sizeBytes ?? '-').padStart(14)}  ` +
+        `pg_statistic ${String(s.statisticRows).padStart(4)}  ` +
+        `analyze ${s.lastAnalyze ?? '—'}  autoanalyze ${s.lastAutoanalyze ?? '—'}`,
+    );
+  }
+  if (probes.length > 0) {
+    console.log('\nsearch smoke (the real retrieval path, on this generation):\n');
+    for (const p of probes) {
+      console.log(
+        `  ${p.name.padEnd(28)} ${String(p.ms).padStart(6)}ms  ${String(p.results).padStart(3)} hit(s)  ` +
+          `${p.outcome}${p.error ? `  ERROR ${p.error}` : ''}`,
+      );
+    }
+  }
+
+  const activation = gateSkipped
+    ? { verdict: 'REFUSE' as const, activate: false, reasons: ['activation gate skipped by flag'] }
+    : decision;
+  console.log(
+    `\nACTIVATION ${activation.verdict}${
+      activation.activate ? '' : `\n${activation.reasons.map((r) => `  ! ${r}`).join('\n')}`
+    }`,
+  );
+
+  writeFileSync(
+    join(dir, 'ACTIVATION.json'),
+    `${JSON.stringify(
+      {
+        kind: 'lawmind-corpus-generation-activation',
+        releaseVersion: manifest.releaseVersion,
+        target: targetDb,
+        checkedAt: new Date().toISOString(),
+        restoreVerified: mismatches === 0,
+        statistics: { verdict: statistics, tables: stats },
+        searchSmoke: { verdict: smoke, probes },
+        activation,
+        /* The two prerequisites, named so a reader does not have to infer them
+         * from the shape of the object. */
+        requiresStatistics: true,
+        requiresSearchSmoke: true,
+      },
+      null,
+      2,
+    )}\n`,
+    'utf8',
+  );
+
   console.log(`\ntrace written to ${join(dir, 'RESTORE_TRACE.jsonl')}`);
+  console.log(`activation record written to ${join(dir, 'ACTIVATION.json')}`);
 
   await sql.end();
   if (observer) await observer.end();
-  process.exit(mismatches === 0 ? 0 : 1);
+  /* Non-zero on either failure. A generation that restored perfectly and cannot
+   * serve a search is not a success, and an orchestrator that exits 0 on it is
+   * how an unservable generation gets activated. */
+  process.exit(mismatches === 0 && activation.activate ? 0 : 1);
 }
 
 main().catch((err: unknown) => {

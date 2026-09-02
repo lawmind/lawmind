@@ -1,0 +1,764 @@
+{
+  "label": "LOCAL_CONTENDED_R27_POSTFIX",
+  "collectedAt": "2026-09-02T17:25:21.823Z",
+  "repeat": 3,
+  "poolProbe": true,
+  "embedder": "absent — dense arm did not run",
+  "environment": "LOCAL, contended; not staging and not a Gate-C certification",
+  "target": {
+    "wholeRequestP95Ms": 3000,
+    "appliesTo": "staging only"
+  },
+  "samples": [
+    {
+      "askedClass": "exact citation",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 38,
+      "poolWaitMeasured": true,
+      "totalMs": 229,
+      "unattributedMs": 40,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 41,
+        "derivedEffectsMs": 148
+      }
+    },
+    {
+      "askedClass": "exact citation",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 30,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 2,
+        "derivedEffectsMs": 28
+      }
+    },
+    {
+      "askedClass": "exact citation",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 2,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 1,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 2,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 2,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 1,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 1,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "CNR",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured_ambiguous",
+      "status": 200,
+      "resultCount": 3,
+      "outcomeState": "review_required",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 288,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 287,
+        "derivedEffectsMs": 1
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 221,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 221,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 227,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 226,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured_ambiguous",
+      "status": 200,
+      "resultCount": 3,
+      "outcomeState": "review_required",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 182,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 181,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 189,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 189,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 185,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 184,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured_ambiguous",
+      "status": 200,
+      "resultCount": 3,
+      "outcomeState": "review_required",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 174,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 173,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 186,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 185,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "case number",
+      "queryClass": "structured",
+      "status": 200,
+      "resultCount": 1,
+      "outcomeState": "answered",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 184,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 183,
+        "derivedEffectsMs": 0
+      }
+    },
+    {
+      "askedClass": "filtered lexical",
+      "queryClass": "structured_unbounded",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 29,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 29
+      }
+    },
+    {
+      "askedClass": "filtered lexical",
+      "queryClass": "structured_unbounded",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 7,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 7
+      }
+    },
+    {
+      "askedClass": "filtered lexical",
+      "queryClass": "structured_unbounded",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 3,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 3
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1046,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 951,
+        "armsMs": 951,
+        "dedupMs": 7,
+        "hydrateMs": 4,
+        "edgesMs": 3,
+        "fallbackMs": 61,
+        "retrievalMs": 1027,
+        "bookkeepingMs": 10,
+        "unpopulatedMs": 8,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "party_name",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 2733,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 392,
+        "sparseMs": 2180,
+        "armsMs": 2180,
+        "dedupMs": 6,
+        "hydrateMs": 4,
+        "edgesMs": 3,
+        "fallbackMs": 134,
+        "retrievalMs": 2720,
+        "bookkeepingMs": 3,
+        "unpopulatedMs": 8,
+        "serializationMs": 2
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 2827,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 2749,
+        "armsMs": 2749,
+        "dedupMs": 3,
+        "hydrateMs": 3,
+        "edgesMs": 0,
+        "fallbackMs": 69,
+        "retrievalMs": 2826,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 1
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 215,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 172,
+        "armsMs": 172,
+        "dedupMs": 1,
+        "hydrateMs": 2,
+        "edgesMs": 0,
+        "fallbackMs": 39,
+        "retrievalMs": 214,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "party_name",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 521,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 64,
+        "sparseMs": 380,
+        "armsMs": 380,
+        "dedupMs": 1,
+        "hydrateMs": 3,
+        "edgesMs": 0,
+        "fallbackMs": 69,
+        "retrievalMs": 519,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 2
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 969,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 887,
+        "armsMs": 887,
+        "dedupMs": 2,
+        "hydrateMs": 3,
+        "edgesMs": 0,
+        "fallbackMs": 75,
+        "retrievalMs": 967,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 243,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 199,
+        "armsMs": 199,
+        "dedupMs": 1,
+        "hydrateMs": 2,
+        "edgesMs": 0,
+        "fallbackMs": 39,
+        "retrievalMs": 241,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "party_name",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 585,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 63,
+        "sparseMs": 363,
+        "armsMs": 363,
+        "dedupMs": 1,
+        "hydrateMs": 4,
+        "edgesMs": 0,
+        "fallbackMs": 150,
+        "retrievalMs": 582,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 1,
+        "serializationMs": 2
+      }
+    },
+    {
+      "askedClass": "normal research query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 5,
+      "outcomeState": "degraded",
+      "degraded": [],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 685,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 554,
+        "armsMs": 554,
+        "dedupMs": 1,
+        "hydrateMs": 3,
+        "edgesMs": 0,
+        "fallbackMs": 125,
+        "retrievalMs": 684,
+        "bookkeepingMs": 1,
+        "unpopulatedMs": 0,
+        "serializationMs": 1
+      }
+    },
+    {
+      "askedClass": "broad / refused query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 0,
+        "armsMs": 0,
+        "dedupMs": 0,
+        "retrievalMs": 1,
+        "bookkeepingMs": 0,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "broad / refused query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 19,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 0,
+        "armsMs": 0,
+        "dedupMs": 18,
+        "retrievalMs": 19,
+        "bookkeepingMs": 0,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    },
+    {
+      "askedClass": "broad / refused query",
+      "queryClass": "concept",
+      "status": 200,
+      "resultCount": 0,
+      "outcomeState": "coverage_unknown",
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "poolWaitMs": 0,
+      "poolWaitMeasured": true,
+      "totalMs": 1,
+      "unattributedMs": 0,
+      "phases": {
+        "admissionWaitMs": 0,
+        "structuredMs": 0,
+        "classificationMs": 0,
+        "pinsMs": 0,
+        "sparseMs": 0,
+        "armsMs": 0,
+        "dedupMs": 0,
+        "retrievalMs": 1,
+        "bookkeepingMs": 0,
+        "unpopulatedMs": 0,
+        "serializationMs": 0
+      }
+    }
+  ],
+  "pooled": {
+    "n": 36,
+    "p50": 174,
+    "p95": 2733,
+    "p99": null
+  }
+}

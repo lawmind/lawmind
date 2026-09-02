@@ -18,11 +18,12 @@
  *   pnpm --filter @lawmind/api measure:round -- --label LOCAL_QUIET
  */
 import { writeFileSync } from 'node:fs';
+import { cpus } from 'node:os';
 
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
-import { createPools } from '../pools.ts';
+import { createPools, RESEARCH_CONCURRENCY, RESEARCH_POOL_MAX } from '../pools.ts';
 import { createAdmission } from './admission.ts';
 
 const url = process.env['DATABASE_URL'];
@@ -64,11 +65,54 @@ const REPEAT = Number(flag('--repeat') ?? 3);
 const JSON_OUT = flag('--json');
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `--concurrency 1,2,3,5` — THE CAPACITY ENVELOPE, NOT A SECOND GATE
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Gate S1's single-request p95 is a PASS. That number was bought substantially
+ * by PostgreSQL parallel workers on the sparse arm, and PostgreSQL launches
+ * fewer workers than it planned when the cluster's worker slots are already
+ * taken. A second single-user benchmark cannot see that; only concurrent load
+ * can, because concurrency is what takes the slots.
+ *
+ * So this mode runs the SAME frozen Gate-S1 query set, in the SAME deterministic
+ * order, at several parallelism levels. Every level does identical work — same
+ * queries, same rotation, same count — and the only variable is how many are in
+ * flight. A difference between levels is therefore attributable to parallelism
+ * and to nothing else.
+ *
+ * ── WHAT IT MAY AND MAY NOT CONCLUDE ────────────────────────────────────────
+ *
+ * **There is no new threshold here.** V7.2's formal Gate S1 remains the
+ * 3-second p95 over the fixed suite in STAGING. "Concurrency-5 p95 must be 3
+ * seconds" is NOT a release gate and this file does not invent one. The output
+ * is capacity evidence, and it answers two questions:
+ *
+ *   1. does the selected plan have a catastrophic worker-starvation cliff?
+ *   2. what must the remote alpha database be sized and configured to provide?
+ *
+ * A laptop that degrades at five fully parallel rankers is a sizing fact about
+ * the laptop. It is not a reason to rewrite legal search.
+ *
+ * ── WHY NOT FIVE COPIES OF ONE QUERY ────────────────────────────────────────
+ *
+ * Because that measures the cheapest query five times and calls it load. The
+ * rotation is over the whole class set — exact citation, CNR, case number,
+ * filtered lexical, research, refusal — so each level runs the same MIX, which
+ * is the only kind of concurrent measurement that transfers to a real deployment.
+ */
+const CONCURRENCY = (flag('--concurrency') ?? '')
+  .split(',')
+  .map((s) => Number(s.trim()))
+  .filter((n) => Number.isInteger(n) && n > 0);
+const ENVELOPE = CONCURRENCY.length > 0;
+
+/**
  * The pool probe is ON for this harness and OFF in production — `timings.ts`
  * records why. Set before `createApp`, because `poolProbeEnabled()` is read per
  * request and the harness must not depend on the operator remembering.
  */
-if (GATE_S1) process.env['SEARCH_POOL_PROBE'] = '1';
+if (GATE_S1 || ENVELOPE) process.env['SEARCH_POOL_PROBE'] = '1';
 
 const pools = createPools(url, 15_000);
 const sql = postgres(url, { max: 2 });
@@ -396,8 +440,421 @@ async function runGateS1(): Promise<void> {
   }
 }
 
-if (GATE_S1) {
-  await runGateS1();
+/* ═══════════════════════════════════════════════════════════════════════════
+ * CONCURRENCY ENVELOPE
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+type EnvelopeSample = {
+  askedClass: string;
+  order: number;
+  status: number;
+  /** Wall clock, and deliberately not the route's `total_ms` — see below. */
+  wallMs: number;
+  /** The route's own `total_ms`, correlated by request id. Null if uncorrelated. */
+  routeMs: number | null;
+  resultCount: number;
+  degraded: string[];
+  outcomeState: string | null;
+  poolWaitMs: number | null;
+  sparseMs: number | null;
+  /** 503 SEARCH_BUSY — the admission gate refusing, not a slow answer. */
+  refused: boolean;
+};
+
+/**
+ * One PARALLEL-WORKER observation, taken from a connection that is doing no work
+ * of its own.
+ *
+ * `pg_stat_activity` distinguishes a leader from the workers it launched, so
+ * "how many workers is this statement actually running with" is DIRECTLY
+ * observable rather than inferred from a plan. That matters here: an `EXPLAIN`
+ * run beside the load would be a different statement with different bind values
+ * and its own plan, which is not evidence about the one under test.
+ *
+ * `Workers Planned` is what level 1 shows: at concurrency 1 nothing competes for
+ * a slot, so what was launched IS what was planned. Any later level whose
+ * per-leader maximum falls below that has been starved, and it is a measurement
+ * rather than a guess.
+ */
+type WorkerObservation = {
+  /** Total `backend_type = 'parallel worker'` rows on this server, at one instant. */
+  totalWorkers: number;
+  /** The largest number of workers any single leader had at that instant. */
+  maxPerLeader: number;
+  /** Client backends running a statement, ours and anyone else's. */
+  activeBackends: number;
+};
+
+async function sampleWorkers(observer: postgres.Sql): Promise<WorkerObservation> {
+  const [row] = await observer<
+    { total: string; max_per_leader: string; active: string }[]
+  >`
+    WITH w AS (
+      SELECT leader_pid, count(*)::int AS n
+        FROM pg_stat_activity
+       WHERE backend_type = 'parallel worker' AND leader_pid IS NOT NULL
+       GROUP BY leader_pid
+    )
+    SELECT coalesce(sum(n), 0)::text AS total,
+           coalesce(max(n), 0)::text AS max_per_leader,
+           (SELECT count(*) FROM pg_stat_activity
+             WHERE backend_type = 'client backend' AND state = 'active')::text AS active
+      FROM w`;
+  return {
+    totalWorkers: Number(row?.total ?? 0),
+    maxPerLeader: Number(row?.max_per_leader ?? 0),
+    activeBackends: Number(row?.active ?? 0),
+  };
+}
+
+/**
+ * One request, safe to run beside others.
+ *
+ * `gateSample` above reads `phaseLines[phaseLines.length - 1]` after emptying the
+ * array, which is correct for a serial run and WRONG the instant two requests
+ * overlap: the last line would belong to whichever request happened to finish
+ * last. So this one leaves the array alone and correlates on `request_id`, which
+ * the route already puts on every phase line and Hono already returns in
+ * `X-Request-Id`. Where the correlation fails the field is null rather than
+ * another request's number.
+ */
+async function envelopeSample(
+  askedClass: string,
+  query: string,
+  order: number,
+): Promise<EnvelopeSample> {
+  const wall = performance.now();
+  let status = 0;
+  let requestId: string | null = null;
+  let body: {
+    data?: { results?: unknown[]; degraded?: string[]; retrievalOutcome?: { state?: string } };
+  } = {};
+  try {
+    const res = await app.request('/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ query, language: 'en' }),
+    });
+    status = res.status;
+    requestId = res.headers.get('x-request-id');
+    body = (await res.json()) as typeof body;
+  } catch {
+    /* status stays 0 — "no HTTP answer at all", a different fact from a 5xx. */
+  }
+  const wallMs = Math.round(performance.now() - wall);
+  const line = requestId
+    ? phaseLines.find((l) => l['request_id'] === requestId)
+    : undefined;
+  return {
+    askedClass,
+    order,
+    status,
+    wallMs,
+    routeMs: typeof line?.['total_ms'] === 'number' ? line['total_ms'] : null,
+    resultCount: body.data?.results?.length ?? 0,
+    degraded: body.data?.degraded ?? [],
+    outcomeState: body.data?.retrievalOutcome?.state ?? null,
+    poolWaitMs: typeof line?.['pool_wait_ms'] === 'number' ? line['pool_wait_ms'] : null,
+    sparseMs: typeof line?.['sparseMs'] === 'number' ? line['sparseMs'] : null,
+    /* The admission gate's honest refusal. It is NOT a latency observation and
+     * must never be averaged in with one — a fast refusal would flatter the p95
+     * of a server that answered nothing. */
+    refused: status === 503,
+  };
+}
+
+async function runLevel(
+  concurrency: number,
+  stream: { name: string; query: string }[],
+  observer: postgres.Sql | null,
+): Promise<{
+  concurrency: number;
+  n: number;
+  samples: EnvelopeSample[];
+  wallMs: number;
+  workers: WorkerObservation[];
+  tempFilesDelta: number;
+  tempBytesDelta: number;
+}> {
+  const samples: EnvelopeSample[] = [];
+  const workers: WorkerObservation[] = [];
+  let cursor = 0;
+
+  const tempBefore = observer ? await tempStats(observer) : { files: 0, bytes: 0 };
+  /* 200 ms: fast enough to catch a gather that lives for a second, slow enough
+   * that the observer's own backend is not itself a load. */
+  const probe = observer
+    ? setInterval(() => {
+        void sampleWorkers(observer)
+          .then((w) => workers.push(w))
+          .catch(() => {});
+      }, 200)
+    : undefined;
+
+  const started = performance.now();
+  await Promise.all(
+    Array.from({ length: concurrency }, async () => {
+      for (;;) {
+        const i = cursor++;
+        const item = stream[i];
+        if (!item) return;
+        samples.push(await envelopeSample(item.name, item.query, i));
+      }
+    }),
+  );
+  const wallMs = Math.round(performance.now() - started);
+  if (probe) clearInterval(probe);
+  const tempAfter = observer ? await tempStats(observer) : { files: 0, bytes: 0 };
+
+  return {
+    concurrency,
+    n: samples.length,
+    samples,
+    wallMs,
+    workers,
+    tempFilesDelta: tempAfter.files - tempBefore.files,
+    tempBytesDelta: tempAfter.bytes - tempBefore.bytes,
+  };
+}
+
+/** Sort spill for this database. A ranker that spills is a different plan. */
+async function tempStats(observer: postgres.Sql): Promise<{ files: number; bytes: number }> {
+  const [row] = await observer<{ f: string; b: string }[]>`
+    SELECT temp_files::text AS f, temp_bytes::text AS b
+      FROM pg_stat_database WHERE datname = current_database()`;
+  return { files: Number(row?.f ?? 0), bytes: Number(row?.b ?? 0) };
+}
+
+async function runEnvelope(): Promise<void> {
+  const classes = await gateS1Queries();
+  /**
+   * The stream, built ONCE and reused at every level.
+   *
+   * Rotation order is class-major and identical for all levels, so two levels
+   * differ in interleaving and in nothing else. A per-level shuffle would make
+   * every comparison a comparison of two different workloads.
+   */
+  const stream: { name: string; query: string }[] = [];
+  for (let round = 0; round < REPEAT; round++) {
+    for (const cls of classes) {
+      for (const q of cls.queries) stream.push({ name: cls.name, query: q });
+    }
+  }
+
+  const observer = await (async () => {
+    try {
+      const o = postgres(url!, { max: 1, onnotice: () => {} });
+      await o`SELECT 1`;
+      return o;
+    } catch {
+      return null;
+    }
+  })();
+
+  const [cfg] = await sql<
+    {
+      mwp: string;
+      mpw: string;
+      mpwpg: string;
+      plp: string;
+      work_mem: string;
+      st: string;
+      ver: string;
+    }[]
+  >`
+    SELECT current_setting('max_worker_processes') AS mwp,
+           current_setting('max_parallel_workers') AS mpw,
+           current_setting('max_parallel_workers_per_gather') AS mpwpg,
+           current_setting('parallel_leader_participation') AS plp,
+           current_setting('work_mem') AS work_mem,
+           current_setting('statement_timeout') AS st,
+           current_setting('server_version') AS ver`;
+
+  console.log(`\nCONCURRENCY ENVELOPE — ${LABEL} — ${new Date().toISOString()}`);
+  console.log(
+    `server ${cfg?.ver}  max_worker_processes=${cfg?.mwp}  max_parallel_workers=${cfg?.mpw}\n` +
+      `max_parallel_workers_per_gather=${cfg?.mpwpg}  parallel_leader_participation=${cfg?.plp}\n` +
+      `work_mem=${cfg?.work_mem}  research pool max=${RESEARCH_POOL_MAX}  ` +
+      `admission limit=${RESEARCH_CONCURRENCY}  cpus=${cpus().length}\n` +
+      `stream=${stream.length} requests per level, identical order at every level\n`,
+  );
+
+  /**
+   * ── ONE DISCARDED PASS, BECAUSE THE LEVELS ARE NOT INDEPENDENT ────────────
+   *
+   * The first measured run of this harness put its WORST p95 at concurrency 1
+   * (2,550 ms) and its best at 2 (872 ms), which read as "concurrency makes
+   * search faster". It does not. Level 1 ran first and paid every cold cost —
+   * page cache, the planner's first parse, the pool's first connections — and
+   * then handed a warm database to every level after it.
+   *
+   * Gate-S1's own mode deliberately KEEPS its cold case, because a cold request
+   * is a real request an advocate makes. This mode is asking a different
+   * question: what changes when the SAME work runs in parallel. That comparison
+   * is only meaningful from a common state, so one full stream is run and thrown
+   * away first, and the run is labelled as warm.
+   *
+   * `--no-warmup` exists to falsify this: it reproduces the confounded numbers.
+   */
+  if (!args.includes('--no-warmup')) {
+    const started = performance.now();
+    await runLevel(1, stream, null);
+    console.log(
+      `warm-up: ${stream.length} requests discarded in ${Math.round(performance.now() - started)}ms ` +
+        '— every level below starts from the same warm state\n',
+    );
+  }
+
+  const header =
+    'conc'.padStart(5) +
+    'n'.padStart(5) +
+    'p50'.padStart(9) +
+    'p95'.padStart(9) +
+    'max'.padStart(9) +
+    'req/s'.padStart(8) +
+    'refus'.padStart(7) +
+    'degr'.padStart(6) +
+    'zero'.padStart(6) +
+    'poolW'.padStart(8) +
+    'wrk/ldr'.padStart(9);
+  console.log(header);
+
+  const levels: Record<string, unknown>[] = [];
+  for (const c of CONCURRENCY) {
+    const r = await runLevel(c, stream, observer);
+    /**
+     * ANSWERED requests only. A 503 from the admission gate is a refusal, not a
+     * fast answer, and letting it into the latency sample would make a server
+     * that answered less look faster.
+     */
+    const answered = r.samples.filter((s) => !s.refused && s.status === 200);
+    const totals = answered.map((s) => s.wallMs);
+    const waits = r.samples.map((s) => s.poolWaitMs).filter((v): v is number => v !== null);
+    const maxPerLeader = r.workers.length ? Math.max(...r.workers.map((w) => w.maxPerLeader)) : 0;
+    const maxWorkers = r.workers.length ? Math.max(...r.workers.map((w) => w.totalWorkers)) : 0;
+    const p50 = percentileOrNull(totals, 50);
+    const p95 = percentileOrNull(totals, 95);
+    const max = totals.length ? Math.max(...totals) : null;
+    const throughput = r.wallMs > 0 ? (r.samples.length / r.wallMs) * 1000 : 0;
+
+    console.log(
+      String(c).padStart(5) +
+        String(r.samples.length).padStart(5) +
+        show(p50).padStart(9) +
+        show(p95).padStart(9) +
+        show(max).padStart(9) +
+        throughput.toFixed(2).padStart(8) +
+        String(r.samples.filter((s) => s.refused).length).padStart(7) +
+        String(r.samples.filter((s) => s.degraded.length > 0).length).padStart(6) +
+        String(answered.filter((s) => s.resultCount === 0).length).padStart(6) +
+        (waits.length ? `${Math.max(...waits)}ms` : '—').padStart(8) +
+        String(maxPerLeader).padStart(9),
+    );
+
+    levels.push({
+      concurrency: c,
+      requests: r.samples.length,
+      answered: answered.length,
+      refusedSearchBusy: r.samples.filter((s) => s.refused).length,
+      nonOk: r.samples.filter((s) => s.status !== 200 && s.status !== 503).length,
+      degraded: r.samples.filter((s) => s.degraded.length > 0).length,
+      timeouts: r.samples.filter((s) => s.degraded.some((d) => d.endsWith('timeout'))).length,
+      zeroResult: answered.filter((s) => s.resultCount === 0).length,
+      p50,
+      p95,
+      max,
+      throughputPerSec: Number(throughput.toFixed(3)),
+      wallMs: r.wallMs,
+      poolWaitMaxMs: waits.length ? Math.max(...waits) : null,
+      sparseMaxMs: (() => {
+        const v = r.samples.map((s) => s.sparseMs).filter((x): x is number => x !== null);
+        return v.length ? Math.max(...v) : null;
+      })(),
+      workersLaunchedMaxPerLeader: maxPerLeader,
+      workersLaunchedMaxTotal: maxWorkers,
+      workerSamples: r.workers.length,
+      tempFilesDelta: r.tempFilesDelta,
+      tempBytesDelta: r.tempBytesDelta,
+      byClass: [...new Set(stream.map((s) => s.name))].map((name) => {
+        const mine = answered.filter((s) => s.askedClass === name).map((s) => s.wallMs);
+        return {
+          name,
+          n: mine.length,
+          p50: percentileOrNull(mine, 50),
+          max: mine.length ? Math.max(...mine) : null,
+        };
+      }),
+      /* Kept per level so a reader can recompute any statistic above. */
+      samples: r.samples,
+    });
+  }
+
+  /**
+   * `Workers Planned` is the level-1 observation, for the reason in
+   * `sampleWorkers`: with nothing competing, launched == planned.
+   */
+  const level1 = levels.find((l) => l['concurrency'] === 1);
+  const planned = (level1?.['workersLaunchedMaxPerLeader'] as number | undefined) ?? null;
+  console.log(
+    `\nWORKERS: planned (observed at concurrency 1, nothing competing) = ${planned ?? '—'} ` +
+      `per gather; cluster cap max_parallel_workers=${cfg?.mpw}.\n` +
+      'A later level whose wrk/ldr is BELOW that number was starved of slots. Equal ' +
+      'numbers with a worse p95 is contention somewhere else and must not be called\n' +
+      'starvation.',
+  );
+  console.log(
+    '\nNO NEW THRESHOLD. V7.2 Gate S1 remains a 3-second p95 over the fixed suite in\n' +
+      'STAGING. These numbers are LOCAL, on a contended box, with NO EMBEDDER, and\n' +
+      'they are capacity evidence for sizing the remote alpha database — not a gate.\n' +
+      'refus is the admission gate answering 503 SEARCH_BUSY, which is a truthful\n' +
+      'state and is excluded from the latency sample rather than averaged into it.',
+  );
+
+  if (JSON_OUT) {
+    writeFileSync(
+      JSON_OUT,
+      `${JSON.stringify(
+        {
+          kind: 'lawmind-search-concurrency-envelope',
+          label: LABEL,
+          collectedAt: new Date().toISOString(),
+          environment: 'LOCAL, contended; not staging and not a Gate-C certification',
+          embedder: 'absent — dense arm did not run',
+          formalGate: {
+            name: 'Gate S1',
+            wholeRequestP95Ms: 3000,
+            appliesTo: 'staging, single-request fixed suite',
+            thisRunIsAGate: false,
+          },
+          server: {
+            version: cfg?.ver,
+            maxWorkerProcesses: Number(cfg?.mwp),
+            maxParallelWorkers: Number(cfg?.mpw),
+            maxParallelWorkersPerGather: Number(cfg?.mpwpg),
+            parallelLeaderParticipation: cfg?.plp,
+            workMem: cfg?.work_mem,
+            statementTimeout: cfg?.st,
+            logicalCpus: cpus().length,
+          },
+          api: { researchPoolMax: RESEARCH_POOL_MAX, admissionLimit: RESEARCH_CONCURRENCY },
+          stream: stream.map((s) => s.name),
+          workersPlannedAtConcurrency1: planned,
+          levels,
+        },
+        null,
+        2,
+      )}\n`,
+      'utf8',
+    );
+    console.log(`\nmachine-readable: ${JSON_OUT}`);
+  }
+
+  if (observer) await observer.end();
+}
+
+if (GATE_S1 || ENVELOPE) {
+  if (GATE_S1) await runGateS1();
+  if (ENVELOPE) await runEnvelope();
   await sql.end();
   await pools.end();
   process.exit(0);
