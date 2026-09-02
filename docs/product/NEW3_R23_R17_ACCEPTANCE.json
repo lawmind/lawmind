@@ -1,0 +1,199 @@
+{
+  "kind": "new3-r23-r17-independent-acceptance",
+  "observedAt": "2026-09-02T18:17:37.2957052Z",
+  "headStart": "6124b5f02754d2a61db590d1630a7f0287c8fd8f",
+  "integrationBase": "6124b5f02754d2a61db590d1630a7f0287c8fd8f",
+  "ancestry": {
+    "f60bfaaaf96d0da90706fd55dcbcb3e92357fbe3": "ANCESTOR",
+    "6124b5f02754d2a61db590d1630a7f0287c8fd8f": "HEAD",
+    "7cc830a1676a9821802c92ddc73945297111de6d": "ANCESTOR",
+    "f5ce4d44acd9ec8f37b765d7eb7224064ccfc7ef": "ANCESTOR"
+  },
+  "integrationConflict": null,
+  "migrationChain": {
+    "journalIndexes": [100, 101, 102, 103],
+    "tags": [
+      "0100_api_idempotency_records",
+      "0101_matters_parties_jsonb_object",
+      "0102_soft_corpus_references",
+      "0103_identity_only_erasure_principal"
+    ],
+    "sqlFiles": 4,
+    "verdict": "PASS"
+  },
+  "authorityManifest": {
+    "LAWMIND_MASTER_ROADMAP_V7_2.md": true,
+    "LAWMIND_SPRINT_PROMPTS_V3.md": true,
+    "LAWMIND_V7_2_DEEP_RESEARCH_MEMO.md": true
+  },
+  "focusedApiSplitTests": {
+    "command": "pnpm --filter @lawmind/api exec tsx --test --test-concurrency=1 src/matters/authorities-corpus-split.test.ts src/search/refusal-total.test.ts src/ops/db-split-physical.test.ts",
+    "tests": 16,
+    "failed": 0,
+    "skipped": 0,
+    "verdict": "PASS"
+  },
+  "focusedIdentityOnlyDeletionTests": {
+    "command": "pnpm --filter @lawmind/api exec tsx --test --test-concurrency=1 src/identity-only-deletion.test.ts",
+    "tests": 10,
+    "failed": 0,
+    "skipped": 0,
+    "verdict": "PASS"
+  },
+  "focusedRccTests": {
+    "command": "pnpm --filter @lawmind/mobile exec jest --runInBand src/citation/saveAuthorityOutcome.test.ts src/state/pendingSave.r17.test.ts src/screens/matter/MatterScreen.unavailable.test.tsx src/screens/matter/savedAuthorities.test.ts src/screens/search/SearchScreen.refusal.test.tsx src/screens/settings/DeleteAccountScreen.test.tsx src/components/AuthBoundary.deleteAccount.test.ts src/screens/auth/OnboardingScreen.deleteAccount.test.tsx",
+    "suites": 8,
+    "tests": 57,
+    "failed": 0,
+    "verdict": "PASS"
+  },
+  "combinedActualApiAndRccProbe": {
+    "databases": {
+      "user": "lawmind",
+      "corpusA": "lawmind_corpus_gen_a_new3_r23",
+      "corpusB": "lawmind_corpus_gen_b_new3_r23",
+      "physicallyDistinct": true
+    },
+    "availableSave": {
+      "httpStatus": 201,
+      "clientOutcome": "saved",
+      "matterAuthorityRows": 1,
+      "verdict": "PASS"
+    },
+    "unavailableRead": {
+      "httpStatus": 200,
+      "clientRowKind": "unavailable",
+      "shellFields": [
+        "addedAt",
+        "addedBy",
+        "authorityId",
+        "availability",
+        "judgmentId",
+        "removedAt"
+      ],
+      "fabricatedCorpusFields": 0,
+      "verdict": "PASS"
+    },
+    "missingTargetWrite": {
+      "httpStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "clientOutcome": "corpus_unavailable",
+      "retryable": false,
+      "matterAuthorityRowsCreated": 0,
+      "falseNotFoundCopy": false,
+      "verdict": "PASS"
+    },
+    "idempotentUnavailable": {
+      "httpStatus": 200,
+      "clientOutcome": "already_saved_unavailable",
+      "matterAuthorityRowsMutated": 0,
+      "verdict": "PASS"
+    },
+    "recovery": {
+      "httpStatus": 200,
+      "sameAuthorityId": true,
+      "sameAddedAt": true,
+      "clientRowKind": "available",
+      "matterAuthorityRows": 1,
+      "verdict": "PASS"
+    },
+    "cleanup": {
+      "fixtureUserRowsRemoved": true,
+      "fixtureMatterRowsRemoved": true,
+      "disposableCorpusDatabasesDropped": true
+    },
+    "verdict": "PASS"
+  },
+  "refusalTotal": {
+    "sparseUnboundedTotalKey": "ABSENT",
+    "sparseTimeoutTotalKey": "ABSENT",
+    "sparseTimeoutReason": "timeout",
+    "sparseTimeoutDegradedArm": "sparse_timeout",
+    "confirmedEmpty": false,
+    "verdict": "PASS"
+  },
+  "localGateS1": {
+    "suiteRequests": 36,
+    "p50Ms": 174,
+    "p95Ms": 2733,
+    "budgetMs": 3000,
+    "embedder": "absent — dense arm did not run",
+    "verdict": "PASS_LOCAL_ONLY",
+    "lccR28RepeatP95Ms": [3074, 2812, 2830],
+    "lccR28Variance": "ONE_OF_THREE_OVER_BOUND"
+  },
+  "concurrency": {
+    "classification": "DEGRADES_GRADUALLY",
+    "testedThrough": 8,
+    "p95At8Ms": 1533,
+    "refusalsAt8": 0,
+    "timeoutsAt8": 0,
+    "workersPerLeaderAt8": 4,
+    "workerStarvation": false,
+    "staging": "UNPROVEN"
+  },
+  "androidLocalAcceptance": "PENDING_DEVICE",
+  "androidProductionExport": {
+    "environment": "staging",
+    "platform": "android",
+    "bundle": "Hermes",
+    "bundleBytesApprox": 6600000,
+    "verdict": "PASS_BUILD_ONLY"
+  },
+  "verificationChecks": {
+    "mobileTypecheck": "PASS",
+    "focusedApiLint": "PASS",
+    "apiTypecheck": {
+      "verdict": "PASS_FINAL",
+      "initialObservation": {
+        "verdict": "FAIL_ACTIVE_LCC_R28_WORK",
+        "location": "services/api/src/briefings/route.ts:204:45",
+        "diagnostic": "TS2304: Cannot find name 'sql'",
+        "r17PathsAffected": false,
+        "reportedToLccBus": 1760
+      },
+      "rerunAfterLccR28": "PASS",
+      "closedOnBus": 1761
+    }
+  },
+  "downstreamCompletionReceipts": {
+    "lccR28": {
+      "commit": "6947f72d",
+      "physicalSplitMatrix": "64/64 PASS, 0 wrong-role",
+      "staticRoleGuardTest": "PASS",
+      "requiredZeroes": "PASS",
+      "physicalDbSplitActivation": "PASS"
+    },
+    "rccR25": {
+      "commit": "b787748b",
+      "realServerR17Lifecycle": "PASS",
+      "identityOnlyDeletion": "PASS",
+      "externalDeletionWeb": "BLOCKED_REPOSITORY_OWNER",
+      "physicalDevice": "PENDING_DEVICE"
+    }
+  },
+  "new1": {
+    "receiptAt": "2026-09-02T20:15:51.741Z",
+    "eligibleTotal": 7654179,
+    "alreadyEmbedded": 5863970,
+    "durableCoarseCoveragePercent": 76.6114,
+    "advancedFromInitialR23Observation": 5795647,
+    "zeroOutputWindows": 0,
+    "hnswPrecheckDue": true,
+    "hnswBuildAuthorized": false
+  },
+  "handoffs": {
+    "lccR28": ".agents/bus/1752--NEW3-to-LCC--new3-r23-lcc-r28-role-routing-and-physical-split.md",
+    "rccR25": ".agents/bus/1753--NEW3-to-RCC--new3-r23-rcc-r25-deletion-store-and-device-hando.md",
+    "lccR28TypecheckFollowup": ".agents/bus/1760--NEW3-to-LCC--new3-r23-verification-lcc-r28-api-typecheck-fail.md",
+    "lccR28Closure": ".agents/bus/1761--NEW3-to-LCC--new3-r23-closure-r28-typecheck-passes-split-rece.md",
+    "rccR25Ack": ".agents/bus/1762--NEW3-to-RCC--ack-rcc-r25-real-server-r17-receipt-accepted-web.md"
+  },
+  "r17BackendAccepted": true,
+  "r17ClientAccepted": true,
+  "r17Released": true,
+  "wireProtocolVersion": 1,
+  "citationBulkApply": "HOLD",
+  "paidRemoteInfrastructureAuthorized": false,
+  "verdict": "PASS"
+}

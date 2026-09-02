@@ -606,14 +606,8 @@
             "search/route.ts:614",
             "briefings/route.ts:255"
           ],
-          "derivedUpstream": [
-            "search/saved.ts:292",
-            "arguments/counter.ts:212"
-          ],
-          "stored": [
-            "matters/authorities.ts:187",
-            "citations/check.ts:123"
-          ]
+          "derivedUpstream": ["search/saved.ts:292", "arguments/counter.ts:212"],
+          "stored": ["matters/authorities.ts:187", "citations/check.ts:123"]
         }
       },
       "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
@@ -829,13 +823,8 @@
       "cause": "matters/route.ts writes ${JSON.stringify(body.parties)}::jsonb; postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a string scalar. Isolated: JSON.stringify(obj)::jsonb gives jsonb_typeof=string, sql.json(obj) gives object.",
       "userTruthImpact": "MatterScreen.tsx:369 renders {matter.parties.description}, undefined against a string. No crash and no error state - the parties line silently loses the advocate’s own case identity on the matter workspace.",
       "severity": "P1",
-      "blocks": [
-        "FINAL_LOCAL_V1_ACCEPTANCE",
-        "REMOTE_ALPHA"
-      ],
-      "doesNotBlock": [
-        "RCC_R16_CLIENT_IMPLEMENTATION"
-      ],
+      "blocks": ["FINAL_LOCAL_V1_ACCEPTANCE", "REMOTE_ALPHA"],
+      "doesNotBlock": ["RCC_R16_CLIENT_IMPLEMENTATION"],
       "backendOwner": "LCC",
       "clientOwner": "RCC - notify only; no client change, and no defensive JSON.parse",
       "fix": [
@@ -888,11 +877,11 @@
         "reason": "SOURCE_UNAVAILABLE describes an upstream source observation failure. corpus_unavailable describes absence of an immutable target from the selected corpus generation. Neither is a legal conclusion."
       },
       "implementation": {
-        "lcc": "PENDING",
-        "rcc": "PENDING",
-        "independentNew3Acceptance": "PENDING",
-        "released": false,
-        "activationGuard": "PHYSICAL_DB_SPLIT_BLOCKED_UNTIL_LCC_RCC_AND_NEW3_PASS"
+        "lcc": "DONE at 5d84e870 — R17 write and refusal-total conformance",
+        "rcc": "DONE at 677e6972 — unavailable read/write consumption and no-retry client behavior",
+        "independentNew3Acceptance": "PASS at integration base 6124b5f0 — actual Hono responses from physically distinct A/B corpus generations passed through RCC classifiers and merger",
+        "released": true,
+        "activationGuard": "R17_RELEASED; PHYSICAL_DB_SPLIT activation subsequently PASSED in LCC R28 at 6947f72d"
       },
       "CONTRACT_REVISION": "R17",
       "WIRE_PROTOCOL_VERSION": 1,
@@ -907,9 +896,7 @@
       "id": "CCR-LCC-R25-01",
       "new3LedgerId": "CCR-2026-09-02-20",
       "filedVia": "LCC bus 1726 while implementing R17: \"Your handoff says retrievalOutcome.state=coverage_unknown with reason sparse_timeout. RetrievalOutcomeReason has no such member.\" LCC followed the existing derivation rather than add a member to a contract it does not own, and asked.",
-      "endpoints": [
-        "POST /search"
-      ],
+      "endpoints": ["POST /search"],
       "decision": "REJECT_WITH_ALTERNATIVE",
       "classification": "CONTRACT_ARTIFACT_ERRATUM_NO_WIRE_CHANGE",
       "severity": "P1",
@@ -943,10 +930,7 @@
       "id": "CCR-NEW3-R21-01",
       "new3LedgerId": "CCR-2026-09-02-21",
       "filedVia": "NEW3 R21 acceptance pass, raised on its own initiative while reading the R17 implementation at f0d1490c rather than taking LCC bus 1726 at face value.",
-      "endpoints": [
-        "POST /matters/:id/authorities",
-        "POST /search"
-      ],
+      "endpoints": ["POST /matters/:id/authorities", "POST /search"],
       "decision": "ENGINEERING_DEFECT_ROUTED_TO_LCC",
       "classification": "CONTRACT_CONFORMANCE_GAP_NO_CONTRACT_CHANGE",
       "severity": "P1",
@@ -975,9 +959,7 @@
       "id": "CCR-RCC-R22-01",
       "new3LedgerId": "CCR-2026-09-02-22",
       "filedVia": "RCC bus 1722: an identity_only account (verified auth identity, tokens, no users row) receives 401 AUTH_REQUIRED from POST /me/data-requests, so the app's answer to \"delete my account\" is \"first give us your name and phone number\".",
-      "endpoints": [
-        "POST /me/data-requests"
-      ],
+      "endpoints": ["POST /me/data-requests"],
       "decision": "REJECT_WITH_ALTERNATIVE",
       "classification": "BACKEND_BEHAVIOUR_NOT_WIRE_SHAPE",
       "severity": "P2",
@@ -993,20 +975,50 @@
       "decidedBy": "NEW3 R21",
       "decidedAt": "2026-09-02",
       "earlyHandoff": "LCC bus 1729 §4 (backend contract), RCC bus 1728 §6 (no second screen)."
+    },
+    {
+      "id": "CCR-LCC-R28-01",
+      "new3LedgerId": "CCR-2026-09-02-23",
+      "filedBy": "LCC",
+      "filedVia": "LCC bus 1759 after R28 role routing exposed eight R17-adjacent corpus-missing surfaces.",
+      "endpoints": [
+        "POST /citations/copies",
+        "POST /verify/confirm",
+        "POST /documents/:id/citations",
+        "POST /judgments/:id/annotations",
+        "GET /judgments/:id/authorities",
+        "GET /judgments/:id",
+        "GET /judgments/:id/treatment",
+        "GET /judgments/:id/graph"
+      ],
+      "decision": "DEFER",
+      "classification": "R17_ADJACENT_MISSING_TARGET_SEMANTICS",
+      "severity": "P2",
+      "blockingGate": "NONE — RCC already prevents the false not-found sentence from reaching an advocate; no P0 or Gate-C blocker is created.",
+      "requiresAck": false,
+      "CONTRACT_CHANGE_REQUIRED": "DEFERRED TO THE NEXT SEMANTIC CONTRACT ROUND",
+      "rationale": "R17 is released and R23 is a release/integration round, not a scope-widening round. The four read surfaces cannot inherit the write-only 409/200 unavailable-shell shapes mechanically, so a deliberate semantic design is required. Creating R18 merely to absorb the finding would violate the R23 bound.",
+      "alternative": "Keep released R17 unchanged. Preserve RCC's truthful user-facing fallback and adjudicate all eight surfaces together in the next NEW3 semantic contract round.",
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": false,
+      "decidedBy": "NEW3 R23",
+      "decidedAt": "2026-09-02",
+      "earlyHandoff": "Disposition returned to LCC in bus 1761."
     }
   ],
   "counts": {
-    "received": 22,
+    "received": 23,
     "amended": 11,
-    "deferred": 4,
+    "deferred": 5,
     "rejectedWithAlternative": 3,
     "engineeringDefectRoutedToLCC": 4,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "NEW3 R21, 2 September 2026, at INTEGRATION_BASE f0d1490c. R17 added CCR-LCC-R24-01 (AMEND). R21 adds three rows and opens no new revision: CCR-LCC-R25-01 (REJECT_WITH_ALTERNATIVE — the sparse_timeout reason member; R17 §3 corrected by erratum, identities recomputed), CCR-NEW3-R21-01 (engineering defect — the R17 §1 write path and the §3 total omission are not yet implemented), and CCR-RCC-R22-01 (REJECT_WITH_ALTERNATIVE — identity_only deletion is a backend behaviour, not a wire shape). R17 §1 read is accepted and RCC is authorized to consume it; R17 remains UNRELEASED."
+    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17."
   },
   "wireProtocolVersion": 1,
-  "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The new list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object is unchanged. R16 remains the latest released revision while R17 implementation, RCC consumption and independent acceptance are pending.",
+  "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the current released revision; the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object remains unchanged.",
   "revisionIdentities": {
     "R12": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R12.md",
@@ -1040,7 +1052,7 @@
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R16_AMENDMENT.md",
       "sha256": "30e20206ba58cd581bd866f96067aa7eb98773115c7505cda80548d5404aa25a",
       "gitBlob": "6e0dc3542abfa034c0c4841286aad44ede296dcb",
-      "state": "CURRENT_RELEASED",
+      "state": "RELEASED_PRIOR",
       "note": "NEW3 R18 independently accepted the backend and authorized RCC implementation and testing. NEW3 R19 independently accepted the focused RCC client implementation and released R16 on 2 September 2026. Physical Android current-v1 acceptance remains PENDING_DEVICE as a separate local-release gate.",
       "lifecycle": {
         "R16_BACKEND_ACCEPTANCE": "PASS",
@@ -1051,24 +1063,29 @@
     },
     "R17": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
-      "sha256": "4f1e5375804e033564228eb278d1b166fea8e38fb0f73dc216103c05748f8964",
-      "gitBlob": "acde387ccc7b5a3b4bdcf5e1410b19af726f548b",
-      "state": "FROZEN_PARTIALLY_IMPLEMENTED_NOT_RELEASED",
-      "note": "NEW3 R20 froze the smallest additive missing-target and qlang truth contract. NEW3 R21 corrected a defective DESCRIPTION in §3 (see CCR-2026-09-02-20) and recomputed both identities; the identities recorded here supersede the R20 pair. R17 was never released, so nothing shipped against the defective wording. §1 read is implemented and accepted; §1 write and the §3 total omission are not yet implemented.",
+      "sha256": "0bbb555b30bafa4488eb241c852aa0125bd49655e015690188b2563ebf93332d",
+      "gitBlob": "d51997f15a5951fc7f242aa2ebfcade9ddcdb45d",
+      "state": "CURRENT_RELEASED",
+      "note": "NEW3 R20 froze the smallest additive missing-target and qlang truth contract. NEW3 R21 corrected a defective DESCRIPTION in §3 before release. LCC R27 implemented both remaining conformance gaps at 5d84e870, RCC R24 consumed them at 677e6972, and NEW3 R23 independently accepted the combined actual-API/client lifecycle at integration base 6124b5f0. R17 was released on 2 September 2026 with wire protocol 1 unchanged.",
       "supersededIdentities": {
         "NEW3 R20": {
           "sha256": "c6be4e92ee2ca6fc9e80b04db4c60da505929efd5afece4212348af5b9de2382",
           "gitBlob": "d5c77776a0f532fbd233891f98608d09e49c9758"
+        },
+        "NEW3 R21 through R22": {
+          "sha256": "4f1e5375804e033564228eb278d1b166fea8e38fb0f73dc216103c05748f8964",
+          "gitBlob": "acde387ccc7b5a3b4bdcf5e1410b19af726f548b"
         }
       },
       "verifyWith": "sha256sum docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md ; git rev-parse HEAD:docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
       "lifecycle": {
-        "R17_LCC_IMPLEMENTATION": "PARTIAL — §1 read landed at f0d1490c; §1 write and §3 total omission PENDING",
-        "R17_BACKEND_ACCEPTANCE": "PARTIAL_PASS — §1 read accepted by NEW3 R21 by source read at f0d1490c",
-        "R17_CLIENT_CONSUMPTION_AUTHORIZED": "YES — scoped to §1 unavailableAuthorities[], authorized by NEW3 R21, bus 1728",
-        "R17_RCC_CONSUMPTION": "PENDING",
-        "R17_INDEPENDENT_ACCEPTANCE": "PENDING",
-        "R17_RELEASED": "NO"
+        "R17_LCC_IMPLEMENTATION": "DONE at 5d84e870",
+        "R17_BACKEND_ACCEPTANCE": "PASS — NEW3 R23 physically distinct corpus A/B actual-Hono lifecycle and raw refusal responses",
+        "R17_CLIENT_CONSUMPTION_AUTHORIZED": "YES",
+        "R17_RCC_CONSUMPTION": "DONE at 677e6972",
+        "R17_CLIENT_ACCEPTANCE": "PASS — 8 focused suites / 57 tests plus actual-Hono responses through RCC classifiers",
+        "R17_INDEPENDENT_ACCEPTANCE": "PASS at integration base 6124b5f0",
+        "R17_RELEASED": "YES"
       }
     }
   },
@@ -1080,16 +1097,14 @@
     "note": "R14 is measured against CURRENT HEAD, not the sealed Day-0 HEAD f3b31c96 the R13 rows were measured against. The commits that made four R13 facts stale landed after that seal."
   },
   "p0p1Truth": {
-    "recomputedAt": "2026-09-02, NEW3 R20 from HEAD 75a84804c09be058f9d7b20f3d60e4845ec7f729. Supersedes the NEW3 R19 reconciliation for Gate-C foundation status. R16 remains released; R17 is frozen and pending implementation. Physical Android current-v1 acceptance remains PENDING_DEVICE.",
+    "recomputedAt": "2026-09-02, NEW3 R23 from integration base 6124b5f02754d2a61db590d1630a7f0287c8fd8f. R17 is released. LCC R28 physical database split activation subsequently passed at 6947f72d. Physical Android current-v1 acceptance remains PENDING_DEVICE.",
     "doNotUseR13Counts": "R13's P0_OPEN = 0 / P1_OPEN = 2 predate the four RCC CCRs entering the ledger. They are not carried forward.",
     "CONTRACT_CHANGE_P0_OPEN": 0,
-    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an undecided P0 requiring a product decision. CCR-LCC-R24-01 is P0 and AMENDed into frozen R17; its remaining work is implementation and acceptance, not an open semantic choice. Earlier R16 and party-capability items remain resolved as recorded.",
+    "CONTRACT_CHANGE_P0_OPEN_basis": "No CCR in this ledger is an undecided P0 requiring a product decision. CCR-LCC-R24-01 was AMENDed into R17, then implemented, independently accepted, and released. CCR-LCC-R28-01 is an explicitly deferred P2. Earlier R16 and party-capability items remain resolved as recorded.",
     "ACCEPTANCE_P0_OPEN": 0,
-    "ACCEPTANCE_P0_OPEN_basis": "NEW3_ACCEPTANCE_DELTA_R13.json: AB-1 and AB-2 PASS_WITH_LIMIT, CTRL-CITATION and CTRL-CORELOOP PASS. No acceptance case was rerun in R14 and no acceptance verdict changed - R14 mutated product governance documents only, and touched no apps/**, services/**, packages/** or migration.",
-    "IMPLEMENTATION_P0_OPEN": 1,
-    "IMPLEMENTATION_P0_OPEN_items": [
-      "CCR-LCC-R24-01 / R17 - LCC server implementation, RCC consumption and independent NEW3 acceptance are required before physical database split activation. No-spend local implementation is authorized."
-    ],
+    "ACCEPTANCE_P0_OPEN_basis": "R17 backend/client lifecycle and refusal-total acceptance passed together at integration base 6124b5f0. LCC R28 subsequently passed the committed physical split route matrix and static role guard. Physical Android evidence remains PENDING_DEVICE as a separate product gate, not an undecided P0 contract or backend acceptance item.",
+    "IMPLEMENTATION_P0_OPEN": 0,
+    "IMPLEMENTATION_P0_OPEN_items": [],
     "NON_GATE_P1_OPEN": 2,
     "NON_GATE_P1_OPEN_items": [
       "CCR-2026-08-30-05 - treatment_provenance not on the wire. DEFERRED to Gate C, 18 September, with a named interim behaviour. Unchanged.",
@@ -1161,6 +1176,14 @@
       "CCR-LCC-R20-01 - CLOSED_RELEASED. Focused backend acceptance and all seven focused RCC mobile suites passed; R16 is released with wire protocol 1 and minimum supported contract 1 unchanged.",
       "CCR-NEW3-R18-01 - IMPLEMENTATION DEFECT CLOSED. Migration 0101 and focused matter-route/migration tests prove matters.parties is stored and returned as a JSONB object. Final physical mutation observation remains PENDING_DEVICE, so current-v1 functional acceptance is not promoted to YES.",
       "CCR-NEW3-S2F-01 activation guard - DISCHARGED IN RUNTIME. iOS resolves search.party_name to DISABLED, Android/web resolve ENABLED, and focused route tests prove the suppressed arm reports capability_disabled truthfully."
+    ],
+    "closedInR23": [
+      "CCR-NEW3-R21-01 - CLOSED_RELEASED. LCC R27 implemented 409 CORPUS_TARGET_UNAVAILABLE, idempotent 200 unavailableAuthority, and omission of total on both incomplete structured outcomes. RCC R24 consumed the states. NEW3 R23 independently passed the combined physical-generation API/client lifecycle.",
+      "CCR-LCC-R24-01 / R17 lifecycle - RELEASED with wire protocol 1 and minimum supported contract 1 unchanged. Physical database split activation subsequently passed in LCC R28 at 6947f72d.",
+      "LCC R28 / PHYSICAL_DB_SPLIT_ACTIVATION - CLOSED. The committed physical route matrix passes 64/64 with zero wrong-role paths, the static role guard passes, and all required cross-role/fallback mechanisms remain zero."
+    ],
+    "deferredInR23": [
+      "CCR-LCC-R28-01 - P2, eight R17-adjacent missing-target wording surfaces. Deferred to the next semantic contract round; R17 remains released and R18 is not created merely to absorb the finding."
     ],
     "openedInR20": [
       "CCR-LCC-R24-01 - R17 FROZEN, IMPLEMENTATION P0 OPEN. Soft corpus references, an additive corpus_unavailable saved-authority shell, immutable generation switching, the shared qlang sparse fence and truthful unbounded/timeout outcomes are decided. Physical split activation remains blocked until implementation and acceptance pass."

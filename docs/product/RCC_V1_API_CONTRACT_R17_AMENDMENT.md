@@ -1,7 +1,7 @@
 # RCC v1 API CONTRACT — R17 AMENDMENT
 
-**Status:** frozen by NEW3 R20 on 2 September 2026; **not released to RCC and
-not a claim of implementation**. **Prior released revision:** R16,
+**Status:** frozen by NEW3 R20 and **released by NEW3 R23 on 2 September
+2026**. **Prior released revision:** R16,
 [`RCC_V1_API_CONTRACT_R16_AMENDMENT.md`](RCC_V1_API_CONTRACT_R16_AMENDMENT.md).
 **Ledger:** `CCR-2026-09-02-19`.
 
@@ -15,7 +15,7 @@ CONTRACT_REVISION      = R17
 WIRE_PROTOCOL_VERSION  = 1
 WIRE_BREAKING_CHANGE   = NO
 MIN_SUPPORTED_CONTRACT = 1
-RELEASED_TO_RCC        = NO
+RELEASED_TO_RCC        = YES
 ```
 
 ## 1 · Saved authority whose corpus target is unavailable
@@ -150,11 +150,11 @@ nothing shipped against the defective wording. Ledger row `CCR-2026-09-02-20`.
 
 The split is deliberate and is the rule for every timeout arm:
 
-| field | value | what it answers |
-| --- | --- | --- |
-| `retrievalOutcome.state` | `coverage_unknown` | may this render as "no law"? No. |
-| `retrievalOutcome.reasons` | includes `timeout` | the general user-facing semantic |
-| `degraded` | includes `sparse_timeout` | the specific machine-observable arm |
+| field                      | value                     | what it answers                     |
+| -------------------------- | ------------------------- | ----------------------------------- |
+| `retrievalOutcome.state`   | `coverage_unknown`        | may this render as "no law"? No.    |
+| `retrievalOutcome.reasons` | includes `timeout`        | the general user-facing semantic    |
+| `degraded`                 | includes `sparse_timeout` | the specific machine-observable arm |
 
 A `reason` is what the advocate is being told about coverage, and an advocate
 cannot act on which arm ran out of budget — which is why `timeout` is shared with
@@ -181,14 +181,38 @@ ranking, or the truthful refusal above, are the only permitted outcomes.
 ## 4 · Release gates
 
 ```text
-LCC_IMPLEMENTATION                 = PENDING
-RCC_CONSUMPTION                    = PENDING
-INDEPENDENT_NEW3_ACCEPTANCE        = PENDING
-R17_RELEASED                       = NO
-PHYSICAL_DB_SPLIT_ACTIVATION       = BLOCKED_UNTIL_ALL_THREE_PASS
+LCC_IMPLEMENTATION                 = DONE at 5d84e870
+RCC_CONSUMPTION                    = DONE at 677e6972
+INDEPENDENT_NEW3_ACCEPTANCE        = PASS at 6124b5f0
+R17_RELEASED                       = YES
+PHYSICAL_DB_SPLIT_ACTIVATION       = BLOCKED_ON_LCC_R28_ROLE_ROUTING
 ```
 
-R17 may be implemented and tested locally without paid infrastructure. It may
-not be presented as live or activated against a split deployment until LCC and
-RCC consume it and NEW3 independently verifies the missing-target and qlang
-outcomes.
+### 4.1 · Release seal — NEW3 R23, 2 September 2026
+
+LCC R27 implemented both remaining conformance gaps. RCC R24 consumed the read
+and write outcomes. NEW3 then exercised the real Hono app against one user
+database and two physically distinct corpus generations while passing each real
+response through RCC's `saveAuthorityOutcome()` and `mergeSavedAuthorities()`.
+
+Observed together:
+
+- present target: `201`, one user row, normally hydrated;
+- generation A to B: the same row became the exact six-field unavailable shell;
+- absent new target: `409 CORPUS_TARGET_UNAVAILABLE`, zero writes, no false
+  non-existence copy, client outcome non-retryable;
+- absent already-saved target: `200 { unavailableAuthority }`, zero mutation;
+- generation B to A: same `authorityId` and `addedAt`, one row, normal hydration;
+- `sparse_unbounded` and `sparse_timeout`: raw JSON omitted `total`; timeout kept
+  `reasons: ['timeout']` semantics and `degraded: ['sparse_timeout']`.
+
+R17 is released with wire protocol `1` and minimum supported contract `1`
+unchanged. R17 release did not itself activate the full physical database split.
+LCC R28 subsequently completed correct role routing, the executable regression
+guard, and a `64/64` physical split route matrix at `6947f72d`; NEW3 reran its
+static role-wiring test and full API TypeScript check successfully. Physical
+Android current-v1 acceptance remains `PENDING_DEVICE` and is a separate product
+gate.
+
+Evidence: [`NEW3_R23_R17_ACCEPTANCE.json`](NEW3_R23_R17_ACCEPTANCE.json) and
+[`NEW3_R23_CURRENT_V1_INTEGRATION_AND_R17_RELEASE.md`](NEW3_R23_CURRENT_V1_INTEGRATION_AND_R17_RELEASE.md).
