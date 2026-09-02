@@ -137,9 +137,38 @@ If an admitted bounded qlang lexical operation reaches its statement budget:
 - HTTP 200;
 - `results: []` for the aborted structured operation;
 - `degraded` includes `sparse_timeout`;
-- `retrievalOutcome.state = coverage_unknown` and `reasons` includes
-  `sparse_timeout`;
+- `retrievalOutcome.state = coverage_unknown` and `reasons` includes the
+  existing `timeout` member;
 - `total` and `emptyBecause` are omitted.
+
+**ERRATUM, NEW3 R21, 2 September 2026.** The two bullets above previously read
+`reasons` includes `sparse_timeout`. `RetrievalOutcomeReason` has no such member
+and is not gaining one; LCC found this while implementing (bus 1726) and
+correctly declined to add a member to a contract it does not own. The wire was
+never wrong — only this description of it was, and R17 was never released, so
+nothing shipped against the defective wording. Ledger row `CCR-2026-09-02-20`.
+
+The split is deliberate and is the rule for every timeout arm:
+
+| field | value | what it answers |
+| --- | --- | --- |
+| `retrievalOutcome.state` | `coverage_unknown` | may this render as "no law"? No. |
+| `retrievalOutcome.reasons` | includes `timeout` | the general user-facing semantic |
+| `degraded` | includes `sparse_timeout` | the specific machine-observable arm |
+
+A `reason` is what the advocate is being told about coverage, and an advocate
+cannot act on which arm ran out of budget — which is why `timeout` is shared with
+`dense_timeout` and `pin_timeout`. `degraded` is where the arm is named. Putting
+the arm name in both lists would give one event two vocabularies, which §8.5
+forbids, and would make `reasons` arm-shaped for one arm and semantic for every
+other.
+
+`sparse_unbounded` appearing in both lists is not a counter-example. A refusal to
+rank has a REMEDY the advocate can act on — `add_more_terms` — so it earns a
+reason of its own. A timeout has no remedy, which is exactly why `emptyBecause`
+is omitted here and present there.
+
+A client identifies the failed arm from `degraded`, never from `reasons`.
 
 It never falls through to the generic HTTP 503 `TIMEOUT` copy, never renders as
 "no results", never auto-retries, and does not widen the 15-second statement or

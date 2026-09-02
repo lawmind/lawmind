@@ -606,8 +606,14 @@
             "search/route.ts:614",
             "briefings/route.ts:255"
           ],
-          "derivedUpstream": ["search/saved.ts:292", "arguments/counter.ts:212"],
-          "stored": ["matters/authorities.ts:187", "citations/check.ts:123"]
+          "derivedUpstream": [
+            "search/saved.ts:292",
+            "arguments/counter.ts:212"
+          ],
+          "stored": [
+            "matters/authorities.ts:187",
+            "citations/check.ts:123"
+          ]
         }
       },
       "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
@@ -823,8 +829,13 @@
       "cause": "matters/route.ts writes ${JSON.stringify(body.parties)}::jsonb; postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a string scalar. Isolated: JSON.stringify(obj)::jsonb gives jsonb_typeof=string, sql.json(obj) gives object.",
       "userTruthImpact": "MatterScreen.tsx:369 renders {matter.parties.description}, undefined against a string. No crash and no error state - the parties line silently loses the advocate’s own case identity on the matter workspace.",
       "severity": "P1",
-      "blocks": ["FINAL_LOCAL_V1_ACCEPTANCE", "REMOTE_ALPHA"],
-      "doesNotBlock": ["RCC_R16_CLIENT_IMPLEMENTATION"],
+      "blocks": [
+        "FINAL_LOCAL_V1_ACCEPTANCE",
+        "REMOTE_ALPHA"
+      ],
+      "doesNotBlock": [
+        "RCC_R16_CLIENT_IMPLEMENTATION"
+      ],
       "backendOwner": "LCC",
       "clientOwner": "RCC - notify only; no client change, and no defensive JSON.parse",
       "fix": [
@@ -891,17 +902,108 @@
       "decidedAt": "2026-09-02",
       "earlyHandoff": ".agents/bus/1723--NEW3-to-LCC--gate-c-foundation-frozen-soft-corpus-references-.md",
       "evidence": "docs/product/NEW3_R20_GATE_C_FOUNDATION_CONTRACT.md; docs/ai/lcc-r24/remote-db-split-readiness.md; docs/ai/lcc-r24/corpus-rollback-separation.md; docs/ai/lcc-r24/gate-s1-findings.md"
+    },
+    {
+      "id": "CCR-LCC-R25-01",
+      "new3LedgerId": "CCR-2026-09-02-20",
+      "filedVia": "LCC bus 1726 while implementing R17: \"Your handoff says retrievalOutcome.state=coverage_unknown with reason sparse_timeout. RetrievalOutcomeReason has no such member.\" LCC followed the existing derivation rather than add a member to a contract it does not own, and asked.",
+      "endpoints": [
+        "POST /search"
+      ],
+      "decision": "REJECT_WITH_ALTERNATIVE",
+      "classification": "CONTRACT_ARTIFACT_ERRATUM_NO_WIRE_CHANGE",
+      "severity": "P1",
+      "blockingGate": "none — R17 was unreleased, so nothing shipped against the defective wording",
+      "requiresAck": true,
+      "contractArtifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
+      "missing": "Nothing on the wire. R17 §3 described the timeout state as `retrievalOutcome.reasons` including `sparse_timeout`. That member does not exist in `RetrievalOutcomeReason` (services/api/src/search/outcome.ts:98-123) and the shipped derivation maps `sparse_timeout` in `degradedArms` to `reason: timeout` (outcome.ts:209, 231, 256). The contract prose was wrong; the implementation was right.",
+      "rationale": "REJECTED as a new enum member. A `reason` is the general user-facing semantic — what the advocate is told about coverage — and an advocate cannot act on WHICH arm ran out of budget, which is why `timeout` is deliberately shared with dense_timeout and pin_timeout. `degraded` is where the specific machine-observable arm is named. Adding sparse_timeout to the reason enum would give one event two vocabularies (forbidden by §8.5) and make `reasons` arm-shaped for one arm and semantic for every other. sparse_unbounded appearing in both lists is not a counter-example: a refusal to rank has a remedy the advocate can act on (add_more_terms) and so earns a reason of its own, which is the same fact that makes emptyBecause present there and omitted here.",
+      "alternative": "The existing vocabulary already expresses the state exactly. state=coverage_unknown, reasons includes the existing `timeout`, degraded includes `sparse_timeout`. R17 §3 was corrected in place with a visible ERRATUM block and a field table; both identities recomputed above. A client identifies the failed arm from `degraded`, never from `reasons`.",
+      "SPARSE_TIMEOUT_WIRE_REASON": "timeout",
+      "SPARSE_TIMEOUT_DEGRADED_ARM": "sparse_timeout",
+      "CONTRACT_REVISION": "R17 (unchanged — an erratum to an unreleased artifact, not a new revision)",
+      "WIRE_PROTOCOL_VERSION": 1,
+      "WIRE_BREAKING_CHANGE": "NO",
+      "MIN_SUPPORTED_CONTRACT": 1,
+      "CONTRACT_CHANGE_REQUIRED": "NO — no wire field moves, no shape changes, nothing for LCC to implement",
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": false,
+      "decidedBy": "NEW3 R21",
+      "decidedAt": "2026-09-02",
+      "earlyHandoff": "LCC bus 1729 and RCC bus 1728, both sent before this ledger row was written so R26 does not wait on documentation.",
+      "evidence": {
+        "enumAtHead": "services/api/src/search/outcome.ts:98-123 — nine members, no sparse_timeout",
+        "derivationAtHead": "services/api/src/search/outcome.ts:209 TIMEOUT_ARMS, :231 timedOut, :256 reasons.push(timeout)",
+        "emissionAtHead": "services/api/src/search/route.ts:642-680 — one shape, the degraded arm separates refusal from timeout",
+        "integrationBase": "f0d1490c"
+      }
+    },
+    {
+      "id": "CCR-NEW3-R21-01",
+      "new3LedgerId": "CCR-2026-09-02-21",
+      "filedVia": "NEW3 R21 acceptance pass, raised on its own initiative while reading the R17 implementation at f0d1490c rather than taking LCC bus 1726 at face value.",
+      "endpoints": [
+        "POST /matters/:id/authorities",
+        "POST /search"
+      ],
+      "decision": "ENGINEERING_DEFECT_ROUTED_TO_LCC",
+      "classification": "CONTRACT_CONFORMANCE_GAP_NO_CONTRACT_CHANGE",
+      "severity": "P1",
+      "blockingGate": "R17 release. Does NOT block RCC §1 read consumption, which is why consumption was authorized separately.",
+      "requiresAck": true,
+      "missing": [
+        "R17 §1 write: POST /matters/:id/authorities answers an absent corpus target with 404 NOT_FOUND \"no judgment with that id\" (services/api/src/matters/authorities.ts:459). R17 requires 409 CORPUS_TARGET_UNAVAILABLE and explicitly forbids saying the judgment does not exist — under the split it is also false, because after a rollback the judgment exists and this release does not carry it. The idempotent 200 { unavailableAuthority } branch for an already-satisfied save is not implemented.",
+        "R17 §3 total: the contract omits `total` on both sparse_unbounded and sparse_timeout; services/api/src/search/route.ts:648 sends total: 0."
+      ],
+      "rationale": "On `total`, LCC's route comment argues total:0 is a page count beside a state that says what the zero means, and that is sound in isolation. The contract stands on who has to be wrong for it to matter: a consumer that reads retrievalOutcome sees the same truth either way, while a consumer that ignores it reads total:0 as \"zero results exist\" and renders \"there is no law on this\". Omission makes that consumer read undefined and fail loudly instead of quietly — the same asymmetry outcome.ts already relies on. retrievalOutcome.resultCount remains available to anyone who wants the count. This narrows a refusal branch only; it does not move minSupportedContract and RCC reads no `total` on these shapes today.",
+      "alternative": "No contract change. LCC implements the two frozen behaviours; NEW3 re-accepts before R17 release.",
+      "docsOnlyDefect": "services/api/src/matters/authorities.ts:282-285 still says unavailableAuthorities \"is therefore emitted ONLY when it is non-empty\" — the prose the code below it corrected. A reader trusting the comment over the code would reintroduce the bug. LCC-owned file, LCC-owned fix.",
+      "accepted": "R17 §1 READ conforms exactly, read at f0d1490c: six-field shell and nothing else, no fabricated corpus metadata, removed rows retained, addedAt DESC, and always sent including []. Blue/green A -> B -> A proof with the user database byte-identical by ordered md5 (scripts/lcc-corpus-bluegreen-proof.mjs).",
+      "CONTRACT_REVISION": "R17 (unchanged)",
+      "WIRE_PROTOCOL_VERSION": 1,
+      "WIRE_BREAKING_CHANGE": "NO",
+      "MIN_SUPPORTED_CONTRACT": 1,
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": false,
+      "decidedBy": "NEW3 R21",
+      "decidedAt": "2026-09-02",
+      "earlyHandoff": "LCC bus 1729 §3; RCC bus 1728 §3 so RCC does not build against the unimplemented halves."
+    },
+    {
+      "id": "CCR-RCC-R22-01",
+      "new3LedgerId": "CCR-2026-09-02-22",
+      "filedVia": "RCC bus 1722: an identity_only account (verified auth identity, tokens, no users row) receives 401 AUTH_REQUIRED from POST /me/data-requests, so the app's answer to \"delete my account\" is \"first give us your name and phone number\".",
+      "endpoints": [
+        "POST /me/data-requests"
+      ],
+      "decision": "REJECT_WITH_ALTERNATIVE",
+      "classification": "BACKEND_BEHAVIOUR_NOT_WIRE_SHAPE",
+      "severity": "P2",
+      "blockingGate": "SPRINT4_STORE_BLOCKER (Apple 5.1.1(v), DPDP). Does NOT block Gate-C backend search engineering.",
+      "requiresAck": true,
+      "CONTRACT_CHANGE_REQUIRED": "NO — RCC assessed this correctly. The request body, the kind:erasure value and the response are all unchanged.",
+      "rationale": "Rejected AS A CONTRACT CHANGE because no request or response shape moves. The decision that was owed is a semantic one and it is frozen in docs/product/NEW3_R21_INTEGRATION_AND_DELETION_ADJUDICATION.md: extend the existing endpoint to be principal-aware; never create a second user-facing deletion concept; never require a profile as a prerequisite for erasure.",
+      "alternative": "IDENTITY_ONLY_DELETION = API_IMPLEMENTATION_EXTENSION_EXISTING_CONTRACT + SCHEMA_AMENDMENT_REQUIRED. Six binding semantic requirements SR-1..SR-6, LCC bus 1729 §4.4.",
+      "correctionToTheReport": "RCC read identity_only as an account with tokens and nothing to erase. There IS durable personal data — auth_user holds the email and name, auth_session holds IP address and user-agent, auth_verification holds magic-link artifacts keyed by the EMAIL with no foreign key so it does not cascade, and refresh_tokens holds the token family (packages/auth/src/schema.ts). eraseUser already deletes every one of them (services/api/src/auth/erasure.ts:358-363), keyed on authId and email. \"No profile row\" is not \"no account\" and is not \"nothing to erase\".",
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": false,
+      "decidedBy": "NEW3 R21",
+      "decidedAt": "2026-09-02",
+      "earlyHandoff": "LCC bus 1729 §4 (backend contract), RCC bus 1728 §6 (no second screen)."
     }
   ],
   "counts": {
-    "received": 19,
+    "received": 22,
     "amended": 11,
     "deferred": 4,
-    "rejectedWithAlternative": 1,
-    "engineeringDefectRoutedToLCC": 3,
+    "rejectedWithAlternative": 3,
+    "engineeringDefectRoutedToLCC": 4,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "R17, 2 September 2026. R15 recorded 16 received / 9 amended / 4 deferred / 1 rejected-with-alternative / 2 engineering defects. R16 added CCR-LCC-R20-01 (AMEND), and R18 added CCR-NEW3-R18-01 (engineering defect); NEW3 R19 released R16. R17 adds CCR-LCC-R24-01 (AMEND): the additive unavailable-authority shell and existing truthful sparse outcome vocabulary for qlang, backed by soft corpus references and immutable blue/green generations. R17 is frozen but not released or implemented."
+    "note": "NEW3 R21, 2 September 2026, at INTEGRATION_BASE f0d1490c. R17 added CCR-LCC-R24-01 (AMEND). R21 adds three rows and opens no new revision: CCR-LCC-R25-01 (REJECT_WITH_ALTERNATIVE — the sparse_timeout reason member; R17 §3 corrected by erratum, identities recomputed), CCR-NEW3-R21-01 (engineering defect — the R17 §1 write path and the §3 total omission are not yet implemented), and CCR-RCC-R22-01 (REJECT_WITH_ALTERNATIVE — identity_only deletion is a backend behaviour, not a wire shape). R17 §1 read is accepted and RCC is authorized to consume it; R17 remains UNRELEASED."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The new list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object is unchanged. R16 remains the latest released revision while R17 implementation, RCC consumption and independent acceptance are pending.",
@@ -949,12 +1051,21 @@
     },
     "R17": {
       "artifact": "docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
-      "sha256": "c6be4e92ee2ca6fc9e80b04db4c60da505929efd5afece4212348af5b9de2382",
-      "gitBlob": "d5c77776a0f532fbd233891f98608d09e49c9758",
-      "state": "FROZEN_PENDING_IMPLEMENTATION_NOT_RELEASED",
-      "note": "NEW3 R20 froze the smallest additive missing-target and qlang truth contract. LCC and RCC implementation plus independent NEW3 acceptance are required before release or physical split activation.",
+      "sha256": "4f1e5375804e033564228eb278d1b166fea8e38fb0f73dc216103c05748f8964",
+      "gitBlob": "acde387ccc7b5a3b4bdcf5e1410b19af726f548b",
+      "state": "FROZEN_PARTIALLY_IMPLEMENTED_NOT_RELEASED",
+      "note": "NEW3 R20 froze the smallest additive missing-target and qlang truth contract. NEW3 R21 corrected a defective DESCRIPTION in §3 (see CCR-2026-09-02-20) and recomputed both identities; the identities recorded here supersede the R20 pair. R17 was never released, so nothing shipped against the defective wording. §1 read is implemented and accepted; §1 write and the §3 total omission are not yet implemented.",
+      "supersededIdentities": {
+        "NEW3 R20": {
+          "sha256": "c6be4e92ee2ca6fc9e80b04db4c60da505929efd5afece4212348af5b9de2382",
+          "gitBlob": "d5c77776a0f532fbd233891f98608d09e49c9758"
+        }
+      },
+      "verifyWith": "sha256sum docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md ; git rev-parse HEAD:docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md",
       "lifecycle": {
-        "R17_LCC_IMPLEMENTATION": "PENDING",
+        "R17_LCC_IMPLEMENTATION": "PARTIAL — §1 read landed at f0d1490c; §1 write and §3 total omission PENDING",
+        "R17_BACKEND_ACCEPTANCE": "PARTIAL_PASS — §1 read accepted by NEW3 R21 by source read at f0d1490c",
+        "R17_CLIENT_CONSUMPTION_AUTHORIZED": "YES — scoped to §1 unavailableAuthorities[], authorized by NEW3 R21, bus 1728",
         "R17_RCC_CONSUMPTION": "PENDING",
         "R17_INDEPENDENT_ACCEPTANCE": "PENDING",
         "R17_RELEASED": "NO"
