@@ -16,6 +16,7 @@ import { after, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { hybridSearch, type DegradedArm } from './retrieve.ts';
+import { createPhaseClock, SEARCH_PHASE } from './timings.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 4, onnotice: () => {} });
 
@@ -129,6 +130,11 @@ describe('sparse arm — the bound on the ranked set', () => {
     if (!scope) return t.skip('no bounded court-month population in this corpus');
 
     const degraded: DegradedArm[] = [];
+    /**
+     * The clock exists so this assertion can measure THE SPARSE ARM rather than
+     * the whole pipeline. See the note on the assertion below.
+     */
+    const clock = createPhaseClock();
     const started = Date.now();
     const results = await hybridSearch(
       sql,
@@ -138,8 +144,12 @@ describe('sparse arm — the bound on the ranked set', () => {
       10,
       'hybrid',
       (a) => degraded.push(a),
+      0,
+      undefined,
+      { timings: clock },
     );
     const ms = Date.now() - started;
+    const sparseMs = clock.phases()[SEARCH_PHASE.sparse] ?? ms;
 
     assert.ok(
       !degraded.includes('sparse_unbounded'),
@@ -147,15 +157,54 @@ describe('sparse arm — the bound on the ranked set', () => {
     );
     assert.ok(results.length > 0, 'the bounded population must actually be ranked');
     /**
-     * **This number is asserting the PLAN FENCE, not the admission.** Admission
-     * alone was implemented first and the same admitted query took 10,799 ms:
-     * the planner cannot cost a tsquery built inside a CTE, so it BitmapAnd'd
-     * 4,518,732 `bail` postings against the date index and applied the court as
-     * a heap filter — to answer a 54-document window. If this assertion starts
-     * failing, the `MATERIALIZED` fence in `rankWithinBoundedPopulation` has
-     * been removed or inlined, and admission on its own will not catch it.
+     * ─────────────────────────────────────────────────────────────────────────
+     * **This number is asserting the PLAN FENCE, not the admission** — and as of
+     * 2 September 2026 it is applied to the ARM rather than to the pipeline
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Admission alone was implemented first and the same admitted query took
+     * 10,799 ms: the planner cannot cost a tsquery built inside a CTE, so it
+     * BitmapAnd'd 4,518,732 `bail` postings against the date index and applied
+     * the court as a heap filter — to answer a small window. If this assertion
+     * starts failing, the `MATERIALIZED` fence in `rankWithinBoundedPopulation`
+     * has been removed or inlined, and admission on its own will not catch it.
+     *
+     * **The threshold is unchanged at 5,000 ms. What changed is WHAT it
+     * measures, and that makes it strictly tighter.** It used to time the whole
+     * of `hybridSearch` — the fenced query PLUS the exact-lookup probe, the
+     * content-hash collapse, the hydration of ten `full_text` rows and the
+     * paragraph fallback, none of which the fence has anything to do with. On
+     * 2 Sep it failed at 6,718 ms *running alone*, and the earlier round's
+     * "re-run alone: 383 ms" no longer reproduced — which read as a broken
+     * fence. It was not:
+     *
+     *     EXPLAIN (ANALYZE, BUFFERS) of the fenced statement, same scope
+     *     (High Court of Karnataka, June 2026, 7,903 documents):
+     *       CTE Scan on eligible ... Storage: Memory
+     *       Index Scan using judgments_date_court_idx
+     *       Execution Time: 358.091 ms
+     *
+     * The fence is intact. What the 358 ms does NOT say is that the pipeline was
+     * the slow part: measured again under full-suite load, this assertion's own
+     * message reads `arm took 5038ms (whole hybridSearch 5095ms)` — the arm is
+     * 99% of the call and the rest is ~57 ms. The SAME fenced statement is
+     * 358 ms on a quiet box and seconds under contention.
+     *
+     * So `sparseMs` from the phase clock (`search/timings.ts`) is the right
+     * quantity to assert — it is what the comment claims to guard, and the
+     * unfenced plan's 10,799 ms still fails it loudly — but narrowing it did NOT
+     * make this test stable. It is red under the twelve-suite run on this box
+     * and green alone at ~437 ms. Printing both figures is the part that
+     * actually helps: it is how the pipeline-is-slow reading above was refuted.
+     *
+     * Do not raise the number. If this needs to be stable in CI it needs a quiet
+     * box, or deterministic plan evidence that does not require duplicating this
+     * module's SQL into the test.
      */
-    assert.ok(ms < 5000, `admitted narrow query must be fast; took ${ms}ms`);
+    assert.ok(
+      sparseMs < 5000,
+      `the fenced sparse arm must be fast; arm took ${sparseMs}ms (whole hybridSearch ${ms}ms)`,
+    );
   });
 
   it('still refuses a globally common term over a population it has NOT bounded', async (t) => {

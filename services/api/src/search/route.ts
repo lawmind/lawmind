@@ -28,6 +28,14 @@ import {
   SEMANTIC_INDEX_SUFFICIENT,
 } from './outcome.ts';
 import { classifyQuery } from './query-shape.ts';
+import {
+  createPhaseClock,
+  measurePoolWaitMs,
+  poolProbeEnabled,
+  SEARCH_PHASE,
+  SEARCH_TOP_LEVEL_PHASES,
+  type PhaseClock,
+} from './timings.ts';
 import { answerStructured } from './structured.ts';
 import { recordStepForAuthIdInBackground } from '../product/activation.ts';
 import {
@@ -242,6 +250,21 @@ export type SearchDeps = {
     ((platform: ReturnType<typeof platformFromRequest>) => boolean) | undefined;
   /** Absent until auth ships in S5. See the note where `searches` is written. */
   userId?: string | undefined;
+  /**
+   * Harness sink for the phase line this route logs.
+   *
+   * Production omits it and the line goes to pino only. The Gate-S1 harness
+   * supplies it because it drives the REAL Hono app in-process, where pino's
+   * default destination is a raw `fs.write` to fd 1 that no in-process reader
+   * can intercept — so without this hook a harness would have to shell out and
+   * re-parse its own stdout to read numbers it is standing next to.
+   *
+   * It receives EXACTLY the object that was logged, so the harness and the log
+   * stream cannot disagree about a run. Called after the response is decided,
+   * inside the same `finally`; a throw from it is caught and ignored, because a
+   * measurement must never fail a search.
+   */
+  onPhaseTiming?: ((line: Record<string, unknown>) => void) | undefined;
 };
 
 /**
@@ -283,6 +306,35 @@ export async function handleSearch(
 ): Promise<Response> {
   const started = performance.now();
   /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * ONE STRUCTURED LOG LINE THAT SAYS WHERE THE FIFTEEN SECONDS WENT
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * RCC measured a COLD `/search` at 15,334 ms on a physical Galaxy S24 (bus
+   * 1652) and 15,243 ms again the next day (bus 1690), against warm requests of
+   * 90-771 ms on the same device and the same build. `app.ts` logged
+   * `duration_ms 15243`; `search_events` logged `latency_ms`. Neither could name
+   * a phase, and direct local phase measurement did not reproduce the event — so
+   * the only way to close it is to make the next occurrence self-describing.
+   *
+   * Diagnostics only. Nothing here reaches the response, and `search/timings.ts`
+   * carries the rule this file must not break: the residual is published as
+   * `unattributedMs` and never as pool wait.
+   */
+  const clock = createPhaseClock(SEARCH_TOP_LEVEL_PHASES);
+  /**
+   * One place that builds the line, so the log stream and the harness can never
+   * carry different numbers for the same request.
+   */
+  function emitPhaseTiming(line: Record<string, unknown>): void {
+    logger.info(line, 'search phase timing');
+    try {
+      deps.onPhaseTiming?.(line);
+    } catch (error) {
+      logger.warn({ err: error }, 'phase-timing sink threw — the search itself was unaffected');
+    }
+  }
+  /**
    * Filled in by `runSearch` as it learns things. A plain mutable record rather
    * than a return value because every branch of that function returns a
    * Response and threading a tuple through nine of them would obscure what they
@@ -290,7 +342,18 @@ export async function handleSearch(
    */
   const outcome: SearchOutcome = { queryClass: 'unknown', resultCount: 0, degraded: [] };
 
-  const slot = deps.admission ? await deps.admission.acquire() : null;
+  /**
+   * Bound to a local so the closure below does not need a non-null assertion,
+   * and — deliberately — so `admission.acquire(` still reads literally in this
+   * file. `search/production-callers.test.ts` enumerates every production caller
+   * of `hybridSearch` and greps for exactly that, because two routes have
+   * shipped without a slot. An instrumentation change is not a reason to make
+   * that check stop matching.
+   */
+  const admission = deps.admission;
+  const slot = admission
+    ? await clock.phase(SEARCH_PHASE.admissionWait, () => admission.acquire())
+    : null;
   if (deps.admission && slot === null) {
     logger.warn(
       { ...deps.admission.stats(), query_chars: body.query.length },
@@ -309,6 +372,28 @@ export async function handleSearch(
       requestId: c.get('requestId'),
       subject: c.get('authId'),
     });
+    /**
+     * The refusal gets a phase line of its own, and it is the shortest one this
+     * route emits: `admissionWaitMs` alone, at the gate's full wait. A capacity
+     * event that appears in `search_events` but not in the timing stream would
+     * make the timing stream look healthy during the exact incident it exists
+     * for — the same reasoning `search/event.ts` records for `admitted`.
+     */
+    emitPhaseTiming({
+      event: 'search_phase_timing',
+      request_id: c.get('requestId'),
+      query_class: 'refused',
+      query_chars: body.query.length,
+      result_count: 0,
+      degraded: [],
+      status: 503,
+      admitted: false,
+      pool_wait_ms: null,
+      pool_wait_measured: poolProbeEnabled(),
+      ...clock.phases(),
+      unattributed_ms: clock.unattributedMs(),
+      total_ms: Math.round(performance.now() - started),
+    });
     // 503 + Retry-After. An honest "not now" that the client can retry, rather
     // than an empty page that reads as "no such law".
     c.header('Retry-After', '2');
@@ -319,8 +404,21 @@ export async function handleSearch(
       503,
     );
   }
+  /**
+   * Measured at the REAL acquisition boundary — `sql.reserve()` — and only when
+   * the operator asked for it. See `search/timings.ts` for what the number is
+   * and, just as importantly, what it is not: a sample taken here, not the wait
+   * the two rankers themselves pay a moment later, and on a cold pool it
+   * includes connection establishment.
+   *
+   * Taken AFTER admission and BEFORE any research statement, because that is the
+   * instant a request first needs a research connection. On the research pool
+   * specifically — the core pool is a different queue with a different depth,
+   * and averaging them would describe neither.
+   */
+  const poolWaitMs = await measurePoolWaitMs(deps.researchSql ?? deps.sql);
   try {
-    return await runSearch(c, deps, body, outcome);
+    return await runSearch(c, deps, body, outcome, clock);
   } finally {
     slot?.release();
     /**
@@ -341,6 +439,41 @@ export async function handleSearch(
       status: c.res.status,
       requestId: c.get('requestId'),
       subject: c.get('authId'),
+    });
+
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * THE PHASE LINE. ONE EVENT, EVERY SEARCH, INCLUDING THE ONES THAT THREW
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * In the same `finally` as the telemetry row and for the same reason: a
+     * 15-second request that ended in a 500 is precisely the one worth reading,
+     * and an instrumentation that only fires on the happy path would miss it.
+     *
+     * `pool_wait_ms` is `null` unless `SEARCH_POOL_PROBE=1`, and null MEANS "not
+     * measured" — never zero, never inferred. `unattributed_ms` is the residual
+     * and is labelled as a residual; `search/timings.ts` records why it must not
+     * be renamed to pool wait however tempting the arithmetic looks.
+     *
+     * No query text, matching `search/event.ts` and migration `0075`: the shape
+     * answers every operational question and the string names a client.
+     */
+    emitPhaseTiming({
+      event: 'search_phase_timing',
+      request_id: c.get('requestId'),
+      query_class: outcome.queryClass,
+      query_chars: body.query.length,
+      result_count: outcome.resultCount,
+      degraded: outcome.degraded,
+      status: c.res.status,
+      // Unconditionally true here: the refusal branch returns above and emits
+      // its own line, so this one only ever describes an admitted request.
+      admitted: true,
+      pool_wait_ms: poolWaitMs,
+      pool_wait_measured: poolProbeEnabled(),
+      ...clock.phases(),
+      unattributed_ms: clock.unattributedMs(),
+      total_ms: Math.round(performance.now() - started),
     });
 
     /**
@@ -373,6 +506,7 @@ async function runSearch(
   deps: SearchDeps,
   body: SearchRequest,
   outcome: SearchOutcome,
+  clock: PhaseClock,
 ): Promise<Response> {
   /**
    * The pool the rankers run on. Falls back to the core handle so every
@@ -394,7 +528,9 @@ async function runSearch(
    * would ignore a request they can see on their screen.
    */
   const courts = body.filters?.courts
-    ? await expandCategories(deps.sql, body.filters.courts)
+    ? await clock.phase(SEARCH_PHASE.courtExpand, () =>
+        expandCategories(deps.sql, body.filters!.courts!),
+      )
     : undefined;
 
   const filters: SearchFilters = {
@@ -432,7 +568,9 @@ async function runSearch(
   const page = body.page ?? 1;
   const offset = (page - 1) * pageSize;
 
-  const structured = await answerStructured(research, body.query, pageSize, offset);
+  const structured = await clock.phase(SEARCH_PHASE.structured, () =>
+    answerStructured(research, body.query, pageSize, offset),
+  );
 
   if (structured.kind === 'invalid') {
     outcome.queryClass = 'structured_invalid';
@@ -466,7 +604,9 @@ async function runSearch(
   if (structured.kind === 'matched') {
     outcome.queryClass = 'structured';
     outcome.resultCount = structured.hits.length;
-    const derived = await derivedEffects(deps.sql, structured.hits);
+    const derived = await clock.phase(SEARCH_PHASE.derivedEffects, () =>
+      derivedEffects(deps.sql, structured.hits),
+    );
     return ok(c, {
       results: structured.hits.map((h) => ({
         judgmentId: h.judgmentId,
@@ -526,7 +666,9 @@ async function runSearch(
      * fourth concern's sibling gate — an exact-identity lookup that isn't
      * exact must say so, never silently pick one reading for the advocate.
      */
-    const derived = await derivedEffects(deps.sql, structured.hits);
+    const derived = await clock.phase(SEARCH_PHASE.derivedEffects, () =>
+      derivedEffects(deps.sql, structured.hits),
+    );
     return ok(c, {
       results: structured.hits.map((h) => ({
         judgmentId: h.judgmentId,
@@ -608,7 +750,9 @@ async function runSearch(
    * silently truncated, and no lexical result is promoted to a confidence it did
    * not earn.
    */
-  const queryVector = semanticArmPermitted() ? await deps.embedQuery(body.query) : null;
+  const queryVector = semanticArmPermitted()
+    ? await clock.phase(SEARCH_PHASE.embed, () => deps.embedQuery(body.query))
+    : null;
   /**
    * Which ranker, if any, ran out of its statement budget on this request.
    *
@@ -624,34 +768,39 @@ async function runSearch(
   // The hybrid path's own class, taken from the same classifier retrieval uses
   // so telemetry and routing can never disagree about what a query was.
   outcome.queryClass = classifyQuery(body.query).shape;
-  const retrieved = await hybridSearch(
-    research,
-    body.query,
-    queryVector,
-    filters,
-    // One more than the page, so `hasMore` is OBSERVED rather than inferred
-    // from a full page. A page of exactly `pageSize` results is ambiguous —
-    // it is the last page as often as it is not — and telling an advocate
-    // there is more when there is not sends them to an empty screen.
-    pageSize + 1,
-    'hybrid',
-    (arm) => {
-      if (!degraded.includes(arm)) degraded.push(arm);
-      logger.warn(
-        { arm, query_chars: body.query.length },
-        arm === 'party_name_disabled'
-          ? 'search arm disabled by platform capability — results are incomplete'
-          : 'search arm exceeded its statement budget — results are incomplete',
-      );
-    },
-    offset,
-    signals,
-    // §9.5. Resolved from the request's own platform, so an iOS build can lose
-    // the party arm without any other client losing anything, and without
-    // `/search` refusing — exact case number, CNR and citation are untouched.
-    {
-      partyNameArm: (deps.partyNameArmPermitted ?? partyNameArmPermitted)(platformFromRequest(c)),
-    },
+  const retrieved = await clock.phase(SEARCH_PHASE.retrieval, () =>
+    hybridSearch(
+      research,
+      body.query,
+      queryVector,
+      filters,
+      // One more than the page, so `hasMore` is OBSERVED rather than inferred
+      // from a full page. A page of exactly `pageSize` results is ambiguous —
+      // it is the last page as often as it is not — and telling an advocate
+      // there is more when there is not sends them to an empty screen.
+      pageSize + 1,
+      'hybrid',
+      (arm) => {
+        if (!degraded.includes(arm)) degraded.push(arm);
+        logger.warn(
+          { arm, query_chars: body.query.length },
+          arm === 'party_name_disabled'
+            ? 'search arm disabled by platform capability — results are incomplete'
+            : 'search arm exceeded its statement budget — results are incomplete',
+        );
+      },
+      offset,
+      signals,
+      // §9.5. Resolved from the request's own platform, so an iOS build can lose
+      // the party arm without any other client losing anything, and without
+      // `/search` refusing — exact case number, CNR and citation are untouched.
+      {
+        partyNameArm: (deps.partyNameArmPermitted ?? partyNameArmPermitted)(platformFromRequest(c)),
+        // The same clock, so the ranker's own phases land in the SAME log line as
+        // the route's rather than in a second event nobody joins to the first.
+        timings: clock,
+      },
+    ),
   );
   const hasMore = retrieved.length > pageSize;
   if (hasMore) retrieved.length = pageSize;
@@ -672,6 +821,7 @@ async function runSearch(
   // row is written only when a user is present and `searchId` is null otherwise.
   // RCC: `searchId` can be null until auth lands.
   let searchId: string | null = null;
+  const bookkeepingAt = performance.now();
   if (deps.userId) {
     const [searchRow] = await deps.sql<{ id: string }[]>`
       INSERT INTO searches (user_id, matter_id, query_text, query_language, results_returned, model_used)
@@ -725,8 +875,20 @@ async function runSearch(
       );
     }
   }
+  clock.add(SEARCH_PHASE.bookkeeping, performance.now() - bookkeepingAt);
 
-  return ok(c, {
+  /**
+   * Hoisted out of the response literal it used to be awaited inside, so its
+   * cost is a phase of its own rather than an unnamed part of serialisation.
+   * It was the only `await` in that literal, so the order of every other read is
+   * unchanged and so is the response.
+   */
+  const unpopulated = await clock.phase(SEARCH_PHASE.unpopulated, () =>
+    unpopulatedCategories(deps.sql),
+  );
+
+  const serializeAt = performance.now();
+  const response = ok(c, {
     results: retrieved.map((r, i) => ({
       judgmentId: r.judgmentId,
       // The handle for GET /citations/:id — what each tier did, and when.
@@ -809,7 +971,7 @@ async function runSearch(
      * Computed per request rather than cached, so the day a district-court
      * ingest lands the category stops being listed without a deploy.
      */
-    unpopulatedCourtCategories: await unpopulatedCategories(deps.sql),
+    unpopulatedCourtCategories: unpopulated,
     /**
      * Present ONLY when a ranker ran out of its budget, so the ordinary
      * response shape is byte-identical to what clients already parse.
@@ -931,4 +1093,6 @@ async function runSearch(
       : {}),
     searchId,
   });
+  clock.add(SEARCH_PHASE.serialization, performance.now() - serializeAt);
+  return response;
 }

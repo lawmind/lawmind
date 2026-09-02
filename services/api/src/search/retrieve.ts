@@ -13,6 +13,8 @@
  */
 import type { Sql } from 'postgres';
 
+import { SEARCH_PHASE, type RetrievalTimings } from './timings.ts';
+
 import { canonicalAct } from '@lawmind/ingest/sections';
 
 import {
@@ -1954,6 +1956,15 @@ export type HybridSearchOptions = {
    * and does not suppress the sparse arm. Absent or true is the normal path.
    */
   partyNameArm?: boolean | undefined;
+  /**
+   * Diagnostics sink for per-phase timings — `search/timings.ts`.
+   *
+   * Optional and additive, like `signals` and `partyNameArm` before it: every
+   * existing caller passes nothing and behaves exactly as it did. It is a SINK
+   * and never an input; no branch below reads back from it, so a run with
+   * timings and a run without take the identical code path.
+   */
+  timings?: RetrievalTimings | undefined;
 };
 
 export async function hybridSearch(
@@ -1994,6 +2005,18 @@ export async function hybridSearch(
    */
   options?: HybridSearchOptions,
 ): Promise<RetrievedJudgment[]> {
+  /**
+   * The phase sink, defaulted to a no-op so every call site below is
+   * UNCONDITIONAL. An `if (options?.timings)` at each of eight places would be
+   * two code paths, and the instrumented one would be the one nobody runs in
+   * production — which is how instrumentation comes to hide the defect it was
+   * added for.
+   */
+  const clock: RetrievalTimings = options?.timings ?? {
+    phase: async (_name, run) => run(),
+    phaseSync: (_name, run) => run(),
+    add: () => {},
+  };
   // Each arm is skipped rather than computed-and-discarded: an isolated-arm
   // measurement that still paid for the other half would report the fused
   // system's latency and call it the arm's.
@@ -2034,7 +2057,7 @@ export async function hybridSearch(
    * the ordinary pipeline unchanged — the asymmetry {@link warrantsExactLookup}
    * describes, preserved.
    */
-  const shape = classifyQuery(query);
+  const shape = clock.phaseSync(SEARCH_PHASE.classification, () => classifyQuery(query));
   /**
    * §9.5's kill switch, resolved once and read twice below.
    *
@@ -2064,32 +2087,34 @@ export async function hybridSearch(
    * and it is emphatically not a server fault to show an advocate. The rankers
    * still run, so the page still fills.
    */
-  const pins = await bounded(
-    'pin_timeout',
-    [] as (string | null)[],
-    async () =>
-      warrantsExactLookup(shape) && shape.citation !== null
-        ? [await exactCitation(sql, shape.citation, filters)]
-        : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
-          ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
-          : /**
-             * `party_name` joins `case_name` here rather than getting a route
-             * of its own. AB-1 was never a missing retrieval path — the title
-             * probe existed and worked — it was a query that never arrived at
-             * it. Giving the new shape a second probe would be building the
-             * thing that already exists.
-             */
-            shape.shape === 'case_name' || (shape.shape === 'party_name' && partyArmPermitted)
-            ? await caseNamePins(
-                sql,
-                query,
-                filters,
-                Math.floor(limit / 2),
-                signals,
-                shape.shape === 'party_name' ? PARTY_NAME_BUDGET_MS : CASE_TITLE_BUDGET_MS,
-              )
-            : [],
-    onDegrade,
+  const pins = await clock.phase(SEARCH_PHASE.pins, () =>
+    bounded(
+      'pin_timeout',
+      [] as (string | null)[],
+      async () =>
+        warrantsExactLookup(shape) && shape.citation !== null
+          ? [await exactCitation(sql, shape.citation, filters)]
+          : warrantsSectionLookup(shape, query) && shape.act !== null && shape.section !== null
+            ? await sectionJudgments(sql, shape.act, shape.section, filters, Math.floor(limit / 2))
+            : /**
+               * `party_name` joins `case_name` here rather than getting a route
+               * of its own. AB-1 was never a missing retrieval path — the title
+               * probe existed and worked — it was a query that never arrived at
+               * it. Giving the new shape a second probe would be building the
+               * thing that already exists.
+               */
+              shape.shape === 'case_name' || (shape.shape === 'party_name' && partyArmPermitted)
+              ? await caseNamePins(
+                  sql,
+                  query,
+                  filters,
+                  Math.floor(limit / 2),
+                  signals,
+                  shape.shape === 'party_name' ? PARTY_NAME_BUDGET_MS : CASE_TITLE_BUDGET_MS,
+                )
+              : [],
+      onDegrade,
+    ),
   );
   const pinned: string[] = [];
   for (const id of pins) if (id !== null && !pinned.includes(id)) pinned.push(id);
@@ -2129,23 +2154,29 @@ export async function hybridSearch(
    * pool connection for the overlap; the connection-SECONDS are unchanged,
    * only their arrangement.
    */
-  const [sparseRanked, denseResult] = await Promise.all([
-    mode === 'dense' || skipSparse
-      ? Promise.resolve([] as Ranked[])
-      : bounded(
-          'sparse_timeout',
-          [] as Ranked[],
-          // `onDegrade` is passed BOTH ways on purpose: `bounded` reports the
-          // clock running out, and the arm itself reports refusing to start.
-          () => sparse(sql, query, filters, onDegrade, signals),
-          onDegrade,
-        ),
-    // A corpus with no embeddings yet still searches, lexically. Returning
-    // nothing because half the pipeline is cold would be worse than less.
-    queryVector && mode !== 'sparse'
-      ? bounded('dense_timeout', emptyDense, () => dense(sql, queryVector, filters), onDegrade)
-      : Promise.resolve(emptyDense),
-  ]);
+  const [sparseRanked, denseResult] = await clock.phase(SEARCH_PHASE.arms, () =>
+    Promise.all([
+      mode === 'dense' || skipSparse
+        ? Promise.resolve([] as Ranked[])
+        : clock.phase(SEARCH_PHASE.sparse, () =>
+            bounded(
+              'sparse_timeout',
+              [] as Ranked[],
+              // `onDegrade` is passed BOTH ways on purpose: `bounded` reports the
+              // clock running out, and the arm itself reports refusing to start.
+              () => sparse(sql, query, filters, onDegrade, signals),
+              onDegrade,
+            ),
+          ),
+      // A corpus with no embeddings yet still searches, lexically. Returning
+      // nothing because half the pipeline is cold would be worse than less.
+      queryVector && mode !== 'sparse'
+        ? clock.phase(SEARCH_PHASE.dense, () =>
+            bounded('dense_timeout', emptyDense, () => dense(sql, queryVector, filters), onDegrade),
+          )
+        : Promise.resolve(emptyDense),
+    ]),
+  );
 
   /**
    * RRF over one list is not fusion, but it is order-preserving — `1/(k+rank)`
@@ -2238,8 +2269,11 @@ export async function hybridSearch(
    * distinct authorities is unchanged and `CITATION_HARNESS.md`'s zero
    * silent-drop threshold is untouched.
    */
-  const hashRows = await sql<{ id: string; content_hash: string | null }[]>`
-    SELECT id, content_hash FROM judgments WHERE id = ANY(${whole.map(([id]) => id)})`;
+  const hashRows = await clock.phase(
+    SEARCH_PHASE.dedup,
+    () => sql<{ id: string; content_hash: string | null }[]>`
+    SELECT id, content_hash FROM judgments WHERE id = ANY(${whole.map(([id]) => id)})`,
+  );
   const hashById = new Map(hashRows.map((r) => [r.id, r.content_hash]));
   const seenHashGlobal = new Set<string>();
   const deduped = whole.filter(([id]) => {
@@ -2256,6 +2290,7 @@ export async function hybridSearch(
   const ids = ordered.map(([id]) => id);
   // Final read: every rendered field comes from this row, including
   // overruled_status, read live at render time.
+  const hydrateAt = performance.now();
   const rows = await sql<JudgmentRow[]>`
     SELECT id, case_title, neutral_citation, reporter_citations, court,
            -- ::text keeps this a calendar date. The column type is date; the
@@ -2277,6 +2312,7 @@ export async function hybridSearch(
            left(full_text, ${LOCATE_MAX_CHARS}) AS full_text
     FROM judgments WHERE id = ANY(${ids})
   `;
+  clock.add(SEARCH_PHASE.hydrate, performance.now() - hydrateAt);
 
   const byId = new Map<string, JudgmentRow>(rows.map((r) => [r.id, r]));
 
@@ -2301,6 +2337,7 @@ export async function hybridSearch(
    * status is never cached. `bannerStatus` is still one of the same four wire
    * values, so a client reading only `overruledStatus` is unaffected.
    */
+  const edgesAt = performance.now();
   const edgeRows = await sql<
     { cited_judgment_id: string; relationship: string; treatment_provenance: string | null }[]
   >`
@@ -2308,6 +2345,7 @@ export async function hybridSearch(
       FROM judgment_citations
      WHERE cited_judgment_id = ANY(${ids})
        AND relationship IN ('overruled', 'overruled_in_part', 'doubted')`;
+  clock.add(SEARCH_PHASE.edges, performance.now() - edgesAt);
   const edgesById = new Map<string, TreatmentEdge[]>();
   for (const e of edgeRows) {
     const edge: TreatmentEdge = {
@@ -2442,7 +2480,7 @@ export async function hybridSearch(
       },
     });
   }
-  await fillParagraphFallback(sql, results, query);
+  await clock.phase(SEARCH_PHASE.fallback, () => fillParagraphFallback(sql, results, query));
   return results;
 }
 

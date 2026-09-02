@@ -31,6 +31,8 @@ import { pipeline } from 'node:stream/promises';
 
 import postgres from 'postgres';
 
+import { cascadeVictims, type ForeignKeyEdge } from './cascade-guard.ts';
+
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  * THE TRACE, AND WHY IT REPLACED A FOURTH HYPOTHESIS
@@ -587,6 +589,59 @@ async function main(): Promise<void> {
       return 'none';
     }
   })();
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * WHAT ELSE THE `TRUNCATE ... CASCADE` BELOW WOULD EMPTY
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Gate C requires that a corpus rollback NOT roll back user/matter data.
+   * Nothing checked it, and on a single shared database it is false: `CASCADE`
+   * truncates every referencing table whatever its `ON DELETE` rule says.
+   * `ops/cascade-guard.ts` carries the measurement.
+   *
+   * The FK read above is deliberately not reused — it asks which tables the
+   * RELEASE references, and this asks the opposite question: who references the
+   * release from OUTSIDE it. Same catalogue, opposite direction, and conflating
+   * them is how this went unnoticed.
+   *
+   * A correct remote-alpha corpus target holds only the release's own tables and
+   * this finds nothing. A shared database refuses here, before the first
+   * TRUNCATE — which is the only point at which refusing is still free.
+   */
+  const inboundFks = await sql.unsafe<ForeignKeyEdge[]>(
+    `SELECT DISTINCT cl.relname AS child, pl.relname AS parent
+       FROM pg_constraint c
+       JOIN pg_class cl ON cl.oid = c.conrelid
+       JOIN pg_class pl ON pl.oid = c.confrelid
+      WHERE c.contype = 'f'`,
+  );
+  const victims = cascadeVictims(
+    inboundFks,
+    manifest.tables.map((t) => t.table),
+  );
+  if (victims.length > 0) {
+    trace('cascade_guard_refused', { victims });
+    if (!argv.includes('--allow-cascade-into')) {
+      await sql.end();
+      if (observer) await observer.end();
+      throw new Error(
+        'REFUSING TO RESTORE: `TRUNCATE ... CASCADE` over this release would also empty ' +
+          `${victims.length} table(s) that are NOT in it:\n` +
+          victims.map((v) => `  - ${v.table} (references ${v.via.join(', ')})`).join('\n') +
+          '\n\nOn a shared database that includes an advocate’s saved authorities, alerts ' +
+          'and annotations — a corpus rollback would take user data with it, which Gate C ' +
+          'forbids. Restore onto a target that holds only the corpus, or pass ' +
+          '--allow-cascade-into to proceed deliberately.',
+      );
+    }
+    trace('cascade_guard_overridden', { why: '--allow-cascade-into', victims: victims.length });
+    console.log(
+      `\nWARNING: --allow-cascade-into — ${victims.length} table(s) outside this release ` +
+        `will be emptied:\n` +
+        victims.map((v) => `  - ${v.table}`).join('\n'),
+    );
+  }
 
   // ── load ──────────────────────────────────────────────────────────────────
   for (const t of manifest.tables) {

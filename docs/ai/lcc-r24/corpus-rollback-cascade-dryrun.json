@@ -1,0 +1,152 @@
+{
+  "release": [
+    "judgments",
+    "judgment_citations",
+    "judgment_judges",
+    "judgment_statute_refs",
+    "statutes",
+    "statute_sections",
+    "lexeme_document_frequency"
+  ],
+  "foreignKeys": 87,
+  "victimCount": 22,
+  "victims": [
+    {
+      "table": "alerts",
+      "via": [
+        "citation_fanouts",
+        "judgments"
+      ]
+    },
+    {
+      "table": "citation_checks",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "citation_concordance_resolutions",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "citation_copies",
+      "via": [
+        "citation_checks",
+        "judgments"
+      ]
+    },
+    {
+      "table": "citation_disputes",
+      "via": [
+        "citation_checks",
+        "citation_fanouts",
+        "judgments"
+      ]
+    },
+    {
+      "table": "citation_fanouts",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "document_duplicate_members",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "document_enrichments",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "ecourts_observation",
+      "via": [
+        "official_source_artifact"
+      ]
+    },
+    {
+      "table": "ecourts_transition",
+      "via": [
+        "ecourts_observation"
+      ]
+    },
+    {
+      "table": "external_citations",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "hc_class_candidate",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "judgment_annotations",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "judgment_chunks",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "judgment_citation_aliases",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "judgment_citation_keys",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "judgment_paragraphs",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "matter_authorities",
+      "via": [
+        "citation_checks",
+        "judgments"
+      ]
+    },
+    {
+      "table": "official_source_artifact",
+      "via": [
+        "judgments"
+      ]
+    },
+    {
+      "table": "statute_amendment_unparsed",
+      "via": [
+        "statute_sections"
+      ]
+    },
+    {
+      "table": "statute_amendments",
+      "via": [
+        "statute_sections"
+      ]
+    },
+    {
+      "table": "verification_cache",
+      "via": [
+        "judgments"
+      ]
+    }
+  ]
+}
