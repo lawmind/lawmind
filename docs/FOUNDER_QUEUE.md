@@ -179,6 +179,41 @@ new one.
 
 ---
 
+### [OPEN — NEEDS THE PHONE PLUGGED IN, NOTHING ELSE] FQ-ANDROID-DEVICE — the last local-v1 evidence is physical, and the S24 was not attached · RCC · 2 Sep 2026
+
+**Needs:** the Galaxy S24 connected — USB with debugging authorised, or wireless
+ADB already paired. No purchase, no account, no decision. Five minutes of your
+time and then none.
+
+**What was found.** `adb devices -l` on 2 Sep 2026 listed **zero** devices
+(neither USB nor an authorised wireless target). The round was told to make one
+attempt and not to spend itself troubleshooting device settings, so it did not.
+
+**Why it is not a blocker.** The round pivoted the moment the device came back
+empty and closed everything that does not need a phone: the iOS production build
+image is pinned and guarded (FQ-APPLE-TOOLCHAIN below), in-app account deletion
+was re-verified end to end and one real gap in it was found and handed to the
+server lane, and the iOS party-search degrade was confirmed already correct. No
+work waited on the phone except the physical matrix itself.
+
+**Cost if never resolved.** `ANDROID_LOCAL_R16_ACCEPTANCE` stays
+`PENDING_DEVICE`, and with it the last of the local-v1 physical evidence: the
+R16 double-tap test (one tap-storm, one durable row, read from the server and
+the database rather than from the screen), matter create with a real
+`parties.description`, adjournment, annotation, the three training-consent
+writes, and the authenticated verification-confirm whose UI must only turn
+confirmed AFTER the server says so. Every one of those is proven by automated
+test today; none of them is proven on the hardware an advocate will hold. That
+distinction is the entire point of the physical pass — the last two device
+sessions each found a defect no green suite had (`AuthBoundary` starving the
+router, and `/verify/confirm` sending no bearer token).
+
+**Where it plugs in.** Plug the phone in and say so; the lane runs
+`adb devices -l`, `adb reverse` to the local API, and works the matrix from the
+round brief in one session. Nothing needs configuring first.
+
+---
+
 ### [OPEN — NEEDS AN ACCOUNT AND ONE BUILD, NOT A DECISION] FQ-APPLE-TOOLCHAIN — the iOS build toolchain is not pinned anywhere, so nobody can prove it meets Apple's floor · RCC · 2 Sep 2026
 
 **Needs:** an Apple Developer Program enrolment and one EAS iOS build actually
@@ -220,6 +255,29 @@ side fact this workstation cannot verify, and inventing a config value from
 memory is the one thing `CLAUDE.md` §7 forbids outright. One `eas build
 --platform ios --profile production` prints the image, the Xcode version and the
 SDK version in its own log; that log is the evidence, and pinning follows it.
+
+**UPDATE — 2 Sep 2026, RCC R22. The configuration half is closed; the evidence
+half is not.** `build.production.ios.image` is now pinned to
+`macos-tahoe-26.5-xcode-26.6`, and `apps/mobile/src/config/easBuildImage.ts`
+carries a test that fails if the pin is removed, replaced with a floating tag
+(`latest`/`default`), or moved below Xcode 26.
+
+The reason the round above refused to pin still stands and is the reason this
+entry stays OPEN: the identifier was supplied to this round as a measurement of
+Expo's published build-image list for `sdk-57`, and it was **not** re-verified
+against EAS from this workstation (`eas-cli` is not installed here and this lane
+has no cloud network). What changed is the judgement about which risk is worse.
+An unset image is a SILENT floating default that can drift below Apple's floor
+between two builds of the same commit; a wrong image identifier fails loudly at
+queue time with an unknown-image error. Pinning trades a silent failure for a
+noisy one and adds a guard against the silent one returning.
+
+So: `APPLE_CONFIG_READY = YES`, `APPLE_PRODUCTION_BUILD_PROOF = PENDING`.
+Configuration is not a build. The first real
+`eas build --platform ios --profile production` remains the evidence, and if its
+log names a different image, the value in `eas.json` moves to match the log —
+the guard asserts a floor, not one exact string, so a correction needs no edit
+to the test.
 
 ---
 

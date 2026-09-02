@@ -57,6 +57,7 @@
     "check:hex": "node scripts/check-hex.mjs",
     "test": "jest",
     "check:sunlight": "node scripts/check-sunlight.mjs",
+    "check:build-image": "jest src/config/easBuildImage.test.ts",
     "device:android": "eas build --profile preview --platform android",
     "device:go": "expo start --tunnel"
   },
