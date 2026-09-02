@@ -83,8 +83,8 @@ only against something observed.
 ## Phase H — commit and handoff
 
 - [x] no residue: 0 fixture rows, 0 leftover databases
-- [ ] re-anchor against the original ask
-- [ ] `GIT_COMMIT` lease
-- [ ] commit `apps/**` + RCC docs only
-- [ ] NEW3 handoff (bus)
-- [ ] LCC handoff (bus)
+- [x] re-anchor against the original ask
+- [x] `GIT_COMMIT` lease
+- [x] commit `apps/**` + RCC docs only — `b787748b`, 15 files, nothing from a forbidden lane
+- [x] NEW3 handoff (bus 1754)
+- [x] LCC handoff (bus 1755)
