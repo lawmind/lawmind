@@ -181,10 +181,20 @@ async function build(): Promise<Fixture> {
    * completion trigger enforces at COMMIT: there is no half-written record to
    * fixture, because there is no half-written record. */
   await sql`INSERT INTO api_idempotency_records
-              (user_id, method, route, idempotency_key, request_fingerprint,
+              (auth_id, user_id, method, route, idempotency_key, request_fingerprint,
                outcome, response_status, response_body, completed_at)
-            VALUES (${userId}::uuid, 'POST', '/matters',
+            VALUES (${authId}, ${userId}::uuid, 'POST', '/matters',
                     ${`fixture-${crypto.randomUUID()}`}, repeat('a', 64),
+                    'success', 201, ${sql.json({ fixture: true })}, now())`;
+  /* R16 after 0103. A record written BEFORE this advocate onboarded carries the
+   * principal and NO profile, and `eraseUser` must sweep it too — deleting by
+   * `user_id` alone would leave the `response_body`, which R16 §4 requires to be
+   * the original success body and can therefore hold the advocate's own words. */
+  await sql`INSERT INTO api_idempotency_records
+              (auth_id, user_id, method, route, idempotency_key, request_fingerprint,
+               outcome, response_status, response_body, completed_at)
+            VALUES (${authId}, NULL, 'POST', '/me/data-requests',
+                    ${`fixture-preonboarding-${crypto.randomUUID()}`}, repeat('b', 64),
                     'success', 201, ${sql.json({ fixture: true })}, now())`;
   await sql`INSERT INTO activation_events (user_id, step)
             VALUES (${userId}::uuid, 'first_successful_search')`;
@@ -214,8 +224,9 @@ async function build(): Promise<Fixture> {
             VALUES (${userId}::uuid, 'hearing_pack', 1, 'test')`;
 
   const [r] = await sql<{ id: string }[]>`
-    INSERT INTO data_requests (user_id, kind, status, due_at, artefact_storage_key)
-    VALUES (${userId}::uuid, 'erasure', 'in_progress', now() + interval '30 days', ${artefactKey})
+    INSERT INTO data_requests (auth_id, user_id, kind, status, due_at, artefact_storage_key)
+    VALUES (${authId}, ${userId}::uuid, 'erasure', 'in_progress',
+            now() + interval '30 days', ${artefactKey})
     RETURNING id`;
 
   return {
@@ -372,6 +383,24 @@ describe('one comprehensive erasure fixture', () => {
         SELECT count(*)::text AS n FROM ${sql(table)} WHERE ${sql(column)} = ${value}`;
       assert.equal(Number(c?.n ?? -1), 0, `${table}.${column} survived erasure`);
     }
+
+    /**
+     * THE PRE-ONBOARDING R16 RECORD, WHICH NO CHECK ABOVE CAN SEE.
+     *
+     * After 0103 the ledger's principal is `auth_id`, and a record written
+     * before this advocate had a profile carries a NULL `user_id`. The
+     * `EXPECTED` loop asks `WHERE user_id = <victim>`, so that row would read as
+     * GONE whether it was deleted or not — a check that returns 0 for every
+     * input is not a check. This asks the question the loop cannot.
+     */
+    const [preOnboarding] = await sql<{ n: string }[]>`
+      SELECT count(*)::text AS n FROM api_idempotency_records
+       WHERE auth_id = ${fx.authId}`;
+    assert.equal(
+      Number(preOnboarding?.n ?? -1),
+      0,
+      'an R16 record written before onboarding survived: it carries auth_id and a NULL user_id, so deleting by profile alone leaves the replayable response body behind',
+    );
 
     // And the audit record, which is the one thing that must NOT be erasable.
     const [audit] = await sql<{ n: string }[]>`

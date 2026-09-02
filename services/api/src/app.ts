@@ -370,15 +370,27 @@ export function createApp(deps: AppDeps) {
      * key lives in is answerable by reading this file.
      */
     app.post('/me/data-requests', validate('json', dataRequestBody), async (c) => {
-      const userId = await profileIdFor(auth.sql, c.get('authId'));
+      /**
+       * BOTH identifiers, and the ORDER of the two lines is the whole fix.
+       *
+       * `authId` is the principal: it exists the moment an email is verified.
+       * `userId` is the profile, and it is `undefined` for an `identity_only`
+       * advocate who never finished onboarding. This route used to resolve only
+       * the profile and answer 401 to a real, authenticated account — the
+       * defect RCC reported at bus 1722 — which meant the product demanded more
+       * personal data as the price of deleting personal data.
+       */
+      const authId = c.get('authId');
+      const userId = await profileIdFor(auth.sql, authId);
       const body = c.req.valid('json');
-      return withIdempotency(c, auth.sql, { userId, route: '/me/data-requests', body }, (tx) =>
-        createDataRequest(c, tx, userId, body),
+      return withIdempotency(
+        c,
+        auth.sql,
+        { authId, userId, route: '/me/data-requests', body },
+        (tx) => createDataRequest(c, tx, authId, userId, body),
       );
     });
-    app.get('/me/data-requests', async (c) =>
-      listOwnDataRequests(c, auth.sql, await profileIdFor(auth.sql, c.get('authId'))),
-    );
+    app.get('/me/data-requests', (c) => listOwnDataRequests(c, auth.sql, c.get('authId')));
     app.post('/me/accept-terms', validate('json', acceptTermsBody), (c) =>
       acceptTerms(c, auth.sql, c.get('authId'), c.req.valid('json')),
     );
@@ -479,7 +491,13 @@ export function createApp(deps: AppDeps) {
       return withIdempotency(
         c,
         sql,
-        { userId, route: '/judgments/:id/annotations', params: { id: judgmentId }, body },
+        {
+          authId: c.get('authId'),
+          userId,
+          route: '/judgments/:id/annotations',
+          params: { id: judgmentId },
+          body,
+        },
         (tx) => createAnnotation(c, tx, judgmentId, userId, body),
       );
     });
@@ -530,8 +548,11 @@ export function createApp(deps: AppDeps) {
     app.post('/verify/confirm', validate('json', confirmRequest), async (c) => {
       const userId = await userFor(c);
       const body = c.req.valid('json');
-      return withIdempotency(c, sql, { userId, route: '/verify/confirm', body }, (tx) =>
-        handleConfirm(c, tx, userId, body),
+      return withIdempotency(
+        c,
+        sql,
+        { authId: c.get('authId'), userId, route: '/verify/confirm', body },
+        (tx) => handleConfirm(c, tx, userId, body),
       );
     });
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
@@ -675,8 +696,11 @@ export function createApp(deps: AppDeps) {
     app.post('/matters', validate('json', createMatterBody), async (c) => {
       const userId = await userFor(c);
       const body = c.req.valid('json');
-      return withIdempotency(c, sql, { userId, route: '/matters', body }, (tx) =>
-        createMatter(c, tx, userId, body, sql),
+      return withIdempotency(
+        c,
+        sql,
+        { authId: c.get('authId'), userId, route: '/matters', body },
+        (tx) => createMatter(c, tx, userId, body, sql),
       );
     });
     app.get('/matters/:id', async (c) => getMatter(c, sql, c.req.param('id'), await userFor(c)));
@@ -694,7 +718,13 @@ export function createApp(deps: AppDeps) {
       return withIdempotency(
         c,
         sql,
-        { userId, route: '/matters/:id/events', params: { id: matterId }, body },
+        {
+          authId: c.get('authId'),
+          userId,
+          route: '/matters/:id/events',
+          params: { id: matterId },
+          body,
+        },
         (tx) => createMatterEvent(c, tx, matterId, userId, body),
       );
     });
@@ -767,7 +797,11 @@ export function createApp(deps: AppDeps) {
     app.post('/me/training-consent', validate('json', grantBody), async (c) => {
       const userId = await userFor(c);
       const body = c.req.valid('json');
-      return withIdempotency(c, sql, { userId, route: '/me/training-consent', body }, (tx) =>
+      return withIdempotency(
+        c,
+        sql,
+        { authId: c.get('authId'), userId, route: '/me/training-consent', body },
+        (tx) =>
         grantTrainingConsent(c, tx, userId, body),
       );
     });

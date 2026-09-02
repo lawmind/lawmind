@@ -52,14 +52,14 @@ describe('DPDP data requests', () => {
     admin = { authId, userId: u!.id, token: await signAccessToken({ sub: authId, email }, SECRET) };
 
     const [o] = await sql<{ id: string }[]>`
-      INSERT INTO data_requests (user_id, kind, status, due_at)
-      VALUES (${admin.userId}, 'export', 'received', now() - interval '1 day')
+      INSERT INTO data_requests (auth_id, user_id, kind, status, due_at)
+      VALUES (${authId}, ${admin.userId}, 'export', 'received', now() - interval '1 day')
       RETURNING id`;
     overdueId = o!.id;
 
     const [f] = await sql<{ id: string }[]>`
-      INSERT INTO data_requests (user_id, kind, status, due_at)
-      VALUES (${admin.userId}, 'erasure', 'received', now() + interval '10 days')
+      INSERT INTO data_requests (auth_id, user_id, kind, status, due_at)
+      VALUES (${authId}, ${admin.userId}, 'erasure', 'received', now() + interval '10 days')
       RETURNING id`;
     futureId = f!.id;
   });

@@ -84,53 +84,88 @@ const COLUMNS = (sql: Sql) => sql`
   refusal_reason,
   ${sql.unsafe(isoColumn('created_at'))} AS created_at`;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE CALLER IS AN IDENTITY, NOT A PROFILE — NEW3 R21 §4, SR-1
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `authId` is the authenticated principal and is what this route now requires.
+ * `userId` is the profile and is `undefined` for an `identity_only` account —
+ * an advocate who verified an email and never finished onboarding.
+ *
+ * **That population is not "an account with nothing to erase."** With no `users`
+ * row we still durably hold their EMAIL ADDRESS and name (`auth_user`), an IP
+ * ADDRESS AND USER-AGENT PER SESSION (`auth_session`), a provider row
+ * (`auth_account`), magic-link artifacts keyed by the email with no foreign key
+ * to cascade from (`auth_verification`), and a hashed token family
+ * (`refresh_tokens`). That is personal data under DPDP whether or not anyone
+ * finished onboarding, and `eraseUser` already deletes every one of those rows.
+ * The only thing missing was a way to ASK.
+ *
+ * No profile is created here, by the client or silently on their behalf: making
+ * a `users` row in order to delete a `users` row is the product manufacturing
+ * personal data as the price of erasing personal data.
+ */
 export async function createDataRequest(
   c: Context,
   sql: Sql,
+  authId: string | undefined,
   userId: string | undefined,
   body: z.infer<typeof dataRequestBody>,
 ): Promise<Response> {
   // A data request is about a specific person's data, so there is no meaningful
   // anonymous version of it. 401 rather than a queue nobody can be matched to.
-  if (!userId) {
+  // This is now the ONLY 401: a caller with no auth identity at all.
+  if (!authId) {
     return fail(c, 'AUTH_REQUIRED', 'Sign in to make a data request about your account.', 401);
   }
 
   /**
-   * One OPEN request per kind.
+   * One OPEN request per kind — SR-6, and scoped to the PRINCIPAL.
    *
    * Not a rate limit — an advocate hitting "delete my account" three times
    * because the first tap did not obviously do anything should not create three
    * clocks, three audit trails and three chances for an operator to erase an
    * account twice. The existing request is returned, so the client can show its
    * status either way and the second tap looks like it worked, because it did.
+   *
+   * Keyed on `auth_id` rather than `user_id`, which also closes the gap SR-4
+   * names: an advocate who asks to be deleted and THEN completes onboarding has
+   * one open request, not two, because the identity did not change when the
+   * profile appeared.
    */
   const [existing] = await sql<Row[]>`
     SELECT ${COLUMNS(sql)} FROM data_requests
-     WHERE user_id = ${userId}::uuid AND kind = ${body.kind}
+     WHERE auth_id = ${authId} AND kind = ${body.kind}
        AND status IN ('received', 'in_progress')
      ORDER BY created_at DESC LIMIT 1`;
   if (existing) return ok(c, { request: shape(existing), alreadyOpen: true });
 
   const [created] = await sql<Row[]>`
-    INSERT INTO data_requests (user_id, kind, status, due_at)
-    VALUES (${userId}::uuid, ${body.kind}, 'received',
+    INSERT INTO data_requests (auth_id, user_id, kind, status, due_at)
+    VALUES (${authId}, ${userId ?? null}::uuid, ${body.kind}, 'received',
             now() + ${`${RESPONSE_DAYS} days`}::interval)
     RETURNING ${COLUMNS(sql)}`;
   if (!created) return fail(c, 'REQUEST_FAILED', 'The request could not be recorded.', 500);
   return ok(c, { request: shape(created), alreadyOpen: false }, 201);
 }
 
+/**
+ * The same principal shift as the create. An `identity_only` advocate who has
+ * asked to be deleted must be able to SEE that request — the client renders its
+ * status from this list, and a create that succeeds followed by a list that
+ * 401s would read to them as the request having failed.
+ */
 export async function listOwnDataRequests(
   c: Context,
   sql: Sql,
-  userId: string | undefined,
+  authId: string | undefined,
 ): Promise<Response> {
-  if (!userId) {
+  if (!authId) {
     return fail(c, 'AUTH_REQUIRED', 'Sign in to see your data requests.', 401);
   }
   const rows = await sql<Row[]>`
     SELECT ${COLUMNS(sql)} FROM data_requests
-     WHERE user_id = ${userId}::uuid ORDER BY created_at DESC`;
+     WHERE auth_id = ${authId} ORDER BY created_at DESC`;
   return ok(c, { requests: rows.map(shape) });
 }

@@ -98,8 +98,30 @@ const KEY_PATTERN = /^[\x21-\x2b\x2d-\x7e]{8,128}$/;
 export const IDEMPOTENCY_HEADER = 'Idempotency-Key';
 
 export type IdempotencyScope = {
-  /** `users.id` — the principal. Undefined means "no scope", and the wrapper passes through. */
-  userId: string | undefined;
+  /**
+   * THE PRINCIPAL: `users.auth_id`, the authenticated identity.
+   *
+   * Undefined means "no authenticated caller at all", and the wrapper passes
+   * through — a signed-out request is about to be refused anyway and must not
+   * be able to consume, probe or collide with anybody's key.
+   *
+   * **It is NOT the profile id, and that distinction is the whole of R26's
+   * deletion work.** R16 always said principal; every one of the six routes
+   * happened to resolve a profile first, so `users.id` stood in for it. An
+   * `identity_only` advocate — email verified, onboarding never finished — has
+   * no profile and would therefore have had NO SCOPE, and a scope-less create
+   * silently loses its idempotency while still answering 200. Migration 0103
+   * moves the uniqueness boundary to `auth_id`, which is `NOT NULL UNIQUE` on
+   * `users` and exists for both populations, so the set of distinct principals
+   * is unchanged and no existing key changes meaning.
+   */
+  authId: string | undefined;
+  /**
+   * The profile id, when the caller has one. Recorded on the ledger row so the
+   * admin surface and `eraseUser` keep working by profile exactly as before;
+   * it takes no part in uniqueness.
+   */
+  userId?: string | undefined;
   /** The canonical route TEMPLATE, e.g. `/matters/:id/events`. Never a concrete path. */
   route: string;
   /** Route parameter values, included in the fingerprint so one key cannot serve two matters. */
@@ -250,12 +272,16 @@ export async function withIdempotency(
   }
 
   /**
-   * No principal, no scope. R16 scopes a record to the authenticated user id, so
-   * there is nothing to key an anonymous or un-onboarded caller's record to —
-   * and the handler is about to answer 401/403 anyway. Passing through means a
-   * signed-out caller cannot consume, probe or collide with anybody's key.
+   * No principal, no scope — and "principal" now means AUTHENTICATED IDENTITY,
+   * not "has finished onboarding".
+   *
+   * This guard used to read `scope.userId`, which made every un-onboarded
+   * caller pass through unscoped: their retries created a second durable row
+   * each time while the response still looked idempotent. An anonymous caller
+   * still passes through, because the handler is about to answer 401 and a
+   * signed-out request must not be able to consume or probe anybody's key.
    */
-  if (!scope.userId) return run(asHandlerSql(sql));
+  if (!scope.authId) return run(asHandlerSql(sql));
 
   const method = scope.method ?? c.req.method.toUpperCase();
   const fingerprint = requestFingerprint({ ...scope, method });
@@ -271,9 +297,11 @@ export async function withIdempotency(
       await tx.unsafe(`SET LOCAL lock_timeout = '${IDEMPOTENCY_WAIT_BUDGET_MS}ms'`);
       const claimed = await tx<{ id: string }[]>`
         INSERT INTO api_idempotency_records
-          (user_id, method, route, idempotency_key, request_fingerprint)
-        VALUES (${scope.userId!}::uuid, ${method}, ${scope.route}, ${raw}, ${fingerprint})
-        ON CONFLICT (user_id, method, route, idempotency_key) DO NOTHING
+          (auth_id, user_id, method, route, idempotency_key, request_fingerprint)
+        VALUES (${scope.authId!},
+                ${scope.userId ?? null}::uuid,
+                ${method}, ${scope.route}, ${raw}, ${fingerprint})
+        ON CONFLICT (auth_id, method, route, idempotency_key) DO NOTHING
         RETURNING id`;
       await tx.unsafe(`SET LOCAL lock_timeout = '0'`);
 
@@ -283,7 +311,7 @@ export async function withIdempotency(
         const [stored] = await tx<StoredResult[]>`
           SELECT request_fingerprint, outcome, response_status, response_body
           FROM api_idempotency_records
-          WHERE user_id = ${scope.userId!}::uuid AND method = ${method}
+          WHERE auth_id = ${scope.authId!} AND method = ${method}
             AND route = ${scope.route} AND idempotency_key = ${raw}`;
         // Not visible and not ours: an executor is still running and we did not
         // block on it. Answer retryably rather than executing a second time.

@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { writeAudit } from './audit.ts';
-import { eraseUser } from '../auth/erasure.ts';
+import { eraseIdentityOnly, eraseUser } from '../auth/erasure.ts';
 import {
   erasureObjectStatus,
   recordErasureObjects,
@@ -205,8 +205,10 @@ export async function executeErasure(
 ): Promise<Response> {
   if (!actorUserId) return fail(c, 'AUTH_REQUIRED', 'data requests are a privileged surface', 401);
 
-  const [request] = await sql<{ user_id: string; kind: string; status: string }[]>`
-    SELECT user_id, kind, status FROM data_requests WHERE id = ${id}`;
+  const [request] = await sql<
+    { user_id: string | null; auth_id: string; kind: string; status: string }[]
+  >`
+    SELECT user_id, auth_id, kind, status FROM data_requests WHERE id = ${id}`;
   if (!request) return fail(c, 'NOT_FOUND', 'no data request with that id', 404);
   if (request.kind !== 'erasure') {
     // A wrong-kind request is a mistake, not an edge case: refusing loudly is
@@ -218,7 +220,33 @@ export async function executeErasure(
     return fail(c, 'ALREADY_COMPLETED', 'this erasure has already been carried out', 409);
   }
 
-  const result = await eraseUser(sql, request.user_id, { userId: actorUserId, role: 'admin' }, body.reason);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE PRINCIPAL IS RESOLVED NOW, NOT READ OFF THE REQUEST — SR-4
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `data_requests.user_id` records the profile AS IT WAS WHEN THE REQUEST WAS
+   * MADE, and for an `identity_only` advocate that is NULL. If they finish
+   * onboarding between asking and this execution, a profile now exists and the
+   * erasure must cover it — trusting the stored NULL would destroy the identity
+   * layer and leave their matters, documents and annotations behind.
+   *
+   * So the profile is looked up from the auth id at execution time. That is what
+   * makes the intent survive a profile appearing, with no reconciliation job and
+   * no second request: the request was bound to the identity, and the identity
+   * is what does not change.
+   *
+   * The stored `user_id` is deliberately not consulted for this decision. It can
+   * only be stale in one direction (null -> a profile), and a lookup that
+   * answers the live question is cheaper than a rule about when the column can
+   * be trusted.
+   */
+  const [profile] = await sql<{ id: string }[]>`
+    SELECT id FROM users WHERE auth_id = ${request.auth_id}`;
+  const actor = { userId: actorUserId, role: 'admin' };
+  const result = profile
+    ? await eraseUser(sql, profile.id, actor, body.reason)
+    : await eraseIdentityOnly(sql, request.auth_id, actor, body.reason);
 
   /**
    * ───────────────────────────────────────────────────────────────────────────

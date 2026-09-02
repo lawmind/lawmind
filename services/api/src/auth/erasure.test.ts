@@ -359,8 +359,9 @@ describe('account deletion', () => {
   it('hands back the data-export artefact key, not only document keys', async () => {
     const doomed = await seed('artefact-victim');
     const key = `exports/${crypto.randomUUID()}.zip`;
-    await sql`INSERT INTO data_requests (user_id, kind, status, due_at, artefact_storage_key)
-              VALUES (${doomed.userId}::uuid, 'export', 'completed',
+    await sql`INSERT INTO data_requests
+                (auth_id, user_id, kind, status, due_at, artefact_storage_key)
+              VALUES (${doomed.authId}, ${doomed.userId}::uuid, 'export', 'completed',
                       now() + interval '30 days', ${key})`;
 
     const result = await eraseUser(

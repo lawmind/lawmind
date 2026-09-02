@@ -96,6 +96,18 @@ async function ledgerCount(userId: string): Promise<number> {
   );
 }
 
+/**
+ * The same count by PRINCIPAL. After 0103 the uniqueness boundary is `auth_id`,
+ * and a row written before onboarding carries no profile at all — so a count by
+ * `user_id` can no longer stand in for "records belonging to this caller".
+ */
+async function principalLedgerCount(authId: string): Promise<number> {
+  return countOf(
+    await sql<{ n: number }[]>`
+    SELECT count(*)::int AS n FROM api_idempotency_records WHERE auth_id = ${authId}`,
+  );
+}
+
 async function skipUnlessMigrated(t: { skip: (m: string) => void }): Promise<boolean> {
   const [row] = await sql<{ n: number }[]>`
     SELECT count(*)::int AS n FROM information_schema.tables
@@ -125,6 +137,7 @@ let bob: Advocate;
 
 async function cleanup(): Promise<void> {
   const users = sql`SELECT id FROM users WHERE auth_id LIKE ${`${TAG}-%`}`;
+  await sql`DELETE FROM api_idempotency_records WHERE auth_id LIKE ${`${TAG}-%`}`;
   await sql`DELETE FROM api_idempotency_records WHERE user_id IN (${users})`;
   await sql`DELETE FROM judgment_annotations WHERE user_id IN (${users})`;
   await sql`DELETE FROM citation_checks WHERE citation_claimed LIKE ${`${TAG}%`}`;
@@ -132,6 +145,7 @@ async function cleanup(): Promise<void> {
             (SELECT id FROM matters WHERE user_id IN (${users}))`;
   await sql`DELETE FROM activation_events WHERE user_id IN (${users})`;
   await sql`DELETE FROM matters WHERE user_id IN (${users})`;
+  await sql`DELETE FROM data_requests WHERE auth_id LIKE ${`${TAG}-%`}`;
   await sql`DELETE FROM data_requests WHERE user_id IN (${users})`;
   await sql`DELETE FROM training_consent_events WHERE user_id IN (${users})`;
   await sql`DELETE FROM users WHERE auth_id LIKE ${`${TAG}-%`}`;
@@ -395,17 +409,17 @@ describe('R16 idempotency', () => {
     // with a test that remembers to check.
     const base = { route: '/x', method: 'POST', params: {}, body: { a: 1 } };
     assert.notEqual(
-      requestFingerprint({ ...base, userId: undefined, query: { scope: 'mine' } }),
-      requestFingerprint({ ...base, userId: undefined, query: { scope: 'all' } }),
+      requestFingerprint({ ...base, authId: undefined, query: { scope: 'mine' } }),
+      requestFingerprint({ ...base, authId: undefined, query: { scope: 'all' } }),
     );
     assert.equal(
-      requestFingerprint({ ...base, userId: undefined, query: { a: '1', b: '2' } }),
-      requestFingerprint({ ...base, userId: undefined, query: { b: '2', a: '1' } }),
+      requestFingerprint({ ...base, authId: undefined, query: { a: '1', b: '2' } }),
+      requestFingerprint({ ...base, authId: undefined, query: { b: '2', a: '1' } }),
     );
     // Path parameters are in it too, which is what makes D a mismatch.
     assert.notEqual(
-      requestFingerprint({ ...base, userId: undefined, params: { id: 'one' } }),
-      requestFingerprint({ ...base, userId: undefined, params: { id: 'two' } }),
+      requestFingerprint({ ...base, authId: undefined, params: { id: 'one' } }),
+      requestFingerprint({ ...base, authId: undefined, params: { id: 'two' } }),
     );
   });
 
@@ -693,11 +707,15 @@ describe('R16 atomicity and concurrency', () => {
   probe.post('/probe/:mode', async (c) => {
     const mode = c.req.param('mode');
     const userId = c.req.header('x-probe-user');
+    // The PRINCIPAL. 0103 moved R16's scope from the profile to the auth
+    // identity; the probe sends both so it exercises the same shape a real
+    // profile-backed route does.
+    const authId = c.req.header('x-probe-auth');
     const title = c.req.header('x-probe-title') ?? 'probe';
     return withIdempotency(
       c,
       sql,
-      { userId, route: '/probe/:mode', params: { mode }, body: { title } },
+      { authId, userId, route: '/probe/:mode', params: { mode }, body: { title } },
       async (tx) => {
         const [row] = await tx<{ id: string }[]>`
           INSERT INTO matters (user_id, case_title, court, case_type, parties, client_name,
@@ -719,6 +737,7 @@ describe('R16 atomicity and concurrency', () => {
       headers: {
         [IDEMPOTENCY_HEADER]: key,
         'x-probe-user': advocate.userId,
+        'x-probe-auth': advocate.authId,
         'x-probe-title': title,
       },
     });
@@ -835,9 +854,9 @@ describe('R16 atomicity and concurrency', () => {
       .begin(async (tx) => {
         await tx`
           INSERT INTO api_idempotency_records
-            (user_id, method, route, idempotency_key, request_fingerprint,
+            (auth_id, user_id, method, route, idempotency_key, request_fingerprint,
              outcome, response_status, response_body, completed_at)
-          VALUES (${advocate.userId}::uuid, 'POST', '/probe/:mode', ${key},
+          VALUES (${advocate.authId}, ${advocate.userId}::uuid, 'POST', '/probe/:mode', ${key},
                   repeat('0', 64), 'success', 201, ${sql.json({ held: true })}, now())`;
         await held;
       })
@@ -874,8 +893,8 @@ describe('R16 atomicity and concurrency', () => {
         sql.begin(async (tx) => {
           await tx`
             INSERT INTO api_idempotency_records
-              (user_id, method, route, idempotency_key, request_fingerprint)
-            VALUES (${advocate.userId}::uuid, 'POST', '/probe/:mode',
+              (auth_id, user_id, method, route, idempotency_key, request_fingerprint)
+            VALUES (${advocate.authId}, ${advocate.userId}::uuid, 'POST', '/probe/:mode',
                     ${newKey()}, repeat('f', 64))`;
         }),
       /committed without a completed result/,

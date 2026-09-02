@@ -124,6 +124,107 @@ function redacted(userId: string) {
 }
 
 /**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ERASE AN `identity_only` ACCOUNT — SR-5
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * An advocate who verified an email and never finished onboarding has no
+ * `users` row, so {@link eraseUser} cannot serve them: it reads the profile
+ * first and throws when there is none. That throw is CORRECT for its own
+ * contract and is left exactly as it is — this is the branch beside it, not a
+ * loosening of it.
+ *
+ * **No `users` row is created in order to erase one.** NEW3 R21 §4.2 forbids it
+ * in terms, and the reason is not procedural: manufacturing a profile would make
+ * the erasure path the one place in the product that CREATES personal data about
+ * someone who has asked to have theirs destroyed.
+ *
+ * What this population actually holds, and therefore what this deletes, is the
+ * identity layer `eraseUser` already knows how to destroy — the email address
+ * and name, the per-session IP address and user-agent, the provider row, the
+ * magic-link artifacts keyed by email with no foreign key to cascade from, and
+ * the hashed refresh-token family. Nothing about erasure had to be reinvented;
+ * only the way in.
+ *
+ * **An already-absent identity is not an error.** `auth_user` may have been
+ * deleted by an earlier run or by the cascade of something else, and an erasure
+ * that throws on "nothing left to erase" turns a completed request into a stuck
+ * one. Zero counts are returned instead, which is the truthful reading and one
+ * an operator can audit.
+ */
+export async function eraseIdentityOnly(
+  sql: Sql,
+  authId: string,
+  actor: { userId: string; role: string },
+  reason: string,
+): Promise<ErasureResult> {
+  return sql.begin(async (tx: TransactionSql) => {
+    const deleted: Record<string, number> = {};
+    const count = async (label: string, run: Promise<{ count: number }>) => {
+      deleted[label] = (await run).count;
+    };
+
+    /**
+     * The email is read FIRST and from `auth_user`, for the same reason
+     * {@link eraseUser} captures the auth id before redacting: `auth_verification`
+     * is keyed by the EMAIL ADDRESS and has no foreign key, so once the
+     * `auth_user` row is gone there is nothing left to derive the key from. A
+     * magic link already sitting in the advocate's inbox is a working credential
+     * for this account until it expires.
+     */
+    const [identity] = await tx<{ email: string }[]>`
+      SELECT email FROM auth_user WHERE id = ${authId}`;
+    const email = identity?.email ?? null;
+
+    await count('refresh_tokens', tx`DELETE FROM refresh_tokens WHERE user_id = ${authId}`);
+    await count('auth_session', tx`DELETE FROM auth_session WHERE user_id = ${authId}`);
+    await count('auth_account', tx`DELETE FROM auth_account WHERE user_id = ${authId}`);
+    await count(
+      'auth_verification',
+      email
+        ? tx`DELETE FROM auth_verification WHERE identifier = ${email}`
+        : Promise.resolve({ count: 0 }),
+    );
+    await count('auth_user', tx`DELETE FROM auth_user WHERE id = ${authId}`);
+
+    /**
+     * R16 records for this principal. They carry `auth_id` and a NULL
+     * `user_id`, so nothing keyed on the profile would ever have found them.
+     */
+    await count(
+      'api_idempotency_records',
+      tx`DELETE FROM api_idempotency_records WHERE auth_id = ${authId}`,
+    );
+
+    /**
+     * `data_requests` is NOT deleted, exactly as in the profile-backed path: it
+     * is the record that the erasure was asked for and carried out, and it is
+     * the one row that must outlive the identity it names. Its `auth_id` is now
+     * a dangling identifier by design — there is deliberately no foreign key.
+     */
+    await writeAudit(tx, {
+      actorUserId: actor.userId,
+      actorRole: actor.role,
+      action: 'user.erase',
+      targetType: 'auth_identity',
+      targetId: authId,
+      before: null,
+      after: deleted as Record<string, number>,
+      reason,
+    });
+
+    /**
+     * `userId` carries the auth id because this result has no profile to name,
+     * and the field is what the admin surface prints. Empty object lists are
+     * literal: an account with no profile has no documents, no OCR jobs and no
+     * export artefact, so there is nothing in R2 to sweep — not "we did not
+     * look".
+     */
+    return { userId: authId, deleted, erasedStorageKeys: [], pendingObjects: [] };
+  });
+}
+
+/**
  * Erase one advocate, in ONE transaction.
  *
  * All-or-nothing on purpose: a partial erasure that deleted the matters and
@@ -238,8 +339,19 @@ export async function eraseUser(
      * is unavoidable; what is avoidable is leaving it behind. A closed account
      * has nothing left to replay to.
      */
+    /**
+     * BOTH SCOPES, and the second one is not redundant.
+     *
+     * Migration 0103 made the R16 ledger's principal `auth_id`, so a record
+     * written BEFORE this advocate finished onboarding carries their auth id and
+     * a NULL `user_id`. Deleting by profile alone would leave those rows behind
+     * — including their `response_body`, which R16 §4 requires to be the
+     * original success body and can therefore contain the advocate's own words.
+     * `auth_id` is captured above, before any redaction rewrites it.
+     */
     await count('api_idempotency_records', tx`
-      DELETE FROM api_idempotency_records WHERE user_id = ${userId}::uuid`);
+      DELETE FROM api_idempotency_records
+       WHERE user_id = ${userId}::uuid OR auth_id = ${authId}`);
     /**
      * ── ANALYTICS AND PREMIUM STATE, NAMED BECAUSE THEY WERE MISSED ──────────
      *

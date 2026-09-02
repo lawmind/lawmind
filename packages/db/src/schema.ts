@@ -1558,9 +1558,21 @@ export const dataRequests = pgTable(
   'data_requests',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
-      .notNull()
-      .references(() => users.id),
+    /**
+     * THE PRINCIPAL. `users.auth_id`, never the access token.
+     *
+     * Migration 0103. This is the column that lets an advocate who verified an
+     * email but never finished onboarding ask to be erased: they have no
+     * profile, so `user_id` below is null for them, and a request keyed only on
+     * a profile could not exist at all. It stays correct when they later DO
+     * onboard, because the identity does not change when a profile appears.
+     *
+     * No foreign key to `auth_user` on purpose: erasure deletes that row, and
+     * this request is the record that the erasure was asked for.
+     */
+    authId: text('auth_id').notNull(),
+    /** The profile, IF THERE IS ONE YET. Null for an `identity_only` account. */
+    userId: uuid('user_id').references(() => users.id),
     kind: dataRequestKindEnum('kind').notNull(),
     status: dataRequestStatusEnum('status').notNull(),
     dueAt: timestamp('due_at', { withTimezone: true }).notNull(),
@@ -1569,7 +1581,10 @@ export const dataRequests = pgTable(
     artefactStorageKey: text('artefact_storage_key'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index('data_requests_status_due_at_idx').on(t.status, t.dueAt)],
+  (t) => [
+    index('data_requests_status_due_at_idx').on(t.status, t.dueAt),
+    index('data_requests_auth_id_kind_idx').on(t.authId, t.kind),
+  ],
 );
 
 /**
