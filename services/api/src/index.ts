@@ -217,7 +217,7 @@ const app = createApp({
   ping: async () => {
     await db.execute(sql`SELECT 1`);
   },
-  search: { sql: rawSql, researchSql: pools.research, admission, embedQuery },
+  search: { sql: rawSql, userSql, researchSql: pools.research, admission, embedQuery },
   auth: { auth, sql: rawSql, secret: authSecret },
 });
 

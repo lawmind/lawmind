@@ -1,0 +1,57 @@
+{
+  "kind": "lawmind-split-api-smoke",
+  "note": "The real Hono app driven against a RESTORED user database and the live corpus database.",
+  "steps": [
+    {
+      "step": "user_restore",
+      "database": "lawmind_user_smoke"
+    },
+    {
+      "step": "split_resolved",
+      "mode": "split"
+    },
+    {
+      "step": "identity_verified",
+      "corpus": "lawmind",
+      "user": "lawmind_user_smoke",
+      "sameCluster": true
+    },
+    {
+      "step": "restored_user_rows",
+      "users": "661",
+      "matters": "4",
+      "authorities": "4"
+    },
+    {
+      "step": "corpus_rows",
+      "judgments": "18761920"
+    },
+    {
+      "step": "cross_role_hydration",
+      "savedAuthorities": 4,
+      "resolvedFromCorpus": 4,
+      "corpusUnavailable": 0
+    }
+  ],
+  "checks": [
+    {
+      "name": "health answers",
+      "path": "/health",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "name": "matters requires auth",
+      "path": "/matters",
+      "status": 401,
+      "ok": true
+    },
+    {
+      "name": "alerts requires auth",
+      "path": "/alerts",
+      "status": 401,
+      "ok": true
+    }
+  ],
+  "verdict": "SPLIT_API_SMOKE_PASS"
+}

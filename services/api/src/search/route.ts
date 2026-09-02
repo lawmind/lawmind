@@ -231,8 +231,22 @@ export const searchRequest = z
 export type SearchRequest = z.infer<typeof searchRequest>;
 
 export type SearchDeps = {
-  /** The CORE pool. Bookkeeping writes and small lookups. */
+  /** The CORE pool, CORPUS role. Bookkeeping writes and small lookups. */
   sql: Sql;
+  /**
+   * The USER role — matters, authorities, annotations, alerts, documents,
+   * billing. `ops/db-roles.ts` is the list.
+   *
+   * Optional, and it defaults to {@link sql}, because that is exactly what
+   * single-database mode IS: `db-split.ts` resolves both roles to `DATABASE_URL`
+   * unless a deployment says otherwise, and every existing caller, test and CLI
+   * keeps the one handle it already passes.
+   *
+   * When a deployment DOES split, this is the handle that must not be the corpus
+   * one — a user route reading matters out of the corpus database would find
+   * nothing and report it as an empty matter list.
+   */
+  userSql?: Sql | undefined;
   /**
    * The RESEARCH pool — rankers only. Absent in tests and CLIs, which then run
    * everything on `sql` exactly as they did before.

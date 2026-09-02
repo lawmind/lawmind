@@ -71,7 +71,6 @@ import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { judgmentFacts } from '../judgments/hydrate.ts';
 import {
-  precedentialEffect,
   precedentialPolicy,
   type OverruledStatus,
   type PrecedentialEffect,
@@ -246,19 +245,7 @@ export type UnavailableAuthority = {
   availability: 'corpus_unavailable';
 };
 
-const AUTHORITY_COLUMNS = `a.id, a.judgment_id, j.case_title, j.neutral_citation,
-       j.reporter_citations, a.added_by_user_id, ${isoColumn('a.added_at')} AS added_at,
-       ${isoColumn('a.removed_at')} AS removed_at,
-       j.overruled_status, j.overruled_by_judgment_id, j.overruled_paras,
-       j.overruled_note, o.case_title AS overruled_by_title`;
 
-/**
- * One FROM clause, both read paths. The `LEFT JOIN` is what lets a moved
- * authority NAME what displaced it rather than only saying that it moved.
- */
-const AUTHORITY_FROM = `matter_authorities a
-    JOIN judgments j ON j.id = a.judgment_id
-    LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id`;
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -433,13 +420,23 @@ export async function addAuthority(
   matterId: string,
   userId: string | undefined,
   body: z.infer<typeof addAuthorityBody>,
+  /**
+   * The CORPUS role; defaults to `sql` so single-database use is unchanged.
+   *
+   * The WRITE path is the one place that must resolve the target: NEW3 R20,
+   * *"New saves require the target to exist in the request-pinned active corpus
+   * generation."* The read path deliberately does not — it must show what was
+   * saved whether or not it still resolves — and that asymmetry is the contract,
+   * not an oversight.
+   */
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
   if (!(await ownedMatter(sql, matterId, userId))) {
     return fail(c, 'NOT_FOUND', 'no matter with that id', 404);
   }
 
-  const [judgment] = await sql<
+  const [judgment] = await corpusSql<
     {
       id: string;
       case_title: string;
@@ -481,7 +478,9 @@ export async function addAuthority(
    *
    * The banner is UNCHANGED in every case. Nothing here weakens a warning.
    */
-  const treatment = await sql<{ relationship: string; treatment_provenance: string | null }[]>`
+  const treatment = await corpusSql<
+    { relationship: string; treatment_provenance: string | null }[]
+  >`
     SELECT DISTINCT relationship, treatment_provenance
       FROM judgment_citations
      WHERE cited_judgment_id = ${body.judgmentId}

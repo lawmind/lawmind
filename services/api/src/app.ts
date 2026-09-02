@@ -386,7 +386,14 @@ export function createApp(deps: AppDeps) {
 
   const search = deps.search;
   if (search) {
+    /**
+     * `sql` keeps its name and its meaning for every CORPUS read below.
+     * `userSql` is the USER role and defaults to it, so a single-database
+     * deployment — and every test and CLI that passes one handle — behaves
+     * exactly as before. See `SearchDeps.userSql` and `ops/db-roles.ts`.
+     */
     const sql = search.sql;
+    const userSql = search.userSql ?? search.sql;
     /**
      * The profile id for the caller, or undefined.
      *
@@ -504,7 +511,7 @@ export function createApp(deps: AppDeps) {
     // What each verification tier did, and when. Unblocks the verification sheet
     // and the unverified-citation screen, both of which were on a mock because
     // nothing exposed per-tier results.
-    app.get('/citations/:id', (c) => getCitationCheck(c, sql, c.req.param('id')));
+    app.get('/citations/:id', (c) => getCitationCheck(c, userSql, c.req.param('id'), sql));
     // The advocate at highest risk: somebody who copies a citation into Word has
     // taken it out of the app, and without this row nothing can warn them when
     // the authority moves. Offered in EVERY state including set_aside — refusing
@@ -607,7 +614,7 @@ export function createApp(deps: AppDeps) {
     );
     // The citation monitor — production aggregates of the harness metrics.
     app.get('/admin/citations', validate('query', citationsMonitorQuery), async (c) =>
-      getCitationsMonitor(c, sql, await userFor(c), c.req.valid('query')),
+      getCitationsMonitor(c, userSql, await userFor(c), c.req.valid('query'), sql),
     );
     // The manual re-check. Synchronous — the contract chose a returned result
     // over a job id to poll, because the job log would have had one consumer.
@@ -721,20 +728,20 @@ export function createApp(deps: AppDeps) {
     // all — enforced here so it cannot be styled away client-side.
     // `docs/SCHEMA_TRUTH.md` §matter_authorities.
     app.get('/matters/:id/authorities', async (c) =>
-      listAuthorities(c, sql, c.req.param('id'), await userFor(c)),
+      listAuthorities(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
     app.post('/matters/:id/authorities', validate('json', addAuthorityBody), async (c) =>
-      addAuthority(c, sql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+      addAuthority(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json'), sql),
     );
     app.delete('/matters/:id/authorities/:authorityId', async (c) =>
-      removeAuthority(c, sql, c.req.param('id'), c.req.param('authorityId'), await userFor(c)),
+      removeAuthority(c, userSql, c.req.param('id'), c.req.param('authorityId'), await userFor(c)),
     );
     // Citator alerts — PD-5/PD-6. The app does not grow a notifications tab:
     // this feeds the briefing's "since yesterday" block, and `since` lets a
     // client re-read a window it already saw. `overruled_status` is re-read
     // LIVE per alert, same rule as the briefing below.
     app.get('/alerts', validate('query', alertsQuery), async (c) =>
-      listAlerts(c, sql, await userFor(c), c.req.valid('query')),
+      listAlerts(c, userSql, await userFor(c), c.req.valid('query'), sql),
     );
     app.post('/alerts/:id/read', async (c) =>
       markAlertRead(c, sql, c.req.param('id'), await userFor(c)),
