@@ -24,7 +24,7 @@
  * lookup, so there is no path that forgets it.
  */
 import type { Context } from 'hono';
-import type { Sql } from 'postgres';
+import type { JSONValue, Sql } from 'postgres';
 import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
@@ -213,11 +213,38 @@ export async function createMatter(
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
+  /**
+   * `sql.json(...)`, never `JSON.stringify(...)::jsonb`.
+   *
+   * postgres.js JSON-encodes a JS string parameter bound into a jsonb slot, so
+   * the stringify form stored a jsonb *string scalar*: `jsonb_typeof(parties)`
+   * read `string`, not `object`. Measured through this route, not inferred —
+   * `docs/ai/lcc-r23/probe-matters-parties.mts`.
+   *
+   * It was a PERSISTENCE defect wearing a serialization defect's clothes. Every
+   * read path served the same scalar, so `MatterScreen.tsx:369` rendered
+   * `{matter.parties.description}` against a string, got `undefined`, and React
+   * printed nothing: the line read ` · for the accused` and the advocate's own
+   * parties were SILENTLY GONE from the screen whose job is to say which case
+   * this is. No crash, no error state — the failure mode this product treats
+   * most seriously everywhere else. NEW3 bus 1706.
+   *
+   * `idempotency.ts` learned the same thing the same way and wrote it down;
+   * this line is the second place in the codebase where it cost something.
+   * Migration 0101 converts the rows the stringify form already wrote.
+   *
+   * The cast is the one thing `sql.json` cannot infer. The contract shape is
+   * `z.record(z.string(), z.unknown())` (R12 §1.7) and stays that way — NEW3
+   * ruled the contract already correct — but `unknown` is wider than
+   * postgres.js's `JSONValue`. It is sound here and not merely convenient:
+   * `body` is what `c.req.json()` parsed out of the request, so every value
+   * in it came from JSON and is representable as JSON by construction.
+   */
   const [row] = await sql<MatterRow[]>`
     INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties,
                          client_name, our_side, next_hearing_date, status, source)
     VALUES (${userId!}, ${body.caseTitle}, ${body.cnrNumber ?? null}, ${body.court},
-            ${body.caseType}, ${JSON.stringify(body.parties)}::jsonb, ${body.clientName},
+            ${body.caseType}, ${sql.json(body.parties as Record<string, JSONValue>)}, ${body.clientName},
             ${body.ourSide}, ${body.nextHearingDate ?? null}, 'active',
             -- Typed by the advocate. A date we were told is a first-class source
             -- (PD-12), not a fallback — next dates are given orally in open court.

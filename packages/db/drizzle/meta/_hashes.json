@@ -102,6 +102,7 @@
     "0097_firm_ready_workspace_ownership": "d673aa79f692ed5d2ea42e1799d70c5400b7c2034911db0705c9ea8fcc40ef5b",
     "0098_personal_workspace_is_automatic": "7574971b150b95a136c6eee95d380a1923af29c8f6065bd4f0b3c7fde44140f1",
     "0099_matter_workspace_defaults_from_user": "ca006c9977b937a37a90b97c18b859223fe97d686979aea9a5eb4a7f54bdc616",
-    "0100_api_idempotency_records": "f093dc91d43dee36a10cfcea27bc0b0f6d786895dcb30957dfdf35d851922f38"
+    "0100_api_idempotency_records": "f093dc91d43dee36a10cfcea27bc0b0f6d786895dcb30957dfdf35d851922f38",
+    "0101_matters_parties_jsonb_object": "60fd020fb9fcaf71c7001255ee54359f353221b01a6acb59529d5f2a2a32a933"
   }
 }

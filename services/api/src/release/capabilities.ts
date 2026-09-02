@@ -61,8 +61,16 @@
  * Recorded in the release manifest and returned on the wire, so "which
  * capability set was this candidate frozen with" is answerable by query rather
  * than by reading a commit log.
+ *
+ * R8_3.5 (2 Sep 2026): the first PLATFORM OVERRIDE — `search.party_name`
+ * DISABLED on ios. The release-wide set below is byte-identical, so
+ * `registryDigest` (which hashes `capabilityRegistry()` with no platform) does
+ * NOT move; what changed is the RESOLVED view this endpoint serves an iOS
+ * caller. Leaving the version alone would let one version string stand for two
+ * different iOS answers, which is precisely the stale-flag failure the digest
+ * was added to catch, in the one dimension the digest cannot see.
  */
-export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.4';
+export const RELEASE_CAPABILITIES_VERSION = 'RELEASE_CAPABILITIES_R8_3.5';
 
 export type CapabilityState = 'ENABLED' | 'LIMITED' | 'DISABLED' | 'EXPERIMENTAL_INTERNAL';
 
@@ -450,15 +458,35 @@ export function capabilityRefusal(name: CapabilityName) {
  *      capability that is off on the platform it is listed under.
  *
  * ─────────────────────────────────────────────────────────────────────────────
- * WHY THE OVERRIDES ARE EMPTY TODAY, AND WHY THAT IS THE CORRECT STATE
+ * THE iOS OVERRIDE IS NOW SET — 2 SEP 2026, NEW3 bus 1707
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * §9.5 says to SHIP THE SWITCH. It does not say to disable party search, and
- * disabling it pre-emptively would remove a capability advocates use on a
- * prediction about a review nobody has run yet. So `ios` carries no override and
- * the map is exercised only by its tests — which is the same discipline
- * `vectorExportRefusal()` follows: a guard first exercised on the day it is
- * needed is a guard first exercised after the damage.
+ * §9.5 said to SHIP THE SWITCH, and until now `ios` carried no override because
+ * disabling party search pre-emptively would have removed a capability advocates
+ * use on a prediction about a review nobody had run. That is no longer the
+ * argument on the table. V7.2 §10.5 records
+ * `IOS_PARTY_SEARCH_SUBMISSION_DEFAULT = OFF` unless NEW3 plus founder/counsel
+ * record a specific evidence-based decision to submit ON, and no such record
+ * exists — iOS was ON because nobody had written a row, which is not evidence
+ * for ON. NEW3 adjudicated it: `IOS_PARTY_SEARCH_DECISION = ACTIVATE_IOS_OFF_NOW`.
+ *
+ * The row is written NOW rather than at Gate D because a flip deferred to Gate D
+ * depends on someone remembering, and one row now does not. It buys correctness,
+ * not test coverage: there is no `apps/mobile/ios/`, no pinned build image and
+ * no iOS CI job, so nobody can exercise an iOS surface today, and claiming
+ * otherwise would be the wrong defence of a right decision.
+ *
+ * IT COULD NOT HAVE BEEN WRITTEN EARLIER. CCR-NEW3-S2F-01 blocked any narrowing
+ * row for `search.party_name` on any platform while `retrievalOutcome` could not
+ * say an arm had been administratively switched off: a suppressed party query
+ * with zero results derived `abstained` + `low_relevance`, byte-identical to an
+ * honest zero — "there is no law on this" collapsed into "we could not search".
+ * `outcome.ts` now makes `party_name_disabled` contribute to
+ * `couldNotLookProperly`, so the suppressed zero derives `coverage_unknown` +
+ * `capability_disabled` instead, and NEW3 verified that independently of both
+ * implementing lanes (bus 1707, R15 §B1.7 step 5).
+ *
+ * Reversible: delete the row if founder/counsel later record an ON decision.
  *
  * Narrowing only. A platform override may take a capability DOWN and never up —
  * `resolveState` enforces it — so this map can never become a back door that
@@ -480,13 +508,39 @@ type PlatformOverride = { readonly state: CapabilityState; readonly reason: stri
  * Capability states that are NARROWER on a specific platform than the
  * release-wide set above.
  *
- * `search.party_name` on `ios` is the one this exists for. It is absent, not
- * present-and-enabled: an empty override means "the release-wide state stands",
- * and adding the row is the entire act of flipping the switch.
+ * `search.party_name` on `ios` is the one this exists for, and adding the row is
+ * the entire act of flipping the switch — there is no second place to change.
+ *
+ * ANDROID AND WEB CANNOT BE REACHED FROM HERE. The map is platform-keyed, so a
+ * row under `ios` is consulted only for `ios`; `capabilityStateForPlatform`
+ * additionally ignores any override that is not strictly narrower. Both are
+ * asserted in `search/party-search-platform.test.ts`.
+ *
+ * `search.party_name` stays ENABLED RELEASE-WIDE. This narrows one platform's
+ * view of it and nothing else. Exact case number, CNR and citation lookup are
+ * untouched by construction — none of them classifies as `party_name`, which
+ * that same test asserts query by query, next to the switch.
  */
 export const PLATFORM_CAPABILITY_OVERRIDES: Readonly<
   Partial<Record<Platform, Partial<Record<CapabilityName, PlatformOverride>>>>
-> = {};
+> = {
+  ios: {
+    'search.party_name': {
+      state: 'DISABLED',
+      reason:
+        'V7.2 §10.5: IOS_PARTY_SEARCH_SUBMISSION_DEFAULT = OFF unless NEW3 plus founder/counsel ' +
+        'record an evidence-based decision to submit ON, and no such record exists. Apple ' +
+        'guideline 5.1.1(viii) reaches an app that compiles personal information from any source ' +
+        'not supplied directly by the user, public databases included; case-first design is the ' +
+        'right mitigation and v7.1 is explicit that it is not a guarantee. The arm is suppressed, ' +
+        'not silently absent: the response carries degraded[party_name_disabled] and the ' +
+        'retrieval outcome derives coverage_unknown + capability_disabled, never an honest zero. ' +
+        'Exact case number, CNR and citation lookup are unaffected. NEW3 bus 1707, ' +
+        'IOS_PARTY_SEARCH_DECISION = ACTIVATE_IOS_OFF_NOW.',
+      asOf: '2026-09-02',
+    },
+  },
+};
 
 /** A platform may narrow a capability, never widen it. */
 const NARROWNESS: Record<CapabilityState, number> = {

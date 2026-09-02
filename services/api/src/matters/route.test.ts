@@ -98,6 +98,55 @@ describe('matters', () => {
     assert.ok(listed.some((x) => x.matterId === m['matterId']));
   });
 
+  /**
+   * `parties` IS STORED AS A JSONB OBJECT — asserted on the column, not on the
+   * round trip.
+   *
+   * NEW3 bus 1706. `matters/route.ts` bound `JSON.stringify(parties)::jsonb`;
+   * postgres.js JSON-encodes a JS string parameter bound into a jsonb slot, so
+   * what landed was a jsonb STRING SCALAR and every read path served it back.
+   * `MatterScreen.tsx:369` renders `{matter.parties.description}`, which against
+   * a string is `undefined`, which React renders as nothing: the advocate's own
+   * parties vanished from the matter workspace with no crash and no error state.
+   *
+   * The defect survived because no server test asserted `parties` at all, and a
+   * round-trip assertion could not have caught it — every fixture wrote an
+   * object and read back whatever came out. So the SHAPE is asserted here, at
+   * the column and at all three response surfaces. Migration 0101 repairs the
+   * rows the old writer already wrote.
+   */
+  it('stores parties as a jsonb OBJECT, and serves it as one on all three surfaces', async () => {
+    const created = await app.request('/matters', {
+      method: 'POST',
+      headers: auth(alice.token),
+      body: JSON.stringify({ ...body, parties: { description: 'Ramesh Kumar v. State of NCT of Delhi' } }),
+    });
+    assert.equal(created.status, 201);
+    const posted = ((await created.json()) as { data: { matter: Record<string, unknown> } }).data
+      .matter;
+    const id = posted['matterId'] as string;
+
+    // The column. This is the assertion the defect could not have survived.
+    const [stored] = await sql<{ t: string }[]>`
+      SELECT jsonb_typeof(parties) AS t FROM matters WHERE id = ${id}::uuid`;
+    assert.equal(stored?.t, 'object', 'matters.parties must be a jsonb object, never a string scalar');
+
+    // RCC's frozen contract is `{ description: string }` (apps/mobile/src/api/
+    // contract.ts). It reads it directly, with no defensive JSON.parse, on all
+    // three — so all three are checked rather than only the one that broke.
+    const expected = 'Ramesh Kumar v. State of NCT of Delhi';
+    assert.deepEqual(posted['parties'], { description: expected }, 'POST /matters');
+
+    const detail = await app.request(`/matters/${id}`, { headers: auth(alice.token) });
+    const got = ((await detail.json()) as { data: { matter: Record<string, unknown> } }).data.matter;
+    assert.deepEqual(got['parties'], { description: expected }, 'GET /matters/:id');
+
+    const list = await app.request('/matters', { headers: auth(alice.token) });
+    const row = ((await list.json()) as { data: { matters: Record<string, unknown>[] } }).data
+      .matters.find((x) => x['matterId'] === id);
+    assert.deepEqual(row?.['parties'], { description: expected }, 'GET /matters');
+  });
+
   it("never shows one advocate another's matter", async () => {
     const created = await app.request('/matters', {
       method: 'POST',
