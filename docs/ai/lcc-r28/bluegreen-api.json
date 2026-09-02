@@ -1,0 +1,87 @@
+{
+  "kind": "lawmind-r28-bluegreen-api",
+  "note": "A -> B -> A with the authenticated Hono app running, over HTTP, against a user database stripped of every corpus table.",
+  "generations": {
+    "A": "lawmind_r28_gen_a",
+    "B": "lawmind_r28_gen_b"
+  },
+  "userDatabase": "lawmind_r28_user",
+  "negativeSchema": {
+    "corpusDatabase": "lawmind_r28_corpus",
+    "userDatabase": "lawmind_r28_user",
+    "droppedFromCorpus": 44,
+    "droppedFromUser": 58,
+    "corpusTablesRemaining": 58,
+    "userTablesRemaining": 44,
+    "userDbHasJudgments": false,
+    "userDbHasJudgmentCitations": false,
+    "corpusDbHasUsers": false,
+    "corpusDbHasMatters": false,
+    "corpusDbHasMatterAuthorities": false,
+    "corpusCollateralDrops": []
+  },
+  "judgmentId": "e08e4c96-8da0-4ff8-9e10-381c7b364bec",
+  "matterId": "2b7d08a0-e053-4f44-82ab-c2a0b855cb31",
+  "authorityId": "76244797-5bb8-4ce0-8034-43ae06fb10ac",
+  "steps": [
+    {
+      "step": "generations",
+      "A": "lawmind_r28_gen_a",
+      "B": "lawmind_r28_gen_b",
+      "targetInA": 1,
+      "targetInB": 0
+    },
+    {
+      "step": "active_A",
+      "status": 200,
+      "authorities": 1,
+      "unavailable": 0,
+      "caseTitle": "SYNTHETIC — Present In Generation A Only"
+    },
+    {
+      "step": "switch_A_to_B",
+      "status": 200,
+      "authorities": 0,
+      "unavailable": 1,
+      "availability": "corpus_unavailable",
+      "sameAuthorityId": true,
+      "sameAddedAt": true,
+      "noFabricatedFields": true
+    },
+    {
+      "step": "new_save_under_B",
+      "status": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "forbiddenSentence": false
+    },
+    {
+      "step": "rollback_B_to_A",
+      "status": 200,
+      "authorities": 1,
+      "unavailable": 0,
+      "caseTitle": "SYNTHETIC — Present In Generation A Only",
+      "sameAuthorityId": true,
+      "sameAddedAt": true
+    },
+    {
+      "step": "user_digest",
+      "tables": 44,
+      "changedTables": []
+    }
+  ],
+  "checks": {
+    "A_hydrates": true,
+    "B_shows_unavailable_shell": true,
+    "B_shell_is_the_same_row": true,
+    "B_shell_fabricates_nothing": true,
+    "B_new_save_refused_409": true,
+    "B_refusal_code": true,
+    "B_refusal_does_not_deny_existence": true,
+    "A_recovers": true,
+    "A_recovers_the_same_row": true,
+    "user_data_unchanged": true
+  },
+  "USER_DATA_CHANGED_BY_CORPUS_SWITCH": "NO",
+  "changedTables": [],
+  "verdict": "BLUEGREEN_API_PASS"
+}

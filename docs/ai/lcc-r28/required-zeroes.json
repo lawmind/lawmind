@@ -1,0 +1,49 @@
+{
+  "kind": "lawmind-r28-required-zeroes",
+  "database": "lawmind",
+  "measuredAt": "2026-09-02T18:33:35.578Z",
+  "verdicts": {
+    "CURRENT_V1_CROSS_ROLE_FKS": 0,
+    "CURRENT_V1_CROSS_ROLE_SQL_JOINS": 0,
+    "FDW": 0,
+    "DBLINK": 0,
+    "DISTRIBUTED_TRANSACTION_LAYER": 0,
+    "WRONG_ROLE_FALLBACK": 0
+  },
+  "findings": {
+    "CROSS_ROLE_FKS": {
+      "count": 0,
+      "totalForeignKeys": 83,
+      "offenders": []
+    },
+    "FDW": {
+      "used": false,
+      "fdwExtensions": [],
+      "foreignServers": [],
+      "foreignTables": []
+    },
+    "DBLINK": {
+      "used": false,
+      "extensions": [
+        "pg_trgm",
+        "plpgsql",
+        "vector"
+      ]
+    },
+    "DISTRIBUTED_TRANSACTION_LAYER": {
+      "used": false,
+      "preparedTransactions": 0,
+      "maxPreparedTransactions": "0",
+      "twoPhaseSource": []
+    },
+    "CROSS_ROLE_SQL_JOINS": {
+      "count": 0,
+      "offenders": []
+    },
+    "WRONG_ROLE_FALLBACK": {
+      "count": 0,
+      "offenders": []
+    }
+  },
+  "verdict": "REQUIRED_ZEROES_PASS"
+}

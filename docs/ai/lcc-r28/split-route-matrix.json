@@ -1,0 +1,776 @@
+{
+  "kind": "lawmind-r28-split-route-matrix",
+  "note": "The real Hono app driven over two physically distinct databases, each stripped of the other role’s tables so a wrong-role query cannot succeed by accident.",
+  "strictSplitMode": true,
+  "corpusDatabase": "lawmind_r28_corpus",
+  "userDatabase": "lawmind_r28_user",
+  "physicallyDistinct": true,
+  "sameCluster": true,
+  "negativeSchema": {
+    "corpusDatabase": "lawmind_r28_corpus",
+    "userDatabase": "lawmind_r28_user",
+    "droppedFromCorpus": 44,
+    "droppedFromUser": 58,
+    "corpusTablesRemaining": 58,
+    "userTablesRemaining": 44,
+    "userDbHasJudgments": false,
+    "userDbHasJudgmentCitations": false,
+    "corpusDbHasUsers": false,
+    "corpusDbHasMatters": false,
+    "corpusDbHasMatterAuthorities": false,
+    "corpusCollateralDrops": []
+  },
+  "sentinels": [
+    {
+      "name": "user table through the CORPUS role",
+      "statement": "SELECT count(*) FROM matters",
+      "refused": true,
+      "error": "relation \"matters\" does not exist"
+    },
+    {
+      "name": "corpus table through the USER role",
+      "statement": "SELECT count(*) FROM judgments",
+      "refused": true,
+      "error": "relation \"judgments\" does not exist"
+    }
+  ],
+  "counts": {
+    "total": 64,
+    "pass": 64,
+    "fail": 0,
+    "wrongRole": 0
+  },
+  "results": [
+    {
+      "phase": "boot",
+      "name": "health",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "boot",
+      "name": "version",
+      "method": "GET",
+      "path": "/version",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "boot",
+      "name": "capabilities",
+      "method": "GET",
+      "path": "/release/capabilities",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "auth",
+      "name": "unauthenticated matters refuses",
+      "method": "GET",
+      "path": "/matters",
+      "status": 401,
+      "expect": [
+        401
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "auth",
+      "name": "GET /me",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "auth",
+      "name": "PATCH /me",
+      "method": "PATCH",
+      "path": "/me",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "auth",
+      "name": "GET /terms/current",
+      "method": "GET",
+      "path": "/terms/current",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "auth",
+      "name": "POST /me/accept-terms",
+      "method": "POST",
+      "path": "/me/accept-terms",
+      "status": 409,
+      "expect": [
+        200,
+        400,
+        409
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "matter",
+      "name": "POST /matters",
+      "method": "POST",
+      "path": "/matters",
+      "status": 201,
+      "expect": [
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "matter",
+      "name": "GET /matters",
+      "method": "GET",
+      "path": "/matters",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "matter",
+      "name": "GET /matters/:id",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "matter",
+      "name": "PATCH /matters/:id",
+      "method": "PATCH",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "authority",
+      "name": "POST authority — target present",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/authorities",
+      "status": 201,
+      "expect": [
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "authority",
+      "name": "GET authorities — hydrated from corpus",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/authorities",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "authority",
+      "name": "POST authority — target absent from corpus",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/authorities",
+      "status": 409,
+      "expect": [
+        409
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "authority",
+      "name": "GET matter detail with authorities",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "events",
+      "name": "POST /matters/:id/events",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/events",
+      "status": 201,
+      "expect": [
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "events",
+      "name": "GET matter detail shows the event",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "shares",
+      "name": "GET shares",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/shares",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "shares",
+      "name": "POST share",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/shares",
+      "status": 201,
+      "expect": [
+        201,
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "annotations",
+      "name": "GET annotations",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/annotations",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "annotations",
+      "name": "POST annotation",
+      "method": "POST",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/annotations",
+      "status": 200,
+      "expect": [
+        201,
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "annotations",
+      "name": "GET annotations after create",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/annotations",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "search",
+      "name": "POST /search",
+      "method": "POST",
+      "path": "/search",
+      "status": 200,
+      "expect": [
+        200,
+        503
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "search",
+      "name": "GET judgment",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "search",
+      "name": "GET judgment treatment",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/treatment",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "search",
+      "name": "GET judgment graph",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/graph",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "search",
+      "name": "GET judgment authorities as-at",
+      "method": "GET",
+      "path": "/judgments/77f73bde-34b4-4e7b-a003-1a9023f1df6c/authorities",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "verification",
+      "name": "POST /verify/confirm",
+      "method": "POST",
+      "path": "/verify/confirm",
+      "status": 200,
+      "expect": [
+        200,
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "verification",
+      "name": "POST /citations/copies",
+      "method": "POST",
+      "path": "/citations/copies",
+      "status": 201,
+      "expect": [
+        200,
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "verification",
+      "name": "POST /verify/ecourts",
+      "method": "POST",
+      "path": "/verify/ecourts",
+      "status": 200,
+      "expect": [
+        200,
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "saved-searches",
+      "name": "GET /saved-searches",
+      "method": "GET",
+      "path": "/saved-searches",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "alerts",
+      "name": "GET /alerts",
+      "method": "GET",
+      "path": "/alerts",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "alerts",
+      "name": "GET /me/alert-settings",
+      "method": "GET",
+      "path": "/me/alert-settings",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "alerts",
+      "name": "PATCH /me/alert-settings",
+      "method": "PATCH",
+      "path": "/me/alert-settings",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "training-consent",
+      "name": "GET /me/training-consent",
+      "method": "GET",
+      "path": "/me/training-consent",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "training-consent",
+      "name": "POST /me/training-consent",
+      "method": "POST",
+      "path": "/me/training-consent",
+      "status": 200,
+      "expect": [
+        200,
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "training-consent",
+      "name": "DELETE /me/training-consent",
+      "method": "DELETE",
+      "path": "/me/training-consent",
+      "status": 200,
+      "expect": [
+        200,
+        204
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "data-requests",
+      "name": "POST correction request",
+      "method": "POST",
+      "path": "/me/data-requests",
+      "status": 201,
+      "expect": [
+        201,
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "data-requests",
+      "name": "GET own data requests",
+      "method": "GET",
+      "path": "/me/data-requests",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "data-requests",
+      "name": "identity_only erasure request",
+      "method": "POST",
+      "path": "/me/data-requests",
+      "status": 201,
+      "expect": [
+        201,
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "data-requests",
+      "name": "identity_only reads its own request",
+      "method": "GET",
+      "path": "/me/data-requests",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "data-requests",
+      "name": "profile-backed erasure request",
+      "method": "POST",
+      "path": "/me/data-requests",
+      "status": 201,
+      "expect": [
+        201,
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "idempotency",
+      "name": "same key replays rather than creating twice",
+      "method": "POST",
+      "path": "/matters",
+      "status": 201,
+      "expect": [
+        200,
+        201
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "idempotency",
+      "name": "different fingerprint under the same key is refused",
+      "method": "POST",
+      "path": "/matters",
+      "status": 409,
+      "expect": [
+        409,
+        422
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "documents",
+      "name": "GET /documents/types",
+      "method": "GET",
+      "path": "/documents/types",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "documents",
+      "name": "GET /documents",
+      "method": "GET",
+      "path": "/documents",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "entitlements",
+      "name": "GET /me/entitlements",
+      "method": "GET",
+      "path": "/me/entitlements",
+      "status": 404,
+      "expect": [
+        200,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "premium",
+      "name": "GET premium preview",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/premium-preview",
+      "status": 404,
+      "expect": [
+        200,
+        402,
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "briefings",
+      "name": "GET matter briefings",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/briefings",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "corpus",
+      "name": "GET /corpus/coverage",
+      "method": "GET",
+      "path": "/corpus/coverage",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "corpus",
+      "name": "GET /corpus/freshness",
+      "method": "GET",
+      "path": "/corpus/freshness",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "corpus",
+      "name": "GET /statutes",
+      "method": "GET",
+      "path": "/statutes",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot read A matter",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot patch A matter",
+      "method": "PATCH",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot read A authorities",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/authorities",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot save into A matter",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/authorities",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot add an event to A matter",
+      "method": "POST",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/events",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot read A briefings",
+      "method": "GET",
+      "path": "/matters/6698e1b8-265b-4095-ad20-89e11f72a081/briefings",
+      "status": 404,
+      "expect": [
+        403,
+        404
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B's matter list does not contain A's matter",
+      "method": "GET",
+      "path": "/matters",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B's data requests do not contain A's",
+      "method": "GET",
+      "path": "/me/data-requests",
+      "status": 200,
+      "expect": [
+        200
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "tenant-isolation",
+      "name": "B cannot reach an admin surface",
+      "method": "GET",
+      "path": "/admin/users",
+      "status": 403,
+      "expect": [
+        401,
+        403
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "role-sentinel",
+      "name": "sentinel — user table through the CORPUS role",
+      "method": "SQL",
+      "path": "SELECT count(*) FROM matters",
+      "status": 0,
+      "expect": [
+        0
+      ],
+      "verdict": "PASS"
+    },
+    {
+      "phase": "role-sentinel",
+      "name": "sentinel — corpus table through the USER role",
+      "method": "SQL",
+      "path": "SELECT count(*) FROM judgments",
+      "status": 0,
+      "expect": [
+        0
+      ],
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "SPLIT_ROUTE_MATRIX_PASS"
+}

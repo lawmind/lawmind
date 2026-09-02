@@ -1,0 +1,164 @@
+{
+  "kind": "lawmind-corpus-activation-proof",
+  "gate": "RESTORE -> integrity -> STATISTICS -> SEARCH SMOKE -> ACTIVATE",
+  "requiresStatistics": true,
+  "requiresSearchSmoke": true,
+  "steps": [
+    {
+      "step": "schema",
+      "at": "2026-09-02T18:38:26.163Z",
+      "via": "packages/db migrations"
+    },
+    {
+      "step": "rows_loaded",
+      "at": "2026-09-02T18:38:26.222Z",
+      "judgments": 40,
+      "lexemes": 3
+    },
+    {
+      "step": "before_analyze",
+      "at": "2026-09-02T18:38:26.403Z",
+      "unanalyzed": [
+        "judgments",
+        "lexeme_document_frequency"
+      ],
+      "verdict": "REFUSE"
+    },
+    {
+      "step": "after_analyze",
+      "at": "2026-09-02T18:38:26.937Z",
+      "unanalyzed": [],
+      "empty": [
+        "statutes",
+        "statute_sections",
+        "judgment_chunks",
+        "judgment_citations"
+      ],
+      "probes": [
+        {
+          "name": "exact citation",
+          "ms": 30,
+          "n": 1,
+          "outcome": "matched"
+        },
+        {
+          "name": "filtered lexical",
+          "ms": 5,
+          "n": 5,
+          "outcome": "matched"
+        },
+        {
+          "name": "normal research query",
+          "ms": 13,
+          "n": 5,
+          "outcome": "hybrid"
+        }
+      ],
+      "verdict": "ACTIVATE"
+    },
+    {
+      "step": "broken_search_path",
+      "at": "2026-09-02T18:38:27.141Z",
+      "absent": [
+        "lexeme_document_frequency"
+      ],
+      "failed": [
+        "filtered lexical",
+        "normal research query"
+      ],
+      "verdict": "REFUSE"
+    }
+  ],
+  "beforeAnalyze": {
+    "statistics": {
+      "ready": false,
+      "unanalyzed": [
+        "judgments",
+        "lexeme_document_frequency"
+      ],
+      "absent": [],
+      "empty": [
+        "statutes",
+        "statute_sections",
+        "judgment_chunks",
+        "judgment_citations"
+      ]
+    },
+    "decision": {
+      "verdict": "REFUSE",
+      "activate": false,
+      "reasons": [
+        "no optimizer statistics for populated table(s): judgments, lexeme_document_frequency — the planner would cost them as empty",
+        "search smoke did not run"
+      ]
+    }
+  },
+  "afterAnalyze": {
+    "statistics": {
+      "ready": true,
+      "unanalyzed": [],
+      "absent": [],
+      "empty": [
+        "statutes",
+        "statute_sections",
+        "judgment_chunks",
+        "judgment_citations"
+      ]
+    },
+    "probes": [
+      {
+        "name": "exact citation",
+        "query": "cite:\"PRF 2026 INSC 21\"",
+        "ms": 30,
+        "results": 1,
+        "degraded": [],
+        "outcome": "matched",
+        "error": null
+      },
+      {
+        "name": "filtered lexical",
+        "query": "court:\"Proof Court\" AND bail",
+        "ms": 5,
+        "results": 5,
+        "degraded": [],
+        "outcome": "matched",
+        "error": null
+      },
+      {
+        "name": "normal research query",
+        "query": "anticipatory bail in a dowry harassment case",
+        "ms": 13,
+        "results": 5,
+        "degraded": [],
+        "outcome": "hybrid",
+        "error": null
+      }
+    ],
+    "decision": {
+      "verdict": "ACTIVATE",
+      "activate": true,
+      "reasons": []
+    }
+  },
+  "brokenSearchPath": {
+    "smoke": {
+      "ready": false,
+      "failed": [
+        "filtered lexical",
+        "normal research query"
+      ],
+      "allEmpty": false,
+      "slowestMs": 30
+    },
+    "decision": {
+      "verdict": "REFUSE",
+      "activate": false,
+      "reasons": [
+        "search-critical table(s) absent from this generation: lexeme_document_frequency",
+        "search smoke threw on: filtered lexical, normal research query"
+      ]
+    }
+  },
+  "failures": 0,
+  "verdict": "ACTIVATION_GATE_PROVED"
+}

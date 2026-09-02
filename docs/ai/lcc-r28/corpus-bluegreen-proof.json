@@ -1,0 +1,135 @@
+{
+  "kind": "lawmind-corpus-bluegreen-proof",
+  "releaseModel": "IMMUTABLE_BLUE_GREEN_CORPUS_GENERATION",
+  "truncateCascadeUsedForRelease": false,
+  "judgmentLimit": 200,
+  "steps": [
+    {
+      "step": "export",
+      "at": "2026-09-02T18:33:55.184Z",
+      "packDir": "C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-release-iRvcns",
+      "judgmentLimit": 200
+    },
+    {
+      "step": "restore_corpus_a",
+      "at": "2026-09-02T18:34:06.354Z",
+      "database": "lawmind_corpus_gen_a",
+      "judgments": "200",
+      "verdict": "RESTORE_VERIFIED",
+      "cascadeVictims": [
+        "citation_concordance_resolutions",
+        "document_duplicate_members",
+        "document_enrichments",
+        "ecourts_observation",
+        "external_citations",
+        "hc_class_candidate",
+        "judgment_chunks",
+        "judgment_citation_aliases",
+        "judgment_citation_keys",
+        "judgment_paragraphs",
+        "official_source_artifact",
+        "statute_amendment_unparsed",
+        "statute_amendments"
+      ],
+      "userTablesReachable": []
+    },
+    {
+      "step": "restore_corpus_b",
+      "at": "2026-09-02T18:34:16.614Z",
+      "database": "lawmind_corpus_gen_b",
+      "judgments": "200",
+      "verdict": "RESTORE_VERIFIED",
+      "cascadeVictims": [
+        "citation_concordance_resolutions",
+        "document_duplicate_members",
+        "document_enrichments",
+        "ecourts_observation",
+        "external_citations",
+        "hc_class_candidate",
+        "judgment_chunks",
+        "judgment_citation_aliases",
+        "judgment_citation_keys",
+        "judgment_paragraphs",
+        "official_source_artifact",
+        "statute_amendment_unparsed",
+        "statute_amendments"
+      ],
+      "userTablesReachable": []
+    },
+    {
+      "step": "user_data_written",
+      "at": "2026-09-02T18:34:16.818Z",
+      "savedAuthorities": 4,
+      "resolvable": 3,
+      "deliberatelyMissing": 1
+    },
+    {
+      "step": "user_digest_before",
+      "at": "2026-09-02T18:34:16.823Z",
+      "tables": 3
+    },
+    {
+      "step": "active_A",
+      "at": "2026-09-02T18:34:16.871Z",
+      "activeGeneration": "lawmind_corpus_gen_a",
+      "systemIdentifier": "7674332331006092552",
+      "savedAuthorities": 4,
+      "resolved": 3,
+      "corpusUnavailable": 1
+    },
+    {
+      "step": "switch_A_to_B",
+      "at": "2026-09-02T18:34:16.936Z",
+      "activeGeneration": "lawmind_corpus_gen_b",
+      "systemIdentifier": "7674332331006092552",
+      "savedAuthorities": 4,
+      "resolved": 3,
+      "corpusUnavailable": 1
+    },
+    {
+      "step": "rollback_B_to_A",
+      "at": "2026-09-02T18:34:16.978Z",
+      "activeGeneration": "lawmind_corpus_gen_a",
+      "systemIdentifier": "7674332331006092552",
+      "savedAuthorities": 4,
+      "resolved": 3,
+      "corpusUnavailable": 1
+    },
+    {
+      "step": "user_digest_after",
+      "at": "2026-09-02T18:34:16.980Z",
+      "tables": 3,
+      "changedTables": []
+    }
+  ],
+  "userDigestBefore": {
+    "matter_authorities": {
+      "rows": "4",
+      "md5": "19d28e8880b68201ca0937317213625c"
+    },
+    "matters": {
+      "rows": "1",
+      "md5": "cc95b2e965ca7ec4f875bf35a160699a"
+    },
+    "users": {
+      "rows": "1",
+      "md5": "3e7be086105a6048f4683561aad8d829"
+    }
+  },
+  "userDigestAfter": {
+    "matter_authorities": {
+      "rows": "4",
+      "md5": "19d28e8880b68201ca0937317213625c"
+    },
+    "matters": {
+      "rows": "1",
+      "md5": "cc95b2e965ca7ec4f875bf35a160699a"
+    },
+    "users": {
+      "rows": "1",
+      "md5": "3e7be086105a6048f4683561aad8d829"
+    }
+  },
+  "changedTables": [],
+  "verdict": "USER_DATA_UNCHANGED"
+}
