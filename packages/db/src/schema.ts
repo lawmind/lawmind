@@ -797,7 +797,7 @@ export const citationChecks = pgTable('citation_checks', {
   searchId: uuid('search_id').references(() => searches.id),
   documentId: uuid('document_id').references(() => documents.id),
   citationClaimed: text('citation_claimed').notNull(),
-  judgmentIdMatched: uuid('judgment_id_matched').references(() => judgments.id),
+  judgmentIdMatched: uuid('judgment_id_matched'),
   verificationState: verificationStateEnum('verification_state').notNull(),
   verifiedBySource: verifiedBySourceEnum('verified_by_source').notNull(),
   matchConfidence: numeric('match_confidence', { precision: 4, scale: 3 }),
@@ -822,7 +822,7 @@ export const verificationCache = pgTable(
     id: uuid('id').primaryKey().defaultRandom(),
     citationText: text('citation_text').notNull(),
     normalisedCitation: text('normalised_citation').notNull(),
-    judgmentId: uuid('judgment_id').references(() => judgments.id),
+    judgmentId: uuid('judgment_id'),
     verificationState: verificationStateEnum('verification_state').notNull(),
     verifiedBySource: verifiedBySourceEnum('verified_by_source').notNull(),
     matchConfidence: numeric('match_confidence', { precision: 4, scale: 3 }),
@@ -941,9 +941,7 @@ export const judgmentAnnotations = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    judgmentId: uuid('judgment_id')
-      .notNull()
-      .references(() => judgments.id, { onDelete: 'cascade' }),
+    judgmentId: uuid('judgment_id').notNull(),
     matterId: uuid('matter_id').references(() => matters.id, { onDelete: 'set null' }),
     /** What the court PRINTED. Null on every pre-1990s scan. The citable anchor. */
     paragraphNumber: integer('paragraph_number'),
@@ -1268,12 +1266,8 @@ export const ecourtsTransition = pgTable(
     caseNumber: text('case_number'),
     fromValue: text('from_value'),
     toValue: text('to_value'),
-    fromObservationId: uuid('from_observation_id').references(() => ecourtsObservation.id, {
-      onDelete: 'set null',
-    }),
-    toObservationId: uuid('to_observation_id').references(() => ecourtsObservation.id, {
-      onDelete: 'set null',
-    }),
+    fromObservationId: uuid('from_observation_id'),
+    toObservationId: uuid('to_observation_id'),
     /** Says the evidence is gone, so a NULL id is never read as "never had any". */
     evidencePrunedAt: timestamp('evidence_pruned_at', { withTimezone: true }),
     occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
@@ -1380,9 +1374,7 @@ export const citationFanouts = pgTable(
   'citation_fanouts',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    judgmentId: uuid('judgment_id')
-      .notNull()
-      .references(() => judgments.id),
+    judgmentId: uuid('judgment_id').notNull(),
     trigger: citationFanoutTriggerEnum('trigger').notNull(),
     /** The dispute or recheck id. Null for an ingest-time flip, which has none. */
     triggerRef: uuid('trigger_ref'),
@@ -1429,9 +1421,7 @@ export const citationCopies = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id),
-    judgmentId: uuid('judgment_id')
-      .notNull()
-      .references(() => judgments.id),
+    judgmentId: uuid('judgment_id').notNull(),
     matterId: uuid('matter_id').references(() => matters.id),
     citationCheckId: uuid('citation_check_id').references(() => citationChecks.id),
     /** TEXT, not the enum: a record of what was SHOWN must survive the enum growing. */
@@ -1467,7 +1457,7 @@ export const alerts = pgTable(
       .references(() => users.id),
     kind: alertKindEnum('kind').notNull(),
     severity: alertSeverityEnum('severity').notNull(),
-    judgmentId: uuid('judgment_id').references(() => judgments.id),
+    judgmentId: uuid('judgment_id'),
     matterId: uuid('matter_id').references(() => matters.id),
     fanoutId: uuid('fanout_id').references(() => citationFanouts.id),
     payload: jsonb('payload').notNull(),
@@ -1507,7 +1497,7 @@ export const citationDisputes = pgTable(
       .notNull()
       .references(() => users.id),
     citationCheckId: uuid('citation_check_id').references(() => citationChecks.id),
-    judgmentId: uuid('judgment_id').references(() => judgments.id),
+    judgmentId: uuid('judgment_id'),
     claim: text('claim').notNull(),
     status: disputeStatusEnum('status').notNull().default('open'),
     resolvedByUserId: uuid('resolved_by_user_id').references(() => users.id),
@@ -1626,9 +1616,7 @@ export const matterAuthorities = pgTable(
     matterId: uuid('matter_id')
       .notNull()
       .references(() => matters.id, { onDelete: 'cascade' }),
-    judgmentId: uuid('judgment_id')
-      .notNull()
-      .references(() => judgments.id),
+    judgmentId: uuid('judgment_id').notNull(),
     addedByUserId: uuid('added_by_user_id')
       .notNull()
       .references(() => users.id),

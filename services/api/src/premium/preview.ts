@@ -105,6 +105,8 @@ export type HearingPackPreview = {
 export async function hearingPackPreview(
   sql: Sql,
   matterId: string,
+  /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
+  corpusSql: Sql = sql,
 ): Promise<HearingPackPreview> {
   const [authorities] = await sql<{ n: string }[]>`
     SELECT count(*)::text AS n FROM matter_authorities
@@ -113,12 +115,36 @@ export async function hearingPackPreview(
   const [events] = await sql<{ n: string }[]>`
     SELECT count(*)::text AS n FROM matter_events WHERE matter_id = ${matterId}`;
 
-  const [adverse] = await sql<{ n: string }[]>`
-    SELECT count(*)::text AS n
-      FROM matter_authorities ma
-      JOIN judgments j ON j.id = ma.judgment_id
-     WHERE ma.matter_id = ${matterId} AND ma.removed_at IS NULL
-       AND j.overruled_status <> 'none'`;
+  /**
+   * Two reads rather than one join, because `matter_authorities` and `judgments`
+   * are owned by different databases — NEW3 R20's `SOFT_CORPUS_REFERENCE`. The
+   * user database names the ids; the corpus database counts how many of THOSE
+   * ids have moved.
+   *
+   * `= ANY($ids)` keeps it one statement per side however many authorities the
+   * matter holds, and the empty case is short-circuited rather than sent as an
+   * empty array — a count over nothing is a round trip that can only return 0.
+   */
+  const savedIds = (
+    await sql<{ judgment_id: string }[]>`
+      SELECT ma.judgment_id FROM matter_authorities ma
+       WHERE ma.matter_id = ${matterId} AND ma.removed_at IS NULL`
+  ).map((r) => r.judgment_id);
+
+  /**
+   * A saved id the active corpus generation does not carry is simply not counted
+   * as adverse — it is not counted as good law either. Its absence is reported
+   * by `GET /matters/:id/authorities` as `corpus_unavailable`, which is the one
+   * surface R20 gives that fact, and inventing a second answer here would be a
+   * second opinion about the same row.
+   */
+  const adverse = savedIds.length === 0
+    ? { n: '0' }
+    : (
+        await corpusSql<{ n: string }[]>`
+          SELECT count(*)::text AS n FROM judgments j
+           WHERE j.id = ANY(${savedIds}::uuid[]) AND j.overruled_status <> 'none'`
+      )[0];
 
   const [matter] = await sql<{ next_hearing_date: string | null }[]>`
     SELECT next_hearing_date::text AS next_hearing_date

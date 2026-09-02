@@ -74,7 +74,12 @@ export function currentRenderedStatus(input: {
  * two immediate exceptions. `recheck-cli.ts` passes one — this signature
  * exists so a test can call `runRecheck` without standing up a transport.
  */
-export async function runRecheck(sql: Sql, pusher?: Pusher): Promise<RecheckResult> {
+export async function runRecheck(
+  sql: Sql,
+  pusher?: Pusher,
+  /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
+  corpusSql: Sql = sql,
+): Promise<RecheckResult> {
   const startedAt = new Date().toISOString();
 
   /**
@@ -84,46 +89,86 @@ export async function runRecheck(sql: Sql, pusher?: Pusher): Promise<RecheckResu
    * `shown_to_user = true` is what makes this an audience rather than a log:
    * a citation_checks row nobody ever saw cannot have misled anybody.
    */
-  const candidates = await sql<
-    {
-      judgment_id: string;
-      case_title: string;
-      shown: string;
-      stored: OverruledStatus;
-      edges: TreatmentEdge[];
-    }[]
-  >`
-    SELECT DISTINCT
-           j.id                       AS judgment_id,
-           j.case_title,
-           cc.overruled_status_shown  AS shown,
-           j.overruled_status::text   AS stored,
-           COALESCE((
-             SELECT jsonb_agg(jsonb_build_object(
-                      'relationship', adverse.relationship,
-                      'provenance', adverse.treatment_provenance
-                    ))
-             FROM (
-               SELECT DISTINCT relationship, treatment_provenance
-               FROM judgment_citations
-               WHERE cited_judgment_id = j.id
-                 AND relationship IN ('overruled', 'overruled_in_part', 'doubted')
-             ) adverse
-           ), '[]'::jsonb)             AS edges
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE AUDIENCE COMES FROM THE USER DATABASE; THE LAW COMES FROM THE CORPUS
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This was one statement joining `citation_checks`, `judgment_annotations` and
+   * `matters` — all user-owned — to `judgments` and `judgment_citations`, which
+   * are corpus-owned. NEW3 R20's `SOFT_CORPUS_REFERENCE` makes that join
+   * impossible across the split, and splitting it in two says the sweep's own
+   * logic out loud: **who was shown a status** is a fact about the advocates, and
+   * **what the status is now** is a fact about the corpus.
+   *
+   * The selection is otherwise unchanged, including the part that makes it an
+   * audience rather than a log: `shown_to_user = true`, and referenced either by
+   * an ACTIVE matter or by an exported draft, which is already filed.
+   *
+   * `DISTINCT` moves with the first half. One judgment can have been shown under
+   * several checks; the sweep decides once per judgment, as it did before.
+   */
+  const shown = await sql<{ judgment_id: string; shown: string }[]>`
+    SELECT DISTINCT cc.judgment_id_matched AS judgment_id,
+           cc.overruled_status_shown       AS shown
     FROM citation_checks cc
-    JOIN judgments j ON j.id = cc.judgment_id_matched
     WHERE cc.shown_to_user = true
+      AND cc.judgment_id_matched IS NOT NULL
       AND (
         -- referenced by an ACTIVE matter …
         EXISTS (
           SELECT 1 FROM judgment_annotations a
           JOIN matters m ON m.id = a.matter_id
-          WHERE a.judgment_id = j.id AND a.deleted_at IS NULL AND m.status = 'active'
+          WHERE a.judgment_id = cc.judgment_id_matched
+            AND a.deleted_at IS NULL AND m.status = 'active'
         )
         -- … or by an EXPORTED draft, which is already filed
         OR cc.document_id IS NOT NULL
       )
   `;
+
+  const shownIds = [...new Set(shown.map((r) => r.judgment_id))];
+  const corpusRows = shownIds.length === 0
+    ? []
+    : await corpusSql<
+        {
+          judgment_id: string;
+          case_title: string;
+          stored: OverruledStatus;
+          edges: TreatmentEdge[];
+        }[]
+      >`
+        SELECT j.id                       AS judgment_id,
+               j.case_title,
+               j.overruled_status::text   AS stored,
+               COALESCE((
+                 SELECT jsonb_agg(jsonb_build_object(
+                          'relationship', adverse.relationship,
+                          'provenance', adverse.treatment_provenance
+                        ))
+                 FROM (
+                   SELECT DISTINCT relationship, treatment_provenance
+                   FROM judgment_citations
+                   WHERE cited_judgment_id = j.id
+                     AND relationship IN ('overruled', 'overruled_in_part', 'doubted')
+                 ) adverse
+               ), '[]'::jsonb)             AS edges
+        FROM judgments j
+        WHERE j.id = ANY(${shownIds}::uuid[])`;
+
+  const corpusById = new Map(corpusRows.map((r) => [r.judgment_id, r]));
+
+  /**
+   * A judgment the active corpus generation does not carry is SKIPPED, and that
+   * is the same behaviour the INNER JOIN had. It is emphatically not treated as
+   * "no longer overruled": this sweep writes canonical status and announces
+   * movements in the law, and inferring either from a judgment we cannot
+   * currently read would be inventing legal truth out of a release boundary.
+   */
+  const candidates = shown.flatMap((s) => {
+    const j = corpusById.get(s.judgment_id);
+    return j === undefined ? [] : [{ ...j, shown: s.shown }];
+  });
 
   const diverged = candidates
     .map((row) => ({

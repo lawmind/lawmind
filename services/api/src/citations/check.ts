@@ -83,28 +83,64 @@ function tierOne(r: Row): { status: TierStatus; detail: string; at: string | nul
   };
 }
 
-export async function getCitationCheck(c: Context, sql: Sql, id: string): Promise<Response> {
-  const [r] = await sql<Row[]>`
+export async function getCitationCheck(
+  c: Context,
+  sql: Sql,
+  id: string,
+  /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
+  corpusSql: Sql = sql,
+): Promise<Response> {
+  const [check] = await sql<Omit<Row, 'case_title' | 'neutral_citation' | 'court' | 'judgment_date' | 'overruled_status'>[]>`
     SELECT cc.id, cc.citation_claimed, cc.judgment_id_matched,
            cc.verification_state, cc.verified_by_source,
            cc.match_confidence::text AS match_confidence,
            cc.shown_to_user, cc.overruled_status_shown, cc.surface,
-           ${sql.unsafe(isoColumn('cc.created_at'))} AS created_at,
-           -- Rendered fields come from the JUDGMENT row, never from what a model
-           -- typed. CITATION_HARNESS.md step 8, the one most often skipped.
-           j.case_title, j.neutral_citation, j.court,
-           j.judgment_date::text AS judgment_date,
-           -- Read live at render, never cached. Same rule as everywhere else.
-           j.overruled_status
+           ${sql.unsafe(isoColumn('cc.created_at'))} AS created_at
     FROM citation_checks cc
-    LEFT JOIN judgments j ON j.id = cc.judgment_id_matched
     WHERE cc.id = ${id}
   `;
-  if (!r) return fail(c, 'NOT_FOUND', 'no citation check with that id', 404);
+  if (!check) return fail(c, 'NOT_FOUND', 'no citation check with that id', 404);
+
+  /**
+   * The rendered fields still come from the JUDGMENT row and never from what a
+   * model typed — `CITATION_HARNESS.md` step 8, the one most often skipped. What
+   * changed is only WHERE that row is read from: `citation_checks` is user-owned
+   * and `judgments` is corpus-owned, so the `LEFT JOIN` becomes a second read
+   * against the corpus role (NEW3 R20, `SOFT_CORPUS_REFERENCE`).
+   *
+   * `LEFT` is preserved in behaviour: a check with no match, or one whose match
+   * the active corpus generation does not carry, still renders with null corpus
+   * fields rather than 404ing. The advocate's record of the check is theirs.
+   */
+  const [judgment] = check.judgment_id_matched
+    ? await corpusSql<
+        {
+          case_title: string | null;
+          neutral_citation: string | null;
+          court: string | null;
+          judgment_date: string | null;
+          overruled_status: string | null;
+        }[]
+      >`
+        SELECT j.case_title, j.neutral_citation, j.court,
+               j.judgment_date::text AS judgment_date,
+               -- Read live at render, never cached. Same rule as everywhere else.
+               j.overruled_status
+          FROM judgments j WHERE j.id = ${check.judgment_id_matched}`
+    : [];
+
+  const r: Row = {
+    ...check,
+    case_title: judgment?.case_title ?? null,
+    neutral_citation: judgment?.neutral_citation ?? null,
+    court: judgment?.court ?? null,
+    judgment_date: judgment?.judgment_date ?? null,
+    overruled_status: judgment?.overruled_status ?? null,
+  } as Row;
 
   const one = tierOne(r);
   const dateQuality = r.judgment_id_matched
-    ? await dateQualityOf(sql, r.judgment_id_matched)
+    ? await dateQualityOf(corpusSql, r.judgment_id_matched)
     : null;
 
   return ok(c, {

@@ -38,6 +38,7 @@ import { z } from 'zod';
 
 import { toWireSourceUnsafe } from '../citations/source-strength.ts';
 import { fail, ok } from '../envelope.ts';
+import { judgmentFacts } from '../judgments/hydrate.ts';
 import { isoColumn } from '../iso-time.ts';
 import {
   loadOnePrecedentialState,
@@ -300,7 +301,7 @@ export async function removeDocumentCitation(
   return ok(c, { ok: true });
 }
 
-async function readDocument(sql: Sql, documentId: string) {
+async function readDocument(sql: Sql, documentId: string, corpusSql: Sql = sql) {
   const [doc] = await sql<
     {
       id: string;
@@ -332,11 +333,37 @@ async function readDocument(sql: Sql, documentId: string) {
     }[]
   >`
     SELECT cc.id, cc.citation_claimed, cc.judgment_id_matched, cc.verification_state,
-           cc.verified_by_source, j.overruled_status, j.case_title
+           cc.verified_by_source, NULL::text AS overruled_status, NULL::text AS case_title
     FROM citation_checks cc
-    LEFT JOIN judgments j ON j.id = cc.judgment_id_matched
     WHERE cc.document_id = ${documentId}
     ORDER BY cc.created_at`;
+
+  /**
+   * The two corpus columns, read from the corpus role in ONE batched statement
+   * and merged here — NEW3 R20's `SOFT_CORPUS_REFERENCE`: `citation_checks` is
+   * user-owned and `judgments` is corpus-owned, so a `LEFT JOIN` between them
+   * stops being possible once the roles are two databases.
+   *
+   * The liveness rule above is unchanged and is the reason this is a read rather
+   * than a stored value: a draft sitting for three weeks must not assert good law
+   * it no longer has. `LEFT` semantics are preserved — a citation whose match the
+   * active corpus generation does not carry keeps both columns null and is still
+   * listed, because a citation may never be silently dropped.
+   */
+  const citationJudgmentIds = [
+    ...new Set(
+      citations.map((r) => r.judgment_id_matched).filter((id): id is string => id !== null),
+    ),
+  ];
+  if (citationJudgmentIds.length > 0) {
+    const facts = await judgmentFacts(corpusSql, citationJudgmentIds);
+    for (const r of citations) {
+      const f = r.judgment_id_matched === null ? undefined : facts.get(r.judgment_id_matched);
+      if (f === undefined) continue;
+      r.overruled_status = f.overruledStatus;
+      r.case_title = f.caseTitle;
+    }
+  }
 
   /**
    * The derived layers, from the SAME function the judgment screen, the search

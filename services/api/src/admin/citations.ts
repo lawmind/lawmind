@@ -32,6 +32,8 @@ export async function getCitationsMonitor(
   sql: Sql,
   userId: string | undefined,
   query: z.infer<typeof citationsMonitorQuery>,
+  /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'the citation monitor is a privileged surface', 401);
 
@@ -51,15 +53,62 @@ export async function getCitationsMonitor(
     FROM citation_checks cc WHERE true ${range}
     GROUP BY verification_state`;
 
-  // `overruled_status` lives on `judgments`, joined via judgment_id_matched —
-  // never taken from `overruled_status_shown`, which is what was RENDERED, not
-  // what is true now. This monitor reports the CURRENT corpus state.
-  const byOverruledStatus = await sql<{ overruled_status: string; n: number }[]>`
-    SELECT j.overruled_status, count(*)::int AS n
-    FROM citation_checks cc
-    JOIN judgments j ON j.id = cc.judgment_id_matched
-    WHERE true ${range}
-    GROUP BY j.overruled_status`;
+  /**
+   * `overruled_status` lives on `judgments` and is reached through
+   * `judgment_id_matched` — never taken from `overruled_status_shown`, which is
+   * what was RENDERED, not what is true now. This monitor reports the CURRENT
+   * corpus state, and that rule is unchanged.
+   *
+   * What changed is that `citation_checks` is user-owned and `judgments` is
+   * corpus-owned (NEW3 R20, `SOFT_CORPUS_REFERENCE`), so the aggregate is done
+   * in two steps: the matched ids from the user role, then ONE grouped count
+   * over exactly those ids from the corpus role.
+   *
+   * An `INNER JOIN` is preserved in meaning: an id the active corpus generation
+   * does not carry contributes to no bucket, exactly as a non-matching join row
+   * did. It is not silently counted as `none`, which would report a judgment
+   * this release cannot see as good law.
+   */
+/**
+   * **The unit of this count is a CHECK ROW, not a judgment**, and keeping that
+   * right is the whole difficulty of moving the aggregate across the boundary.
+   * The join it replaces counted one row per `citation_checks` row; grouping the
+   * corpus side instead would count each judgment once and quietly report a
+   * smaller, different number that still looks like a plausible monitor.
+   *
+   * So the user side keeps its per-row grain and carries a count per matched
+   * judgment; the corpus side supplies the status for those ids; the sum happens
+   * here.
+   */
+  const perJudgment = await sql<{ judgment_id_matched: string; n: number }[]>`
+    SELECT cc.judgment_id_matched, count(*)::int AS n
+      FROM citation_checks cc
+     WHERE cc.judgment_id_matched IS NOT NULL ${range}
+     GROUP BY cc.judgment_id_matched`;
+  const matchedIds = perJudgment.map((r) => r.judgment_id_matched);
+
+  const statusOf = new Map<string, string>();
+  if (matchedIds.length > 0) {
+    for (const j of await corpusSql<{ id: string; overruled_status: string }[]>`
+      SELECT j.id, j.overruled_status::text AS overruled_status
+        FROM judgments j WHERE j.id = ANY(${matchedIds}::uuid[])`) {
+      statusOf.set(j.id, j.overruled_status);
+    }
+  }
+
+  const checksPerStatus = new Map<string, number>();
+  for (const r of perJudgment) {
+    const status = statusOf.get(r.judgment_id_matched);
+    // An id the active corpus generation does not carry contributes to no
+    // bucket, exactly as a non-matching INNER JOIN row did. It is NOT counted as
+    // `none`, which would report a judgment this release cannot see as good law.
+    if (status === undefined) continue;
+    checksPerStatus.set(status, (checksPerStatus.get(status) ?? 0) + r.n);
+  }
+  const byOverruledStatus = [...checksPerStatus].map(([overruled_status, n]) => ({
+    overruled_status,
+    n,
+  }));
 
   const failed = await sql<{ n: number }[]>`
     SELECT count(*)::int AS n FROM citation_checks cc

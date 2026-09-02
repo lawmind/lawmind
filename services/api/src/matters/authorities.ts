@@ -69,6 +69,7 @@ import { z } from 'zod';
 
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
+import { judgmentFacts } from '../judgments/hydrate.ts';
 import {
   precedentialEffect,
   precedentialPolicy,
@@ -210,6 +211,41 @@ async function ownedMatter(sql: Sql, matterId: string, userId: string) {
   return row;
 }
 
+/**
+ * The USER-owned half of a saved authority: everything `matter_authorities`
+ * itself holds, and nothing that lives in the corpus.
+ *
+ * This is the row the read path actually selects now. `AuthorityRow` below stays
+ * as the shape `shape()` consumes — the union of user and corpus fields — so the
+ * response is assembled from two reads without either side learning about the
+ * other's storage.
+ */
+type UserAuthorityRow = {
+  id: string;
+  judgment_id: string;
+  added_by_user_id: string;
+  added_at: string;
+  removed_at: string | null;
+};
+
+/**
+ * A saved authority whose target the ACTIVE corpus generation does not carry.
+ *
+ * NEW3 R20's shell, and the field list is exhaustive BY DESIGN — every field
+ * here is one the USER database already holds. There is deliberately no slot for
+ * a title, a citation, a verification state or a currentness, because there is
+ * no honest value for any of them and a nullable field is an invitation to fill
+ * it in later from a cache.
+ */
+export type UnavailableAuthority = {
+  authorityId: string;
+  judgmentId: string;
+  addedBy: string;
+  addedAt: string;
+  removedAt: string | null;
+  availability: 'corpus_unavailable';
+};
+
 const AUTHORITY_COLUMNS = `a.id, a.judgment_id, j.case_title, j.neutral_citation,
        j.reporter_citations, a.added_by_user_id, ${isoColumn('a.added_at')} AS added_at,
        ${isoColumn('a.removed_at')} AS removed_at,
@@ -224,11 +260,54 @@ const AUTHORITY_FROM = `matter_authorities a
     JOIN judgments j ON j.id = a.judgment_id
     LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id`;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE ROW SURVIVES THE CORPUS. R20's LOAD-BEARING GATE-C PROPERTY.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * After the split, `matter_authorities.judgment_id` is a SOFT reference: an
+ * opaque immutable judgment UUID in the user database, naming a row in a corpus
+ * database that a rollback may have replaced with an earlier generation.
+ *
+ * NEW3 R20 (bus 1723) froze what happens then, and it is the one shape allowed:
+ *
+ *   - `authorities[]` keeps every authority whose target the ACTIVE corpus
+ *     generation resolves, with live corpus fields exactly as before.
+ *   - `unavailableAuthorities[]` carries the rest, and carries **only**
+ *     `authorityId`, `judgmentId`, `addedBy`, `addedAt`, `removedAt` and
+ *     `availability: 'corpus_unavailable'`.
+ *   - **No case title, citation, verification source, currentness, treatment or
+ *     replacement metadata may be fabricated or cached into that shell.** The
+ *     advocate saved something; we cannot presently show what it was; inventing
+ *     a title would be a citation surface asserting a fact it does not hold.
+ *   - The row is **not deleted and not hidden**. When a later active release
+ *     contains the same judgment id, it returns to `authorities[]` with live
+ *     fields and no user-data write ever happened.
+ *
+ * `corpus_unavailable` is deliberately NOT the existing `SOURCE_UNAVAILABLE`.
+ * That one means an upstream source observation failed; this one means the
+ * selected corpus release does not carry the judgment. Different causes,
+ * different remedies, and collapsing them would tell an advocate a rollback was
+ * an outage.
+ *
+ * ── ACTIVATION ──────────────────────────────────────────────────────────────
+ *
+ * `unavailableAuthorities` is ADDITIVE and R17 activation is gated on RCC
+ * consumption — an old client ignores an unknown array. It is therefore emitted
+ * ONLY when it is non-empty, so the response shape a shipped client parses today
+ * is byte-identical until the condition it describes actually occurs.
+ */
 export async function listAuthorities(
   c: Context,
   sql: Sql,
   matterId: string,
   userId: string | undefined,
+  /**
+   * The CORPUS role. Defaults to `sql` so single-database development and every
+   * existing caller are unchanged — `db-split.ts` resolves the two roles to one
+   * URL unless a deployment says otherwise.
+   */
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) return fail(c, 'AUTH_REQUIRED', 'sign in to continue', 401);
 
@@ -248,34 +327,104 @@ export async function listAuthorities(
     return fail(c, 'NOT_FOUND', 'no matter with that id', 404);
   }
 
-  // Removed authorities are returned too, same reasoning as revoked shares:
-  // what was saved, and when it was taken off, is the question asked later.
-  const rows = await sql<AuthorityRow[]>`
-    SELECT ${sql.unsafe(AUTHORITY_COLUMNS)}
-    FROM ${sql.unsafe(AUTHORITY_FROM)}
-    WHERE a.matter_id = ${matterId}
-    ORDER BY a.added_at DESC`;
+  /**
+   * STEP 1 — the USER database alone. No join, no corpus table, and the
+   * `ORDER BY` that decides what the advocate sees lives here, where the rows
+   * being ordered are owned.
+   *
+   * Removed authorities are returned too, same reasoning as revoked shares:
+   * what was saved, and when it was taken off, is the question asked later.
+   */
+  const saved = await sql<UserAuthorityRow[]>`
+    SELECT a.id, a.judgment_id, a.added_by_user_id,
+           ${sql.unsafe(isoColumn('a.added_at'))} AS added_at,
+           ${sql.unsafe(isoColumn('a.removed_at'))} AS removed_at
+      FROM matter_authorities a
+     WHERE a.matter_id = ${matterId}
+     ORDER BY a.added_at DESC`;
 
-  /* Read live, this request, for every row — the same rule `overruledStatus`
-   * already follows on this route. A relationship recorded after an authority
-   * was saved is reflected on the NEXT list, without the advocate resaving
-   * anything. */
-  const edgesByJudgment = await adverseEdgesByJudgment(
-    sql,
-    rows.map((r) => r.judgment_id),
-  );
+  /**
+   * STEP 2 — ONE batched read of the corpus for every id at once, and the
+   * adverse edges beside it. Two statements for any number of authorities: the
+   * N+1 the split makes tempting is the thing this shape exists to refuse.
+   *
+   * The edges are read LIVE, this request, for the same reason `overruledStatus`
+   * is — a relationship recorded after an authority was saved is reflected on
+   * the NEXT list, without the advocate resaving anything.
+   */
+  const ids = saved.map((r) => r.judgment_id);
+  const [facts, edgesByJudgment] = await Promise.all([
+    judgmentFacts(corpusSql, ids),
+    adverseEdgesByJudgment(corpusSql, ids),
+  ]);
 
-  const authorities = rows.map((r) =>
-    shape(
-      r,
-      precedentialEffectFromEdges({
-        overruledStatus: r.overruled_status as OverruledStatus,
-        edges: edgesByJudgment.get(r.judgment_id) ?? [],
-      }),
-    ),
-  );
+  /**
+   * STEP 3 — merge in the application, in the user database's order.
+   *
+   * Iterating the SAVED rows and looking each id up is what preserves both the
+   * ordering and the completeness: a row whose target is missing falls into the
+   * shell list, and cannot be silently joined away.
+   */
+  const authorities: ReturnType<typeof shape>[] = [];
+  const unavailableAuthorities: UnavailableAuthority[] = [];
+  for (const r of saved) {
+    const f = facts.get(r.judgment_id);
+    if (f === undefined) {
+      unavailableAuthorities.push({
+        authorityId: r.id,
+        judgmentId: r.judgment_id,
+        addedBy: r.added_by_user_id,
+        addedAt: r.added_at,
+        removedAt: r.removed_at,
+        availability: 'corpus_unavailable',
+      });
+      continue;
+    }
+    authorities.push(
+      shape(
+        {
+          id: r.id,
+          judgment_id: r.judgment_id,
+          added_by_user_id: r.added_by_user_id,
+          added_at: r.added_at,
+          removed_at: r.removed_at,
+          case_title: f.caseTitle,
+          neutral_citation: f.neutralCitation,
+          reporter_citations: f.reporterCitations,
+          overruled_status: f.overruledStatus,
+          overruled_by_judgment_id: f.overruledByJudgmentId,
+          overruled_by_title: f.overruledByTitle,
+          overruled_paras: f.overruledParas,
+          overruled_note: f.overruledNote,
+        } as AuthorityRow,
+        precedentialEffectFromEdges({
+          overruledStatus: f.overruledStatus as OverruledStatus,
+          edges: edgesByJudgment.get(r.judgment_id) ?? [],
+        }),
+      ),
+    );
+  }
 
-  return ok(c, { authorities, asOf: new Date().toISOString() });
+  return ok(c, {
+    authorities,
+    /**
+     * ALWAYS sent, including `[]` — R17 §1, verbatim: *"An R17 server always
+     * sends `unavailableAuthorities`, including `[]`."*
+     *
+     * It is optional in the CONTRACT so an R17 client can talk truthfully to an
+     * older R16 server, where the single-database foreign key guaranteed every
+     * returned target was present. That is a statement about what a client must
+     * tolerate, not a licence for this server to omit it: a client that cannot
+     * distinguish "no unavailable authorities" from "this server does not know
+     * about the concept" would have to guess, and the guess it would make is
+     * that everything resolved.
+     *
+     * Emitting it conditionally was the first implementation here and was wrong
+     * for exactly that reason.
+     */
+    unavailableAuthorities,
+    asOf: new Date().toISOString(),
+  });
 }
 
 export async function addAuthority(
@@ -472,12 +621,36 @@ export async function addAuthority(
     );
   }
 
-  // Already live. Idempotent rather than an error — the advocate's intent
-  // (this authority is saved) is already satisfied.
-  const [existing] = await sql<AuthorityRow[]>`
-    SELECT ${sql.unsafe(AUTHORITY_COLUMNS)}
-    FROM ${sql.unsafe(AUTHORITY_FROM)}
-    WHERE a.matter_id = ${matterId} AND a.judgment_id = ${body.judgmentId} AND a.removed_at IS NULL`;
+  /**
+   * Already live. Idempotent rather than an error — the advocate's intent (this
+   * authority is saved) is already satisfied.
+   *
+   * The corpus half is the `judgment` row this function ALREADY read and
+   * validated above, reused rather than re-fetched: the write path proved the
+   * target exists in the active corpus generation before it inserted, so a
+   * second read could only tell us something different, which on this path would
+   * be a corpus generation changing under one request.
+   */
+  const [saved] = await sql<UserAuthorityRow[]>`
+    SELECT a.id, a.judgment_id, a.added_by_user_id,
+           ${sql.unsafe(isoColumn('a.added_at'))} AS added_at,
+           ${sql.unsafe(isoColumn('a.removed_at'))} AS removed_at
+      FROM matter_authorities a
+     WHERE a.matter_id = ${matterId} AND a.judgment_id = ${body.judgmentId}
+       AND a.removed_at IS NULL`;
+  const existing = saved
+    ? ({
+        ...saved,
+        case_title: judgment.case_title,
+        neutral_citation: judgment.neutral_citation,
+        reporter_citations: judgment.reporter_citations,
+        overruled_status: judgment.overruled_status,
+        overruled_by_judgment_id: judgment.overruled_by_judgment_id,
+        overruled_by_title: judgment.overruled_by_case_title,
+        overruled_paras: judgment.overruled_paras,
+        overruled_note: judgment.overruled_note,
+      } as AuthorityRow)
+    : undefined;
   // ON CONFLICT DO NOTHING with no existing live row means the unique index
   // did not fire, which should be unreachable — but never guess a response.
   if (!existing) return fail(c, 'INTERNAL_ERROR', 'could not add this authority', 500);

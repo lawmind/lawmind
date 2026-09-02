@@ -106,26 +106,52 @@ export async function listAlerts(
   sql: Sql,
   userId: string | undefined,
   query: z.infer<typeof alertsQuery>,
+  /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
+  corpusSql: Sql = sql,
 ): Promise<Response> {
   if (!userId) {
     return fail(c, 'AUTH_REQUIRED', 'alerts belong to an advocate', 401);
   }
 
-  const rows = await sql<AlertRow[]>`
+  /**
+   * The alerts are the advocate's and come from the USER database; the current
+   * overruled status is the corpus's and is read LIVE beside them — the same
+   * rule everywhere else, now expressed as two reads because the two rows live
+   * in two databases (NEW3 R20, `SOFT_CORPUS_REFERENCE`).
+   *
+   * The `LEFT JOIN` this replaces was already tolerant of a missing judgment,
+   * and so is this: an alert whose target the active corpus generation does not
+   * carry keeps `current_overruled_status: null`, exactly as before, and is
+   * never dropped from the list.
+   */
+  const rows = await sql<Omit<AlertRow, 'current_overruled_status'>[]>`
     SELECT a.id, a.kind, a.severity, a.judgment_id, a.matter_id, a.payload,
            ${sql.unsafe(isoColumn('a.created_at'))} AS created_at,
-           ${sql.unsafe(isoColumn('a.read_at'))} AS read_at,
-           j.overruled_status::text AS current_overruled_status
+           ${sql.unsafe(isoColumn('a.read_at'))} AS read_at
     FROM alerts a
-    LEFT JOIN judgments j ON j.id = a.judgment_id
     WHERE a.user_id = ${userId}
       ${query.since ? sql`AND a.created_at > (${query.since}::text)::timestamptz` : sql``}
     ORDER BY a.created_at DESC
   `;
 
-  const unreadCount = rows.filter((r) => r.read_at === null).length;
+  const ids = [...new Set(rows.map((r) => r.judgment_id).filter((id): id is string => id !== null))];
+  const status = new Map<string, string>();
+  if (ids.length > 0) {
+    for (const j of await corpusSql<{ id: string; overruled_status: string }[]>`
+      SELECT j.id, j.overruled_status::text AS overruled_status
+        FROM judgments j WHERE j.id = ANY(${ids}::uuid[])`) {
+      status.set(j.id, j.overruled_status);
+    }
+  }
 
-  return ok(c, { alerts: rows.map(shapeAlert), unreadCount });
+  const hydrated: AlertRow[] = rows.map((r) => ({
+    ...r,
+    current_overruled_status: r.judgment_id === null ? null : (status.get(r.judgment_id) ?? null),
+  }));
+
+  const unreadCount = hydrated.filter((r) => r.read_at === null).length;
+
+  return ok(c, { alerts: hydrated.map(shapeAlert), unreadCount });
 }
 
 export async function markAlertRead(

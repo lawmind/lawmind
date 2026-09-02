@@ -715,6 +715,13 @@
       "when": 1788328000000,
       "tag": "0101_matters_parties_jsonb_object",
       "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1788343000000,
+      "tag": "0102_soft_corpus_references",
+      "breakpoints": true
     }
   ]
 }

@@ -73,12 +73,80 @@ export const CORE_POOL_MAX = Number(process.env['CORE_POOL_MAX'] ?? 8);
 export const CORE_STATEMENT_TIMEOUT_MS = Number(process.env['CORE_STATEMENT_TIMEOUT_MS'] ?? 10_000);
 
 export type Pools = {
-  /** Everything that is not a ranker. */
+  /**
+   * Everything that is not a ranker, on the CORPUS role.
+   *
+   * Keeps the name every route already takes. What changed 2 September 2026 is
+   * that it is now one of two ROLES rather than the only handle — see
+   * {@link createRolePools}.
+   */
   core: Sql;
-  /** Rankers only, admission-gated. */
+  /** Rankers only, admission-gated. Corpus role. */
   research: Sql;
   end: () => Promise<void>;
 };
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE WORKLOAD SPLIT AND THE DATA-ROLE SPLIT ARE DIFFERENT AXES
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Everything above this line divides work by COST: cheap indexed statements get
+ * their own queue so a burst of rankers cannot starve a sign-in. That split is
+ * unchanged and still correct.
+ *
+ * This one divides data by OWNERSHIP: published law on one database, an
+ * advocate's matters on another, so a corpus rollback cannot reach the matters.
+ * `db-roles.ts` says which table is which and `db-split.ts` resolves the two
+ * URLs.
+ *
+ * **They compose rather than replace.** The corpus role keeps both queues,
+ * because that is where the rankers run. The user role needs one: nothing on it
+ * is a ranker, every statement is a short indexed read or write, and giving it a
+ * second queue would be sizing for a workload that does not exist.
+ *
+ * ── WHY THE THREE POOLS ARE NOT RESIZED WHEN THE ROLES SHARE A DATABASE ─────
+ *
+ * In `single` mode all three point at one database and the connection count
+ * rises from 14 to 14 + `USER_POOL_MAX`. That is deliberate: a pool whose size
+ * changes with an unrelated configuration flag is a pool nobody can reason
+ * about, and the numbers here are defended in the header above as "how many can
+ * one request need times how many of this class run at once", which does not
+ * change because two URLs happen to be equal. 22 against `max_connections = 100`
+ * with the ingest fleet holding 16 is comfortably inside.
+ */
+export const USER_POOL_MAX = Number(process.env['USER_POOL_MAX'] ?? 8);
+
+export type RolePools = {
+  /** Published law and everything derived from it. Two queues: core and research. */
+  corpus: Pools;
+  /** An advocate's own work. One queue — nothing here is a ranker. */
+  user: Sql;
+  end: () => Promise<void>;
+};
+
+export function createRolePools(
+  corpusUrl: string,
+  userUrl: string,
+  researchStatementTimeoutMs: number,
+): RolePools {
+  const corpus = createPools(corpusUrl, researchStatementTimeoutMs);
+  const user = postgres(userUrl, {
+    ssl: sslFor(userUrl),
+    max: USER_POOL_MAX,
+    connection: {
+      idle_in_transaction_session_timeout: 30_000,
+      statement_timeout: CORE_STATEMENT_TIMEOUT_MS,
+    },
+  });
+  return {
+    corpus,
+    user,
+    end: async () => {
+      await Promise.all([corpus.end(), user.end()]);
+    },
+  };
+}
 
 export function createPools(url: string, researchStatementTimeoutMs: number): Pools {
   const shared = {

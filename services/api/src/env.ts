@@ -2,6 +2,8 @@
  * Names are documented in `DEPLOYMENT.md`. Values live in Railway and never in the
  * repo.
  */
+import { resolveDatabases } from './db-split.ts';
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is not set`);
@@ -53,6 +55,27 @@ export const env = {
   nodeEnv,
   logLevel: process.env['LOG_LEVEL'] ?? 'info',
   databaseUrl: () => required('DATABASE_URL'),
+
+  /**
+   * The two DATA ROLES — published law, and an advocate's own work.
+   *
+   * Resolved through `db-split.ts`, which applies the defaults (each falls back
+   * to `DATABASE_URL`, so no existing deployment needs a new variable) and
+   * REFUSES to return when a deployment declares `DB_SPLIT_MODE=split` while the
+   * two URLs resolve to one database. See that file for why the comparison is on
+   * host/port/database rather than on the URL string.
+   *
+   * A function rather than a value for the same reason `databaseUrl` is one:
+   * importing this module must not throw in a process that never touches a
+   * database, and several CLIs in this repository do exactly that.
+   */
+  databases: () =>
+    resolveDatabases({
+      DATABASE_URL: process.env['DATABASE_URL'],
+      CORPUS_DATABASE_URL: process.env['CORPUS_DATABASE_URL'],
+      USER_DATABASE_URL: process.env['USER_DATABASE_URL'],
+      DB_SPLIT_MODE: process.env['DB_SPLIT_MODE'],
+    }),
 
   /**
    * The hard ceiling on any single statement this API sends to Postgres.

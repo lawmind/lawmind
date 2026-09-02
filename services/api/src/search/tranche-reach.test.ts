@@ -164,7 +164,26 @@ describe('new1_tranche_passages — wired, and unreachable by a user', () => {
       const rel = relative(SRC, file).replace(/\\/g, '/');
       if (NOT_PRODUCTION.test(rel)) continue;
       if (rel === 'search/retrieve.ts') continue;
-      if (readFileSync(file, 'utf8').includes('new1_tranche_passages')) offenders.push(rel);
+      /**
+       * A QUERY, not a mention. The question this test asks is whether another
+       * module opens a second door into the tranche, and a door is a `FROM`, a
+       * `JOIN`, an `INTO` or an `UPDATE` — not the table's name appearing in a
+       * list of table names.
+       *
+       * Narrowed 2 September 2026, when `ops/db-roles.ts` was added: it
+       * classifies every table in the database into a corpus or user role, so it
+       * necessarily names this one, and flagging it would have forced either a
+       * by-name exemption — which is how an audit stops covering the file that
+       * most needs it — or leaving a table unclassified in the map that decides
+       * what a corpus rollback may touch.
+       *
+       * Strictly stronger against the real failure: a bare mention was never
+       * evidence of reach, and this still catches every way of reaching it.
+       */
+      const src = readFileSync(file, 'utf8');
+      if (/\b(?:FROM|JOIN|INTO|UPDATE|USING)\s+new1_tranche_passages\b/i.test(src)) {
+        offenders.push(rel);
+      }
     }
     assert.deepEqual(
       offenders,

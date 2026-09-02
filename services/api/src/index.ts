@@ -5,7 +5,8 @@ import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import { sql } from 'drizzle-orm';
 
 import { createApp } from './app.ts';
-import { createPools } from './pools.ts';
+import { createRolePools } from './pools.ts';
+import { sameDatabaseRefusal, verifyDistinctDatabases } from './ops/db-identity.ts';
 import { ActivationOutbox, type OutboxStats } from './product/activation-outbox.ts';
 import { installActivationOutbox } from './product/activation.ts';
 import { createAdmission } from './search/admission.ts';
@@ -29,8 +30,25 @@ const db = createDatabase(env.databaseUrl());
  * `rawSql` is the CORE handle and keeps its name because every route below
  * already takes it; what changed is that the rankers no longer share it.
  */
-const pools = createPools(env.databaseUrl(), env.pgStatementTimeoutMs());
+/**
+ * TWO DATA ROLES as well as two workload queues — `pools.ts` explains why those
+ * are different axes, and `db-split.ts` resolves the URLs.
+ *
+ * In the default configuration both roles resolve to `DATABASE_URL` and this is
+ * exactly the behaviour that existed before: one database, the same two pools,
+ * plus one short-statement pool for user-owned work. Nothing needs a new
+ * variable to keep working.
+ */
+const databases = env.databases();
+const rolePools = createRolePools(
+  databases.corpusUrl,
+  databases.userUrl,
+  env.pgStatementTimeoutMs(),
+);
+const pools = rolePools.corpus;
 const rawSql = pools.core;
+/** User-owned work — matters, annotations, alerts, billing. `ops/db-roles.ts`. */
+const userSql = rolePools.user;
 const admission = createAdmission();
 
 /**
@@ -40,6 +58,43 @@ const admission = createAdmission();
  * that silently stopped matching is indistinguishable from one that correctly
  * found nothing. `preflight.ts` documents exactly what is checked and why.
  */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * A DECLARED SPLIT IS VERIFIED AGAINST THE SERVERS, NOT AGAINST THE URLS
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `resolveDatabases` has already refused a split whose two URLs name one
+ * database. That check is syntactic and cannot see two hostnames resolving to
+ * one server — a proxy endpoint beside a private one is the ordinary way to
+ * configure Railway, and both spellings reach the same files.
+ *
+ * So in split mode the two handles are asked who they are. `ops/db-identity.ts`
+ * compares `(system_identifier, current_database())`, which is the cluster's
+ * data directory plus the database inside it — precisely the scope a `TRUNCATE`
+ * has.
+ *
+ * Startup is the right place: a misconfiguration discovered by a restore has
+ * already destroyed the thing the check protects.
+ */
+if (databases.mode === 'split') {
+  const verdict = await verifyDistinctDatabases(rawSql, userSql);
+  if (!verdict.distinct) {
+    logger.fatal({ event: 'db_split_same_database' }, sameDatabaseRefusal(verdict));
+    process.exit(1);
+  }
+  logger.info(
+    {
+      event: 'db_split_verified',
+      corpus: verdict.corpus.database,
+      user: verdict.user.database,
+      // Different databases in ONE cluster are genuinely isolated for TRUNCATE
+      // and share a disk, a WAL and a failure domain. Worth an operator knowing.
+      same_cluster: verdict.sameCluster,
+    },
+    'corpus and user databases verified distinct',
+  );
+}
+
 const preflightFailures = await runPreflight(rawSql);
 if (preflightFailures.length > 0) {
   logger.fatal(
