@@ -413,8 +413,16 @@ export function createApp(deps: AppDeps) {
      * so they resolve `users.id` rather than the identity id. An identity that
      * has not finished onboarding has no profile and these correctly behave as
      * signed out — there is no row to attach the write to.
+     *
+     * **`userSql`, not `sql`.** `users` is a USER table — `ops/db-roles.ts` lists
+     * it under identity — so resolving it through the CORPUS role is a read of a
+     * table that role does not own. In single-database mode the two handles are
+     * the same object and nothing changes; under the physical split the corpus
+     * generation has no `users` at all, and every authenticated route answered
+     * `500 relation "users" does not exist`. Found while building the R17
+     * split-role suite, which could not authenticate a single request.
      */
-    const userFor = (c: Context) => profileIdFor(sql, c.get('authId'));
+    const userFor = (c: Context) => profileIdFor(userSql, c.get('authId'));
 
     /**
      * ─────────────────────────────────────────────────────────────────────────

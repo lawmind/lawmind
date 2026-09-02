@@ -280,9 +280,16 @@ export type UnavailableAuthority = {
  * ── ACTIVATION ──────────────────────────────────────────────────────────────
  *
  * `unavailableAuthorities` is ADDITIVE and R17 activation is gated on RCC
- * consumption — an old client ignores an unknown array. It is therefore emitted
- * ONLY when it is non-empty, so the response shape a shipped client parses today
- * is byte-identical until the condition it describes actually occurs.
+ * consumption — an old client ignores an unknown array. It is **ALWAYS emitted,
+ * including `[]`**: a client that cannot tell "nothing is unavailable" from
+ * "this server does not know the concept" has to guess, and the guess it makes
+ * is that everything resolved.
+ *
+ * This paragraph said the opposite until now — *"emitted ONLY when it is
+ * non-empty"* — describing the first implementation here, which was wrong for
+ * exactly that reason and was corrected in the code below without the comment
+ * following it. NEW3 R21 §2 found it. A reader trusting the prose over the code
+ * would have reintroduced the bug.
  */
 export async function listAuthorities(
   c: Context,
@@ -457,7 +464,69 @@ export async function addAuthority(
     FROM judgments j
     LEFT JOIN judgments r ON r.id = j.overruled_by_judgment_id
     WHERE j.id = ${body.judgmentId}`;
-  if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  if (!judgment) {
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * THE TARGET IS NOT IN THIS CORPUS RELEASE. IT IS NOT "NO SUCH JUDGMENT".
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * This branch answered `404 NOT_FOUND` *"no judgment with that id"* until
+     * now, and NEW3 R21 §3a is right that R17 §1 forbids the sentence. Under the
+     * physical split it is worse than forbidden — it is FALSE. After a rollback
+     * the judgment exists; this generation does not carry it. Telling an advocate
+     * their saved authority "does not exist" is a citation surface asserting a
+     * fact about the law from a fact about our deployment.
+     *
+     * Two outcomes, and which one applies is decided by the USER database alone:
+     *
+     *   - the same LIVE saved row already exists  ->  `200 { unavailableAuthority }`
+     *   - no live saved row                       ->  `409 CORPUS_TARGET_UNAVAILABLE`
+     *
+     * The first is the already-satisfied save. The advocate asked for a state
+     * that is already true, and turning that into a refusal would make a
+     * successful retry — a double tap, a client resend — look like a new failure
+     * about law they already have on the file.
+     *
+     * NOTHING IS WRITTEN ON EITHER PATH. A shell row for an authority that cannot
+     * be validated against any corpus generation is a saved citation with no
+     * verifiable target, which is the one thing `CITATION_HARNESS.md` will not
+     * have. R17 authorises no such row and this does not invent one.
+     */
+    const [live] = await sql<UserAuthorityRow[]>`
+      SELECT a.id, a.judgment_id, a.added_by_user_id,
+             ${sql.unsafe(isoColumn('a.added_at'))} AS added_at,
+             ${sql.unsafe(isoColumn('a.removed_at'))} AS removed_at
+        FROM matter_authorities a
+       WHERE a.matter_id = ${matterId} AND a.judgment_id = ${body.judgmentId}
+         AND a.removed_at IS NULL`;
+
+    if (live) {
+      /* The R20 shell, field for field — and deliberately NOT `shape()`, which
+       * would need corpus columns there is no honest value for. */
+      const unavailableAuthority: UnavailableAuthority = {
+        authorityId: live.id,
+        judgmentId: live.judgment_id,
+        addedBy: live.added_by_user_id,
+        addedAt: live.added_at,
+        removedAt: live.removed_at,
+        availability: 'corpus_unavailable',
+      };
+      return ok(c, { unavailableAuthority }, 200);
+    }
+
+    /**
+     * Copy is licence protection, not an audit (`CLAUDE.md`). It states what is
+     * true of THIS release and claims nothing about the judgment: not that it is
+     * gone, not that it was never there, not that it is unverified.
+     */
+    return fail(
+      c,
+      'CORPUS_TARGET_UNAVAILABLE',
+      'That judgment is not available in the selected corpus release, so it cannot be added ' +
+        'to a matter right now.',
+      409,
+    );
+  }
 
   /**
    * The one refusal Lawmind enforces server-side — now keyed on the ACT rather

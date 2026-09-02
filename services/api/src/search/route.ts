@@ -619,8 +619,20 @@ async function runSearch(
    *   never render as "there is no law on this",** and that is the whole
    *   difference from the `no_match` branch below, which is an honest empty.
    *
-   * `total: 0` is a count of what this page carries, beside a state that says
-   * what the zero means. It is never the confidence signal.
+   * `total` is OMITTED, and this comment used to argue the opposite.
+   *
+   * The argument was that `total: 0` is a count of what this page carries,
+   * beside a state that says what the zero means. NEW3 R21 §3b did not call that
+   * reasoning wrong; it decided the question on WHO HAS TO BE WRONG for the field
+   * to matter. A client that reads `retrievalOutcome` sees the same truth either
+   * way. A client that ignores it — a future surface, a debugging script, an
+   * analytics job — reads `total: 0` as "zero results exist" and renders "there
+   * is no law on this". Omitting the key makes that consumer read `undefined` and
+   * fail loudly instead of quietly.
+   *
+   * That is the same asymmetry `outcome.ts` already relies on and the same rule
+   * `CITATION_HARNESS.md` applies to a dropped citation. `resultCount` on
+   * `retrievalOutcome` remains for anyone who genuinely wants the count.
    */
   if (structured.kind === 'unbounded' || structured.kind === 'timed_out') {
     /**
@@ -633,11 +645,10 @@ async function runSearch(
      * `sparse_timeout`: the arm WAS attempted, admitted on that same evidence,
      * and still ran out of its budget.
      *
-     * Both are `coverage_unknown`, both carry a real `total: 0` beside a state
-     * that says the zero is not a searched-to-completion claim, and neither is a
-     * 503. There is no auto-retry and no widened timeout: R20 forbids both, and
-     * both would spend the advocate's next fifteen seconds reaching the same
-     * place.
+     * Both are `coverage_unknown`, both OMIT `total` because neither computed a
+     * trustworthy one, and neither is a 503. There is no auto-retry and no
+     * widened timeout: R20 forbids both, and both would spend the advocate's next
+     * fifteen seconds reaching the same place.
      */
     const arm = structured.kind === 'unbounded' ? 'sparse_unbounded' : 'sparse_timeout';
     outcome.queryClass = `structured_${structured.kind}`;
@@ -647,7 +658,6 @@ async function runSearch(
       unverifiedReferences: [],
       searchId: null,
       parsed: structured.parsed,
-      total: 0,
       degraded: [arm],
       /**
        * Only the refusal carries a remedy, and only because it HAS one: a second

@@ -299,13 +299,28 @@ describe('matter authorities', () => {
     assert.equal(res.status, 404);
   });
 
-  it('404s a judgment id that does not exist', async () => {
+  /**
+   * This asserted `404` until R17. The change is deliberate and is the contract:
+   * a judgment id the ACTIVE corpus generation does not carry is
+   * `409 CORPUS_TARGET_UNAVAILABLE`, never *"no judgment with that id"*.
+   *
+   * On one database the two readings look interchangeable — the id genuinely is
+   * not there. Across the split they are different facts, and only one of them is
+   * ours to assert: after a rollback the judgment exists and this release does not
+   * carry it. `authorities-corpus-split.test.ts` proves it against two
+   * generations; this asserts the single-database path answers identically, so
+   * the shape does not depend on how the deployment is wired.
+   */
+  it('a judgment id this corpus release does not carry is 409, not 404', async () => {
     const res = await app.request(`/matters/${matterId}/authorities`, {
       method: 'POST',
       headers: auth(owner.token),
       body: JSON.stringify({ judgmentId: crypto.randomUUID() }),
     });
-    assert.equal(res.status, 404);
+    assert.equal(res.status, 409);
+    const body = (await res.json()) as { error: { code: string; message: string } };
+    assert.equal(body.error.code, 'CORPUS_TARGET_UNAVAILABLE');
+    assert.doesNotMatch(body.error.message, /does not exist|no judgment with that id/i);
   });
 
   it('rejects a malformed body through the shared validator', async () => {
