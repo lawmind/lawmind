@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useAttempt } from '../../hooks/useAttempt';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
@@ -39,34 +40,83 @@ export function AddEventSheet({
 }: {
   visible: boolean;
   onDismiss: () => void;
-  onSubmit: (event: {
-    eventDate: string;
-    eventType: EventType;
-    orderText?: string;
-    notes?: string;
-  }) => void;
+  /**
+   * RESOLVES TO WHETHER THE EVENT IS DURABLY WRITTEN. It used to return `void`,
+   * so this sheet could not tell a landed write from a refused one and cleared
+   * the advocate's typed text either way. The attempt key travels with it — the
+   * caller sends it, this component owns its lifetime.
+   */
+  onSubmit: (
+    event: {
+      eventDate: string;
+      eventType: EventType;
+      orderText?: string;
+      notes?: string;
+    },
+    attemptKey: string,
+  ) => Promise<boolean>;
 }) {
   const [eventDate, setEventDate] = useState(() => toIso(todayCivil()));
   const [eventType, setEventType] = useState<EventType>('hearing');
   const [text, setText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  /**
+   * THIS SHEET HAD NO IN-FLIGHT PROTECTION AT ALL — not a ref, not state, not
+   * even a `disabled` prop. `submit()` called `onSubmit` and returned, so two
+   * taps in one frame appended TWO events to the matter timeline, and the
+   * timeline is the one authoritative record of what the court did.
+   *
+   * The latch is taken on the first line, before validation and before any
+   * state transition, because a React state commit is asynchronous and a tap is
+   * not. See `useAttempt`.
+   */
+  const attempt = useAttempt();
 
   const isNote = eventType === 'note';
 
-  function submit() {
+  async function submit() {
+    const attemptKey = attempt.begin();
+    // The second synchronous tap. It does nothing at all — not an error, not a
+    // second request. One tap and one double-tap must be indistinguishable in
+    // the timeline.
+    if (attemptKey === null) return;
+
     if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) {
       setError('Date must be YYYY-MM-DD.');
+      // The key is KEPT: a validation failure never reached the server, and
+      // R16 §5 guarantees the corrected request may reuse it.
+      attempt.settle();
       return;
     }
     if (!text.trim()) {
       setError(isNote ? 'A note needs some text.' : 'What did the court record?');
+      attempt.settle();
       return;
     }
-    onSubmit({
-      eventDate,
-      eventType,
-      ...(isNote ? { notes: text.trim() } : { orderText: text.trim() }),
-    });
+
+    const saved = await onSubmit(
+      {
+        eventDate,
+        eventType,
+        ...(isNote ? { notes: text.trim() } : { orderText: text.trim() }),
+      },
+      attemptKey,
+    );
+
+    if (!saved) {
+      /*
+        THE TEXT STAYS. It used to be cleared unconditionally, before anyone
+        knew whether the write landed — so a failed save left the advocate
+        looking at an error message and an empty box, with the court's own words
+        gone. The key stays too: pressing Save again is the same intentional
+        mutation, and reusing it is what stops the retry from writing a second
+        event if the first one actually committed.
+      */
+      attempt.settle();
+      return;
+    }
+
+    attempt.complete();
     setText('');
     setError(null);
   }
@@ -116,7 +166,7 @@ export function AddEventSheet({
           </Text>
         ) : null}
 
-        <Button label="Save" onPress={submit} />
+        <Button label="Save" onPress={() => void submit()} />
       </View>
     </Sheet>
   );

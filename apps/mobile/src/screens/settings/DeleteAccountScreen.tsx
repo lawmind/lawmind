@@ -6,7 +6,9 @@ import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
+import { useAttempt } from '../../hooks/useAttempt';
 import type { DataRequest } from '../../api/contract';
 import { useSession } from '../../state/session';
 import { haptics } from '../../theme/haptics';
@@ -65,17 +67,35 @@ export function DeleteAccountScreen({ onBack }: { onBack: () => void }) {
   const expectedEmail = (profile?.email ?? '').trim().toLowerCase();
   const confirmed = expectedEmail.length > 0 && confirmText.trim().toLowerCase() === expectedEmail;
 
+  /**
+   * ONE ERASURE REQUEST PER INTENTION.
+   *
+   * `POST /me/data-requests` looks up an open request of the same kind before
+   * inserting, but that is a sequential read with no database uniqueness behind
+   * it — R16 §2 records it as exactly that — so two concurrent taps CAN both
+   * insert. The synchronous latch stops the double tap; the attempt key stops
+   * the lost-response retry.
+   */
+  const attempt = useAttempt();
+
   async function requestErasure() {
-    if (!confirmed) return;
+    const attemptKey = attempt.begin();
+    if (attemptKey === null) return;
+    if (!confirmed) {
+      attempt.settle();
+      return;
+    }
     setWorking(true);
     setNote(null);
-    const r = await api.createDataRequest('erasure');
+    const r = await runAttempt(attemptKey, (key) => api.createDataRequest('erasure', undefined, key));
     setWorking(false);
     if (r.ok) {
+      attempt.complete();
       haptics.reject();
       setConfirmText('');
       load();
     } else {
+      attempt.settle();
       setNote(r.error.message);
     }
   }

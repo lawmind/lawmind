@@ -1,3 +1,4 @@
+import { ATTEMPT_KEY_PATTERN } from '../api/attempt';
 import { api } from '../api/client';
 import { PENDING_WINDOW_MS, usePendingSave, type PendingSaveIntent } from './pendingSave';
 
@@ -80,12 +81,17 @@ describe('holding the intent', () => {
 
     await usePendingSave.getState().runFor('mat_new');
 
-    expect(createAnnotation).toHaveBeenCalledWith('jdg_1', {
-      paragraphNumber: null,
-      paragraphIndex: 11,
-      quote: 'The passage the advocate marked.',
-      matterId: 'mat_new',
-    });
+    expect(createAnnotation).toHaveBeenCalledWith(
+      'jdg_1',
+      {
+        paragraphNumber: null,
+        paragraphIndex: 11,
+        quote: 'The passage the advocate marked.',
+        matterId: 'mat_new',
+      },
+      // R16: the key persisted with the intent at capture, not minted here.
+      usePendingSave.getState().held?.attemptKey ?? expect.any(String),
+    );
   });
 
   it('does nothing, and says nothing, when no intent is held', async () => {

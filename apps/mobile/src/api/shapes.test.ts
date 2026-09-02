@@ -135,3 +135,63 @@ describe('caseType filters, and never guesses a side', () => {
     expect(response.data.results.length).toBe(MOCK_RESULTS.length);
   });
 });
+
+/**
+ * NODE BUILT-INS, TYPED LOCALLY — the same shape `routeGates.test.ts` uses, and
+ * for the same reason: `@types/node` is not in this workspace's `tsconfig.json`.
+ */
+declare const __dirname: string;
+declare function require(id: string): unknown;
+const { readFileSync } = require('fs') as {
+  readFileSync: (path: string, encoding: 'utf8') => string;
+};
+const { join } = require('path') as { join: (...parts: string[]) => string };
+const read = (rel: string) => readFileSync(join(__dirname, '..', ...rel.split('/')), 'utf8');
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `matters.parties` — THE CLIENT IS ALREADY CORRECT AND STAYS THAT WAY.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * `POST /matters` currently returns `parties` as a JSON-ENCODED STRING rather
+ * than an object (LCC bus 1697, observed directly against the route):
+ *
+ *     "parties": "{\"petitioner\":\"a\",\"respondent\":\"b\"}"
+ *
+ * `matters/route.ts` writes `${JSON.stringify(body.parties)}::jsonb` and
+ * postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a
+ * string SCALAR — `jsonb_typeof` reads `string`. A census of the dev database
+ * found four rows `object` and one `string`, so both shapes now coexist.
+ *
+ * NEW3 R18 classified it as a BACKEND/STORAGE defect and gave repair to LCC.
+ * The temptation on this side is a defensive `JSON.parse` or a
+ * `typeof parties === 'string'` fallback, and it is a trap: it would make the UI
+ * look fixed today and BREAK on the day the server is corrected — a client that
+ * parses a string will be handed an object, and `MatterScreen` renders
+ * `{matter.parties.description}` from it.
+ *
+ * So this asserts the ABSENCE of the workaround, which is the thing that would
+ * otherwise be added quietly by whoever next sees an undefined on that screen.
+ * At this HEAD the fix is not an ancestor — `git show HEAD:services/api/src/
+ * matters/route.ts` still carries the `JSON.stringify` form — so what the client
+ * owes here is to stay correct and say so, not to compensate.
+ */
+describe('matters.parties carries no client-side compensation', () => {
+  const SOURCES = ['screens/matter/NewMatterScreen.tsx', 'screens/matter/MatterScreen.tsx'];
+
+  it.each(SOURCES)('%s neither parses nor type-switches parties', (file) => {
+    const src = read(file);
+    expect(src).not.toMatch(/JSON\.parse\([^)]*parties/);
+    expect(src).not.toMatch(/typeof\s+[A-Za-z.]*parties\s*===\s*'string'/);
+  });
+
+  /** And the contract still declares the shape the server is SUPPOSED to send. */
+  it('the contract type is unchanged', () => {
+    expect(read('api/contract.ts')).toContain('parties: { description: string }');
+  });
+
+  /** The screen still reads it as an object, because that is the contract. */
+  it('the matter screen reads it as an object', () => {
+    expect(read('screens/matter/MatterScreen.tsx')).toContain('{matter.parties.description}');
+  });
+});

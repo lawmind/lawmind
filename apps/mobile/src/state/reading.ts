@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
+import { newAttemptKey, runAttempt } from '../api/attempt';
 import { api } from '../api/client';
 
 /**
@@ -48,6 +49,26 @@ export type Highlight = {
   matterId?: string;
   /** Set once `POST /judgments/:id/annotations` confirms the write. Absent means not yet synced. */
   annotationId?: string;
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * R16. THE ATTEMPT KEY, PERSISTED BECAUSE THE PAYLOAD ALREADY IS.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * A highlight with no `annotationId` is a pending write, held in AsyncStorage
+   * and surviving a cold start — see `syncAnnotations`, population 1. That means
+   * the retry can outlive the process, which is exactly the case an in-memory
+   * key cannot cover: a new key on a new launch executes a second insert of a
+   * row that may already have committed.
+   *
+   * So the key lives on the record. It is minted when the highlight is made,
+   * written with it, and reused by every retry of THAT highlight. It is dropped
+   * once `annotationId` arrives: the write is done, and a key kept past its
+   * mutation is only a way to get a `409` later.
+   *
+   * NOTHING SENSITIVE IS ADDED HERE. The quote is already persisted; this is 26
+   * characters of opaque identifier beside it, and no new body reaches storage.
+   */
+  attemptKey?: string;
 };
 
 type ReadingState = {
@@ -190,7 +211,12 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
       const match = res.data.annotations.find(
         (a) => a.paragraphIndex === h.paragraphIndex && a.quote === h.text
       );
-      return match ? { ...h, annotationId: match.annotationId } : h;
+      /*
+        POPULATION 2 — a pending write that actually landed and whose response we
+        never saw. It adopts the server's id AND drops its attempt key: the
+        mutation is done, so nothing should ever replay that key again.
+      */
+      return match ? { ...h, annotationId: match.annotationId, attemptKey: undefined } : h;
     });
 
     const incoming: Highlight[] = res.data.annotations
@@ -248,20 +274,41 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
   },
 
   addHighlight: async (highlight) => {
-    const next = [...get().highlights, highlight];
+    /*
+      THE KEY IS MINTED WITH THE HIGHLIGHT AND PERSISTED WITH IT. `??=` rather
+      than always minting: a highlight arriving here a second time — a retry, or
+      a rehydrated pending write — is the SAME intentional annotation and must
+      present the SAME key. A fresh key on a retry is how one passage becomes two
+      permanent rows.
+    */
+    const held: Highlight = { ...highlight, attemptKey: highlight.attemptKey ?? newAttemptKey() };
+    const next = [...get().highlights, held];
     set({ highlights: next });
     persist({ ...get(), highlights: next });
 
-    const res = await api.createAnnotation(highlight.judgmentId, {
-      paragraphNumber: highlight.paragraphNumber,
-      paragraphIndex: highlight.paragraphIndex,
-      quote: highlight.text,
-      matterId: highlight.matterId,
-    });
+    const res = await runAttempt(held.attemptKey!, (key) =>
+      api.createAnnotation(
+        held.judgmentId,
+        {
+          paragraphNumber: held.paragraphNumber,
+          paragraphIndex: held.paragraphIndex,
+          quote: held.text,
+          matterId: held.matterId,
+        },
+        key,
+      ),
+    );
 
     if (res.ok) {
+      /*
+        THE KEY IS DROPPED AT THE SAME MOMENT `annotationId` ARRIVES. The write
+        is durable; a key kept past its own mutation can only earn a `409` if
+        anything ever replayed it.
+      */
       const withId = get().highlights.map((h) =>
-        h === highlight ? { ...h, annotationId: res.data.annotation.annotationId } : h
+        h === held
+          ? { ...h, annotationId: res.data.annotation.annotationId, attemptKey: undefined }
+          : h
       );
       set({ highlights: withId });
       persist({ ...get(), highlights: withId });
@@ -276,9 +323,9 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
      * dishonest about a highlight that has not synced yet, and stripping the
      * matter on a network blip would silently undo a real choice.
      */
-    if (res.error.code === 'AUTHORITY_SET_ASIDE' && highlight.matterId) {
+    if (res.error.code === 'AUTHORITY_SET_ASIDE' && held.matterId) {
       const stripped = get().highlights.map((h) =>
-        h === highlight ? { ...h, matterId: undefined } : h
+        h === held ? { ...h, matterId: undefined, attemptKey: h.attemptKey } : h
       );
       set({ highlights: stripped });
       persist({ ...get(), highlights: stripped });

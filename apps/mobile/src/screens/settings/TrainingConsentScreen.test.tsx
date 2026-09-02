@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { TrainingConsentScreen } from './TrainingConsentScreen';
+import { ATTEMPT_KEY_PATTERN } from '../../api/attempt';
 import { api } from '../../api/client';
 import type { TrainingConsent } from '../../api/contract';
 
@@ -87,7 +88,8 @@ describe('TrainingConsentScreen', () => {
 
     await fireEvent.press(await screen.findByText('Agree'));
 
-    expect(grantTrainingConsent).toHaveBeenCalledWith('training-v7');
+    expect(grantTrainingConsent).toHaveBeenCalledWith('training-v7', expect.any(String));
+    expect(ATTEMPT_KEY_PATTERN.test(grantTrainingConsent.mock.calls[0]![1] as string)).toBe(true);
     expect(await screen.findByText('You have agreed to this.')).toBeTruthy();
   });
 

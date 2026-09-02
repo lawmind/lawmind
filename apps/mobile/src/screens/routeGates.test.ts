@@ -138,6 +138,118 @@ describe('development-only routes do not ship', () => {
   });
 });
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE INTERNAL SCREEN MANIFEST CANNOT REACH A RELEASE BUILD — NEW3 R18, bus
+ * 1704, `V1_CLAIMS_REGISTER_R16.md` §2.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * WHAT THE PRIOR ROUTE-TRUTH CHECKS MISSED, AND WHY. The dev-only sweep above
+ * named `directory.tsx` and `gallery.tsx` — a hand-written list — and
+ * `/s/[slug]` was not on it. So a dynamic route mounting `ScreenShell` for 81 of
+ * 98 manifest rows shipped in the binary, 53 of them rendering internal design
+ * prose, while the claims audit in `r16Surfaces.test.ts` skipped `manifest.ts`
+ * BY FILENAME. A production surface excluded from the audits that govern
+ * production surfaces is the definition of an internal tool that escaped.
+ *
+ * SO THIS TESTS THE PROPERTY, NOT THE INSTANCE. A ban on today's manifest
+ * strings is the thing that already failed: every future design row would be a
+ * new production-reachable sentence, and the file is SUPPOSED to be free to say
+ * "colour and serif superseded". What may not happen is that it says it to an
+ * advocate.
+ *
+ * The property is REACHABILITY, expressed three ways so that adding a second
+ * manifest-backed route next month fails here rather than in an advocate's hand:
+ * every route that mounts the shell or reads the manifest is dev-guarded; no
+ * production source links into `/s/`; and the guard is a redirect, not a
+ * disabled button.
+ */
+const MANIFEST_BACKED = ROUTES.filter(
+  (r) => /screens\/manifest|ScreenShell/.test(r.source),
+).map((r) => r.route);
+
+/** A route is dev-guarded when `__DEV__` decides whether it renders at all. */
+function isDevGuarded(source: string): boolean {
+  return (
+    /if \(!?__DEV__\)|if \(notInProduction\)/.test(source) &&
+    source.includes('Redirect') &&
+    source.includes('__DEV__')
+  );
+}
+
+describe('the internal screen manifest cannot reach a release build', () => {
+  /**
+   * The list is DERIVED, not written down. `/s/[slug]` was missing from the
+   * hand-written dev-only list above and that is exactly how it survived; a
+   * derived list cannot omit the route somebody adds next.
+   */
+  it('finds the manifest-backed routes by reading them, not from a list', () => {
+    expect(MANIFEST_BACKED).toEqual(expect.arrayContaining(['s/[slug].tsx', 'directory.tsx']));
+  });
+
+  it.each(MANIFEST_BACKED)('%s cannot mount in a release bundle', (route) => {
+    expect(isDevGuarded(sourceOf(route))).toBe(true);
+  });
+
+  /**
+   * THE GUARD IS A REDIRECT, NOT A DISABLED CONTROL. A screen that renders and
+   * then hides its buttons has still rendered — and rendering is what put
+   * manifest prose in front of an advocate.
+   */
+  it('/s/[slug] redirects rather than rendering a narrowed shell', () => {
+    const src = sourceOf('s/[slug].tsx');
+    expect(src).toMatch(/if \(!__DEV__\) return <Redirect href="\/\+not-found" \/>;/);
+    // And the guard sits BEFORE the manifest lookup that decides what to mount.
+    expect(src.indexOf('!__DEV__')).toBeLessThan(src.indexOf('APP_SCREENS.find'));
+  });
+
+  /**
+   * BOTH ENDS, the same rule `+not-found` is already held to. A guarded route is
+   * still a dead end if a shipped screen offers a link into it.
+   */
+  it('no production source links into /s/', () => {
+    const linkers = [
+      ...walk(SRC_DIR, (n) => (n.endsWith('.ts') || n.endsWith('.tsx')) && !n.includes('.test.'))
+        .map((f) => ({
+          file: relative(SRC_DIR, f).split(sep).join('/'),
+          source: readFileSync(f, 'utf8'),
+        }))
+        .filter((s) => /href=["\`]\/s\/|["\`]\/s\/\$\{/.test(s.source)),
+      ...ROUTES.filter((r) => /href=["\`]\/s\/|["\`]\/s\/\$\{/.test(r.source))
+        .filter((r) => !isDevGuarded(r.source))
+        .map((r) => ({ file: `app/${r.route}`, source: r.source })),
+    ];
+    expect(linkers.map((l) => l.file)).toEqual([]);
+  });
+
+  /**
+   * THE EXEMPTION IS NOW CORRECT RATHER THAN DANGEROUS. `r16Surfaces.test.ts`
+   * skips `manifest.ts` and this file's own copy audit skips `manifest` and
+   * `ScreenShell` — both on the stated ground that they are "never rendered in a
+   * production build". That ground was FALSE until the guard landed. It is
+   * asserted here so the two exemptions and the guard cannot drift apart: remove
+   * the guard and this fails, which is the only thing that makes skipping a file
+   * in a claims audit legitimate.
+   */
+  it('the claims audits may skip the manifest only because the route is guarded', () => {
+    expect(readFileSync(join(SRC_DIR, 'screens', 'r16Surfaces.test.ts'), 'utf8')).toContain(
+      "endsWith('manifest.ts')",
+    );
+    expect(isDevGuarded(sourceOf('s/[slug].tsx'))).toBe(true);
+  });
+
+  /**
+   * AND NO CAPABILITY ROW WAS INVENTED TO KEEP IT. NEW3: "a surface with no
+   * capability row and no acceptance evidence is not current product, whatever
+   * it renders." The fix is the guard, not a promotion.
+   */
+  it('the manifest tool did not acquire a capability row', () => {
+    const names = Object.keys(V1_SURFACE);
+    expect(names).not.toContain('screenManifest');
+    expect(names).not.toContain('screenInventory');
+  });
+});
+
 describe('no link points at a destination the app then ignores', () => {
   /**
    * NEW3 R15 §8 I1 — "Open the briefing" pushed `/matter/[id]` with a `briefing`

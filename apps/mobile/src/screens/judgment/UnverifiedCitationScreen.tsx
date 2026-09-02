@@ -15,7 +15,9 @@ import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
+import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
+import { useAttempt } from '../../hooks/useAttempt';
 import type {
   CitationCheck,
   CitationTier,
@@ -65,7 +67,36 @@ export function UnverifiedCitationScreen({
   const citationStored = citation.stored;
 
   const [check, setCheck] = useState<CitationCheck | null>(null);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * `confirmed` NOW MEANS THE SERVER SAID SO. IT USED TO MEAN THE ADVOCATE
+   * TAPPED.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The button did `setConfirmed(true)` and then `void api.verifyConfirm(...)`,
+   * discarding the promise. `verifyConfirm` was also sending no bearer token
+   * (fixed in `client.ts`, 2 September 2026), so the server answered
+   * `AUTH_REQUIRED` and wrote nothing — every single time. The screen said "You
+   * confirmed this" and no `citation_checks` row existed.
+   *
+   * That is the shape of failure this product exists to refuse. Tier 3 IS the
+   * advocate's own vouch, kept permanently so nobody in their chamber checks the
+   * same citation twice; a vouch we did not record is a vouch the next person in
+   * that chamber will have to make again, believing it was already done.
+   *
+   * So there are three states and the screen renders all three honestly:
+   * untouched, in flight, and confirmed — plus a failure that says what happened
+   * in our own terms and leaves the button usable.
+   */
   const [confirmed, setConfirmed] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
+  /**
+   * ONE VOUCH, ONE KEY. `POST /verify/confirm` appends a permanent
+   * `citation_checks` row per request — R16 §2 — so a retried tap without a key
+   * appends a second. The latch is synchronous because a double tap is.
+   */
+  const attempt = useAttempt();
   const [unavailable, setUnavailable] = useState(false);
   /** The path itself, kept so the string to paste stays on screen after the tap. */
   const [ecourts, setEcourts] = useState<EcourtsPath | null>(null);
@@ -86,6 +117,51 @@ export function UnverifiedCitationScreen({
       alive = false;
     };
   }, [citationCheckId]);
+
+  /**
+   * THE VOUCH. Awaited, and the UI moves ONLY on the server's own success.
+   *
+   * `runAttempt` retries `IDEMPOTENCY_IN_PROGRESS` with the SAME key and
+   * nothing else: a `409 IDEMPOTENCY_KEY_REUSE_MISMATCH` is a bug on this side
+   * and is surfaced rather than resubmitted, and an ordinary failure leaves the
+   * button live with the key intact so the deliberate retry cannot append a
+   * second permanent row.
+   */
+  async function confirm() {
+    const attemptKey = attempt.begin();
+    if (attemptKey === null) return;
+    /*
+      The button only renders inside the `citationStored ?` branch, so this is
+      unreachable in practice — it is here because `confirm()` is a function and
+      not a closure inside that branch, and a vouch for a citation string we do
+      not hold would be a vouch for nothing.
+    */
+    if (!citationStored) {
+      attempt.settle();
+      return;
+    }
+
+    setConfirming(true);
+    setConfirmError(null);
+    const res = await runAttempt(attemptKey, (key) =>
+      api.verifyConfirm(citationStored, judgment.judgmentId, key),
+    );
+    setConfirming(false);
+
+    if (!res.ok) {
+      /*
+        NOT CONFIRMED, AND SAID SO. Turning a server refusal into a local
+        success is the exact defect this round was opened on: a permanent Tier 3
+        record that does not exist, presented to the advocate as one that does.
+      */
+      attempt.settle();
+      setConfirmError(res.error.message);
+      return;
+    }
+
+    attempt.complete();
+    setConfirmed(true);
+  }
 
   return (
     // Rendered from JudgmentScreen, which is a `headerShown: false` route, so
@@ -283,13 +359,29 @@ export function UnverifiedCitationScreen({
                 ) : null}
 
                 <Button
-                  disabled={confirmed}
-                  label={confirmed ? 'You confirmed this' : 'I verified it — mark it'}
-                  onPress={() => {
-                    setConfirmed(true);
-                    void api.verifyConfirm(citationStored, judgment.judgmentId);
-                  }}
+                  disabled={confirmed || confirming}
+                  label={
+                    confirmed
+                      ? 'You confirmed this'
+                      : confirming
+                        ? 'Recording your check…'
+                        : 'I verified it — mark it'
+                  }
+                  onPress={() => void confirm()}
                 />
+                {/*
+                  OUR FAILURE, IN OUR OWN TERMS. Never "verification failed" —
+                  the advocate DID verify it; we failed to write it down. The
+                  button stays live so the deliberate retry is one tap, and it
+                  reuses the same attempt key so a lost response cannot leave two
+                  permanent rows behind.
+                */}
+                {confirmError ? (
+                  <Text variant="ui" style={styles.muted}>
+                    We could not record your check just now. Nothing was saved — tap again when you
+                    have a moment, and it will not be recorded twice.
+                  </Text>
+                ) : null}
                 <Text variant="ui" style={styles.muted}>
                   Marking it records that you checked it yourself. We keep that permanently, so
                   nobody in your chamber has to check it twice.

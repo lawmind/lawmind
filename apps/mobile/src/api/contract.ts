@@ -11,7 +11,30 @@
 
 /** Every response. There is no bare payload and no bare error string. */
 export type ApiResponse<T> =
-  { ok: true; data: T } | { ok: false; error: { code: string; message: string } };
+  | { ok: true; data: T }
+  | {
+      ok: false;
+      error: {
+        code: string;
+        message: string;
+        /**
+         * THE SERVER'S OWN `Retry-After`, IN SECONDS, WHEN IT SENT ONE.
+         *
+         * R16 answers a follower that could not wait for the executor with
+         * `409 IDEMPOTENCY_IN_PROGRESS` and `Retry-After: 1`. `once()` in
+         * `client.ts` reads the header and puts it here; everything else in
+         * this client sees only the envelope, and the whole `Response` is
+         * deliberately NOT plumbed through the app for one number.
+         *
+         * ABSENT IS THE ORDINARY CASE and means "no instruction", not "retry
+         * immediately" and not "do not retry" — `attempt.ts#retryAfterMs`
+         * supplies the bounded fallback. It is never invented: a header that is
+         * missing, non-numeric or non-positive leaves this undefined rather
+         * than being rounded into a number the server did not say.
+         */
+        retryAfterSeconds?: number;
+      };
+    };
 
 /* ------------------------------------------------------------------ citation */
 

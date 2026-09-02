@@ -9,6 +9,7 @@ import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
 import { Switch } from '../../components/Switch';
 import { Text } from '../../components/Text';
+import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
 import type {
   Matter,
@@ -714,17 +715,28 @@ export function MatterScreen({
 
       <AddEventSheet
         onDismiss={() => setAddEventOpen(false)}
-        onSubmit={async (draft) => {
-          const r = await api.addMatterEvent(matterId, draft);
+        /**
+         * THE ATTEMPT KEY COMES FROM THE SHEET, which owns the submit that
+         * began it. `runAttempt` retries only `IDEMPOTENCY_IN_PROGRESS`, only
+         * with the same key, and only twice — a follower that could not wait for
+         * the executor created nothing, and its retry collects the real result.
+         * A `409 IDEMPOTENCY_KEY_REUSE_MISMATCH` is terminal and surfaces as the
+         * error it is.
+         */
+        onSubmit={async (draft, attemptKey) => {
+          const r = await runAttempt(attemptKey, (key) =>
+            api.addMatterEvent(matterId, draft, key),
+          );
           if (r.ok) {
             setAddEventOpen(false);
             setAddEventError(null);
             setBundle((current) =>
               current ? { ...current, events: [r.data.event, ...current.events] } : current,
             );
-          } else {
-            setAddEventError(r.error.message);
+            return true;
           }
+          setAddEventError(r.error.message);
+          return false;
         }}
         visible={addEventOpen}
       />

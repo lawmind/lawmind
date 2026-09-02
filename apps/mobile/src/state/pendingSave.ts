@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
+import { newAttemptKey, runAttempt } from '../api/attempt';
 import { api } from '../api/client';
 
 /**
@@ -44,14 +45,19 @@ import { api } from '../api/client';
  * 201 when it is new, precisely so a double tap in a court corridor cannot
  * duplicate. Retry there is free.
  *
- * An ANNOTATION save is NOT. `services/api/src/judgments/annotations.ts` runs a
- * bare `INSERT INTO judgment_annotations` with no `ON CONFLICT` and no
- * idempotency key, so two requests make two rows. The protection here is
- * therefore client-side and is stated rather than assumed: {@link running} is a
- * single-flight latch, and the intent is consumed only on success. The residual
- * case this CANNOT cover is a request the server completed whose response never
- * arrived — a retry then duplicates, and closing that needs a server-side key,
- * which is LCC's and is not invented here.
+ * An ANNOTATION save had no such identity: `services/api/src/judgments/
+ * annotations.ts` runs a bare `INSERT INTO judgment_annotations` with no `ON
+ * CONFLICT`, so two requests made two rows. The protection was client-side only
+ * — {@link running} is a single-flight latch and the intent is consumed only on
+ * success — and this comment named the residual case it could not cover: a
+ * request the server completed whose response never arrived.
+ *
+ * THAT CASE IS NOW CLOSED. LCC built R16's `Idempotency-Key` at `e325ed9f` and
+ * this store carries one on the persisted record ({@link PendingSave.attemptKey}),
+ * so the lost-response retry replays the original result instead of inserting
+ * again. The latch and the key answer different questions and BOTH stay: the
+ * latch stops two requests leaving this device, the key stops the second one
+ * mattering if it does.
  *
  * ── IT SURVIVES A BACKGROUND, AND IT EXPIRES ────────────────────────────────
  *
@@ -107,8 +113,31 @@ export type PendingSaveIntent =
       quote: string;
     };
 
-/** An intent, plus when it was held. Intersection over a union distributes. */
-export type PendingSave = PendingSaveIntent & { capturedAt: number };
+/**
+ * An intent, plus when it was held. Intersection over a union distributes.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * R16. `attemptKey` IS PERSISTED HERE FOR THE SAME REASON THE INTENT IS.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This record already survives a background and a cold start — creating a matter
+ * is a form an advocate can be interrupted in the middle of, and on Android a
+ * return can be a cold start. So the RETRY can outlive the process, and an
+ * in-memory key would be a new key on the new launch, which executes a second
+ * insert of a row that may already have committed. The key therefore belongs on
+ * the record.
+ *
+ * IT IS MINTED AT CAPTURE, NOT AT RUN. Capture is the moment the advocate
+ * intended one save; `runFor` may be reached several times for that one
+ * intention (a cold start, a failed first attempt, the explicit retry on
+ * `NewMatterScreen`) and every one of them is the same logical mutation. A new
+ * capture is a new intention — the advocate chose a different passage — and gets
+ * a new key, which is exactly what `capture`'s latest-wins rule already means.
+ *
+ * IT ADDS NO SENSITIVE BODY TO STORAGE. The quote and the case title are already
+ * here; this is 26 characters of opaque identifier beside them.
+ */
+export type PendingSave = PendingSaveIntent & { capturedAt: number; attemptKey: string };
 
 /** What happened when the held intent was run against a freshly created matter. */
 export type PendingSaveResult =
@@ -149,6 +178,13 @@ async function persist(held: PendingSave | null): Promise<void> {
 function isPending(value: unknown): value is PendingSave {
   if (value === null || typeof value !== 'object') return false;
   const v = value as PendingSave;
+  /*
+    `attemptKey` IS NOT REQUIRED BY THIS GUARD, deliberately. A record written by
+    a build from before R16 is a real held intent and must still be performed;
+    refusing to rehydrate it would lose an advocate's save to an app update. It
+    is filled in below instead, and such a record simply has no cold-restart
+    idempotency — which is the state it was written in, honestly carried forward.
+  */
   return (
     (v.kind === 'authority' || v.kind === 'annotation') &&
     typeof v.judgmentId === 'string' &&
@@ -165,7 +201,17 @@ export const usePendingSave = create<PendingSaveState>((set, get) => ({
     try {
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
       const parsed: unknown = raw ? JSON.parse(raw) : null;
-      set({ held: isPending(parsed) ? parsed : null, hydrated: true });
+      if (!isPending(parsed)) {
+        set({ held: null, hydrated: true });
+        return;
+      }
+      // A pre-R16 record has no key. It gets one now rather than being dropped —
+      // see `isPending`. From this launch on, its retries are duplicate-safe.
+      const held: PendingSave = parsed.attemptKey
+        ? parsed
+        : { ...parsed, attemptKey: newAttemptKey() };
+      set({ held, hydrated: true });
+      void persist(held);
     } catch {
       set({ held: null, hydrated: true });
     }
@@ -180,7 +226,7 @@ export const usePendingSave = create<PendingSaveState>((set, get) => ({
      * one they mean, and holding the older one would save something they walked
      * away from.
      */
-    const held = { ...intent, capturedAt: Date.now() } as PendingSave;
+    const held = { ...intent, capturedAt: Date.now(), attemptKey: newAttemptKey() } as PendingSave;
     set({ held });
     void persist(held);
   },
@@ -216,12 +262,27 @@ export const usePendingSave = create<PendingSaveState>((set, get) => ({
               judgmentId: held.judgmentId,
               ...(held.citationCheckId ? { citationCheckId: held.citationCheckId } : {}),
             })
-          : await api.createAnnotation(held.judgmentId, {
-              paragraphNumber: held.paragraphNumber,
-              paragraphIndex: held.paragraphIndex,
-              quote: held.quote,
-              matterId,
-            });
+          : /*
+              THE PERSISTED KEY, REUSED. This is the retry the annotation path
+              has never had cover for: the note above said "the residual case
+              this CANNOT cover is a request the server completed whose response
+              never arrived — closing that needs a server-side key, which is
+              LCC's and is not invented here." LCC built it (R16, e325ed9f) and
+              this is that case closed. The latch below still stops the double
+              tap; the key stops the lost response.
+            */
+            await runAttempt(held.attemptKey, (key) =>
+              api.createAnnotation(
+                held.judgmentId,
+                {
+                  paragraphNumber: held.paragraphNumber,
+                  paragraphIndex: held.paragraphIndex,
+                  quote: held.quote,
+                  matterId,
+                },
+                key,
+              ),
+            );
 
       if (!res.ok) {
         /*

@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { DeleteAccountScreen } from './DeleteAccountScreen';
+import { ATTEMPT_KEY_PATTERN } from '../../api/attempt';
 import { api } from '../../api/client';
 import type { DataRequest } from '../../api/contract';
 
@@ -63,7 +64,11 @@ describe('DeleteAccountScreen', () => {
 
     await fireEvent.changeText(screen.getByPlaceholderText('advocate@example.com'), 'Advocate@Example.com');
     await fireEvent.press(screen.getByText('Request account deletion'));
-    expect(createDataRequest).toHaveBeenCalledWith('erasure');
+    // R16: kind, no note, and an attempt key inside the server's grammar. The
+    // key is asserted rather than wildcarded — a screen that stopped sending one
+    // would silently lose its duplicate protection and this would still pass.
+    expect(createDataRequest).toHaveBeenCalledWith('erasure', undefined, expect.any(String));
+    expect(ATTEMPT_KEY_PATTERN.test(createDataRequest.mock.calls[0]![2] as string)).toBe(true);
   });
 
   it('never claims the account is deleted — only that a request was received', async () => {
@@ -81,7 +86,11 @@ describe('DeleteAccountScreen', () => {
     );
     await fireEvent.press(screen.getByText('Request account deletion'));
 
-    expect(createDataRequest).toHaveBeenCalledWith('erasure');
+    // R16: kind, no note, and an attempt key inside the server's grammar. The
+    // key is asserted rather than wildcarded — a screen that stopped sending one
+    // would silently lose its duplicate protection and this would still pass.
+    expect(createDataRequest).toHaveBeenCalledWith('erasure', undefined, expect.any(String));
+    expect(ATTEMPT_KEY_PATTERN.test(createDataRequest.mock.calls[0]![2] as string)).toBe(true);
     expect(await screen.findByText('Your request has been received.')).toBeTruthy();
     expect(screen.queryByText(/account has been deleted/i)).toBeNull();
     expect(screen.getByText(/An operator will complete it by/)).toBeTruthy();

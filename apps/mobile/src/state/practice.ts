@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { runAttempt } from '../api/attempt';
 import { api } from '../api/client';
 import type { BriefingListItem, Matter, MatterStatus } from '../api/contract';
 import {
@@ -65,6 +66,12 @@ type PracticeState = {
     matterId: string,
     iso: string,
     purpose: string,
+    /**
+     * R16. The EVENT half only — the date is a column on `matters` and a PATCH,
+     * which does not create a second object on replay. Optional so the store
+     * keeps working for any caller that has no attempt of its own.
+     */
+    attemptKey?: string,
   ) => Promise<{ purposeRecorded: boolean }>;
   /**
    * EDIT THE CONTRACTED FIELDS OF A MATTER — NEW3 R16 `R16-RCC-02`, D-2.
@@ -237,17 +244,27 @@ export const usePractice = create<PracticeState>((set, get) => ({
    * one-tap-plus-save budget on a Redmi in a corridor.
    * ─────────────────────────────────────────────────────────────────────────
    */
-  recordAdjournment: async (matterId, iso, purpose) => {
+  recordAdjournment: async (matterId, iso, purpose, attemptKey) => {
     await get().setNextHearingDate(matterId, iso);
 
-    const res = await api.addMatterEvent(matterId, {
+    /*
+      THE KEY PROTECTS THE PURPOSE, NOT THE DATE, AND THE DISTINCTION STANDS.
+      R16 does not merge the two halves into one atomic guarantee and nothing
+      here pretends it does: `next_hearing_date` is a column written
+      optimistically and reconciled on next launch; the purpose is an append to
+      the matter timeline, and an append is the thing a retry duplicates.
+    */
+    const event = {
       eventDate: iso,
       eventType: 'hearing',
       orderText: adjournmentOrderText(iso, purpose),
       // `notes` and `noteVisibility` are deliberately absent. PD-4 puts the
       // default in the COLUMN, and sending nothing is how this client lets the
       // column decide.
-    });
+    };
+    const res = attemptKey
+      ? await runAttempt(attemptKey, (key) => api.addMatterEvent(matterId, event, key))
+      : await api.addMatterEvent(matterId, event);
 
     return { purposeRecorded: res.ok };
   },

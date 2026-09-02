@@ -5,6 +5,7 @@ import { Check, WifiOff } from 'lucide-react-native';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { useAttempt } from '../../hooks/useAttempt';
 import { usePractice } from '../../state/practice';
 import { haptics } from '../../theme/haptics';
 import {
@@ -74,6 +75,8 @@ export function AdjournmentScreen({
 }) {
   const matters = usePractice((s) => s.matters);
   const recordAdjournment = usePractice((s) => s.recordAdjournment);
+  /** One adjournment, one key. See `useAttempt` for why the latch is a ref. */
+  const attempt = useAttempt();
   const hydrate = usePractice((s) => s.hydrate);
 
   useEffect(() => {
@@ -109,7 +112,18 @@ export function AdjournmentScreen({
   const [purposeRecorded, setPurposeRecorded] = useState<boolean | null>(null);
 
   const save = useCallback(() => {
-    if (!selected) return;
+    /*
+      THE LATCH IS FIRST. `saved` is state and commits on a later tick, so two
+      taps on Save in one frame both read `saved === null` and both appended a
+      hearing event to the matter timeline. The key that comes back is reused by
+      any retry of the same adjournment.
+    */
+    const attemptKey = attempt.begin();
+    if (attemptKey === null) return;
+    if (!selected) {
+      attempt.settle();
+      return;
+    }
     haptics.commit();
     /**
      * NOT AWAITED, AND NO CONFIRMATION DIALOG. The store writes the DATE to the
@@ -119,11 +133,19 @@ export function AdjournmentScreen({
      * line appear — the confirmation is not held back for it.
      */
     setPurposeRecorded(null);
-    void recordAdjournment(matterId, selected, purpose).then((r) =>
-      setPurposeRecorded(r.purposeRecorded),
-    );
+    void recordAdjournment(matterId, selected, purpose, attemptKey).then((r) => {
+      /*
+        The DATE is saved either way and the stamp already says so. Only the
+        purpose waits on the server — and only a landed purpose ends the
+        attempt. A failed one keeps its key, because the screen may be re-entered
+        and the same adjournment recorded again, and that must not append twice.
+      */
+      if (r.purposeRecorded) attempt.complete();
+      else attempt.settle();
+      setPurposeRecorded(r.purposeRecorded);
+    });
     setSaved(selected);
-  }, [matterId, selected, purpose, recordAdjournment]);
+  }, [matterId, selected, purpose, recordAdjournment, attempt]);
 
   if (saved) {
     const savedDate = offers.find((o) => o.iso === saved);

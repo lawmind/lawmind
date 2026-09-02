@@ -1,5 +1,7 @@
 import { Platform } from 'react-native';
 
+import { IDEMPOTENCY_HEADER } from './attempt';
+
 import type {
   Alert,
   AlertSettings,
@@ -233,6 +235,26 @@ export function registerAuthBridge(next: AuthBridge | null): void {
   bridge = next;
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `Idempotency-Key` — SENT ONLY WHEN THE CALLER OWNS AN ATTEMPT. R16.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The key is NOT minted here, and that is the whole point. A key minted per call
+ * would be a new key on every retry, which executes a second mutation — exactly
+ * the duplicate R16 exists to prevent. Only the logical attempt knows when it
+ * began and when it ended, so the attempt holds the key and passes it down.
+ * `attempt.ts` is where one comes from.
+ *
+ * NO KEY, NO HEADER, and that path stays first-class: R16 is
+ * `WIRE_BREAKING_CHANGE = NO` and a request without the header is the R15
+ * behaviour byte for byte, server-side. Every one of the six creates below can
+ * still be called without an attempt key and still works.
+ */
+function idempotency(attemptKey: string | undefined): Record<string, string> {
+  return attemptKey ? { [IDEMPOTENCY_HEADER]: attemptKey } : {};
+}
+
 type RequestOptions = RequestInit & {
   /** Attach the access token, and refresh once on a 401. Default false. */
   auth?: boolean;
@@ -298,6 +320,33 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
      * "request failed".
      */
     const body = (await response.json()) as ApiResponse<T>;
+
+    /**
+     * `Retry-After` — THE ONE HEADER THIS CLIENT READS, AND ONLY ON A FAILURE.
+     *
+     * R16 answers a follower that could not wait for the executor with `409
+     * IDEMPOTENCY_IN_PROGRESS` and `Retry-After: 1`. Until now `once()` parsed
+     * the JSON body and DROPPED the response object, so that instruction could
+     * not reach the caller at all and a retry would have had to guess.
+     *
+     * IT IS ONE FIELD ON THE ERROR, NOT THE WHOLE `Response`. Plumbing headers
+     * through the app would put a transport object in every screen for the sake
+     * of one integer; `attempt.ts` reads it, bounds it, and nothing else needs
+     * to know a header exists.
+     *
+     * PARSED, NEVER ASSUMED. Only the delay-seconds form, only a finite
+     * positive number. `1` is what today's server sends and hardcoding it would
+     * bake a server constant into a shipped binary; anything unusable is left
+     * undefined so `retryAfterMs` can apply its bounded fallback rather than
+     * this layer inventing a number the server did not say.
+     */
+    if (body.ok === false) {
+      const raw = Number(response.headers?.get?.('retry-after'));
+      if (Number.isFinite(raw) && raw > 0) {
+        return { ok: false, error: { ...body.error, retryAfterSeconds: raw } };
+      }
+    }
+
     return body;
   } catch (cause) {
     /**
@@ -523,8 +572,11 @@ export const api = {
   trainingConsent: () => get<TrainingConsent>('/me/training-consent', { auth: true }),
 
   /** `version` is `currentVersion` off a prior read, echoed back — never a client constant, so a stale build cannot record agreement to a notice it never displayed. */
-  grantTrainingConsent: (version: string) =>
-    send<TrainingConsent>('/me/training-consent', { version }, { auth: true }),
+  grantTrainingConsent: (version: string, attemptKey?: string) =>
+    send<TrainingConsent>('/me/training-consent', { version }, {
+      auth: true,
+      headers: idempotency(attemptKey),
+    }),
 
   /** s. 6(4)–(6): withdrawal must be as easy as granting. Idempotent — succeeds even where nothing was granted. */
   withdrawTrainingConsent: () =>
@@ -537,11 +589,11 @@ export const api = {
    * this returned it rather than opening a second — the server's own
    * idempotency, not a client-side guess.
    */
-  createDataRequest: (kind: DataRequestKind, note?: string) =>
+  createDataRequest: (kind: DataRequestKind, note?: string, attemptKey?: string) =>
     send<{ request: DataRequest; alreadyOpen: boolean }>(
       '/me/data-requests',
       note ? { kind, note } : { kind },
-      { auth: true },
+      { auth: true, headers: idempotency(attemptKey) },
     ),
 
   /** Every request this advocate has ever raised, newest first. */
@@ -633,8 +685,11 @@ export const api = {
       { method: 'DELETE', auth: true },
     ),
 
-  createMatter: (matter: Omit<Matter, 'matterId'>) =>
-    send<{ matter: Matter }>('/matters', matter, { auth: true }),
+  createMatter: (matter: Omit<Matter, 'matterId'>, attemptKey?: string) =>
+    send<{ matter: Matter }>('/matters', matter, {
+      auth: true,
+      headers: idempotency(attemptKey),
+    }),
 
   /**
    * `nextHearingDate: null` CLEARS IT. Omitting the key leaves it alone. The
@@ -663,9 +718,11 @@ export const api = {
       notes?: string;
       noteVisibility?: 'private' | 'shared';
     },
+    attemptKey?: string,
   ) =>
     send<{ event: MatterEvent }>(`/matters/${encodeURIComponent(matterId)}/events`, event, {
       auth: true,
+      headers: idempotency(attemptKey),
     }),
 
   /**
@@ -922,12 +979,13 @@ export const api = {
    * USING the passage as an authority, not about saving it. Retry without
    * `matterId` to save the passage on its own.
    */
-  createAnnotation: (judgmentId: string, draft: AnnotationDraft) =>
+  createAnnotation: (judgmentId: string, draft: AnnotationDraft, attemptKey?: string) =>
     send<{ annotation: Annotation }>(
       `/judgments/${encodeURIComponent(judgmentId)}/annotations`,
       draft,
       {
         auth: true,
+        headers: idempotency(attemptKey),
       },
     ),
 
@@ -1015,7 +1073,23 @@ export const api = {
    * product refuses to collapse, and a response that answers both while the
    * client declares only the first is how they get collapsed by accident.
    */
-  verifyConfirm: (citationText: string, judgmentId: string) =>
+  /**
+   * `auth: true` IS LOAD-BEARING HERE TOO — missing until 2 September 2026, and
+   * the same defect class as `recordCitationCopy` above.
+   *
+   * `services/api/src/app.ts` resolves the principal (`await userFor(c)`) before
+   * `handleConfirm` runs and the row it writes is scoped to that advocate, so
+   * every confirm this client ever sent answered `AUTH_REQUIRED` and wrote
+   * nothing — while `UnverifiedCitationScreen` had already painted "You
+   * confirmed this". Tier 3 is a human vouching and we were recording none of
+   * it.
+   *
+   * IT IS ALSO THE PRECONDITION FOR R16 ON THIS ROUTE. `withIdempotency` passes
+   * straight through when there is no principal — "No principal, no scope" — so
+   * an unauthenticated confirm cannot be made duplicate-safe by any key. The
+   * auth flag is not a separate tidy-up; without it the key below is inert.
+   */
+  verifyConfirm: (citationText: string, judgmentId: string, attemptKey?: string) =>
     request<{
       cached: true;
       citationCheckId: string | null;
@@ -1026,7 +1100,8 @@ export const api = {
       asOf: string;
     }>('/verify/confirm', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      auth: true,
+      headers: { 'content-type': 'application/json', ...idempotency(attemptKey) },
       body: JSON.stringify({ citationText, judgmentId }),
     }),
 

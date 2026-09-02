@@ -5,7 +5,9 @@ import { Button } from '../../components/Button';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
+import { useAttempt } from '../../hooks/useAttempt';
 import type { TrainingConsent } from '../../api/contract';
 import { haptics } from '../../theme/haptics';
 import { color, space } from '../../theme/tokens';
@@ -46,32 +48,65 @@ export function TrainingConsentScreen({ onBack }: { onBack: () => void }) {
     load();
   }, [load]);
 
+  /**
+   * ONE LATCH FOR BOTH BUTTONS, AND ONE KEY THAT ENDS AT EACH DECISION.
+   *
+   * DPDP s. 6 consent is an intentional act and grant/withdraw/grant is THREE
+   * intentional acts, not one repeated — `POST /me/training-consent` updates the
+   * user AND appends a consent audit event per call, and that audit trail is the
+   * point. So each decision that LANDS calls `complete()` and the next one mints
+   * a fresh key; only a decision that FAILED keeps its key, because retrying it
+   * is the same act.
+   *
+   * `withdraw` is a DELETE and carries no key — it is idempotent server-side by
+   * its own contract ("succeeds even where nothing was granted") and is not one
+   * of R16's six. It shares the latch because it shares the `working` flag: a
+   * tap on one button while the other is in flight must do nothing.
+   */
+  const attempt = useAttempt();
+
   async function grant() {
-    if (!consent) return;
+    const attemptKey = attempt.begin();
+    if (attemptKey === null) return;
+    if (!consent) {
+      attempt.settle();
+      return;
+    }
     setWorking(true);
     setNote(null);
-    const r = await api.grantTrainingConsent(consent.currentVersion);
+    const r = await runAttempt(attemptKey, (key) =>
+      api.grantTrainingConsent(consent.currentVersion, key),
+    );
     setWorking(false);
     if (r.ok) {
+      attempt.complete();
       setConsent(r.data);
       haptics.commit();
     } else {
       // STALE_CONSENT_VERSION or a network failure both land here. Re-reading
-      // rather than guessing keeps `currentVersion` honest either way.
+      // rather than guessing keeps `currentVersion` honest either way. The key
+      // is kept: a stale version is a corrected request, and R16 §5 guarantees
+      // a validation refusal did not consume it.
+      attempt.settle();
       setNote(r.error.message);
       load();
     }
   }
 
   async function withdraw() {
+    if (attempt.begin() === null) return;
     setWorking(true);
     setNote(null);
     const r = await api.withdrawTrainingConsent();
     setWorking(false);
     if (r.ok) {
+      // A withdrawal is a decision of its own. The next grant is a new act and
+      // must not replay the key of the grant this just undid.
+      attempt.complete();
       setConsent(r.data);
       haptics.shift();
     } else {
+      attempt.settle();
       setNote(r.error.message);
     }
   }

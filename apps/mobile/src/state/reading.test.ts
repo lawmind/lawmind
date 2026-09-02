@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { ATTEMPT_KEY_PATTERN } from '../api/attempt';
 import { api } from '../api/client';
 import { useReadingStore, type Highlight } from './reading';
 
@@ -161,12 +162,17 @@ describe('a passage with no paragraph number', () => {
     );
 
     expect(result.ok).toBe(true);
-    expect(createAnnotation).toHaveBeenCalledWith('j-1', {
-      paragraphNumber: null,
-      paragraphIndex: 3,
-      quote: 'A passage from an unnumbered scan.',
-      matterId: undefined,
-    });
+    expect(createAnnotation).toHaveBeenCalledWith(
+      'j-1',
+      {
+        paragraphNumber: null,
+        paragraphIndex: 3,
+        quote: 'A passage from an unnumbered scan.',
+        matterId: undefined,
+      },
+      // R16: the key minted with the highlight and persisted beside it.
+      expect.stringMatching(ATTEMPT_KEY_PATTERN),
+    );
   });
 
   it('keeps it locally, with its server id, exactly as a numbered one', async () => {

@@ -6,7 +6,9 @@ import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { Text } from '../../components/Text';
+import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
+import { useAttempt } from '../../hooks/useAttempt';
 import { usePendingSave, type PendingSaveResult } from '../../state/pendingSave';
 import { usePractice } from '../../state/practice';
 import { color, radius, space } from '../../theme/tokens';
@@ -98,33 +100,80 @@ export function NewMatterScreen({
   const [partial, setPartial] = useState<{ matterId: string; result: PendingSaveResult } | null>(
     null,
   );
+  /** The matter create. One key per intentional matter, discarded once it exists. */
+  const attempt = useAttempt();
+  /**
+   * The held-save RETRY is a separate logical mutation with a separate latch —
+   * the annotation's own key lives on the persisted intent in `pendingSave.ts`,
+   * so this guards only the double tap on the retry button.
+   */
+  const heldAttempt = useAttempt();
 
   async function submit() {
-    if (!caseTitle.trim()) return setError('Give the matter a title.');
-    if (!court.trim()) return setError('Which court is this in?');
-    if (!clientName.trim()) return setError("Who is the client?");
+    /*
+      THE LATCH IS TAKEN FIRST, before validation and before `setSaving`. A
+      React state commit is asynchronous, so two taps in one frame both read the
+      old `saving` and both create a matter; a ref write is true on the next
+      statement. See `useAttempt`.
+    */
+    const attemptKey = attempt.begin();
+    if (attemptKey === null) return;
+
+    if (!caseTitle.trim()) {
+      attempt.settle();
+      return setError('Give the matter a title.');
+    }
+    if (!court.trim()) {
+      attempt.settle();
+      return setError('Which court is this in?');
+    }
+    if (!clientName.trim()) {
+      attempt.settle();
+      return setError("Who is the client?");
+    }
     if (nextHearingDate && !/^\d{4}-\d{2}-\d{2}$/.test(nextHearingDate)) {
+      attempt.settle();
       return setError('Next hearing date must be YYYY-MM-DD.');
     }
 
     setError(null);
     setSaving(true);
-    const res = await api.createMatter({
-      caseTitle: caseTitle.trim(),
-      cnrNumber: cnrNumber.trim() || null,
-      court: court.trim(),
-      caseType,
-      parties: { description: parties.trim() },
-      clientName: clientName.trim(),
-      ourSide,
-      nextHearingDate: nextHearingDate || null,
-    });
+    /*
+      `parties` STAYS `{ description }`. LCC's `POST /matters` currently returns
+      it as a JSON-ENCODED STRING (bus 1697): `matters/route.ts` writes
+      `${JSON.stringify(body.parties)}::jsonb` and postgres.js encodes the JS
+      string again, so the stored jsonb is a string SCALAR. NEW3 R18 classified
+      that as a backend/storage defect and LCC owns the repair; a defensive
+      `JSON.parse` here would make the UI look fixed today and break on the day
+      the server is corrected. What this client SENDS has always been right and
+      is unchanged.
+    */
+    const res = await runAttempt(attemptKey, (key) =>
+      api.createMatter(
+        {
+          caseTitle: caseTitle.trim(),
+          cnrNumber: cnrNumber.trim() || null,
+          court: court.trim(),
+          caseType,
+          parties: { description: parties.trim() },
+          clientName: clientName.trim(),
+          ourSide,
+          nextHearingDate: nextHearingDate || null,
+        },
+        key,
+      ),
+    );
     setSaving(false);
 
     if (!res.ok) {
+      // The key is kept: pressing Save again is the same intentional matter, and
+      // reusing it is what stops a lost response from creating a second one.
+      attempt.settle();
       setError(res.error.message);
       return;
     }
+    // The matter exists. A later tap is a NEW matter and gets a new key.
+    attempt.complete();
     void refresh();
 
     const matterId = res.data.matter.matterId;
@@ -150,15 +199,25 @@ export function NewMatterScreen({
    * `pendingSave` clears it only on success — so this simply runs it again.
    *
    * For an AUTHORITY this is free: the server answers 200 for a judgment already
-   * saved. For an ANNOTATION there is no server-side idempotency, so the store's
-   * single-flight latch is what stops a double tap here becoming two rows.
+   * saved. For an ANNOTATION it is now free too — R16's `Idempotency-Key` rides
+   * on the persisted intent, so a replay returns the original row rather than
+   * inserting a second. The store's single-flight latch and the synchronous
+   * guard here still stop two requests leaving the device at all.
    */
   async function retryHeldSave() {
-    if (!partial || saving) return;
+    // `saving` is state and therefore late; `heldAttempt` is the synchronous
+    // guard. Both are kept — the first drives the button's appearance, the
+    // second decides whether a second tap does anything.
+    if (!partial || heldAttempt.inFlight()) return;
+    if (heldAttempt.begin() === null) return;
     setSaving(true);
     const again = await runHeldSave(partial.matterId);
     setSaving(false);
-    if (again === null || again.kind === 'saved') return onCreated(partial.matterId);
+    if (again === null || again.kind === 'saved') {
+      heldAttempt.complete();
+      return onCreated(partial.matterId);
+    }
+    heldAttempt.settle();
     setPartial({ matterId: partial.matterId, result: again });
   }
 
