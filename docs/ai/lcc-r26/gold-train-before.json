@@ -1,0 +1,2493 @@
+{
+  "label": "R26_BEFORE",
+  "split": "train",
+  "collectedAt": "2026-09-02T12:22:33.933Z",
+  "depth": 50,
+  "embedder": "absent — dense arm did not run",
+  "n": 304,
+  "aggregate": {
+    "at10": 0.6414473684210527,
+    "at50": 0.6546052631578947
+  },
+  "retrievableToday": {
+    "n": 200,
+    "at10": 0.625,
+    "at50": 0.635
+  },
+  "byFamily": {
+    "adverse_authority": {
+      "n": 41,
+      "at10": 1,
+      "at50": 1
+    },
+    "case_title_identity": {
+      "n": 34,
+      "at10": 0.8823529411764706,
+      "at50": 0.8823529411764706
+    },
+    "criminal_code_transition": {
+      "n": 30,
+      "at10": 0,
+      "at50": 0.03333333333333333
+    },
+    "exact_identity": {
+      "n": 46,
+      "at10": 0.8260869565217391,
+      "at50": 0.8260869565217391
+    },
+    "long_narrative": {
+      "n": 35,
+      "at10": 0.6,
+      "at50": 0.6285714285714286
+    },
+    "pasted_passage": {
+      "n": 36,
+      "at10": 0.4444444444444444,
+      "at50": 0.4722222222222222
+    },
+    "statute": {
+      "n": 36,
+      "at10": 0.08333333333333333,
+      "at50": 0.1111111111111111
+    },
+    "supporting_authority": {
+      "n": 46,
+      "at10": 1,
+      "at50": 1
+    }
+  },
+  "scored": [
+    {
+      "id": "exact_identity:069aa468",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 164
+    },
+    {
+      "id": "exact_identity:07098b70",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 4,
+      "latencyMs": 169
+    },
+    {
+      "id": "exact_identity:079e5206",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 20,
+      "latencyMs": 79
+    },
+    {
+      "id": "exact_identity:07b017bf",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "exact_identity:082d310e",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 4,
+      "latencyMs": 35
+    },
+    {
+      "id": "exact_identity:0836398e",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 4,
+      "latencyMs": 139
+    },
+    {
+      "id": "exact_identity:0ac7e252",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 36
+    },
+    {
+      "id": "exact_identity:0bd3d7c3",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "exact_identity:0c0d0704",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 8,
+      "latencyMs": 45
+    },
+    {
+      "id": "exact_identity:0c2aa697",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 25,
+      "latencyMs": 56
+    },
+    {
+      "id": "exact_identity:0cedc15b",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 133
+    },
+    {
+      "id": "exact_identity:0e5c2965",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 25,
+      "latencyMs": 52
+    },
+    {
+      "id": "exact_identity:0fad02b7",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 4,
+      "latencyMs": 32
+    },
+    {
+      "id": "exact_identity:10c69a48",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 12,
+      "latencyMs": 41
+    },
+    {
+      "id": "exact_identity:12017219",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 3,
+      "resultCount": 3,
+      "latencyMs": 27
+    },
+    {
+      "id": "exact_identity:227015a0",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 3,
+      "latencyMs": 28
+    },
+    {
+      "id": "exact_identity:234e7f5a",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 4,
+      "latencyMs": 132
+    },
+    {
+      "id": "exact_identity:23f6ac9f",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 3,
+      "resultCount": 5,
+      "latencyMs": 38
+    },
+    {
+      "id": "exact_identity:25d4169e",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:2623ccb7",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "exact_identity:26938629",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "exact_identity:329c1a39",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 3,
+      "latencyMs": 33
+    },
+    {
+      "id": "exact_identity:32ff1649",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "exact_identity:33473d78",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 4,
+      "latencyMs": 134
+    },
+    {
+      "id": "exact_identity:33927879",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 19
+    },
+    {
+      "id": "exact_identity:34117961",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "exact_identity:3444053d",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "exact_identity:3998a949",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "exact_identity:39d7fb1f",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 4,
+      "latencyMs": 35
+    },
+    {
+      "id": "exact_identity:41182a3c",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 3,
+      "resultCount": 4,
+      "latencyMs": 31
+    },
+    {
+      "id": "exact_identity:41603a16",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:41f8e5ce",
+      "family": "exact_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:42d6534d",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "exact_identity:335cd89d",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:34d8adeb",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:439cc41f",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "exact_identity:43f0c1a9",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:441613e1",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "exact_identity:41b7d868",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 27
+    },
+    {
+      "id": "exact_identity:443bf46c",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 4,
+      "latencyMs": 146
+    },
+    {
+      "id": "exact_identity:4479bc2a",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 4,
+      "latencyMs": 44
+    },
+    {
+      "id": "exact_identity:44c6f1d8",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "exact_identity:44d8bc5b",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 28
+    },
+    {
+      "id": "exact_identity:44ebf115",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "exact_identity:6d4d3af5",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "exact_identity:4588cb8d",
+      "family": "exact_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:45bf894b",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 23
+    },
+    {
+      "id": "case_title_identity:45c159f3",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 24
+    },
+    {
+      "id": "case_title_identity:45c3c10d",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:45db6c1d",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:45e16922",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:45f0913c",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:460f612a",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 129
+    },
+    {
+      "id": "case_title_identity:462790a2",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 3,
+      "resultCount": 3,
+      "latencyMs": 25
+    },
+    {
+      "id": "case_title_identity:94aba08b",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 4
+    },
+    {
+      "id": "case_title_identity:477ab82d",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:95022617",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 3,
+      "latencyMs": 24
+    },
+    {
+      "id": "case_title_identity:955ec1d7",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 5,
+      "resultCount": 10,
+      "latencyMs": 5
+    },
+    {
+      "id": "case_title_identity:47ac2fe9",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 22
+    },
+    {
+      "id": "case_title_identity:47d56bf6",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 3,
+      "latencyMs": 24
+    },
+    {
+      "id": "case_title_identity:47d733d5",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:47e9227a",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 24
+    },
+    {
+      "id": "case_title_identity:47f8448e",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:4852adf1",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:4c686fff",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 2,
+      "resultCount": 3,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:5c288864",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 136
+    },
+    {
+      "id": "case_title_identity:08f38f3f",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:00ee73bd",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:39ad60e3",
+      "family": "case_title_identity",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:466982a2",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 2
+    },
+    {
+      "id": "case_title_identity:4684ad82",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 10,
+      "latencyMs": 33
+    },
+    {
+      "id": "case_title_identity:48d6ed4b",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:48dc97e0",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 10,
+      "latencyMs": 35
+    },
+    {
+      "id": "case_title_identity:48ff33fb",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 4,
+      "resultCount": 4,
+      "latencyMs": 25
+    },
+    {
+      "id": "case_title_identity:49e7fc1d",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 3
+    },
+    {
+      "id": "case_title_identity:49f33eb8",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 10,
+      "latencyMs": 150
+    },
+    {
+      "id": "case_title_identity:4affdd0e",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 7,
+      "latencyMs": 38
+    },
+    {
+      "id": "case_title_identity:4b0413f2",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "case_title_identity:a1949c8f",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 1
+    },
+    {
+      "id": "case_title_identity:fcdad5ab",
+      "family": "case_title_identity",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "statute:01160ef5",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 29,
+      "latencyMs": 27158
+    },
+    {
+      "id": "statute:01c97492",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 5,
+      "latencyMs": 2840
+    },
+    {
+      "id": "statute:022ef584",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 3,
+      "latencyMs": 40
+    },
+    {
+      "id": "statute:027d2070",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "statute:05566903",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 0
+    },
+    {
+      "id": "statute:067e654f",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 19,
+      "latencyMs": 20346
+    },
+    {
+      "id": "statute:0734d272",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": 18,
+      "resultCount": 22,
+      "latencyMs": 1567
+    },
+    {
+      "id": "statute:07fd5b7a",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "statute:088a8884",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 21,
+      "latencyMs": 1389
+    },
+    {
+      "id": "statute:0a237d34",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 39,
+      "latencyMs": 6664
+    },
+    {
+      "id": "statute:0e93b914",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 47,
+      "latencyMs": 1408
+    },
+    {
+      "id": "statute:11b5dd84",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 36,
+      "latencyMs": 22517
+    },
+    {
+      "id": "statute:16b41737",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "statute:16da6bef",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 39,
+      "latencyMs": 13441
+    },
+    {
+      "id": "statute:1f8ef143",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 15,
+      "latencyMs": 12244
+    },
+    {
+      "id": "statute:242ee9fa",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 34,
+      "latencyMs": 357
+    },
+    {
+      "id": "statute:2e759f9e",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "statute:2fbdf27c",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 35,
+      "latencyMs": 2029
+    },
+    {
+      "id": "statute:3617e17f",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 20,
+      "latencyMs": 343
+    },
+    {
+      "id": "statute:3681678b",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 29,
+      "latencyMs": 26928
+    },
+    {
+      "id": "statute:375564b5",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 27,
+      "latencyMs": 23202
+    },
+    {
+      "id": "statute:37b41178",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 14,
+      "latencyMs": 2228
+    },
+    {
+      "id": "statute:3dc05a1e",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "statute:3e851b33",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 25,
+      "latencyMs": 6732
+    },
+    {
+      "id": "statute:40d4fa21",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 43,
+      "latencyMs": 24958
+    },
+    {
+      "id": "statute:42444bf0",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": 3,
+      "resultCount": 41,
+      "latencyMs": 13528
+    },
+    {
+      "id": "statute:43b83cfc",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 11,
+      "latencyMs": 22844
+    },
+    {
+      "id": "statute:448d02f3",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 49,
+      "latencyMs": 491
+    },
+    {
+      "id": "statute:465bfb14",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 20,
+      "latencyMs": 10283
+    },
+    {
+      "id": "statute:476bf2ea",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 25,
+      "latencyMs": 4908
+    },
+    {
+      "id": "statute:48062b7f",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 36,
+      "latencyMs": 14933
+    },
+    {
+      "id": "statute:4a4039fb",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 46,
+      "latencyMs": 6012
+    },
+    {
+      "id": "statute:4cacb1c3",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 33,
+      "latencyMs": 3208
+    },
+    {
+      "id": "statute:50eebcc5",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 2
+    },
+    {
+      "id": "statute:560a4e5d",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 18,
+      "latencyMs": 82222
+    },
+    {
+      "id": "statute:564fa771",
+      "family": "statute",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 28,
+      "latencyMs": 31341
+    },
+    {
+      "id": "pasted_passage:47271a18",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 119
+    },
+    {
+      "id": "pasted_passage:8228c274",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 2,
+      "latencyMs": 228
+    },
+    {
+      "id": "pasted_passage:9706285c",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 19
+    },
+    {
+      "id": "pasted_passage:ef6ccd52",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 28
+    },
+    {
+      "id": "pasted_passage:4c2db360",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "pasted_passage:d29f6336",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 35,
+      "resultCount": 50,
+      "latencyMs": 918
+    },
+    {
+      "id": "pasted_passage:d24b46ee",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 151
+    },
+    {
+      "id": "pasted_passage:9bd1bd0f",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 8
+    },
+    {
+      "id": "pasted_passage:637b8ff9",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 16
+    },
+    {
+      "id": "pasted_passage:53bc2457",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 3,
+      "resultCount": 9,
+      "latencyMs": 436
+    },
+    {
+      "id": "pasted_passage:0fcc97aa",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "pasted_passage:4db39d38",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "pasted_passage:0e9a10b7",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 73
+    },
+    {
+      "id": "pasted_passage:3e0f45cd",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 46,
+      "latencyMs": 1082
+    },
+    {
+      "id": "pasted_passage:a9ef093b",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "pasted_passage:e7bb0b45",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 3
+    },
+    {
+      "id": "pasted_passage:5cd9afb6",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "pasted_passage:024f1c1c",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "pasted_passage:34e6a29d",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": 3,
+      "resultCount": 48,
+      "latencyMs": 262
+    },
+    {
+      "id": "pasted_passage:ac108db6",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "pasted_passage:f244643e",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 44
+    },
+    {
+      "id": "pasted_passage:2d9643d4",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 9
+    },
+    {
+      "id": "pasted_passage:96566ce0",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "pasted_passage:2163e70d",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 7
+    },
+    {
+      "id": "pasted_passage:06d64228",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 48,
+      "latencyMs": 675
+    },
+    {
+      "id": "pasted_passage:249d71b2",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 15
+    },
+    {
+      "id": "pasted_passage:83c9d894",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 53
+    },
+    {
+      "id": "pasted_passage:f1eeacff",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 40,
+      "latencyMs": 223
+    },
+    {
+      "id": "pasted_passage:bd24bdbb",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 42,
+      "latencyMs": 250
+    },
+    {
+      "id": "pasted_passage:02984553",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 50
+    },
+    {
+      "id": "pasted_passage:064810f2",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 13
+    },
+    {
+      "id": "pasted_passage:60e3c4a8",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "pasted_passage:02b722f0",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 115
+    },
+    {
+      "id": "pasted_passage:e35add86",
+      "family": "pasted_passage",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 21
+    },
+    {
+      "id": "pasted_passage:0ea146a2",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 50,
+      "latencyMs": 377
+    },
+    {
+      "id": "pasted_passage:12717cde",
+      "family": "pasted_passage",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "long_narrative:01864459",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "long_narrative:0207d37e",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "long_narrative:02670204",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 2,
+      "latencyMs": 32
+    },
+    {
+      "id": "long_narrative:02721695",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "long_narrative:02a1ae0e",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 14,
+      "resultCount": 35,
+      "latencyMs": 477
+    },
+    {
+      "id": "long_narrative:04dc95e0",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 253
+    },
+    {
+      "id": "long_narrative:04fc4850",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 48,
+      "latencyMs": 556
+    },
+    {
+      "id": "long_narrative:055c88f6",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "long_narrative:0827e704",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 4
+    },
+    {
+      "id": "long_narrative:08edea19",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 50,
+      "latencyMs": 249
+    },
+    {
+      "id": "long_narrative:0a6a6159",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 1159
+    },
+    {
+      "id": "long_narrative:0a9870be",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "long_narrative:0b2fd38c",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "long_narrative:0c19bc7f",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 1896
+    },
+    {
+      "id": "long_narrative:0ceb0704",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "long_narrative:0cf4affc",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 2,
+      "latencyMs": 38
+    },
+    {
+      "id": "long_narrative:0d8238a6",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "long_narrative:0db9a08d",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "long_narrative:0e261761",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 4,
+      "resultCount": 5,
+      "latencyMs": 362
+    },
+    {
+      "id": "long_narrative:0ee246ed",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 14
+    },
+    {
+      "id": "long_narrative:0ee7731b",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "long_narrative:0f1044aa",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 7
+    },
+    {
+      "id": "long_narrative:0f2dc2b3",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "long_narrative:0fc4009e",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "long_narrative:0fdba26f",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "long_narrative:100e3709",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "long_narrative:101070b4",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 89
+    },
+    {
+      "id": "long_narrative:108cdded",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 2,
+      "resultCount": 4,
+      "latencyMs": 49
+    },
+    {
+      "id": "long_narrative:1186fd13",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "long_narrative:1311b160",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 50,
+      "latencyMs": 1610
+    },
+    {
+      "id": "long_narrative:137af8b7",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 25
+    },
+    {
+      "id": "long_narrative:13ccb78c",
+      "family": "long_narrative",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "long_narrative:1530bf74",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 47,
+      "latencyMs": 991
+    },
+    {
+      "id": "long_narrative:15468783",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 3
+    },
+    {
+      "id": "long_narrative:155c6d7e",
+      "family": "long_narrative",
+      "retrievableToday": false,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "supporting_authority:0007d392",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 92
+    },
+    {
+      "id": "supporting_authority:0007d392",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 84
+    },
+    {
+      "id": "supporting_authority:0007d392",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 81
+    },
+    {
+      "id": "supporting_authority:001372d0",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "supporting_authority:001372d0",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "supporting_authority:00278c14",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 21
+    },
+    {
+      "id": "supporting_authority:0031b204",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 61
+    },
+    {
+      "id": "supporting_authority:003398d2",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "supporting_authority:003a6991",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "supporting_authority:003a6991",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "supporting_authority:004a5404",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "supporting_authority:004a5404",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "supporting_authority:005b76f0",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "supporting_authority:006896ae",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "supporting_authority:006896ae",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "supporting_authority:006896ae",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "supporting_authority:00695137",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "supporting_authority:007431fc",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "supporting_authority:007431fc",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "supporting_authority:009a0bc8",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 20
+    },
+    {
+      "id": "supporting_authority:009a0bc8",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "supporting_authority:00c62d27",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "supporting_authority:00d5d163",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 28
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 23
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 23
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 23
+    },
+    {
+      "id": "supporting_authority:0104c0d1",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 23
+    },
+    {
+      "id": "supporting_authority:010aadd9",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "supporting_authority:0123f4da",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 25
+    },
+    {
+      "id": "supporting_authority:0123f4da",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "supporting_authority:0123f4da",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "supporting_authority:0123f4da",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "supporting_authority:01caa94c",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 21
+    },
+    {
+      "id": "supporting_authority:01caa94c",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "supporting_authority:01fa5e78",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 14
+    },
+    {
+      "id": "supporting_authority:01fa5e78",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "supporting_authority:0215d78d",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "supporting_authority:021adea9",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "supporting_authority:02275ed6",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "supporting_authority:0229e862",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "supporting_authority:0229e862",
+      "family": "supporting_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "adverse_authority:002bf1a7",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "adverse_authority:002bf1a7",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "adverse_authority:006896ae",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "adverse_authority:006896ae",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "adverse_authority:00d674e7",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 20
+    },
+    {
+      "id": "adverse_authority:00d674e7",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "adverse_authority:0104c0d1",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "adverse_authority:0104c0d1",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "adverse_authority:0104c0d1",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 24
+    },
+    {
+      "id": "adverse_authority:01caa94c",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "adverse_authority:01caa94c",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "adverse_authority:03759ecd",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 13
+    },
+    {
+      "id": "adverse_authority:03759ecd",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "adverse_authority:03f81ef2",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "adverse_authority:042324c3",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 14
+    },
+    {
+      "id": "adverse_authority:0457c146",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "adverse_authority:0457c146",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "adverse_authority:04d9103c",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "adverse_authority:055764e9",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "adverse_authority:055764e9",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "adverse_authority:0564d3e3",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "adverse_authority:0564d3e3",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 5
+    },
+    {
+      "id": "adverse_authority:05a0e670",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 8
+    },
+    {
+      "id": "adverse_authority:05dca791",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 6
+    },
+    {
+      "id": "adverse_authority:05dca791",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 4
+    },
+    {
+      "id": "adverse_authority:06004b0e",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 16
+    },
+    {
+      "id": "adverse_authority:062cb4e4",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 12
+    },
+    {
+      "id": "adverse_authority:064dedbf",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 18
+    },
+    {
+      "id": "adverse_authority:072fdb35",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "adverse_authority:078ba97f",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 22
+    },
+    {
+      "id": "adverse_authority:0816b9de",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "adverse_authority:084da4fe",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "adverse_authority:085b7815",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 38
+    },
+    {
+      "id": "adverse_authority:088dfd7b",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 7
+    },
+    {
+      "id": "adverse_authority:08949049",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 26
+    },
+    {
+      "id": "adverse_authority:08a48081",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 16
+    },
+    {
+      "id": "adverse_authority:08a48081",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 11
+    },
+    {
+      "id": "adverse_authority:08bdf1c5",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 9
+    },
+    {
+      "id": "adverse_authority:08c9ec4b",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 32
+    },
+    {
+      "id": "adverse_authority:08c9ec4b",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 19
+    },
+    {
+      "id": "adverse_authority:08d5bf06",
+      "family": "adverse_authority",
+      "retrievableToday": true,
+      "rank": 1,
+      "resultCount": 1,
+      "latencyMs": 10
+    },
+    {
+      "id": "criminal_code_transition:0734d272",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": 17,
+      "resultCount": 47,
+      "latencyMs": 2381
+    },
+    {
+      "id": "criminal_code_transition:11b0b0c2",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 30850
+    },
+    {
+      "id": "criminal_code_transition:11d82b45",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 33,
+      "latencyMs": 3655
+    },
+    {
+      "id": "criminal_code_transition:1789e977",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 37,
+      "latencyMs": 2036
+    },
+    {
+      "id": "criminal_code_transition:1909c718",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 4352
+    },
+    {
+      "id": "criminal_code_transition:1eaa9324",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 39,
+      "latencyMs": 4894
+    },
+    {
+      "id": "criminal_code_transition:238c265a",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 29284
+    },
+    {
+      "id": "criminal_code_transition:30a28673",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 43,
+      "latencyMs": 1054
+    },
+    {
+      "id": "criminal_code_transition:31d22830",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 40,
+      "latencyMs": 1826
+    },
+    {
+      "id": "criminal_code_transition:33dab7a4",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 35,
+      "latencyMs": 21162
+    },
+    {
+      "id": "criminal_code_transition:3677fa51",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 39,
+      "latencyMs": 1408
+    },
+    {
+      "id": "criminal_code_transition:422e5612",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 39,
+      "latencyMs": 36519
+    },
+    {
+      "id": "criminal_code_transition:4e9ff614",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 4716
+    },
+    {
+      "id": "criminal_code_transition:4ff898e0",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 38,
+      "latencyMs": 1544
+    },
+    {
+      "id": "criminal_code_transition:5cdf1c52",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 47,
+      "latencyMs": 19496
+    },
+    {
+      "id": "criminal_code_transition:6fb9e9af",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 14,
+      "latencyMs": 1598
+    },
+    {
+      "id": "criminal_code_transition:76eb9f35",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 27,
+      "latencyMs": 6817
+    },
+    {
+      "id": "criminal_code_transition:78c68da1",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 0,
+      "latencyMs": 1
+    },
+    {
+      "id": "criminal_code_transition:7c73dca0",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 13,
+      "latencyMs": 1017
+    },
+    {
+      "id": "criminal_code_transition:7e29c2d7",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 4,
+      "latencyMs": 846
+    },
+    {
+      "id": "criminal_code_transition:829df9b7",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 27,
+      "latencyMs": 772
+    },
+    {
+      "id": "criminal_code_transition:87746f00",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 28,
+      "latencyMs": 16050
+    },
+    {
+      "id": "criminal_code_transition:9023a0b5",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 27,
+      "latencyMs": 1756
+    },
+    {
+      "id": "criminal_code_transition:9c702b64",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 20,
+      "latencyMs": 1453
+    },
+    {
+      "id": "criminal_code_transition:9e3f97c2",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 28,
+      "latencyMs": 4566
+    },
+    {
+      "id": "criminal_code_transition:a3b1acb9",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 1273
+    },
+    {
+      "id": "criminal_code_transition:b30d9fad",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 24,
+      "latencyMs": 3607
+    },
+    {
+      "id": "criminal_code_transition:b3a0b842",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 1,
+      "latencyMs": 2620
+    },
+    {
+      "id": "criminal_code_transition:b7374671",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 45,
+      "latencyMs": 1861
+    },
+    {
+      "id": "criminal_code_transition:bc5a7166",
+      "family": "criminal_code_transition",
+      "retrievableToday": true,
+      "rank": null,
+      "resultCount": 47,
+      "latencyMs": 3234
+    }
+  ]
+}

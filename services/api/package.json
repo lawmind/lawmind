@@ -47,7 +47,8 @@
     "ecourts:capture": "tsx src/court/raw-capture-cli.ts",
     "ecourts:captcha-sample": "tsx src/court/captcha-sample-cli.ts",
     "ecourts:canary": "tsx src/court/cause-list-canary-cli.ts",
-    "ecourts:asset": "tsx src/court/interface-asset-cli.ts"
+    "ecourts:asset": "tsx src/court/interface-asset-cli.ts",
+    "gold:quality": "tsx src/search/gold-quality-cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.12",

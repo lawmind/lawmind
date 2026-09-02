@@ -77,6 +77,10 @@ const NON_SERVING = new Map([
     'search/overruled-retrieval-audit-cli.ts',
     'CLI audit over known-overruled judgments, developer-facing output only',
   ],
+  [
+    'search/gold-quality-cli.ts',
+    'CLI gold scorer — measures target@k against a fixed split, renders nothing to an advocate',
+  ],
   ['search/retrieve.ts', 'the ranker itself — it RAISES the degradation, it does not consume it'],
 ]);
 

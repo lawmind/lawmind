@@ -826,12 +826,19 @@ async function rankWithinBoundedPopulation(
       ) AS tsq
       FROM unnest(${lexemes.map((l) => l.lexeme)}::text[]) AS lexeme
     )
+    -- The scalar-subquery form and the total order, for the reasons the
+    -- corpus-wide ranker in {@link sparseAny} records at length. Both sites had
+    -- the same two defects because they are the same query with a different
+    -- population in front of it, and fixing one would have left the other to be
+    -- rediscovered. THE \`MATERIALIZED\` FENCE ABOVE IS UNTOUCHED: it is what
+    -- makes the structured predicates run first, and this changes only how the
+    -- tsquery reaches the scan and how ties are settled.
     SELECT j.id
     FROM eligible e
-    JOIN judgments j ON j.id = e.id, q
-    WHERE q.tsq IS NOT NULL
-      AND j.full_text_tsv @@ q.tsq
-    ORDER BY ts_rank(j.full_text_tsv, q.tsq) DESC
+    JOIN judgments j ON j.id = e.id
+    WHERE (SELECT tsq FROM q) IS NOT NULL
+      AND j.full_text_tsv @@ (SELECT tsq FROM q)
+    ORDER BY ts_rank(j.full_text_tsv, (SELECT tsq FROM q)) DESC, j.judgment_date DESC, j.id DESC
     LIMIT ${CANDIDATE_DEPTH}`;
   return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
 }
@@ -1048,16 +1055,68 @@ async function sparseAny(
     q AS (
       SELECT to_tsquery('english', string_agg(quote_literal(lexeme), ' & ')) AS tsq FROM lex
     )
+    -- \`(SELECT tsq FROM q)\` RATHER THAN A JOIN AGAINST \`q\`, AND THE REASON IS
+    -- THE PLAN, NOT THE STYLE.
+    --
+    -- Written as \`FROM judgments j, q\` this is a join, so the planner builds a
+    -- Nested Loop with the one-row aggregate as the outer relation and the
+    -- \`judgments\` scan as the inner. A parallel-aware scan cannot sit on the
+    -- inner side of a nested loop, so the whole match set is read by ONE
+    -- backend — and the cost here is \`ts_rank\` detoasting the \`full_text_tsv\`
+    -- of every matched row, which is exactly the work that parallelises.
+    --
+    -- As an uncorrelated scalar subquery it becomes an InitPlan, evaluated once
+    -- before the scan, and the scan is then free to be a Parallel Bitmap Heap
+    -- Scan. Measured on this box, 2 September 2026, warm, over the three fixed
+    -- Gate-S1 research queries:
+    --
+    --   | matched rows | join (1 backend) | InitPlan (4 workers) |
+    --   | ---          | ---              | ---                  |
+    --   | 13,533       | 336 ms           | 105 ms               |
+    --   | 21,635       | 878 ms           | 152 ms               |
+    --   | 40,031       | 1,490 ms         | 207 ms               |
+    --
+    -- Same index, same match set, same ranks. The buffers are identical
+    -- (322,936 against 323,224); they are simply read by five processes rather
+    -- than one. NOTHING about admission, lexeme choice or ranking moves.
+    --
+    -- The three InitPlan scans below all read the same one-row in-memory CTE at
+    -- ~0.03 ms total, so naming \`q\` three times costs nothing measurable.
     SELECT j.id
-    FROM judgments j, q
-    WHERE q.tsq IS NOT NULL
-      AND j.full_text_tsv @@ q.tsq
+    FROM judgments j
+    WHERE (SELECT tsq FROM q) IS NOT NULL
+      AND j.full_text_tsv @@ (SELECT tsq FROM q)
       ${andBodyTextSafe(sql)}
       ${courtWhere(sql, filters)}
       ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
       ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
       ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
-    ORDER BY ts_rank(j.full_text_tsv, q.tsq) DESC
+    -- THE TIE-BREAK IS A CORRECTNESS FIX, NOT NEATNESS — AND THE COLUMN CHOICE
+    -- WAS MEASURED, NOT ASSUMED.
+    --
+    -- \`ts_rank\` saturates. Measured here on the fixed suite: for
+    -- \`corroboration & dying & declaration\`, **87 judgments score exactly
+    -- 0.9999997**, the maximum, and \`LIMIT 50\` takes fifty of them. Which
+    -- fifty was decided by heap order — so the same request answered by a
+    -- different plan returned a different 37 authorities, and neither set was
+    -- more correct. An advocate cannot see that and cannot act on it. It also
+    -- makes the parallel plan above safe by construction rather than by luck: a
+    -- Gather Merge over per-worker heapsorts breaks ties any way it likes.
+    --
+    -- **\`j.id\` ALONE WAS TRIED FIRST AND IT COST GOLD.** A uuid is total but
+    -- uncorrelated with anything an advocate wants, and on the TRAIN split it
+    -- displaced three targets that the previous heap order had happened to
+    -- return — including \`2025:RJ-JP:22340-DB\`, a neutral citation that names
+    -- NINE connected matters, where the tie is between nine equally-cited
+    -- documents and uuid order picked a different one.
+    --
+    -- \`judgment_date DESC\` is the repo's own answer, already in use one
+    -- function below: *"the id makes it total, so two identical requests cannot
+    -- return two different pages"*. Among authorities the ranker cannot separate,
+    -- the later one is the one an advocate wants first, and \`id DESC\` after it
+    -- keeps the order total. \`judgment_date\` is \`NOT NULL\` (0001, and zero
+    -- nulls measured), so there is no NULLS-FIRST trap to guard against.
+    ORDER BY ts_rank(j.full_text_tsv, (SELECT tsq FROM q)) DESC, j.judgment_date DESC, j.id DESC
     LIMIT ${CANDIDATE_DEPTH}
   `;
   return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
