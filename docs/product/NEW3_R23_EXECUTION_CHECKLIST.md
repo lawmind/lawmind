@@ -29,7 +29,8 @@ unfinished NEW3 action.
 - [x] Phase F — Gate S1, concurrency, citation hold, NEW1 coverage, and HNSW
       precheck state recorded without reopening benchmark or starting HNSW.
 - [x] Phase G — LCC R28 and RCC R25 P0 handoffs sent before final documentation.
-- [ ] Phase H — exact NEW3-only release commit and post-commit proof pending.
+- [x] Phase H — exact NEW3-only release commit `f45c3f0` and post-commit path,
+      worktree, and NEW1-continuity proofs passed.
 - [!] Downstream implementation — public deletion resource remains an RCC/store
   blocker. LCC R28 subsequently closed physical split activation; the
   transient API typecheck defect reported in bus `1760` also closed.
@@ -293,73 +294,75 @@ status. Do not infer from log order, filenames, or reports.
 
 ## H · NEW3-only commit
 
-- [ ] Confirm the diff contains NEW3-owned files only.
-- [ ] Re-anchor against the original R23 brief.
-- [ ] Acquire the `GIT_COMMIT` lease.
-- [ ] Stage exact files only; no broad staging.
-- [ ] Review `rtk git diff --cached` before commit.
-- [ ] Commit with the repository's NEW3 convention.
-- [ ] Prove the commit did not alter another lane's files or background workers.
-- [ ] Capture `HEAD_FINAL = ________________________________`.
-- [ ] Capture `COMMITS = ________________________________`.
+- [x] Confirm the diff contains NEW3-owned files only.
+- [x] Re-anchor against the original R23 brief.
+- [x] Acquire the `GIT_COMMIT` lease.
+- [x] Stage exact files only; no broad staging.
+- [x] Review `rtk git diff --cached` before commit.
+- [x] Commit with the repository's NEW3 convention.
+- [x] Prove the commit did not alter another lane's files or background workers.
+- [x] Capture the release commit and emit exact post-seal `HEAD_FINAL` in the
+      user handoff (a Git commit cannot contain its own object ID).
+- [x] Capture `COMMITS = f45c3f029f4ebba8430ea9b79505d6da4da847b6`
+      plus this checklist-seal commit.
 
 ## Final release record
 
 Do not publish `YES`/`PASS` values without attached observation evidence.
 
 ```text
-HEAD_START =
-INTEGRATION_BASE =
-HEAD_FINAL =
-COMMITS =
+HEAD_START = 6124b5f02754d2a61db590d1630a7f0287c8fd8f
+INTEGRATION_BASE = 6124b5f02754d2a61db590d1630a7f0287c8fd8f
+HEAD_FINAL = POST-SEAL OBSERVATION IN USER HANDOFF
+COMMITS = f45c3f029f4ebba8430ea9b79505d6da4da847b6 + checklist-seal commit
 
-NEW3_F60BFAAA =
-LCC_6124B5F0 =
-RCC_7CC830A1 =
-NEW2_F5CE4D44 =
+NEW3_F60BFAAA = ANCESTOR
+LCC_6124B5F0 = INTEGRATION_BASE
+RCC_7CC830A1 = ANCESTOR
+NEW2_F5CE4D44 = ANCESTOR
 
-INTEGRATION_BASE_READY =
-INTEGRATION_CONFLICT =
+INTEGRATION_BASE_READY = YES
+INTEGRATION_CONFLICT = NONE
 
-R17_AVAILABLE_SAVE =
-R17_UNAVAILABLE_READ =
-R17_MISSING_TARGET_WRITE =
-R17_IDEMPOTENT_UNAVAILABLE =
-R17_RECOVERY =
+R17_AVAILABLE_SAVE = PASS
+R17_UNAVAILABLE_READ = PASS
+R17_MISSING_TARGET_WRITE = PASS
+R17_IDEMPOTENT_UNAVAILABLE = PASS
+R17_RECOVERY = PASS
 
-REFUSAL_TOTAL =
-R17_BACKEND_ACCEPTED =
-R17_CLIENT_ACCEPTED =
-R17_RELEASED =
+REFUSAL_TOTAL = PASS
+R17_BACKEND_ACCEPTED = YES
+R17_CLIENT_ACCEPTED = YES
+R17_RELEASED = YES
 
-DB_ROLE_ROUTING_INVARIANT =
-CROSS_ROLE_JOIN_ALLOWED = MUST BE NO
-CROSS_ROLE_FK_ALLOWED = MUST BE NO
-FDW_DBLINK_ALLOWED = MUST BE NO
+DB_ROLE_ROUTING_INVARIANT = EVERY_CURRENT_V1_QUERY_USES_OWNER_ROLE
+CROSS_ROLE_JOIN_ALLOWED = NO
+CROSS_ROLE_FK_ALLOWED = NO
+FDW_DBLINK_ALLOWED = NO
 
 ROLE_ROUTING_REGRESSION_GUARD_REQUIRED = YES
 
-EXTERNAL_DELETION_WEB_CONTRACT =
+EXTERNAL_DELETION_WEB_CONTRACT = FROZEN
 IDENTITY_ONLY_EXTERNAL_DELETE_REQUIRED = YES
 
-LOCAL_GATE_S1 =
-GATE_S1_CONCURRENCY =
+LOCAL_GATE_S1 = PASS_LOCAL_ONLY; R28 REPEAT HAS ONE OF THREE OVER BOUND
+GATE_S1_CONCURRENCY = DEGRADES_GRADUALLY
 GATE_S1_STAGING = UNPROVEN
 
-ANDROID_LOCAL_ACCEPTANCE =
+ANDROID_LOCAL_ACCEPTANCE = PENDING_DEVICE
 
-NEW1_COVERAGE =
-HNSW_PRECHECK_DUE =
+NEW1_COVERAGE = 5,863,970 / 7,654,179 = 76.6114% AT RELEASE SEAL
+HNSW_PRECHECK_DUE = YES
 
 CITATION_BULK_APPLY = HOLD
 
-LCC_R28_AUTHORIZED =
-RCC_R25_AUTHORIZED =
+LCC_R28_AUTHORIZED = YES; PHYSICAL_DB_SPLIT_ACTIVATION = PASS
+RCC_R25_AUTHORIZED = YES; REAL_SERVER_CONSUMPTION = PASS
 
-READY_FOR_REMOTE_SPEND_DECISION =
-PAID_REMOTE_INFRA_AUTHORIZED = MUST BE NO
+READY_FOR_REMOTE_SPEND_DECISION = NO
+PAID_REMOTE_INFRA_AUTHORIZED = NO
 
-BLOCKERS =
+BLOCKERS = PHYSICAL_ANDROID_DEVICE; PUBLIC_EXTERNAL_DELETION_SITE; GATE_S1_STAGING; DEFERRED_P2_CCR_LCC_R28_01
 ```
 
 ## Stop conditions
