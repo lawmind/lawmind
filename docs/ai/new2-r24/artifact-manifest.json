@@ -1,0 +1,44 @@
+{
+  "artifact": "NEW2_R24_IMMUTABLE_ARTIFACT_MANIFEST",
+  "executionPopulationId": "NEW2-R24-EXEC-53f01c212644524f",
+  "executionPopulationHash": "53f01c212644524f9611ca4856820931cf3f839384559a5f739df0257e6bf3e5",
+  "parentPopulationId": "NEW2-R23-SAFE-e5caecc2b05a4d04",
+  "parentPopulationHash": "e5caecc2b05a4d047291f4b2bad45e108b6a7135006da502cced8d5b6ab990b4",
+  "receiptHash": "a54bc5d1230be2f2f4d3175c206f165ee1412252bd734eb0df0918edf1187a5b",
+  "edgeCandidatePopulationId": "NEW2-R24-EDGE-CANDIDATE-cdd96b0f3b6c7215",
+  "edgeCandidatePopulationHash": "cdd96b0f3b6c7215b94b8130155cc952b4494404b7ac77d3b2601d8552390a32",
+  "edgeCandidates": 1556947,
+  "edgeCandidateRowFile": {
+    "path": "docs/ai/new2-r24/edge-candidate-population.jsonl",
+    "committed": false,
+    "reason": "row-level artifact, gitignored per the repository convention; identified by sha256 and line count",
+    "lines": 1556947,
+    "bytes": 1825438019,
+    "sha256": "e30c5de00e906abce5573df9b8e2bfaa1aa88ec1360c0b55b19f574c76aa99cc"
+  },
+  "files": {
+    "r24-exec-manifest.json": "367bf6e44b53dd7701791e2a86333d0f445d0cd6139a4fc3d0551bc28c6963f1",
+    "prewrite-live-check.json": "34e85fa6b9fbbd7c47f140d5ad92bd83f04c6e7022e2e4a986d43707160bab4b",
+    "transaction-result.json": "9012457d8aa837e169dbc4382a1453ff800ae5d5129d8591f9093e940d0a18f8",
+    "postcommit-readback.json": "7c290fee4ec664b9c3aa347cb14231f2beba367b4848be078db249ba2b57189c",
+    "receipt.json": "a54bc5d1230be2f2f4d3175c206f165ee1412252bd734eb0df0918edf1187a5b",
+    "receipt-hash.json": "7ff0cc0c205fa9c1faaba08ca82fb97787c9caba3993c7d997ac4b9bc21f3802",
+    "edge-candidate-population.json": "7ff8a9114e6901218c69662865f043d4603328ec545ce3f80b76f1a650aaf23e",
+    "edge-candidate-source-readability.json": "343dc89d7c188ff46c3f19afb5534847e93b67ae7696b1e100e46ca3696d74d4",
+    "furniture-guard-reach.json": "f06ac39a96c9d77d165b178dc14f44a8a84399f431fcfb0e64641bfb227fbe96",
+    "edge-falsifier.json": "ad93372f4ce2ac65dcd1c31eac43a300b3a2d72886443d5f2e30a1c3161e82d1",
+    "zero-mutation-proof.json": "08173eb19d682db2fd93fa09691df496925a6c862a4d2755a0b5aca11516f15b"
+  },
+  "mutationLedger": {
+    "canonicalRows": 539,
+    "edges": 0,
+    "aliases": 0,
+    "migrations": 0,
+    "network": false
+  },
+  "canonicalCorrection": "PASS",
+  "edgesChangedByR24": 0,
+  "aliasesChangedByR24": 0,
+  "edgePopulationReadyForIndependentAudit": "YES",
+  "citationBulkApply": "HOLD"
+}

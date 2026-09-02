@@ -1,0 +1,186 @@
+{
+  "artifact": "NEW2_R24_EDGE_INTERNAL_FALSIFIER",
+  "populationId": "NEW2-R24-EDGE-CANDIDATE-cdd96b0f3b6c7215",
+  "candidateEdges": 1556947,
+  "excludedSelfCitation": 1003934,
+  "excludedCommonOrderPageFurniture": 0,
+  "excludedTargetNotHeld": 3137718,
+  "excludedRefused": 16130843,
+  "ambiguous": 354196,
+  "untestable": 5,
+  "untestableBreakdown": {
+    "staleIndex": 0,
+    "ambiguousSourceOwnership": 5,
+    "damagedSource": 0
+  },
+  "knownFalsePins": {
+    "meghalayaClasses": 2,
+    "blocked": 2,
+    "cases": [
+      {
+        "sourceJudgmentId": "093f1c76-f235-4896-bb34-ecdc13f09e5e",
+        "token": "2025:MLHC:405-DB",
+        "tokenFound": true,
+        "offset": 1161,
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "blocked": true,
+        "storedOccurrenceOutcomes": [
+          "EXCLUDED_AMBIGUOUS"
+        ],
+        "admittedOccurrences": 0,
+        "inCandidatePopulation": false
+      },
+      {
+        "sourceJudgmentId": "a8d2bb17-0cb5-42bc-9b8d-e5550170eb76",
+        "token": "2025:MLHC:384-DB",
+        "tokenFound": true,
+        "offset": 896,
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "blocked": true,
+        "storedOccurrenceOutcomes": [
+          "UNTESTABLE_AMBIGUOUS_SOURCE_OWNERSHIP"
+        ],
+        "admittedOccurrences": 0,
+        "inCandidatePopulation": false
+      }
+    ],
+    "survivingInPopulation": 0,
+    "admittedIntoCandidatePopulation": 0
+  },
+  "adversarialFixtures": {
+    "total": 12,
+    "correct": 12,
+    "trueEdgesWronglyRejected": 0,
+    "falsePinsSurviving": 0,
+    "results": [
+      {
+        "id": "known-false-405",
+        "category": "known_false_pin",
+        "token": "2025:MLHC:405-DB",
+        "offset": 0,
+        "expected": "BLOCK",
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "known-false-384",
+        "category": "known_false_pin",
+        "token": "2025:MLHC:384-DB",
+        "offset": 0,
+        "expected": "BLOCK",
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "true-suffix",
+        "category": "true_outgoing_suffixed",
+        "token": "2026:PHHC:027747-DB",
+        "offset": 10,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      },
+      {
+        "id": "foreign",
+        "category": "foreign_citation_reference",
+        "token": "2025:DHC:8491-DB",
+        "offset": 22,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      },
+      {
+        "id": "short",
+        "category": "short_order",
+        "token": "2023:PHHC:081753-DB",
+        "offset": 16,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      },
+      {
+        "id": "common",
+        "category": "common_order",
+        "token": "2025:MLHC:405-DB",
+        "offset": 0,
+        "expected": "BLOCK",
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "multiple",
+        "category": "multiple_case_order",
+        "token": "2025:MLHC:405-DB",
+        "offset": 0,
+        "expected": "BLOCK",
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "header",
+        "category": "page_header_footer",
+        "token": "2024:DHC:9465-DB",
+        "offset": 7,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      },
+      {
+        "id": "prose",
+        "category": "ordinary_prose",
+        "token": "2024:DHC:5183-DB",
+        "offset": 24,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      },
+      {
+        "id": "self",
+        "category": "self_citation",
+        "token": "2023:PHHC:081753-DB",
+        "offset": 18,
+        "expected": "BLOCK",
+        "disposition": "CANONICAL_SELF_IDENTITY",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "connected",
+        "category": "connected_matter",
+        "token": "2025:MLHC:405-DB",
+        "offset": 0,
+        "expected": "BLOCK",
+        "disposition": "COMMON_ORDER_PAGE_FURNITURE",
+        "prediction": "BLOCK",
+        "correct": true
+      },
+      {
+        "id": "fb",
+        "category": "db_fb_citation",
+        "token": "2024:DHC:5183-FB",
+        "offset": 18,
+        "expected": "ALLOW",
+        "disposition": "OUTGOING_CITATION_CANDIDATE",
+        "prediction": "ALLOW",
+        "correct": true
+      }
+    ]
+  },
+  "forbiddenSignals": [
+    "court similarity",
+    "date similarity",
+    "title similarity",
+    "party similarity",
+    "semantic similarity"
+  ],
+  "readyForIndependentAudit": "YES"
+}

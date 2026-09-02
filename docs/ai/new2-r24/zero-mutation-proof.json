@@ -1,0 +1,34 @@
+{
+  "artifact": "NEW2_R24_ZERO_EDGE_MUTATION_PROOF",
+  "session": {
+    "mode": "READ_ONLY",
+    "proof": "REFUSED_READ_ONLY_TRANSACTION"
+  },
+  "edges": {
+    "before": {
+      "edges": "22411265",
+      "newest": "2026-09-01 14:20:19.364856+00",
+      "unresolved": "22183643"
+    },
+    "after": {
+      "edges": "22411265",
+      "newest": "2026-09-01 14:20:19.364856+00",
+      "unresolved": "22183643"
+    },
+    "changed": false
+  },
+  "aliases": {
+    "before": {
+      "aliases": "4394",
+      "hash": "81a898e6fb01eecda93fa24a55527721"
+    },
+    "after": {
+      "aliases": "4394",
+      "hash": "81a898e6fb01eecda93fa24a55527721"
+    },
+    "changed": false
+  },
+  "edgesChangedByR24": 0,
+  "aliasesChangedByR24": 0,
+  "citationBulkApply": "HOLD"
+}

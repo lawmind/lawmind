@@ -1,0 +1,117 @@
+{
+  "artifact": "NEW2_R24_EDGE_CANDIDATE_POPULATION",
+  "populationId": "NEW2-R24-EDGE-CANDIDATE-cdd96b0f3b6c7215",
+  "populationHash": "cdd96b0f3b6c7215b94b8130155cc952b4494404b7ac77d3b2601d8552390a32",
+  "derivedFrom": {
+    "canonicalCorrection": "NEW2-R24 PHASE A, COMMITTED",
+    "reusedPriorPopulation": false,
+    "priorPopulationsConsidered": [
+      "R19",
+      "R20",
+      "R21",
+      "R22"
+    ],
+    "note": "Generated from the corpus as it stands after the 539 corrections. No R19-R22 edge-apply population was read."
+  },
+  "generatedAt": "2026-09-02T07:40:19.479Z",
+  "session": {
+    "mode": "READ_ONLY",
+    "proof": "REFUSED_READ_ONLY_TRANSACTION"
+  },
+  "frontier": {
+    "citationKeyFrontier": {
+      "cursor_at": "2026-09-01 14:10:15.122617+00",
+      "cursor_id": "5b685b7c-26cc-4d66-95fb-14383fae9d34",
+      "scanned": "27752149"
+    },
+    "judgmentFrontier": {
+      "created_at": "2026-09-01 14:10:15.122617+00",
+      "id": "5b685b7c-26cc-4d66-95fb-14383fae9d34"
+    }
+  },
+  "resolutionIndex": {
+    "keyRows": 1432441,
+    "distinctKeys": 1225136,
+    "dirtyJudgments": 0,
+    "dirtyReasons": [],
+    "quarantinedJudgments": 32
+  },
+  "keyLevelCensus": {
+    "REFUSED:empty": {
+      "citations": 1,
+      "occurrences": 16130016
+    },
+    "TARGET_NOT_HELD": {
+      "citations": 121958,
+      "occurrences": 3137718
+    },
+    "UNIQUE": {
+      "citations": 1012395,
+      "occurrences": 2560886
+    },
+    "AMBIGUOUS": {
+      "citations": 156294,
+      "occurrences": 354196
+    },
+    "REFUSED:registry despatch stamp, not a citation": {
+      "citations": 232,
+      "occurrences": 827
+    }
+  },
+  "occurrenceCensus": {
+    "EXCLUDED_TARGET_NOT_HELD": 3137718,
+    "EXCLUDED_REFUSED": 16130843,
+    "EXCLUDED_SELF_CITATION": 1003934,
+    "EXCLUDED_AMBIGUOUS": 354196,
+    "UNTESTABLE_AMBIGUOUS_SOURCE_OWNERSHIP": 5,
+    "EDGE_CANDIDATE": 1556947
+  },
+  "occurrencesExamined": 22183643,
+  "guardInputs": 1556947,
+  "candidates": 1556947,
+  "populationFile": {
+    "path": "docs/ai/new2-r24/edge-candidate-population.jsonl",
+    "committed": false,
+    "reason": "row-level artifact, gitignored per the repository convention; identified by sha256 and line count",
+    "lines": 1556947,
+    "bytes": 1825438019,
+    "sha256": "e30c5de00e906abce5573df9b8e2bfaa1aa88ec1360c0b55b19f574c76aa99cc"
+  },
+  "evidenceFields": [
+    "occurrenceId",
+    "sourceJudgmentId",
+    "targetJudgmentId",
+    "rawToken",
+    "canonicalKey",
+    "normalisedCitation",
+    "sourceCharOffset",
+    "sourceSpanChars",
+    "sourceWindowSha256",
+    "sourceArtifact",
+    "sourceContentHash",
+    "targetArtifact",
+    "targetContentHash",
+    "resolutionPath",
+    "aliasUsed",
+    "graphDisposition",
+    "sourceCourt",
+    "targetCourt",
+    "crossCourt",
+    "sourceTextQuality",
+    "sourceScriptQuality",
+    "writerPath",
+    "relationship"
+  ],
+  "unknownsPreserved": {
+    "relationship": "UNKNOWN on every candidate — a treatment is a legal reading, not a string match",
+    "courtUnknownOnEitherSide": 0,
+    "crossCourtCandidates": 1555855
+  },
+  "mutation": {
+    "edges": 0,
+    "aliases": 0,
+    "canonicalRows": 0,
+    "migrations": 0,
+    "network": false
+  }
+}

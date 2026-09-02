@@ -1,0 +1,42 @@
+{
+  "artifact": "NEW2_R24_EDGE_CANDIDATE_SOURCE_READABILITY",
+  "populationId": "NEW2-R24-EDGE-CANDIDATE-cdd96b0f3b6c7215",
+  "linesRead": 1556947,
+  "linesExpected": 1556947,
+  "agreesWithFrozenCount": true,
+  "sourceTextQuality": {
+    ">=0.95": 1479012,
+    "0.85-0.95": 71181,
+    "0.50-0.85": 6678,
+    "<0.50": 76
+  },
+  "sourceScriptQuality": {
+    "UNKNOWN": 1540805,
+    "damaged_other": 10427,
+    "legacy_font_ascii": 5715
+  },
+  "resolutionPath": {
+    "alias": 1549125,
+    "neutral": 5004,
+    "reporter": 2818
+  },
+  "crossCourt": {
+    "true": 1555855,
+    "false": 1092
+  },
+  "targetConcentration": {
+    "distinctTargets": 5272,
+    "busiestTarget": {
+      "judgmentId": "c37fe434-f3c2-4bb6-a4f6-d97ffc682c15",
+      "candidates": 66211
+    },
+    "top10Candidates": 305288,
+    "top100Candidates": 644192,
+    "top1000Candidates": 1228034,
+    "top10Share": 0.1961,
+    "top100Share": 0.4138,
+    "top1000Share": 0.7887,
+    "note": "An alias key is UNIQUE by index, so the alias path can never report AMBIGUOUS. Its uniqueness is a property of the index, not an observation about the corpus, and almost every candidate here arrives on it."
+  },
+  "guardNote": "Readability is EVIDENCE on the candidate, never a block. The generator refuses a candidate only when the source text is absent, because text_quality is known to score unreadable documents above its own floor and a guard built on it would refuse good sources while admitting damaged ones."
+}

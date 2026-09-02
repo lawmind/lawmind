@@ -1,0 +1,62 @@
+{
+  "artifact": "NEW2_R24_PREWRITE_LIVE_CHECK",
+  "observedAt": "2026-09-02T07:08:43.613Z",
+  "rowsChecked": 539,
+  "rowsFound": 539,
+  "driftRows": 0,
+  "drift": [],
+  "preflight": {
+    "ok": true,
+    "refusals": []
+  },
+  "targetHolder": {
+    "keysProbed": 95,
+    "keysWithHolders": 0,
+    "positiveControl": {
+      "citationKey": "1950INSC36",
+      "holders": 1,
+      "pass": true
+    }
+  },
+  "frontier": {
+    "createdAt": "2026-09-01 14:10:15.122617+00",
+    "judgmentId": "5b685b7c-26cc-4d66-95fb-14383fae9d34"
+  },
+  "frozenFrontier": {
+    "createdAt": "2026-08-31 14:09:11.196548+00",
+    "judgmentId": "b66f80ad-7cea-4d85-bd94-b8980ad30873"
+  },
+  "edgesBefore": {
+    "edges": "22411265",
+    "newest": "2026-09-01 14:20:19.364856+00",
+    "unresolved": "22183643",
+    "regionRows": "1179",
+    "regionHash": "e581c77789d06200031a0fefc60d13a7"
+  },
+  "aliasesBefore": {
+    "aliases": "4394",
+    "hash": "81a898e6fb01eecda93fa24a55527721"
+  },
+  "citationKeyDirtyBefore": "0",
+  "new1Before": {
+    "rows": "5426000",
+    "newest": "2026-09-02 07:03:21.183077+00",
+    "snapshots": [
+      {
+        "snapshot_hash": "5b5d02384b46c96c",
+        "generation": "coarse-v2",
+        "definition_version": "document-vectors-v2",
+        "state": "ACTIVE",
+        "manifest_sha256": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7"
+      },
+      {
+        "snapshot_hash": "UNIDENTIFIED_LEGACY_V1",
+        "generation": "legacy-v1",
+        "definition_version": "UNKNOWN",
+        "state": "SEALED",
+        "manifest_sha256": "NULL"
+      }
+    ]
+  },
+  "quarantineRowsObserved": 32
+}

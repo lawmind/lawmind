@@ -1,0 +1,15 @@
+{
+  "artifact": "NEW2_R24_POSTCOMMIT_READBACK",
+  "observedAt": "2026-09-02T07:08:57.495Z",
+  "connection": "FRESH_SESSION_AFTER_COMMIT",
+  "rowsRead": 539,
+  "exact": 539,
+  "expected": 539,
+  "counts": {
+    "DETERMINISTIC_TO_NULL": 441,
+    "DETERMINISTIC_TO_REPLACE": 86,
+    "DETERMINISTIC_SUFFIX_REPLACE": 12
+  },
+  "failures": [],
+  "pass": true
+}

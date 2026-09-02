@@ -1,0 +1,45 @@
+{
+  "artifact": "NEW2_R24_TRANSACTION_RESULT",
+  "executionPopulationId": "NEW2-R24-EXEC-53f01c212644524f",
+  "executionPopulationHash": "53f01c212644524f9611ca4856820931cf3f839384559a5f739df0257e6bf3e5",
+  "transaction": "ONE_TRANSACTION",
+  "commit": "YES",
+  "applied": 539,
+  "perDisposition": {
+    "DETERMINISTIC_TO_NULL": 441,
+    "DETERMINISTIC_TO_REPLACE": 86,
+    "DETERMINISTIC_SUFFIX_REPLACE": 12
+  },
+  "inTransactionValidation": {
+    "validation": "PASS",
+    "counts": {
+      "DETERMINISTIC_TO_NULL": 441,
+      "DETERMINISTIC_TO_REPLACE": 86,
+      "DETERMINISTIC_SUFFIX_REPLACE": 12
+    },
+    "nullRows": 441,
+    "quarantineUnchanged": true,
+    "edgesAtStart": {
+      "edges": "22411265",
+      "newest": "2026-09-01 14:20:19.364856+00",
+      "unresolved": "22183643",
+      "regionRows": "1179",
+      "regionHash": "e581c77789d06200031a0fefc60d13a7"
+    },
+    "edgesAtEnd": {
+      "edges": "22411265",
+      "newest": "2026-09-01 14:20:19.364856+00",
+      "unresolved": "22183643",
+      "regionRows": "1179",
+      "regionHash": "e581c77789d06200031a0fefc60d13a7"
+    },
+    "aliasesAtStart": {
+      "aliases": "4394",
+      "hash": "81a898e6fb01eecda93fa24a55527721"
+    },
+    "aliasesAtEnd": {
+      "aliases": "4394",
+      "hash": "81a898e6fb01eecda93fa24a55527721"
+    }
+  }
+}

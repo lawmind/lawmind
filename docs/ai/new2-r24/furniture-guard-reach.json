@@ -1,0 +1,27 @@
+{
+  "artifact": "NEW2_R24_FURNITURE_GUARD_REACH",
+  "question": "The guard is proven correct on fixtures and on both real documents, yet excluded 0 of 1,556,947 candidates. Is it unnecessary, or unreachable?",
+  "answer": "UNREACHABLE_AT_CURRENT_STORED_OFFSETS",
+  "storedOccurrencesCarryingADbOrFbSuffix": "216336",
+  "meghalayaOccurrencesImmediatelyFollowedByAnotherNeutralToken": "0",
+  "probes": [
+    {
+      "label": "every stored occurrence carrying a -DB or -FB suffix",
+      "where": "jc.normalised_citation ~ '-(DB|FB)$'",
+      "sampled": 3000,
+      "furniture": 0,
+      "outgoing": 3000,
+      "sourceTextAbsent": 0
+    },
+    {
+      "label": "every stored 2025 Meghalaya occurrence",
+      "where": "jc.normalised_citation like '2025:MLHC:%'",
+      "sampled": 1091,
+      "furniture": 0,
+      "outgoing": 1091,
+      "sourceTextAbsent": 0
+    }
+  ],
+  "mechanism": "extractCitations de-duplicates on the normalised form and keeps the first appearance, so a citation printed both inside a concatenated common-order stamp and in ordinary prose stores the prose offset. The stamp is still in the document text; no stored row points at it.",
+  "consequence": "The guard is LATENT, not redundant. citations.ts already requires a re-extraction once the stored keys are backfilled; that re-extraction is what turns stamp occurrences into rows, and this guard is what stops them becoming false pins. It must not be removed on the strength of a zero."
+}
