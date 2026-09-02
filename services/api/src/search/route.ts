@@ -585,6 +585,88 @@ async function runSearch(
     );
   }
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * A REFUSAL THE ADVOCATE CAN ACT ON, IN MILLISECONDS, INSTEAD OF A 15s 503
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * `structured.ts` carries the measurement. What matters here is the SHAPE of
+   * the answer, and every field below already exists on the wire and is already
+   * parsed by shipped clients:
+   *
+   * - `degraded: ['sparse_unbounded']` — the lexical arm refused to rank, which
+   *   is exactly what happened. The structured route's `full_text_tsv` work now
+   *   goes through the same bounded-sparse mechanism the hybrid arm uses, so it
+   *   is the same arm reporting the same refusal, not a second vocabulary.
+   * - `emptyBecause` — absence stating itself, the rule `CITATION_HARNESS.md`
+   *   applies to a dropped citation and this route applies to an empty page.
+   * - `retrievalOutcome: coverage_unknown` with reason `sparse_unbounded` —
+   *   derived through the ONE derivation in `search/outcome.ts`. **This may
+   *   never render as "there is no law on this",** and that is the whole
+   *   difference from the `no_match` branch below, which is an honest empty.
+   *
+   * `total: 0` is a count of what this page carries, beside a state that says
+   * what the zero means. It is never the confidence signal.
+   */
+  if (structured.kind === 'unbounded' || structured.kind === 'timed_out') {
+    /**
+     * Two different facts, ONE response shape, and the `degraded` arm is what
+     * separates them — NEW3 R20's two clauses, implemented together because they
+     * differ in exactly one field and splitting them would let the two drift.
+     *
+     * `sparse_unbounded`: the arm was never attempted, because the measured
+     * evidence said it could not have finished.
+     * `sparse_timeout`: the arm WAS attempted, admitted on that same evidence,
+     * and still ran out of its budget.
+     *
+     * Both are `coverage_unknown`, both carry a real `total: 0` beside a state
+     * that says the zero is not a searched-to-completion claim, and neither is a
+     * 503. There is no auto-retry and no widened timeout: R20 forbids both, and
+     * both would spend the advocate's next fifteen seconds reaching the same
+     * place.
+     */
+    const arm = structured.kind === 'unbounded' ? 'sparse_unbounded' : 'sparse_timeout';
+    outcome.queryClass = `structured_${structured.kind}`;
+    outcome.degraded = [arm];
+    return ok(c, {
+      results: [],
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: structured.parsed,
+      total: 0,
+      degraded: [arm],
+      /**
+       * Only the refusal carries a remedy, and only because it HAS one: a second
+       * discriminating term lowers the rarest document frequency below the bar
+       * and the same query is then answered. A timeout has no such advice, and
+       * offering `add_more_terms` there would be an apology dressed as a fix.
+       */
+      ...(structured.kind === 'unbounded'
+        ? {
+            emptyBecause: {
+              reason: 'query_too_broad_to_rank' as const,
+              remedy: 'add_more_terms' as const,
+            },
+          }
+        : {}),
+      retrievalOutcome: deriveRetrievalOutcome({
+        resultCount: 0,
+        degradedArms: [arm],
+        semanticAvailable: false,
+        semanticIndexSufficient: SEMANTIC_INDEX_SUFFICIENT,
+        // Unchanged from the other structured branches: this route answers from
+        // predicates and never embeds anything, so reporting the semantic index
+        // here would be true and useless.
+        semanticDependent: false,
+        // The measured cause, not a re-derivation — NEW1 bus 1222.
+        ...(structured.kind === 'unbounded' && Number.isFinite(structured.rarestDf)
+          ? { rarestDf: structured.rarestDf }
+          : {}),
+      }),
+      page: { page, pageSize, hasMore: false },
+    });
+  }
+
   if (structured.kind === 'no_match') {
     outcome.queryClass = 'structured';
     return ok(c, {

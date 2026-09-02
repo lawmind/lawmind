@@ -13,6 +13,9 @@
  */
 import type { Sql } from 'postgres';
 
+/** A nested `postgres.js` fragment. Composable, and always parameterised. */
+export type Frag = ReturnType<Sql>;
+
 import { SEARCH_PHASE, type RetrievalTimings } from './timings.ts';
 
 import { canonicalAct } from '@lawmind/ingest/sections';
@@ -59,6 +62,21 @@ import {
  * absorb — it means "this arm ran out of its budget", not "the data is wrong".
  */
 const QUERY_CANCELED = '57014';
+
+/**
+ * Was this error PostgreSQL cancelling a statement that ran out of its budget?
+ *
+ * Exported so the structured route can tell a timeout from a defect without a
+ * second opinion about what a timeout looks like. NEW3 R20 requires an admitted
+ * bounded qlang arm that reaches `statement_timeout` to answer 200 with
+ * `sparse_timeout` and `coverage_unknown` rather than a generic 503 — and that
+ * distinction is only safe if "timed out" is decided in ONE place. Any other
+ * error is a defect and must still be thrown: a missing column swallowed as a
+ * timeout is a broken route that reports itself as a busy one.
+ */
+export function isStatementTimeout(error: unknown): boolean {
+  return isQueryCanceled(error);
+}
 
 /**
  * Which half of the search stopped contributing, when one did.
@@ -681,7 +699,7 @@ const MEASURED_MS_PER_ELIGIBLE_ROW = 0.25;
  * the error above: the term's frequency decides how many rows COME BACK, and the
  * population decides how many are READ. The budget is spent on reading.
  */
-const FILTERED_MAX_ELIGIBLE_ROWS = Math.round(
+export const FILTERED_MAX_ELIGIBLE_ROWS = Math.round(
   FILTERED_ADMISSION_BUDGET_MS / MEASURED_MS_PER_ELIGIBLE_ROW,
 );
 
@@ -709,9 +727,28 @@ function narrowsPopulation(filters: SearchFilters): boolean {
  * precisely so `judgments_date_court_idx` stays usable — the EXPLAIN above is
  * the receipt.
  */
-async function eligiblePopulation(
+export async function countBoundedPopulation(
   sql: Sql,
-  filters: SearchFilters,
+  /**
+   * The eligibility predicate, already composed by the caller and ANDed onto
+   * `WHERE true`.
+   *
+   * A FRAGMENT rather than a `SearchFilters`, because the two routes that share
+   * this bound do not share an eligibility. The hybrid arm screens unsafe body
+   * text before it will rank a document; the structured route deliberately does
+   * NOT, because a `judge:` or `cite:` query resolves IDENTITY fields and
+   * identity is not damaged by a body that failed to extract
+   * (`qlang/compile.ts`, `StructuredHit.bodyText`). Forcing one predicate on
+   * both would silently drop rows from the structured route, which is the one
+   * failure `CITATION_HARNESS.md` holds at a zero threshold.
+   *
+   * So the BOUND lives here exactly once — the cap, the early-stopping `LIMIT`,
+   * and the "capped proves only *at least cap*, and unknown is not small" rule
+   * — while each caller counts the population it is actually about to execute
+   * over. A probe that counted a different population from the one executed
+   * would be worse than no probe: it would be a number that reads like evidence.
+   */
+  where: Frag,
   cap: number,
 ): Promise<{ population: number; capped: boolean }> {
   const rows = await sql<{ n: string }[]>`
@@ -719,15 +756,21 @@ async function eligiblePopulation(
       SELECT 1
       FROM judgments j
       WHERE true
-        ${andBodyTextSafe(sql)}
-        ${courtWhere(sql, filters)}
-        ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
-        ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
-        ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}
+        ${where}
       LIMIT ${cap}
     ) bounded`;
   const population = Number(rows[0]!.n);
   return { population, capped: population >= cap };
+}
+
+/** The hybrid arm's eligibility: the request's filters, plus the body-text screen. */
+function hybridEligibility(sql: Sql, filters: SearchFilters): Frag {
+  return sql`
+        ${andBodyTextSafe(sql)}
+        ${courtWhere(sql, filters)}
+        ${filters.dateFrom ? sql`AND j.judgment_date >= ${filters.dateFrom}` : sql``}
+        ${filters.dateTo ? sql`AND j.judgment_date <= ${filters.dateTo}` : sql``}
+        ${filters.caseType ? sql`AND j.case_type = ${filters.caseType}` : sql``}`;
 }
 
 /**
@@ -793,14 +836,62 @@ async function rankWithinBoundedPopulation(
   return rows.map((r, i) => ({ judgmentId: r.id, rank: i + 1 }));
 }
 
-async function sparseAny(
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * ONE LEXICAL ADMISSION RULE, SHARED — NOT TWO THAT AGREE TODAY
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The lexemes this query would rank, and the verdict on whether ranking them is
+ * bounded. Lifted out of {@link sparseAny} unchanged so the STRUCTURED route
+ * (`qlang/`) executes its `full_text_tsv` work under the same rule rather than
+ * under a second approximation of it.
+ *
+ * **Why that mattered, measured 2 September 2026 through the real route.**
+ * `court:"<a real court>" AND bail` took **15,086 / 15,091 / 15,100 ms**, all
+ * of it inside `structuredMs`, and returned `degraded: []`. The structured path
+ * compiled the bare term to `j.full_text_tsv @@ plainto_tsquery('english','bail')`
+ * ANDed with the court predicate and had NEITHER protection this file already
+ * had: no document-frequency admission — the same word corpus-wide is refused
+ * here in about a millisecond — and no `MATERIALIZED` population fence. It ran
+ * to `statement_timeout` every time. Two mechanisms for one question is how a
+ * bound that is correct in one file becomes absent in another, so there is now
+ * one.
+ *
+ * The verdict is returned rather than acted on, because the two callers do
+ * different things with a refusal: the hybrid arm returns no candidates and
+ * lets the dense arm answer, and the structured route has no other arm and must
+ * say so on the wire.
+ */
+export type LexicalAdmission = {
+  /** The rarest lexemes kept, with their measured document frequency. */
+  readonly lexemes: { lexeme: string; df: string }[];
+  /** `min(df)` across {@link lexemes}. `Infinity` when nothing was measurable. */
+  readonly rarestDf: number;
+  /** May this be ranked at all? */
+  readonly admitted: boolean;
+  /** Did the corpus-wide rule admit it on its own, without a filtered probe? */
+  readonly corpusWideAdmitted: boolean;
+  /** The filtered probe's count, when one ran. */
+  readonly population?: number;
+  /** Did the probe hit its cap? A capped probe proves only "at least cap". */
+  readonly populationCapped?: boolean;
+};
+
+/**
+ * Choose the lexemes and decide whether ranking them is bounded.
+ *
+ * `eligibility` is the caller's own population predicate — see
+ * {@link countBoundedPopulation} for why it is a fragment and not a filter set.
+ * `undefined` means the request narrows nothing, in which case the eligible
+ * population IS the corpus and the probe would re-derive, at a cost, the number
+ * the corpus-wide rule has just used.
+ */
+export async function admitLexical(
   sql: Sql,
   query: string,
-  filters: SearchFilters,
-  onDegrade?: (arm: DegradedArm) => void,
-  /** Out-parameter: the refusal cause, carried to the response rather than re-derived. */
+  eligibility: Frag | undefined,
   signals?: RetrievalSignals,
-): Promise<Ranked[]> {
+): Promise<LexicalAdmission> {
   /**
    * The lexeme selection, lifted out of the ranking query so its answer can be
    * INSPECTED before anything is ranked.
@@ -828,7 +919,9 @@ async function sparseAny(
     ORDER BY df ASC, length(lexeme) DESC
     LIMIT ${SPARSE_RARE_LEXEMES}`;
 
-  if (lexemes.length === 0) return [];
+  if (lexemes.length === 0) {
+    return { lexemes, rarestDf: Infinity, admitted: false, corpusWideAdmitted: false };
+  }
 
   /**
    * ANDed terms, so the rarest bounds the match set. `df = 0` means the corpus
@@ -841,31 +934,60 @@ async function sparseAny(
   // would make the field's presence the signal, and then nobody could tell a
   // query that comfortably passed from one that nearly did not.
   if (signals && Number.isFinite(rarestDf)) signals.sparseRarestDf = rarestDf;
-  if (rarestDf > SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY) {
-    /**
-     * AB-2. The corpus-wide rule has refused; ask the question it could not.
-     *
-     * Only when the request actually narrows the corpus — with no filters the
-     * eligible population IS the corpus and the probe would re-derive the
-     * number the rule just used, at a cost.
-     */
-    let admitted = false;
-    if (narrowsPopulation(filters)) {
-      const { population, capped } = await eligiblePopulation(
-        sql,
-        filters,
-        FILTERED_MAX_ELIGIBLE_ROWS + 1,
-      );
-      if (signals) {
-        signals.filteredPopulation = population;
-        signals.filteredPopulationCapped = capped;
-      }
-      // A capped probe proves only "at least `cap`", which is never a reason to
-      // admit. Unknown is not small.
-      admitted = !capped && population <= FILTERED_MAX_ELIGIBLE_ROWS;
-      if (signals) signals.filteredAdmission = admitted ? 'admitted' : 'refused';
-    }
-    if (!admitted) {
+
+  if (rarestDf <= SPARSE_MAX_RANKED_DOCUMENT_FREQUENCY) {
+    return { lexemes, rarestDf, admitted: true, corpusWideAdmitted: true };
+  }
+
+  /**
+   * AB-2. The corpus-wide rule has refused; ask the question it could not.
+   */
+  if (eligibility === undefined) {
+    return { lexemes, rarestDf, admitted: false, corpusWideAdmitted: false };
+  }
+  const { population, capped } = await countBoundedPopulation(
+    sql,
+    eligibility,
+    FILTERED_MAX_ELIGIBLE_ROWS + 1,
+  );
+  if (signals) {
+    signals.filteredPopulation = population;
+    signals.filteredPopulationCapped = capped;
+  }
+  // A capped probe proves only "at least `cap`", which is never a reason to
+  // admit. Unknown is not small.
+  const admitted = !capped && population <= FILTERED_MAX_ELIGIBLE_ROWS;
+  if (signals) signals.filteredAdmission = admitted ? 'admitted' : 'refused';
+  return { lexemes, rarestDf, admitted, corpusWideAdmitted: false, population, populationCapped: capped };
+}
+
+async function sparseAny(
+  sql: Sql,
+  query: string,
+  filters: SearchFilters,
+  onDegrade?: (arm: DegradedArm) => void,
+  /** Out-parameter: the refusal cause, carried to the response rather than re-derived. */
+  signals?: RetrievalSignals,
+): Promise<Ranked[]> {
+  /**
+   * The lexeme choice and the admission verdict, from the one shared rule —
+   * {@link admitLexical}. The filtered probe is offered an eligibility only when
+   * the request actually narrows the corpus: with no filters the eligible
+   * population IS the corpus, and the probe would re-derive, at a cost, the
+   * number the corpus-wide rule has just used.
+   */
+  const admission = await admitLexical(
+    sql,
+    query,
+    narrowsPopulation(filters) ? hybridEligibility(sql, filters) : undefined,
+    signals,
+  );
+  const { lexemes } = admission;
+
+  if (lexemes.length === 0) return [];
+
+  if (!admission.corpusWideAdmitted) {
+    if (!admission.admitted) {
       onDegrade?.('sparse_unbounded');
       return [];
     }

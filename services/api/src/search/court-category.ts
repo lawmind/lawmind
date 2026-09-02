@@ -141,7 +141,7 @@ export function categoryOf(courtName: string): CourtCategory | null {
  * landing a new court must become filterable without a deploy. At 1 ms warm the
  * trade the old comment described is finally the trade actually being made.
  */
-async function distinctCourts(sql: Sql): Promise<string[]> {
+export async function distinctCourts(sql: Sql): Promise<string[]> {
   const rows = await sql<{ court: string }[]>`
     WITH RECURSIVE t AS (
       (SELECT court FROM judgments ORDER BY court LIMIT 1)

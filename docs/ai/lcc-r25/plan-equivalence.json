@@ -1,0 +1,137 @@
+{
+  "kind": "lawmind-qlang-plan-equivalence",
+  "note": "The materialised/fenced plan against the plain plan, on the live corpus. `comparable: false` means the BASELINE plan did not finish inside its 60s budget - that is the defect under repair, not a gap in the evidence.",
+  "compared": 7,
+  "divergences": 0,
+  "cases": [
+    {
+      "q": "court:\"High Court of Manipur\" AND kesavananda",
+      "resolvedCourts": [
+        "High Court of Manipur"
+      ],
+      "comparable": true,
+      "plainMs": 64,
+      "ms": 4,
+      "plainTotal": 1,
+      "total": 1,
+      "sameTotal": true,
+      "plainN": 1,
+      "n": 1,
+      "sameIds": true
+    },
+    {
+      "q": "court:\"High Court of Manipur\" AND bail",
+      "resolvedCourts": [
+        "High Court of Manipur"
+      ],
+      "comparable": false,
+      "plainMs": 60186,
+      "ms": 4442,
+      "plainTotal": null,
+      "total": 1059,
+      "sameTotal": false,
+      "plainN": null,
+      "n": 20,
+      "sameIds": false
+    },
+    {
+      "q": "court:\"High Court of Karnataka\" AND kesavananda",
+      "resolvedCourts": [
+        "High Court of Karnataka"
+      ],
+      "comparable": false,
+      "plainMs": 60008,
+      "ms": 444,
+      "plainTotal": null,
+      "total": 94,
+      "sameTotal": false,
+      "plainN": null,
+      "n": 20,
+      "sameIds": false
+    },
+    {
+      "q": "court:\"High Court of Karnataka\" AND kesavananda AND bharati",
+      "resolvedCourts": [
+        "High Court of Karnataka"
+      ],
+      "comparable": true,
+      "plainMs": 16,
+      "ms": 3,
+      "plainTotal": 55,
+      "total": 55,
+      "sameTotal": true,
+      "plainN": 20,
+      "n": 20,
+      "sameIds": true
+    },
+    {
+      "q": "court:\"High Court of Manipur\" AND (kesavananda OR bharati)",
+      "resolvedCourts": [
+        "High Court of Manipur"
+      ],
+      "comparable": true,
+      "plainMs": 1014,
+      "ms": 20,
+      "plainTotal": 13,
+      "total": 13,
+      "sameTotal": true,
+      "plainN": 13,
+      "n": 13,
+      "sameIds": true
+    },
+    {
+      "q": "court:\"High Court of Manipur\" AND type:criminal",
+      "resolvedCourts": [
+        "High Court of Manipur"
+      ],
+      "comparable": true,
+      "plainMs": 23087,
+      "ms": 1172,
+      "plainTotal": 962,
+      "total": 962,
+      "sameTotal": true,
+      "plainN": 20,
+      "n": 20,
+      "sameIds": true
+    },
+    {
+      "q": "kesavananda AND bharati",
+      "resolvedCourts": [],
+      "comparable": true,
+      "plainMs": 30,
+      "ms": 7,
+      "plainTotal": 1272,
+      "total": 1272,
+      "sameTotal": true,
+      "plainN": 20,
+      "n": 20,
+      "sameIds": true
+    },
+    {
+      "q": "judge:\"CHANDRACHUD\" AND section:138",
+      "resolvedCourts": [],
+      "comparable": true,
+      "plainMs": 540,
+      "ms": 15,
+      "plainTotal": 18,
+      "total": 18,
+      "sameTotal": true,
+      "plainN": 18,
+      "n": 18,
+      "sameIds": true
+    },
+    {
+      "q": "court:\"High Court*\" AND kesavananda",
+      "resolvedCourts": [],
+      "comparable": true,
+      "plainMs": 49,
+      "ms": 10,
+      "plainTotal": 0,
+      "total": 0,
+      "sameTotal": true,
+      "plainN": 0,
+      "n": 0,
+      "sameIds": true
+    }
+  ]
+}

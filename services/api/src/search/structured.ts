@@ -38,7 +38,21 @@ import type { Sql } from 'postgres';
 
 import { explainQuery } from './qlang/explain.ts';
 import { QueryError } from './qlang/lex.ts';
-import { type StructuredHit, countStructured, runStructured } from './qlang/compile.ts';
+import {
+  type StructuredHit,
+  countStructured,
+  fenceWhere,
+  resolveCourts,
+  runStructured,
+  runStructuredCandidates,
+} from './qlang/compile.ts';
+import { courtTerms, partitionForFence } from './qlang/bounded.ts';
+import {
+  FILTERED_MAX_ELIGIBLE_ROWS,
+  admitLexical,
+  countBoundedPopulation,
+  isStatementTimeout,
+} from './retrieve.ts';
 import type { Node } from './qlang/parse.ts';
 import { looksStructured, parse } from './qlang/parse.ts';
 import { isCnr, parseCaseNumber } from './case-number.ts';
@@ -84,6 +98,60 @@ export type StructuredOutcome =
       readonly total: number;
       readonly hits: StructuredHit[];
     }
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * PARSED, AND ITS LEXICAL HALF COULD NOT BE SAFELY EXECUTED
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * The one outcome that is NOT a statement about the corpus. `no_match` says
+   * *"we looked and there is nothing"*; this says *"we did not look, and we are
+   * not going to pretend otherwise"*.
+   *
+   * **The event it replaces, measured through the real route on 2 September
+   * 2026:** `court:"<a real court>" AND bail` ran for 15,086 / 15,091 /
+   * 15,100 ms, three times in three, and ended as an HTTP 503 whose copy reads
+   * *"Nothing is wrong with the record — the server is busy."* The server was
+   * not busy — `poolWaitMs` was 0 on every one of those samples — the query
+   * could not complete, and a retry bought another fifteen seconds of the same.
+   *
+   * The caller renders this with the vocabulary the wire already carries and
+   * every client already parses: `degraded: ['sparse_unbounded']`,
+   * `emptyBecause.reason = 'query_too_broad_to_rank'`, and a
+   * `retrievalOutcome` of `coverage_unknown`. No new response semantics were
+   * invented for it, deliberately — those belong to NEW3, and the existing
+   * vocabulary already says exactly the true thing.
+   *
+   * `remedy: 'add_more_terms'` is true here rather than an apology: a second
+   * discriminating word lowers the rarest document frequency below the
+   * corpus-wide bar, and the same query is then admitted and answered.
+   */
+  /**
+   * Parsed and ADMITTED, and then the bounded arm ran out of its statement
+   * budget anyway.
+   *
+   * NEW3 R20, verbatim in effect: *"If an admitted bounded qlang arm reaches
+   * statement timeout: HTTP 200, degraded includes sparse_timeout,
+   * retrievalOutcome.state=coverage_unknown with reason sparse_timeout, no
+   * trusted total=0 and no generic 503 TIMEOUT copy. Do not auto-retry and do
+   * not widen the client or statement timeout."*
+   *
+   * Distinct from {@link StructuredOutcome} `unbounded` in the way that matters
+   * to an advocate: there the arm was never attempted because it could not have
+   * finished; here it was attempted, admitted on measured evidence, and still
+   * did not. Both are `coverage_unknown` and neither may render as "there is no
+   * law on this", but they are different facts and the reason field says which.
+   */
+  | { readonly kind: 'timed_out'; readonly parsed: string }
+  | {
+      readonly kind: 'unbounded';
+      readonly parsed: string;
+      /** `min(df)` over the lexemes the query would have ranked. */
+      readonly rarestDf: number;
+      /** The fenced population, when one was counted. */
+      readonly population?: number;
+      /** Did that count hit its cap? Then it proves only "at least the cap". */
+      readonly populationCapped?: boolean;
+    }
   /** Did not parse. Carries the offset so the client can point at the mistake. */
   | {
       readonly kind: 'invalid';
@@ -109,6 +177,45 @@ export type StructuredOutcome =
  * still to show both rather than to pick.
  */
 const IDENTITY_FIELDS = new Set(['cite', 'caseno', 'cnr']);
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE BAND IN WHICH MATERIALISING THE MATCH SET IS THE RIGHT PLAN
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The rarest lexeme's document frequency, above which the query's match set is
+ * NOT small enough to materialise. `qlang/compile.ts`'s `runStructuredCandidates`
+ * carries the three measurements this is set from; the derivation is here.
+ *
+ * **Measured, this box, 2 September 2026, against the live corpus of
+ * 18,761,920 judgments:**
+ *
+ * | candidates | materialised | storage | plain plan |
+ * | --- | --- | --- | --- |
+ * | 94 | **10 ms** | 21 kB, memory | 15,165 ms |
+ * | 153,857 | 412 ms | 9,261 kB, memory | 8,138 ms |
+ * | 827,690 | 100,077 ms | 32,768 kB, **DISK** | 81,920 ms |
+ *
+ * The cliff is not the row count, it is `work_mem` — 32 MB on this box, and
+ * commonly 4 MB on a managed Postgres. So the threshold is set from the ROW
+ * WIDTH the middle row measures, 9,261 kB / 153,857 = **61.6 bytes per
+ * candidate**, and not from fitting a curve to three points.
+ *
+ * `0.008 × 18,761,920 ≈ 150,000 candidates ≈ 9.2 MB` — at or under the largest
+ * materialisation actually observed to stay in memory, and roughly a third of
+ * this box's `work_mem`.
+ *
+ * **It is a document frequency and not a row count on purpose.** A row count
+ * would need the corpus size at request time, and the only cheap source for that
+ * is `pg_class.reltuples`, which this repository has already recorded reading
+ * zero on this database after a crash. A `df` is read from the same table the
+ * bound above it reads and needs nothing else. The consequence is stated rather
+ * than hidden: **as the corpus grows, the same `df` admits proportionally more
+ * candidates.** At double the corpus this admits ~300,000 (~18 MB), which is
+ * still inside this box's `work_mem` and is the point at which the number should
+ * be re-measured rather than re-guessed.
+ */
+const STRUCTURED_MAX_CANDIDATE_DOCUMENT_FREQUENCY = 0.008;
 
 function isBareCitationTerm(node: Node): boolean {
   return node.kind === 'term' && IDENTITY_FIELDS.has(node.field);
@@ -340,10 +447,206 @@ export async function answerStructured(
   }
 
   const parsed = explainQuery(ast);
-  const [total, hits] = await Promise.all([
-    countStructured(sql, ast),
-    runStructured(sql, ast, limit, offset),
-  ]);
+
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE LEXICAL HALF GOES THROUGH THE SAME BOUND THE SPARSE ARM USES
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Everything above this line is identity and metadata resolution — `cite:`,
+   * `cnr:`, `caseno:`, `judge:` — served by indexes, measured in single-digit
+   * milliseconds, and untouched. What follows applies ONLY to a query that puts
+   * work on `full_text_tsv`, which is the shape that ran for fifteen seconds.
+   *
+   * Three outcomes, in the order they are decided:
+   *
+   * 1. **The corpus-wide document-frequency rule admits it.** The rarest lexeme
+   *    is discriminating, GIN can serve it, and the query runs exactly as it did
+   *    before — no fence, no extra statement, no change. This is the common case
+   *    and it must not be made slower to fix the rare one.
+   * 2. **The rule refuses, and the query carries a positive structural conjunct
+   *    to fence with.** The population is COUNTED first, capped; if it is small
+   *    enough the query runs inside a `MATERIALIZED` fence over exactly that
+   *    population. Same constants, same cap, same probe as `retrieve.ts` — one
+   *    mechanism, not two that agree today.
+   * 3. **Neither.** The query is refused, in milliseconds, and SAYS SO.
+   *
+   * ── WHY THE PROBE IS NOT A COST THIS ADDS ──────────────────────────────────
+   *
+   * It runs only where the corpus-wide rule has ALREADY refused, which is
+   * precisely the population that was previously spending fifteen seconds
+   * reaching a timeout. A query admitted today never reaches this code and pays
+   * nothing — the same argument `retrieve.ts` makes for the sparse arm's probe,
+   * and it holds here for the same reason.
+   */
+  const partition = partitionForFence(ast);
+  let plan: 'plain' | 'candidates' = 'plain';
+
+  /**
+   * Court patterns are resolved to names FIRST, and unconditionally, because
+   * every decision below depends on the predicate being indexable. `qlang/
+   * compile.ts` carries the measurement: the same fenced query is 23,760 ms with
+   * `court ILIKE '%…%'` and 139 ms with `court = ANY(…)`, because a leading `%`
+   * leaves `judgments_court_idx` unused and Postgres reads the table.
+   *
+   * Unconditional rather than only-when-full-text: a purely structural
+   * `court:"…" AND type:criminal` gets the same index, and the resolution is one
+   * round trip over a couple of dozen names.
+   */
+  const courts = courtTerms(ast);
+  const resolvedCourts = courts.length > 0 ? await resolveCourts(sql, courts) : undefined;
+
+  if (partition.hasFullText) {
+    /**
+     * STEP 1 — the corpus-wide question, asked with the statistic this query's
+     * SHAPE makes valid. `qlang/bounded.ts` carries the reasoning: `conjunction`
+     * is one lookup over the joined text and is byte-for-byte the sparse arm's
+     * own decision; `per_term` measures each full-text node separately because a
+     * union is not bounded by its rarest member; `never` cannot be measured at
+     * all and is not asked.
+     *
+     * The eligibility is deliberately NOT handed to `admitLexical` here. It
+     * would run the filtered probe once per term and, worse, would skip the
+     * probe entirely for a query the corpus-wide rule happened to admit — which
+     * is the exact shape that could then be fenced without anyone having counted
+     * the population, and truncated by the fence's own `LIMIT`. A silent drop.
+     * The probe is step 2, explicit, and runs exactly once.
+     */
+    const measured =
+      partition.shortcut === 'never'
+        ? []
+        : partition.shortcut === 'per_term'
+          ? await Promise.all(
+              partition.fullTextTerms.map((term) => admitLexical(sql, term, undefined, undefined)),
+            )
+          : [await admitLexical(sql, partition.fullTextQuery, undefined, undefined)];
+
+    /**
+     * The worst case across whatever was measured. `Infinity` when the shape
+     * allowed no measurement at all — a negation or a wildcard — which is
+     * `never`, not `zero`, and is treated as such everywhere below.
+     */
+    const rarestDf = measured.length === 0 ? Infinity : Math.max(...measured.map((m) => m.rarestDf));
+
+    /**
+     * ── ADMISSION 1: is the MATCH SET small? ──────────────────────────────────
+     *
+     * Free — the document frequencies are already in hand. When it holds, the
+     * whole predicate goes inside a materialised CTE and both answers come out
+     * of one scan. `qlang/compile.ts`'s `runStructuredCandidates` carries the
+     * measurements; the threshold's derivation is on the constant below.
+     */
+    if (rarestDf <= STRUCTURED_MAX_CANDIDATE_DOCUMENT_FREQUENCY) {
+      plan = 'candidates';
+    } else if (
+      /**
+       * `[].every(…)` is TRUE, so an unmeasurable shape — `never`, which
+       * measures nothing — would otherwise read as "the corpus-wide rule
+       * admitted it" and fall through to the plain plan. It did, and
+       * `court:"…" AND NOT bail` ran for 15,041 ms because of it. Absence of a
+       * measurement is not a passing measurement.
+       */
+      measured.length === 0 ||
+      !measured.every((m) => m.corpusWideAdmitted)
+    ) {
+      /**
+       * ── ADMISSION 2: is the POPULATION small? ───────────────────────────────
+       *
+       * The match set is not small, so ask the question the corpus-wide rule
+       * could not: how big is the population this query's own positive structure
+       * narrows to? Same cap, same early-stopping probe, and the same "capped
+       * proves only *at least cap*, and unknown is not small" rule as the sparse
+       * arm — `countBoundedPopulation` in `retrieve.ts` is the one implementation.
+       */
+      /**
+       * NO FENCE means nothing to narrow with: the eligible population IS the
+       * corpus, the corpus-wide rule has already refused, and there is no
+       * question left to ask or probe worth paying for.
+       *
+       * Refusing there is the SAME answer the hybrid path already gives for the
+       * same words — `search/route.ts` records it measured, `anticipatory bail`
+       * returns zero results and `sparse_unbounded`. A structured spelling of a
+       * query the lexical arm refuses must refuse too, or the two paths disagree
+       * about whether the corpus was searched, which is exactly the second
+       * approximation NEW3 R20 forbids.
+       */
+      const probe =
+        partition.fence.length > 0
+          ? await countBoundedPopulation(
+              sql,
+              fenceWhere(sql, partition.fence, resolvedCourts),
+              FILTERED_MAX_ELIGIBLE_ROWS + 1,
+            )
+          : null;
+      if (probe !== null && !probe.capped && probe.population <= FILTERED_MAX_ELIGIBLE_ROWS) {
+        /**
+         * The population is counted and small, so the CANDIDATES — which are a
+         * subset of it — are small too, and the same materialised shape serves
+         * both admissions. One execution path, two ways of earning it.
+         */
+        plan = 'candidates';
+      } else {
+        /**
+         * Neither bound holds and the query DOES narrow structurally, so this is
+         * a genuinely broad question and the honest answer is to say so — in
+         * milliseconds, with the reason, instead of fifteen seconds and a 503
+         * whose copy says the server was busy.
+         *
+         * An INFERRED boolean gets the same rescue the zero-match case gets
+         * below: if the only evidence that this was a structured query was an
+         * upper-case AND out of a case title, then a refusal here is much better
+         * evidence that the inference was wrong than that the query is too
+         * broad — and ordinary search applies this identical bound and reaches
+         * an identical, cheap, truthful refusal if it really is.
+         */
+        if (structuredOnlyByBareOperator(query)) return { kind: 'not_structured' };
+        return {
+          kind: 'unbounded',
+          parsed,
+          rarestDf,
+          /* Present only when a probe actually ran. A query with nothing to
+           * narrow it was never counted, and publishing a zero there would read
+           * as "we looked and the population was empty". */
+          ...(probe === null ? {} : { population: probe.population, populationCapped: probe.capped }),
+        };
+      }
+    }
+    /**
+     * ── WHAT STILL KEEPS THE PLAN IT HAS TODAY ───────────────────────────────
+     *
+     * Only queries the corpus-wide rule ADMITS and whose match set is too large
+     * to materialise — `bail AND murder`, measured at 8,138 ms with 153,857
+     * matches. Materialising those 153,857 candidates measured 412 ms, but the
+     * same shape at 827,690 candidates measured 100,077 ms because the CTE
+     * spilled past `work_mem`. Admitting it on that evidence would trade a known
+     * cost for an unmeasured cliff, and the query is answered correctly today.
+     *
+     * The numbers are recorded rather than remembered: `docs/ai/lcc-r25/`.
+     */
+  }
+
+  let total: number;
+  let hits: StructuredHit[];
+  try {
+    [total, hits] =
+      plan === 'candidates'
+        ? await runStructuredCandidates(sql, ast, limit, offset, resolvedCourts).then(
+            (r) => [r.total, r.hits] as [number, StructuredHit[]],
+          )
+        : await Promise.all([
+            countStructured(sql, ast, resolvedCourts),
+            runStructured(sql, ast, limit, offset, resolvedCourts),
+          ]);
+  } catch (error) {
+    /**
+     * A statement that ran out of its budget is an ANSWER — an incomplete one,
+     * said so — and never a 503 whose copy claims the server was busy. Anything
+     * else is a defect and is rethrown: swallowing a missing column as a timeout
+     * would turn a broken route into a permanently quiet one.
+     */
+    if (!isStatementTimeout(error)) throw error;
+    return { kind: 'timed_out', parsed };
+  }
 
   if (total === 0) {
     // An INFERRED boolean that matched nothing was probably never a query —
