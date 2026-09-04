@@ -62,7 +62,42 @@ for (const f of readdirSync(CHECKPOINT_DIR)) {
 }
 
 const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
-const hc = manifest.buckets.aws_open_data_hc;
+
+/**
+ * THIS PLANNER OWNS ONE BUCKET, AND UNTIL TODAY IT DID NOT SAY SO.
+ *
+ * The line below used to read `manifest.buckets.aws_open_data_hc` and nothing
+ * else — a single named property in a file that has always described TWO
+ * buckets. Everything downstream then quoted a headline that had silently
+ * excluded one of them: "16 scope(s) own 26 GROWN + 0 real NEW upstream
+ * objects", printed on a cycle where the Supreme Court bucket was reporting 77
+ * NEW objects and 48,563,942 bytes.
+ *
+ * Reading only HC is CORRECT and stays. The mapping this file performs — key ->
+ * checkpoint file -> `hc-boot-*` scope name — is meaningful only for an adapter
+ * whose frontier is a byte offset, and the SC adapter (`cli.ts`, `sci`) resumes
+ * by asking the database which `source_url`s it holds. There is no offset to map
+ * and no scope to name.
+ *
+ * What was wrong was doing it SILENTLY. So the selection is now derived from the
+ * manifest's own `resume` field and every bucket is accounted for out loud —
+ * planned here, or named with where it IS planned. A bucket that this file
+ * cannot plan must never again be a bucket nobody notices it did not plan.
+ */
+const BUCKET_ENTRIES = Object.entries(manifest.buckets ?? {});
+const planned = BUCKET_ENTRIES.filter(([, v]) => v?.resume === 'checkpoint-offset');
+const notPlanned = BUCKET_ENTRIES.filter(([, v]) => v?.resume !== 'checkpoint-offset');
+
+if (planned.length !== 1) {
+  console.error(
+    `REFUSED: expected exactly one checkpoint-offset bucket to plan, found ${planned.length} ` +
+      `(${planned.map(([k]) => k).join(', ') || 'none'}). The scope-name construction below is ` +
+      `hc-load-cli's and cannot be applied to another adapter by assumption. ` +
+      `Re-run scripts/n2-upstream-manifest.mts if the manifest predates the \`resume\` field.`,
+  );
+  process.exit(1);
+}
+const [hcName, hc] = planned[0];
 
 const scopes = new Map(); // scope -> {court, year, fromYear, toYear, keys:[], bytes}
 const unowned = [];
@@ -95,7 +130,16 @@ const ranked = [...scopes.entries()]
   .map(([scope, v]) => ({ scope, ...v }))
   .sort((a, b) => b.bytes - a.bytes);
 
-console.log(`DELTA SCOPES — ${ranked.length} scope(s) own ${hc.grown.length} GROWN + ${hc.newKeys.filter((k) => k.bench !== 'testcase').length} real NEW upstream objects`);
+console.log(`DELTA SCOPES — ${hcName}: ${ranked.length} scope(s) own ${hc.grown.length} GROWN + ${hc.newKeys.filter((k) => k.bench !== 'testcase').length} real NEW upstream objects`);
+for (const [name, v] of notPlanned) {
+  console.log(
+    `  NOT PLANNED HERE  ${name}  resume=${v?.resume ?? 'UNDECLARED'} · ` +
+      `${v?.metadataParquetObjects ?? '?'} objects · newest upstream write ${v?.newestUpstreamWrite ?? 'unknown'}` +
+      (v?.resume === 'source-url'
+        ? ' — planned by the SC step of n2-daily-delta.ps1, from the exact gap in n2-sc-reconcile.mts'
+        : ' — NO OWNER DECLARED. This bucket is being measured and dropped; give it a resume model.'),
+  );
+}
 console.log('');
 console.log('  scope                      objects   bytes waiting');
 for (const r of ranked) {

@@ -122,8 +122,15 @@ export const ALERT_RULES = {
    * a page: these are counted jobs, not a rate, and the two on this list that
    * matter most (the GPU document walk, the citation walk) fail exactly once
    * and then stay failed silently for days.
+   *
+   * THE THRESHOLD IS 0, NOT 1, AND THAT IS THE WHOLE POINT. `add()` breaches on
+   * `value > t`, so `{ page: 1 }` did not mean "one is a page" — it meant "one
+   * is SILENT and two are a page". A rule whose comment and whose arithmetic
+   * disagreed, on the one list where a single failure is the incident. Found
+   * 5 Sep 2026 while fixing the staleness gate below it; the pager had never
+   * been able to report a lone stalled job.
    */
-  stalledCriticalJobs: { watch: 1, page: 1 },
+  stalledCriticalJobs: { watch: 0, page: 0 },
   /**
    * How stale the control plane's own feed is.
    *
@@ -512,13 +519,40 @@ export async function collectMetrics(
         })),
       };
 
-      if (stalled.length > 0) {
+      /**
+       * A STALLED READING IS ONLY EVIDENCE ABOUT NOW IF THE FEED IS STILL ALIVE.
+       *
+       * `ops_job_current` holds the LATEST reading per job, which is not the
+       * same as a RECENT one. When the publisher stops, those rows freeze at
+       * whatever they last said and this rule keeps asserting them in the
+       * present tense forever.
+       *
+       * MEASURED 4-5 Sep 2026: nothing had run `job-health.mjs --publish` since
+       * 25 Aug 09:40Z, so every ten minutes for eleven days the pager said
+       * `new1-doc-vector-embed FAILED` — about a job that was producing 34,000
+       * vectors an hour on a GPU at 99%. The rows were not wrong when they were
+       * written; they were simply eleven days old, and nothing in this rule
+       * could tell the difference.
+       *
+       * So the reading must be fresher than the age at which THIS FILE already
+       * declares the feed an outage — `jobObservationAgeHours.page`. Past that
+       * line we have said we cannot see; asserting present-tense job failures
+       * out of a feed we have already called blind is a claim we cannot support,
+       * and `jobObservationAgeHours` pages on its own with the honest reason.
+       *
+       * Inside the bound nothing changes except that the age is now stated, so a
+       * page is never read as more current than the reading behind it.
+       */
+      const readingIsCurrent =
+        observedAgeHours !== null && observedAgeHours <= ALERT_RULES.jobObservationAgeHours.page;
+      if (stalled.length > 0 && readingIsCurrent) {
         add(
           'stalledCriticalJobs',
           stalled.length,
-          stalled
-            .map((r) => `${r.job_id} (${r.owner_lane}) ${r.state}${r.why ? ': ' + r.why : ''}`)
-            .join(' | '),
+          `as of the control plane's reading ${observedAgeHours.toFixed(1)}h ago: ` +
+            stalled
+              .map((r) => `${r.job_id} (${r.owner_lane}) ${r.state}${r.why ? ': ' + r.why : ''}`)
+              .join(' | '),
         );
       }
       if (observedAgeHours !== null) {

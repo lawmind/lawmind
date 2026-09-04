@@ -1,5 +1,5 @@
 {
-  "takenAt": "2026-08-27T14:13:28.330Z",
+  "takenAt": "2026-09-04T20:53:47.767Z",
   "sources": [
     {
       "source": "aws_open_data_hc",
@@ -11,102 +11,102 @@
       },
       "adapter": "services/ingest/src/harvest/hc-load-cli.ts",
       "adapterSha256": "547c293e82f5172a",
-      "newestUpstreamWrite": "2026-08-27T13:30:48.000Z",
-      "heldDocuments": 18712919,
-      "newestLocalDecision": "2026-08-25",
-      "naiveLagDays": 2,
+      "newestUpstreamWrite": "2026-09-04T08:50:01.000Z",
+      "heldDocuments": 18731220,
+      "newestLocalDecision": "2026-09-03",
+      "naiveLagDays": 1,
       "honestCurrencyFrontier": "2026-07-01",
-      "honestLagDays": 57,
-      "lastSuccessfulIngest": "2026-08-27 14:10:08.698525+00",
+      "honestLagDays": 65,
+      "lastSuccessfulIngest": "2026-09-04 15:37:07.387071+00",
       "monthly": [
         {
+          "month": "2026-09",
+          "documents": 2925,
+          "shareOfBaseline": 0.0258,
+          "state": "EFFECTIVELY_ABSENT"
+        },
+        {
           "month": "2026-08",
-          "documents": 38600,
-          "shareOfBaseline": 0.3258,
+          "documents": 53519,
+          "shareOfBaseline": 0.4713,
           "state": "PARTIAL"
         },
         {
           "month": "2026-07",
-          "documents": 96058,
-          "shareOfBaseline": 0.8109,
+          "documents": 96118,
+          "shareOfBaseline": 0.8464,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-06",
-          "documents": 71886,
-          "shareOfBaseline": 0.6068,
+          "documents": 71924,
+          "shareOfBaseline": 0.6334,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-05",
-          "documents": 100506,
-          "shareOfBaseline": 0.8484,
+          "documents": 100520,
+          "shareOfBaseline": 0.8852,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-04",
-          "documents": 143982,
-          "shareOfBaseline": 1.2154,
+          "documents": 144023,
+          "shareOfBaseline": 1.2683,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-03",
-          "documents": 124935,
-          "shareOfBaseline": 1.0547,
+          "documents": 125020,
+          "shareOfBaseline": 1.1009,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-02",
-          "documents": 143712,
-          "shareOfBaseline": 1.2132,
+          "documents": 143741,
+          "shareOfBaseline": 1.2658,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2026-01",
-          "documents": 125739,
-          "shareOfBaseline": 1.0614,
+          "documents": 125799,
+          "shareOfBaseline": 1.1078,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2025-12",
           "documents": 144588,
-          "shareOfBaseline": 1.2206,
+          "shareOfBaseline": 1.2733,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2025-11",
           "documents": 159985,
-          "shareOfBaseline": 1.3505,
+          "shareOfBaseline": 1.4088,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2025-10",
           "documents": 134213,
-          "shareOfBaseline": 1.133,
+          "shareOfBaseline": 1.1819,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2025-09",
           "documents": 203720,
-          "shareOfBaseline": 1.7197,
+          "shareOfBaseline": 1.794,
           "state": "COMPLETE_ENOUGH"
         },
         {
           "month": "2025-08",
           "documents": 167671,
-          "shareOfBaseline": 1.4154,
-          "state": "COMPLETE_ENOUGH"
-        },
-        {
-          "month": "2025-07",
-          "documents": 209462,
-          "shareOfBaseline": 1.7682,
+          "shareOfBaseline": 1.4765,
           "state": "COMPLETE_ENOUGH"
         }
       ],
-      "baselineDocumentsPerMonth": 118460,
+      "baselineDocumentsPerMonth": 113558,
       "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
-      "newestCheckpointWrite": "2026-08-27T14:13:13.180Z"
+      "newestCheckpointWrite": "2026-09-04T15:44:43.970Z"
     },
     {
       "source": "aws_open_data_sc",
@@ -117,20 +117,20 @@
         "expires": null
       },
       "adapter": "services/ingest/src/sci.ts",
-      "adapterSha256": "5cfc299fd74b13a7",
-      "newestUpstreamWrite": "2026-08-15T16:48:53.000Z",
-      "heldDocuments": 38351,
-      "newestLocalDecision": "2026-08-04",
+      "adapterSha256": "2f83cfbcec98bf96",
+      "newestUpstreamWrite": "2026-08-30T19:23:42.000Z",
+      "heldDocuments": 38358,
+      "newestLocalDecision": "2026-08-12",
       "naiveLagDays": 23,
       "honestCurrencyFrontier": "2026-05-01",
-      "honestLagDays": 118,
-      "lastSuccessfulIngest": "2026-08-27 09:51:16.083224+00",
+      "honestLagDays": 126,
+      "lastSuccessfulIngest": "2026-09-04 20:42:56.406554+00",
       "monthly": [
         {
           "month": "2026-08",
-          "documents": 2,
-          "shareOfBaseline": 0.0625,
-          "state": "EFFECTIVELY_ABSENT"
+          "documents": 8,
+          "shareOfBaseline": 0.25,
+          "state": "PARTIAL"
         },
         {
           "month": "2026-07",
@@ -213,7 +213,7 @@
       ],
       "baselineDocumentsPerMonth": 32,
       "nextCheckpoint": "services/ingest/.checkpoints (per court-year); newest write below",
-      "newestCheckpointWrite": "2026-08-27T14:13:13.180Z"
+      "newestCheckpointWrite": "2026-09-04T15:44:43.970Z"
     },
     {
       "source": "ecourts",
@@ -224,7 +224,7 @@
         "expires": "2029-01"
       },
       "adapter": "services/api/src/court/ecourts.ts",
-      "adapterSha256": "40ab33889c2c3e37",
+      "adapterSha256": "c9b752e590e75bdf",
       "newestUpstreamWrite": "NOT_MEASURED — live source, no listing endpoint",
       "heldDocuments": 0,
       "newestLocalDecision": null,

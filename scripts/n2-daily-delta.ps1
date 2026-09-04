@@ -208,6 +208,107 @@ $revalidateOk = Run $tsx @('scripts\n2-hc-gap-closure.mts', '--mode', 'revalidat
 if (-not $revalidateOk) { Say "  source-unavailable revalidation FAILED -- eligible rows remain recoverable next cycle" }
 
 <#
+  SUPREME COURT OPEN DATA BUCKET — THE HALF THIS CYCLE MEASURED AND THEN DROPPED.
+
+  ADDED 5 Sep 2026. Steps 1-4 above plan the HIGH COURT bucket. The header of
+  this file has always said the manifest is built "from BOTH Open Data buckets",
+  and it is — but `n2-delta-scopes.mjs` maps upstream keys to `hc-boot-*` scopes
+  through the checkpoint set, and the SC adapter has no checkpoint to map. So the
+  SC half of every measurement reached step 2 and stopped there.
+
+  WHAT THAT LOOKED LIKE, AND WHY NOBODY CAUGHT IT. Because no checkpoint records
+  an SC key, the manifest classified all 77 of its metadata objects as NEW and
+  all 48,563,942 of their bytes as "waiting" — identical to the digit on the 3 Sep
+  and 4 Sep receipts, and identical on every cycle before them. A backlog that
+  never changes is easy to read as a backlog nobody has got to yet. It was not
+  one: measured 5 Sep by `n2-sc-reconcile.mts`, the REAL gap was NINE documents.
+  The manifest now reports that bucket as `resume=source-url` with no byte
+  frontier, and this step is the owner it never had.
+
+  WHY THE RECONCILIATION AND NOT A YEAR RANGE. `fleet-work-is-derived-not-typed`.
+  The SC bucket publishes one PDF per judgment and `sci.ts:sourceUrlFor` builds
+  `judgments.source_url` from the same key, so upstream identity and stored
+  identity are the SAME SPACE — this is the one source where "do we hold
+  everything" has an exact yes/no answer per year. Hand-picking "the last two
+  years" would have missed the 1996 and 1998 rows that were actually missing.
+
+  WHY IT IS BOUNDED. `MaxYears` caps how many gap years one cycle will ingest. A
+  first run against a badly behind corpus must not turn a daily cycle into an
+  unbounded backfill on a box that is also running the GPU walk; the remainder is
+  named in the log and picked up tomorrow. When the gap is zero this step lists
+  the bucket, writes the artifact and starts nothing.
+
+  This is the AWS Open Data bucket (authorized bulk corpus, CLAUDE.md 6a), which
+  is a different source from the sci-live homepage feed handled below it.
+#>
+$scGapYears = @()
+$scIngestedYears = @()
+$scDeferredYears = @()
+$scYearFailures = @{}
+$scMaxYears = 6
+$scReconcileOk = Run $tsx @('scripts\n2-sc-reconcile.mts') 'sc-reconcile'
+if (-not $scReconcileOk) {
+  Say "  SC reconciliation FAILED -- the SC gap is unmeasured this cycle, so nothing is ingested for it"
+} else {
+  $scFile = Join-Path $repo 'docs\ai\new2-r9\sc-reconciliation.json'
+  $sc = Get-Content -LiteralPath $scFile -Raw | ConvertFrom-Json
+  # `missing` is the exact per-year set difference by basename. Sorted newest
+  # first: if the cap bites, the years an advocate is most likely to search for
+  # are the ones that get closed today.
+  $scGapYears = @(
+    $sc.byYear.PSObject.Properties |
+      Where-Object { $_.Value.missing -gt 0 } |
+      Sort-Object { [int]$_.Name } -Descending |
+      ForEach-Object { [int]$_.Name }
+  )
+  $scTotalMissing = $sc.gap.missingAlsoByBasename
+  Say "  SC gap $scTotalMissing document(s) across $($scGapYears.Count) year(s)"
+  if ($scGapYears.Count -eq 0) {
+    Say "  SC holds every upstream english PDF -- starting nothing"
+  } else {
+    $scTake = @($scGapYears | Select-Object -First $scMaxYears)
+    $scDeferredYears = @($scGapYears | Select-Object -Skip $scMaxYears)
+    foreach ($y in $scTake) {
+      $n = $sc.byYear."$y".missing
+      Say "  SC ingest year $y ($n missing)"
+      # --resume skips source URLs already held, so a year with one missing row
+      # costs one parquet read and one PDF fetch, not a re-ingest of the year.
+      if (Run $tsx @('services\ingest\src\cli.ts', '--from', "$y", '--to', "$y", '--resume') "sc-$y") {
+        $scIngestedYears += $y
+        <#
+          A GAP WE CANNOT CLOSE IS NOT A GAP WE HAVE NOT TRIED TO CLOSE.
+
+          MEASURED 5 Sep 2026: 2026 closed cleanly (inserted 6 of 6), but 1998
+          and 1996 returned `failed=2` each and inserted nothing — the parquet
+          metadata names PDF keys the bucket does not serve, and every fetch is
+          an upstream 404:
+
+            .../data/pdf/year=1996/english/S_1996_2_866_868_EN.pdf -> 404
+
+          Retrying them daily is CORRECT and costs ~1s: a publisher that fixes
+          its own object is picked up without anyone re-enabling anything. What
+          would not be correct is reporting "SC gap 3 documents" for ever with no
+          way to tell a backlog from a permanent upstream hole — which is exactly
+          the false-signal shape that let this bucket rot for a month. So the
+          failure count is parsed back out and recorded per year.
+        #>
+        $line = Select-String -Path (Join-Path $logDir "n2-daily-sc-$y.out") -Pattern '^year=\d+ .*failed=(\d+)' | Select-Object -Last 1
+        $f = if ($line) { [int]$line.Matches[0].Groups[1].Value } else { $null }
+        $scYearFailures["$y"] = $f
+        if ($f -ne $null -and $f -gt 0) {
+          Say "    SC year $y -- $f fetch(es) refused by upstream (404); those rows are not ours to close"
+        }
+      } else {
+        Say "    SC year $y FAILED -- it stays in the gap and is retried next cycle"
+      }
+    }
+    if ($scDeferredYears.Count -gt 0) {
+      Say "  SC deferred $($scDeferredYears.Count) year(s) past the $scMaxYears-year cap: $($scDeferredYears -join ', ')"
+    }
+  }
+}
+
+<#
   SUPREME COURT CURRENT DELTA — EXACTLY THE INDEPENDENTLY AUTHORIZED SCOPE.
 
   This invokes only sci-live's public, server-rendered homepage Judgments feed
@@ -333,6 +434,18 @@ Receipt 'ok' @{
   scopes = $names
   sourceUnavailableRevalidation = $revalidateOk
   sciHomepageJudgmentDelta = $sciHomepageOk
+  # The SC bucket's own line in the receipt. `reconciled = false` and
+  # `gapYears = 0` are DIFFERENT facts and are recorded separately: one means we
+  # could not look, the other means we looked and there was nothing. Reading them
+  # the same is how this bucket went a month without an owner.
+  scOpenDataBucket = [ordered]@{
+    reconciled     = $scReconcileOk
+    gapYears       = $scGapYears
+    ingestedYears  = $scIngestedYears
+    deferredYears  = $scDeferredYears
+    upstream404ByYear = $scYearFailures
+    maxYearsPerCycle = $scMaxYears
+  }
   observed = $observed
 }
 Say "=== cycle $stamp end"

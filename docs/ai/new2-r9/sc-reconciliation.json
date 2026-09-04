@@ -1,22 +1,22 @@
 {
-  "takenAt": "2026-08-27T10:10:09.580Z",
+  "takenAt": "2026-09-04T20:47:28.612Z",
   "bucket": "https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com",
   "upstream": {
-    "pdfObjects": 177563,
-    "englishPdfObjects": 43535,
-    "newestUpstreamWrite": "2026-08-15T16:48:37.000Z",
+    "pdfObjects": 177569,
+    "englishPdfObjects": 43541,
+    "newestUpstreamWrite": "2026-08-30T19:23:24.000Z",
     "years": 77
   },
   "local": {
-    "heldRows": 38351,
-    "newestLocalDecision": "2026-08-04",
+    "heldRows": 38358,
+    "newestLocalDecision": "2026-08-12",
     "oldestLocalDecision": "1950-03-14"
   },
   "gap": {
     "missingByExactUrl": 5184,
-    "missingAlsoByBasename": 4,
+    "missingAlsoByBasename": 3,
     "note": "A judgment listed under two adjacent year partitions is held under one URL only; the basename figure is the real gap.",
-    "heldButNotUpstream": 0
+    "heldButNotUpstream": 1
   },
   "byYear": {
     "1950": {
@@ -245,7 +245,7 @@
     },
     "2006": {
       "upstream": 1029,
-      "missing": 1
+      "missing": 0
     },
     "2007": {
       "upstream": 1325,
@@ -324,7 +324,7 @@
       "missing": 0
     },
     "2026": {
-      "upstream": 208,
+      "upstream": 214,
       "missing": 0
     }
   },
@@ -343,16 +343,10 @@
       "key": "data/pdf/year=1998/english/1998_1_948_960_EN.pdf",
       "size": 129,
       "lastModified": "2026-06-04T04:29:59.000Z"
-    },
-    {
-      "key": "data/pdf/year=2006/english/2009_9_810_820_EN.pdf",
-      "size": 403918,
-      "lastModified": "2026-06-04T04:44:20.000Z"
     }
   ],
   "missingYearsToIngest": [
     "1996",
-    "1998",
-    "2006"
+    "1998"
   ]
 }

@@ -105,6 +105,7 @@
     "0100_api_idempotency_records": "f093dc91d43dee36a10cfcea27bc0b0f6d786895dcb30957dfdf35d851922f38",
     "0101_matters_parties_jsonb_object": "60fd020fb9fcaf71c7001255ee54359f353221b01a6acb59529d5f2a2a32a933",
     "0102_soft_corpus_references": "b129c493ba794d8a09fade82a9015f3b2f4c25dc72e5d7bb69a787fce43232b9",
-    "0103_identity_only_erasure_principal": "55ec847197d91fb7f1d41ccdf8a9601da2f235b4d08ceab3262d51e629252a27"
+    "0103_identity_only_erasure_principal": "55ec847197d91fb7f1d41ccdf8a9601da2f235b4d08ceab3262d51e629252a27",
+    "0104_ops_job_state_check_all_states": "e7f65cb39132bfede335bd4151d1bde9fe5e1c12fcaff603be039c7d402b75ab"
   }
 }

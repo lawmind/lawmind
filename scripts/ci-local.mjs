@@ -108,6 +108,15 @@ const STEPS = [
   // which made 141 lines of watcher exclusions inert while looking like they
   // simply were not aggressive enough.
   ['json configs', 'node', ['scripts/check-json-configs.mjs']],
+  // Same class as the two above, for the only load-bearing language in this repo
+  // that nothing checked. `n2-daily-delta.ps1` runs UNATTENDED at 18:00 daily; a
+  // PowerShell file that does not parse runs nothing at all — no manifest, no
+  // ingest, no ledger — while its scheduled task still reports that it fired.
+  // Added 5 Sep 2026 after one em dash inside a double-quoted string silently
+  // broke that file: these files carry no BOM, PowerShell 5.1 decodes them as
+  // ANSI, and the UTF-8 em dash becomes `â€"` whose third character CLOSES THE
+  // STRING. Static, no socket, milliseconds.
+  ['powershell syntax', 'node', ['scripts/check-powershell-syntax.mjs']],
   // Twice: the first proves migrations apply to an empty database, the second
   // proves a re-run is a no-op. Both are real failures we have shipped before.
   ['migrate (fresh)', 'pnpm', ['--filter', '@lawmind/db', 'migrate']],

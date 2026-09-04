@@ -43,9 +43,50 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'docs/ai/new2-r9/upstream-manifest.json');
 const CHECKPOINT_DIR = join(ROOT, 'services/ingest/.checkpoints');
 
+/**
+ * NOT EVERY SOURCE RESUMES BY A BYTE OFFSET, AND ONE OF THESE TWO NEVER DID.
+ *
+ * `resume` names what the adapter's frontier actually IS, because the whole diff
+ * above is meaningful only for a source whose progress is a byte offset into a
+ * parquet file.
+ *
+ *   checkpoint-offset  High Court. `hc-load-cli` records `{offset, size}` per
+ *                      key under `services/ingest/.checkpoints/`, so upstream
+ *                      size minus recorded size is real unread work.
+ *   source-url         Supreme Court. `cli.ts` (`sci`) resumes by asking the
+ *                      database which `source_url`s it already holds — it writes
+ *                      no checkpoint, and it never has. One PDF per judgment,
+ *                      and `sci.ts:sourceUrlFor` builds the identity from the
+ *                      parquet row rather than from a file position.
+ *
+ * MEASURED 4-5 Sep 2026, and it is the same defect the FIXTURE class below was
+ * created to fix, arriving by a different door. Every one of the SC bucket's 77
+ * metadata objects appears in no checkpoint — because no checkpoint for them can
+ * exist — so all 77 landed in NEW and all 48,563,942 of their bytes landed in
+ * `bytesWaiting`, on every cycle, for ever. Two consecutive daily receipts (3 and
+ * 4 Sep) carry the byte count IDENTICAL to the digit.
+ *
+ * That is not a small cosmetic lie. It made the SC half of the daily trigger
+ * permanently unusable: a headline that cannot reach zero cannot signal anything,
+ * so nothing downstream could act on it and `n2-delta-scopes.mjs` reads only the
+ * HC bucket. Meanwhile the ACTUAL SC gap on 5 Sep was NINE DOCUMENTS — measured
+ * by `n2-sc-reconcile.mts`, which is the authority for this source precisely
+ * because the upstream key space and our stored identity are the same space.
+ *
+ * A source with no byte frontier is therefore reported as one, honestly, rather
+ * than being forced through a model it does not have.
+ */
 const BUCKETS = [
-  { adapter: 'aws_open_data_hc', host: 'https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com' },
-  { adapter: 'aws_open_data_sc', host: 'https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com' },
+  {
+    adapter: 'aws_open_data_hc',
+    host: 'https://indian-high-court-judgments.s3.ap-south-1.amazonaws.com',
+    resume: 'checkpoint-offset',
+  },
+  {
+    adapter: 'aws_open_data_sc',
+    host: 'https://indian-supreme-court-judgments.s3.ap-south-1.amazonaws.com',
+    resume: 'source-url',
+  },
 ] as const;
 
 type S3Obj = { key: string; size: number; etag: string; lastModified: string };
@@ -155,6 +196,13 @@ async function main() {
        * deliberately do not ingest must be visible as a decision, not absent.
        */
       FIXTURE: [] as Record<string, unknown>[],
+      /**
+       * This bucket's adapter has no byte frontier, so "how much have we not
+       * read" is not a question its objects can answer. Counted and listed —
+       * never dropped, never silently zero — with the authority that CAN answer
+       * it named on every row. See the `resume` note on BUCKETS.
+       */
+      NO_BYTE_FRONTIER: [] as Record<string, unknown>[],
     };
     let bytesWaiting = 0;
     let fixtureBytes = 0;
@@ -166,7 +214,17 @@ async function main() {
       const l = local.get(o.key);
       const part = partitionOf(o.key);
       const row = { key: o.key, upstreamSize: o.size, lastModified: o.lastModified, etag: o.etag, ...(part ?? {}) };
-      if (/\/bench=testcase\//.test(o.key)) {
+      if (b.resume !== 'checkpoint-offset') {
+        /* No checkpoint can exist for this adapter, so absence of one is not
+         * evidence of unread work. `bytesWaiting` is deliberately NOT advanced:
+         * a number that can never reach zero is a number nothing can act on. */
+        classes.NO_BYTE_FRONTIER.push({
+          ...row,
+          resume: b.resume,
+          authority:
+            'scripts/n2-sc-reconcile.mts — exact set difference of upstream PDF keys against judgments.source_url',
+        });
+      } else if (/\/bench=testcase\//.test(o.key)) {
         classes.FIXTURE.push({ ...row, refusedBy: 'isTestFixture — publisher fixture partition, never ingested' });
         fixtureBytes += o.size;
       } else if (!l) {
@@ -200,6 +258,12 @@ async function main() {
 
     (report['buckets'] as Record<string, unknown>)[b.adapter] = {
       host: b.host,
+      /* What this adapter's frontier IS. A consumer that plans work out of
+       * `newKeys`/`grown` must check this first: for anything but
+       * `checkpoint-offset` those arrays are empty BY CONSTRUCTION, and reading
+       * their emptiness as "nothing to do" is the mistake this field exists to
+       * make impossible. */
+      resume: b.resume,
       totalObjects: objs.length,
       metadataParquetObjects: metadataObjs.length,
       newestUpstreamWrite: newest,
@@ -210,9 +274,11 @@ async function main() {
         CHANGED: classes.CHANGED.length,
         UNCHANGED: classes.UNCHANGED,
         FIXTURE: classes.FIXTURE.length,
+        NO_BYTE_FRONTIER: classes.NO_BYTE_FRONTIER.length,
       },
       bytesWaiting,
       fixtureBytes,
+      noByteFrontier: classes.NO_BYTE_FRONTIER,
       byYear,
       newKeys: classes.NEW,
       grown: classes.GROWN.sort((a, b2) => (b2['added'] as number) - (a['added'] as number)),
@@ -221,9 +287,20 @@ async function main() {
       objectVersions: metadataObjs,
       fixture: classes.FIXTURE,
     };
-    process.stderr.write(
-      `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · CHANGED ${classes.CHANGED.length} · UNCHANGED ${classes.UNCHANGED} · FIXTURE ${classes.FIXTURE.length} (${fixtureBytes} bytes, never ingested) · ${bytesWaiting} bytes waiting\n`,
-    );
+    if (b.resume === 'checkpoint-offset') {
+      process.stderr.write(
+        `${b.adapter}: ${metadataObjs.length} metadata objects · NEW ${classes.NEW.length} · GROWN ${classes.GROWN.length} · SHRUNK ${classes.SHRUNK.length} · CHANGED ${classes.CHANGED.length} · UNCHANGED ${classes.UNCHANGED} · FIXTURE ${classes.FIXTURE.length} (${fixtureBytes} bytes, never ingested) · ${bytesWaiting} bytes waiting\n`,
+      );
+    } else {
+      /* Deliberately a different sentence, not the same one with zeroes in it.
+       * The byte vocabulary is what made this bucket unreadable for a month;
+       * printing "0 bytes waiting" would replace a false backlog with a false
+       * all-clear, and neither is the truth about a source measured elsewhere. */
+      process.stderr.write(
+        `${b.adapter}: ${metadataObjs.length} metadata objects · resume=${b.resume}, NO byte frontier — ` +
+          `newest upstream write ${newest || 'unknown'} · currency is answered by scripts/n2-sc-reconcile.mts, not by this manifest\n`,
+      );
+    }
   }
 
   mkdirSync(dirname(OUT), { recursive: true });
