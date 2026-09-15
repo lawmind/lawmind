@@ -22,12 +22,14 @@
   "pauseResume": null,
   "launcher": "Start-Process node services/harness/src/new1-final-hnsw-build.mjs (detached)",
   "livenessSource": "durable-progress",
-  "state": "HELD",
+  "state": "RELEASED",
   "tookOverFrom": {
     "holder": "NEW1",
     "sessionId": "8ddda8bc-876f-41f9-91c3-70f37ee725fe",
     "pid": 22620,
     "health": "DEAD",
     "reason": "same lane, same session id, same round; re-stating the lease with a durable metric that MOVES during an index build. The embedding row count is correct for the walk and is frozen during a build, so it reads NO_DELTA and would let another lane conclude the box is idle while a four-hour CREATE INDEX is running."
-  }
+  },
+  "releasedAt": "2026-09-15T17:28:48.692Z",
+  "releasedBy": "NEW1"
 }
