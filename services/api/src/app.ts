@@ -162,9 +162,40 @@ import {
 import { validate } from './validate.ts';
 import { withIdempotency } from './idempotency.ts';
 
+/**
+ * What `GET /ready` reports. Every field is OBSERVED on the request, never
+ * remembered from boot — a readiness probe that replays a startup verdict says
+ * the deployment was fine once, which is not the question a load balancer asks.
+ */
+export type ReadinessReport = {
+  /** Both roles answered a trivial statement. */
+  corpusReachable: boolean;
+  userReachable: boolean;
+  /**
+   * `single` or `split`, and whether the two handles were PROVEN to be two
+   * databases by `(system_identifier, current_database())`. `null` in single
+   * mode, where there is nothing to prove and a `true` would be a lie.
+   */
+  splitMode: 'single' | 'split';
+  rolesDistinct: boolean | null;
+  /** From `serving-contract.ts`. A serving deployment that got here has zero. */
+  servingEnv: string;
+  detail?: string | undefined;
+};
+
 export type AppDeps = {
   /** Injected so the health check can be exercised without a live server. */
   ping: () => Promise<void>;
+  /**
+   * Readiness, as distinct from liveness.
+   *
+   * `/health` answers "is this container able to serve traffic" and pings ONE
+   * handle. Under the physical split that is half the serving plane: a user
+   * database that has gone away leaves `/health` green and every matter route
+   * 500ing. Absent in tests and in single-database deployments that never
+   * supplied one, where `/ready` says so rather than inventing a verdict.
+   */
+  readiness?: (() => Promise<ReadinessReport>) | undefined;
   /** Absent in tests that do not exercise search. */
   search?: SearchDeps | undefined;
   /** Absent in tests that do not exercise authentication. */
@@ -229,6 +260,48 @@ export function createApp(deps: AppDeps) {
    * digest. Recorded as a known gap rather than guessed at —
    * `docs/ai/V2_RECONCILIATION.md`.
    */
+  /**
+   * ─────────────────────────────────────────────────────────────────────────────
+   * READINESS IS A DIFFERENT QUESTION FROM LIVENESS, AND UNDER A SPLIT IT SHOWS
+   * ─────────────────────────────────────────────────────────────────────────────
+   *
+   * `/health` pings the CORPUS handle. After R28 that is half the serving plane:
+   * a user database that has gone away leaves `/health` green, the deployment in
+   * rotation, and every matter, annotation and sign-in route 500ing. A probe
+   * that cannot see that is a probe that keeps routing traffic into an outage.
+   *
+   * 503 when a role is unreachable or a declared split is not really two
+   * databases. A load balancer may read this; nothing here is user-facing and
+   * nothing here says anything about the law.
+   */
+  app.get('/ready', async (c) => {
+    if (!deps.readiness) {
+      return fail(
+        c,
+        'READINESS_NOT_CONFIGURED',
+        `this process supplied no readiness probe (build ${buildSha}) — use /health for liveness`,
+        503,
+      );
+    }
+    try {
+      const report = await deps.readiness();
+      const ready =
+        report.corpusReachable &&
+        report.userReachable &&
+        (report.splitMode === 'single' || report.rolesDistinct === true);
+      if (!ready) {
+        logger.error({ request_id: c.get('requestId'), readiness: report }, 'readiness failed');
+        return fail(c, 'NOT_READY', `this deployment is not ready to serve (build ${buildSha})`, 503, {
+          ...report,
+        });
+      }
+      return ok(c, { status: 'ready', sha: buildSha, ...report });
+    } catch (error) {
+      logger.error({ request_id: c.get('requestId'), err: error }, 'readiness probe threw');
+      return fail(c, 'NOT_READY', `readiness probe failed (build ${buildSha})`, 503);
+    }
+  });
+
   app.get('/version', (c) =>
     ok(c, {
       gitSha: buildSha,

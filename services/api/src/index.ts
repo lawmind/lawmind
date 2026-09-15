@@ -1,3 +1,5 @@
+import { hostname } from 'node:os';
+
 import { serve } from '@hono/node-server';
 import { createAuth, mailerFrom } from '@lawmind/auth';
 import { createDatabase } from '@lawmind/db';
@@ -6,7 +8,13 @@ import { sql } from 'drizzle-orm';
 
 import { createApp } from './app.ts';
 import { createRolePools } from './pools.ts';
-import { sameDatabaseRefusal, verifyDistinctDatabases } from './ops/db-identity.ts';
+import {
+  databaseIdentity,
+  forbiddenClusterRefusal,
+  sameDatabaseRefusal,
+  verifyDistinctDatabases,
+} from './ops/db-identity.ts';
+import { evaluateServingContract, servingContractRefusal } from './ops/serving-contract.ts';
 import { ActivationOutbox, type OutboxStats } from './product/activation-outbox.ts';
 import { installActivationOutbox } from './product/activation.ts';
 import { createAdmission } from './search/admission.ts';
@@ -39,6 +47,28 @@ const db = createDatabase(env.databaseUrl());
  * plus one short-statement pool for user-owned work. Nothing needs a new
  * variable to keep working.
  */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────────
+ * BEFORE A SOCKET IS OPENED: IS THIS DEPLOYMENT CONFIGURED TO SERVE ANYONE?
+ * ─────────────────────────────────────────────────────────────────────────────────
+ *
+ * `ops/serving-contract.ts` holds the reasoning. The short version: everything
+ * R28 built is opt-in by variables nobody is forced to set, so a production
+ * deployment that sets only `DATABASE_URL` runs single-database, skips the
+ * identity verification below, and lets a corpus restore TRUNCATE an advocate's
+ * matters. This refuses that configuration by name, along with a serving
+ * deployment pointed at loopback — which in this repository's own `.env` is the
+ * founder's workstation.
+ */
+const servingContract = evaluateServingContract(process.env, { ownHostname: hostname() });
+if (servingContract.violations.length > 0) {
+  logger.fatal(
+    { event: 'serving_contract_refused', violations: servingContract.violations },
+    servingContractRefusal(servingContract),
+  );
+  process.exit(1);
+}
+
 const databases = env.databases();
 const rolePools = createRolePools(
   databases.corpusUrl,
@@ -93,6 +123,30 @@ if (databases.mode === 'split') {
     },
     'corpus and user databases verified distinct',
   );
+}
+
+/**
+ * The tunnel-proof half of the workstation guard. `serving-contract.ts` already
+ * refused a loopback HOST; this asks the cluster who it is, because an SSH
+ * tunnel or a port-forward makes a laptop answer on a public-looking name and
+ * every string rule passes. No-ops when the list is unconfigured, which is why
+ * both halves exist.
+ */
+if (servingContract.forbiddenSystemIdentifiers.length > 0) {
+  for (const [role, handle] of [
+    ['corpus', rawSql],
+    ['user', userSql],
+  ] as const) {
+    const refusal = forbiddenClusterRefusal(
+      await databaseIdentity(handle),
+      role,
+      servingContract.forbiddenSystemIdentifiers,
+    );
+    if (refusal) {
+      logger.fatal({ event: 'forbidden_serving_cluster', role }, refusal);
+      process.exit(1);
+    }
+  }
 }
 
 const preflightFailures = await runPreflight(rawSql);
@@ -223,6 +277,37 @@ const auth = createAuth({
 const app = createApp({
   ping: async () => {
     await db.execute(sql`SELECT 1`);
+  },
+  /**
+   * Measured on the request, never replayed from boot. A readiness probe that
+   * repeats a startup verdict reports that the deployment was fine once, which
+   * is not what a load balancer is asking, and it would stay green through the
+   * exact outage the probe exists to catch.
+   */
+  readiness: async () => {
+    const report = {
+      corpusReachable: false,
+      userReachable: false,
+      splitMode: databases.mode,
+      rolesDistinct: null as boolean | null,
+      servingEnv: servingContract.servingEnv,
+    };
+    try {
+      await rawSql`SELECT 1`;
+      report.corpusReachable = true;
+    } catch (error) {
+      logger.error({ err: error, role: 'corpus' }, 'readiness: corpus role unreachable');
+    }
+    try {
+      await userSql`SELECT 1`;
+      report.userReachable = true;
+    } catch (error) {
+      logger.error({ err: error, role: 'user' }, 'readiness: user role unreachable');
+    }
+    if (databases.mode === 'split' && report.corpusReachable && report.userReachable) {
+      report.rolesDistinct = (await verifyDistinctDatabases(rawSql, userSql)).distinct;
+    }
+    return report;
   },
   search: { sql: rawSql, userSql, researchSql: pools.research, admission, embedQuery },
   auth: { auth, sql: userSql, secret: authSecret },

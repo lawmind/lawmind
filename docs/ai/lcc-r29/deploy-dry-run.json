@@ -1,0 +1,111 @@
+{
+  "kind": "lawmind-r29-deploy-dry-run",
+  "generatedAt": "2026-09-15T10:07:21.043Z",
+  "paidInfraCreated": false,
+  "remoteResourceCreated": false,
+  "counts": {
+    "total": 16,
+    "pass": 16,
+    "fail": 0,
+    "failClosedProbes": 7
+  },
+  "steps": [
+    {
+      "name": "corpus and user pointed at ONE database",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "DB_SPLIT_MODE=split, but CORPUS_DATABASE_URL and USER_DATABASE_URL resolve to the SAME database (127.0.0.1:5432/lawmind_r28_corpus). Refusin"
+    },
+    {
+      "name": "one database behind two DIFFERENT hostnames",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "verifyDistinctDatabases refused: same (system_identifier, database)"
+    },
+    {
+      "name": "a serving deployment with AUTH_SECRET missing",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "env:AUTH_SECRET"
+    },
+    {
+      "name": "a serving deployment that set only DATABASE_URL",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "env:role-urls, env:db-split-mode"
+    },
+    {
+      "name": "a serving deployment pointed at this workstation (by host)",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "db-target:CORPUS_DATABASE_URL"
+    },
+    {
+      "name": "a serving deployment pointed at this workstation (through a tunnel)",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "The corpus role is connected to cluster 7674332331006092552 (database \"lawmind_r28_corpus\"), which LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS n"
+    },
+    {
+      "name": "a corpus generation that is not fit to activate",
+      "kind": "fail-closed",
+      "verdict": "PASS",
+      "detail": "no optimizer statistics for populated table(s): judgments — the planner would cost them as empty; search smoke answered every Gate-S1 class "
+    },
+    {
+      "name": "strict-split boot from the environment contract",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "corpus=\"lawmind_r28_corpus\" user=\"lawmind_r28_user\""
+    },
+    {
+      "name": "activation gate ACTIVATES a generation that is fit",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "ACTIVATE"
+    },
+    {
+      "name": "GET /health",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "sha=aaef76aacd8dcaa5f991ee9cc8b1d5fc799cc816"
+    },
+    {
+      "name": "GET /ready reports both roles and a proved split",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "splitMode=split rolesDistinct=true"
+    },
+    {
+      "name": "GET /version carries a release identity",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "contract=1 sha=aaef76aacd8dcaa5f991ee9cc8b1d5fc799cc816"
+    },
+    {
+      "name": "R17 corpus-unavailable semantics on a deployed socket",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "CORPUS_TARGET_UNAVAILABLE / That judgment is not available in the selected corpus release, so it cannot be opened right now."
+    },
+    {
+      "name": "POST /search answers over HTTP",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "status=200 results=0"
+    },
+    {
+      "name": "identity-only erasure reaches a terminal state",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "status=201 code=accepted"
+    },
+    {
+      "name": "staging Gate-S1 runner executes against a live socket",
+      "kind": "green-path",
+      "verdict": "PASS",
+      "detail": "5/5 answered · whole-request p50=8ms p95=13ms max=13ms (target p95 <= 3000ms) (local, NOT a Gate-S1 certification)"
+    }
+  ],
+  "verdict": "DEPLOY_DRY_RUN_PASS"
+}

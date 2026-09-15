@@ -90,6 +90,41 @@ export async function verifyDistinctDatabases(
   return { distinct: true, sameCluster, corpus, user };
 }
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────────
+ * THE CLUSTER THIS DEPLOYMENT MAY NOT BE POINTED AT
+ * ─────────────────────────────────────────────────────────────────────────────────
+ *
+ * `serving-contract.ts` refuses a loopback or LAN host before a socket is
+ * opened. That is the cheap half and it has a real blind spot: an SSH tunnel, a
+ * `cloudflared` hostname or a port-forward makes the founder's workstation
+ * answer on a public-looking name, and every string rule passes.
+ *
+ * `system_identifier` does not care what the URL said — it is the cluster's own
+ * id, generated at `initdb`, and it is identical through any tunnel. So the
+ * workstation's id is configured as FORBIDDEN and checked against the handle
+ * this process actually holds.
+ *
+ * Unconfigured means no check, and that is stated rather than defaulted:
+ * an empty list cannot pretend to be a guarantee, which is exactly why the
+ * host rules in `serving-contract.ts` still exist beside this.
+ */
+export function forbiddenClusterRefusal(
+  identity: DatabaseIdentity,
+  role: 'corpus' | 'user',
+  forbidden: readonly string[],
+): string | null {
+  if (!forbidden.includes(identity.systemIdentifier)) return null;
+  return (
+    `The ${role} role is connected to cluster ${identity.systemIdentifier} ` +
+    `(database "${identity.database}"), which LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS names as ` +
+    'a cluster this deployment must never serve from — on this project that is the founder’s ' +
+    'workstation, the box the ingest fleet writes to and lanes TRUNCATE. The hostname in the ' +
+    'URL is not the evidence here; the cluster id is, and it survives a tunnel, a proxy and a ' +
+    'port-forward.'
+  );
+}
+
 /** The message a refusal prints. Extracted so the test can assert on it. */
 export function sameDatabaseRefusal(v: Extract<IdentityVerdict, { distinct: false }>): string {
   return (

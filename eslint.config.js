@@ -82,6 +82,15 @@ export default tseslint.config(
         fetch: 'readonly',
         URL: 'readonly',
         AbortSignal: 'readonly',
+        // `AbortController` and `performance` join 15 Sep 2026 for the same
+        // reason and after the same shape of failure. A runner that measures a
+        // deployed API needs a wall clock that is not `Date.now()` and a way to
+        // abandon a request at the client timeout the product actually ships;
+        // without these two declarations the CORRECT version of
+        // `lcc-staging-gate-s1.mjs` lints worse than one that measures nothing
+        // and never gives up.
+        AbortController: 'readonly',
+        performance: 'readonly',
         // A script that loops over long-running children needs both halves of
         // the timer pair. `legal-object-factory.mjs` bounds each batch and
         // clears the timer when the child exits; without these declarations the
