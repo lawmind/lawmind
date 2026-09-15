@@ -7470,3 +7470,77 @@ box existing.
 
 Still separately owed and unchanged by this round: the countersigned DPA before
 uploads ship (OD-6), and the DNS/TLS/subdomain choice.
+
+## FQ-NEW1-R14-RAM — the semantic index needs about 20 GB of memory to build, and this machine has 11.7 GB to give
+
+**Raised:** 15 September 2026 · **Lane:** NEW1 · **Blocks:** nothing you are
+using today. The app does not read this index and no feature waits on it.
+
+**The good news first, because it is the bigger half.** The embedding programme
+is **finished**. Every document we hold that qualifies for semantic search now
+has a vector: 7,673,702 distinct texts out of 7,673,702, with nothing queued and
+nothing unaccounted for. That was the open question when this round started and
+it is now closed and measured, not estimated.
+
+**What could not be finished.** Turning those vectors into a searchable index is
+a separate step, and it did not complete. The index would be about 19.5 GB, and
+the way this software builds it, the whole thing has to be held in memory at once
+or it falls off a cliff. Measured twice, on two different settings:
+
+- With 4 GB of memory: ran 4 hours 55 minutes, got 52% of the way, and was
+  slowing down as it went — 233 rows a second early on, 25 a second by the end.
+  Finishing would have taken more than 41 hours and the figure was still rising.
+- With 8 GB and more than twice the parallel workers: **exactly the same speed**,
+  24 rows a second. The extra workers did 2.3 times the disk reads and produced
+  no extra progress, which tells us the slow part cannot be parallelised.
+
+The memory figure is not a guess. Both runs fell off the cliff at the precise
+point arithmetic predicted — within 15 rows the first time and 551 the second —
+so we know exactly what it needs: **19.52 GB**. This machine has 31.7 GB in
+total and, with Windows and your other applications running, about **11.7 GB**
+available. There is no setting that closes that gap.
+
+**Nothing was damaged.** Both attempts were cancelled cleanly and the vector
+table was verified untouched afterwards — all 8,160,672 rows still there.
+
+**What we did instead, so the round is not empty.** There is an existing
+1-million-row index built to exactly the same specification. We ran the full
+quality measurement against that. It is honest evidence about the *design*, and
+it is clearly labelled as one million rows rather than seven and a half, because
+search quality changes with size and it would be wrong to quote it as if it were
+the real thing.
+
+That measurement already found something worth knowing: **with the default
+setting, filtering a search to a single High Court returned nothing at all for
+137 of 283 test queries** — not "few results", zero. A different setting fixes it
+completely but makes those searches roughly a hundred times slower. That is a
+real trade-off we now have measured numbers for, and it is ours to resolve, not
+yours.
+
+**The decision that is yours, and there is no urgency.** Three options:
+
+1. **Do nothing for now.** Costs nothing. The vectors are safe and permanent; the
+   index can be built whenever a machine is available. Semantic search is not in
+   the app today and nothing regresses.
+2. **Add memory to this machine.** Going from 32 GB to 64 GB is the cheapest fix
+   and would let the index build in well under an hour instead of never. This is
+   a parts purchase, roughly the price of a decent dinner out, and it is a
+   one-time cost.
+3. **Build it on a rented machine once.** We already have a hosting decision in
+   front of you (`FQ-LCC-R13-HOSTING`, `FQ-REMOTE-ALPHA`). A machine with enough
+   memory, rented for an afternoon, would do it.
+
+**NEW1's view: option 2, whenever convenient.** It is the smallest amount of
+money that removes the problem permanently, and it helps everything else on this
+box as well. Option 1 is genuinely fine in the meantime — this is not a fire.
+
+**One thing to be aware of either way.** The measurement that the extra parallel
+workers bought nothing is specific to building the index. It does not mean the
+machine is slow or that anything else is misconfigured.
+
+Evidence: `docs/ai/new1-r14/HNSW_BUILD_COST_AT_SCALE.md` (the two runs and the
+mechanism), `docs/ai/new1-r14/NEW1_EMBEDDING_COMPLETION_RECEIPT.json` (the
+embedding is finished), `docs/ai/new1-r14/NEW1_R14_FINALIZATION.md` (the round).
+
+
+---

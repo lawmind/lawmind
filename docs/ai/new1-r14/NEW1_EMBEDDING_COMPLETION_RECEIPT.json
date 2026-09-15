@@ -1,0 +1,224 @@
+{
+  "kind": "NEW1_EMBEDDING_COMPLETION_RECEIPT",
+  "version": 1,
+  "writtenAt": "2026-09-15T14:30:05.327Z",
+  "writtenBy": "NEW1 finalization round",
+  "head": "ae889a8f11c350357e4a9ce40e59d4975335a0e3",
+  "immutable": "Every figure in this file was measured against the live database in this round. None was carried forward from an earlier artifact. A later round that disagrees should re-measure and write its own receipt rather than edit this one.",
+  "generation": {
+    "activeSnapshotId": "5b5d02384b46c96c",
+    "deployedEligibilityViewHash": "5b5d02384b46c96c",
+    "identityMatches": true,
+    "snapshotRegistry": [
+      {
+        "snapshot_hash": "5b5d02384b46c96c",
+        "generation": "coarse-v2",
+        "definition_version": "document-vectors-v2",
+        "manifest_sha256": "524ece8a42544b5e4cea9cff95bb8e72ba8a91e1d819a553d81c238472b5a5f7",
+        "model_identity": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+        "recipe": "HEAD:4800",
+        "dimensions": 1024,
+        "metric": "cosine",
+        "state": "ACTIVE",
+        "represents_sql_null": false,
+        "created_at": "2026-08-30T08:07:48.144Z",
+        "sealed_at": null
+      },
+      {
+        "snapshot_hash": "UNIDENTIFIED_LEGACY_V1",
+        "generation": "legacy-v1",
+        "definition_version": "UNKNOWN",
+        "manifest_sha256": null,
+        "model_identity": "UNKNOWN",
+        "recipe": "UNKNOWN",
+        "dimensions": 1024,
+        "metric": "cosine",
+        "state": "SEALED",
+        "represents_sql_null": true,
+        "created_at": "2026-08-30T08:07:48.144Z",
+        "sealed_at": "2026-08-30T08:07:48.144Z"
+      }
+    ],
+    "snapshotHashSchemaReproducible": "YES — sha256(pg_get_viewdef(judgment_embedding_eligibility, true))[0:16] recomputed live",
+    "snapshotHashWriterExplicit": "YES — services/harness/src/doc-vector-embed.mjs names snapshot_hash in the INSERT column list and supplies RECONCILED_VIEW_HASH, which assertContractHash() has already proven equal to the deployed view at that batch. The constant column DEFAULT is gone (information_schema reports no default).",
+    "activeSnapshotIdImmutable": "YES — exactly one non-null label exists in the stage table, and two triggers (new1_doc_vector_stage_bind_snapshot_trg, new1_doc_vector_stage_freeze_snapshot_trg) enforce it."
+  },
+  "model": {
+    "modelIdentity": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+    "recipe": "HEAD:4800",
+    "dimensions": 1024,
+    "metric": "cosine",
+    "modelRevision": "UNKNOWN",
+    "modelRevisionWhy": "The local onnx/model.onnx_data matches no upstream revision: it is the pinned-revision file with 42,988 of 2,266,820,608 bytes different (docs/ai/new1-r12/model-revision-recovery.json). Four of five files pin cleanly to 4de13258303883538bd53b696b452bf8099f0858; the weights do not, so recovery is not claimed.",
+    "modelLocalFilesHashed": true,
+    "files": [
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx_data",
+        "bytes": 2266820608,
+        "sha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx",
+        "bytes": 607298,
+        "sha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer.json",
+        "bytes": 17082821,
+        "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer_config.json",
+        "bytes": 1173,
+        "sha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/config.json",
+        "bytes": 770,
+        "sha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "present": true
+      }
+    ],
+    "offMachineIdentityEvidence": "Cloudflare R2 lawmind-corpus, key backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2 — 7 files, 2.13 GB, every object downloaded back and compared byte-for-byte, 0 differences. Uploaded unencrypted, a declared deviation from LOW_COST_BACKUP_ARCHITECTURE (public model weights, no client data)."
+  },
+  "population": {
+    "kind": "new1_terminal_embedding_census",
+    "measuredAt": "2026-09-15T10:45:58.200Z",
+    "elapsedSec": 1871.3,
+    "otherActiveBackendsAtStart": 5,
+    "snapshotHash": "5b5d02384b46c96c",
+    "denominatorSource": "judgment_embedding_eligibility, LIVE, Tier A bands [standard, full, substantial], non-bail",
+    "frozenRepresentativeDenominator": 7654179,
+    "frozenDenominatorIsStale": "yes — the 27-Aug representative cut. Reported for continuity with earlier rounds, NOT used as the denominator.",
+    "fourState": {
+      "ELIGIBLE_DOCUMENTS": 8442638,
+      "ELIGIBLE_CONTENT_IDENTITIES": 7673702,
+      "EMBEDDED_DOCUMENTS": 7673717,
+      "EMBEDDED_CONTENT_IDENTITIES": 7673702,
+      "CONTENT_HASH_ALREADY_COVERED": 768921,
+      "QUEUED": 0,
+      "EXPLICITLY_REFUSED": 0,
+      "UNNAMED_RESIDUAL": 0
+    },
+    "queuedSource": "docs/ai/new1-r9/delta/queue-ledger.jsonl — every pass reports QUEUED and the unnamed residual of its own window; the value is read from the queue, not inferred here.",
+    "identityIntegrity": {
+      "JUDGMENT_ID_DUPLICATES": 0,
+      "JUDGMENT_ID_DUPLICATES_HOW": "enforced — new1_doc_vector_stage_pkey is UNIQUE on judgment_id",
+      "CONTENT_HASH_COLLISIONS": 15,
+      "CONTENT_HASH_SURPLUS_ROWS": 15
+    },
+    "accountingCloses": true,
+    "refusalLedger": {
+      "ROWS": 72099,
+      "STILL_TIER_A_ELIGIBLE": 0,
+      "NO_ELIGIBILITY_ROW": 0,
+      "measuredAt": "2026-09-15T14:30:00Z",
+      "measuredSeparately": "yes — added after the main pass, by the same query the census script now runs inline (services/harness/src/new1-terminal-census.mjs). A re-run of the script reproduces it in one pass.",
+      "why": "EXPLICITLY_REFUSED above counts refusals INSIDE the eligible population and is 0. That is not \"nothing was refused\": the walk refused 72,099 documents, and the live eligibility predicate independently excludes every one of them. Two mechanisms, same verdict, on all of them."
+    }
+  },
+  "refusals": {
+    "totalRows": 72099,
+    "byClass": [
+      {
+        "refusedClass": "text_unsafe:damaged_other",
+        "rows": 67071
+      },
+      {
+        "refusedClass": "procedural_disposal",
+        "rows": 5021
+      },
+      {
+        "refusedClass": "legacy_font_ascii",
+        "rows": 5
+      },
+      {
+        "refusedClass": "damaged_other",
+        "rows": 2
+      }
+    ],
+    "note": "Every refusal is a named row in new1_doc_vector_stage_refused. A refusal that left no ledger row is the failure the UNNAMED_RESIDUAL check exists for, and there are none."
+  },
+  "stageTable": {
+    "rowsAll": 8160672,
+    "currentGenerationRows": 7673717,
+    "legacyNullRows": 486955,
+    "distinctNonNullLabels": 1
+  },
+  "incrementalQueue": {
+    "state": "HEALTHY / IDLE",
+    "watermark": "2026-09-14T14:08:10.740Z",
+    "newestJudgmentCreatedAt": "2026-09-14T14:08:10.740Z",
+    "watermarkHasReachedFrontier": true,
+    "oldestPendingAge": "none — the last pass classified every row it considered and emitted zero: {\"EMBEDDED\":242,\"REFUSED_NO_ELIGIBILITY_ROW\":0,\"REFUSED_NOT_ELIGIBLE\":74,\"REFUSED_TEXT_UNSAFE\":0,\"REFUSED_BAND_EXCLUDED\":0,\"CONTENT_HASH_ALREADY_COVERED\":17,\"QUEUED\":0}",
+    "lastPassAt": "2026-09-15T14:30:05.329Z",
+    "unnamedInLastPass": 0,
+    "note": "The watermark being flat is correct, not stalled: it sits at max(judgments.created_at), which is where an empty pass advances it to."
+  },
+  "workerRetirement": {
+    "coarseBackfill": "TERMINAL",
+    "secondGpuWriter": "NO — embedding has terminated; there is no GPU writer at all",
+    "jobs": [
+      {
+        "jobId": "new1-doc-vector-embed",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.432Z",
+        "reason": "Full snapshot embedding completed at 8,156,545 staged rows; future arrivals use the delta queue."
+      },
+      {
+        "jobId": "new1-gpu-sidecar",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.593Z",
+        "reason": "Persistent GPU residency retired; delta-queue now starts and stops an owned sidecar only for non-empty batches."
+      },
+      {
+        "jobId": "new1-sidecar-keeper",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.669Z",
+        "reason": "Persistent keeper retired with the completed full walk; the incremental queue owns bounded sidecar lifecycle."
+      },
+      {
+        "jobId": "new1-production-route-benchmark",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": null,
+        "reason": null
+      },
+      {
+        "jobId": "new1-tranche-embed",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-08-26T01:40:11.749Z",
+        "reason": "TRANCHE EMBED DONE at 01:39:27Z -- 418,116 passages over 81,720 documents (5.12 chunks/doc), verified by row count not by process absence"
+      },
+      {
+        "jobId": "new1-coarse-walk",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.291Z",
+        "reason": "Full coarse embedding frontier is complete; incremental coverage is owned by Lawmind-new1-delta-queue."
+      },
+      {
+        "jobId": "new1-coarse-telemetry",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:36:44.258Z",
+        "reason": "Telemetry belonged to the completed full coarse walk and is superseded by delta-queue ledger receipts."
+      },
+      {
+        "jobId": "new1-delta-queue",
+        "status": "RUNNING",
+        "scheduledTask": "Lawmind-new1-delta-queue",
+        "retiredAt": null,
+        "reason": null
+      }
+    ]
+  }
+}

@@ -389,3 +389,66 @@ categories.
 40,161 the `0059` header was written against — the Tier-A vectors landing. The
 `LEXICAL_ONLY` count in the 19 August addendum is stale in the favourable
 direction and should be re-read from the table rather than quoted from here.
+
+---
+
+## ADDENDUM, 15 SEPTEMBER 2026 — THE REACHABILITY AXIS NOW HAS TWO POPULATIONS,
+## AND EVERY FIGURE ABOVE DESCRIBES THE SMALLER ONE
+
+The 19 August addendum's operational rule — *"Supreme Court is `EMBEDDED`. Every
+other court is `LEXICAL_ONLY`."* — is **still correct for the arm that is wired**
+and is now **badly misleading as a description of what this lane holds.** Both
+halves of that sentence matter, and conflating them is the error this addendum
+exists to prevent.
+
+### The wired arm has not moved
+
+`services/api/src/search/retrieve.ts` reads `judgment_chunks` UNION
+`new1_tranche_passages`. It does **not** reference `new1_doc_vector_stage`
+anywhere. So `reachability` as the retrieval API can currently compute it is
+unchanged, the 40,161-document figure on
+`V1_CAPABILITY_REGISTRY_R16.json#search.semantic.broad` is still right about
+public reach, and nothing in this addendum enables anything.
+
+### The coarse generation is terminal
+
+Measured 15 September 2026 against the **live** `judgment_embedding_eligibility`
+view, not against the frozen 27-August `embedding_content_representative` cut:
+
+| | |
+| --- | ---: |
+| eligible distinct content identities | 7,673,702 |
+| embedded distinct content identities | **7,673,702** |
+| eligible documents | 8,442,638 |
+| queued | 0 |
+| unnamed residual | **0** |
+
+One pass, 13m00s, zero other active backends. `uncovered_distinct_content = 0`
+and `uncovered_documents = 0`.
+
+**The 7,654,179 denominator this lane has quoted since 27 August is superseded.**
+It is 19,523 content identities short of current eligibility — exactly the
+post-cut delta the incremental queue produced — and dividing by it answers a
+question about a worklist file rather than about the corpus.
+
+### What this means for the two axes
+
+The contract's shape is unchanged and `reachability` still belongs in the
+response. What changed is that **`EMBEDDED` and `LEXICAL_ONLY` can no longer be
+read off a single corpus-wide fact**, because there are now two vector
+populations of very different size and only the smaller one is reachable from a
+route:
+
+```
+judgment_chunks + new1_tranche_passages   wired, 40,161 documents      -> reachability today
+new1_doc_vector_stage (5b5d02384b46c96c)  not wired, 8,442,638 documents -> reachability if pointed at
+```
+
+A rollup computed over the second and reported as `reachability` would tell an
+advocate the dense arm can see law it cannot see. **The rollup must name the
+table it counted.** That is the same discipline the body of this document
+already applies to `held` versus `source_estimate`, applied one layer down.
+
+Whether the retrieval path is ever pointed at `new1_doc_vector_stage` is a
+product decision recorded in the capability registry, which is NEW3's, not this
+lane's. Evidence for it: `docs/ai/new1-r14/NEW1_R14_FINALIZATION.md`.

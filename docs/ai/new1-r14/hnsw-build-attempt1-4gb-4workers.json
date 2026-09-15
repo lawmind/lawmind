@@ -1,0 +1,23 @@
+{
+  "kind": "new1_hnsw_final_build",
+  "startedAt": "2026-09-15T09:51:39.096Z",
+  "snapshotHash": "5b5d02384b46c96c",
+  "maintenanceWorkMem": "4GB",
+  "maxParallelMaintenanceWorkers": 4,
+  "indexName": "new1_doc_vector_stage_hnsw",
+  "indexCutAt": "2026-09-15T09:51:39.174Z",
+  "residualSinceCensus": {
+    "since": "2026-09-15T09:18:00Z",
+    "considered": 0,
+    "uncovered": 0
+  },
+  "rowsToIndex": 7673717,
+  "sessionSettingsConfirmed": {
+    "maintenance_work_mem": "4GB",
+    "max_parallel_maintenance_workers": "4"
+  },
+  "ddl": "CREATE INDEX new1_doc_vector_stage_hnsw ON new1_doc_vector_stage USING hnsw (((embedding)::halfvec(1024)) halfvec_cosine_ops) WITH (m = 16, ef_construction = 64) WHERE (snapshot_hash = '5b5d02384b46c96c')",
+  "result": "FAILED",
+  "error": "canceling statement due to user request",
+  "finishedAt": "2026-09-15T14:46:01.439Z"
+}
