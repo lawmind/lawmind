@@ -14,6 +14,7 @@ import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import type { Alert } from '../../api/contract';
 import { alertNarrative } from '../../citation/alertNarrative';
+import { timeOfDayGreeting } from './greeting';
 import { useAlerts } from '../../state/alerts';
 import { useCommandPalette } from '../../state/commandPalette';
 import { describeCacheAge } from '../../state/offlineCache';
@@ -189,7 +190,27 @@ export function TodayScreen() {
     );
   }
 
-  const greeting = profile?.fullName ? `Good morning,\n${profile.fullName}` : 'Good morning';
+  /**
+   * THE GREETING IS READ FROM THE CLOCK, NOT ASSERTED.
+   *
+   * It said "Good morning" unconditionally. OBSERVED ON A GALAXY S24 AT 15:58
+   * LOCAL, 15 September 2026: the wedge surface — the one an advocate opens
+   * every day, and the first words on it — greeted them with a time of day it
+   * had not checked.
+   *
+   * Small, and not nothing. This product's entire claim is that what it says is
+   * true, and an advocate who catches it being wrong about the hour has been
+   * given a reason to wonder what else it asserts without looking. Same rule as
+   * every other surface here: state what was observed.
+   *
+   * Boundaries are the ordinary English ones and deliberately not clever —
+   * before noon is morning, noon to 17:00 afternoon, after that evening. The
+   * clock is the DEVICE's, which is the right one: the advocate is standing
+   * where the phone is, and a court's listing day is local to that court.
+   */
+  const greeting = profile?.fullName
+    ? `${timeOfDayGreeting()},\n${profile.fullName}`
+    : timeOfDayGreeting();
 
   return (
     <Screen topInset>
@@ -426,6 +447,55 @@ export function TodayScreen() {
               </Pressable>
             ))}
           </View>
+        ) : null}
+
+        {/*
+          ─────────────────────────────────────────────────────────────────────
+          THE STATE WITH MATTERS AND NOTHING IN ANY WINDOW — found on a device.
+          ─────────────────────────────────────────────────────────────────────
+
+          OBSERVED ON A GALAXY S24, 15 September 2026, on the account
+          `RCC Smoke Advocate`: 1 matter, 0 events, no alerts. Every section
+          above renders `null`, and the "No matters yet" state below is gated on
+          `matters.length === 0`, which is false. So Today drew the greeting and
+          then **nothing at all** — an empty screen, on the surface the whole
+          Tier-B daily loop is built on and the first thing an advocate opens
+          every morning.
+
+          No unit test could see it. Each section is individually correct to
+          render nothing, and the defect is the CONJUNCTION — it exists only
+          when all six are empty at once and the seventh is switched off by a
+          count that is not zero.
+
+          WHAT IT MAY SAY. Lawmind knows the hearing dates that were RECORDED,
+          from the advocate or from a confirmed OCR read. It does not know the
+          court's list. So this says no dates are recorded, which is true, and
+          never "you have no hearings", which would be a claim about the court's
+          diary that this product has no basis for — the same distinction
+          `searchTruth.ts` draws between an honest empty and coverage unknown.
+        */}
+        {matters.length > 0 &&
+        !loading &&
+        listed.length === 0 &&
+        week.length === 0 &&
+        missed.length === 0 &&
+        immediate.length === 0 &&
+        batched.length === 0 ? (
+          <EmptyState
+            icon={CalendarDays}
+            title="Nothing scheduled"
+            body={
+              matters.length === 1
+                ? 'No hearing dates are recorded on your matter, and nothing has moved under the authorities you have saved. Add a date and it will appear here.'
+                : 'No hearing dates are recorded on your matters, and nothing has moved under the authorities you have saved. Add a date and it will appear here.'
+            }
+            actions={[
+              {
+                label: 'Open matters',
+                onPress: () => router.push('/(tabs)/matters' as never),
+              },
+            ]}
+          />
         ) : null}
 
         {matters.length === 0 && !loading ? (

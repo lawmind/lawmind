@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react-native';
 
 import { TodayScreen } from './TodayScreen';
 import type { Alert } from '../../api/contract';
+import { timeOfDayGreeting } from './greeting';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -112,7 +113,14 @@ describe('an authority the advocate has already used', () => {
   it('draws no heading at all when there is nothing to report', async () => {
     await draw([]);
 
-    await screen.findByText(/Good morning/);
+    /**
+     * The greeting is the "screen has rendered" anchor, and it used to be
+     * matched as the literal `/Good morning/` — which was only ever true
+     * because the string was a hard-coded constant. It is read from the clock
+     * now, so this asks `greeting.ts` what it should say at THIS hour rather
+     * than pinning one of the three answers and failing in the afternoon.
+     */
+    await screen.findByText(new RegExp(timeOfDayGreeting()));
     expect(screen.queryByText('An authority you have used has moved')).toBeNull();
     expect(screen.queryByText('Since yesterday')).toBeNull();
   });
