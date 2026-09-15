@@ -166,11 +166,24 @@ function exactSubset() {
   return out;
 }
 
-/** Gold is a judgment id; the stage row may carry a byte-identical twin's id. */
-async function goldContentHashes() {
+/**
+ * Map each gold judgment id to the identity the RESULT ROWS carry.
+ *
+ * On `new1_doc_vector_stage` that is `content_hash`, because the stage row for a
+ * gold judgment may legitimately be its byte-identical twin's row and matching on
+ * the id alone would score a correct hit as a miss. On a probe table with no
+ * content_hash the row identity IS the judgment id, and mapping to content_hash
+ * there compares a hash against a uuid and can only ever return zero — which is
+ * exactly the false negative this function has to avoid.
+ */
+async function goldIdentities() {
   const ids = [...new Set(QUERIES.flatMap((q) => q.gold ?? []))];
-  const rows = await sql`SELECT id, content_hash FROM judgments WHERE id = ANY(${ids}::uuid[])`;
   const m = new Map();
+  if (IDENT_KIND === 'judgment_id') {
+    for (const id of ids) m.set(id, id);
+    return m;
+  }
+  const rows = await sql`SELECT id, content_hash FROM judgments WHERE id = ANY(${ids}::uuid[])`;
   for (const r of rows) m.set(r.id, r.content_hash);
   return m;
 }
@@ -403,7 +416,7 @@ async function main() {
 async function report(ctx) {
   const { bytes, def, bigCourt, exact, subset, rowsIndexed } = ctx;
   const ann = readJsonl(ANN_CK);
-  const golds = await goldContentHashes();
+  const golds = await goldIdentities();
 
   /**
    * How many gold targets are in the indexed population AT ALL.
@@ -415,10 +428,16 @@ async function report(ctx) {
    * index lost them" and "they were never in it".
    */
   const goldIds = [...new Set(QUERIES.flatMap((q) => q.gold ?? []))];
-  const [goldPresent] = await sql.unsafe(
-    `SELECT count(*)::int AS present FROM ${TABLE} s
+  const presentRows = await sql.unsafe(
+    `SELECT s.judgment_id FROM ${TABLE} s
      WHERE s.snapshot_hash = $1 AND s.judgment_id = ANY($2::uuid[])`,
     [SNAPSHOT, goldIds],
+  );
+  const presentGold = new Set(presentRows.map((r) => r.judgment_id));
+  const goldPresent = { present: presentGold.size };
+  /** Queries with at least one gold target actually in this indexed population. */
+  const reachableGold = new Set(
+    QUERIES.filter((q) => (q.gold ?? []).some((g) => presentGold.has(g))).map((q) => q.id),
   );
 
   const out = {
@@ -453,10 +472,11 @@ async function report(ctx) {
     goldTargets: {
       distinctGoldJudgments: goldIds.length,
       presentInIndexedPopulation: goldPresent.present,
+      queriesWithReachableGold: reachableGold.size,
       note:
         goldPresent.present === 0
-          ? 'NONE of the gold judgments is in this indexed population, so knownTargetRetention is 0 by construction and says nothing about the index. It is a property of which rows this table holds.'
-          : 'knownTargetRetention below is over queries whose gold target is reachable in principle.',
+          ? 'NONE of the gold judgments is in this indexed population, so knownTargetRetention says nothing about the index. It is a property of which rows this table holds.'
+          : 'knownTargetRetention is computed ONLY over the ' + reachableGold.size + ' queries whose gold target is actually present in this indexed population. Queries whose gold is absent are excluded rather than scored as misses, because a target that was never in the table cannot be retained.',
     },
     byEf: [],
   };
@@ -494,8 +514,11 @@ async function report(ctx) {
       if (!a) continue;
       const want = new Set((q.gold ?? []).map((g) => golds.get(g)).filter(Boolean));
       if (want.size === 0) continue;
+      // Only queries whose gold is actually IN the indexed population can be
+      // retained; counting the rest would measure the sample, not the index.
+      if (!reachableGold.has(q.id)) continue;
       goldTotal++;
-      if (a.rows.some((r) => want.has(r.c))) goldIn++;
+      if (a.rows.some((r) => want.has(String(r.c)))) goldIn++;
     }
 
     const zero = cold.filter((r) => r.n === 0).length;

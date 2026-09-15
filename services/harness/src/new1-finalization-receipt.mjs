@@ -103,12 +103,19 @@ const receipt = {
     definition: idx?.def ?? null,
     bytes: idx ? Number(idx.bytes) : null,
     size: idx?.pretty ?? null,
-    indexCutAt: build?.indexCutAt ?? null,
-    buildSeconds: build?.buildSeconds ?? null,
-    buildHours: build?.buildSeconds ? Number((build.buildSeconds / 3600).toFixed(2)) : null,
-    rowsIndexed: build?.rowsToIndex ?? null,
-    bytesPerVector: build?.bytesPerVector ?? null,
-    maintenanceWorkMem: build?.maintenanceWorkMem ?? null,
+    /**
+     * Only meaningful for an index that exists. An INDEX_CUT_AT belonging to a
+     * build that was cancelled is a timestamp for a graph nobody can query, and
+     * leaving it at the top level would let a later reader bind evidence to it.
+     * Each attempt keeps its own cut in `attempts` below.
+     */
+    indexCutAt: idx ? (build?.indexCutAt ?? null) : null,
+    buildSeconds: idx ? (build?.buildSeconds ?? null) : null,
+    buildHours: idx && build?.buildSeconds ? Number((build.buildSeconds / 3600).toFixed(2)) : null,
+    rowsIndexed: idx ? (build?.rowsToIndex ?? null) : null,
+    bytesPerVector: idx ? (build?.bytesPerVector ?? null) : null,
+    maintenanceWorkMem: idx ? (build?.maintenanceWorkMem ?? null) : null,
+    populationThatWouldHaveBeenIndexed: build?.rowsToIndex ?? null,
     attempts: attempts.map((a) => ({
       file: a.file,
       sha256: a.sha256,

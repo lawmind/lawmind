@@ -32,5 +32,15 @@
     "measuredAt": "2026-09-15T14:30:00Z",
     "measuredSeparately": "yes — added after the main pass, by the same query the census script now runs inline (services/harness/src/new1-terminal-census.mjs). A re-run of the script reproduces it in one pass.",
     "why": "EXPLICITLY_REFUSED above counts refusals INSIDE the eligible population and is 0. That is not \"nothing was refused\": the walk refused 72,099 documents, and the live eligibility predicate independently excludes every one of them. Two mechanisms, same verdict, on all of them."
+  },
+  "supersededByOngoingIngest": {
+    "observedAt": "2026-09-15T17:20:00Z",
+    "stageRowsThen": 8160672,
+    "stageRowsNow": 8161630,
+    "currentGenerationThen": 7673717,
+    "currentGenerationNow": 7674675,
+    "watermarkThen": "2026-09-14T14:08:10.740Z",
+    "watermarkNow": "2026-09-15T17:06:22.540Z",
+    "why": "NEW2 resumed ingest at ~16:50Z and the incremental queue embedded 109 documents at 17:14:06Z. This census is a SNAPSHOT with a measuredAt, and the corpus moving past it is the system working. \"Terminal\" describes the coarse backfill reaching its frontier, not a corpus that has stopped growing."
   }
 }

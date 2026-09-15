@@ -1,0 +1,323 @@
+{
+  "kind": "NEW1_FINALIZATION_RECEIPT",
+  "version": 1,
+  "writtenAt": "2026-09-15T17:26:53.823Z",
+  "head": "7887c00ab41cc6cd60e0b616f43b4cd4cd71a2be",
+  "binds": {
+    "embeddingCompletionReceipt": {
+      "path": "docs/ai/new1-r14/NEW1_EMBEDDING_COMPLETION_RECEIPT.json",
+      "sha256": "2c71bb5aba5dbef4f8b4e2c4737e0aa3a41630fc8652989c770eaa90ded9ced6"
+    },
+    "terminalCensus": {
+      "path": "docs/ai/new1-r14/terminal-census.json",
+      "sha256": "3fef6cba0c59070a5e45caea902e7f67c7adb3d88b642a0cc8690d71af3b74ad"
+    },
+    "buildReceipt": {
+      "path": "docs/ai/new1-r14/hnsw-final-build.json",
+      "sha256": "6f43e43cf0c023caf337815add7073169a70c150c7199906d031b4a782fdc246"
+    },
+    "annEvaluation": {
+      "path": "docs/ai/new1-r14/ann-evaluation-probe1m.json",
+      "sha256": "678a6db8e550d4e04b0ec492a4af56d8d5f61eae83f9a7c7a372750b064921bc"
+    },
+    "buildCostCorrection": {
+      "path": "docs/ai/new1-r14/HNSW_BUILD_COST_AT_SCALE.md",
+      "sha256": "e7815793c6a336e2c7996ddbe7b95ecafc17da96fa15043e7d85876be5037b18"
+    }
+  },
+  "snapshotHash": "5b5d02384b46c96c",
+  "modelIdentity": "BGE-M3 onnx fp32, CLS-pooled, L2-normalised, GPU sidecar",
+  "modelRevision": "UNKNOWN",
+  "index": {
+    "state": "NOT_BUILT",
+    "name": "new1_doc_vector_stage_hnsw",
+    "oid": null,
+    "relfilenode": null,
+    "valid": null,
+    "ready": null,
+    "definition": null,
+    "bytes": null,
+    "size": null,
+    "indexCutAt": null,
+    "buildSeconds": null,
+    "buildHours": null,
+    "rowsIndexed": null,
+    "bytesPerVector": null,
+    "maintenanceWorkMem": null,
+    "populationThatWouldHaveBeenIndexed": 7673717,
+    "attempts": [
+      {
+        "file": "hnsw-build-attempt1-4gb-4workers.json",
+        "sha256": "798aed8e1e7ce2b2e9c6727e5187facac532c997203020f4cb8ff02591e85883",
+        "result": "FAILED",
+        "error": "canceling statement due to user request",
+        "maintenanceWorkMem": "4GB",
+        "workers": 4,
+        "indexCutAt": "2026-09-15T09:51:39.174Z"
+      },
+      {
+        "file": "hnsw-build-attempt2-8gb-10workers.json",
+        "sha256": "6f43e43cf0c023caf337815add7073169a70c150c7199906d031b4a782fdc246",
+        "result": "FAILED",
+        "error": "canceling statement due to user request",
+        "maintenanceWorkMem": "8GB",
+        "workers": 10,
+        "indexCutAt": "2026-09-15T14:48:15.949Z"
+      }
+    ],
+    "notBuiltBecause": "The build requires 19.52 GiB resident (7,673,717 x 2,731 bytes, confirmed by two spill points landing within 0.02% of that constant). This box has 11.7 GiB available. Post-spill throughput is ~24 tuples/s and is indifferent to parallelism: 4 workers gave 24.7/s and 10 gave 24.2/s while doing 2.3x the disk reads. Residency is the only lever and the gap has no setting that closes it. Raised as FQ-NEW1-R14-RAM. docs/ai/new1-r14/HNSW_BUILD_COST_AT_SCALE.md",
+    "baselinePreserved": "Both attempts were cancelled with pg_cancel_backend and the table verified afterwards: 8,160,672 rows, 7,673,717 current-generation, new1_doc_vector_stage_pkey the only index. Nothing was dropped, truncated or rewritten."
+  },
+  "population": {
+    "ELIGIBLE_DOCUMENTS": 8442638,
+    "ELIGIBLE_CONTENT_IDENTITIES": 7673702,
+    "EMBEDDED_DOCUMENTS": 7673717,
+    "EMBEDDED_CONTENT_IDENTITIES": 7673702,
+    "CONTENT_HASH_ALREADY_COVERED": 768921,
+    "QUEUED": 0,
+    "EXPLICITLY_REFUSED": 0,
+    "UNNAMED_RESIDUAL": 0
+  },
+  "annEvidence": {
+    "measuredOnTable": "new1_probe_hnsw_1000000",
+    "measuredOnIndex": "new1_probe_hnsw_1000000_hnsw",
+    "rowsIndexed": 1000000,
+    "scaleWarning": "MEASURED ON 1000000 ROWS, NOT ON THE FULL 7,673,717-ROW GENERATION. The index form is identical (halfvec(1024), halfvec_cosine_ops, m=16, ef_construction=64, partial on the same snapshot), so these figures describe the FORM faithfully. They do NOT describe the full-generation index, which was not built — recall and latency both move with graph size, and nothing here licenses a claim about 7.67M rows.",
+    "identityMatchedOn": "judgment_id",
+    "goldTargets": {
+      "distinctGoldJudgments": 278,
+      "presentInIndexedPopulation": 47,
+      "queriesWithReachableGold": 47,
+      "note": "knownTargetRetention is computed ONLY over the 47 queries whose gold target is actually present in this indexed population. Queries whose gold is absent are excluded rather than scored as misses, because a target that was never in the table cannot be retained."
+    },
+    "exactSubsetSize": 283,
+    "queriesTotal": 283,
+    "byEf": [
+      {
+        "ef": 40,
+        "recallHalfvec": {
+          "recall@10": 0.5805653710247354,
+          "recall@50": 0.4942049469964668,
+          "recall@100": 0.3290106007067144
+        },
+        "recallFp32": {
+          "recall@10": 0.5805653710247354,
+          "recall@50": 0.4942049469964668,
+          "recall@100": 0.32904593639576035
+        },
+        "knownTargetRetention": 0.1702127659574468,
+        "warmP50": 2,
+        "warmP95": 3,
+        "warmP99": 4,
+        "coldP50": 6,
+        "coldP95": 74,
+        "coldP99": 200,
+        "filtered": {
+          "iterativeScanOff": {
+            "iterativeScan": "off",
+            "court": "Madras High Court",
+            "p50": 2,
+            "p95": 3,
+            "p99": 4,
+            "zeroResults": 137,
+            "shortOfK": 146,
+            "meanRowsReturned": 2.6784452296819787,
+            "n": 283
+          },
+          "iterativeScanRelaxedOrder": {
+            "iterativeScan": "relaxed_order",
+            "court": "Madras High Court",
+            "p50": 170,
+            "p95": 1050,
+            "p99": 2463,
+            "zeroResults": 0,
+            "shortOfK": 0,
+            "meanRowsReturned": 100,
+            "n": 283
+          }
+        }
+      },
+      {
+        "ef": 64,
+        "recallHalfvec": {
+          "recall@10": 0.6424028268551241,
+          "recall@50": 0.5723674911660778,
+          "recall@100": 0.4767844522968197
+        },
+        "recallFp32": {
+          "recall@10": 0.6424028268551241,
+          "recall@50": 0.5723674911660777,
+          "recall@100": 0.4767844522968197
+        },
+        "knownTargetRetention": 0.2553191489361702,
+        "warmP50": 3,
+        "warmP95": 4,
+        "warmP99": 5,
+        "coldP50": 6,
+        "coldP95": 15,
+        "coldP99": 19,
+        "filtered": {
+          "iterativeScanOff": {
+            "iterativeScan": "off",
+            "court": "Madras High Court",
+            "p50": 3,
+            "p95": 5,
+            "p99": 6,
+            "zeroResults": 112,
+            "shortOfK": 171,
+            "meanRowsReturned": 4.431095406360424,
+            "n": 283
+          },
+          "iterativeScanRelaxedOrder": {
+            "iterativeScan": "relaxed_order",
+            "court": "Madras High Court",
+            "p50": 101,
+            "p95": 255,
+            "p99": 408,
+            "zeroResults": 0,
+            "shortOfK": 0,
+            "meanRowsReturned": 100,
+            "n": 283
+          }
+        }
+      },
+      {
+        "ef": 100,
+        "recallHalfvec": {
+          "recall@10": 0.708127208480566,
+          "recall@50": 0.6470671378091871,
+          "recall@100": 0.5996113074204951
+        },
+        "recallFp32": {
+          "recall@10": 0.708127208480566,
+          "recall@50": 0.6470671378091871,
+          "recall@100": 0.5995759717314492
+        },
+        "knownTargetRetention": 0.3191489361702128,
+        "warmP50": 4,
+        "warmP95": 6,
+        "warmP99": 9,
+        "coldP50": 10,
+        "coldP95": 20,
+        "coldP99": 32,
+        "filtered": {
+          "iterativeScanOff": {
+            "iterativeScan": "off",
+            "court": "Madras High Court",
+            "p50": 4,
+            "p95": 7,
+            "p99": 13,
+            "zeroResults": 83,
+            "shortOfK": 200,
+            "meanRowsReturned": 7.250883392226148,
+            "n": 283
+          },
+          "iterativeScanRelaxedOrder": {
+            "iterativeScan": "relaxed_order",
+            "court": "Madras High Court",
+            "p50": 102,
+            "p95": 278,
+            "p99": 411,
+            "zeroResults": 0,
+            "shortOfK": 0,
+            "meanRowsReturned": 100,
+            "n": 283
+          }
+        }
+      },
+      {
+        "ef": 200,
+        "recallHalfvec": {
+          "recall@10": 0.7946996466431102,
+          "recall@50": 0.75547703180212,
+          "recall@100": 0.7169611307420495
+        },
+        "recallFp32": {
+          "recall@10": 0.7946996466431102,
+          "recall@50": 0.7556183745583036,
+          "recall@100": 0.7169611307420495
+        },
+        "knownTargetRetention": 0.3191489361702128,
+        "warmP50": 6,
+        "warmP95": 10,
+        "warmP99": 16,
+        "coldP50": 15,
+        "coldP95": 32,
+        "coldP99": 49,
+        "filtered": {
+          "iterativeScanOff": {
+            "iterativeScan": "off",
+            "court": "Madras High Court",
+            "p50": 8,
+            "p95": 16,
+            "p99": 23,
+            "zeroResults": 41,
+            "shortOfK": 240,
+            "meanRowsReturned": 15.43816254416961,
+            "n": 283
+          },
+          "iterativeScanRelaxedOrder": {
+            "iterativeScan": "relaxed_order",
+            "court": "Madras High Court",
+            "p50": 101,
+            "p95": 251,
+            "p99": 458,
+            "zeroResults": 0,
+            "shortOfK": 0,
+            "meanRowsReturned": 100,
+            "n": 283
+          }
+        }
+      },
+      {
+        "ef": 400,
+        "recallHalfvec": {
+          "recall@10": 0.8667844522968208,
+          "recall@50": 0.8383038869257946,
+          "recall@100": 0.8112367491166074
+        },
+        "recallFp32": {
+          "recall@10": 0.8667844522968208,
+          "recall@50": 0.8383745583038865,
+          "recall@100": 0.8113074204946992
+        },
+        "knownTargetRetention": 0.3191489361702128,
+        "warmP50": 11,
+        "warmP95": 32,
+        "warmP99": 55,
+        "coldP50": 29,
+        "coldP95": 99,
+        "coldP99": 171,
+        "filtered": {
+          "iterativeScanOff": {
+            "iterativeScan": "off",
+            "court": "Madras High Court",
+            "p50": 19,
+            "p95": 57,
+            "p99": 113,
+            "zeroResults": 17,
+            "shortOfK": 249,
+            "meanRowsReturned": 31.90459363957597,
+            "n": 283
+          },
+          "iterativeScanRelaxedOrder": {
+            "iterativeScan": "relaxed_order",
+            "court": "Madras High Court",
+            "p50": 108,
+            "p95": 338,
+            "p99": 796,
+            "zeroResults": 0,
+            "shortOfK": 0,
+            "meanRowsReturned": 100,
+            "n": 283
+          }
+        }
+      }
+    ]
+  },
+  "productBoundary": {
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED",
+    "how": "By construction, not by restraint. services/api/src/search/retrieve.ts reads judgment_chunks UNION new1_tranche_passages and does not reference new1_doc_vector_stage anywhere, and there is no index on that table to read. No capability registry row, no route, no mobile surface, no coverage claim and no marketing was changed in this round. Enabling public semantic search is a product decision recorded in the capability registry, which belongs to NEW3.",
+    "capabilityRowUntouched": "V1_CAPABILITY_REGISTRY_R16.json#search.semantic.broad — INTERNAL_EXPERIMENTAL, publicState DISABLED. Evidence sent to NEW3 on the bus; the row was not edited by this lane."
+  }
+}

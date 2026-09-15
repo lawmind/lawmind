@@ -2,9 +2,11 @@
 
 **Lane:** NEW1 · **Written:** 15 September 2026 · **HEAD at start:** `c36c853f`
 
-The round the founder asked for: *is the embedding program finished, and if so,
-finalize it.* It was finished. This records how that was established, what was
-built on the strength of it, and the one thing the evidence does **not** say.
+The round the founder asked for: *is the embedding programme finished, and if so,
+finalize it.* **It was finished.** The index that was supposed to follow it was
+not built, and could not be on this machine — that is a measurement with a
+mechanism, not an exhausted attempt. This records how both were established and
+what the evidence does **not** say.
 
 ---
 
@@ -35,9 +37,14 @@ Measured in one pass, 13m00s, zero other active backends:
 | --- | ---: |
 | ELIGIBLE, documents | 8,442,638 |
 | ELIGIBLE, distinct content identities | 7,673,702 |
+| EMBEDDED, documents | 7,673,717 |
 | EMBEDDED, distinct content identities | **7,673,702** |
+| CONTENT_HASH_ALREADY_COVERED | 768,921 |
 | QUEUED | 0 |
+| EXPLICITLY_REFUSED *(inside the eligible population — see 3c)* | 0 |
 | **UNNAMED_RESIDUAL** | **0** |
+
+**The accounting closes exactly**: 7,673,717 + 768,921 + 0 + 0 = 8,442,638.
 
 `uncovered_distinct_content = 0` and `uncovered_documents = 0`. Not "close to
 zero" — zero, against a denominator recomputed at the moment of measurement.
@@ -64,6 +71,28 @@ new1-delta-queue        RUNNING    <- the incremental path, deliberately kept
 Task Scheduler agrees: `Lawmind-new1-coarse-walk`, `-coarse-telemetry`,
 `-sidecar-keeper` and `-worker-truth` are **Disabled**; `-delta-queue` is Ready
 and fires every 15 minutes.
+
+### The incremental queue proved itself by working, not by idling
+
+For most of this round the queue reported `queue_nothing_to_embed` with
+`QUEUED: 0` every fifteen minutes, which is the weakest possible evidence of
+health — a dead queue and an idle one produce the same line.
+
+Then NEW2 ingested. At **16:59:04Z** the queue emitted **109** documents, started
+an owned GPU sidecar, embedded them and stopped the sidecar again; at
+**17:14:06Z** it emitted **849** more. The watermark advanced from
+`2026-09-14T14:08:10.740Z` to `2026-09-15T17:06:22.540Z` and the stage table grew
+from 8,160,672 rows to **8,161,630** (current generation 7,673,717 -> 7,674,675).
+
+So `INCREMENTAL_QUEUE = HEALTHY` is a statement about observed work: new
+judgments arrived, were picked up within one tick, embedded, and the GPU was
+released again. The bounded sidecar lifecycle that replaced the persistent keeper
+on 10 September did exactly what it was retired in favour of doing.
+
+**A consequence worth stating plainly: the census in section 1 is a SNAPSHOT and
+the corpus has already moved past it.** That is correct behaviour, not drift —
+`terminal-census.json` carries `measuredAt`, and "terminal" describes the coarse
+backfill reaching its frontier, never a corpus that has stopped growing.
 
 **What was stale was the lease, not the work.** `HEAVY_BOX` still read `HELD` by
 NEW1 session `bff58c23`, pid 2136 — a process not in the table, heartbeat 5.9
@@ -93,9 +122,23 @@ with the reason recorded.
 | `DELTA_OLDEST_PENDING_AGE` | **none** | watermark `2026-09-14T14:08:10.740Z` **equals** `max(judgments.created_at)` to the microsecond |
 | `ONE_GPU_WRITER` | **ZERO** | embedding has terminated; there is no GPU writer at all |
 | disk headroom | **PASS** | 160.8 GiB free on the NVMe holding `C:/lawmind/pgdata`, against a projected 19.47 GiB index |
-| memory | **PASS** | 10.0 GiB free at the decision; `maintenance_work_mem` set **session-locally** to 4 GB, never globally |
+| memory | **PASS, and this is the clause that mattered** | 10.0 GiB free at the decision; `maintenance_work_mem` set **session-locally** to 4 GB, never globally |
 
 `HNSW_BUILD_AUTHORIZED = YES`.
+
+**A note on the memory clause, written after the fact and kept here rather than
+quietly corrected.** The directive's test is *"derive session-local maintenance
+memory from CURRENT machine headroom"*, and that is what was done: 10.0 GiB free,
+4 GB allocated, session-local. The clause passed on its own terms and the build
+was authorised correctly.
+
+What the clause does **not** ask, and what nobody had asked before this round, is
+whether the available headroom is enough for the build to **finish**. It was not,
+and the gap is a factor of 1.7. That question was only answerable by building —
+the requirement (19.52 GiB) and the ceiling (11.7 GiB available) were both
+measured during the attempts, not before them. A predicate that authorises a
+start is not a predicate that predicts an end, and section 4 is what happened
+next.
 
 ### 3a. `MODEL_REVISION` is UNKNOWN, and the fallback condition is met
 
@@ -285,6 +328,116 @@ half-precision quantisation. `hnsw.ef_search` and `hnsw.iterative_scan` are SET
 and read back on every measurement, never inherited — an ad-hoc vector query runs
 at pgvector's default 40 while production runs 200.
 
+### 5a. Half precision costs nothing measurable
+
+| `ef_search` | recall@10 | recall@50 | recall@100 | | recall@10 | recall@50 | recall@100 |
+| ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
+| | *vs exact halfvec (graph loss)* | | | | *vs exact fp32 (total loss)* | | |
+| 40 | 0.5806 | 0.4942 | 0.3290 | | 0.5806 | 0.4942 | 0.3290 |
+| 64 | 0.6424 | 0.5724 | 0.4768 | | 0.6424 | 0.5724 | 0.4768 |
+| 100 | 0.7081 | 0.6471 | 0.5996 | | 0.7081 | 0.6471 | 0.5996 |
+| 200 | 0.7947 | 0.7555 | 0.7170 | | 0.7947 | 0.7556 | 0.7170 |
+| 400 | 0.8668 | 0.8383 | 0.8112 | | 0.8668 | 0.8384 | 0.8113 |
+
+283 of 283 queries in both arms — **no subsetting**, so there is no sampling
+caveat on these figures.
+
+**The two baselines agree to four decimal places at every setting**, differing in
+the fourth place twice out of fifteen pairs. Every point of recall lost is lost by
+the **graph**; half-precision quantisation costs nothing that this measurement can
+detect. That is the question `CX1_HALFVEC_FIDELITY.md` answered on copied vectors
+at 100,000 pairs, now answered again end-to-end through a real index.
+
+### 5b. Latency, and what the index is actually worth
+
+| `ef_search` | warm p50 | p95 | p99 | cold-ish p50 | p95 | p99 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 40 | 2 ms | 3 | 4 | 6 ms | 74 | 200 |
+| 64 | 3 ms | 4 | 5 | 6 ms | 15 | 19 |
+| 100 | 4 ms | 6 | 9 | 10 ms | 20 | 32 |
+| 200 | 6 ms | 10 | 16 | 15 ms | 32 | 49 |
+| 400 | 11 ms | 32 | 55 | 29 ms | 99 | 171 |
+
+Exact sequential scan over the same million rows, same queries: **halfvec p50
+7,196 ms / p95 21,200 ms**, **fp32 p50 3,697 ms / p95 9,057 ms**. At production's
+`ef_search = 200` the index is roughly **1,200x faster** than the exact baseline
+it approximates.
+
+"cold-ish" is the first touch of each query at that setting and "warm" is an
+immediate repeat; the index is 2,603 MB against 2 GiB of `shared_buffers`, so
+neither is a true cold cache and both are labelled rather than averaged together.
+The ef=40 cold p99 of 200 ms is the first sweep paying for everything the later
+sweeps found in cache.
+
+### 5c. FILTERED SEARCH IS THE FINDING
+
+pgvector applies a non-indexed predicate **after** the index scan. Filtered to
+one court holding **169,952 of 1,000,000 rows — 17.0%, not a narrow filter**:
+
+| `ef_search` | `iterative_scan = off` | | | | `= relaxed_order` | | |
+| ---: | ---: | ---: | ---: | --- | ---: | ---: | ---: |
+| | zero results | short of k | mean rows | | zero | short of k | mean rows |
+| 40 | **137 / 283** | 146 | 2.68 | | 0 | 0 | 100.00 |
+| 64 | **112 / 283** | 171 | 4.43 | | 0 | 0 | 100.00 |
+| 100 | **83 / 283** | 200 | 7.25 | | 0 | 0 | 100.00 |
+| 200 | **41 / 283** | 240 | 15.44 | | 0 | 0 | 100.00 |
+| 400 | **17 / 283** | 249 | 31.90 | | 0 | 0 | 100.00 |
+
+**At production's `ef_search = 200` and pgvector's default `iterative_scan = off`,
+41 of 283 filtered queries return nothing at all, and 240 of 283 return fewer
+results than asked for — a mean of 15 rows where 100 were requested.** Raising ef
+to 400 still leaves 17 queries empty.
+
+`relaxed_order` fixes it completely — 0 empty, 0 short, 100 rows every time — and
+costs the latency the speed table was celebrating: p50 **101–170 ms** and p95
+**251–1,050 ms**, against 6 ms and 10 ms unfiltered at ef=200. Roughly a hundredfold.
+
+> **This is the failure `NEW1_COVERAGE_STATE_CONTRACT.md` exists to prevent,
+> arriving from inside the index instead of from acquisition.** An advocate
+> filtering to their own High Court would be shown an empty screen, and nothing
+> about that screen would distinguish "we hold no such law" from "the graph
+> stopped looking". The contract's rule — that a zero result and an absence of
+> authority must never be indistinguishable — is violated by a *default setting*,
+> not by a coverage gap.
+
+The remedy is a setting, not a rebuild, and the trade-off is now measured rather
+than argued. **This lane is not choosing it here**: it is a latency-versus-
+completeness decision that touches the retrieval contract, and the numbers above
+are at one million rows.
+
+### 5d. Known-target retention, and what it is not
+
+| `ef_search` | 40 | 64 | 100 | 200 | 400 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| gold in top-100 | 0.1702 | 0.2553 | 0.3191 | 0.3191 | 0.3191 |
+
+Over **47 queries**, not 283. Only 47 of the 278 distinct gold judgments are in
+this one-million-row sample at all, and a target that was never in the table
+cannot be retained — so the other 236 queries are **excluded rather than scored as
+misses**. An earlier version of this harness mapped gold to `content_hash` and
+compared it against the probe's `judgment_id` identity; that can only ever return
+zero, and it did. The corrected figure replaces a 0.0000 that was a bug.
+
+**It plateaus at ef=100 while recall@100 keeps climbing to 0.81.** So the 68% that
+are missing are not missing because the graph stopped looking — they are not in
+the top 100 by cosine at all. That is a statement about the representation and
+the query set, not about the index, and it is the reason this number is reported
+separately from recall rather than folded into it.
+
+### 5e. No `ef_search` is selected, deliberately
+
+The directive says to pick the smallest `ef_search` that meets **the existing**
+recall bar, and not to invent one. **There is no existing bar.** Searched:
+`NEW1_CX1_BENCHMARK_CONTRACT.md`, `INDEX_CUT_POLICY.md` (which mandates the
+measurement and sets no threshold), and the release-gate metrics in
+`NEW1_LOCAL_RETRIEVAL_BASELINE.md` and `NEW1_POST_0055_BASELINE.md` — the
+threshold-1 gates there are `structuredExactness`, `fieldPrecision` and
+`adversarialPassRate`, none of which is ANN recall.
+
+So the Pareto frontier above is the answer and **`SELECTED_EF_SEARCH = NOT
+SELECTED`**. Inventing a bar now, on 1M-row numbers, to justify a setting for an
+index that does not exist, would be three mistakes in one sentence.
+
 ---
 
 ## 6. PRODUCT BOUNDARY
@@ -292,18 +445,31 @@ at pgvector's default 40 while production runs 200.
 **`PUBLIC_SEMANTIC_SEARCH = DISABLED`, by construction rather than by restraint.**
 
 `services/api/src/search/retrieve.ts` reads `judgment_chunks` UNION
-`new1_tranche_passages`. It does not reference `new1_doc_vector_stage` anywhere,
-and there is no index on that table for it to read. Nothing in this round could
-have enabled semantic search even by accident.
+`new1_tranche_passages`. **`services/api/src/search/` contains zero references to
+`new1_doc_vector_stage`**, and there is no index on that table for it to read.
+Nothing in this round could have enabled semantic search even by accident.
+
+Checked rather than assumed, and the check found something better than absence.
+The table IS named in `services/api/src/ops/`, in exactly three places and all
+three are refusals:
+
+- `db-roles.ts` lists it among the tables a role may not reach past,
+- `release-export-cli.ts` calls it *"factory scratch"* and refuses to export it,
+  recording that promoting the staged vectors is not approved and that NEW1 owns
+  that decision,
+- `vector-export-contract.test.ts` asserts that refusal.
+
+So the boundary this round was asked to hold was already enforced by a committed
+test before the round started, and nothing here weakened it.
 
 Not changed, and not this lane's to change: the capability registry
 (`search.semantic.broad` stays `INTERNAL_EXPERIMENTAL` / `publicState: DISABLED`),
 any route, any mobile surface, any coverage claim, any marketing copy. Evidence
-went to NEW3 on the bus; the row was not edited here.
+went to NEW3 on the bus as 1772; the row was not edited here.
 
-Not changed for a different reason: `shared_buffers`. Raising it would have helped
-the build materially and it is a global PostgreSQL memory setting, which this
-round is explicitly not permitted to touch.
+Not changed for a different reason: `shared_buffers`. Raising it from 2 GiB would
+have helped the build materially, and it is a global PostgreSQL memory setting
+which this round is explicitly not permitted to touch.
 
 ---
 
@@ -313,20 +479,24 @@ round is explicitly not permitted to touch.
   was raised for one.
 - **The scheduled delta queue was not paused.** Pausing it was refused by the
   permission layer; the build did not need it, and that was verified rather than
-  assumed — the queue fired throughout both attempts and completed normal empty
-  passes.
+  assumed — the queue fired every fifteen minutes through both attempts and
+  completed normal empty passes each time.
 - **The 15 content-hash collisions were not deleted.** Satisfying an identity
   metric by removing fifteen real documents' reachability is the wrong trade in a
   corpus whose defining failure is a document held and invisible.
 - **The ANN figures are at 1,000,000 rows and describe the index FORM, not the
   full-generation index.** Recall and latency both move with graph size. Nothing
-  in this round licenses a statement about how the 7.67M-row index would behave,
-  because it does not exist.
-- **`knownTargetRetention` is not a quality measurement here.** The frozen gold
-  set is Supreme Court, and the probe table is a one-million-row sample of the
-  generation; the artifact records how many gold judgments are in the indexed
-  population at all, so a zero cannot be misread as the index losing them.
+  here licenses a statement about how a 7.67M-row index would behave, because it
+  does not exist.
+- **No `ef_search` was selected** — see 5e. There is no existing recall bar and
+  none was invented.
+- **`knownTargetRetention` is not a quality verdict.** It is over 47 of 283
+  queries, because only 47 gold judgments are in the probe population.
 - **`MODEL_REVISION` remains UNKNOWN** and is not recoverable — see 3a. The
-  fallback condition the directive allows is met by verified off-machine model
-  identity evidence, and the corpus reproduces from the local weights at cosine
-  1.000000.
+  fallback the directive allows is met by verified off-machine model identity
+  evidence, and the corpus reproduces from the local weights at cosine 1.000000.
+- **The raw ANN row dump is not committed.** `ann-eval-ann-probe1m.jsonl` is
+  31 MB of per-query result rows across five `ef_search` values. The
+  computed metrics are in `ann-evaluation-probe1m.json` and the exact-arm
+  checkpoint is committed in full; the dump is reproducible by re-running the
+  harness against the same frozen query vectors.
