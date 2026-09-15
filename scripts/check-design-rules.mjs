@@ -30,6 +30,22 @@ const PALETTE = new Set(
     '#FFFFFF',
     '#141B2D',
     '#5A6478',
+    /**
+     * `ink-faint`. `#747064` IS THE SHIPPED VALUE; `#8A8578` is its predecessor.
+     *
+     * Moved 2 September 2026 because `#8A8578` fails WCAG AA and it is TEXT —
+     * citations, dates and metadata, which is the part an advocate reads in a
+     * sunlit corridor. `apps/mobile/src/theme/tokens.ts` carries the argument.
+     * LCC bus 1757 §5 flagged that this allowlist and `DESIGN_SYSTEM.md` had not
+     * followed, which would make this guard reject a render drawn in the colour
+     * the app actually ships.
+     *
+     * BOTH ARE ALLOWED, DELIBERATELY. The 18 existing renders in `design/screens`
+     * were drawn against the old value and are visual-language references, not
+     * capability truth; rewriting them would be a mass edit to make a guard
+     * tidy. New work uses `#747064`.
+     */
+    '#747064',
     '#8A8578',
     '#DAD6CB',
     '#E8E4DA',

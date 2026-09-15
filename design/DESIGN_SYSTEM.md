@@ -40,7 +40,7 @@ regardless of output quality. Credibility is a design requirement.
 | `card` | `#FFFFFF` | Card and sheet fill |
 | `ink` | `#141B2D` | Primary text, secondary buttons, 1px section rules |
 | `ink-muted` | `#5A6478` | Body secondary, supporting copy |
-| `ink-faint` | `#8A8578` | Citations, dates, metadata, eyebrows |
+| `ink-faint` | `#747064` | Citations, dates, metadata, eyebrows. **Moved from `#8A8578` on 2 September 2026** — the old value fails WCAG AA and this token is text. `apps/mobile/src/theme/tokens.ts` is the shipped value; the renders in `design/screens` predate the move. |
 | `rule` | `#DAD6CB` | Card edges, section divisions |
 | `hairline` | `#E8E4DA` | Between list items |
 | `oxblood` | `#5E1A2B` | **The only accent.** Primary action + one earned emphasis |
@@ -255,7 +255,7 @@ floor gives way.
 | Condition | Renders |
 |---|---|
 | `verification_state = verified` · **any** `verified_by_source` | **nothing at all.** No badge, chip, tick, ring or colour |
-| `verification_state = unverified` **or** `failed` | **dashed ink card** — 1.5px dashed `#8A8578`, headline *"Do not file this without checking it"*, with the reason and the eCourts route inside the card |
+| `verification_state = unverified` **or** `failed` | **dashed ink card** — 1.5px dashed `#747064` (`ink-faint`), headline *"Do not file this without checking it"*, with the reason and the eCourts route inside the card |
 | `overruled_status != none` | **amber card** — `#FBF0DF` wash, `rgba(180,105,14,.35)` border, headline naming the affected paragraphs |
 
 **`failed` renders identically to `unverified`.** The advocate cannot act on the

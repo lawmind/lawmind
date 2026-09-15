@@ -12,6 +12,7 @@ import { SectionRule } from '../../components/SectionRule';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { Text } from '../../components/Text';
 import { api } from '../../api/client';
+import { CORPUS_ABSENT_COPY, assertsJudgmentDoesNotExist } from '../../api/corpusAbsence';
 import type { JudgmentDetail } from '../../api/contract';
 import { citationCopyText, citationDisplay } from '../../citation/citationDisplay';
 import { citationRender } from '../../citation/renderState';
@@ -112,7 +113,23 @@ export function JudgmentScreen({
    * as current." Null means live, which is the ordinary case.
    */
   const [statusAsOf, setStatusAsOf] = useState<string | null>(null);
-  const [missing, setMissing] = useState(false);
+  /**
+   * WHY THE READ FAILED, NOT MERELY THAT IT DID — R17 §1.
+   *
+   * This used to be a boolean, and the one screen it drove said "It is in the
+   * corpus — search found it." Both halves of that sentence are things this
+   * screen cannot know. The reader is reached from a deep link, a saved
+   * authority, the authorities panel, a briefing and a matter, so there may have
+   * been no search; and after LCC R28 every judgment read goes to the CORPUS
+   * role, so a `NOT_FOUND` here can mean the release does not carry it — in
+   * which case "it is in the corpus" is simply false.
+   *
+   * `corpus_absent` is the failure `api/corpusAbsence.ts` folds at the
+   * transport: `NOT_FOUND` naming a judgment, whatever the server's wording.
+   * `fetch_failed` is everything else — a timeout, a network drop, a 500 —
+   * where the honest statement is about US and not about the law.
+   */
+  const [missing, setMissing] = useState<null | 'corpus_absent' | 'fetch_failed'>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -173,7 +190,7 @@ export function JudgmentScreen({
     let alive = true;
     setJudgment(null);
     setStatusAsOf(null);
-    setMissing(false);
+    setMissing(null);
 
     void readCache<JudgmentDetail>(judgmentCacheKey(judgmentId)).then((entry) => {
       // A live response that has already landed always wins over the cache.
@@ -197,8 +214,9 @@ export function JudgmentScreen({
       // Only a judgment we have never held is missing. One we hold a copy of is
       // already on screen, and saying "we could not open this" over the top of
       // it would be false.
+      const reason = assertsJudgmentDoesNotExist(r.error) ? 'corpus_absent' : 'fetch_failed';
       setJudgment((current) => {
-        if (!current) setMissing(true);
+        if (!current) setMissing(reason);
         return current;
       });
     });
@@ -233,22 +251,38 @@ export function JudgmentScreen({
 
   if (missing) {
     /**
-     * NOT "that judgment is not in the corpus". Telling an advocate their
-     * authority is missing when the truth is that WE could not fetch it would
-     * send them looking elsewhere for a judgment we hold.
+     * TWO FAILURES, TWO SENTENCES, AND NEITHER OF THEM A CLAIM ABOUT THE LAW.
      *
-     * State our limitation, never imply a gap in the law. This is the same
-     * distinction the panel draws when it resolves no authorities.
+     * `fetch_failed` states OUR limitation: we could not fetch it. It does not
+     * say the judgment is missing, because telling an advocate their authority
+     * is gone when the truth is that a request failed would send them looking
+     * elsewhere for a judgment we hold. It no longer says "it is in the corpus —
+     * search found it" either: this screen is reached from deep links, saved
+     * authorities, briefings and matters, so there may have been no search and
+     * no result that could still be accurate.
+     *
+     * `corpus_absent` states the RELEASE's limitation, in the same vocabulary
+     * `api/corpusAbsence.ts` and `citation/saveAuthorityOutcome.ts` use. It may
+     * not say the judgment does not exist, was removed from the law, is
+     * unverified, or is still good law — R17 §1's own list.
+     *
+     * The back control is labelled for what it does, not for where the advocate
+     * came from, which this screen equally cannot know.
      */
     return (
       <Screen>
         <View style={[styles.body, topInset]}>
-          <Text variant="uiStrong">We could not open this judgment</Text>
-          <Text variant="ui" style={styles.muted}>
-            It is in the corpus — search found it. Something went wrong on our side fetching the
-            full text. The search result is still accurate.
+          <Text variant="uiStrong">
+            {missing === 'corpus_absent'
+              ? 'This judgment is not in the release we are reading'
+              : 'We could not open this judgment'}
           </Text>
-          <Button label="Back to results" onPress={onBack} variant="secondary" />
+          <Text variant="ui" style={styles.muted}>
+            {missing === 'corpus_absent'
+              ? CORPUS_ABSENT_COPY
+              : 'Something went wrong on our side fetching the full text. This is not a statement about the judgment.'}
+          </Text>
+          <Button label="Back" onPress={onBack} variant="secondary" />
         </View>
       </Screen>
     );

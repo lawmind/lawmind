@@ -66,7 +66,29 @@ const CORPUS_A = 'lawmind_e2e_rcc_a';
 const CORPUS_B = 'lawmind_e2e_rcc_b';
 const SECRET = 'rcc-r25-e2e-secret-not-a-real-key';
 
-/** Exactly the corpus tables these routes read. Same set as LCC's split suite. */
+/**
+ * Exactly the corpus tables these routes read. Same set as LCC's split suite,
+ * plus — RCC R26 — the ten columns `GET /judgments/:id` selects.
+ *
+ * WHY THE EXTRA COLUMNS, AND EXACTLY HOW FAR THEY GO. R25 built this table for
+ * the R17 §1 write path only, so `getJudgment`'s SELECT raised `column "bench"
+ * does not exist` and the route answered `500 INTERNAL` — which looked exactly
+ * like a server defect, the loudest of LCC R29's eight sites failing to reach
+ * its own refusal under a split, and is not one. It was this fixture.
+ *
+ * With them, the SELECT runs and returns no row, so `if (!row)` reaches
+ * `corpusTargetUnavailable` and RCC R26 can assert the corpus refusal against a
+ * real server. **The SUCCESS path still does not run here** and still answers
+ * `500`: hydration below that line reads paragraph and citation-check tables
+ * this harness does not build. That is deliberate — standing them up would make
+ * this a second copy of the schema rather than the two tables the R17 lifecycle
+ * needs — and the e2e file says so where the assertion is, so nobody reads a
+ * passing refusal as a working reader.
+ *
+ * `/treatment`, `/graph` and `/authorities` are likewise not runnable here.
+ * Their fold is covered by `src/api/corpusAbsence.test.ts`, which drives the
+ * same real client.
+ */
 async function buildGeneration(sql: Sql): Promise<void> {
   await sql`CREATE TABLE judgments (
               id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -74,7 +96,17 @@ async function buildGeneration(sql: Sql): Promise<void> {
               neutral_citation text,
               reporter_citations text[] NOT NULL DEFAULT '{}',
               court text NOT NULL,
+              bench text,
               judgment_date date NOT NULL,
+              case_number text,
+              case_type text,
+              language text,
+              source_url text,
+              full_text text,
+              source_id text,
+              source_edition text,
+              authorization_basis text,
+              provenance_recorded_at timestamptz,
               overruled_status text NOT NULL DEFAULT 'none',
               overruled_by_judgment_id uuid,
               overruled_paras int[],

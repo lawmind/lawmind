@@ -1,4 +1,5 @@
 import type { AddAuthorityResponse, ApiResponse, MatterAuthorityUnavailable } from '../api/contract';
+import { CORPUS_TARGET_UNAVAILABLE } from '../api/corpusAbsence';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -70,8 +71,13 @@ export type SaveAuthorityOutcome =
   | { kind: 'corpus_unavailable'; message: string; retryable: false }
   | { kind: 'refused'; message: string };
 
-/** R17 §1 write. The code the server sends once the write half is implemented. */
-export const CORPUS_TARGET_UNAVAILABLE = 'CORPUS_TARGET_UNAVAILABLE';
+/**
+ * R17 §1's write code. DEFINED ONCE, in `api/corpusAbsence.ts`, and re-exported
+ * here because four call sites already import it from this module. Since LCC
+ * R29 it is also the code on all eight corpus READ/write sites, which is why it
+ * no longer belongs to the write path alone.
+ */
+export { CORPUS_TARGET_UNAVAILABLE } from '../api/corpusAbsence';
 
 /**
  * THE ONE SENTENCE THE ADVOCATE SEES FOR BOTH CORPUS STATES.

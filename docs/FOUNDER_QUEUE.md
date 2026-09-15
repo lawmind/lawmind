@@ -7320,3 +7320,45 @@ away, so that it is not silently applied later.
 **Where it plugs in:** the answer goes into the packet's `disposition` and the
 edge is either written or refused deliberately. Five minutes for anyone with an
 SCC volume or a subscription.
+
+
+---
+
+## FQ-DELETE-WEB — Google Play needs a deletion page on the open web, and this repository has nowhere to put one · RCC, 15 September 2026
+
+**What is needed:** a public web address you own — a domain and somewhere to
+serve it from. Not a decision, not a design. An account and a small amount of
+money.
+
+**Why it is a founder item.** Google Play's Data Safety declaration requires a
+**web URL** at which someone can request deletion of their account and its data
+**without installing the app**. The policy exists for the person who has already
+uninstalled, so an in-app screen cannot satisfy it however well it works. There
+is no CLI that can conjure a domain we do not own, and the lane checked before
+queueing this: `apps/` holds `mobile` and `admin`, and `admin` is the internal
+staff console behind auth, which `CLAUDE.md` §1 and the PD-15 reversal both say
+is the only web surface this product has. Standing up a second public web app
+inside this repository to satisfy a store form would be inventing a product
+surface the founder cancelled.
+
+**What was built anyway, and it is finished.** The in-app half works for BOTH
+account populations and is proved against the real backend, not a mock:
+`/delete-account` reaches the deletion request for a profile-backed advocate and
+for an `identity_only` account that has no profile row, without completing
+onboarding first, with the R16 idempotency key attached, and creating no profile
+row as a side effect. RCC R25 proved it; RCC R26 re-proved it at this HEAD
+(`apps/mobile/e2e/identity-delete.e2e.test.tsx`, 23 tests, 0 failures, against a
+live API and a live Postgres). The requirement the page must meet is written
+down in full at `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md`, including the nine
+contract points NEW3 froze at bus 1753 — so whoever builds it is not starting
+from a blank page.
+
+**What stays broken without it.** Nothing an advocate can see, and nothing in
+the app. It is a **store-submission blocker only**: the Data Safety form cannot
+be completed truthfully, so the Play listing cannot be submitted. Everything
+else in the client is unaffected.
+
+**Where it plugs in:** the URL goes into the Play Console Data Safety form, and
+the page itself authenticates against the existing better-auth deployment and
+calls the same deletion route the app already calls. NEW3 owns the truthful web
+copy and the public-web seam (bus 1753); RCC owns nothing further here.

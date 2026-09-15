@@ -73,7 +73,22 @@ export function SettingsRow({
   );
 
   if (!onPress) return body;
-  return <Pressable onPress={onPress}>{body}</Pressable>;
+  /**
+   * `accessibilityRole` IS THE DIFFERENCE BETWEEN A LABEL AND A CONTROL.
+   *
+   * The row's own text is announced either way — `RNPressable` is `accessible`
+   * by default and TalkBack composes the child labels. What was missing is that
+   * it is actionable: without a role, an advocate using a screen reader hears
+   * "Delete account" read out exactly as the static rows around it are, with
+   * nothing saying it can be activated. Every other tappable row in this app
+   * declares one; this shared component did not, so it was absent from every
+   * settings surface at once.
+   */
+  return (
+    <Pressable accessibilityRole="button" onPress={onPress}>
+      {body}
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({

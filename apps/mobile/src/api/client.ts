@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 
 import { IDEMPOTENCY_HEADER } from './attempt';
+import { corpusSafeError } from './corpusAbsence';
 
 import type {
   Alert,
@@ -343,10 +344,30 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
      * this layer inventing a number the server did not say.
      */
     if (body.ok === false) {
+      /**
+       * ONE SENTENCE FOR THE CORPUS-GENERATION STATE, ON EVERY ROUTE AT ONCE.
+       *
+       * Eight server call sites across seven routes can answer that the corpus
+       * generation this request was pinned to does not carry a judgment (LCC bus
+       * 1758). Four render sites printed the server's own words for it, and
+       * before LCC R29 those words were *"no judgment with that id"* — a claim
+       * about the law, which after a rollback is false.
+       *
+       * Applied at the one place every response passes through, so a screen
+       * added later cannot opt out of it by forgetting, and so both wires are
+       * handled in one place: R29's `CORPUS_TARGET_UNAVAILABLE` and the pre-R29
+       * `NOT_FOUND`, which a shipped binary still meets during a rolling
+       * release. `api/corpusAbsence.ts` carries the whole argument.
+       *
+       * The CODE is untouched — callers branch on it, and a code this client
+       * invented would be a contract this client invented.
+       */
+      const error = corpusSafeError(body.error);
       const raw = Number(response.headers?.get?.('retry-after'));
       if (Number.isFinite(raw) && raw > 0) {
-        return { ok: false, error: { ...body.error, retryAfterSeconds: raw } };
+        return { ok: false, error: { ...error, retryAfterSeconds: raw } };
       }
+      return { ok: false, error };
     }
 
     return body;

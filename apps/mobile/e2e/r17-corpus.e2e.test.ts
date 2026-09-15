@@ -36,16 +36,19 @@ import {
  * would hoist above that and pin the client to the wrong host. */
 type ClientModule = typeof import('../src/api/client');
 type OutcomeModule = typeof import('../src/citation/saveAuthorityOutcome');
+type CorpusAbsenceModule = typeof import('../src/api/corpusAbsence');
 
 let handshake: E2eHandshake;
 let api: ClientModule['api'];
 let outcome: OutcomeModule;
+let corpusAbsence: CorpusAbsenceModule;
 
 beforeAll(() => {
   handshake = readHandshake();
   const client = require('../src/api/client') as ClientModule;
   api = client.api;
   outcome = require('../src/citation/saveAuthorityOutcome') as OutcomeModule;
+  corpusAbsence = require('../src/api/corpusAbsence') as CorpusAbsenceModule;
 
   /* The real token path. The client asks its auth bridge for a bearer token on
    * every `auth: true` call, so signing in for this suite is registering one. */
@@ -223,6 +226,52 @@ describe('R17 §1 — an EXISTING saved authority becomes unavailable', () => {
     const rows = await authorityRows(handshake.controlUrl);
     expect(read.data.unavailableAuthorities![0]!.authorityId).toBe(rows.live[0]!.authorityId);
   });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * THE READ SIDE — RCC R26. The write half above was already proved; this is the
+ * half four screens were printing the server's own words for.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Generation B does not carry `absentJudgmentId`, so `GET /judgments/:id` is a
+ * genuine corpus refusal from a real server — not a fixture, not a mock. LCC R29
+ * made that refusal truthful server-side; this asserts the CLIENT renders its
+ * own single sentence for it, on the real transport, and that no wording about
+ * the existence of a judgment can reach a screen from this route.
+ *
+ * WHAT THIS DOES **NOT** PROVE, STATED SO NOBODY READS IT AS MORE. Only the
+ * REFUSAL path of `getJudgment` runs against this harness. The route returns at
+ * `if (!row)` before it hydrates anything, and the hydration that follows reads
+ * paragraph and citation-check tables this harness does not build — a SUCCESSFUL
+ * read of a judgment it does carry answers `500 INTERNAL` here, which is this
+ * fixture's schema and not a product defect. Standing the rest up would make
+ * this a second copy of the schema rather than the two tables the R17 lifecycle
+ * needs. That the fold does NOT fire on an ordinary failure is asserted in
+ * `src/api/corpusAbsence.test.ts` and `JudgmentScreen.missing.test.tsx`.
+ */
+describe('RCC R26 — a corpus-absent READ is folded on the real transport', () => {
+  beforeAll(async () => {
+    await setGeneration(handshake.controlUrl, 'B');
+  });
+
+  it('answers CORPUS_TARGET_UNAVAILABLE and the client substitutes its own sentence', async () => {
+    const res = await api.judgment(handshake.absentJudgmentId);
+
+    expect(res.ok).toBe(false);
+    if (res.ok) throw new Error('unreachable');
+
+    /* The CODE is the server's and is never rewritten — callers branch on it. */
+    expect(res.error.code).toBe('CORPUS_TARGET_UNAVAILABLE');
+
+    /* The SENTENCE is this client's, on every surface, whatever the server said. */
+    expect(res.error.message).toBe(corpusAbsence.CORPUS_ABSENT_COPY);
+
+    /* And it asserts nothing about the judgment. */
+    expect(res.error.message).not.toMatch(/no judgment with that id/i);
+    expect(res.error.message).not.toMatch(/does not exist|was removed|no such judgment/i);
+  });
+
 });
 
 describe('R17 §1 — the corpus RECOVERS', () => {
