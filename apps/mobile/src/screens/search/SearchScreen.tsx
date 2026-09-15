@@ -31,6 +31,7 @@ import { MatterPicker } from '../judgment/MatterPicker';
 import { Toast } from '../../components/Toast';
 import { haptics } from '../../theme/haptics';
 import { FiltersSheet } from './FiltersSheet';
+import { CLAIM_FREE_SEARCH_LEDE } from './searchCopy';
 import {
   classifySearch,
   looksLikeBarePartyName,
@@ -600,7 +601,41 @@ export function SearchScreen({
                 variant: 'secondary' as const,
               },
             ]}
-            body="Ask the way you would ask a junior. Every citation you get back has been checked against the reported record before you see it."
+            /*
+              ─────────────────────────────────────────────────────────────────
+              THIS PROMISED SOMETHING THE PRODUCT DOES NOT DO — found 15 Sep 2026
+              while exercising search on a physical device.
+              ─────────────────────────────────────────────────────────────────
+
+              It read: *"Every citation you get back has been checked against the
+              reported record before you see it."* Unconditional, on the first
+              screen an advocate ever sees.
+
+              IT IS NOT TRUE OF EVERY CITATION, and `CITATION_HARNESS.md` is the
+              reason it cannot be. A citation may be `unverified` — nothing
+              confirmed it — or `failed`, which is an OUTAGE, meaning the check
+              did not happen at all. Both are still SHOWN, deliberately and by
+              rule, because a silent drop is the more dangerous failure. So the
+              sentence claims of the whole set something that is only true of a
+              subset, on a surface with no state to qualify it.
+
+              The same sentence is legitimate where it already lives:
+              `judgment/VerificationSheet.tsx` puts it behind `confirmed`, about
+              ONE citation whose state has been read. Here there is no citation
+              yet and no state to read.
+
+              It is also the exact shape `CLAUDE.md` forbids — "copy is licence
+              protection, not an audit: 'Safe to file', never 'we verified
+              this'." An unconditional "we checked everything" is the audit
+              claim, made about results that do not exist yet.
+
+              WHAT REPLACES IT IS TRUE OF EVERY CITATION, and is the stronger
+              promise anyway: the state travels with the result, nothing is
+              dropped to make the list look clean, and what could not be
+              confirmed says so rather than being quietly presented as if it had
+              been.
+            */
+            body={CLAIM_FREE_SEARCH_LEDE}
             title="Search the corpus"
           />
         </View>

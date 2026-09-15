@@ -98,6 +98,35 @@ away and needs no device — `matter_events` for matter
 text. It is recorded here so the next session runs it rather than assuming
 either answer.
 
+## A third defect the device surfaced, fixed without needing the device again
+
+Exercising search on the phone put the empty state in front of me, and it read:
+
+> "Ask the way you would ask a junior. **Every citation you get back has been
+> checked against the reported record before you see it.**"
+
+Unconditional, on the first screen an advocate ever sees. `CITATION_HARNESS.md`
+makes it false of the whole set: a citation may be `unverified` (nothing
+confirmed it) or `failed` (an outage — the check did not happen), and both are
+SHOWN on purpose, because a silent drop is the more dangerous failure. So the
+sentence claims of every result something true only of a subset.
+
+The same sentence is legitimate where it already lives —
+`judgment/VerificationSheet.tsx` puts it behind `confirmed`, about ONE citation
+whose state has been read. On the search lede there is no citation yet and no
+state to read. It is also the shape `CLAUDE.md` names directly: *"copy is licence
+protection, not an audit: 'Safe to file', never 'we verified this'."*
+
+Replaced with something true of every result, and a stronger promise anyway — the
+state travels with the citation, and what could not be confirmed says so instead
+of being left out. The string is now `screens/search/searchCopy.ts` so
+`searchCopy.test.ts` can hold the rule: no universal verification claim may
+regrow there, whatever the wording becomes.
+
+**Not re-observed on the device** — it locked before this change was made. It is
+covered by a test and by the full suite, and is flagged here rather than counted
+as physical evidence.
+
 ## What this run does not claim
 
 - It is **local** physical evidence. The API was on this machine over
