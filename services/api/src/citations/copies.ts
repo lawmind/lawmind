@@ -46,6 +46,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 
@@ -95,7 +96,14 @@ export async function recordCopy(
    */
   const [judgment] = await corpusSql<{ overruled_status: string }[]>`
     SELECT overruled_status FROM judgments WHERE id = ${body.judgmentId}`;
-  if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  /* Absent from THIS generation is not "no such judgment" — see
+   * `corpus/target-unavailable.ts`. A copy names a judgment the advocate had in
+   * front of them; a rollback under them may not tell them it never existed. */
+  if (!judgment) {
+    return corpusTargetUnavailable(c, 'the copy cannot be recorded against it right now', {
+      write: true,
+    });
+  }
 
   const [row] = await sql<{ id: string; copied_at: string; inserted: boolean }[]>`
     INSERT INTO citation_copies

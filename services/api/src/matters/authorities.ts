@@ -67,6 +67,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { judgmentFacts } from '../judgments/hydrate.ts';
@@ -518,14 +519,16 @@ export async function addAuthority(
      * Copy is licence protection, not an audit (`CLAUDE.md`). It states what is
      * true of THIS release and claims nothing about the judgment: not that it is
      * gone, not that it was never there, not that it is unverified.
+     *
+     * Routed through `corpus/target-unavailable.ts` since R29 so that this — the
+     * ONE site R17 §1 froze — and the eight that were answering existentially
+     * speak with one voice. The wire is unchanged: same 409, same code, same
+     * sentence, plus the additive `details.availability` every other corpus
+     * refusal now carries.
      */
-    return fail(
-      c,
-      'CORPUS_TARGET_UNAVAILABLE',
-      'That judgment is not available in the selected corpus release, so it cannot be added ' +
-        'to a matter right now.',
-      409,
-    );
+    return corpusTargetUnavailable(c, 'it cannot be added to a matter right now', {
+      write: true,
+    });
   }
 
   /**

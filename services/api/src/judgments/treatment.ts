@@ -23,7 +23,8 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
-import { fail, ok } from '../envelope.ts';
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
+import { ok } from '../envelope.ts';
 import { dateQualityFor, dateQualityState, isDateContradicted } from './date-quality.ts';
 import { graphCoverage } from './graph-coverage.ts';
 import { attributionOf, type TreatmentProvenance } from './precedential-effect.ts';
@@ -61,8 +62,12 @@ export async function getTreatment(
   id: string,
   q: z.infer<typeof treatmentQuery>,
 ): Promise<Response> {
+  /* A treatment read is a READ of the precedential spine. If this generation
+   * does not carry the subject there is nothing to say about how the law has
+   * moved — and saying "no judgment with that id" would be saying something far
+   * stronger, and after a rollback false (`corpus/target-unavailable.ts`). */
   if (!(await judgmentExists(sql, id)))
-    return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+    return corpusTargetUnavailable(c, 'its treatment cannot be shown right now');
 
   const asOf = new Date().toISOString();
 
@@ -200,8 +205,11 @@ export async function getGraph(
   id: string,
   q: z.infer<typeof graphQuery>,
 ): Promise<Response> {
+  /* Same fact, same refusal as `getTreatment` above: the citation graph of a
+   * subject this generation does not carry is unavailable, not absent from the
+   * law (`corpus/target-unavailable.ts`). */
   if (!(await judgmentExists(sql, id)))
-    return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+    return corpusTargetUnavailable(c, 'its citation network cannot be shown right now');
 
   const asOf = new Date().toISOString();
 

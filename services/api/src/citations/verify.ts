@@ -20,6 +20,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 
@@ -101,11 +102,17 @@ export async function handleConfirm(
     );
   }
 
-  // The judgment must exist. Confirming a citation against an id we do not hold
-  // would cache a claim about a judgment we cannot render.
+  // The judgment must be IN THIS CORPUS GENERATION. Confirming a citation
+  // against a target we cannot hydrate would cache a permanent Tier 3 claim
+  // about a judgment we cannot render — and absence here is a deployment fact,
+  // not a legal one (`corpus/target-unavailable.ts`).
   const [judgment] = await corpusSql<{ id: string; overruled_status: string }[]>`
     SELECT id, overruled_status FROM judgments WHERE id = ${body.judgmentId}`;
-  if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  if (!judgment) {
+    return corpusTargetUnavailable(c, 'the confirmation cannot be recorded right now', {
+      write: true,
+    });
+  }
 
   const [row] = await sql<{ id: string; created_at: string }[]>`
     INSERT INTO citation_checks

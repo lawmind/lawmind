@@ -32,7 +32,7 @@ type Body = {
     bench: string | null;
     asOf: string;
   };
-  error?: { code: string };
+  error?: { code: string; message: string; details?: Record<string, unknown> };
 };
 
 const get = async (path: string): Promise<{ status: number; body: Body }> => {
@@ -243,10 +243,19 @@ describe('GET /judgments/:id', () => {
     });
   });
 
-  it('404s an id that is not in the corpus', async () => {
+  /**
+   * R17's product-truth rule, on the reading view. An id this corpus generation
+   * cannot hydrate is UNAVAILABLE, not non-existent: a blue/green rollback makes
+   * the same id resolve again with no user-data write. The status stays 404
+   * (RFC 9110 §15.5.5 — no current representation); the CODE and the SENTENCE are
+   * what may not claim the judgment does not exist.
+   */
+  it('answers an id this corpus generation does not carry without claiming it does not exist', async () => {
     const { status, body } = await get('/judgments/00000000-0000-4000-8000-000000000000');
     assert.equal(status, 404);
-    assert.equal(body.error?.code, 'NOT_FOUND');
+    assert.equal(body.error?.code, 'CORPUS_TARGET_UNAVAILABLE');
+    assert.match(body.error!.message, /not available in the selected corpus release/i);
+    assert.doesNotMatch(body.error!.message, /does not exist|no judgment with that id|not found/i);
   });
 
   it('rejects a malformed id through the shared validator', async () => {

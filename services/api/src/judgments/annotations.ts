@@ -20,6 +20,7 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { loadOnePrecedentialState } from './treatment-lookup.ts';
@@ -117,7 +118,13 @@ export async function createAnnotation(
     -- Read LIVE, never cached. Verification is permanent; good-law status is not,
     -- and a judgment that was fine to add last week may not be today.
     SELECT id, overruled_status, case_title FROM judgments WHERE id = ${judgmentId}`;
-  if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  /* Annotating WITH a `matterId` IS add-to-matter (see the note below), so this
+   * is the closest of the eight to R17 §1's frozen write — and it takes §1's
+   * exact refusal: this generation does not carry the target, which is not a
+   * statement that the judgment does not exist (`corpus/target-unavailable.ts`). */
+  if (!judgment) {
+    return corpusTargetUnavailable(c, 'it cannot be annotated right now', { write: true });
+  }
 
   /**
    * **`set_aside` disables add-to-matter — the one case where Lawmind refuses to

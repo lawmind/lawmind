@@ -75,9 +75,12 @@ async function withPlane<T>(
   return out as T;
 }
 
-const stalled = (alerts: { rule: string }[]) =>
-  alerts.filter((a) => a.rule === 'stalledCriticalJobs');
-const staleFeed = (alerts: { rule: string }[]) =>
+/* The narrowing helpers take the WHOLE alert, not just `rule`. Declaring the
+ * parameter as `{ rule: string }[]` narrowed the return type too, so every
+ * `severity`/`detail` assertion below failed to typecheck at c36c853f. */
+type PlaneAlert = { severity: string; rule: string; detail: string };
+const stalled = (alerts: PlaneAlert[]) => alerts.filter((a) => a.rule === 'stalledCriticalJobs');
+const staleFeed = (alerts: PlaneAlert[]) =>
   alerts.filter((a) => a.rule === 'jobObservationAgeHours');
 
 describe('job control plane alerts', () => {

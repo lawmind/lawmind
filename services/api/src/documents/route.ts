@@ -37,6 +37,7 @@ import type { Sql } from 'postgres';
 import { z } from 'zod';
 
 import { toWireSourceUnsafe } from '../citations/source-strength.ts';
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
 import { fail, ok } from '../envelope.ts';
 import { judgmentFacts } from '../judgments/hydrate.ts';
 import { isoColumn } from '../iso-time.ts';
@@ -208,7 +209,15 @@ export async function addDocumentCitation(
   >`
     SELECT id, case_title, neutral_citation, overruled_status
     FROM judgments WHERE id = ${body.judgmentId}`;
-  if (!judgment) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  /* A citation that cannot be validated against the pinned generation does not
+   * enter a draft — and the refusal says which fact stopped it. A document is
+   * filed; "no judgment with that id" on a drafting surface would be the
+   * strongest possible false claim (`corpus/target-unavailable.ts`). */
+  if (!judgment) {
+    return corpusTargetUnavailable(c, 'it cannot be cited in this document right now', {
+      write: true,
+    });
+  }
 
   /**
    * The same refusal as add-to-matter, for a stronger reason: a document is

@@ -64,7 +64,8 @@
 import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 
-import { fail, ok } from '../envelope.ts';
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
+import { ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { dateQualityState, type DateQuality } from './date-quality.ts';
 
@@ -98,7 +99,12 @@ export async function getAuthoritiesAsAt(c: Context, sql: Sql, id: string): Prom
       LEFT JOIN judgment_date_quality q ON q.judgment_id = j.id
      WHERE j.id = ${id}
   `;
-  if (!subject) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  /* The "as at" question needs the SUBJECT's own delivery date, which only this
+   * generation can supply. Absent here is a deployment fact, not a finding that
+   * the judgment never existed (`corpus/target-unavailable.ts`). */
+  if (!subject) {
+    return corpusTargetUnavailable(c, 'its authorities cannot be dated against it right now');
+  }
 
   const rows = await sql<Row[]>`
     SELECT cited.id AS cited_id, cited.case_title, cited.neutral_citation,

@@ -1,0 +1,224 @@
+{
+  "kind": "lawmind-r29-missing-target-smoke",
+  "generatedAt": "2026-09-15T09:31:15.644Z",
+  "absentTarget": "4d1a0000-0000-4000-8000-0000000029ff",
+  "corpusDatabase": "lawmind_r28_corpus",
+  "userDatabase": "lawmind_r28_user",
+  "physicallyDistinct": true,
+  "counts": {
+    "total": 9,
+    "pass": 9,
+    "fail": 0,
+    "wrongRole": 0
+  },
+  "results": [
+    {
+      "name": "GET judgment",
+      "method": "GET",
+      "path": "/judgments/4d1a0000-0000-4000-8000-0000000029ff",
+      "kind": "read",
+      "status": 404,
+      "expectStatus": 404,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be opened right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "GET judgment treatment",
+      "method": "GET",
+      "path": "/judgments/4d1a0000-0000-4000-8000-0000000029ff/treatment",
+      "kind": "read",
+      "status": 404,
+      "expectStatus": 404,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so its treatment cannot be shown right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "GET judgment graph",
+      "method": "GET",
+      "path": "/judgments/4d1a0000-0000-4000-8000-0000000029ff/graph",
+      "kind": "read",
+      "status": 404,
+      "expectStatus": 404,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so its citation network cannot be shown right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "GET judgment authorities as-at",
+      "method": "GET",
+      "path": "/judgments/4d1a0000-0000-4000-8000-0000000029ff/authorities",
+      "kind": "read",
+      "status": 404,
+      "expectStatus": 404,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so its authorities cannot be dated against it right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "POST annotation",
+      "method": "POST",
+      "path": "/judgments/4d1a0000-0000-4000-8000-0000000029ff/annotations",
+      "kind": "write",
+      "status": 409,
+      "expectStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be annotated right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "POST citation copy",
+      "method": "POST",
+      "path": "/citations/copies",
+      "kind": "write",
+      "status": 409,
+      "expectStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so the copy cannot be recorded against it right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "POST verify confirm (Tier 3)",
+      "method": "POST",
+      "path": "/verify/confirm",
+      "kind": "write",
+      "status": 409,
+      "expectStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so the confirmation cannot be recorded right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "POST document citation",
+      "method": "POST",
+      "path": "/documents/00c4fbf0-a6b2-4045-91a6-2a9635e0a302/citations",
+      "kind": "write",
+      "status": 409,
+      "expectStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be cited in this document right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    },
+    {
+      "name": "POST add-to-matter (R17 §1, already released)",
+      "method": "POST",
+      "path": "/matters/d5d3dd93-3adb-46e4-b2ef-dd7569d1f999/authorities",
+      "kind": "write",
+      "status": 409,
+      "expectStatus": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be added to a matter right now.",
+      "details": {
+        "availability": "corpus_unavailable"
+      },
+      "missingRelation": null,
+      "checks": {
+        "noWrongRole": true,
+        "status": true,
+        "code": true,
+        "availability": true,
+        "saysRelease": true,
+        "claimsNothing": true
+      },
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "MISSING_TARGET_SEMANTICS_PASS"
+}

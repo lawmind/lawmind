@@ -13,16 +13,15 @@ import type { Context } from 'hono';
 import type { Sql } from 'postgres';
 import { z } from 'zod';
 
-import { fail, ok } from '../envelope.ts';
+import { corpusTargetUnavailable } from '../corpus/target-unavailable.ts';
+import { ok } from '../envelope.ts';
 import { attachCitesJudgmentId } from './citations.ts';
 import {
-  precedentialEffect,
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
   attributionOf,
   precedentialEffectFromEdges,
-  type TreatmentEdge,
   type TreatmentProvenance,
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
@@ -117,7 +116,18 @@ export async function getJudgment(
     FROM judgments WHERE id = ${id}
   `;
 
-  if (!row) return fail(c, 'NOT_FOUND', 'no judgment with that id', 404);
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * THE READING VIEW ITSELF. THIS IS THE LOUDEST OF THE EIGHT.
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * An advocate who follows a link to a judgment they cited and reads *"no
+   * judgment with that id"* has been told, on Lawmind's own reading surface,
+   * that their authority does not exist. After a blue/green rollback that
+   * sentence is simply false: the judgment exists and this generation does not
+   * carry it. `corpus/target-unavailable.ts` holds the reasoning and the shape.
+   */
+  if (!row) return corpusTargetUnavailable(c, 'it cannot be opened right now');
 
   /**
    * ───────────────────────────────────────────────────────────────────────────

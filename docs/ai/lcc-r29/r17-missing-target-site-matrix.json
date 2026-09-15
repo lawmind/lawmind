@@ -1,0 +1,595 @@
+{
+  "kind": "lawmind-r17-missing-target-site-matrix",
+  "generatedAt": "2026-09-15T09:30:20.277Z",
+  "counts": {
+    "sitesFound": 58,
+    "trueNotFound": 33,
+    "corpusUnavailable": 13,
+    "internal": 12,
+    "dead": 0,
+    "falseExistentialSites": 0
+  },
+  "falseExistentialSites": [],
+  "sites": [
+    {
+      "module": "services/api/src/admin/cause-lists.ts",
+      "line": 133,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no cause list sync with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/cause-lists.ts",
+      "line": 176,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no cause list sync with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/data-requests.ts",
+      "line": 126,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no data request with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/data-requests.ts",
+      "line": 166,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no data request with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/data-requests.ts",
+      "line": 212,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no data request with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/disputes.ts",
+      "line": 145,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no dispute with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/disputes.ts",
+      "line": 186,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no dispute with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/disputes.ts",
+      "line": 263,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no dispute with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/admin/users.ts",
+      "line": 122,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no user with that id",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/alerts/route.ts",
+      "line": 175,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no alert with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/alerts/route.ts",
+      "line": 244,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no user with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/alerts/route.ts",
+      "line": 272,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no user with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/briefings/route.ts",
+      "line": 317,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no briefing with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/briefings/route.ts",
+      "line": 394,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/briefings/route.ts",
+      "line": 441,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no briefing with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/citations/check.ts",
+      "line": 102,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no citation check with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/citations/copies.ts",
+      "line": 103,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 409,
+      "message": "the copy cannot be recorded against it right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/citations/verify.ts",
+      "line": 112,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 409,
+      "message": "the confirmation cannot be recorded right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 133,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no document with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 204,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no document with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 217,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 409,
+      "message": "it cannot be cited in this document right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 307,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no document with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 315,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no citation with that id on this document",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/documents/route.ts",
+      "line": 542,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no document with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/annotations.ts",
+      "line": 126,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 409,
+      "message": "it cannot be annotated right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/annotations.ts",
+      "line": 226,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no annotation with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/as-at.ts",
+      "line": 106,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 404,
+      "message": "its authorities cannot be dated against it right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/route.ts",
+      "line": 130,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 404,
+      "message": "it cannot be opened right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/treatment.ts",
+      "line": 70,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 404,
+      "message": "its treatment cannot be shown right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/judgments/treatment.ts",
+      "line": 212,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 404,
+      "message": "its citation network cannot be shown right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/authorities.ts",
+      "line": 322,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/authorities.ts",
+      "line": 444,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/authorities.ts",
+      "line": 529,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "status": 409,
+      "message": "it cannot be added to a matter right now",
+      "classification": "B",
+      "why": "corpus target unavailable, answered through corpus/target-unavailable.ts",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/authorities.ts",
+      "line": 740,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/authorities.ts",
+      "line": 750,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no live authority with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/route.ts",
+      "line": 287,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/route.ts",
+      "line": 293,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/route.ts",
+      "line": 435,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/route.ts",
+      "line": 451,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 94,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 121,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 179,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 190,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no live share with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 214,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/matters/shares.ts",
+      "line": 222,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no event with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/premium/route.ts",
+      "line": 92,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/premium/route.ts",
+      "line": 140,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no matter with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/premium/route.ts",
+      "line": 173,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no job with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/premium/route.ts",
+      "line": 189,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no cancellable job with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/search/saved.ts",
+      "line": 150,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no saved search with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/search/saved.ts",
+      "line": 200,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no saved search with that id",
+      "classification": "A",
+      "why": "user-owned namespace; the identifier genuinely does not address a row",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/statutes/linked-judgments.ts",
+      "line": 256,
+      "code": "STATUTE_NOT_FOUND",
+      "status": 404,
+      "message": "We do not hold an Act with that identifier.",
+      "classification": "B",
+      "why": "corpus-owned noun refused by a module that reads the corpus role",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/statutes/linked-judgments.ts",
+      "line": 273,
+      "code": "SECTION_NOT_FOUND",
+      "status": 404,
+      "message": "We do not hold a section with that identifier.",
+      "classification": "B",
+      "why": "corpus-owned noun refused by a module that reads the corpus role",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/statutes/linked-judgments.ts",
+      "line": 276,
+      "code": "SECTION_NOT_IN_ACT",
+      "status": 404,
+      "message": "That section belongs to a different Act. Nothing was looked up.",
+      "classification": "B",
+      "why": "corpus-owned noun refused by a module that reads the corpus role",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/statutes/linked-judgments.ts",
+      "line": 306,
+      "code": "SECTION_NOT_FOUND",
+      "status": 404,
+      "message": "We do not hold that section of this Act.",
+      "classification": "B",
+      "why": "corpus-owned noun refused by a module that reads the corpus role",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/training/consent.ts",
+      "line": 126,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no such user",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/training/consent.ts",
+      "line": 173,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no such user",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    },
+    {
+      "module": "services/api/src/training/consent.ts",
+      "line": 214,
+      "code": "NOT_FOUND",
+      "status": 404,
+      "message": "no such user",
+      "classification": "C",
+      "why": "operator-facing surface; not a product assertion about the law",
+      "existential": false
+    }
+  ]
+}
