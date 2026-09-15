@@ -30,9 +30,11 @@
   working reader — its fixture schema cannot hydrate a judgment it does carry.
 - `PUBLIC_WEB_PRESENT = NO` was reported and is **withdrawn**: the site exists
   and is live. See the README's Phase-9 correction.
-- `EVENT_DOUBLE_TAP = UNVERIFIED`. The taps were performed; the verifying read
-  stalled behind another lane's 4h37m HNSW index build and then the phone locked.
-  Neither PASS nor FAIL is claimed.
+- `EVENT_DOUBLE_TAP = NOT EXERCISED`. Read correctly, `matter_events` holds
+  **zero** rows for this matter — the probe wrote nothing, most likely because
+  the Save bounds were dumped before the keyboard was dismissed. The R16 guard
+  was never put under test. (An earlier version of this line blamed an HNSW
+  index build for a read that had actually failed on a wrong column name.)
 - `AUTH_DEEP_LINK_PHYSICAL`, `MATTER_CREATE`, `ADJOURNMENT`, `ANNOTATION`,
   `VERIFY_PHYSICAL`, `DELETE_PHYSICAL` = NOT RUN on the device.
 - The physical run is LOCAL (API over `adb reverse`). It is **not** Gate C

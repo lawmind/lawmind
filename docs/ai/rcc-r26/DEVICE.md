@@ -85,18 +85,34 @@ SQL used to *verify* writes, not the product.
 RCC standing orders are explicit that NEW1/HNSW workers are not to be touched, so
 nothing was killed and nothing was waited on.
 
-## The one row that is outstanding, stated as unknown rather than guessed
+## The one row that is outstanding — and a correction to why
 
-The double-tap was performed: two taps dispatched at the Save control of the
-add-event sheet, with a note reading `RCC R26 physical double-tap probe`. **Then
-the verifying query stalled and the phone locked, so the number of durable rows
-was never read.**
+**First version of this section, now withdrawn.** It said the double-tap was
+performed and that "the verifying query stalled" behind the HNSW build, leaving
+the row count merely unread. Both halves were wrong, and the way they were wrong
+is worth more than the row.
 
-`EVENT_DOUBLE_TAP = UNVERIFIED`. Not PASS, not FAIL. The answer is one query
-away and needs no device — `matter_events` for matter
-`cedfe466-cdc1-4be3-b69e-03103593d986`, expecting exactly one row carrying that
-text. It is recorded here so the next session runs it rather than assuming
-either answer.
+**The query did not stall. It failed on a column that does not exist.** I wrote
+`me.kind`; `matter_events` has `event_type`. Connections genuinely were slow —
+five backends are five hours into `CREATE INDEX new1_doc_vector_stage_hnsw` and
+ad-hoc connects do take tens of seconds — so a slow connect followed by an error
+looked exactly like starvation, and I had a ready explanation sitting in front of
+me and attributed the failure to it **without testing it**. The tell was there:
+`pg_stat_activity` answered fine seconds earlier over the same contended IO.
+
+**Run correctly, the answer is `EVENT_ROWS = 0`.** Not one row, not two. So the
+probe never wrote anything, and the most likely reason is mine: bounds for the
+Save control were dumped BEFORE the note was typed, and dismissing the keyboard
+moves the sheet, so the two taps probably landed where Save no longer was. That
+is the stale-bounds mistake this repository already has a memory about.
+
+`EVENT_DOUBLE_TAP = NOT EXERCISED`. Not UNVERIFIED-but-attempted, and certainly
+not PASS — the R16 guard was never put under the test it exists for. Redoing it
+needs the device, and needs the bounds re-dumped immediately before the tap:
+
+    matter_id  cedfe466-cdc1-4be3-b69e-03103593d986
+    expect     exactly one matter_events row after two rapid taps
+    columns    event_type, event_date, order_text, notes, source, created_at
 
 ## A third defect the device surfaced, fixed without needing the device again
 
