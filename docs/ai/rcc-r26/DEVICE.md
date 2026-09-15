@@ -93,7 +93,14 @@ the row count merely unread. Both halves were wrong, and the way they were wrong
 is worth more than the row.
 
 **The query did not stall. It failed on a column that does not exist.** I wrote
-`me.kind`; `matter_events` has `event_type`. Connections genuinely were slow —
+`me.kind`; `matter_events` has `event_type`.
+
+This is now **confirmed rather than inferred**. Two separate runs of that query
+were left outstanding — one I abandoned after 120s and one backgrounded for
+roughly three hours — and when both finally returned they carried the *same*
+`column me.kind does not exist`. Neither was ever starved. The long one was a
+slow CONNECT under IO pressure followed by an immediate error, which is precisely
+the compound that reads as a hang. Connections genuinely were slow —
 five backends are five hours into `CREATE INDEX new1_doc_vector_stage_hnsw` and
 ad-hoc connects do take tens of seconds — so a slow connect followed by an error
 looked exactly like starvation, and I had a ready explanation sitting in front of
