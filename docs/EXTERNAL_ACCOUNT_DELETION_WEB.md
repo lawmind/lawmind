@@ -23,12 +23,34 @@ page on the public web, and this repository has nowhere to put one.
 | `apps/mobile` | the Expo client, iOS + Android | it is an app, not a web surface |
 | `apps/admin` | the Next.js staff console — 19 `sections/*` pages, all internal | no |
 
-There is **no official LawMind public web application in this repository**, and
-that is a recorded finding rather than a reading of the directory listing:
-`docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0 and `FOUNDER_QUEUE.md` **FQ-SITE**
-both state it — *"no marketing site, no landing page, no public surface of any
-kind. `lawmind.co` is verified with DNS written through the Spaceship API and
-serves nothing."*
+> **CORRECTION, 15 September 2026 (RCC R26). The premise of this section was
+> wrong, and the specification below was not.** This document said `lawmind.co`
+> "serves nothing". It serves a site. Observed, not inferred:
+>
+> ```
+> lawmind/lawmind-site        on the org — Next.js 16 App Router, 12 routes
+> https://lawmind.co          200, Vercel (bom1)
+>                             <title>Lawmind — verified case law and hearing briefings…</title>
+> https://lawmind.co/privacy  200   <title>Privacy · Lawmind</title>
+> https://lawmind.co/terms    200
+> https://lawmind.co/delete-account   404   <- the only thing missing
+> ```
+>
+> So the blocker is **one route in a sibling repository**, not a missing website.
+> Everything below about WHAT the page must say and must not say stands
+> unchanged, `https://lawmind.co/privacy` is now a link that resolves rather than
+> a plan, and `FOUNDER_QUEUE.md` FQ-SITE and
+> `docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0 carry the same refuted claim and
+> have not been edited by RCC — they are NEW3's and the website lane's.
+
+There is **no official LawMind public web application in this repository**, which
+remains true and is the reason nothing was built here. The stronger claim this
+section used to make — that no LawMind public surface exists anywhere — came from
+`docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0 and `FOUNDER_QUEUE.md` **FQ-SITE**,
+*"no marketing site, no landing page, no public surface of any kind. `lawmind.co`
+is verified with DNS written through the Spaceship API and serves nothing."*
+**That was repeated through three documents and two rounds without anyone
+spending the ten seconds a `curl` costs, and it is false.**
 
 The round's instruction on this point was explicit and it was followed: **do not
 invent a mobile-hosted HTML route to satisfy a store requirement about a
@@ -176,16 +198,19 @@ one row in the IA table and one sentence in §4.5.
 ## 5 · Status
 
 ```
-PUBLIC_WEB_PRESENT                    = NO
-EXTERNAL_DELETE_WEB                   = BLOCKED_REPOSITORY_OWNER
-EXTERNAL_DELETE_ROUTE                 = /delete-account   (specified, not built)
-PLAY_ACCOUNT_DELETION_URL_CANDIDATE   = https://lawmind.co/delete-account
+PUBLIC_WEB_PRESENT                    = YES  (lawmind/lawmind-site, live at lawmind.co)
+PUBLIC_WEB_IN_THIS_REPOSITORY         = NO   (and it should not be)
+EXTERNAL_DELETE_WEB                   = BLOCKED_OTHER_REPOSITORY   (was: BLOCKED_REPOSITORY_OWNER)
+EXTERNAL_DELETE_ROUTE                 = /delete-account   (specified, 404 today)
+PLAY_ACCOUNT_DELETION_URL             = https://lawmind.co/delete-account
 EXTERNAL_DELETE_APP_REQUIRED          = NO   (by design of this specification)
 PLAY_CONSOLE_EDITED                   = NO   (out of scope this round)
+OWNER                                 = NEW3 / website lane (bus 1753, bus 1767)
 ```
 
 **Nothing about the in-app path is blocked by this.** In-app deletion works for
 both populations and is proved against the real backend
 (`apps/mobile/e2e/identity-delete.e2e.test.tsx`). What is blocked is the external
-URL, and it is blocked on a website that does not exist yet rather than on
-anything this lane can write today.
+URL, and — corrected 15 September 2026 — it is blocked on **one route in
+`lawmind/lawmind-site`**, a repository this lane does not own, rather than on a
+website that does not exist.

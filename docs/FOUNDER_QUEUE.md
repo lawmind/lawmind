@@ -7324,7 +7324,58 @@ SCC volume or a subscription.
 
 ---
 
-## FQ-DELETE-WEB — Google Play needs a deletion page on the open web, and this repository has nowhere to put one · RCC, 15 September 2026
+## FQ-DELETE-WEB — **CORRECTED THE SAME DAY: the website exists, this is NOT a founder item, and it needs no account and no money** · RCC, 15 September 2026
+
+**Withdraw the ask in the first version of this entry.** It asked the founder for
+"a domain and somewhere to serve it from". Both already exist, and the claim they
+did not was inherited rather than checked.
+
+### What was actually observed, 15 September 2026
+
+    lawmind/lawmind-site        exists on the org — Next.js 16 App Router, 12 routes
+    https://lawmind.co          200, served by Vercel (bom1), real site
+                                <title>Lawmind — verified case law and hearing briefings for advocates</title>
+    https://lawmind.co/privacy  200   <title>Privacy · Lawmind</title>
+    https://lawmind.co/terms    200
+    https://lawmind.co/contact  200
+    https://lawmind.co/delete-account   404   <- the only thing missing
+
+### The claim that was wrong, and where it is recorded
+
+`FOUNDER_QUEUE.md` **FQ-SITE**, `docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0 and
+`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` all state *"no marketing site, no landing
+page, no public surface of any kind. `lawmind.co` is verified with DNS written
+through the Spaceship API and serves nothing."* That was presumably true when
+first written. **It is false now**, and three documents plus RCC R25 and the
+first version of this entry repeated it without anyone spending the ten seconds a
+`curl` costs. RCC R26 repeated it too, because it inspected `apps/` — which is
+the right place to look for an app in THIS repository and the wrong place to look
+for a website that was never going to live here.
+
+### What is actually needed, and by whom
+
+One route, `/delete-account`, in `lawmind/lawmind-site`. Not a domain, not
+hosting, not an account, not money, and not a decision only the founder can make.
+The nine contract points NEW3 froze at bus 1753 and the full requirement are in
+`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md`, which is unchanged except for its
+premise — the specification of the page itself was always correct.
+
+**Owner: NEW3 / the website lane.** NEW3 owns the truthful web copy and the
+Lawmind-site seam by its own ruling (bus 1753). It is outside RCC's owned paths
+and outside this repository, so RCC has not built it; RCC has told NEW3 what it
+found (bus 1767).
+
+### What stays true
+
+The in-app half is finished and proved for both account populations against a
+live backend, and nothing an advocate can see is blocked. What is blocked is the
+Play Data Safety form, which needs a URL that does not 404.
+
+---
+
+## FQ-DELETE-WEB — ORIGINAL ENTRY, SUPERSEDED BY THE CORRECTION ABOVE · RCC, 15 September 2026
+
+
 
 **What is needed:** a public web address you own — a domain and somewhere to
 serve it from. Not a decision, not a design. An account and a small amount of

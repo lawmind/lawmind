@@ -39,11 +39,17 @@ import { CORPUS_TARGET_UNAVAILABLE } from '../api/corpusAbsence';
  * WHY THE LEGACY 404 IS FOLDED INTO `corpus_unavailable`
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * At `ab4b4989` the write half of R17 is not implemented — NEW3 adjudicated it
- * to LCC (bus 1728 §3) and it is honest incompleteness, not a claim anyone made.
- * `services/api/src/matters/authorities.ts:459` still answers an absent target
- * with `404 NOT_FOUND` *"no judgment with that id"*. So the forbidden sentence
- * is on the wire TODAY, and a client that passes it through prints it TODAY.
+ * At `ab4b4989` the write half of R17 was not implemented, and
+ * `services/api/src/matters/authorities.ts` answered an absent target with
+ * `404 NOT_FOUND` *"no judgment with that id"*.
+ *
+ * **THAT IS NO LONGER THE WIRE, AND THE BRANCH STAYS.** LCC R27 landed the 409
+ * and LCC R29 (`94950462`) routed all eight corpus call sites through one
+ * helper, so no current server emits the sentence from any of them. The branch
+ * is kept because a shipped binary outlives a deploy: a phone mid-rolling-
+ * release, or pointed at an environment that has not taken R29, still meets the
+ * old shape. `api/corpusAbsence.ts` now carries the same pair of wires at the
+ * transport, for every route rather than this one.
  *
  * The fold is narrow on purpose: `NOT_FOUND` whose message mentions a JUDGMENT.
  * The same route answers `NOT_FOUND` *"no matter with that id"* for a matter

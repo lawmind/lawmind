@@ -144,9 +144,15 @@ it('reports the age of the oldest unsent copy, and null when there is nothing ow
 /**
  * FOUNDER CORRECTION, 22 Aug 2026: "It must not retry forever." A permanently
  * failing mutation gains nothing from eight identical attempts spread over
- * days — `NOT_FOUND` (the judgment this copy names no longer exists) and
- * `INVALID_REQUEST` (a payload shape the server will always reject) are
- * classified `NON_RETRYABLE` and die on the FIRST failure, never the eighth.
+ * days — `CORPUS_TARGET_UNAVAILABLE` (the pinned corpus generation does not
+ * carry the target), `INVALID_REQUEST` (a payload shape the server will always
+ * reject) and `NOT_FOUND` are classified `NON_RETRYABLE` and die on the FIRST
+ * failure, never the eighth.
+ *
+ * The `NOT_FOUND` case no longer describes "the judgment no longer exists" —
+ * LCC R29 removed that sentence from every corpus route, and it was never a
+ * claim this client was entitled to make. It is kept as a classification
+ * because a shipped binary outlives a deploy.
  */
 describe('a permanently-failing mutation does not retry forever', () => {
   it('marks NOT_FOUND dead on the first attempt, not the eighth', async () => {
@@ -162,6 +168,34 @@ describe('a permanently-failing mutation does not retry forever', () => {
     expect(useOutbox.getState().pending[0]?.attempts).toBe(1);
     expect(useOutbox.getState().pending[0]?.dead).toBe(true);
     expect(useOutbox.getState().deadCount()).toBe(1);
+  });
+
+  /**
+   * THE REGRESSION LCC R29 WOULD HAVE CAUSED SILENTLY.
+   *
+   * This state used to arrive as `NOT_FOUND` and die on attempt 1. LCC R29 gave
+   * it its own code (`CORPUS_TARGET_UNAVAILABLE`, bus 1765 §3), which
+   * `classify()` did not recognise — so it fell through to the RETRYABLE default
+   * and would have been sent eight times before dying anyway, with no test able
+   * to see the change. The client already had a written policy for this exact
+   * state (`citation/saveAuthorityOutcome.ts` returns `retryable: false`), and a
+   * client with two policies for one fact follows the one nobody chose.
+   */
+  it('marks CORPUS_TARGET_UNAVAILABLE dead on the first attempt — one retry policy, not two', async () => {
+    recordCitationCopy.mockResolvedValue({
+      ok: false,
+      error: {
+        code: 'CORPUS_TARGET_UNAVAILABLE',
+        message: 'That judgment is not available in the selected corpus release.',
+      },
+    } as never);
+
+    await useOutbox.getState().enqueue(copy());
+    await useOutbox.getState().flush();
+
+    expect(recordCitationCopy).toHaveBeenCalledTimes(1);
+    expect(useOutbox.getState().pending[0]?.attempts).toBe(1);
+    expect(useOutbox.getState().pending[0]?.dead).toBe(true);
   });
 
   it('marks INVALID_REQUEST dead on the first attempt', async () => {

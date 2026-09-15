@@ -13,7 +13,7 @@
 | 6 · capability / platform truth | APPROVED_NO_CHANGE | iOS `search.party_name` DISABLED server-side; monitoring / statute / good-law all held |
 | 7 · visual / UX quality | PATCH | `SettingsRow` accessibility role; ink-faint drift closed |
 | 8 · physical Android | PENDING_DEVICE | `adb devices -l` run once, nothing attached |
-| 9 · public delete web | BLOCKED_NON_CLIENT | no canonical public site in `apps/`; FQ-DELETE-WEB raised |
+| 9 · public delete web | BLOCKED_OTHER_REPO | **corrected** — `lawmind/lawmind-site` is live at lawmind.co; only `/delete-account` 404s. NEW3's seam, bus 1767 |
 | 10 · store client state | UNCHANGED | targetSdk 36 from Gradle output; iOS image pinned; no production build run |
 | 11 · test / build | DONE | typecheck · 111/1273 · e2e 24/24 · hex · sunlight · design rules |
 | 12 · commit | DONE | GIT_COMMIT lease held; `apps/**` + owned docs only |
@@ -27,6 +27,8 @@
   `migrations/**` was touched.
 - The e2e harness proves the corpus REFUSAL path of `GET /judgments/:id`, not a
   working reader — its fixture schema cannot hydrate a judgment it does carry.
+- `PUBLIC_WEB_PRESENT = NO` was reported and is **withdrawn**: the site exists
+  and is live. See the README's Phase-9 correction.
 
 ## Handed to LCC
 

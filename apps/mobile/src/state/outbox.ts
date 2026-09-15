@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
 import { api } from '../api/client';
+import { CORPUS_TARGET_UNAVAILABLE } from '../api/corpusAbsence';
 import type { CitationCopy } from '../api/contract';
 
 /**
@@ -52,9 +53,11 @@ const MAX_ATTEMPTS = 8;
  *                         code this client does not recognise yet. The safe
  *                         default is "might still succeed", not "give up".
  *   NON_RETRYABLE       — `INVALID_REQUEST` (malformed payload — retrying sends
- *                         the same bytes to the same rejection) or `NOT_FOUND`
- *                         (the judgment this copy names no longer exists —
- *                         no replay makes that row reappear).
+ *                         the same bytes to the same rejection),
+ *                         `CORPUS_TARGET_UNAVAILABLE` (see below), or
+ *                         `NOT_FOUND` (which after LCC R29 no longer names a
+ *                         judgment on any corpus route, and is kept because a
+ *                         shipped binary outlives a deploy).
  *   AUTH_RECOVERABLE    — `AUTH_REQUIRED` reaching HERE means `client.ts`'s own
  *                         refresh-once already failed (`request()`), so the
  *                         session is gone. Retrying the same request cannot
@@ -66,10 +69,42 @@ const MAX_ATTEMPTS = 8;
  * `CONFLICT_REQUIRES_USER` has no member here: `copies.ts`'s own comment says
  * a replayed copy is folded into a success (`ON CONFLICT ... DO UPDATE`)
  * rather than answered with a 409, precisely so this queue never needs it.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * `CORPUS_TARGET_UNAVAILABLE` IS PINNED HERE, AND THE PINNING IS THE POINT.
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Until LCC R29 this state arrived as `NOT_FOUND` and was dead on its first
+ * attempt. R29 gave it its own code, which this classifier did not recognise —
+ * so it silently became RETRYABLE-to-`MAX_ATTEMPTS` by falling through the
+ * default. LCC flagged the change rather than assuming it (bus 1765 §3) and
+ * left the call to RCC, because it is client policy.
+ *
+ * **It is pinned NON_RETRYABLE, for consistency before preference.** The client
+ * already had a policy for this exact state and stated it in writing:
+ * `citation/saveAuthorityOutcome.ts` returns `retryable: false` and explains
+ * why — the state is a property of the pinned corpus generation, so a retry is a
+ * second intentional attempt that cannot succeed for a reason that has not
+ * changed. A client that says "not retryable" on one path and quietly retries
+ * eight times on another has two policies for one fact, and the second one is
+ * the one nobody chose.
+ *
+ * LCC's argument for the other answer is a real one and worth recording: a
+ * generation moving back is exactly the event that makes the next attempt
+ * succeed, which is the shape of the `AUTH_REQUIRED` case above. It is rejected
+ * for a reason specific to the timescales. A sign-in happens while the advocate
+ * is holding the phone, inside this queue's drain window; a corpus rollback is a
+ * deployment, on a timescale of hours, long after eight capped attempts are
+ * spent. So the retries would not catch the recovery — they would only delay
+ * every other entry behind them and end dead anyway.
+ *
+ * Recognised by CODE, not by message, and the constant is imported rather than
+ * retyped so this cannot drift from the transport that folds the same state.
  */
 type FailureClass = 'RETRYABLE' | 'NON_RETRYABLE' | 'AUTH_RECOVERABLE';
 
 function classify(code: string | undefined): FailureClass {
+  if (code === CORPUS_TARGET_UNAVAILABLE) return 'NON_RETRYABLE';
   if (code === 'INVALID_REQUEST' || code === 'NOT_FOUND') return 'NON_RETRYABLE';
   if (code === 'AUTH_REQUIRED') return 'AUTH_RECOVERABLE';
   return 'RETRYABLE';

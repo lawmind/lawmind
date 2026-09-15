@@ -188,12 +188,32 @@ rewriting them would be a mass edit to make a guard tidy.
 - **`DEVICE = PENDING`.** `adb devices -l` was run once and listed nothing. No
   physical matrix row is claimed and none is inferred from Jest, TypeScript or an
   export build.
-- **`EXTERNAL_DELETE_WEB = BLOCKED_REPOSITORY_OWNER`.** `apps/` holds `mobile`
-  and `admin`; `admin` is the internal staff console, which `CLAUDE.md` §1 and the
-  PD-15 reversal both make the only web surface this product has. No mobile-hosted
-  HTML route was invented to work around it. Requirement:
-  `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md`. Queued: `FOUNDER_QUEUE.md`
-  **FQ-DELETE-WEB**.
+- **`EXTERNAL_DELETE_WEB = BLOCKED_OTHER_REPOSITORY`** — and this is a
+  **CORRECTION to what this round first reported.** The round initially recorded
+  `PUBLIC_WEB_PRESENT = NO`, following
+  `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md`, `FOUNDER_QUEUE.md` FQ-SITE and
+  `WEBSITE_PRODUCT_SPEC_V1.md` §0, all of which say `lawmind.co` "serves
+  nothing". Once the GitHub CLI was authenticated, ten seconds of checking
+  refuted it:
+
+  ```
+  lawmind/lawmind-site        on the org — Next.js 16 App Router, 12 routes
+  https://lawmind.co          200, Vercel (bom1), real site
+  https://lawmind.co/privacy  200        https://lawmind.co/terms    200
+  https://lawmind.co/delete-account      404   <- the only thing missing
+  ```
+
+  The blocker is **one route in a sibling repository**, not a missing website,
+  not a domain, and not money. `apps/` still holds only `mobile` and `admin`, so
+  nothing was built here and no mobile-hosted HTML route was invented — the
+  right conclusion from the wrong premise. Owner is NEW3 / the website lane by
+  its own bus 1753 ruling; told at bus 1767. `FOUNDER_QUEUE.md` **FQ-DELETE-WEB**
+  is corrected in place and is no longer a founder item.
+
+  **The lesson is the one this repository already has a memory about.** `apps/`
+  is the right place to look for an app in this repository and the wrong place
+  to look for a website that was never going to live here. A finding repeated
+  across three documents and two rounds is not evidence; a `curl` is.
 - **`APPLE_PRODUCTION_BUILD_PROOF = PENDING`.** No production build was run and
   none was paid for. The `eas.json` production image
   (`macos-tahoe-26.5-xcode-26.6`) is unchanged and guarded by
