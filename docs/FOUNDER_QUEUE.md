@@ -7362,3 +7362,60 @@ else in the client is unaffected.
 the page itself authenticates against the existing better-auth deployment and
 calls the same deletion route the app already calls. NEW3 owns the truthful web
 copy and the public-web seam (bus 1753); RCC owns nothing further here.
+
+---
+
+## FQ-REMOTE-ALPHA · One spend authorisation is enough to start Gate C, and the decision inside it is a REGION, not a price · LCC, 15 Sep 2026
+
+**What is needed from you:** one authorisation to spend, and — inside it — one
+decision that is yours alone and is not a hosting preference.
+
+**What was built anyway:** the entire remote-alpha package, executable today.
+`docs/ops/REMOTE_ALPHA_PACKAGE.md`. Nothing was provisioned, no account created,
+no money committed. `PAID_INFRA_CREATED = NO`, `REMOTE_RESOURCE_CREATED = NO`.
+
+- environment contract, enforced at boot, with its refusals **observed** rather
+  than asserted (`ops/serving-contract.ts`);
+- two independent guards that stop your workstation becoming the serving plane —
+  one syntactic, one by cluster identity that survives an SSH tunnel;
+- corpus release, the activation gate, blue/green rollback A→B→A with user data
+  provably unchanged;
+- USER database backup **and restore**, with an authenticated smoke driven
+  against the restored database — no "backup succeeded" without restore evidence;
+- `GET /ready` beside `/health`, because `/health` pings one of the two database
+  roles and a user database that has gone away leaves liveness green;
+- the staging Gate-S1 runner, written and **run**, so the evidence command is not
+  invented on deployment day;
+- a dry run of all of it against disposable databases: 16/16, including seven
+  deliberate misconfigurations that had to be refused and were.
+
+**The decision, stated precisely.** The API tier is settled on Railway
+(`DEPLOYMENT.md`). The **corpus and user database planes are not**, and the open
+question is a region:
+
+- **Railway Singapore** matches the DPDP residency position recorded in OD-2, and
+  Singapore→India is a same-region hop.
+- **Hetzner EU** (the two independent audits' recommendation) has the RAM to keep
+  the HNSW index resident, is likely cheaper, and **has no Singapore or India
+  region at all** — so ordering it decides OD-2's residency position by accident,
+  and adds a cross-continental round trip inside a 15-second client timeout RCC
+  has already measured as tight on a real device.
+
+`docs/ops/STAGING_PACKAGE_PROPOSAL_2026.md` §0 and §10 hold the measurements and
+the unresolved Hetzner price discrepancy (€157 in the audits vs €259 corroborated
+after the June 2026 rise — re-price on the day, do not commit to either).
+
+**What stays broken without it:** nothing local. Gate S1 has **never** been
+measured against a remote deployment and this repository may not claim it has —
+`STAGING_GATE_S1_MEASURED = NO`. Everything else in Gate C is blocked only on a
+box existing.
+
+**Where it plugs in:** `LAWMIND_SERVING_ENV`, `CORPUS_DATABASE_URL`,
+`USER_DATABASE_URL`, `DB_SPLIT_MODE=split`, `AUTH_SECRET`, `AUTH_BASE_URL`,
+`RESEND_API_KEY`, a release identity, and — strongly recommended —
+`LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS` set to this workstation's Postgres
+`system_identifier`, so no tunnel can make this box the serving database.
+`REMOTE_ALPHA_PACKAGE.md` §2 is the full table.
+
+Still separately owed and unchanged by this round: the countersigned DPA before
+uploads ship (OD-6), and the DNS/TLS/subdomain choice.
