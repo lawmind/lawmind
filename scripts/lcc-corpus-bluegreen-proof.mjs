@@ -246,7 +246,7 @@ try {
     const victims = (
       await c`
         WITH RECURSIVE release(t) AS (
-          SELECT unnest(ARRAY['judgments','judgment_citations','judgment_judges',
+          SELECT unnest(ARRAY['judgments','judgment_paragraphs','judgment_citations','judgment_judges',
                               'judgment_statute_refs','statutes','statute_sections',
                               'lexeme_document_frequency']::text[])
         ),

@@ -60,9 +60,13 @@
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
+import { Transform } from 'node:stream';
+import { createGzip } from 'node:zlib';
 import { join } from 'node:path';
 
 import postgres from 'postgres';
+
+import { releaseChecksum } from './release-checksum.ts';
 
 /**
  * THE APPROVED SERVING SET — enumerated, never derived.
@@ -89,6 +93,10 @@ import postgres from 'postgres';
  */
 export const SERVING_TABLES: readonly { table: string; orderBy: string }[] = [
   { table: 'judgments', orderBy: 'id' },
+  // `paragraph_index` is the canonical 0-based document order (migration 0049),
+  // and `(judgment_id, paragraph_index)` is UNIQUE, so this sort is total. Its
+  // `id` is a random uuid and says nothing about where a paragraph sits.
+  { table: 'judgment_paragraphs', orderBy: 'judgment_id, paragraph_index' },
   { table: 'judgment_citations', orderBy: 'id' },
   // `COLLATE "C"` on every TEXT sort key: byte order is the one ordering a
   // Windows source and a Linux target agree on. Without it the digest is
@@ -260,7 +268,12 @@ type Manifest = {
     file: string;
     /** Named on BOTH sides. Generated columns are absent by construction. */
     columns: string[];
+    /** sha256 of the file AS WRITTEN (compressed bytes when gzip), for transfer integrity. */
+    sha256: string;
+    compression: 'gzip' | null;
   }[];
+  /** Every table was read inside this one exported snapshot. */
+  consistency: { isolation: 'repeatable read'; snapshotId: string };
   excluded: readonly string[];
 };
 
@@ -346,6 +359,36 @@ async function pinSessionRendering(sql: postgres.Sql): Promise<void> {
    * cannot occur in the data, and NULL rendered explicitly so that
    * `(NULL, 'a')` and `('a', NULL)` cannot collide.
  */
+/**
+ * The WHERE clause that confines one serving table to a bounded slice.
+ *
+ * `null` ids means an unbounded release and every table is exported whole. A
+ * judgment-owned table missing from this function is exported WHOLE even in a
+ * bounded release — `judgment_paragraphs` was, and a 500-judgment rehearsal
+ * would have walked the entire paragraph table. Exported so the contract test
+ * can execute it rather than grep for it.
+ */
+export function boundedWhere(table: string, boundIds: readonly string[] | null): string {
+  if (boundIds === null) return '';
+  const idList = `'{${boundIds.join(',')}}'::uuid[]`;
+  if (table === 'judgments') return `WHERE id = ANY(${idList})`;
+  /**
+   * Only edges whose BOTH ends are in the slice. An edge pointing at a
+   * judgment that was not exported is a dangling reference, and a release
+   * whose referential integrity depends on nobody looking is not a release.
+   * Unresolved edges (`cited_judgment_id IS NULL`) are real data and are kept.
+   */
+  if (table === 'judgment_citations')
+    return `WHERE citing_judgment_id = ANY(${idList}) AND (cited_judgment_id IS NULL OR cited_judgment_id = ANY(${idList}))`;
+  if (
+    table === 'judgment_paragraphs' ||
+    table === 'judgment_judges' ||
+    table === 'judgment_statute_refs'
+  )
+    return `WHERE judgment_id = ANY(${idList})`;
+  return '';
+}
+
 async function checksum(
   sql: postgres.Sql,
   table: string,
@@ -353,23 +396,7 @@ async function checksum(
   where: string,
   columns: readonly string[],
 ): Promise<{ rows: number; checksum: string }> {
-  const canonical = [...columns]
-    .sort()
-    // chr(31) as the separator and chr(30) for NULL, because they are
-    // PostgreSQL FUNCTIONS rather than escape strings: nothing has to survive
-    // a JS template literal, a shell, or a file encoding on the way here. The
-    // first attempt used E'\x00' and the server rejected it outright -- a NUL
-    // byte is not a legal value in a text field.
-    .map((c) => `coalesce("${c}"::text, chr(30))`)
-    .join(', chr(31), ');
-  const [row] = await sql.unsafe<{ n: string; ck: string | null }[]>(
-    `SELECT count(*)::text AS n,
-            md5(coalesce(string_agg(t.h, '' ORDER BY t.ord), '')) AS ck
-       FROM (SELECT row_number() OVER (ORDER BY ${orderBy}) AS ord,
-                    md5(concat_ws('', ${canonical})) AS h
-               FROM ${table} ${where}) t`,
-  );
-  return { rows: Number(row?.n ?? 0), checksum: row?.ck ?? '' };
+  return releaseChecksum(sql, table, orderBy, where, columns);
 }
 
 async function main(): Promise<void> {
@@ -388,8 +415,33 @@ async function main(): Promise<void> {
 
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is required');
+  /**
+   * `--gzip`: write `<table>.copy.gz`. A full release is ~204 GiB of COPY text
+   * and does not fit on the source box uncompressed; gzip is ~3x smaller. The
+   * restore reads either form.
+   */
+  const gzip = argv.includes('--gzip');
+  const gzipLevel = Number(arg('gzip-level') ?? 6);
+
   const sql = postgres(url, { max: 2, onnotice: () => {} });
   await pinSessionRendering(sql);
+
+  /**
+   * ONE SNAPSHOT FOR THE WHOLE RELEASE.
+   *
+   * The checksum and the COPY of a table are two statements, and every table is
+   * read at a different moment. On a source that ingestion is still writing,
+   * a full export taken without a shared snapshot checksums one state and
+   * copies another, and the restore then reports corruption that is really
+   * drift. So one connection opens a REPEATABLE READ transaction and exports
+   * its snapshot, and every per-table connection joins it — the same mechanism
+   * `pg_dump` uses. It is held until the last table is written.
+   */
+  const snapHolder = postgres(url, { max: 1, onnotice: () => {} });
+  await snapHolder.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+  const [snap] = await snapHolder.unsafe<{ id: string }[]>('SELECT pg_export_snapshot() AS id');
+  const snapshotId = snap?.id ?? '';
+  if (!/^[0-9A-F-]+$/i.test(snapshotId)) throw new Error(`unexpected snapshot id: ${snapshotId}`);
 
   await mkdir(outDir, { recursive: true });
 
@@ -438,27 +490,12 @@ async function main(): Promise<void> {
   const boundIds =
     judgmentLimit > 0
       ? (
-          await sql<{ id: string }[]>`
+          await snapHolder<{ id: string }[]>`
             SELECT id FROM judgments ORDER BY id LIMIT ${judgmentLimit}`
         ).map((r) => r.id)
       : null;
 
-  const idList = boundIds === null ? '' : `'{${boundIds.join(',')}}'::uuid[]`;
-  const whereFor = (table: string): string => {
-    if (boundIds === null) return '';
-    if (table === 'judgments') return `WHERE id = ANY(${idList})`;
-    /**
-     * Only edges whose BOTH ends are in the slice. An edge pointing at a
-     * judgment that was not exported is a dangling reference, and a release
-     * whose referential integrity depends on nobody looking is not a release.
-     * Unresolved edges (`cited_judgment_id IS NULL`) are real data and are kept.
-     */
-    if (table === 'judgment_citations')
-      return `WHERE citing_judgment_id = ANY(${idList}) AND (cited_judgment_id IS NULL OR cited_judgment_id = ANY(${idList}))`;
-    if (table === 'judgment_judges' || table === 'judgment_statute_refs')
-      return `WHERE judgment_id = ANY(${idList})`;
-    return '';
-  };
+  const whereFor = (table: string): string => boundedWhere(table, boundIds);
 
   const tables: Manifest['tables'] = [];
   for (const { table, orderBy } of SERVING_TABLES) {
@@ -480,11 +517,10 @@ async function main(): Promise<void> {
     }
     const where = whereFor(table);
     const columns = await writableColumns(sql, table);
-    const { rows, checksum: ck } = await checksum(sql, table, orderBy, where, columns);
 
     const columnList = columns.map((c) => `"${c}"`).join(', ');
 
-    const file = `${table}.copy`;
+    const file = gzip ? `${table}.copy.gz` : `${table}.copy`;
     const path = join(outDir, file);
     const query = `COPY (SELECT ${columnList} FROM ${table} ${where} ORDER BY ${orderBy}) TO STDOUT`;
     /**
@@ -503,6 +539,16 @@ async function main(): Promise<void> {
      */
     const copyConn = postgres(url, { max: 1, onnotice: () => {} });
     await pinSessionRendering(copyConn);
+    await copyConn.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
+    await copyConn.unsafe(`SET TRANSACTION SNAPSHOT '${snapshotId}'`);
+    const { rows, checksum: ck } = await checksum(copyConn, table, orderBy, where, columns);
+    const fileHash = createHash('sha256');
+    const hashTap = new Transform({
+      transform(chunk: Buffer, _enc, cb) {
+        fileHash.update(chunk);
+        cb(null, chunk);
+      },
+    });
     const readable = await copyConn.unsafe(query).readable();
     /**
      * `pipeline()` NEVER RESOLVES here, and that cost an hour.
@@ -526,13 +572,24 @@ async function main(): Promise<void> {
       dest.on('finish', resolve);
       dest.on('error', reject);
       readable.on('error', reject);
-      readable.pipe(dest);
+      hashTap.on('error', reject);
+      if (gzip) {
+        const z = createGzip({ level: gzipLevel });
+        z.on('error', reject);
+        readable.pipe(z).pipe(hashTap).pipe(dest);
+      } else {
+        readable.pipe(hashTap).pipe(dest);
+      }
     });
+    // No COMMIT: after a COPY the connection is wedged in copy-out mode (see
+    // above) and a COMMIT on it never returns. The transaction is READ ONLY,
+    // so ending the connection releases it with nothing lost.
     await copyConn.end();
 
     const { size } = await (await import('node:fs/promises')).stat(path);
-    tables.push({ table, rows, checksum: ck, bytes: size, file, columns });
-    console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes`);
+    const sha256 = fileHash.digest('hex');
+    tables.push({ table, rows, checksum: ck, bytes: size, file, columns, sha256, compression: gzip ? 'gzip' : null });
+    console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes  ${new Date().toISOString()}`);
   }
 
   const manifest: Manifest = {
@@ -552,6 +609,7 @@ async function main(): Promise<void> {
     },
     bounded: { judgmentLimit: judgmentLimit > 0 ? judgmentLimit : null },
     tables,
+    consistency: { isolation: 'repeatable read', snapshotId },
     excluded: DELIBERATELY_EXCLUDED,
   };
 
@@ -566,6 +624,8 @@ async function main(): Promise<void> {
 
   console.log(`\nrelease ${releaseVersion} written to ${outDir}`);
   console.log(`source collation: ${manifest.source.collation}  (a Linux target CANNOT match this)`);
+  await snapHolder.unsafe('COMMIT');
+  await snapHolder.end();
   await sql.end();
 }
 

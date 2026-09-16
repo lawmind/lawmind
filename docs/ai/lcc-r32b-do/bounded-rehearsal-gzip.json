@@ -1,0 +1,288 @@
+{
+  "round": "LCC R32B-DO",
+  "phase": "1D bounded rehearsal",
+  "judgmentLimit": 500,
+  "gzip": true,
+  "steps": [
+    {
+      "step": "migrate",
+      "at": "2026-09-16T17:50:37.447Z",
+      "ms": 1090,
+      "tail": "migrations applied · pg_extension: pg_trgm, plpgsql, vector"
+    },
+    {
+      "step": "export",
+      "at": "2026-09-16T17:50:42.043Z",
+      "ms": 4595,
+      "pack": "C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT",
+      "tables": [
+        {
+          "table": "judgments",
+          "rows": 500,
+          "checksum": "5a636946b5746b5a8cdadfa4acbb402d",
+          "bytes": 864449
+        },
+        {
+          "table": "judgment_paragraphs",
+          "rows": 2355,
+          "checksum": "a639d46a6ce4fdd29170244c3000f85a",
+          "bytes": 905936
+        },
+        {
+          "table": "judgment_citations",
+          "rows": 560,
+          "checksum": "6cde6db2a9e0325b81958776775887d6",
+          "bytes": 28882
+        },
+        {
+          "table": "judgment_judges",
+          "rows": 0,
+          "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+          "bytes": 20
+        },
+        {
+          "table": "judgment_statute_refs",
+          "rows": 36,
+          "checksum": "39dba2f6809c45e7843b8b4bf11de5d7",
+          "bytes": 2237
+        },
+        {
+          "table": "statutes",
+          "rows": 849,
+          "checksum": "b4869bb67fd2ccad2a8779cb9de43ef1",
+          "bytes": 90496
+        },
+        {
+          "table": "statute_sections",
+          "rows": 36663,
+          "checksum": "840f0ec1080ec5690733a725f4efd62e",
+          "bytes": 14845893
+        },
+        {
+          "table": "lexeme_document_frequency",
+          "rows": 128243,
+          "checksum": "af4db3b47dba9795f02867c970760ff7",
+          "bytes": 583532
+        }
+      ]
+    },
+    {
+      "step": "pack_paragraph_bound",
+      "at": "2026-09-16T17:50:42.081Z",
+      "boundJudgments": 500,
+      "paragraphRows": 2355,
+      "manifestRows": 2355,
+      "distinctParagraphJudgments": 499,
+      "outsideBoundSet": 0
+    },
+    {
+      "step": "restore",
+      "at": "2026-09-16T17:50:53.582Z",
+      "ms": 11501,
+      "copyPhases": [
+        "file_integrity",
+        "truncate",
+        "copy_open",
+        "copy_stream_begin",
+        "copy_complete",
+        "verify"
+      ],
+      "fileIntegrity": [
+        {
+          "table": "judgments",
+          "ok": true
+        },
+        {
+          "table": "judgment_paragraphs",
+          "ok": true
+        },
+        {
+          "table": "judgment_citations",
+          "ok": true
+        },
+        {
+          "table": "judgment_judges",
+          "ok": true
+        },
+        {
+          "table": "judgment_statute_refs",
+          "ok": true
+        },
+        {
+          "table": "statutes",
+          "ok": true
+        },
+        {
+          "table": "statute_sections",
+          "ok": true
+        },
+        {
+          "table": "lexeme_document_frequency",
+          "ok": true
+        }
+      ],
+      "snapshot": {
+        "isolation": "repeatable read",
+        "snapshotId": "0000000A-00000FCB-1"
+      },
+      "verify": [
+        {
+          "table": "judgments",
+          "rows": 500,
+          "expectedRows": 500,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "judgment_paragraphs",
+          "rows": 2355,
+          "expectedRows": 2355,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "judgment_citations",
+          "rows": 560,
+          "expectedRows": 560,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "judgment_judges",
+          "rows": 0,
+          "expectedRows": 0,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "judgment_statute_refs",
+          "rows": 36,
+          "expectedRows": 36,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "statutes",
+          "rows": 849,
+          "expectedRows": 849,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "statute_sections",
+          "rows": 36663,
+          "expectedRows": 36663,
+          "rowsOk": true,
+          "checksumOk": true
+        },
+        {
+          "table": "lexeme_document_frequency",
+          "rows": 128243,
+          "expectedRows": 128243,
+          "rowsOk": true,
+          "checksumOk": true
+        }
+      ],
+      "tail": [
+        "",
+        "search smoke (the real retrieval path, on this generation):",
+        "",
+        "  exact citation                    5ms    1 hit(s)  matched",
+        "  CNR                               2ms    1 hit(s)  matched",
+        "  filtered lexical                  4ms    5 hit(s)  matched",
+        "  normal research query             7ms    1 hit(s)  hybrid",
+        "",
+        "ACTIVATION ACTIVATE",
+        "",
+        "trace written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT\\RESTORE_TRACE.jsonl",
+        "activation record written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT\\ACTIVATION.json"
+      ]
+    },
+    {
+      "step": "fk_load_order",
+      "at": "2026-09-16T17:50:53.582Z",
+      "firstJudgmentsCopy": 24,
+      "lastJudgmentsCopy": 26,
+      "firstParagraphsCopy": 27,
+      "verifyIdx": 61
+    },
+    {
+      "step": "paragraph_proof",
+      "at": "2026-09-16T17:50:53.995Z",
+      "pass": true,
+      "checks": [
+        {
+          "name": "paragraphs present, no orphans",
+          "pass": true,
+          "detail": {
+            "j": "500",
+            "p": "2355",
+            "pj": "499",
+            "ch": "0",
+            "orphans": "0"
+          }
+        },
+        {
+          "name": "Reader paragraph retrieval",
+          "pass": true,
+          "detail": {
+            "judgmentId": "0000018e-0efb-43a4-b43d-32cafffaecf9",
+            "status": 200,
+            "paragraphs": 11,
+            "title": "SRI GOPAL RAO Vs THE STATE OF KARNATAKA"
+          }
+        },
+        {
+          "name": "Search paragraph fallback",
+          "pass": true,
+          "detail": {
+            "hitsTotal": 1,
+            "withEvidence": 1,
+            "perQuery": [
+              {
+                "q": "anticipatory bail",
+                "hits": 0,
+                "withParagraphEvidence": 0,
+                "ms": 5,
+                "degraded": [
+                  "sparse_unbounded"
+                ]
+              },
+              {
+                "q": "appeal dismissed",
+                "hits": 0,
+                "withParagraphEvidence": 0,
+                "ms": 1,
+                "degraded": [
+                  "sparse_unbounded"
+                ]
+              },
+              {
+                "q": "evidence witness",
+                "hits": 0,
+                "withParagraphEvidence": 0,
+                "ms": 1,
+                "degraded": [
+                  "sparse_unbounded"
+                ]
+              },
+              {
+                "q": "VISHAKANTA",
+                "hits": 1,
+                "withParagraphEvidence": 1,
+                "ms": 7,
+                "degraded": []
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "step": "cleanup",
+      "at": "2026-09-16T17:50:54.251Z",
+      "dropped": "lawmind_r32b_rehearsal"
+    }
+  ],
+  "verdict": "PASS"
+}

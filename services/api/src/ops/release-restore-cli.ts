@@ -24,14 +24,18 @@
  * **It does not run against the source by accident.** `TARGET_DATABASE_URL` is
  * a separate variable and the tool refuses if it equals `DATABASE_URL`.
  */
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { appendFileSync, createReadStream, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pipeline } from 'node:stream/promises';
+import { createGunzip } from 'node:zlib';
 
 import postgres from 'postgres';
 
 import { cascadeVictims, type ForeignKeyEdge } from './cascade-guard.ts';
+import { releaseChecksum } from './release-checksum.ts';
+import { SERVING_TABLES } from './release-export-cli.ts';
 import {
   activationDecision,
   readStatistics,
@@ -178,6 +182,9 @@ type Manifest = {
     bytes: number;
     file: string;
     columns: string[];
+    /** Present on packs written since LCC R32B. Older packs carry neither. */
+    sha256?: string;
+    compression?: 'gzip' | null;
   }[];
 };
 
@@ -256,23 +263,7 @@ async function checksum(
   orderBy: string,
   columns: readonly string[],
 ): Promise<{ rows: number; checksum: string }> {
-  const canonical = [...columns]
-    .sort()
-    // chr(31) as the separator and chr(30) for NULL, because they are
-    // PostgreSQL FUNCTIONS rather than escape strings: nothing has to survive
-    // a JS template literal, a shell, or a file encoding on the way here. The
-    // first attempt used E'\x00' and the server rejected it outright -- a NUL
-    // byte is not a legal value in a text field.
-    .map((c) => `coalesce("${c}"::text, chr(30))`)
-    .join(', chr(31), ');
-  const [row] = await sql.unsafe<{ n: string; ck: string | null }[]>(
-    `SELECT count(*)::text AS n,
-            md5(coalesce(string_agg(t.h, '' ORDER BY t.ord), '')) AS ck
-       FROM (SELECT row_number() OVER (ORDER BY ${orderBy}) AS ord,
-                    md5(concat_ws('', ${canonical})) AS h
-               FROM ${table}) t`,
-  );
-  return { rows: Number(row?.n ?? 0), checksum: row?.ck ?? '' };
+  return releaseChecksum(sql, table, orderBy, '', columns);
 }
 
 /**
@@ -296,15 +287,17 @@ const STALL_PROBE_MS = 15_000;
  */
 const COPY_DEADLINE_DEFAULT_MS = 10 * 60_000;
 
-const ORDER_BY: Record<string, string> = {
-  judgments: 'id',
-  judgment_citations: 'id',
-  judgment_judges: 'judgment_id, judge_name COLLATE "C"',
-  judgment_statute_refs: 'id',
-  statutes: 'id',
-  statute_sections: 'id',
-  lexeme_document_frequency: 'lexeme COLLATE "C"',
-};
+/**
+ * The checksum order for every table, DERIVED from the exporter's list.
+ *
+ * This was a second hand-kept map, and `judgment_paragraphs` was missing from
+ * both. A table absent here falls back to `ctid`, which is physical order and
+ * differs between source and target, so its checksum could never match. One
+ * list cannot drift from itself.
+ */
+const ORDER_BY: Record<string, string> = Object.fromEntries(
+  SERVING_TABLES.map(({ table, orderBy }) => [table, orderBy]),
+);
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
@@ -650,6 +643,25 @@ async function main(): Promise<void> {
     );
   }
 
+  /**
+   * ── FILE INTEGRITY, BEFORE ANYTHING IS TRUNCATED ──────────────────────────
+   *
+   * A pack that crossed a network is checked against the sha256 the exporter
+   * recorded for each file as written. A mismatch stops here, while the target
+   * is still untouched. Packs older than R32B carry no sha256 and are checked
+   * only by the row checksums after load, as before.
+   */
+  for (const t of manifest.tables) {
+    if (!t.sha256) continue;
+    const h = createHash('sha256');
+    await pipeline(createReadStream(join(dir, t.file)), h);
+    const got = h.digest('hex');
+    trace('file_integrity', { table: t.table, file: t.file, ok: got === t.sha256 });
+    if (got !== t.sha256) {
+      throw new Error(`${t.file}: sha256 ${got} does not match manifest ${t.sha256}; refusing to restore`);
+    }
+  }
+
   // ── load ──────────────────────────────────────────────────────────────────
   for (const t of manifest.tables) {
     await watched(`truncate ${t.table}`, trace, observer, targetDb, STALL_PROBE_MS, () =>
@@ -683,7 +695,7 @@ async function main(): Promise<void> {
      * a stall at byte 0 or halfway.
      */
     let sent = 0;
-    const source =
+    const fileStream =
       truncateTable === t.table
         ? /**
            * SIMULATED PARTIAL TRANSFER. Half the bytes, then stop.
@@ -694,9 +706,13 @@ async function main(): Promise<void> {
            */
           createReadStream(path, { start: 0, end: Math.floor(t.bytes / 2) })
         : createReadStream(path);
-    source.on('data', (c: string | Buffer) => {
+    fileStream.on('data', (c: string | Buffer) => {
       sent += typeof c === 'string' ? Buffer.byteLength(c) : c.length;
     });
+    // `sent` counts FILE bytes, so it compares to `t.bytes` for either form.
+    const gzipped = t.compression === 'gzip' || t.file.endsWith('.gz');
+    const source = gzipped ? fileStream.pipe(createGunzip()) : fileStream;
+    if (gzipped) fileStream.on('error', (err) => source.destroy(err));
 
     /**
      * A DEADLINE, because a COPY the server has already rejected can never
