@@ -168,7 +168,11 @@ export async function readStatistics(
            c.reltuples::text AS planner_rows,
            s.last_analyze::text AS last_analyze,
            s.last_autoanalyze::text AS last_autoanalyze,
-           (SELECT count(*) FROM pg_statistic st WHERE st.starelid = c.oid)::text AS statistic_rows
+           -- pg_stats, not pg_statistic: the catalogue is superuser-only and a
+           -- serving restore runs as the database owner (LCC R32B, 42501 on
+           -- DigitalOcean). The view shows the owner every row it can read.
+           (SELECT count(*) FROM pg_stats st
+             WHERE st.schemaname = 'public' AND st.tablename = t.name)::text AS statistic_rows
       FROM unnest(${tables as string[]}::text[]) AS t(name)
       LEFT JOIN pg_class c
              ON c.oid = to_regclass('public.' || quote_ident(t.name))
