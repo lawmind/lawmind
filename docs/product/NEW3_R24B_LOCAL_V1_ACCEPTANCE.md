@@ -88,9 +88,13 @@ Setup: 5 citation classes, each executed 24 times on one database connection.
 - No production change was made. The timeout, the global plan-cache setting and
   the exact/ambiguous/zero semantics are unchanged, and no semantic fallback was
   added.
-- **API suite:** 1319 of 1323 tests pass. The one failure is the documented
-  load-timing test `sparse-bound.test.ts`, which passes when run alone and whose
-  assertion was not loosened.
+- **API suite:** 1319 of 1323 tests pass. The full suite is **not green**: it has
+  one load-sensitive timing failure, `sparse-bound.test.ts` (7,575 ms against a
+  5,000 ms bound under contention). Run alone, it passed both times, and no
+  functional failure traces to R31. Classified
+  `FULL_API_SUITE_LOAD_TIMING = KNOWN_ENVIRONMENT_SENSITIVE_NONBLOCKING`; the test
+  was not changed and its threshold was not raised. (Correction: an earlier draft
+  of this record called the suite "accepted as green". That label is withdrawn.)
 
 ## B4 — CLOSED_NOT_APPLICABLE_CURRENT_V1
 

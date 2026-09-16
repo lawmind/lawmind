@@ -99,7 +99,12 @@
   "apiSuite": {
     "FULL_API_SUITE": "1319/1323 pass, 1 fail, 3 skipped (LCC R31)",
     "theFailure": "sparse-bound.test.ts load-dependent timing (7,575 ms vs 5,000 ms bound under concurrent load); unchanged by R31, passes alone twice (530/152 ms), assertion not loosened",
-    "ruling": "Accepted as green for BACKEND_LOCAL_COMPLETE: a documented load-timing flake that passes in isolation, not a behaviour defect. Not a new blocker."
+    "FULL_API_SUITE": "1 load-sensitive timing failure; isolated reruns PASS; no functional failure attributable to R31",
+    "FULL_API_SUITE_LOAD_TIMING": "KNOWN_ENVIRONMENT_SENSITIVE_NONBLOCKING",
+    "SPARSE_BOUND_ISOLATED": "PASS",
+    "FULL_API_SUITE_GREEN": "NO (not claimed; the full suite is not green under load)",
+    "testMutated": "NO",
+    "ruling": "Non-blocking for BACKEND_LOCAL_COMPLETE: the test documents that its 5-second bound measures the sparse arm, goes red under suite contention and green alone, and must not be raised. Not a behaviour defect and not a new blocker. R24B correction: an earlier draft of this ruling said 'accepted as green'; that label was wrong and is withdrawn."
   },
   "B4": {
     "state": "CLOSED_NOT_APPLICABLE_CURRENT_V1",
@@ -128,7 +133,14 @@
     "EMBEDDING_PROGRAM_LOCAL_COMPLETE": "YES",
     "HNSW": "DEFERRED_HIGH_MEMORY_OFFLOAD",
     "HNSW_BLOCKS_LOCAL_V1": "NO",
-    "PUBLIC_SEMANTIC_SEARCH": "DISABLED"
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED",
+    "CITATION_BULK_APPLY": "HOLD",
+    "STATUTE_LINKED_PUBLIC": "DISABLED",
+    "FOUNDER_DB_SERVING_GUARD": "PASS",
+    "READY_CONTRACT_STATUS": "PASS",
+    "AUTH_RESUME": "FIXED",
+    "READER_2022_INSC_690": "FIXED",
+    "source": "docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.json; not re-examined in R24B"
   },
   "acceptance": {
     "BACKEND_LOCAL_COMPLETE": "YES",
