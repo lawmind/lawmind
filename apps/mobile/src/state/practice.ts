@@ -289,6 +289,41 @@ export const usePractice = create<PracticeState>((set, get) => ({
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
+ * AN UNLOADED STORE IS NOT AN EMPTY CASELOAD. RCC R29 / R30.
+ *
+ * `matters` is `[]` both before anything was read and after a live read found
+ * none. Only the second may be shown as "none". A screen reached by deep link
+ * gets no tab to hydrate the store for it, so it asks here, and states absence
+ * only once a live read has completed.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+export type CaseloadView = 'list' | 'empty' | 'resolving' | 'unavailable';
+
+export function caseloadView(p: {
+  matters: readonly unknown[];
+  freshness: Freshness;
+  loading: boolean;
+  refreshError: string | null;
+}): CaseloadView {
+  if (p.matters.length > 0) return 'list';
+  if (p.freshness.kind === 'live') return 'empty';
+  if (p.loading) return 'resolving';
+  if (p.refreshError !== null) return 'unavailable';
+  return 'resolving';
+}
+
+/**
+ * Never read: `hydrate()` (cache, then network). Read but not live:
+ * `refresh()`, which no-ops while one is in flight and never empties a list.
+ */
+export function ensureLive(): void {
+  const p = usePractice.getState();
+  if (p.freshness.kind === 'unknown') void p.hydrate();
+  else if (p.freshness.kind !== 'live') void p.refresh();
+}
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
  * THE MATTER'S STATE, READ IN ONE PLACE.
  *
  * `status` is `notNull` in the schema and sent on every row, but a matter

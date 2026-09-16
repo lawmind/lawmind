@@ -7,24 +7,11 @@ import { Sheet } from '../../components/Sheet';
 import { Text } from '../../components/Text';
 import type { Matter } from '../../api/contract';
 import { usePendingSave, type PendingSaveIntent } from '../../state/pendingSave';
-import { usePractice, type Freshness } from '../../state/practice';
+import { caseloadView, ensureLive, usePractice } from '../../state/practice';
 import { color, space } from '../../theme/tokens';
 
-export type PickerView = 'list' | 'empty' | 'resolving' | 'unavailable';
-
 /** What the picker may truthfully say, from Practice's own fields. */
-export function pickerView(p: {
-  matters: readonly unknown[];
-  freshness: Freshness;
-  loading: boolean;
-  refreshError: string | null;
-}): PickerView {
-  if (p.matters.length > 0) return 'list';
-  if (p.freshness.kind === 'live') return 'empty';
-  if (p.loading) return 'resolving';
-  if (p.refreshError !== null) return 'unavailable';
-  return 'resolving';
-}
+export const pickerView = caseloadView;
 
 /**
  * "Save to matter" needs to ask WHICH matter — the reading view previously
@@ -104,10 +91,7 @@ export function MatterPicker({
    * no-ops while one is already in flight and never empties a cached list.
    */
   useEffect(() => {
-    if (!visible) return;
-    const p = usePractice.getState();
-    if (p.freshness.kind === 'unknown') void p.hydrate();
-    else if (p.freshness.kind !== 'live') void p.refresh();
+    if (visible) ensureLive();
   }, [visible]);
 
   return (

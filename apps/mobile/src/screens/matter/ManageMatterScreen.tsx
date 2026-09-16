@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button } from '../../components/Button';
@@ -9,7 +9,7 @@ import { SectionRule } from '../../components/SectionRule';
 import { Sheet } from '../../components/Sheet';
 import { Text } from '../../components/Text';
 import type { Matter, MatterStatus } from '../../api/contract';
-import { matterStatus, usePractice } from '../../state/practice';
+import { caseloadView, ensureLive, matterStatus, usePractice } from '../../state/practice';
 import { color, radius, space } from '../../theme/tokens';
 
 /**
@@ -125,19 +125,60 @@ export function ManageMatterScreen({
   onDone: () => void;
 }) {
   const matters = usePractice((s) => s.matters);
+  const freshness = usePractice((s) => s.freshness);
+  const loading = usePractice((s) => s.loading);
+  const refreshError = usePractice((s) => s.refreshError);
   const editMatter = usePractice((s) => s.editMatter);
   const matter = useMemo(
     () => matters.find((m) => m.matterId === matterId) ?? null,
     [matters, matterId],
   );
 
+  /**
+   * NOT FOUND IS ONLY SAID AFTER A LIVE READ — RCC R30. A deep link lands here
+   * with nothing hydrated, so a miss first asks the store to load; the same
+   * rule as the matter picker, applied to one matter instead of the list.
+   */
+  const found = matter !== null;
+  useEffect(() => {
+    if (!found) ensureLive();
+  }, [found, matterId]);
+  const view = caseloadView({ matters: found ? [matter] : [], freshness, loading, refreshError });
+
+  if (view === 'resolving') {
+    return (
+      <Screen topInset>
+        <View style={styles.body} testID="manage-matter-resolving">
+          <BackLink onPress={onBack} />
+          <Text variant="ui" style={styles.muted}>
+            Loading this matter…
+          </Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  if (view === 'unavailable') {
+    return (
+      <Screen topInset>
+        <View style={styles.body} testID="manage-matter-unavailable">
+          <BackLink onPress={onBack} />
+          <Text variant="ui" style={styles.muted}>
+            This matter could not be loaded. Check your connection and try again.
+          </Text>
+          <Button label="Try again" onPress={() => void usePractice.getState().refresh()} />
+        </View>
+      </Screen>
+    );
+  }
+
   if (matter === null) {
     return (
       <Screen topInset>
-        <View style={styles.body}>
+        <View style={styles.body} testID="manage-matter-absent">
           <BackLink onPress={onBack} />
           <Text variant="ui" style={styles.muted}>
-            This matter is not on this device. Open it from Matters first.
+            This matter is not in your matters. It may have been removed, or the link may be wrong.
           </Text>
         </View>
       </Screen>

@@ -44,6 +44,9 @@ jest.mock('../../state/practice', () => {
   // A live, empty caseload: the picker (RCC R29) reads freshness, not just length.
   const state = { matters: [], freshness: { kind: 'live' }, loading: false, refreshError: null };
   return {
+    ...jest.requireActual('../../state/practice'),
+    // The snapshot below is already live, so there is nothing to load.
+    ensureLive: () => {},
     usePractice: Object.assign((selector: (s: unknown) => unknown) => selector(state), {
       getState: () => state,
     }),
