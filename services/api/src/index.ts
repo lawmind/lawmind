@@ -2,9 +2,7 @@ import { hostname } from 'node:os';
 
 import { serve } from '@hono/node-server';
 import { createAuth, mailerFrom } from '@lawmind/auth';
-import { createDatabase } from '@lawmind/db';
 import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
-import { sql } from 'drizzle-orm';
 
 import { createApp } from './app.ts';
 import { createRolePools, jsonSerializerDefects } from './pools.ts';
@@ -22,7 +20,6 @@ import { env } from './env.ts';
 import { logger } from './logger.ts';
 import { runPreflight } from './preflight.ts';
 
-const db = createDatabase(env.databaseUrl());
 /**
  * Every statement this API sends is bounded — see `env.pgStatementTimeoutMs`.
  *
@@ -297,7 +294,10 @@ if (serializerDefects.length > 0) {
 
 const app = createApp({
   ping: async () => {
-    await db.execute(sql`SELECT 1`);
+    // The corpus handle, not a client of its own on `DATABASE_URL`: in split
+    // mode that variable is deliberately unset, and a serving deployment
+    // refused to boot for the sake of a liveness ping (LCC R32B).
+    await rawSql`SELECT 1`;
   },
   /**
    * Measured on the request, never replayed from boot. A readiness probe that
