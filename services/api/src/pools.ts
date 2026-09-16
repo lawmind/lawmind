@@ -117,11 +117,35 @@ export type Pools = {
  */
 export const USER_POOL_MAX = Number(process.env['USER_POOL_MAX'] ?? 8);
 
+/**
+ * better-auth's pool. Magic-link sign-in and verification only — every other
+ * request authenticates from a signed access token without touching it.
+ */
+export const AUTH_POOL_MAX = Number(process.env['AUTH_POOL_MAX'] ?? 2);
+
 export type RolePools = {
   /** Published law and everything derived from it. Two queues: core and research. */
   corpus: Pools;
   /** An advocate's own work. One queue — nothing here is a ranker. */
   user: Sql;
+  /**
+   * The USER database, for `createAuth` and nothing else.
+   *
+   * ── WHY BETTER-AUTH CANNOT SHARE `user` (LCC R30) ─────────────────────────
+   *
+   * `createAuth` wraps its client in `drizzle(...)`, and drizzle-orm's
+   * postgres-js driver REPLACES that client's json (114) and jsonb (3802)
+   * serializers with an identity function, because drizzle stringifies JSON
+   * itself. Handed `user`, it silently changed what every raw `sql.json(obj)`
+   * on the user pool sends: the object reached postgres.js's `Bind` unencoded
+   * and threw `ERR_INVALID_ARG_TYPE`. That was all six R16 creates — and the
+   * unkeyed `POST /matters` — answering 500 on the Galaxy S24, while every
+   * suite built its app with `auth: null` and stayed green.
+   *
+   * A client drizzle has touched is drizzle's. `jsonSerializerDefects` below is
+   * the startup check that keeps it that way.
+   */
+  auth: Sql;
   end: () => Promise<void>;
 };
 
@@ -131,21 +155,44 @@ export function createRolePools(
   researchStatementTimeoutMs: number,
 ): RolePools {
   const corpus = createPools(corpusUrl, researchStatementTimeoutMs);
-  const user = postgres(userUrl, {
+  const userOptions = {
     ssl: sslFor(userUrl),
-    max: USER_POOL_MAX,
     connection: {
       idle_in_transaction_session_timeout: 30_000,
       statement_timeout: CORE_STATEMENT_TIMEOUT_MS,
     },
-  });
+  };
+  const user = postgres(userUrl, { ...userOptions, max: USER_POOL_MAX });
+  const auth = postgres(userUrl, { ...userOptions, max: AUTH_POOL_MAX });
   return {
     corpus,
     user,
+    auth,
     end: async () => {
-      await Promise.all([corpus.end(), user.end()]);
+      await Promise.all([corpus.end(), user.end(), auth.end()]);
     },
   };
+}
+
+/**
+ * The roles whose json/jsonb serializer no longer encodes an object — empty when
+ * every handle is stock.
+ *
+ * Checked by calling the serializer, not by comparing it to a reference: what
+ * matters is what `sql.json(obj)` will put on the wire, and an identity function
+ * returns the object itself.
+ */
+export function jsonSerializerDefects(handles: Record<string, Sql>): string[] {
+  const probe = { r30: [1] };
+  const expected = JSON.stringify(probe);
+  const defects: string[] = [];
+  for (const [role, sql] of Object.entries(handles)) {
+    const serializers = sql.options.serializers as Record<number, (x: unknown) => unknown>;
+    for (const oid of [114, 3802]) {
+      if (serializers[oid]?.(probe) !== expected) defects.push(`${role}:${oid}`);
+    }
+  }
+  return defects;
 }
 
 export function createPools(url: string, researchStatementTimeoutMs: number): Pools {

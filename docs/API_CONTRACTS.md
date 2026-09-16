@@ -58,6 +58,7 @@ endpoint.
 | endpoint | status |
 |---|---|
 | `GET /health` | BUILT |
+| `GET /ready` | BUILT |
 | `GET /version` | BUILT |
 
 **Auth — RCC owns**
@@ -266,6 +267,8 @@ real, never that the surface is on.
 
 ```
 GET /health    —   → { status, sha, database: { reachable, latencyMs } }
+GET /ready     —   → { status: 'ready', sha, corpusReachable, userReachable, splitMode, rolesDistinct, servingEnv }
+                    | 503 NOT_READY (same fields in error.details) | 503 READINESS_NOT_CONFIGURED
 GET /version   —   → { gitSha, deployedAt, environment, imageDigest }
 ```
 

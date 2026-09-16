@@ -1,0 +1,217 @@
+{
+  "topology": "split",
+  "wiring": "fixed",
+  "judgmentId": "00000057-499a-4a81-ba45-5d30e15c08c3",
+  "routes": {
+    "MATTER_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "EVENT_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "ANNOTATION_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "DATA_REQUEST_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "VERIFY_CONFIRM_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "TRAINING_CONSENT_KEYED_CREATE": {
+      "checks": {
+        "first_status": "PASS",
+        "first_rows_plus_1": "PASS",
+        "first_ledger_1": "PASS",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "PASS",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "PASS",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "PASS",
+        "retry_after_fault_rows_plus_1": "PASS",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "PASS"
+    }
+  },
+  "concurrency": {
+    "EVENT_KEYED_CREATE": {
+      "outcomes": [
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok"
+      ],
+      "durableDelta": 1,
+      "ledgerRows": 1,
+      "openLedgerRows": 0,
+      "verdict": "PASS"
+    },
+    "DATA_REQUEST_KEYED_CREATE": {
+      "outcomes": [
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok",
+        "201:ok"
+      ],
+      "durableDelta": 1,
+      "ledgerRows": 1,
+      "openLedgerRows": 0,
+      "verdict": "PASS"
+    }
+  },
+  "jsonSerializerGuard": [],
+  "capturedErrors": [
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO matter_events (matter_id, event_date, event_type, order_text, notes, note_visibility, source) VALUES ($1, $2, $3, $4, $5, -- PD-4: the literal SQL keyword DEFAULT when the client said not"
+    },
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO judgment_annotations (user_id, judgment_id, matter_id, paragraph_number, paragraph_index, quote, note) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, judgment_id, matter_id, paragraph_"
+    },
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO data_requests (auth_id, user_id, kind, status, due_at) VALUES ($1, $2::uuid, $3, 'received', now() + $4::interval) RETURNING id, kind, status, to_char(due_at AT TIME ZONE 'UTC', 'YYYY-MM-"
+    },
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO citation_checks (citation_claimed, judgment_id_matched, verification_state, verified_by_source, shown_to_user, overruled_status_shown, surface) VALUES ($1, $2, 'verified', 'ecourts', true"
+    },
+    {
+      "name": "PostgresError",
+      "message": "r30 injected executor failure",
+      "code": "P0001",
+      "stack": "PostgresError: r30 injected executor failure\n    at ErrorResponse (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:815:30)\n    at handle (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:489:6)\n    at Socket.data (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:324:9)\n    at Socket.emit (node:events:508:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)",
+      "query": " INSERT INTO training_consent_events (user_id, action, version) VALUES ($1, 'granted', $2)"
+    }
+  ],
+  "capturedErrorCount": 6,
+  "failures": [],
+  "verdict": "PASS"
+}

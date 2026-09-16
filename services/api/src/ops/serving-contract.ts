@@ -320,6 +320,26 @@ export function evaluateServingContract(
     });
   }
 
+  /* ── the tunnel-proof half, now mandatory (LCC R30) ─────────────────────
+   *
+   * The host checks above read a STRING. An SSH tunnel or a port-forward makes
+   * the workstation answer on a remote-looking name and every one of them
+   * passes. Only `index.ts`'s identity query — the cluster's own
+   * `system_identifier` against this list — can see through that, and it
+   * no-ops on an empty list. So a serving deployment with an empty list had the
+   * string half and silently not the half that matters. There is no other
+   * trusted-cluster policy in this tree to stand in for it. */
+  if (forbiddenSystemIdentifiers.length === 0) {
+    violations.push({
+      check: 'env:LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS',
+      detail:
+        'LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS is empty. A serving deployment must name the ' +
+        'system_identifier of every local cluster it must never reach (SELECT system_identifier ' +
+        'FROM pg_control_system() on that machine). Hostname checks cannot see a tunnel; this ' +
+        'list is the only startup check that can, and it verifies nothing while empty.',
+    });
+  }
+
   return { servingEnv, serving, violations, forbiddenSystemIdentifiers };
 }
 

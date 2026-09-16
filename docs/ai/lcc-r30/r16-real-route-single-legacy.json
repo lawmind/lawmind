@@ -1,0 +1,237 @@
+{
+  "topology": "single",
+  "wiring": "legacy",
+  "judgmentId": "00000057-499a-4a81-ba45-5d30e15c08c3",
+  "routes": {
+    "MATTER_KEYED_CREATE": {
+      "checks": {
+        "first_status": "FAIL 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+        "first_rows_plus_1": "FAIL delta=0",
+        "first_ledger_1": "FAIL ledger=0",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "FAIL 500 INTERNAL",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "FAIL",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "FAIL 500",
+        "retry_after_fault_rows_plus_1": "FAIL",
+        "nokey_status": "FAIL 500",
+        "nokey_rows_plus_1": "FAIL",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "FAIL"
+    },
+    "EVENT_KEYED_CREATE": {
+      "checks": {
+        "threw": "FAIL fixture matter: 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}"
+      },
+      "verdict": "FAIL"
+    },
+    "ANNOTATION_KEYED_CREATE": {
+      "checks": {
+        "first_status": "FAIL 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+        "first_rows_plus_1": "FAIL delta=0",
+        "first_ledger_1": "FAIL ledger=0",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "FAIL 500 INTERNAL",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "FAIL",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "FAIL 500",
+        "retry_after_fault_rows_plus_1": "FAIL",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "FAIL"
+    },
+    "DATA_REQUEST_KEYED_CREATE": {
+      "checks": {
+        "first_status": "FAIL 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+        "first_rows_plus_1": "FAIL delta=0",
+        "first_ledger_1": "FAIL ledger=0",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "FAIL 500 INTERNAL",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "FAIL",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "FAIL 500",
+        "retry_after_fault_rows_plus_1": "FAIL",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "FAIL"
+    },
+    "VERIFY_CONFIRM_KEYED_CREATE": {
+      "checks": {
+        "first_status": "FAIL 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+        "first_rows_plus_1": "FAIL delta=0",
+        "first_ledger_1": "FAIL ledger=0",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "FAIL 500 INTERNAL",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "FAIL",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "FAIL 500",
+        "retry_after_fault_rows_plus_1": "FAIL",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "FAIL"
+    },
+    "TRAINING_CONSENT_KEYED_CREATE": {
+      "checks": {
+        "first_status": "FAIL 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+        "first_rows_plus_1": "FAIL delta=0",
+        "first_ledger_1": "FAIL ledger=0",
+        "replay_status": "PASS",
+        "replay_same_data": "PASS",
+        "replay_extra_rows_0": "PASS",
+        "mismatch_409": "FAIL 500 INTERNAL",
+        "mismatch_extra_rows_0": "PASS",
+        "ledger_still_1": "FAIL",
+        "fault_is_5xx": "PASS",
+        "fault_rows_0": "PASS",
+        "fault_poison_rows_0": "PASS",
+        "retry_after_fault_executes": "FAIL 500",
+        "retry_after_fault_rows_plus_1": "FAIL",
+        "nokey_status": "PASS",
+        "nokey_rows_plus_1": "PASS",
+        "nokey_ledger_0": "PASS"
+      },
+      "verdict": "FAIL"
+    }
+  },
+  "concurrency": {
+    "EVENT_KEYED_CREATE": {
+      "verdict": "FAIL",
+      "outcomes": [
+        "fixture matter: 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}"
+      ]
+    },
+    "DATA_REQUEST_KEYED_CREATE": {
+      "outcomes": [
+        "500:INTERNAL",
+        "500:INTERNAL",
+        "500:INTERNAL",
+        "500:INTERNAL",
+        "500:INTERNAL",
+        "500:INTERNAL"
+      ],
+      "durableDelta": 0,
+      "ledgerRows": 0,
+      "openLedgerRows": 0,
+      "verdict": "FAIL"
+    }
+  },
+  "jsonSerializerGuard": [
+    "user:114",
+    "user:3802"
+  ],
+  "capturedErrors": [
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:209:7)\n    at ParameterDescription (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:633:58)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:209:7)\n    at toBuffer (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:195:15)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:209:7)\n    at toBuffer (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:195:15)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:209:7)\n    at ParameterDescription (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/postgres/src/connection.js:633:58)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:209:7)\n    at toBuffer (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:195:15)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    },
+    {
+      "name": "TypeError",
+      "message": "The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object",
+      "code": "ERR_INVALID_ARG_TYPE",
+      "stack": "TypeError [ERR_INVALID_ARG_TYPE]: The \"string\" argument must be of type string or an instance of Buffer or ArrayBuffer. Received an instance of Object\n    at Buffer.byteLength (node:buffer:804:11)\n    at reset.str (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/bytes.js:22:27)\n    at file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:964:16\n    at Array.forEach (<anonymous>)\n    at Bind (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:954:16)\n    at prepared (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:209:7)\n    at toBuffer (file:///C:/Users/Xerxus/Documents/Lawmind/node_modules/.pnpm/postgres@3.4.9/node_modules/postgres/src/connection.js:195:15)",
+      "query": " INSERT INTO matters (user_id, case_title, cnr_number, court, case_type, parties, client_name, our_side, next_hearing_date, status, source) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', -- Typ"
+    }
+  ],
+  "capturedErrorCount": 34,
+  "failures": [
+    "MATTER_KEYED_CREATE first_status 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "MATTER_KEYED_CREATE first_rows_plus_1 delta=0",
+    "MATTER_KEYED_CREATE first_ledger_1 ledger=0",
+    "MATTER_KEYED_CREATE mismatch_409 500 INTERNAL",
+    "MATTER_KEYED_CREATE ledger_still_1 ",
+    "MATTER_KEYED_CREATE retry_after_fault_executes 500",
+    "MATTER_KEYED_CREATE retry_after_fault_rows_plus_1 ",
+    "MATTER_KEYED_CREATE nokey_status 500",
+    "MATTER_KEYED_CREATE nokey_rows_plus_1 ",
+    "EVENT_KEYED_CREATE threw fixture matter: 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "ANNOTATION_KEYED_CREATE first_status 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "ANNOTATION_KEYED_CREATE first_rows_plus_1 delta=0",
+    "ANNOTATION_KEYED_CREATE first_ledger_1 ledger=0",
+    "ANNOTATION_KEYED_CREATE mismatch_409 500 INTERNAL",
+    "ANNOTATION_KEYED_CREATE ledger_still_1 ",
+    "ANNOTATION_KEYED_CREATE retry_after_fault_executes 500",
+    "ANNOTATION_KEYED_CREATE retry_after_fault_rows_plus_1 ",
+    "DATA_REQUEST_KEYED_CREATE first_status 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "DATA_REQUEST_KEYED_CREATE first_rows_plus_1 delta=0",
+    "DATA_REQUEST_KEYED_CREATE first_ledger_1 ledger=0",
+    "DATA_REQUEST_KEYED_CREATE mismatch_409 500 INTERNAL",
+    "DATA_REQUEST_KEYED_CREATE ledger_still_1 ",
+    "DATA_REQUEST_KEYED_CREATE retry_after_fault_executes 500",
+    "DATA_REQUEST_KEYED_CREATE retry_after_fault_rows_plus_1 ",
+    "VERIFY_CONFIRM_KEYED_CREATE first_status 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "VERIFY_CONFIRM_KEYED_CREATE first_rows_plus_1 delta=0",
+    "VERIFY_CONFIRM_KEYED_CREATE first_ledger_1 ledger=0",
+    "VERIFY_CONFIRM_KEYED_CREATE mismatch_409 500 INTERNAL",
+    "VERIFY_CONFIRM_KEYED_CREATE ledger_still_1 ",
+    "VERIFY_CONFIRM_KEYED_CREATE retry_after_fault_executes 500",
+    "VERIFY_CONFIRM_KEYED_CREATE retry_after_fault_rows_plus_1 ",
+    "TRAINING_CONSENT_KEYED_CREATE first_status 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "TRAINING_CONSENT_KEYED_CREATE first_rows_plus_1 delta=0",
+    "TRAINING_CONSENT_KEYED_CREATE first_ledger_1 ledger=0",
+    "TRAINING_CONSENT_KEYED_CREATE mismatch_409 500 INTERNAL",
+    "TRAINING_CONSENT_KEYED_CREATE ledger_still_1 ",
+    "TRAINING_CONSENT_KEYED_CREATE retry_after_fault_executes 500",
+    "TRAINING_CONSENT_KEYED_CREATE retry_after_fault_rows_plus_1 ",
+    "EVENT_KEYED_CREATE concurrency threw fixture matter: 500 {\"ok\":false,\"error\":{\"code\":\"INTERNAL\",\"message\":\"something went wrong\"}}",
+    "DATA_REQUEST_KEYED_CREATE concurrency {\"outcomes\":[\"500:INTERNAL\",\"500:INTERNAL\",\"500:INTERNAL\",\"500:INTERNAL\",\"500:INTERNAL\",\"500:INTERNAL\"],\"durableDelta\":0,\"ledgerRows\":0,\"openLedgerRows\":0,\"verdict\":\"FAIL\"}"
+  ],
+  "verdict": "FAIL"
+}

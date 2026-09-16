@@ -40,6 +40,8 @@ function keySpy(): KeySpy {
     if (source.includes('count(*)')) return Promise.resolve([{ n: 0 }]);
     return Promise.resolve([]);
   }) as unknown as Sql;
+  // Paragraph resolution runs inside one transaction (LCC R30); the spy is its own.
+  Object.assign(sql, { begin: (fn: (tx: Sql) => unknown) => fn(sql) });
   return { sql, key: () => captured };
 }
 

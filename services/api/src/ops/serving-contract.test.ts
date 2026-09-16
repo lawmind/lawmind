@@ -33,6 +33,8 @@ const GOOD = {
   AUTH_BASE_URL: 'https://staging-api.lawmind.co',
   RESEND_API_KEY: 're_not_a_real_key',
   LAWMIND_RELEASE_ID: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+  /** The workstation's cluster id. The remote clusters below are different. */
+  LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS: '7412345678901234567',
 };
 
 const OPTS = { ownHostname: 'XC' };
@@ -182,6 +184,62 @@ describe('forbidden serving cluster', () => {
   /** An empty list is no check. Stated, so it is never mistaken for a guarantee. */
   it('is silent when unconfigured, which is why the host rules still exist', () => {
     assert.equal(forbiddenClusterRefusal(identity, 'user', []), null);
+  });
+});
+
+/**
+ * LCC R30. An empty list is no check (above), so a SERVING deployment may no
+ * longer start with one: the host rules cannot see a tunnel and nothing else in
+ * this tree can.
+ */
+describe('the forbidden-cluster list is mandatory when serving', () => {
+  const EMPTY = 'env:LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS';
+  const unset = { ...GOOD, LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS: undefined };
+
+  it('development with an empty list is allowed', () => {
+    const contract = evaluateServingContract({ LAWMIND_SERVING_ENV: 'development' }, OPTS);
+    assert.deepEqual(contract.violations, []);
+    assert.deepEqual(contract.forbiddenSystemIdentifiers, []);
+  });
+
+  it('staging with an empty list is refused', () => {
+    assert.deepEqual(checks(unset), [EMPTY]);
+    assert.deepEqual(checks({ ...GOOD, LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS: ' , ' }), [EMPTY]);
+  });
+
+  it('production with an empty list is refused', () => {
+    assert.deepEqual(checks({ ...unset, LAWMIND_SERVING_ENV: 'production' }), [EMPTY]);
+    assert.ok(
+      servingContractRefusal(
+        evaluateServingContract({ ...unset, LAWMIND_SERVING_ENV: 'production' }, OPTS),
+      ).includes(EMPTY),
+    );
+  });
+
+  it('staging with the local id configured starts, and the remote clusters pass the identity check', () => {
+    const contract = evaluateServingContract(GOOD, OPTS);
+    assert.deepEqual(contract.violations, []);
+    assert.deepEqual(contract.forbiddenSystemIdentifiers, ['7412345678901234567']);
+    for (const [role, id] of [
+      ['corpus', '7500000000000000001'],
+      ['user', '7500000000000000002'],
+    ] as const) {
+      const remote = { systemIdentifier: id, database: `lawmind_${role}`, serverVersion: '16.4' };
+      assert.equal(
+        forbiddenClusterRefusal(remote, role, contract.forbiddenSystemIdentifiers),
+        null,
+      );
+    }
+  });
+
+  it('staging actually connected to the configured local cluster is refused', () => {
+    const contract = evaluateServingContract(GOOD, OPTS);
+    const local = {
+      systemIdentifier: '7412345678901234567',
+      database: 'lawmind',
+      serverVersion: '16.4',
+    };
+    assert.ok(forbiddenClusterRefusal(local, 'user', contract.forbiddenSystemIdentifiers));
   });
 });
 
