@@ -438,6 +438,11 @@ async function main(): Promise<void> {
    * `pg_dump` uses. It is held until the last table is written.
    */
   const snapHolder = postgres(url, { max: 1, onnotice: () => {} });
+  // The holder sits idle in its transaction for hours while tables stream.
+  // The founder box sets idle_in_transaction_session_timeout = 1h, which
+  // killed it three hours into the first full export (LCC R32B: the next
+  // table failed with `snapshot ... does not exist`). Session-level only.
+  await snapHolder.unsafe('SET idle_in_transaction_session_timeout = 0');
   await snapHolder.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
   const [snap] = await snapHolder.unsafe<{ id: string }[]>('SELECT pg_export_snapshot() AS id');
   const snapshotId = snap?.id ?? '';
@@ -539,6 +544,7 @@ async function main(): Promise<void> {
      */
     const copyConn = postgres(url, { max: 1, onnotice: () => {} });
     await pinSessionRendering(copyConn);
+    await copyConn.unsafe('SET idle_in_transaction_session_timeout = 0');
     await copyConn.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     await copyConn.unsafe(`SET TRANSACTION SNAPSHOT '${snapshotId}'`);
     const { rows, checksum: ck } = await checksum(copyConn, table, orderBy, where, columns);
