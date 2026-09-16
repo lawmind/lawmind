@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
+  ReduceMotion,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -47,9 +48,21 @@ export function Toast({ message, onDone }: { message: string | null; onDone?: ()
     if (!message) return;
     // `easing.out` BOTH DIRECTIONS. The exit is as watched as the entry — a
     // toast that eases out slowly at the start reads as reluctant to leave.
-    progress.value = withTiming(1, { duration: duration.fade, easing: easing.out });
+    //
+    // `ReduceMotion.Never`: the fade is not motion, and the default (`System`)
+    // skipped it — on the S24 with reduced motion on, 16 Sep 2026, the toast
+    // stayed at opacity 0 and a refused save said nothing on screen.
+    progress.value = withTiming(1, {
+      duration: duration.fade,
+      easing: easing.out,
+      reduceMotion: ReduceMotion.Never,
+    });
     const timer = setTimeout(() => {
-      progress.value = withTiming(0, { duration: duration.fade, easing: easing.out });
+      progress.value = withTiming(0, {
+        duration: duration.fade,
+        easing: easing.out,
+        reduceMotion: ReduceMotion.Never,
+      });
       onDone?.();
     }, TOAST_MS);
     return () => clearTimeout(timer);

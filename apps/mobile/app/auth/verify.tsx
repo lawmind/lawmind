@@ -44,6 +44,8 @@ export default function Route() {
    */
   const pendingHydrated = usePendingDestination((s) => s.hydrated);
   const [failure, setFailure] = useState<string | null>(null);
+  /** This link's exchange has succeeded — see `exchanged` in `resumeGate.ts`. */
+  const [exchanged, setExchanged] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -53,7 +55,8 @@ export default function Route() {
     let alive = true;
     void verify(token).then((r) => {
       if (!alive) return;
-      if (!r.ok) setFailure(r.message);
+      if (r.ok) setExchanged(true);
+      else setFailure(r.message);
     });
     return () => {
       alive = false;
@@ -70,10 +73,10 @@ export default function Route() {
      * link survives to `app/onboarding.tsx`, which resumes it after the profile
      * exists.
      */
-    const action = resumeAction(status, pendingHydrated);
+    const action = resumeAction(status, pendingHydrated, exchanged);
     if (action === 'resume') router.replace((consume() ?? '/today') as never);
     else if (action === 'onboarding') router.replace('/onboarding');
-  }, [status, pendingHydrated, router, consume]);
+  }, [status, pendingHydrated, exchanged, router, consume]);
 
   return (
     <>

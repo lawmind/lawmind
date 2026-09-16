@@ -66,7 +66,7 @@ function persisted(href: string, ageMs: number): string {
 
 /** Where `auth/verify.tsx` would send the advocate at this moment. */
 function resumesTo(status: SessionStatus): string | null {
-  const action = resumeAction(status, store().hydrated);
+  const action = resumeAction(status, store().hydrated, true);
   if (action !== 'resume') return null;
   return store().consume() ?? '/today';
 }
@@ -191,7 +191,7 @@ describe('the process was killed during the mail round trip', () => {
     jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(persisted('/matter/m1', 60_000));
 
     // The verify exchange returns before the read lands.
-    expect(resumeAction('signed_in', store().hydrated)).toBe('wait');
+    expect(resumeAction('signed_in', store().hydrated, true)).toBe('wait');
     expect(store().held).toBeNull();
 
     await store().hydrate();

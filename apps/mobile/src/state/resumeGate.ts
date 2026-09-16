@@ -40,7 +40,21 @@ export type ResumeAction =
    */
   | 'onboarding';
 
-export function resumeAction(status: SessionStatus, pendingHydrated: boolean): ResumeAction {
+/**
+ * `exchanged` — THIS LINK'S OWN ANSWER HAS ARRIVED. A link can land in an app
+ * that is already signed in as someone, and until `verify()` resolves, `status`
+ * describes THAT session, not this one. Found on the S24, 16 Sep 2026: a full
+ * advocate receiving an identity-only link was sent to Today on the old status,
+ * `GET /me` then flipped the gate on a protected route, and the app died with
+ * "Maximum update depth exceeded"; the reverse left a full advocate on the
+ * onboarding form.
+ */
+export function resumeAction(
+  status: SessionStatus,
+  pendingHydrated: boolean,
+  exchanged: boolean,
+): ResumeAction {
+  if (!exchanged) return 'wait';
   if (status === 'unknown') return 'wait';
   if (status === 'identity_only') return 'onboarding';
   if (status !== 'signed_in') return 'wait';
