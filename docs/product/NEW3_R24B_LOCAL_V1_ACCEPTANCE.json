@@ -1,0 +1,198 @@
+{
+  "kind": "new3-r24b-local-v1-acceptance",
+  "round": "NEW3 R24B",
+  "decidedAt": "2026-09-16",
+  "companion": "docs/product/NEW3_R24B_LOCAL_V1_ACCEPTANCE.md",
+  "supersedesAcceptanceOf": "docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.json (left unedited; everything it accepted stays accepted)",
+  "scope": "Re-check of B1-B4 only. No general audit. No fifth blocker was raised.",
+  "integration": {
+    "HEAD_START": "69cf2e23098d6752ffd55189abbfdf27987cdcfc",
+    "ORIGIN_MAIN_AT_START": "69cf2e23098d6752ffd55189abbfdf27987cdcfc",
+    "ancestry": {
+      "ab235aab": "ANCESTOR (NEW3 R24)",
+      "5df329a2": "ANCESTOR (RCC R28, B1 client patch)",
+      "47ef42ae": "ANCESTOR (LCC R31, B2 guard + B3 measurement)",
+      "69cf2e23": "ANCESTOR (LCC R31 handoff, bus 1785; HEAD at round start)",
+      "34a70a3d": "ANCESTOR (RCC R28B, hydrate clears unsendable pending highlights; B1 device verdict)",
+      "256904c4": "ANCESTOR (RCC R28B handoff, bus 1786)"
+    },
+    "integrationPerformedByNew3": "NONE: nothing was missing",
+    "LCC_R31_IN_HEAD": "YES",
+    "RCC_R28_IN_HEAD": "YES",
+    "INTEGRATED_HEAD_READY": "YES",
+    "HEAD_FINAL_BEFORE_NEW3_COMMIT": "256904c4db85010bcb5fa1659592301b11bc43df",
+    "RCC_R28_FINAL_COMMIT": "34a70a3d (+ handoff 256904c4)"
+  },
+  "B1": {
+    "state": "PASS",
+    "evidence": ["docs/ai/rcc-r28/DEVICE.md", ".agents/bus/1786", "5df329a2", "34a70a3d"],
+    "device": "SM-S921B Galaxy S24, Android 16, USB; local API runtime-equivalent to 69cf2e23; DB single-mode (inferred); wire logged by local pass-through proxy (length + sha only)",
+    "source": "2022 INSC 690 para 2, paragraphIndex 2, 5,458 characters (recomputed with segmentParagraphs)",
+    "properties": {
+      "LONG_PARAGRAPH_NOT_POSTED_WHOLE": "PASS (2 POSTs in the whole run, lengths 116 and 182)",
+      "EXACT_CONTIGUOUS_SELECTION": "PASS (native handles, nothing preselected)",
+      "EXCERPT_LENGTH_1_TO_4000": "PASS (select-all shows 5458 / 4000, both saves disabled, 0 POST, 0 rows)",
+      "NO_SILENT_TRUNCATION": "PASS",
+      "NO_FREEFORM_TEXT": "PASS (native Cut and Paste revert to the canonical sha, clear the selection, 0 POST; injected-marker DB scan empty)",
+      "STORED_QUOTE_EQUALS_SOURCE_SUBSTRING": "PASS (bare 116 at [4862,4978), matter 182 at [5203,5385), each occurs once in para 2)",
+      "INVALID_REFUSAL_NO_FALSE_TINT": "PASS (automated live-400 rollback; physically: six legacy 5,458-char false tints found on the device and removed on hydrate by 34a70a3d, only server-backed highlights after relaunch). A live 400 was not forced physically: the client can no longer send one and no server or test path was added to force it.",
+      "OFFLINE_PENDING_PRESERVED": "PASS (automated; sendable pending writes are kept by the hydrate filter)",
+      "S24_BARE_SAVE": "PASS (row 9bcfc90f, row delta +1)",
+      "S24_SAVE_TO_MATTER": "PASS (row ba8384ff, matter cedfe466, row delta +1)",
+      "S24_RELAUNCH_NO_DUPLICATE": "PASS (one local copy with server id, GET only, duplicate delta 0)",
+      "CRASH_ANR_OOM": "0 / 0 / 0"
+    },
+    "B1_S24_EXACT_EXCERPT": "PASS",
+    "B1_FALSE_TINT": "PASS (none after 34a70a3d; legacy residue cleared on hydrate)",
+    "B1_OFFLINE_BEHAVIOR": "PASS (automated)",
+    "regression": "RCC: Jest 118 suites / 1325 tests, tsc 0, android export 0. NEW3 re-ran reading.refusal + screens/judgment at 256904c4: 10 suites, 115/115 pass.",
+    "ccr": "CCR-NEW3-R24-02 EXACT_USER_SELECTED_EXCERPT implemented and observed",
+    "CLIENT_LOCAL_COMPLETE": "YES",
+    "CURRENT_V1_DESIGN_COMPLETE": "YES",
+    "CURRENT_V1_REQUIRED_SURFACE_COMPLETE": "YES",
+    "observedNotBlocking": {
+      "ruling": "None meets the fifth-blocker test (reachable current-v1 path + incorrect legal/data state + not settled by existing evidence). Routed to RCC as post-acceptance follow-ups; none creates a false legal state or loses data.",
+      "items": [
+        "MatterPicker shows 'No matters yet' on a cold deep link into a judgment although matters exist (reads only already-loaded matters) and offers 'Create a matter', which invites a duplicate matter. Predates R28. No data is lost or misattributed; the advocate sees an incomplete list.",
+        "Bottom sheets ignore the bottom safe-area inset; the lower button sits partly under the Android nav bar but remains tappable. Cosmetic.",
+        "Excerpt field opens scrolled to the end; line height looks tighter after a reverted edit. Cosmetic."
+      ]
+    }
+  },
+  "B2": {
+    "state": "PASS",
+    "evidence": [
+      "docs/ai/lcc-r31/ROUND.md",
+      "services/api/src/search/production-callers.test.ts",
+      ".agents/bus/1785"
+    ],
+    "PRODUCTION_USER_RETRIEVAL_CALLERS": [
+      "search/route.ts",
+      "arguments/counter.ts",
+      "search/saved.ts"
+    ],
+    "userRequestClassBasis": "import graph from index.ts; each acquires admission and releases it in finally (asserted)",
+    "RELEASE_OPS_RETRIEVAL_CALLERS": ["release/activation.ts"],
+    "releaseOpsBasis": "not reachable from index.ts; importers are release-restore tooling, scripts and tests only; contract pinned: one sparse, vector-free, limit-5 probe, no search event, no capability writes, a throwing probe refuses activation",
+    "falsifiers": "ungated new serving caller, unregistered release-looking caller, registered release caller imported by the server, acquire without finally release: all fail the same guard function the real tree passes",
+    "PRODUCTION_CALLER_GUARD": "PASS 13/13 (re-run by NEW3 at 69cf2e23 with node --test via tsx)",
+    "note": "The file is a node:test suite; vitest reports 'no test suite found' for it, which is a runner mismatch, not a failure."
+  },
+  "B3": {
+    "state": "NOT_REPRODUCED",
+    "evidence": [
+      "docs/ai/lcc-r31/ROUND.md",
+      "docs/ai/lcc-r31/cite-plan-cache-quiet.json",
+      "docs/ai/lcc-r31/cite-plan-cache-concurrent.json",
+      "scripts/lcc-r31-cite-plan-cache.mjs"
+    ],
+    "method": "real answerStructured on one backend, 5 classes (unique, reporter-only, alias, ambiguous 2020 INSC 189 = 3, zero) x 24 executions; then transaction-local force_custom_plan vs force_generic_plan",
+    "CITE_PLAN_CACHE_RISK": "NOT_REPRODUCED (generic_plans 0 / custom_plans 120 per statement; forced generic keeps the same BitmapOr of the same three indexes, ~80x custom estimate, 29-150 ms, identical ids)",
+    "CITE_FIX": "NONE_REQUIRED (no production change)",
+    "CITE_TIMEOUTS": 0,
+    "TIMEOUT_CHANGED": "NO",
+    "GLOBAL_PLAN_CACHE_MODE_CHANGED": "NO",
+    "SEMANTIC_FALLBACK_ADDED": "NO",
+    "EXACT_AMBIGUOUS_ZERO_SEMANTICS": "UNCHANGED",
+    "rerunByNew3": "NO (per round instruction; LCC evidence accepted as recorded)"
+  },
+  "apiSuite": {
+    "FULL_API_SUITE": "1319/1323 pass, 1 fail, 3 skipped (LCC R31)",
+    "theFailure": "sparse-bound.test.ts load-dependent timing (7,575 ms vs 5,000 ms bound under concurrent load); unchanged by R31, passes alone twice (530/152 ms), assertion not loosened",
+    "ruling": "Accepted as green for BACKEND_LOCAL_COMPLETE: a documented load-timing flake that passes in isolation, not a behaviour defect. Not a new blocker."
+  },
+  "B4": {
+    "state": "CLOSED_NOT_APPLICABLE_CURRENT_V1",
+    "decidedBy": "founder instruction, NEW3 R24B round brief (16 Sep 2026); answers FQ-NEW3-R24-VERIFY-ROW with option (a)",
+    "VERIFY_CONFIRM_PHYSICAL_CURRENT_V1": "NOT_APPLICABLE_UNREACHABLE_CURRENT_V1",
+    "reason": "A physical acceptance row is required only for a state reachable from a released current-v1 capability. No current-v1 enabled product path creates an unconfirmed citation state (NEW3 R24 verifyConfirm.whyNoCurrentProducer).",
+    "VERIFY_CONFIRM_BACKEND_REAL_ROUTE": "PASS (LCC R30 six-route R16 matrix, single and strict split)",
+    "VERIFY_CONFIRM_CLIENT_TESTS": "PASS (existing RCC test evidence)",
+    "VERIFY_CONFIRM_PHYSICAL": "NOT_APPLICABLE_UNREACHABLE_CURRENT_V1",
+    "VERIFY_CONFIRM_PHYSICAL_TRIGGER": "Before ANY capability capable of introducing or displaying an unconfirmed citation is enabled for users (for example a future document upload, drafting/extracted citation, or external user-supplied authority), physical verify-confirm becomes a mandatory acceptance row. None of these is enabled or designed by this round.",
+    "notDone": [
+      "no unconfirmed corpus judgment fabricated",
+      "upload/drafting not enabled",
+      "no developer bypass",
+      "no server or client path built to make the row reachable",
+      "no test-only capability created"
+    ],
+    "FOUNDER_QUEUE": "FQ-NEW3-R24-VERIFY-ROW CLOSED",
+    "effect": "This row no longer holds ANDROID_PHYSICAL_COMPLETE at NO."
+  },
+  "carriedForward": {
+    "R16_RUNTIME_COMPLETE": "YES",
+    "R16_PHYSICAL_COMPLETE": "YES",
+    "R17": "RELEASED",
+    "R17_READ_SIDE": "RATIFIED",
+    "EMBEDDING_PROGRAM_LOCAL_COMPLETE": "YES",
+    "HNSW": "DEFERRED_HIGH_MEMORY_OFFLOAD",
+    "HNSW_BLOCKS_LOCAL_V1": "NO",
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED"
+  },
+  "acceptance": {
+    "BACKEND_LOCAL_COMPLETE": "YES",
+    "CLIENT_LOCAL_COMPLETE": "YES",
+    "ANDROID_PHYSICAL_COMPLETE": "YES",
+    "EMBEDDING_LOCAL_COMPLETE": "YES",
+    "LEGAL_TRUTH_GATES_COMPLETE": "YES",
+    "STRICT_SPLIT_LOCAL_COMPLETE": "YES",
+    "ACCOUNT_DELETION_IN_APP_COMPLETE": "YES",
+    "CURRENT_V1_REQUIRED_SURFACE_COMPLETE": "YES",
+    "CURRENT_V1_DESIGN_COMPLETE": "YES",
+    "CURRENT_CAPABILITY_GATING_COMPLETE": "YES",
+    "CURRENT_V1_FUNCTIONALLY_COMPLETE": "YES",
+    "LOCAL_V1_ACCEPTED": "YES",
+    "basis": "B1 PASS, B2 PASS, B3 NOT_REPRODUCED, B4 CLOSED_NOT_APPLICABLE_CURRENT_V1; no new current-v1 regression proven by LCC R31 or RCC R28/R28B; no additional local gate invented.",
+    "testOnlyCapabilityCreated": "NO",
+    "frozen": true
+  },
+  "deferred": {
+    "CITATION_BULK_APPLY": "HOLD",
+    "CITATION_EDGE_APPLY_BLOCKS_GATE_C": "NO",
+    "STATUTE_LINKED_PUBLIC": "DISABLED",
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED",
+    "HNSW": "DEFERRED_HIGH_MEMORY_OFFLOAD",
+    "EXTERNAL_DELETE_WEB": "STORE_SUBMISSION_BLOCKER",
+    "APPLE_PRODUCTION_BUILD_PROOF": "STORE/RELEASE_BLOCKER",
+    "STAGING_GATE_S1": "GATE_C_REMOTE_WORK",
+    "REMOTE_MOBILE_DATA_GATE_C": "GATE_C_REMOTE_WORK",
+    "rule": "None of these may be converted back into a local-v1 blocker."
+  },
+  "remote": {
+    "READY_FOR_REMOTE_SPEND_DECISION": "YES",
+    "NEXT_GATE": "FOUNDER_REMOTE_SPEND_DECISION",
+    "GATE_C_STARTED": "NO",
+    "PAID_REMOTE_INFRA_AUTHORIZED": "NO",
+    "rule": "The founder must explicitly authorise spend before any paid remote resource is created. Readiness is not authorisation."
+  },
+  "nextPhaseDefinition": {
+    "recordedNotExecuted": true,
+    "unlockedByFounderSpendAuthorization": "GATE_C_REMOTE_ALPHA",
+    "contents": [
+      "remote API",
+      "separate remote CORPUS DB",
+      "separate remote USER DB",
+      "HTTPS",
+      "remote backup + restore",
+      "A->B->A corpus release rollback",
+      "staging Gate-S1",
+      "Galaxy S24 over MOBILE DATA, not adb reverse",
+      "remote readiness/logging evidence"
+    ],
+    "separateWorkstreams": [
+      "external delete-account website (store submission)",
+      "Apple production build (store/release)"
+    ],
+    "FIFTH": "runs at formal Gate C, not now"
+  },
+  "blockers": [],
+  "notDone": [
+    "no paid remote resource created or provisioned",
+    "Gate C not started",
+    "FIFTH not run (formal Gate C only)",
+    "external delete-account website not built (store workstream)",
+    "Apple production build not proved (store/release workstream)",
+    "the three RCC-observed non-blocking follow-ups are not fixed"
+  ]
+}

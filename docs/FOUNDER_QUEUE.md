@@ -7607,6 +7607,15 @@ switched off and stays switched off either way.
 
 ## FQ-NEW3-R24-VERIFY-ROW — one yes/no before the app can be signed off on this machine (16 Sep 2026)
 
+> **CLOSED 16 Sep 2026 (NEW3 R24B). You chose (a).** The phone test is off the list
+> for now. It returns as a mandatory test before any feature that could show an
+> unconfirmed citation is switched on, such as uploads, drafting, or an authority
+> the advocate types in. Nothing was built to make the test reachable. With this
+> and the three engineering fixes done, **the app is signed off on this machine
+> (local v1 accepted).** The next step is yours: whether to approve paying for
+> remote servers. That is **not** approved yet, and nothing paid has been
+> created. Record: `docs/product/NEW3_R24B_LOCAL_V1_ACCEPTANCE.md`.
+
 **What is needed from you.** The pre-launch checklist asks for one test on the phone: an
 advocate confirms, by hand, a citation we could not confirm ourselves. The test cannot be run
 today, because the app can never reach that state. Everything it currently shows comes straight
