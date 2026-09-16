@@ -185,7 +185,6 @@ export function MatterScreen({
    */
   const [removing, setRemoving] = useState<string | null>(null);
   const [removeError, setRemoveError] = useState<string | null>(null);
-  const [addEventError, setAddEventError] = useState<string | null>(null);
   const storeMatters = usePractice((s) => s.matters);
   const recordRecent = useRecentItems((s) => s.record);
 
@@ -761,12 +760,6 @@ export function MatterScreen({
           </View>
         ) : null}
 
-        {addEventError ? (
-          <Text variant="ui" style={styles.error}>
-            {addEventError}
-          </Text>
-        ) : null}
-
         {cachedAt ? (
           <Text variant="ui" style={styles.freshness}>
             Showing what is saved on this phone · {describeCacheAge(cachedAt)}
@@ -790,14 +783,18 @@ export function MatterScreen({
           );
           if (r.ok) {
             setAddEventOpen(false);
-            setAddEventError(null);
             setBundle((current) =>
               current ? { ...current, events: [r.data.event, ...current.events] } : current,
             );
-            return true;
+            return { ok: true };
           }
-          setAddEventError(r.error.message);
-          return false;
+          /*
+            THE REASON GOES BACK INTO THE SHEET, not onto this screen. It used to
+            be held here as `addEventError` and rendered below the timeline —
+            which is behind `Sheet`'s own native window, and below the fold. On a
+            real phone that read as a Save button that did nothing. RCC R27.
+          */
+          return { ok: false, message: r.error.message };
         }}
         visible={addEventOpen}
       />

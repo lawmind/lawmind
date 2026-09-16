@@ -45,6 +45,15 @@ export function AddEventSheet({
    * so this sheet could not tell a landed write from a refused one and cleared
    * the advocate's typed text either way. The attempt key travels with it — the
    * caller sends it, this component owns its lifetime.
+   *
+   * IT CARRIES THE REASON, not just a boolean — RCC R27, found on a Galaxy S24.
+   * `Sheet` is a `<Modal>`, which React Native renders in its OWN NATIVE WINDOW,
+   * so a message the caller renders on the screen behind it is covered by this
+   * sheet and cannot be read. The advocate tapped Save against a 500, the sheet
+   * stayed open with their text, and nothing said why: the words were on the
+   * matter screen underneath, below the timeline, reachable only by dismissing
+   * the sheet and scrolling. A refusal has to be readable where the action was
+   * taken, so the reason comes back here and `error` renders it.
    */
   onSubmit: (
     event: {
@@ -54,7 +63,7 @@ export function AddEventSheet({
       notes?: string;
     },
     attemptKey: string,
-  ) => Promise<boolean>;
+  ) => Promise<{ ok: true } | { ok: false; message: string }>;
 }) {
   const [eventDate, setEventDate] = useState(() => toIso(todayCivil()));
   const [eventType, setEventType] = useState<EventType>('hearing');
@@ -103,7 +112,7 @@ export function AddEventSheet({
       attemptKey,
     );
 
-    if (!saved) {
+    if (!saved.ok) {
       /*
         THE TEXT STAYS. It used to be cleared unconditionally, before anyone
         knew whether the write landed — so a failed save left the advocate
@@ -112,6 +121,7 @@ export function AddEventSheet({
         mutation, and reusing it is what stops the retry from writing a second
         event if the first one actually committed.
       */
+      setError(saved.message);
       attempt.settle();
       return;
     }

@@ -70,19 +70,20 @@ const neverSettles = () => new Promise<never>(() => {});
 
 /*
   TYPED FROM THE COMPONENT'S OWN PROP, not from the implementation. A bare
-  `jest.fn(async () => true)` infers a zero-argument signature, so `mock.calls[0][1]`
+  `jest.fn(async () => ({ ok: true }))` infers a zero-argument signature, so
   is a type error and — worse — an assertion about the attempt key would be
   unwriteable. `tsc` is the real gate here; Jest would have run this either way.
 */
 type Submit = ComponentProps<typeof AddEventSheet>['onSubmit'];
-const submitMock = (impl: Submit) => jest.fn<Promise<boolean>, Parameters<Submit>>(impl);
+type SubmitResult = Awaited<ReturnType<Submit>>;
+const submitMock = (impl: Submit) => jest.fn<Promise<SubmitResult>, Parameters<Submit>>(impl);
 
 beforeEach(() => {
   jest.clearAllMocks();
 });
 
 describe('AddEventSheet — the one with no in-flight protection at all', () => {
-  const draft = async (visible = true, onSubmit = submitMock(async () => true)) => {
+  const draft = async (visible = true, onSubmit = submitMock(async () => ({ ok: true }) as const)) => {
     await render(<AddEventSheet onDismiss={() => {}} onSubmit={onSubmit} visible={visible} />);
     return onSubmit;
   };
@@ -116,7 +117,7 @@ describe('AddEventSheet — the one with no in-flight protection at all', () => 
    * present the same key or a lost response becomes two timeline entries.
    */
   it('a retry after failure reuses the same key', async () => {
-    const onSubmit = submitMock(async () => false);
+    const onSubmit = submitMock(async () => ({ ok: false, message: 'Could not save.' }) as const);
     await render(<AddEventSheet onDismiss={() => {}} onSubmit={onSubmit} visible />);
 
     await act(async () => {
@@ -136,12 +137,40 @@ describe('AddEventSheet — the one with no in-flight protection at all', () => 
   });
 
   /**
+   * THE REFUSAL IS READABLE WHERE THE TAP HAPPENED — RCC R27, Galaxy S24.
+   *
+   * `Sheet` is a `<Modal>`, so React Native puts it in its own native window.
+   * The caller used to hold this message and render it on the matter screen
+   * BEHIND the sheet, below the timeline. Every unit test passed, because the
+   * text existed and a test that renders the parent finds it. On the phone the
+   * advocate tapped Save against a 500 and the screen said nothing at all: to
+   * read the reason they had to dismiss the sheet, discarding their draft, and
+   * scroll three times. This asserts the message is in the sheet itself.
+   */
+  it('a refused save shows the reason in the sheet', async () => {
+    const onSubmit = submitMock(
+      async () => ({ ok: false, message: 'We could not save that. Try again.' }) as const,
+    );
+    await render(<AddEventSheet onDismiss={() => {}} onSubmit={onSubmit} visible />);
+
+    await act(async () => {
+      fireEvent.changeText(screen.getByPlaceholderText("The court's own words"), 'Adjourned.');
+    });
+    await act(async () => {
+      fireEvent.press(screen.getByText('Save'));
+    });
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('We could not save that. Try again.')).toBeTruthy();
+  });
+
+  /**
    * A NEW INTENTIONAL EVENT GETS A NEW KEY, even when every field is identical.
    * The server does not deduplicate by content and never will: two deliberate
    * entries are two rows, by design.
    */
   it('a second deliberate save after a success gets a NEW key', async () => {
-    const onSubmit = submitMock(async () => true);
+    const onSubmit = submitMock(async () => ({ ok: true }) as const);
     await render(<AddEventSheet onDismiss={() => {}} onSubmit={onSubmit} visible />);
 
     for (const text of ['Adjourned.', 'Adjourned.']) {
@@ -163,7 +192,7 @@ describe('AddEventSheet — the one with no in-flight protection at all', () => 
    * advocate would be locked out of their own form by one bad date.
    */
   it('a validation refusal does not send, and does not lock the form', async () => {
-    const onSubmit = submitMock(async () => true);
+    const onSubmit = submitMock(async () => ({ ok: true }) as const);
     await render(<AddEventSheet onDismiss={() => {}} onSubmit={onSubmit} visible />);
 
     await act(async () => {
