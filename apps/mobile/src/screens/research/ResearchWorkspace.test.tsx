@@ -42,9 +42,15 @@ jest.mock('../../api/client', () => ({
   },
 }));
 
-jest.mock('../../state/practice', () => ({
-  usePractice: (selector: (s: unknown) => unknown) => selector({ matters: [] }),
-}));
+jest.mock('../../state/practice', () => {
+  // A live, empty caseload: the picker (RCC R29) reads freshness, not just length.
+  const state = { matters: [], freshness: { kind: 'live' }, loading: false, refreshError: null };
+  return {
+    usePractice: Object.assign((selector: (s: unknown) => unknown) => selector(state), {
+      getState: () => state,
+    }),
+  };
+});
 
 /**
  * The width is the only switch between the two layouts, so it is the only thing

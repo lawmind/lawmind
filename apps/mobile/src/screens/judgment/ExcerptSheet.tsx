@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 
 import { Button } from '../../components/Button';
@@ -28,6 +28,15 @@ import { EXCERPT_TOO_LONG_COPY, excerptOf, QUOTE_MAX } from './excerpt';
  * `source.slice(start, end)` — so even a change the revert has not yet caught
  * cannot put a typed word into a matter file.
  *
+ * TWO NATIVE SIDE EFFECTS, RCC R29 (RN 0.86 `ReactEditText.maybeSetText`). The
+ * JS value lands as `replace(0, len, text)` over an empty Editable, which pushes
+ * the point selection to the END — the field opened on its last lines. So the
+ * selection is put back at 0 once the text is laid out (a caret, not a
+ * selection: the count stays 0). The same path strips every `ReactSpan`,
+ * line-height included, before re-applying — so a reverted paste rendered with
+ * tighter lines. A native change now REMOUNTS the input instead of reverting it
+ * in place: a fresh view with the canonical source and its full typography.
+ *
  * ONE SELECTION, BOTH DESTINATIONS. The bare save and "Save to matter" read the
  * same excerpt; the matter picker is handed that string, never the paragraph.
  */
@@ -50,10 +59,16 @@ export function ExcerptSheet({
 }) {
   const { height } = useWindowDimensions();
   const [selection, setSelection] = useState<{ start: number; end: number } | null>(null);
+  /** Bumped on any native change, so the input is rebuilt rather than patched. */
+  const [generation, setGeneration] = useState(0);
+  const inputRef = useRef<TextInput>(null);
+  /** Whether THIS input instance has been put back at the paragraph start. */
+  const positioned = useRef(false);
 
   // A new paragraph, or a reopened sheet, starts with nothing chosen.
   useEffect(() => {
     setSelection(null);
+    positioned.current = false;
   }, [source, visible]);
 
   const length = selection ? selection.end - selection.start : 0;
@@ -96,8 +111,21 @@ export function ExcerptSheet({
           caretHidden
           contextMenuHidden={false}
           multiline
-          onChange={() => setSelection(null)}
+          key={generation}
+          onChange={() => {
+            setSelection(null);
+            positioned.current = false;
+            setGeneration((g) => g + 1);
+          }}
+          onContentSizeChange={() => {
+            // After the text is laid out, not on first layout: an earlier call
+            // is undone by the text landing (observed on the S24).
+            if (positioned.current) return;
+            positioned.current = true;
+            inputRef.current?.setSelection(0, 0);
+          }}
           onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
+          ref={inputRef}
           scrollEnabled
           showSoftInputOnFocus={false}
           style={[

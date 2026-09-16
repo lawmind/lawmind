@@ -1,3 +1,4 @@
+import { TextInput } from 'react-native';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 
 import { ReadingView } from './ReadingView';
@@ -233,5 +234,60 @@ describe('a paragraph over 4,000 characters', () => {
 
     expect(sheetButton('Save passage')).toBeDisabled();
     expect(createAnnotation).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * RCC R29, defect 3. On the S24 the field opened on the paragraph's LAST lines,
+ * and a reverted paste came back with tighter line spacing. Both are native
+ * (RN 0.86 `ReactEditText.maybeSetText`), so what is provable here is the
+ * mechanism: the field is put back at offset 0 without selecting anything, and
+ * a native change rebuilds the input rather than patching it in place.
+ */
+describe('open position and revert', () => {
+  /** The Jest TextInput mock omits `setSelection`; the RN 0.86 instance has it. */
+  const setSelectionSpy = jest.fn();
+  beforeEach(() => {
+    setSelectionSpy.mockReset();
+    (TextInput.prototype as unknown as { setSelection: jest.Mock }).setSelection = setSelectionSpy;
+  });
+
+  const textLaidOut = (node: ReturnType<typeof screen.getByTestId>) =>
+    fireEvent(node, 'contentSizeChange', { nativeEvent: { contentSize: { width: 380, height: 4000 } } });
+
+  it('positioning the caret once the text is laid out selects nothing: 0 / 4000 and Save disabled', async () => {
+    await draw([para(1, LONG)]);
+    await fireEvent(screen.getByText(LONG), 'longPress');
+    const field = await screen.findByTestId('excerpt-source');
+
+    await textLaidOut(field);
+    await textLaidOut(field);
+    expect(setSelectionSpy.mock.calls).toEqual([[0, 0]]);
+    await select(0, 0);
+
+    expect(screen.getByTestId('excerpt-count')).toHaveTextContent('0 / 4000');
+    expect(sheetButton('Save passage')).toBeDisabled();
+    expect(sheetButton('Save to matter')).toBeDisabled();
+  });
+
+  it('a native change remounts the field with the canonical source, and selection still works after', async () => {
+    await draw([para(1, LONG)]);
+    await fireEvent(screen.getByText(LONG), 'longPress');
+    const before = await screen.findByTestId('excerpt-source');
+
+    await select(5, 50);
+    await fireEvent(before, 'change', { nativeEvent: { text: 'pasted words' } });
+
+    const after = screen.getByTestId('excerpt-source');
+    expect(after).not.toBe(before);
+    await textLaidOut(after);
+    expect(setSelectionSpy).toHaveBeenLastCalledWith(0, 0);
+    expect(after.props.value).toBe(LONG);
+    expect(sheetButton('Save passage')).toBeDisabled();
+
+    await select(100, 200);
+    await fireEvent.press(sheetButton('Save passage'));
+    await waitFor(() => expect(createAnnotation).toHaveBeenCalledTimes(1));
+    expect(sentQuotes()).toEqual([LONG.slice(100, 200)]);
   });
 });

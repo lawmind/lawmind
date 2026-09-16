@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Glass } from './Glass';
 import { easing } from '../theme/easing';
@@ -61,6 +62,18 @@ const DECELERATION = 0.998;
 /** Rubber-band constant. Lower is stiffer; 0.55 is the familiar iOS resistance. */
 const RUBBER_BAND = 0.55;
 
+/**
+ * THE SHEET'S BOTTOM PADDING CLEARS THE DEVICE'S OWN BOTTOM EDGE. RCC R29.
+ *
+ * `space.lg` alone was the whole rule, and a Modal draws edge-to-edge on
+ * Android 16 — so on the S24 the lowest control sat partly under the
+ * navigation bar. The inset is added, never hard-coded, and `space.lg` stays
+ * the floor so a device with no inset looks exactly as it did.
+ */
+export function sheetBottomPadding(insetBottom: number): number {
+  return Math.max(space.lg, insetBottom + space.sm);
+}
+
 export function Sheet({
   visible,
   onDismiss,
@@ -79,6 +92,7 @@ export function Sheet({
 }) {
   const { height: screenHeight } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
+  const insets = useSafeAreaInsets();
 
   /**
    * The `Modal` unmounts only AFTER the sheet has animated out, or the exit is
@@ -216,48 +230,61 @@ export function Sheet({
   return (
     <Modal animationType="none" onRequestClose={onDismiss} transparent visible>
       {/*
-        A `Modal` renders in its own native window and does not inherit the
-        Activity's `windowSoftInputMode` resize behaviour, on either platform.
-        Without this, the keyboard covers whatever sits below the focused
-        input — including the sheet's own Save button — with no way to
-        reach it that does not also dismiss the sheet (Android's back press
-        closes the `Modal` via `onRequestClose` on the same gesture that
-        would otherwise just drop the keyboard). Found live on device 8 Aug
-        2026: typing into `AddEventSheet`'s input left `Save` permanently
-        off-screen.
+        A `Modal` is its own native window on Android, outside the root
+        `GestureHandlerRootView` in `app/_layout.tsx`, so the pan below never
+        received a touch there. Found on the S24, RCC R29: the sheet did not
+        move under a held drag with system animations on.
       */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.backdrop}
-      >
-        <View accessible={false} onTouchEnd={onDismiss} style={styles.backdropTap} />
-        <GestureDetector gesture={pan}>
-          <Animated.View
-            onLayout={(e) => {
-              height.value = e.nativeEvent.layout.height;
-            }}
-            style={sheetStyle}
-          >
-            <Glass edge="topLeft" sheet style={styles.sheet}>
-              <View style={styles.grabberRow}>
-                <View style={styles.grabber} />
-              </View>
-              {children}
-            </Glass>
-          </Animated.View>
-        </GestureDetector>
-      </KeyboardAvoidingView>
+      <GestureHandlerRootView style={styles.root}>
+        {/*
+          A `Modal` renders in its own native window and does not inherit the
+          Activity's `windowSoftInputMode` resize behaviour, on either platform.
+          Without this, the keyboard covers whatever sits below the focused
+          input — including the sheet's own Save button — with no way to
+          reach it that does not also dismiss the sheet (Android's back press
+          closes the `Modal` via `onRequestClose` on the same gesture that
+          would otherwise just drop the keyboard). Found live on device 8 Aug
+          2026: typing into `AddEventSheet`'s input left `Save` permanently
+          off-screen.
+        */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.backdrop}
+        >
+          <View accessible={false} onTouchEnd={onDismiss} style={styles.backdropTap} />
+          <GestureDetector gesture={pan}>
+            <Animated.View
+              onLayout={(e) => {
+                height.value = e.nativeEvent.layout.height;
+              }}
+              style={sheetStyle}
+            >
+              <Glass
+                edge="topLeft"
+                sheet
+                style={[styles.sheet, { paddingBottom: sheetBottomPadding(insets.bottom) }]}
+                testID="sheet-surface"
+              >
+                <View style={styles.grabberRow}>
+                  <View style={styles.grabber} />
+                </View>
+                {children}
+              </Glass>
+            </Animated.View>
+          </GestureDetector>
+        </KeyboardAvoidingView>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
+  root: { flex: 1 },
   backdrop: { flex: 1, justifyContent: 'flex-end' },
   backdropTap: { flex: 1 },
   sheet: {
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
-    paddingBottom: space.lg,
     shadowColor: shadow.modalSheet.color,
     shadowOffset: { width: shadow.modalSheet.offset[0], height: shadow.modalSheet.offset[1] },
     shadowRadius: shadow.modalSheet.radius,

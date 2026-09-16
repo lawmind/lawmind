@@ -26,19 +26,27 @@ jest.mock('../../api/client', () => ({
   api: { search: jest.fn(), addAuthorityToMatter: jest.fn() },
 }));
 
-jest.mock('../../state/practice', () => ({
-  usePractice: (selector: (s: unknown) => unknown) =>
-    selector({
-      matters: [
-        {
-          matterId: 'mat_1',
-          caseTitle: 'Mock Client v. Mock Opponent',
-          court: 'Mock High Court',
-          nextHearingDate: null,
-        },
-      ],
+jest.mock('../../state/practice', () => {
+  const state = {
+    matters: [
+      {
+        matterId: 'mat_1',
+        caseTitle: 'Mock Client v. Mock Opponent',
+        court: 'Mock High Court',
+        nextHearingDate: null,
+      },
+    ],
+    // RCC R29: the picker reads the store's load state, not just `matters`.
+    freshness: { kind: 'live' },
+    loading: false,
+    refreshError: null,
+  };
+  return {
+    usePractice: Object.assign((selector: (s: unknown) => unknown) => selector(state), {
+      getState: () => state,
     }),
-}));
+  };
+});
 
 const search = api.search as jest.MockedFunction<typeof api.search>;
 const addAuthority = api.addAuthorityToMatter as jest.MockedFunction<

@@ -36,6 +36,15 @@ module.exports = {
    * under Jest. Registering the library's own mock here keeps that from
    * surfacing as a mystery failure in whichever screen test gets written next.
    */
+  /**
+   * Gesture-handler's own documented Jest setup: its native module mock carries
+   * `install`, which `GestureHandlerRootView` calls — and the shared `Sheet`
+   * renders one inside its `Modal` (RCC R29).
+   */
+  setupFiles: [
+    ...(expoPreset.setupFiles ?? []),
+    require.resolve('react-native-gesture-handler/jestSetup.js'),
+  ],
   setupFilesAfterEnv: [
     ...(expoPreset.setupFilesAfterEnv ?? []),
     '<rootDir>/jest/safe-area.js',

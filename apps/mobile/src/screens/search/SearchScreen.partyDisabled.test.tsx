@@ -40,9 +40,15 @@ jest.mock('../../api/client', () => ({
   api: { search: jest.fn(), addAuthorityToMatter: jest.fn() },
 }));
 
-jest.mock('../../state/practice', () => ({
-  usePractice: (selector: (s: unknown) => unknown) => selector({ matters: [] }),
-}));
+jest.mock('../../state/practice', () => {
+  // A live, empty caseload: the picker (RCC R29) reads freshness, not just length.
+  const state = { matters: [], freshness: { kind: 'live' }, loading: false, refreshError: null };
+  return {
+    usePractice: Object.assign((selector: (s: unknown) => unknown) => selector(state), {
+      getState: () => state,
+    }),
+  };
+});
 
 const search = api.search as jest.MockedFunction<typeof api.search>;
 const PLACEHOLDER = 'Ask, or enter a CNR, case number, or citation';

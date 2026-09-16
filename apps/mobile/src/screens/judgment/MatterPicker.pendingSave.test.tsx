@@ -31,7 +31,8 @@ const INTENT: PendingSaveIntent = {
 beforeEach(() => {
   pushed.length = 0;
   usePendingSave.setState({ held: null, hydrated: true, running: false });
-  usePractice.setState({ matters: [] });
+  // A PROVEN empty caseload (RCC R29): `[]` alone is no longer read as "none".
+  usePractice.setState({ matters: [], freshness: { kind: 'live' }, loading: false, refreshError: null });
 });
 
 describe('the empty picker', () => {

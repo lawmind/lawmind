@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
@@ -6,14 +7,30 @@ import { Sheet } from '../../components/Sheet';
 import { Text } from '../../components/Text';
 import type { Matter } from '../../api/contract';
 import { usePendingSave, type PendingSaveIntent } from '../../state/pendingSave';
-import { usePractice } from '../../state/practice';
+import { usePractice, type Freshness } from '../../state/practice';
 import { color, space } from '../../theme/tokens';
+
+export type PickerView = 'list' | 'empty' | 'resolving' | 'unavailable';
+
+/** What the picker may truthfully say, from Practice's own fields. */
+export function pickerView(p: {
+  matters: readonly unknown[];
+  freshness: Freshness;
+  loading: boolean;
+  refreshError: string | null;
+}): PickerView {
+  if (p.matters.length > 0) return 'list';
+  if (p.freshness.kind === 'live') return 'empty';
+  if (p.loading) return 'resolving';
+  if (p.refreshError !== null) return 'unavailable';
+  return 'resolving';
+}
 
 /**
  * "Save to matter" needs to ask WHICH matter — the reading view previously
  * saved a highlight with no `matterId` at all, which is why nothing an
  * advocate saved could ever show up on the matter it belonged to. A picker
- * over the matters already loaded app-wide, nothing fetched fresh.
+ * over the app-wide Practice store — no store or API client of its own.
  *
  * THERE IS NO "SAVE WITHOUT A MATTER" HERE, and that is a decision rather than
  * an omission. Saved authorities are matter-scoped for real, at the server:
@@ -36,6 +53,15 @@ import { color, space } from '../../theme/tokens';
  * minutes, destroyed the moment it is performed or abandoned. `intent` is
  * optional so a caller that has not adopted it behaves exactly as before —
  * pushing the form and holding nothing.
+ *
+ * ── AN UNLOADED STORE IS NOT AN EMPTY CASELOAD, RCC R29 ──────────────────────
+ *
+ * `matters.length === 0` used to be read as "no matters". On a cold deep link
+ * straight to a judgment nothing had hydrated Practice — only the tabs call
+ * `hydrate()` — so an advocate with two matters was told they had none and
+ * offered "Create a matter". The sheet now asks the store's own `hydrate()` /
+ * `refresh()` when it opens, and says "no matters" only once a LIVE read
+ * returned none. A failed read is not an empty caseload either.
  */
 export function MatterPicker({
   visible,
@@ -56,6 +82,10 @@ export function MatterPicker({
   intent?: PendingSaveIntent;
 }) {
   const matters = usePractice((s) => s.matters);
+  const freshness = usePractice((s) => s.freshness);
+  const loading = usePractice((s) => s.loading);
+  const refreshError = usePractice((s) => s.refreshError);
+  const view = pickerView({ matters, freshness, loading, refreshError });
   const capture = usePendingSave((s) => s.capture);
   /**
    * THE PICKER OWNS THIS DESTINATION RATHER THAN TAKING IT AS A PROP.
@@ -68,12 +98,43 @@ export function MatterPicker({
    */
   const router = useRouter();
 
+  /**
+   * OPENING THE SHEET ESTABLISHES THE TRUTH IT IS ABOUT TO STATE. Never read:
+   * `hydrate()` (cache, then network). Read but not live: `refresh()`, which
+   * no-ops while one is already in flight and never empties a cached list.
+   */
+  useEffect(() => {
+    if (!visible) return;
+    const p = usePractice.getState();
+    if (p.freshness.kind === 'unknown') void p.hydrate();
+    else if (p.freshness.kind !== 'live') void p.refresh();
+  }, [visible]);
+
   return (
     <Sheet onDismiss={onDismiss} visible={visible}>
       <Text variant="eyebrow" style={styles.title}>
         Save to which matter?
       </Text>
-      {matters.length === 0 ? (
+      {view === 'resolving' ? (
+        <View style={styles.emptyBlock} testID="matter-picker-resolving">
+          <Text variant="ui" style={styles.empty}>
+            Loading your matters…
+          </Text>
+        </View>
+      ) : view === 'unavailable' ? (
+        <View style={styles.emptyBlock} testID="matter-picker-unavailable">
+          <Text variant="ui" style={styles.empty}>
+            Your matters could not be loaded. Check your connection and try again.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void usePractice.getState().refresh()}
+            style={styles.create}
+          >
+            <Text variant="uiStrong">Try again</Text>
+          </Pressable>
+        </View>
+      ) : view === 'empty' ? (
         <View style={styles.emptyBlock}>
           <Text variant="ui" style={styles.empty}>
             {intent
