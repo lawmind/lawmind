@@ -172,11 +172,22 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
       const raw = await AsyncStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Persisted>;
+        const loaded = parsed.highlights ?? [];
+        /*
+          A PENDING WRITE THE SERVER CAN NEVER ACCEPT IS NOT PENDING. The store
+          before RCC R28 kept refused whole-paragraph saves (> 4,000) — found on
+          the S24 as six 5,458-character copies of 2022 INSC 690 ¶2, tinting a
+          passage the server never stored. The rollback stops new ones; this
+          clears the ones already on a device. A sendable pending write is an
+          undisproved offline save and stays.
+        */
+        const highlights = loaded.filter((h) => h.annotationId || isSendableQuote(h.text));
         set({
           progress: parsed.progress ?? {},
-          highlights: parsed.highlights ?? [],
+          highlights,
           textSize: parsed.textSize ?? TEXT_SIZE_DEFAULT,
         });
+        if (highlights.length !== loaded.length) persist({ ...get(), highlights });
       }
     } catch {
       // A corrupt or absent store is not an error worth showing anyone. The

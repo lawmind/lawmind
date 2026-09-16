@@ -175,3 +175,40 @@ describe('the boundary guard', () => {
     expect(createAnnotation.mock.calls[0]?.[1].quote).toBe(text);
   });
 });
+
+/**
+ * RCC R28B, found on the S24: six 5,458-character pending highlights persisted by
+ * the PRE-R28 store (R27B's refused ¶2 saves) still tinted ¶2 after upgrade. The
+ * rollback stops new ones; hydrate has to clear the ones already on the device.
+ */
+describe('hydrate drops persisted writes the server can never accept', () => {
+  const persisted = (highlights: Highlight[]) =>
+    AsyncStorage.setItem('lawmind.reading.v1', JSON.stringify({ progress: {}, highlights, textSize: 17 }));
+
+  it('removes an unsendable pending highlight, keeps sendable pending and synced ones, and persists the clean list', async () => {
+    const zombie = highlight({ text: 'z'.repeat(5458), attemptKey: 'mu3xjp0d-vkkjso69-npjfa7j5' });
+    const pending = highlight({ paragraphIndex: 4, text: 'offline, not disproved', attemptKey: 'mu3xaaaa-bbbbbbbb-cccccccc' });
+    const synced = highlight({ paragraphIndex: 3, text: 'synced', annotationId: 'ann-9' });
+    await persisted([synced, zombie, pending, { ...zombie, attemptKey: 'mu3xl7kc-p344plph-izgof7bg' }]);
+
+    await useReadingStore.getState().hydrate();
+
+    const texts = useReadingStore.getState().highlights.map((h) => h.text);
+    expect(texts).toEqual(['synced', 'offline, not disproved']);
+    await flush();
+    expect((await stored()).map((h) => h.text)).toEqual(['synced', 'offline, not disproved']);
+    expect(createAnnotation).not.toHaveBeenCalled();
+  });
+
+  it('leaves storage untouched when nothing is unsendable', async () => {
+    await persisted([highlight({ attemptKey: 'mu3xaaaa-bbbbbbbb-cccccccc' })]);
+    const setItem = jest.spyOn(AsyncStorage, 'setItem');
+    setItem.mockClear();
+
+    await useReadingStore.getState().hydrate();
+
+    expect(useReadingStore.getState().highlights).toHaveLength(1);
+    expect(setItem).not.toHaveBeenCalled();
+    setItem.mockRestore();
+  });
+});

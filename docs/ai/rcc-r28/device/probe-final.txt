@@ -1,0 +1,10 @@
+{"judgmentId":"0c13f977-1152-4d03-a8a1-9e489f98bf2e","p2Index":2,"p2Len":5458,"p2Sha":"5ebdcfa117d6f94ca099525e9dec2b3530c42d7892a0f38c15b3560fe47ed8d2"}
+annotations on judgment: 4 (live 4); on para 2: 2
+{"id":"47af98ad-d698-42f2-aa3f-72d8cf6b92f1","user":"cd419982","pi":3,"pn":3,"len":327,"sha":"b8e3e1e6536175f25ef50ab6c4339f8989c7bb6d13b3204135f977cb5a2257cc","matter":null,"deleted":null,"created":"2026-09-16T09:59:04.758Z","offsetsInP2":null,"endOffsets":null,"equalsWholeP2":null,"hasEllipsis":false,"markerHits":[],"head":"Some more applications have been filed seeking certain\ndirec"}
+{"id":"03c47e20-9deb-4bb0-8f88-f049fb7c8f33","user":"cd419982","pi":4,"pn":4,"len":481,"sha":"fcc27c7b8efb9aaf189a2a731e16ab9650e4f76fd266af1ce76ab447b55c0881","matter":null,"deleted":null,"created":"2026-09-16T10:01:18.107Z","offsetsInP2":null,"endOffsets":null,"equalsWholeP2":null,"hasEllipsis":false,"markerHits":[],"head":"Having found that special leave petitions pertaining to diff"}
+{"id":"9bcfc90f-15b7-45e8-9758-7eb3e9d7009f","user":"cd419982","pi":2,"pn":2,"len":116,"sha":"b796c7a2d0e2383924b7de2ac1fec0ca7ffceb2a6cd2c32545eda7e38fed4d28","matter":null,"deleted":null,"created":"2026-09-16T13:06:01.494Z","offsetsInP2":[4862],"endOffsets":[4978],"equalsWholeP2":false,"hasEllipsis":false,"markerHits":[],"head":"caution that merely by categorizing certain\noffences as econ"}
+{"id":"ba8384ff-8b52-4afd-bdf0-ee06d3fbf752","user":"cd419982","pi":2,"pn":2,"len":182,"sha":"629bbf95f405148b3706a8fb74ee59937c20e913a68147e059270d06bde52019","matter":"cedfe466-cdc1-4be3-b69e-03103593d986","deleted":null,"created":"2026-09-16T13:10:34.780Z","offsetsInP2":[5203],"endOffsets":[5385],"equalsWholeP2":false,"hasEllipsis":false,"markerHits":[],"head":"ipso facto cause to arrest\nSATENDER KUMAR ANTIL v. CENTRAL B"}
+matters for cd419982: 2
+{"id":"cedfe466-cdc1-4be3-b69e-03103593d986","title":"RCC Sprint 2 Smoke v Local API"}
+{"id":"6106bc06-4c09-426b-8efc-82479655676f","title":"S27B Smoke v Local API"}
+idempotency rows for /judgments/:id/annotations: 4
