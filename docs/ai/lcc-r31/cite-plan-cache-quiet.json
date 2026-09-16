@@ -1,0 +1,2676 @@
+{
+  "round": "LCC R31 B3",
+  "startedAt": "2026-09-16T12:21:57.754Z",
+  "host": "XC",
+  "statementTimeoutMs": 15000,
+  "executionsPerClass": 12,
+  "activityBefore": [],
+  "classes": [
+    {
+      "cls": "A_unique_neutral",
+      "citation": "2022 INSC 690",
+      "expect": "matched",
+      "expectTotal": 1
+    },
+    {
+      "cls": "B1_reporter_only",
+      "citation": "[2018] 3 S.C.R. 65",
+      "expect": "matched",
+      "expectTotal": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "citation": "(2013) 15 SCC 27",
+      "expect": "matched",
+      "expectTotal": 1
+    },
+    {
+      "cls": "C_ambiguous",
+      "citation": "2020 INSC 189",
+      "expect": "ambiguous",
+      "expectTotal": 3
+    },
+    {
+      "cls": "D_zero",
+      "citation": "2099 INSC 99999",
+      "expect": "no_match",
+      "expectTotal": 0
+    }
+  ],
+  "auto": [
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-1",
+      "pid": 35028,
+      "elapsedMs": 15.7,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-1",
+      "pid": 35028,
+      "elapsedMs": 3.5,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-1",
+      "pid": 35028,
+      "elapsedMs": 3.5,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-1",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-1",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-2",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-2",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-2",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-2",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-2",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-3",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-3",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-3",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-3",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-3",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-4",
+      "pid": 35028,
+      "elapsedMs": 3.4,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-4",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-4",
+      "pid": 35028,
+      "elapsedMs": 3.4,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-4",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-4",
+      "pid": 35028,
+      "elapsedMs": 3.9,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-5",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-5",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-5",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-5",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-5",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-6",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-6",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-6",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-6",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-6",
+      "pid": 35028,
+      "elapsedMs": 2.7,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-7",
+      "pid": 35028,
+      "elapsedMs": 2.7,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-7",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-7",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-7",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-7",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-8",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-8",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-8",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-8",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-8",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-9",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-9",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-9",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-9",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-9",
+      "pid": 35028,
+      "elapsedMs": 4,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-10",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-10",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-10",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-10",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-10",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-11",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-11",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-11",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-11",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-11",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "interleaved-12",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "interleaved-12",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "interleaved-12",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "interleaved-12",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "interleaved-12",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-1",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-2",
+      "pid": 35028,
+      "elapsedMs": 2.7,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-3",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-4",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-5",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-6",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-7",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-8",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-9",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-10",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-11",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "A_unique_neutral",
+      "round": "serial-12",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-1",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-2",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-3",
+      "pid": 35028,
+      "elapsedMs": 3.4,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-4",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-5",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-6",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-7",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-8",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-9",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-10",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-11",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B1_reporter_only",
+      "round": "serial-12",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-1",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-2",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-3",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-4",
+      "pid": 35028,
+      "elapsedMs": 2.7,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-5",
+      "pid": 35028,
+      "elapsedMs": 2.7,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-6",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-7",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-8",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-9",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-10",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-11",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "round": "serial-12",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "matched",
+      "total": 1,
+      "ids": [
+        "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+      ],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-1",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-2",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-3",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-4",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-5",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-6",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-7",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-8",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-9",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-10",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-11",
+      "pid": 35028,
+      "elapsedMs": 2.8,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "C_ambiguous",
+      "round": "serial-12",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "ambiguous",
+      "total": 3,
+      "ids": [
+        "baef360d-2c47-4b14-a203-42bbab7e9706",
+        "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+        "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+      ],
+      "ambiguous": true,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-1",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-2",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-3",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-4",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-5",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-6",
+      "pid": 35028,
+      "elapsedMs": 3.3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-7",
+      "pid": 35028,
+      "elapsedMs": 2.9,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-8",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-9",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-10",
+      "pid": 35028,
+      "elapsedMs": 3.2,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-11",
+      "pid": 35028,
+      "elapsedMs": 3,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    },
+    {
+      "cls": "D_zero",
+      "round": "serial-12",
+      "pid": 35028,
+      "elapsedMs": 3.1,
+      "outcome": "no_match",
+      "total": 0,
+      "ids": [],
+      "ambiguous": false,
+      "timeout": false,
+      "error": null
+    }
+  ],
+  "autoPlanCounters": [
+    {
+      "name": "bkh6fbj40ar7",
+      "generic_plans": "0",
+      "custom_plans": "120",
+      "head": "\n    SELECT j.id, j.case_title, j.neutral_citation, j.reporter_citations,\n           j.court, j.judgment_date::text AS j"
+    },
+    {
+      "name": "bkh6fbj40ar6",
+      "generic_plans": "0",
+      "custom_plans": "120",
+      "head": "\n    SELECT count(*)::int AS n FROM judgments j WHERE (\n    upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-"
+    }
+  ],
+  "forced": [
+    {
+      "cls": "A_unique_neutral",
+      "statement": "page",
+      "mode": "force_custom_plan",
+      "executionMs": 1.276,
+      "planningMs": 0.324,
+      "plan": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10 act=1x1 buf=173",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Sort est=905 act=1x1 buf=173",
+          "    Bitmap Heap Scan [judgments] est=905 act=1x1 buf=173",
+          "      BitmapOr est=905 act=0x1 buf=172",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582 act=1x1 buf=3",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "        Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+        ]
+      },
+      "estimate": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Sort est=905",
+          "    Bitmap Heap Scan [judgments] est=905",
+          "      BitmapOr est=905",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "        Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "A_unique_neutral",
+      "statement": "page",
+      "mode": "force_generic_plan",
+      "executionMs": 77.929,
+      "planningMs": 0.221,
+      "plan": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160 act=1x1 buf=321",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather Merge est=101596 act=1x1 buf=321",
+          "    Sort est=25399 act=0.2x5 buf=319",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=255",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=1x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+        ]
+      },
+      "estimate": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather Merge est=101596",
+          "    Sort est=25399",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B1_reporter_only",
+      "statement": "page",
+      "mode": "force_custom_plan",
+      "executionMs": 1.223,
+      "planningMs": 0.276,
+      "plan": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10 act=1x1 buf=173",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Sort est=905 act=1x1 buf=173",
+          "    Bitmap Heap Scan [judgments] est=905 act=1x1 buf=173",
+          "      BitmapOr est=905 act=0x1 buf=172",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=1x1 buf=167",
+          "        Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+        ]
+      },
+      "estimate": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Sort est=905",
+          "    Bitmap Heap Scan [judgments] est=905",
+          "      BitmapOr est=905",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "        Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B1_reporter_only",
+      "statement": "page",
+      "mode": "force_generic_plan",
+      "executionMs": 35.434,
+      "planningMs": 0.013,
+      "plan": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160 act=1x1 buf=321",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather Merge est=101596 act=1x1 buf=321",
+          "    Sort est=25399 act=0.2x5 buf=319",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=255",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=1x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "00e2c340-4f99-4905-9dcb-fa8fc6961b6d"
+        ]
+      },
+      "estimate": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather Merge est=101596",
+          "    Sort est=25399",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "statement": "page",
+      "mode": "force_custom_plan",
+      "executionMs": 1.201,
+      "planningMs": 0.267,
+      "plan": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10 act=1x1 buf=178",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=1x1 buf=3",
+          "  Sort est=905 act=1x1 buf=178",
+          "    Bitmap Heap Scan [judgments] est=905 act=1x1 buf=178",
+          "      BitmapOr est=905 act=0x1 buf=177",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "        Bitmap Index Scan on judgments_pkey est=10 act=1x1 buf=7"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+        ]
+      },
+      "estimate": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Sort est=905",
+          "    Bitmap Heap Scan [judgments] est=905",
+          "      BitmapOr est=905",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "        Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "statement": "page",
+      "mode": "force_generic_plan",
+      "executionMs": 149.748,
+      "planningMs": 0.009,
+      "plan": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160 act=1x1 buf=326",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=1x1 buf=3",
+          "  Gather Merge est=101596 act=1x1 buf=326",
+          "    Sort est=25399 act=0.2x5 buf=323",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=259",
+          "        BitmapOr est=101636 act=0x1 buf=174",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=1x1 buf=4"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "e6afcf8d-bdb0-4af0-aea9-0a0d095cb08c"
+        ]
+      },
+      "estimate": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather Merge est=101596",
+          "    Sort est=25399",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "C_ambiguous",
+      "statement": "page",
+      "mode": "force_custom_plan",
+      "executionMs": 1.285,
+      "planningMs": 0.286,
+      "plan": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10 act=3x1 buf=175",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Sort est=905 act=3x1 buf=175",
+          "    Bitmap Heap Scan [judgments] est=905 act=3x1 buf=175",
+          "      BitmapOr est=905 act=0x1 buf=172",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582 act=3x1 buf=3",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "        Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "baef360d-2c47-4b14-a203-42bbab7e9706",
+          "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+          "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+        ]
+      },
+      "estimate": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Sort est=905",
+          "    Bitmap Heap Scan [judgments] est=905",
+          "      BitmapOr est=905",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "        Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "C_ambiguous",
+      "statement": "page",
+      "mode": "force_generic_plan",
+      "executionMs": 136.683,
+      "planningMs": 0.014,
+      "plan": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160 act=3x1 buf=323",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather Merge est=101596 act=3x1 buf=323",
+          "    Sort est=25399 act=0.6x5 buf=321",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.6x5 buf=257",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=3x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": [
+          "baef360d-2c47-4b14-a203-42bbab7e9706",
+          "c7ff7a4e-d814-4ef9-8449-164087f480b5",
+          "ee64c180-f0b8-4996-b7cb-1137d6e86080"
+        ]
+      },
+      "estimate": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather Merge est=101596",
+          "    Sort est=25399",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "D_zero",
+      "statement": "page",
+      "mode": "force_custom_plan",
+      "executionMs": 1.181,
+      "planningMs": 0.264,
+      "plan": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10 act=0x1 buf=172",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Sort est=905 act=0x1 buf=172",
+          "    Bitmap Heap Scan [judgments] est=905 act=0x1 buf=172",
+          "      BitmapOr est=905 act=0x1 buf=172",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "        Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": []
+      },
+      "estimate": {
+        "cost": 1529.7,
+        "nodes": [
+          "Limit est=10",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Sort est=905",
+          "    Bitmap Heap Scan [judgments] est=905",
+          "      BitmapOr est=905",
+          "        Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "        Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "        Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "D_zero",
+      "statement": "page",
+      "mode": "force_generic_plan",
+      "executionMs": 37.402,
+      "planningMs": 0.008,
+      "plan": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160 act=0x1 buf=320",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather Merge est=101596 act=0x1 buf=320",
+          "    Sort est=25399 act=0x5 buf=318",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0x5 buf=254",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "ids": []
+      },
+      "estimate": {
+        "cost": 121572.34,
+        "nodes": [
+          "Limit est=10160",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather Merge est=101596",
+          "    Sort est=25399",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "A_unique_neutral",
+      "statement": "count",
+      "mode": "force_custom_plan",
+      "executionMs": 1.245,
+      "planningMs": 0.243,
+      "plan": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=173",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Bitmap Heap Scan [judgments] est=905 act=1x1 buf=173",
+          "    BitmapOr est=905 act=0x1 buf=172",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582 act=1x1 buf=3",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "      Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Bitmap Heap Scan [judgments] est=905",
+          "    BitmapOr est=905",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "      Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "A_unique_neutral",
+      "statement": "count",
+      "mode": "force_generic_plan",
+      "executionMs": 32.463,
+      "planningMs": 0.214,
+      "plan": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=257",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather est=4 act=5x1 buf=257",
+          "    Aggregate est=1 act=1x5 buf=255",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=255",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=1x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather est=4",
+          "    Aggregate est=1",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B1_reporter_only",
+      "statement": "count",
+      "mode": "force_custom_plan",
+      "executionMs": 1.191,
+      "planningMs": 0.261,
+      "plan": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=173",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Bitmap Heap Scan [judgments] est=905 act=1x1 buf=173",
+          "    BitmapOr est=905 act=0x1 buf=172",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=1x1 buf=167",
+          "      Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Bitmap Heap Scan [judgments] est=905",
+          "    BitmapOr est=905",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "      Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B1_reporter_only",
+      "statement": "count",
+      "mode": "force_generic_plan",
+      "executionMs": 28.895,
+      "planningMs": 0.007,
+      "plan": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=257",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather est=4 act=5x1 buf=257",
+          "    Aggregate est=1 act=1x5 buf=255",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=255",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=1x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather est=4",
+          "    Aggregate est=1",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "statement": "count",
+      "mode": "force_custom_plan",
+      "executionMs": 1.207,
+      "planningMs": 0.248,
+      "plan": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=178",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=1x1 buf=3",
+          "  Bitmap Heap Scan [judgments] est=905 act=1x1 buf=178",
+          "    BitmapOr est=905 act=0x1 buf=177",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "      Bitmap Index Scan on judgments_pkey est=10 act=1x1 buf=7"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Bitmap Heap Scan [judgments] est=905",
+          "    BitmapOr est=905",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "      Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "B2_alias_concordance",
+      "statement": "count",
+      "mode": "force_generic_plan",
+      "executionMs": 33.622,
+      "planningMs": 0.008,
+      "plan": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=262",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=1x1 buf=3",
+          "  Gather est=4 act=5x1 buf=262",
+          "    Aggregate est=1 act=1x5 buf=259",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.2x5 buf=259",
+          "        BitmapOr est=101636 act=0x1 buf=174",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=1x1 buf=4"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 1
+      },
+      "estimate": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather est=4",
+          "    Aggregate est=1",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "C_ambiguous",
+      "statement": "count",
+      "mode": "force_custom_plan",
+      "executionMs": 1.355,
+      "planningMs": 0.261,
+      "plan": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=175",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Bitmap Heap Scan [judgments] est=905 act=3x1 buf=175",
+          "    BitmapOr est=905 act=0x1 buf=172",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582 act=3x1 buf=3",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "      Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 3
+      },
+      "estimate": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Bitmap Heap Scan [judgments] est=905",
+          "    BitmapOr est=905",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "      Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "C_ambiguous",
+      "statement": "count",
+      "mode": "force_generic_plan",
+      "executionMs": 129.788,
+      "planningMs": 0.01,
+      "plan": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=259",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather est=4 act=5x1 buf=259",
+          "    Aggregate est=1 act=1x5 buf=257",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0.6x5 buf=257",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=3x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 3
+      },
+      "estimate": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather est=4",
+          "    Aggregate est=1",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "D_zero",
+      "statement": "count",
+      "mode": "force_custom_plan",
+      "executionMs": 1.158,
+      "planningMs": 0.237,
+      "plan": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=172",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Bitmap Heap Scan [judgments] est=905 act=0x1 buf=172",
+          "    BitmapOr est=905 act=0x1 buf=172",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582 act=0x1 buf=3",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313 act=0x1 buf=167",
+          "      Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=2"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 0
+      },
+      "estimate": {
+        "cost": 1503.34,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Bitmap Heap Scan [judgments] est=905",
+          "    BitmapOr est=905",
+          "      Bitmap Index Scan on judgments_neutral_citation_key est=582",
+          "      Bitmap Index Scan on judgments_reporter_citation_keys_gin est=313",
+          "      Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    },
+    {
+      "cls": "D_zero",
+      "statement": "count",
+      "mode": "force_generic_plan",
+      "executionMs": 34.367,
+      "planningMs": 0.008,
+      "plan": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1 act=1x1 buf=256",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1 act=0x1 buf=2",
+          "  Gather est=4 act=5x1 buf=256",
+          "    Aggregate est=1 act=1x5 buf=254",
+          "      Bitmap Heap Scan [judgments] est=25399 act=0x5 buf=254",
+          "        BitmapOr est=101636 act=0x1 buf=170",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863 act=0x1 buf=3",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763 act=0x1 buf=167",
+          "          Bitmap Index Scan on judgments_pkey est=10 act=0x1 buf=0"
+        ]
+      },
+      "timeout": false,
+      "result": {
+        "n": 0
+      },
+      "estimate": {
+        "cost": 117090.96,
+        "nodes": [
+          "Aggregate est=1",
+          "  Index Scan on judgment_citation_aliases_key [judgment_citation_aliases] est=1",
+          "  Gather est=4",
+          "    Aggregate est=1",
+          "      Bitmap Heap Scan [judgments] est=25399",
+          "        BitmapOr est=101636",
+          "          Bitmap Index Scan on judgments_neutral_citation_key est=7863",
+          "          Bitmap Index Scan on judgments_reporter_citation_keys_gin est=93763",
+          "          Bitmap Index Scan on judgments_pkey est=10"
+        ]
+      }
+    }
+  ],
+  "serverVersion": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+  "autoPlanCacheMode": "auto",
+  "autoSingleBackend": true,
+  "capturedStatements": [
+    {
+      "types": [
+        "text",
+        "text",
+        "text",
+        "bigint",
+        "bigint"
+      ],
+      "statement": "\n    SELECT j.id, j.case_title, j.neutral_citation, j.reporter_citations,\n           j.court, j.judgment_date::text AS judgment_date, j.case_number, j.bench,\n           j.overruled_status::text AS overruled_status,\n           j.overruled_by_judgment_id, j.overruled_paras, j.overruled_note,\n           -- P0. A structured query is a METADATA route and must keep finding a\n           -- judgment whose body failed to extract. The verdict rides along so\n           -- the client can say so; the row is never dropped for it.\n           j.script_quality, j.script_quality_method\n      FROM judgments j\n     WHERE (\n    upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = $1\n    OR lawmind_citation_keys(j.reporter_citations) @> ARRAY[$2::text]\n    OR j.id = ANY (ARRAY(\n      SELECT a.judgment_id FROM judgment_citation_aliases a WHERE a.alias_key = $3)))\n     -- j.id is a TIE-BREAK, not a second sort key anyone reads. judgment_date\n     -- alone is not a total order (15 judgments can share one citation and one\n     -- week), so a continuation built on it silently repeats and silently skips.\n     ORDER BY j.judgment_date DESC, j.id DESC\n     OFFSET $4\n     LIMIT $5"
+    },
+    {
+      "types": [
+        "text",
+        "text",
+        "text"
+      ],
+      "statement": "\n    SELECT count(*)::int AS n FROM judgments j WHERE (\n    upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g')) = $1\n    OR lawmind_citation_keys(j.reporter_citations) @> ARRAY[$2::text]\n    OR j.id = ANY (ARRAY(\n      SELECT a.judgment_id FROM judgment_citation_aliases a WHERE a.alias_key = $3)))"
+    }
+  ],
+  "summary": {
+    "A_unique_neutral": {
+      "executions": 24,
+      "outcomes": [
+        "matched"
+      ],
+      "totals": [
+        1
+      ],
+      "stableIds": true,
+      "timeouts": 0,
+      "errors": 0,
+      "minMs": 2.7,
+      "p50Ms": 3,
+      "maxMs": 15.7,
+      "expectedOutcome": "matched",
+      "outcomeAsExpected": true,
+      "totalAsExpected": true,
+      "countIdentityEqual": true,
+      "countCustomMs": 1.245,
+      "countGenericMs": 32.463,
+      "pageIdentityEqual": true,
+      "pageCustomMs": 1.276,
+      "pageGenericMs": 77.929
+    },
+    "B1_reporter_only": {
+      "executions": 24,
+      "outcomes": [
+        "matched"
+      ],
+      "totals": [
+        1
+      ],
+      "stableIds": true,
+      "timeouts": 0,
+      "errors": 0,
+      "minMs": 2.8,
+      "p50Ms": 3,
+      "maxMs": 3.5,
+      "expectedOutcome": "matched",
+      "outcomeAsExpected": true,
+      "totalAsExpected": true,
+      "countIdentityEqual": true,
+      "countCustomMs": 1.191,
+      "countGenericMs": 28.895,
+      "pageIdentityEqual": true,
+      "pageCustomMs": 1.223,
+      "pageGenericMs": 35.434
+    },
+    "B2_alias_concordance": {
+      "executions": 24,
+      "outcomes": [
+        "matched"
+      ],
+      "totals": [
+        1
+      ],
+      "stableIds": true,
+      "timeouts": 0,
+      "errors": 0,
+      "minMs": 2.7,
+      "p50Ms": 3,
+      "maxMs": 3.5,
+      "expectedOutcome": "matched",
+      "outcomeAsExpected": true,
+      "totalAsExpected": true,
+      "countIdentityEqual": true,
+      "countCustomMs": 1.207,
+      "countGenericMs": 33.622,
+      "pageIdentityEqual": true,
+      "pageCustomMs": 1.201,
+      "pageGenericMs": 149.748
+    },
+    "C_ambiguous": {
+      "executions": 24,
+      "outcomes": [
+        "ambiguous"
+      ],
+      "totals": [
+        3
+      ],
+      "stableIds": true,
+      "timeouts": 0,
+      "errors": 0,
+      "minMs": 2.8,
+      "p50Ms": 3.2,
+      "maxMs": 3.3,
+      "expectedOutcome": "ambiguous",
+      "outcomeAsExpected": true,
+      "totalAsExpected": true,
+      "countIdentityEqual": true,
+      "countCustomMs": 1.355,
+      "countGenericMs": 129.788,
+      "pageIdentityEqual": true,
+      "pageCustomMs": 1.285,
+      "pageGenericMs": 136.683
+    },
+    "D_zero": {
+      "executions": 24,
+      "outcomes": [
+        "no_match"
+      ],
+      "totals": [
+        0
+      ],
+      "stableIds": true,
+      "timeouts": 0,
+      "errors": 0,
+      "minMs": 2.7,
+      "p50Ms": 3.1,
+      "maxMs": 4,
+      "expectedOutcome": "no_match",
+      "outcomeAsExpected": true,
+      "totalAsExpected": true,
+      "countIdentityEqual": true,
+      "countCustomMs": 1.158,
+      "countGenericMs": 34.367,
+      "pageIdentityEqual": true,
+      "pageCustomMs": 1.181,
+      "pageGenericMs": 37.402
+    }
+  },
+  "verdict": {
+    "CITE_REPEATED_EXECUTIONS": 24,
+    "AUTO_SINGLE_BACKEND": true,
+    "AUTO_GENERIC_PLANS_USED": [
+      {
+        "generic": "0",
+        "custom": "120"
+      },
+      {
+        "generic": "0",
+        "custom": "120"
+      }
+    ],
+    "AUTO_TIMEOUTS": 0,
+    "AUTO_MAX_MS": 15.7,
+    "FORCED_WORST_CUSTOM_MS": 1.355,
+    "FORCED_WORST_GENERIC_MS": 149.748,
+    "CORPUS_SCAN_NODE_SEEN": false,
+    "RESULT_IDENTITY_EQUAL": true,
+    "SEMANTICS_AS_EXPECTED": true
+  },
+  "activityAfter": [],
+  "finishedAt": "2026-09-16T12:21:59.386Z"
+}
