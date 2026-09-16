@@ -100,6 +100,9 @@ const SERVING_BASE = {
   AUTH_BASE_URL: 'https://staging-api.lawmind.co',
   RESEND_API_KEY: 're_not_a_real_key',
   LAWMIND_RELEASE_ID: 'dryrun0000000000000000000000000000000000',
+  /* Required since LCC R30. A placeholder id: the tunnel probe below reads the
+   * real workstation's id live rather than trusting one written here. */
+  LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS: '7000000000000000000',
 };
 
 const steps = [];
@@ -208,6 +211,14 @@ async function main() {
       { ownHostname: hostname() },
     ).violations;
     return violations.map((v) => `${v.check}`).join(', ') || null;
+  });
+
+  await failClosed('a serving deployment with no forbidden-cluster list (LCC R30)', () => {
+    const violations = evaluateServingContract(
+      { ...SERVING_BASE, LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS: '' },
+      { ownHostname: hostname() },
+    ).violations;
+    return violations.map((v) => v.check).join(', ') || null;
   });
 
   await failClosed(

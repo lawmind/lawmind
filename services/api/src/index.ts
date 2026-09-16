@@ -7,7 +7,7 @@ import { getEmbedder, toVectorLiteral } from '@lawmind/embed';
 import { sql } from 'drizzle-orm';
 
 import { createApp } from './app.ts';
-import { createRolePools } from './pools.ts';
+import { createRolePools, jsonSerializerDefects } from './pools.ts';
 import {
   databaseIdentity,
   forbiddenClusterRefusal,
@@ -268,11 +268,32 @@ const authSecret = env.authSecret();
  * authenticate a single request.
  */
 const auth = createAuth({
-  sql: userSql,
+  /* Its OWN client, never `userSql`: drizzle rewrites the json serializers of
+   * whatever it is handed, and on `userSql` that turned every R16 create into
+   * a 500 (LCC R30). `pools.ts` — `RolePools.auth` — has the mechanism. */
+  sql: rolePools.auth,
   secret: authSecret,
   baseUrl: env.authBaseUrl(),
   mailer,
 });
+
+/**
+ * Checked AFTER `createAuth`, because that is the call that used to break it.
+ * A serving handle whose json serializer is not stock fails every `sql.json`
+ * write at request time with a TypeError; refusing to start names it instead.
+ */
+const serializerDefects = jsonSerializerDefects({
+  corpus: rawSql,
+  research: pools.research,
+  user: userSql,
+});
+if (serializerDefects.length > 0) {
+  logger.fatal(
+    { event: 'json_serializer_replaced', handles: serializerDefects },
+    `refusing to start: the json serializer of ${serializerDefects.join(', ')} is no longer stock — a drizzle client shares that pool`,
+  );
+  process.exit(1);
+}
 
 const app = createApp({
   ping: async () => {

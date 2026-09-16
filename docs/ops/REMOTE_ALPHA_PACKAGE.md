@@ -88,7 +88,7 @@ is, and a staging box legitimately runs it.
 | `RESEND_API_KEY` | Required. Send-only key (`DEPLOYMENT.md` §Mail). |
 | release identity | One of `LAWMIND_RELEASE_ID`, `RAILWAY_GIT_COMMIT_SHA`, `GITHUB_SHA`, `GIT_SHA`. |
 | `LAWMIND_ALLOW_PRIVATE_DB_HOST` | Optional, `1`. States that the API and its database share a provider's private network. Without it a private-range literal is refused. |
-| `LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS` | Optional but strongly recommended: the founder workstation's Postgres `system_identifier`. See §3. |
+| `LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS` | **Required** in staging and production since LCC R30 — an empty list refuses startup (`env:LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS`). The founder workstation's Postgres `system_identifier`. See §3. |
 
 Everything else (`PORT`, `LOG_LEVEL`, `SENTRY_DSN`, `POSTHOG_KEY`, R2, OpenRouter,
 `PII_ENCRYPTION_KEY`, Razorpay…) is unchanged from `DEPLOYMENT.md` §Secrets.

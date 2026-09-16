@@ -654,13 +654,18 @@ describe('R16 idempotency', () => {
     if (!(await skipUnlessMigrated(t))) return;
     const key = newKey();
     // A judgment id that does not exist: a deterministic refusal AFTER validation.
+    // R29 made a WRITE against a missing corpus target `409
+    // CORPUS_TARGET_UNAVAILABLE` (`corpus/target-unavailable.ts`); the code is
+    // asserted so it cannot be mistaken for the key-reuse 409 below.
     const missing = crypto.randomUUID();
     const body = { paragraphNumber: 1, paragraphIndex: 0, quote: `${TAG} refused` };
 
     const first = await post(`/judgments/${missing}/annotations`, alice.token, body, key);
-    assert.equal(first.status, 404);
+    assert.equal(first.status, 409);
+    const firstError = (await json(first.clone()))['error'] as { code: string };
+    assert.equal(firstError.code, 'CORPUS_TARGET_UNAVAILABLE');
     const retry = await post(`/judgments/${missing}/annotations`, alice.token, body, key);
-    assert.equal(retry.status, 404, 'the same request replays the same refusal');
+    assert.equal(retry.status, 409, 'the same request replays the same refusal');
     assert.deepEqual((await json(retry))['error'], (await json(first))['error']);
 
     // A refusal is recorded, so a DIFFERENT request under that key still conflicts.
