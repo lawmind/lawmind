@@ -284,3 +284,16 @@ noted for LCC with the handoff.
 
 `EVENT_DOUBLE_TAP` stays **FAIL**. The fix makes the failure legible; it does not
 make the event save. Only LCC's `withIdempotency` defect can move that row.
+
+## Round state
+
+- `HEAD_START = 3a30b3fc`
+- `CODE_COMMIT = b4987ef1` — the sheet fix, its test, and this file
+- `HEAD_FINAL` = the commit that adds this section (a commit cannot name itself)
+- LCC handoff: bus `1776`
+- Left behind on purpose: the disposable identity-only account
+  `s24delete1@example.invalid` (auth identity, no profile row, no data request —
+  its deletion request was refused by the 500). It is a ready fixture for
+  re-running `IDENTITY_ONLY_DELETE_PHYSICAL` once LCC's fix lands.
+- `matters.next_hearing_date` on `cedfe466` is now `2026-09-30`, written by the
+  adjournment row through the real `PATCH`.
