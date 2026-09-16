@@ -369,7 +369,57 @@ async function teardown() {
   return l.teardown;
 }
 
-const run = { precheck, provision, status, cost: async () => cost(loadLedger()), 'ssh-ip': sshIp, teardown }[cmd];
+/**
+ * The ONE DNS record this round owns: `A alpha-api.lawmind.co`. Spaceship's
+ * `force: false` adds without replacing the zone; DELETE names the exact item.
+ */
+function spaceship() {
+  const env = Object.fromEntries(
+    readFileSync(join(KEYDIR, 'secrets.env'), 'utf8')
+      .split(/\r?\n/)
+      .filter((l) => l.includes('='))
+      .map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1)]),
+  );
+  return async (method, body) => {
+    const res = await fetch('https://spaceship.dev/api/v1/dns/records/lawmind.co', {
+      method,
+      headers: {
+        'X-Api-Key': env.SPACESHIP_API_KEY,
+        'X-Api-Secret': env.SPACESHIP_API_SECRET,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(`spaceship ${method} -> ${res.status} ${(await res.text()).slice(0, 300)}`);
+  };
+}
+
+async function dnsRecord(add) {
+  const l = loadLedger();
+  const api = live(l, 'droplet').find((r) => r.role === 'api-user') ?? l.resources.find((r) => r.role === 'api-user');
+  const item = { type: 'A', name: 'alpha-api', address: api.publicIp, ttl: 300 };
+  const call = spaceship();
+  if (add) {
+    await call('PUT', { force: false, items: [item] });
+    if (!live(l, 'dns_record').length) record(l, { type: 'dns_record', id: 'alpha-api.lawmind.co', name: 'alpha-api.lawmind.co', address: item.address, hourlyUsd: 0 });
+  } else {
+    await call('DELETE', [{ type: 'A', name: 'alpha-api', address: item.address }]);
+    for (const r of live(l, 'dns_record')) r.destroyedAt = new Date().toISOString();
+    saveLedger(l);
+  }
+  return { dns: add ? 'added' : 'removed', item };
+}
+
+const run = {
+  precheck,
+  provision,
+  status,
+  cost: async () => cost(loadLedger()),
+  'ssh-ip': sshIp,
+  teardown,
+  'dns-add': () => dnsRecord(true),
+  'dns-remove': () => dnsRecord(false),
+}[cmd];
 if (!run) {
   console.error('usage: lcc-r32b-do.mjs <precheck|provision --admin-ip IP|status|cost|ssh-ip --admin-ip IP|teardown --confirm>');
   process.exit(2);

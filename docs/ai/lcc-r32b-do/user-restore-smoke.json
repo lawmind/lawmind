@@ -1,0 +1,231 @@
+{
+  "kind": "lcc-r32b-remote-smoke",
+  "at": "2026-09-16T19:21:15.021Z",
+  "api": "https://178-128-209-91.sslip.io",
+  "sha": "3639361e03b87e6fd28741352bd04a202f04f594",
+  "matterId": "28e60722-0f08-41d4-85ba-d086956c80c5",
+  "authority": {
+    "authorityId": "531d64fc-485e-446e-80d3-4cf95c0402c3",
+    "judgmentId": "00013e4f-07ea-4a46-bfd6-c31a78f01cc1",
+    "caseTitle": "ANWAR AHMED SON OF SHRI ALLAH NOOR, Vs LIYAKAT ALI KHAN S/O TAJU KHAN,",
+    "neutralCitation": "2026:RJ-JP:3076-DB",
+    "reporterCitations": [],
+    "addedBy": "9654685e-bdfd-4788-abd5-78e31bd374cb",
+    "addedAt": "2026-09-16T19:21:07.669Z",
+    "removedAt": null,
+    "verificationState": "verified",
+    "verifiedBySource": "corpus",
+    "overruledStatus": "none",
+    "overruledByJudgmentId": null,
+    "overruledByTitle": null,
+    "overruledParas": null,
+    "overruledNote": null,
+    "precedentialEffect": "none",
+    "canAddToMatter": true,
+    "citableForUntouchedPropositions": true
+  },
+  "pass": true,
+  "checks": [
+    {
+      "name": "health",
+      "pass": true,
+      "status": 200,
+      "sha": "3639361e03b87e6fd28741352bd04a202f04f594"
+    },
+    {
+      "name": "ready",
+      "pass": true,
+      "status": "ready",
+      "sha": "3639361e03b87e6fd28741352bd04a202f04f594",
+      "corpusReachable": true,
+      "userReachable": true,
+      "splitMode": "split",
+      "rolesDistinct": true,
+      "servingEnv": "staging"
+    },
+    {
+      "name": "version",
+      "pass": true,
+      "status": 200,
+      "gitSha": "3639361e03b87e6fd28741352bd04a202f04f594"
+    },
+    {
+      "name": "capabilities",
+      "pass": true,
+      "status": 200,
+      "registryVersion": "RELEASE_CAPABILITIES_R8_3.5",
+      "semantic": [
+        {
+          "k": "search.semantic.broad",
+          "state": "EXPERIMENTAL_INTERNAL"
+        },
+        {
+          "k": "search.semantic.supporting_authority",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.adverse_authority",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.counterarguments",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.long_input",
+          "state": "LIMITED"
+        },
+        {
+          "k": "search.semantic.abstention",
+          "state": "DISABLED"
+        }
+      ]
+    },
+    {
+      "name": "no public semantic search",
+      "pass": true,
+      "semantic": [
+        "search.semantic.broad=EXPERIMENTAL_INTERNAL",
+        "search.semantic.supporting_authority=DISABLED",
+        "search.semantic.adverse_authority=DISABLED",
+        "search.semantic.counterarguments=DISABLED",
+        "search.semantic.long_input=LIMITED",
+        "search.semantic.abstention=DISABLED"
+      ]
+    },
+    {
+      "name": "auth: no token refused",
+      "pass": true,
+      "status": 401,
+      "code": "AUTH_REQUIRED"
+    },
+    {
+      "name": "auth: bearer accepted",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "search: normal lexical",
+      "pass": true,
+      "status": 200,
+      "ms": 218,
+      "results": 3,
+      "outcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 3,
+        "rarestDf": 0.0029602585292448874,
+        "contractVersion": 1
+      },
+      "withParagraphEvidence": 3
+    },
+    {
+      "name": "search: exact citation 2026:RJ-JP:3076-DB",
+      "pass": true,
+      "status": 200,
+      "ms": 167,
+      "results": 1,
+      "outcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "first": "00013e4f-07ea-4a46-bfd6-c31a78f01cc1"
+    },
+    {
+      "name": "search: CNR",
+      "pass": true,
+      "status": 200,
+      "ms": 95,
+      "results": 1,
+      "outcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      }
+    },
+    {
+      "name": "search: filtered structured",
+      "pass": true,
+      "status": 200,
+      "ms": 117,
+      "results": 3,
+      "outcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 3,
+        "rarestDf": 0.0029602585292448874,
+        "contractVersion": 1
+      }
+    },
+    {
+      "name": "reader: paragraphs",
+      "pass": true,
+      "status": 200,
+      "ms": 109,
+      "paragraphs": 19
+    },
+    {
+      "name": "matter: create",
+      "pass": true,
+      "status": 201,
+      "matterId": "28e60722-0f08-41d4-85ba-d086956c80c5"
+    },
+    {
+      "name": "R16: idempotent replay returns the same matter",
+      "pass": true,
+      "status": 201,
+      "replayed": "28e60722-0f08-41d4-85ba-d086956c80c5"
+    },
+    {
+      "name": "matter: detail",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "matter: event create",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "matter: save authority",
+      "pass": true,
+      "status": 201,
+      "authorityId": "531d64fc-485e-446e-80d3-4cf95c0402c3",
+      "addedAt": "2026-09-16T19:21:07.669Z"
+    },
+    {
+      "name": "R17: unavailable target refused without a false existential claim",
+      "pass": true,
+      "status": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be added to a matter right now."
+    },
+    {
+      "name": "annotation: create",
+      "pass": true,
+      "status": 200,
+      "annotationId": "11837784-0d68-4907-90f6-086de7f04a8b"
+    },
+    {
+      "name": "identity-only deletion request",
+      "pass": true,
+      "status": 200,
+      "kind": "erasure"
+    }
+  ]
+}

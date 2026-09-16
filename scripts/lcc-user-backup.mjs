@@ -263,11 +263,23 @@ try {
  *
  * The flag needs superuser on the TARGET, which is a disposable database this
  * script just created. It applies only to `--data-only`, which is what this is.
+ *
+ * A serving deployment's USER role is NOT a superuser (LCC R32B, DigitalOcean:
+ * "permission denied: RI_ConstraintTrigger_... is a system trigger"). There the
+ * same effect comes from `session_replication_role = replica` on the restore
+ * session, which PostgreSQL 15+ lets an administrator grant to one role with
+ * `GRANT SET ON PARAMETER session_replication_role`. Replica mode skips user
+ * AND foreign-key triggers, exactly as `--disable-triggers` does.
  */
+const superuser = q(DB, 'SELECT usesuper FROM pg_user WHERE usename = current_user') === 't';
 try {
   pg('pg_restore', [...conn, '-d', SCRATCH, '--no-owner', '--no-privileges',
-    '--disable-triggers', '--exit-on-error', '--single-transaction', dataPath],
-    { stdio: ['ignore', 'inherit', 'inherit'] });
+    ...(superuser ? ['--disable-triggers'] : []),
+    '--exit-on-error', '--single-transaction', dataPath],
+    {
+      stdio: ['ignore', 'inherit', 'inherit'],
+      env: superuser ? env : { ...env, PGOPTIONS: '-c session_replication_role=replica' },
+    });
 } catch (e) {
   failed = `data restore failed: ${String(e.message).split(String.fromCharCode(10)).slice(0, 3).join(' | ')}`;
 }

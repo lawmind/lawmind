@@ -1,0 +1,23 @@
+{
+  "kind": "lcc-r32b-user-remote-backup-restore",
+  "at": "2026-09-16T19:21:00Z",
+  "host": "lawmind-gatec-api-user (sgp1)",
+  "source": "lawmind_user (USER cluster 7686195926996644136)",
+  "tool": "scripts/lcc-user-backup.mjs --keep-restored (run as lawmind_user, non-superuser)",
+  "firstAttempt": "RESTORE_FAILED: pg_restore --disable-triggers needs superuser (permission denied: RI_ConstraintTrigger is a system trigger)",
+  "fix": "non-superuser path restores with PGOPTIONS session_replication_role=replica; lawmind_user granted SET ON PARAMETER session_replication_role and CREATEDB",
+  "restoreTarget": "lawmind_user_restore_20260916192000 (new, isolated database)",
+  "tables": 44,
+  "rowCountMismatches": 0,
+  "invariants": "all 7 OK",
+  "judgmentsRowsInUserBackup": 0,
+  "verdict": "RESTORE_VERIFIED",
+  "authenticatedSmokeAgainstRestore": {
+    "api": "https://178-128-209-91.sslip.io with USER_DATABASE_URL pointed at the restored database",
+    "preBackupMattersVisible": 3,
+    "smoke": "REMOTE_CORE_SMOKE = PASS (docs/ai/lcc-r32b-do/user-restore-smoke.json)"
+  },
+  "afterwards": "API switched back to lawmind_user; disposable database dropped",
+  "USER_REMOTE_BACKUP": "PASS",
+  "USER_REMOTE_RESTORE": "PASS"
+}

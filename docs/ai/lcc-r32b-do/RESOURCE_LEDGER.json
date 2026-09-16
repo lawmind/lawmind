@@ -1,0 +1,157 @@
+{
+  "kind": "lcc-r32b-do-resource-ledger",
+  "region": "sgp1",
+  "resources": [
+    {
+      "type": "ssh_key",
+      "id": 59366539,
+      "name": "lawmind-gatec-202609161754",
+      "fingerprint": "08:55:d3:fc:41:67:f2:58:fc:1e:83:1b:15:18:4d:d0",
+      "hourlyUsd": 0,
+      "region": "sgp1",
+      "createdAt": "2026-09-16T17:57:06.623Z",
+      "hardDestroyDeadline": "2026-09-19T17:57:06.623Z",
+      "destroyRequired": true,
+      "destroyedAt": null
+    },
+    {
+      "type": "vpc",
+      "id": "176f456b-60fc-437c-8297-173fb3208b6a",
+      "name": "lawmind-gatec-vpc",
+      "ipRange": "10.130.0.0/24",
+      "hourlyUsd": 0,
+      "region": "sgp1",
+      "createdAt": "2026-09-16T17:57:08.949Z",
+      "hardDestroyDeadline": "2026-09-19T17:57:08.949Z",
+      "destroyRequired": true,
+      "destroyedAt": null
+    },
+    {
+      "type": "droplet",
+      "id": 601138301,
+      "name": "lawmind-gatec-corpus",
+      "role": "corpus",
+      "sizeSlug": "so1_5-4vcpu-32gb",
+      "hourlyUsd": 0.48512,
+      "createdAt": "2026-09-16T17:57:04Z",
+      "region": "sgp1",
+      "hardDestroyDeadline": "2026-09-19T17:57:04.000Z",
+      "destroyRequired": true,
+      "destroyedAt": null,
+      "publicIp": "157.245.156.133",
+      "privateIp": "10.130.0.2",
+      "status": "active",
+      "vcpus": 4,
+      "memoryMiB": 32768,
+      "diskGiB": 900
+    },
+    {
+      "type": "droplet",
+      "id": 601138316,
+      "name": "lawmind-gatec-api-user",
+      "role": "api-user",
+      "sizeSlug": "s-2vcpu-4gb",
+      "hourlyUsd": 0.03571,
+      "createdAt": "2026-09-16T17:57:05Z",
+      "region": "sgp1",
+      "hardDestroyDeadline": "2026-09-19T17:57:05.000Z",
+      "destroyRequired": true,
+      "destroyedAt": null,
+      "publicIp": "178.128.209.91",
+      "privateIp": "10.130.0.3",
+      "status": "active",
+      "vcpus": 2,
+      "memoryMiB": 4096,
+      "diskGiB": 80
+    },
+    {
+      "type": "firewall",
+      "id": "424dd1be-8e34-483b-a93b-e3cbf6cb1164",
+      "name": "lawmind-gatec-corpus-fw",
+      "hourlyUsd": 0,
+      "adminIp": "110.224.222.92",
+      "region": "sgp1",
+      "createdAt": "2026-09-16T17:57:51.327Z",
+      "hardDestroyDeadline": "2026-09-19T17:57:51.327Z",
+      "destroyRequired": true,
+      "destroyedAt": null
+    },
+    {
+      "type": "firewall",
+      "id": "53b49b45-d85a-4150-a5b6-e0d8d69a91d4",
+      "name": "lawmind-gatec-api-user-fw",
+      "hourlyUsd": 0,
+      "adminIp": "110.224.222.92",
+      "region": "sgp1",
+      "createdAt": "2026-09-16T17:57:52.132Z",
+      "hardDestroyDeadline": "2026-09-19T17:57:52.132Z",
+      "destroyRequired": true,
+      "destroyedAt": null
+    },
+    {
+      "type": "dns_record",
+      "id": "alpha-api.lawmind.co",
+      "name": "alpha-api.lawmind.co",
+      "address": "178.128.209.91",
+      "hourlyUsd": 0,
+      "region": "sgp1",
+      "createdAt": "2026-09-16T19:17:34.703Z",
+      "hardDestroyDeadline": "2026-09-19T19:17:34.703Z",
+      "destroyRequired": true,
+      "destroyedAt": null
+    }
+  ],
+  "precheck": {
+    "at": "2026-09-16T17:57:06.203Z",
+    "account": {
+      "status": "active",
+      "dropletLimit": 30,
+      "emailVerified": true
+    },
+    "existingDroplets": [
+      {
+        "id": 566518737,
+        "name": "ubuntu-s-vikas",
+        "region": "sgp1",
+        "size": "s-1vcpu-1gb",
+        "classification": "FOREIGN_EXISTING_RESOURCE_DO_NOT_TOUCH"
+      }
+    ],
+    "quotaHeadroom": 29,
+    "region": {
+      "slug": "sgp1",
+      "available": true
+    },
+    "machines": [
+      {
+        "name": "lawmind-gatec-corpus",
+        "size": "so1_5-4vcpu-32gb",
+        "role": "corpus",
+        "available": true,
+        "vcpus": 4,
+        "memoryMiB": 32768,
+        "diskGiB": 900,
+        "priceHourly": 0.48512
+      },
+      {
+        "name": "lawmind-gatec-api-user",
+        "size": "s-2vcpu-4gb",
+        "role": "api-user",
+        "available": true,
+        "vcpus": 2,
+        "memoryMiB": 4096,
+        "diskGiB": 80,
+        "priceHourly": 0.03571
+      }
+    ],
+    "projected72hComputeUsd": 37.5,
+    "pass": true
+  },
+  "updatedAt": "2026-09-16T19:17:34.704Z",
+  "cost": {
+    "at": "2026-09-16T17:57:53.262Z",
+    "accruedComputeUsd": 0.52,
+    "projected72hComputeUsd": 37.5,
+    "band": "NORMAL"
+  }
+}

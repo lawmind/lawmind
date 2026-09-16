@@ -175,13 +175,17 @@ const annotation = await call('POST', `/judgments/${FX.judgmentId}/annotations`,
   token: T, key: `r32b-${randomUUID()}`,
   body: { paragraphNumber: 1, paragraphIndex: 0, quote: 'Gate C smoke', note: 'Gate C smoke annotation' },
 });
-check('annotation: create', annotation.status === 201, { status: annotation.status, code: annotation.body?.error?.code });
+// The route answers 200 with the created row (annotations.ts `ok(c, { annotation })`).
+check('annotation: create', annotation.status < 300 && !!data(annotation).annotation?.annotationId, {
+  status: annotation.status, annotationId: data(annotation).annotation?.annotationId, code: annotation.body?.error?.code,
+});
 
 // ── identity-only deletion ─────────────────────────────────────────────────
 const erase = await call('POST', '/me/data-requests', {
   token: TK.identityOnly, key: `r32b-${randomUUID()}`, body: { kind: 'erasure' },
 });
-check('identity-only deletion request', erase.status === 201 || erase.status === 202, {
+// 201 on the first request; a later run replays the one open erasure (SR-6) as 200.
+check('identity-only deletion request', (erase.status === 201 || erase.status === 200) && data(erase).request?.kind === 'erasure', {
   status: erase.status, kind: data(erase).request?.kind, code: erase.body?.error?.code,
 });
 
