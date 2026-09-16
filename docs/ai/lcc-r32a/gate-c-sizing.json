@@ -1,0 +1,226 @@
+{
+  "kind": "lcc-r32a-gate-c-sizing",
+  "computedAt": "2026-09-16T16:23:42.500Z",
+  "paidResourceCreated": "NO",
+  "pricing": {
+    "asOf": "2026-09-16 (Hetzner SIN list effective 2026-06-15 08:00 CEST, net of VAT)",
+    "plans": {
+      "CPX22": {
+        "vcpu": 2,
+        "ramGB": 4,
+        "diskGB": 80,
+        "usdHour": 0.0497,
+        "usdMonthCap": 30.99,
+        "trafficTB": 1
+      },
+      "CPX32": {
+        "vcpu": 4,
+        "ramGB": 8,
+        "diskGB": 160,
+        "usdHour": 0.0929,
+        "usdMonthCap": 57.99,
+        "trafficTB": 2
+      },
+      "CPX42": {
+        "vcpu": 8,
+        "ramGB": 16,
+        "diskGB": 320,
+        "usdHour": 0.1763,
+        "usdMonthCap": 109.99,
+        "trafficTB": 3
+      },
+      "CPX52": {
+        "vcpu": 12,
+        "ramGB": 24,
+        "diskGB": 480,
+        "usdHour": 0.254,
+        "usdMonthCap": 158.49,
+        "trafficTB": 4
+      },
+      "CPX62": {
+        "vcpu": 16,
+        "ramGB": 32,
+        "diskGB": 640,
+        "usdHour": 0.3253,
+        "usdMonthCap": 202.99,
+        "trafficTB": 5
+      }
+    },
+    "primaryIpv4UsdMonth": 0.6,
+    "volumeUsdGbMonth": 0.0669,
+    "volumePriceStatus": "UNVERIFIED (third-party EUR 0.0572; doubled in the cap)",
+    "r2UsdGbMonth": 0.015
+  },
+  "corpus": {
+    "restoredGiB": 250.097,
+    "exportPlainGiB": 204.286,
+    "exportGzipGiB": 67.242,
+    "largestGzipGiB": 35.71,
+    "largestBtreeGiB": 4.62,
+    "walGiB": 4,
+    "tempGiB": 16,
+    "osPgGiB": 10,
+    "headroom": 1.15,
+    "corpusMinLocalDiskGiB": 322.1,
+    "stagingPeakGiB": 240,
+    "stagingNeedGiB": 264,
+    "corpusMinDiskGiBIncludingStaging": 586.1,
+    "workingSetUpperGiB": 12.8,
+    "ioLoadWindow": {
+      "touchedMiBUpperBound": 19563,
+      "readsFromOsMiB": 11056
+    },
+    "ioIdleWindow": {
+      "touchedMiBUpperBound": 23,
+      "readsFromOsMiB": 2
+    }
+  },
+  "planFit": [
+    {
+      "plan": "CPX22",
+      "vcpu": 2,
+      "ramGB": 4,
+      "diskGB": 80,
+      "usdHour": 0.0497,
+      "usdMonthCap": 30.99,
+      "trafficTB": 1,
+      "diskGiB": 74.5,
+      "ramGiB": 3.7,
+      "dbFits": false,
+      "dbAndStagingFit": false,
+      "pageCacheGiB": 1.8,
+      "ramOk": false
+    },
+    {
+      "plan": "CPX32",
+      "vcpu": 4,
+      "ramGB": 8,
+      "diskGB": 160,
+      "usdHour": 0.0929,
+      "usdMonthCap": 57.99,
+      "trafficTB": 2,
+      "diskGiB": 149,
+      "ramGiB": 7.5,
+      "dbFits": false,
+      "dbAndStagingFit": false,
+      "pageCacheGiB": 4.6,
+      "ramOk": false
+    },
+    {
+      "plan": "CPX42",
+      "vcpu": 8,
+      "ramGB": 16,
+      "diskGB": 320,
+      "usdHour": 0.1763,
+      "usdMonthCap": 109.99,
+      "trafficTB": 3,
+      "diskGiB": 298,
+      "ramGiB": 14.9,
+      "dbFits": false,
+      "dbAndStagingFit": false,
+      "pageCacheGiB": 10.2,
+      "ramOk": true
+    },
+    {
+      "plan": "CPX52",
+      "vcpu": 12,
+      "ramGB": 24,
+      "diskGB": 480,
+      "usdHour": 0.254,
+      "usdMonthCap": 158.49,
+      "trafficTB": 4,
+      "diskGiB": 447,
+      "ramGiB": 22.4,
+      "dbFits": true,
+      "dbAndStagingFit": false,
+      "pageCacheGiB": 15.8,
+      "ramOk": true
+    },
+    {
+      "plan": "CPX62",
+      "vcpu": 16,
+      "ramGB": 32,
+      "diskGB": 640,
+      "usdHour": 0.3253,
+      "usdMonthCap": 202.99,
+      "trafficTB": 5,
+      "diskGiB": 596,
+      "ramGiB": 29.8,
+      "dbFits": true,
+      "dbAndStagingFit": true,
+      "pageCacheGiB": 21.4,
+      "ramOk": true
+    }
+  ],
+  "stagingVolumeGB": 300,
+  "compare72h": {
+    "CPX52+volume": 26.08,
+    "CPX62": 29.06
+  },
+  "chosenCorpus": "CPX52+volume",
+  "costs": {
+    "h24": {
+      "hours": 24,
+      "compute": 7.29,
+      "storage": 1.58,
+      "storageVolume": 0.72,
+      "storageR2": 0.86,
+      "network": 0,
+      "ipv4": 1.2,
+      "total": 10.06,
+      "tax": "VAT/GST UNKNOWN — all prices are net; at 18% reverse-charge GST multiply by 1.18"
+    },
+    "h72": {
+      "hours": 72,
+      "compute": 21.87,
+      "storage": 3.01,
+      "storageVolume": 2.15,
+      "storageR2": 0.86,
+      "network": 0,
+      "ipv4": 1.2,
+      "total": 26.08,
+      "tax": "VAT/GST UNKNOWN — all prices are net; at 18% reverse-charge GST multiply by 1.18"
+    },
+    "d7": {
+      "hours": 168,
+      "compute": 51.02,
+      "storage": 5.88,
+      "storageVolume": 5.02,
+      "storageR2": 0.86,
+      "network": 0,
+      "ipv4": 1.2,
+      "total": 58.1,
+      "tax": "VAT/GST UNKNOWN — all prices are net; at 18% reverse-charge GST multiply by 1.18"
+    },
+    "month": {
+      "hours": 730,
+      "compute": 189.48,
+      "storage": 20.93,
+      "storageVolume": 20.08,
+      "storageR2": 0.86,
+      "network": 0,
+      "ipv4": 1.2,
+      "total": 211.61,
+      "tax": "VAT/GST UNKNOWN — all prices are net; at 18% reverse-charge GST multiply by 1.18"
+    }
+  },
+  "worstCase72hWithVolumePriceDoubledAndGst18": 33.31,
+  "authorisationCapUsd": 40,
+  "user": {
+    "dbGiB": 0.041,
+    "backupBytes": 4017236,
+    "backupGiB": 0.003741,
+    "restoreRehearsalSeconds": 10,
+    "userMinDiskGiB": 17.3,
+    "cpx22DiskGiB": 74.5,
+    "apiPeakResidentMiB": 308,
+    "ramBudgetMiB": {
+      "os": 450,
+      "postgres": 704,
+      "api": 1024,
+      "backupTooling": 150
+    },
+    "ramBudgetTotalMiB": 2328,
+    "cpx22RamMiB": 3815
+  }
+}

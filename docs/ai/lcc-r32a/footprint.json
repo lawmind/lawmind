@@ -1,0 +1,843 @@
+{
+  "kind": "lcc-r32a-footprint",
+  "measuredAt": "2026-09-16T15:56:45.223Z",
+  "method": "pg_database_size / pg_relation_size / pg_indexes_size / pg_total_relation_size on the live accepted database; read-only",
+  "server": {
+    "db": "lawmind",
+    "version": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "shared_buffers": "2GB",
+    "work_mem": "32MB",
+    "maintenance_work_mem": "512MB",
+    "max_connections": "100",
+    "server_version_num": "180006",
+    "db_bytes": 368299259583,
+    "dbGiB": 343.005
+  },
+  "extensions": [
+    {
+      "name": "plpgsql",
+      "version": "1.0"
+    },
+    {
+      "name": "pg_trgm",
+      "version": "1.6"
+    },
+    {
+      "name": "vector",
+      "version": "0.8.5"
+    }
+  ],
+  "databases": [
+    {
+      "name": "lawmind",
+      "bytes": 368299259583,
+      "gib": 343.005
+    },
+    {
+      "name": "lawmind_restore_rehearsal",
+      "bytes": 128360975,
+      "gib": 0.12
+    },
+    {
+      "name": "postgres",
+      "bytes": 8206015,
+      "gib": 0.008
+    },
+    {
+      "name": "template1",
+      "bytes": 8159759,
+      "gib": 0.008
+    }
+  ],
+  "physicalLayout": "single cluster, single database: corpus and user planes share `lawmind` locally (DB_SPLIT_MODE unset). Plane sizes below are the db-roles.ts partition of it.",
+  "planes": {
+    "corpusAllTables": {
+      "heapBytes": 91928535040,
+      "heapGiB": 85.615,
+      "indexesBytes": 68757643264,
+      "indexesGiB": 64.036,
+      "toastBytes": 187583807488,
+      "toastGiB": 174.701,
+      "totalBytes": 348296757248,
+      "totalGiB": 324.377
+    },
+    "user": {
+      "heapBytes": 30040064,
+      "heapGiB": 0.028,
+      "indexesBytes": 12640256,
+      "indexesGiB": 0.012,
+      "toastBytes": 352256,
+      "toastGiB": 0,
+      "totalBytes": 44138496,
+      "totalGiB": 0.041
+    },
+    "exportManifest": {
+      "tables": [
+        "judgments",
+        "judgment_citations",
+        "judgment_judges",
+        "judgment_statute_refs",
+        "statutes",
+        "statute_sections",
+        "lexeme_document_frequency"
+      ],
+      "heapBytes": 25652633600,
+      "heapGiB": 23.891,
+      "indexesBytes": 36389945344,
+      "indexesGiB": 33.891,
+      "toastBytes": 106560135168,
+      "toastGiB": 99.242,
+      "totalBytes": 168609972224,
+      "totalGiB": 157.03
+    },
+    "gateCRequired": {
+      "tables": [
+        "judgments",
+        "judgment_citations",
+        "judgment_judges",
+        "judgment_statute_refs",
+        "statutes",
+        "statute_sections",
+        "lexeme_document_frequency",
+        "judgment_paragraphs"
+      ],
+      "heapBytes": 86219456512,
+      "heapGiB": 80.298,
+      "indexesBytes": 53818925056,
+      "indexesGiB": 50.123,
+      "toastBytes": 128477544448,
+      "toastGiB": 119.654,
+      "totalBytes": 268539944960,
+      "totalGiB": 250.097
+    },
+    "searchCriticalForActivation": {
+      "tables": [
+        "judgments",
+        "judgment_chunks",
+        "judgment_citations",
+        "lexeme_document_frequency",
+        "statutes",
+        "statute_sections"
+      ],
+      "heapBytes": 26648330240,
+      "heapGiB": 24.818,
+      "indexesBytes": 41216278528,
+      "indexesGiB": 38.386,
+      "toastBytes": 110073323520,
+      "toastGiB": 102.514,
+      "totalBytes": 177945444352,
+      "totalGiB": 165.725
+    },
+    "deferred": {
+      "tables": ["judgment_chunks", "new1_doc_vector_stage", "new1_tranche_passages"],
+      "heapBytes": 3512819712,
+      "heapGiB": 3.272,
+      "indexesBytes": 9007128576,
+      "indexesGiB": 8.389,
+      "toastBytes": 50997723136,
+      "toastGiB": 47.495,
+      "totalBytes": 63518711808,
+      "totalGiB": 59.156
+    },
+    "nonTableOverheadGiB": 18.588
+  },
+  "byClass": {
+    "CURRENT_V1_REQUIRED": {
+      "heap": 25652633600,
+      "indexes": 36389945344,
+      "toast": 106560135168,
+      "total": 168609972224,
+      "relations": 7,
+      "heapGiB": 23.891,
+      "indexesGiB": 33.891,
+      "toastGiB": 99.242,
+      "totalGiB": 157.03
+    },
+    "CURRENT_V1_REQUIRED_NOT_IN_EXPORT_MANIFEST": {
+      "heap": 60566822912,
+      "indexes": 17428979712,
+      "toast": 21917409280,
+      "total": 99929972736,
+      "relations": 1,
+      "heapGiB": 56.407,
+      "indexesGiB": 16.232,
+      "toastGiB": 20.412,
+      "totalGiB": 93.067
+    },
+    "DEFERRED_CAPABILITY_DATA": {
+      "heap": 3512819712,
+      "indexes": 9007128576,
+      "toast": 50997723136,
+      "total": 63518711808,
+      "relations": 3,
+      "heapGiB": 3.272,
+      "indexesGiB": 8.389,
+      "toastGiB": 47.495,
+      "totalGiB": 59.156
+    },
+    "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH": {
+      "heap": 2194669568,
+      "indexes": 5930442752,
+      "toast": 8108539904,
+      "total": 16235331584,
+      "relations": 47,
+      "heapGiB": 2.044,
+      "indexesGiB": 5.523,
+      "toastGiB": 7.552,
+      "totalGiB": 15.12
+    },
+    "USER_PLANE": {
+      "heap": 30040064,
+      "indexes": 12640256,
+      "toast": 352256,
+      "total": 44138496,
+      "relations": 44,
+      "heapGiB": 0.028,
+      "indexesGiB": 0.012,
+      "toastGiB": 0,
+      "totalGiB": 0.041
+    },
+    "UNKNOWN": {
+      "heap": 1605632,
+      "indexes": 1163264,
+      "toast": 8192,
+      "total": 2834432,
+      "relations": 2,
+      "heapGiB": 0.001,
+      "indexesGiB": 0.001,
+      "toastGiB": 0,
+      "totalGiB": 0.003
+    }
+  },
+  "missingFromDatabase": [],
+  "topRelations": [
+    {
+      "name": "judgments",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 21.536,
+      "indexesGiB": 30.532,
+      "toastGiB": 99.221,
+      "totalGiB": 151.295,
+      "totalBytes": 162452045824,
+      "estRows": 18752608,
+      "deadTupleRatio": 0.0784
+    },
+    {
+      "name": "judgment_paragraphs",
+      "class": "CURRENT_V1_REQUIRED_NOT_IN_EXPORT_MANIFEST",
+      "heapGiB": 56.407,
+      "indexesGiB": 16.232,
+      "toastGiB": 20.412,
+      "totalGiB": 93.067,
+      "totalBytes": 99929972736,
+      "estRows": 91774104,
+      "deadTupleRatio": 0
+    },
+    {
+      "name": "new1_doc_vector_stage",
+      "class": "DEFERRED_CAPABILITY_DATA",
+      "heapGiB": 2.131,
+      "indexesGiB": 0.427,
+      "toastGiB": 42.07,
+      "totalGiB": 44.628,
+      "totalBytes": 47919038464,
+      "estRows": 7981661,
+      "deadTupleRatio": 0
+    },
+    {
+      "name": "judgment_chunks",
+      "class": "DEFERRED_CAPABILITY_DATA",
+      "heapGiB": 1.092,
+      "indexesGiB": 4.772,
+      "toastGiB": 3.272,
+      "totalGiB": 9.136,
+      "totalBytes": 9810067456,
+      "estRows": 620928,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "new1_probe_hnsw_1000000",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.079,
+      "indexesGiB": 2.542,
+      "toastGiB": 5.15,
+      "totalGiB": 7.772,
+      "totalBytes": 8344690688,
+      "estRows": 1000000,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "new1_tranche_passages",
+      "class": "DEFERRED_CAPABILITY_DATA",
+      "heapGiB": 0.049,
+      "indexesGiB": 3.189,
+      "toastGiB": 2.154,
+      "totalGiB": 5.392,
+      "totalBytes": 5789605888,
+      "estRows": 418116,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "judgment_citations",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 2.136,
+      "indexesGiB": 3.059,
+      "toastGiB": 0,
+      "totalGiB": 5.195,
+      "totalBytes": 5578129408,
+      "estRows": 22322064,
+      "deadTupleRatio": 0.0055
+    },
+    {
+      "name": "embedding_content_representative",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 1.073,
+      "indexesGiB": 1.694,
+      "toastGiB": 0,
+      "totalGiB": 2.767,
+      "totalBytes": 2971254784,
+      "estRows": 7654663,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "new1_probe_hnsw_250000",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.02,
+      "indexesGiB": 0.636,
+      "toastGiB": 1.288,
+      "totalGiB": 1.943,
+      "totalBytes": 2086453248,
+      "estRows": 250000,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "judgment_statute_refs",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 0.16,
+      "indexesGiB": 0.271,
+      "toastGiB": 0,
+      "totalGiB": 0.431,
+      "totalBytes": 462823424,
+      "estRows": 900034,
+      "deadTupleRatio": 0
+    },
+    {
+      "name": "judgment_citation_keys",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.169,
+      "indexesGiB": 0.247,
+      "toastGiB": 0,
+      "totalGiB": 0.417,
+      "totalBytes": 447422464,
+      "estRows": 1411749,
+      "deadTupleRatio": 0
+    },
+    {
+      "name": "judgment_date_quality",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.342,
+      "indexesGiB": 0.052,
+      "toastGiB": 0,
+      "totalGiB": 0.394,
+      "totalBytes": 423141376,
+      "estRows": 741613,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "new1_doc_vector_stage_refused",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.02,
+      "indexesGiB": 0,
+      "toastGiB": 0.373,
+      "totalGiB": 0.394,
+      "totalBytes": 422617088,
+      "estRows": 72092,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "official_source_artifact",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.045,
+      "indexesGiB": 0.015,
+      "toastGiB": 0.245,
+      "totalGiB": 0.304,
+      "totalBytes": 326647808,
+      "estRows": 31244,
+      "deadTupleRatio": 0.2222
+    },
+    {
+      "name": "new1_head_baseline",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.001,
+      "indexesGiB": 0.16,
+      "toastGiB": 0.108,
+      "totalGiB": 0.27,
+      "totalBytes": 289636352,
+      "estRows": 20947,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "document_vector_staging",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.011,
+      "indexesGiB": 0.01,
+      "toastGiB": 0.189,
+      "totalGiB": 0.21,
+      "totalBytes": 225525760,
+      "estRows": 36663,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "new1_source_vector_stage",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.01,
+      "indexesGiB": 0.009,
+      "toastGiB": 0.189,
+      "totalGiB": 0.208,
+      "totalBytes": 223551488,
+      "estRows": 36663,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "hc_ingest_ledger",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.058,
+      "indexesGiB": 0.072,
+      "toastGiB": 0,
+      "totalGiB": 0.13,
+      "totalBytes": 139304960,
+      "estRows": 230724,
+      "deadTupleRatio": 1
+    },
+    {
+      "name": "external_citation_documents",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.057,
+      "indexesGiB": 0.043,
+      "toastGiB": 0,
+      "totalGiB": 0.101,
+      "totalBytes": 108249088,
+      "estRows": 370995,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "document_enrichments",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.07,
+      "indexesGiB": 0.016,
+      "toastGiB": 0.009,
+      "totalGiB": 0.095,
+      "totalBytes": 102268928,
+      "estRows": 37608,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "statute_sections",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 0.047,
+      "indexesGiB": 0.013,
+      "toastGiB": 0.021,
+      "totalGiB": 0.08,
+      "totalBytes": 86294528,
+      "estRows": 36663,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "embedding_census_cell",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.04,
+      "indexesGiB": 0.004,
+      "toastGiB": 0,
+      "totalGiB": 0.044,
+      "totalBytes": 47063040,
+      "estRows": 9956,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "ops_job_observations",
+      "class": "USER_PLANE",
+      "heapGiB": 0.018,
+      "indexesGiB": 0.006,
+      "toastGiB": 0,
+      "totalGiB": 0.024,
+      "totalBytes": 26214400,
+      "estRows": 50002,
+      "deadTupleRatio": 0.0007
+    },
+    {
+      "name": "new2_neutral_dupe_groups",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.017,
+      "indexesGiB": 0.006,
+      "toastGiB": 0,
+      "totalGiB": 0.022,
+      "totalBytes": 24092672,
+      "estRows": 155388,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "external_citations",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.011,
+      "indexesGiB": 0.009,
+      "toastGiB": 0,
+      "totalGiB": 0.019,
+      "totalBytes": 20692992,
+      "estRows": 51272,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "lexeme_document_frequency",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 0.008,
+      "indexesGiB": 0.01,
+      "toastGiB": 0,
+      "totalGiB": 0.017,
+      "totalBytes": 18456576,
+      "estRows": 128243,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "official_source_fetch_ledger",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.009,
+      "indexesGiB": 0.002,
+      "toastGiB": 0,
+      "totalGiB": 0.011,
+      "totalBytes": 12132352,
+      "estRows": 31134,
+      "deadTupleRatio": 0
+    },
+    {
+      "name": "judgment_judges",
+      "class": "CURRENT_V1_REQUIRED",
+      "heapGiB": 0.005,
+      "indexesGiB": 0.006,
+      "toastGiB": 0,
+      "totalGiB": 0.011,
+      "totalBytes": 11771904,
+      "estRows": 44360,
+      "deadTupleRatio": null
+    },
+    {
+      "name": "llm_calls",
+      "class": "USER_PLANE",
+      "heapGiB": 0.004,
+      "indexesGiB": 0.002,
+      "toastGiB": 0,
+      "totalGiB": 0.006,
+      "totalBytes": 6406144,
+      "estRows": 39511,
+      "deadTupleRatio": 0.5
+    },
+    {
+      "name": "statute_amendments",
+      "class": "CURRENT_V1_PRESENT_BUT_NOT_REQUEST_PATH",
+      "heapGiB": 0.004,
+      "indexesGiB": 0.002,
+      "toastGiB": 0,
+      "totalGiB": 0.005,
+      "totalBytes": 5709824,
+      "estRows": 18590,
+      "deadTupleRatio": null
+    }
+  ],
+  "topIndexes": [
+    {
+      "index": "judgments_full_text_idx",
+      "table": "judgments",
+      "method": "gin",
+      "bytes": 17711980544,
+      "gib": 16.496
+    },
+    {
+      "index": "judgment_chunks_embedding_hnsw",
+      "table": "judgment_chunks",
+      "method": "hnsw",
+      "bytes": 5073821696,
+      "gib": 4.725
+    },
+    {
+      "index": "judgment_paragraphs_judgment_idx",
+      "table": "judgment_paragraphs",
+      "method": "btree",
+      "bytes": 4960321536,
+      "gib": 4.62
+    },
+    {
+      "index": "judgment_paragraphs_unique",
+      "table": "judgment_paragraphs",
+      "method": "btree",
+      "bytes": 4960313344,
+      "gib": 4.62
+    },
+    {
+      "index": "judgments_source_url_key",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 4492148736,
+      "gib": 4.184
+    },
+    {
+      "index": "judgment_paragraphs_number_idx",
+      "table": "judgment_paragraphs",
+      "method": "btree",
+      "bytes": 3979395072,
+      "gib": 3.706
+    },
+    {
+      "index": "judgment_paragraphs_pkey",
+      "table": "judgment_paragraphs",
+      "method": "btree",
+      "bytes": 3528949760,
+      "gib": 3.287
+    },
+    {
+      "index": "new1_tranche_passages_hnsw",
+      "table": "new1_tranche_passages",
+      "method": "hnsw",
+      "bytes": 3401678848,
+      "gib": 3.168
+    },
+    {
+      "index": "new1_probe_hnsw_1000000_hnsw",
+      "table": "new1_probe_hnsw_1000000",
+      "method": "hnsw",
+      "bytes": 2729910272,
+      "gib": 2.542
+    },
+    {
+      "index": "judgments_content_hash_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 2532130816,
+      "gib": 2.358
+    },
+    {
+      "index": "judgments_case_title_trgm",
+      "table": "judgments",
+      "method": "gin",
+      "bytes": 2507923456,
+      "gib": 2.336
+    },
+    {
+      "index": "judgments_case_title_normalised_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 1513930752,
+      "gib": 1.41
+    },
+    {
+      "index": "judgment_citations_unique_edge",
+      "table": "judgment_citations",
+      "method": "btree",
+      "bytes": 1309564928,
+      "gib": 1.22
+    },
+    {
+      "index": "embedding_content_representative_pkey",
+      "table": "embedding_content_representative",
+      "method": "btree",
+      "bytes": 1295310848,
+      "gib": 1.206
+    },
+    {
+      "index": "judgments_cnr_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 981835776,
+      "gib": 0.914
+    },
+    {
+      "index": "judgments_pkey",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 922435584,
+      "gib": 0.859
+    },
+    {
+      "index": "judgment_citations_pkey",
+      "table": "judgment_citations",
+      "method": "btree",
+      "bytes": 877445120,
+      "gib": 0.817
+    },
+    {
+      "index": "judgments_case_number_trgm",
+      "table": "judgments",
+      "method": "gin",
+      "bytes": 836960256,
+      "gib": 0.779
+    },
+    {
+      "index": "judgment_citations_citing_idx",
+      "table": "judgment_citations",
+      "method": "btree",
+      "bytes": 808468480,
+      "gib": 0.753
+    },
+    {
+      "index": "new1_probe_hnsw_250000_hnsw",
+      "table": "new1_probe_hnsw_250000",
+      "method": "hnsw",
+      "bytes": 682647552,
+      "gib": 0.636
+    },
+    {
+      "index": "embedding_content_representative_rep_idx",
+      "table": "embedding_content_representative",
+      "method": "btree",
+      "bytes": 516112384,
+      "gib": 0.481
+    },
+    {
+      "index": "new1_doc_vector_stage_pkey",
+      "table": "new1_doc_vector_stage",
+      "method": "btree",
+      "bytes": 458407936,
+      "gib": 0.427
+    },
+    {
+      "index": "judgment_citations_unresolved_idx",
+      "table": "judgment_citations",
+      "method": "btree",
+      "bytes": 281477120,
+      "gib": 0.262
+    },
+    {
+      "index": "judgments_neutral_citation_key",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 242237440,
+      "gib": 0.226
+    },
+    {
+      "index": "judgments_judgment_date_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 209436672,
+      "gib": 0.195
+    },
+    {
+      "index": "judgments_court_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 193536000,
+      "gib": 0.18
+    },
+    {
+      "index": "judgments_case_type_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 183590912,
+      "gib": 0.171
+    },
+    {
+      "index": "new1_head_baseline_hnsw",
+      "table": "new1_head_baseline",
+      "method": "hnsw",
+      "bytes": 171606016,
+      "gib": 0.16
+    },
+    {
+      "index": "judgments_created_at_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 162308096,
+      "gib": 0.151
+    },
+    {
+      "index": "judgment_citation_keys_unique",
+      "table": "judgment_citation_keys",
+      "method": "btree",
+      "bytes": 150421504,
+      "gib": 0.14
+    },
+    {
+      "index": "judgments_date_court_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 142467072,
+      "gib": 0.133
+    },
+    {
+      "index": "judgment_statute_refs_unique",
+      "table": "judgment_statute_refs",
+      "method": "btree",
+      "bytes": 79478784,
+      "gib": 0.074
+    },
+    {
+      "index": "judgment_statute_refs_act_trgm",
+      "table": "judgment_statute_refs",
+      "method": "gin",
+      "bytes": 78536704,
+      "gib": 0.073
+    },
+    {
+      "index": "hc_ingest_ledger_pkey",
+      "table": "hc_ingest_ledger",
+      "method": "btree",
+      "bytes": 72540160,
+      "gib": 0.068
+    },
+    {
+      "index": "judgment_citation_keys_judgment_idx",
+      "table": "judgment_citation_keys",
+      "method": "btree",
+      "bytes": 58826752,
+      "gib": 0.055
+    },
+    {
+      "index": "judgment_citation_keys_key_idx",
+      "table": "judgment_citation_keys",
+      "method": "btree",
+      "bytes": 56156160,
+      "gib": 0.052
+    },
+    {
+      "index": "judgment_statute_refs_pkey",
+      "table": "judgment_statute_refs",
+      "method": "btree",
+      "bytes": 54435840,
+      "gib": 0.051
+    },
+    {
+      "index": "judgments_hc_document_class_idx",
+      "table": "judgments",
+      "method": "btree",
+      "bytes": 49086464,
+      "gib": 0.046
+    },
+    {
+      "index": "judgment_date_quality_pkey",
+      "table": "judgment_date_quality",
+      "method": "btree",
+      "bytes": 44916736,
+      "gib": 0.042
+    },
+    {
+      "index": "external_citation_documents_pkey",
+      "table": "external_citation_documents",
+      "method": "btree",
+      "bytes": 43958272,
+      "gib": 0.041
+    }
+  ],
+  "wal": {
+    "bytes": 2147483648,
+    "gib": 2,
+    "files": 128
+  },
+  "tempSinceReset": {
+    "files": 1190,
+    "bytes": 24742794664,
+    "gib": 23.044,
+    "since": null
+  },
+  "workstationDisk": {
+    "volume": "C:",
+    "freeGiB": 152.263,
+    "sizeGiB": 930.43
+  }
+}

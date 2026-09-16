@@ -1,0 +1,26 @@
+{
+  "kind": "lcc-r32a-user-backup-size",
+  "measuredAt": "2026-09-16T16:18:41.907Z",
+  "tool": "scripts/lcc-user-backup.mjs (shipped), full dump -> pristine restore -> verify -> drop",
+  "sourceDatabase": "lawmind",
+  "splitMode": "single",
+  "dumpMs": 1069,
+  "artifacts": {
+    "user-schema.dump": {
+      "sha256": "66345bc220110b3738829f1968e8693e3039c0234bfde151b09f1ab9d2103d2e",
+      "bytes": 313419
+    },
+    "user-data.dump": {
+      "sha256": "2aca24bf3da00c2cce4454efe82039dd7660a1e54977d249a88432c62de42cf6",
+      "bytes": 3703817
+    }
+  },
+  "userDataDumpBytes": 3703817,
+  "userSchemaDumpBytes": 313419,
+  "totalBytes": 4017236,
+  "elapsedSeconds": 10,
+  "verdict": "RESTORE_VERIFIED",
+  "tableCount": 44,
+  "rowsTotal": 120711,
+  "note": "dump files deleted after measurement; they held user data and are not evidence"
+}

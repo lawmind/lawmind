@@ -1,0 +1,110 @@
+{
+  "kind": "lcc-r32a-io-delta",
+  "from": "2026-09-16T16:16:41.532Z",
+  "to": "2026-09-16T16:17:07.505Z",
+  "note": "UPPER bound on distinct blocks touched: repeat reads and concurrent local readers are both counted",
+  "touchedBlocksUpperBound": 2882,
+  "touchedMiBUpperBound": 23,
+  "readsFromOsMiB": 2,
+  "rows": [
+    {
+      "kind": "index",
+      "name": "judgments_pkey",
+      "hit": 1526307,
+      "read": 140021,
+      "dHit": 1480,
+      "dRead": 0,
+      "touchedMiB": 12
+    },
+    {
+      "kind": "index",
+      "name": "judgments_court_idx",
+      "hit": 32131,
+      "read": 5766,
+      "dHit": 695,
+      "dRead": 0,
+      "touchedMiB": 5
+    },
+    {
+      "kind": "heap",
+      "name": "judgments",
+      "hit": 118489868,
+      "read": 173671752,
+      "dHit": 395,
+      "dRead": 0,
+      "touchedMiB": 3
+    },
+    {
+      "kind": "heap",
+      "name": "judgment_paragraphs",
+      "hit": 54632,
+      "read": 18292,
+      "dHit": 2,
+      "dRead": 177,
+      "touchedMiB": 1
+    },
+    {
+      "kind": "index",
+      "name": "judgment_paragraphs_unique",
+      "hit": 124355,
+      "read": 5558,
+      "dHit": 18,
+      "dRead": 19,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "toast",
+      "name": "judgment_paragraphs",
+      "hit": 4176,
+      "read": 4674,
+      "dHit": 17,
+      "dRead": 14,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "toast",
+      "name": "judgments",
+      "hit": 34089599,
+      "read": 27588282,
+      "dHit": 1,
+      "dRead": 24,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "index",
+      "name": "judgment_citations_cited_relationship_idx",
+      "hit": 6619,
+      "read": 2022,
+      "dHit": 12,
+      "dRead": 6,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "index",
+      "name": "lexeme_document_frequency_pkey",
+      "hit": 3249,
+      "read": 273,
+      "dHit": 14,
+      "dRead": 1,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "heap",
+      "name": "lexeme_document_frequency",
+      "hit": 19079,
+      "read": 4044,
+      "dHit": 4,
+      "dRead": 1,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "index",
+      "name": "judgments_storage_key_idx",
+      "hit": 5790,
+      "read": 18,
+      "dHit": 2,
+      "dRead": 0,
+      "touchedMiB": 0
+    }
+  ]
+}

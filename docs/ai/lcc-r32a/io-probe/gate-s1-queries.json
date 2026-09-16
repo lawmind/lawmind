@@ -1,0 +1,34 @@
+{
+  "kind": "lawmind-gate-s1-queries",
+  "pinnedAt": "2026-09-16T16:16:14.297Z",
+  "classes": [
+    {
+      "name": "exact citation",
+      "queries": ["cite:\"1950 INSC 1\""]
+    },
+    {
+      "name": "CNR",
+      "queries": ["UPHC010925922023", "HCBM030377262025", "PHHC011080662018"]
+    },
+    {
+      "name": "case number",
+      "queries": ["WPIL/1012/2023", "BA/1831/2025", "CWP/7429/2018"]
+    },
+    {
+      "name": "filtered lexical",
+      "queries": ["court:\"High Court of Karnataka\" AND bail"]
+    },
+    {
+      "name": "normal research query",
+      "queries": [
+        "anticipatory bail in a dowry harassment case",
+        "dying declaration corroboration requirement",
+        "specific performance of agreement to sell"
+      ]
+    },
+    {
+      "name": "broad / refused query",
+      "queries": ["bail"]
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "kind": "lcc-r32a-io-delta",
+  "from": "2026-09-16T16:16:15.330Z",
+  "to": "2026-09-16T16:16:40.561Z",
+  "note": "UPPER bound on distinct blocks touched: repeat reads and concurrent local readers are both counted",
+  "touchedBlocksUpperBound": 2504007,
+  "touchedMiBUpperBound": 19563,
+  "readsFromOsMiB": 11056,
+  "rows": [
+    {
+      "kind": "toast",
+      "name": "judgments",
+      "hit": 34089598,
+      "read": 27588258,
+      "dHit": 25697,
+      "dRead": 1012078,
+      "touchedMiB": 8108
+    },
+    {
+      "kind": "index",
+      "name": "judgments_case_number_trgm",
+      "hit": 2946724,
+      "read": 52283,
+      "dHit": 980789,
+      "dRead": 17401,
+      "touchedMiB": 7798
+    },
+    {
+      "kind": "heap",
+      "name": "judgments",
+      "hit": 118489473,
+      "read": 173671752,
+      "dHit": 31508,
+      "dRead": 358122,
+      "touchedMiB": 3044
+    },
+    {
+      "kind": "index",
+      "name": "judgments_full_text_idx",
+      "hit": 313010,
+      "read": 128833,
+      "dHit": 16552,
+      "dRead": 10638,
+      "touchedMiB": 212
+    },
+    {
+      "kind": "index",
+      "name": "judgments_case_title_trgm",
+      "hit": 219841,
+      "read": 136983,
+      "dHit": 11589,
+      "dRead": 12872,
+      "touchedMiB": 191
+    },
+    {
+      "kind": "index",
+      "name": "judgments_pkey",
+      "hit": 1524827,
+      "read": 140021,
+      "dHit": 16475,
+      "dRead": 1225,
+      "touchedMiB": 138
+    },
+    {
+      "kind": "index",
+      "name": "judgments_court_idx",
+      "hit": 31436,
+      "read": 5766,
+      "dHit": 2911,
+      "dRead": 29,
+      "touchedMiB": 23
+    },
+    {
+      "kind": "heap",
+      "name": "judgment_paragraphs",
+      "hit": 54630,
+      "read": 18115,
+      "dHit": 28,
+      "dRead": 2063,
+      "touchedMiB": 16
+    },
+    {
+      "kind": "index",
+      "name": "judgments_reporter_citation_keys_gin",
+      "hit": 332823,
+      "read": 1315,
+      "dHit": 1578,
+      "dRead": 174,
+      "touchedMiB": 14
+    },
+    {
+      "kind": "index",
+      "name": "judgment_paragraphs_unique",
+      "hit": 124337,
+      "read": 5539,
+      "dHit": 251,
+      "dRead": 237,
+      "touchedMiB": 4
+    },
+    {
+      "kind": "index",
+      "name": "lexeme_document_frequency_pkey",
+      "hit": 3235,
+      "read": 272,
+      "dHit": 438,
+      "dRead": 27,
+      "touchedMiB": 4
+    },
+    {
+      "kind": "toast",
+      "name": "judgment_paragraphs",
+      "hit": 4159,
+      "read": 4660,
+      "dHit": 272,
+      "dRead": 177,
+      "touchedMiB": 4
+    },
+    {
+      "kind": "index",
+      "name": "judgment_citations_cited_relationship_idx",
+      "hit": 6607,
+      "read": 2016,
+      "dHit": 355,
+      "dRead": 92,
+      "touchedMiB": 3
+    },
+    {
+      "kind": "heap",
+      "name": "lexeme_document_frequency",
+      "hit": 19075,
+      "read": 4043,
+      "dHit": 134,
+      "dRead": 21,
+      "touchedMiB": 1
+    },
+    {
+      "kind": "index",
+      "name": "judgments_cnr_idx",
+      "hit": 6608,
+      "read": 1825,
+      "dHit": 111,
+      "dRead": 9,
+      "touchedMiB": 1
+    },
+    {
+      "kind": "index",
+      "name": "judgments_storage_key_idx",
+      "hit": 5788,
+      "read": 18,
+      "dHit": 104,
+      "dRead": 0,
+      "touchedMiB": 1
+    },
+    {
+      "kind": "index",
+      "name": "judgments_neutral_citation_key",
+      "hit": 12271,
+      "read": 194,
+      "dHit": 27,
+      "dRead": 3,
+      "touchedMiB": 0
+    },
+    {
+      "kind": "index",
+      "name": "judgments_case_title_normalised_idx",
+      "hit": 5680,
+      "read": 3137,
+      "dHit": 0,
+      "dRead": 20,
+      "touchedMiB": 0
+    }
+  ]
+}
