@@ -1,0 +1,275 @@
+{
+  "kind": "NEW1_TERMINAL_RECEIPT",
+  "version": 1,
+  "round": "new1-r15",
+  "measuredAt": "2026-09-16T07:11:12.975Z",
+  "head": "3a30b3fc1ac085e7f12f4212e3dd750c5aed33c8",
+  "reproducedBy": "pnpm --filter @lawmind/harness new1:terminal",
+  "immutable": "Every figure was measured against the live database in this run, or read from an artifact produced in the same run and named here. A later round that disagrees should re-measure and write its own receipt rather than edit this one.",
+  "generation": {
+    "SNAPSHOT_ID": "5b5d02384b46c96c",
+    "SNAPSHOT_HASH": "5b5d02384b46c96c",
+    "snapshotHashRule": "substr(encode(sha256(pg_get_viewdef('judgment_embedding_eligibility', true)::bytea),'hex'),1,16)",
+    "identityMatches": true,
+    "identityMatchesWhy": "The snapshot id IS the hash of the deployed eligibility definition. They matching is the proof that the vectors and the population predicate still describe the same corpus; them differing would mean the contract moved under the graph.",
+    "snapshotRegistry": [
+      {
+        "snapshot_hash": "5b5d02384b46c96c",
+        "generation": "coarse-v2",
+        "definition_version": "document-vectors-v2",
+        "state": "ACTIVE",
+        "dimensions": 1024,
+        "metric": "cosine",
+        "sealed_at": null
+      },
+      {
+        "snapshot_hash": "UNIDENTIFIED_LEGACY_V1",
+        "generation": "legacy-v1",
+        "definition_version": "UNKNOWN",
+        "state": "SEALED",
+        "dimensions": 1024,
+        "metric": "cosine",
+        "sealed_at": "2026-08-30T08:07:48.144Z"
+      }
+    ]
+  },
+  "model": {
+    "modelIdentity": "BGE-M3 ONNX fp32, CLS-pooled, L2-normalised, GPU sidecar",
+    "recipe": "HEAD:4800",
+    "dimensions": 1024,
+    "metric": "cosine",
+    "MODEL_FILES_HASHED": true,
+    "files": [
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx_data",
+        "bytes": 2266820608,
+        "sha256": "a02dfa4caeb2916d812c9d817e84812f1fd66bb2160a5f7d87b4a6469e109a6c",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/onnx/model.onnx",
+        "bytes": 607298,
+        "sha256": "5d89a0010dd39aa2cfa8b22bb49f06904c5bbf5877135f877da419480f40cde3",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer.json",
+        "bytes": 17082821,
+        "sha256": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/tokenizer_config.json",
+        "bytes": 1173,
+        "sha256": "7e4c1cc848840aeccdd763458c18dd525eb0f795c992e00ebe9c28554e7db2d4",
+        "present": true
+      },
+      {
+        "path": ".models/Xenova/bge-m3/config.json",
+        "bytes": 770,
+        "sha256": "734a79bf12d388c1467a4e3ab625f45de7f6906cffcfb93a1eca1787504bed95",
+        "present": true
+      }
+    ],
+    "modelRevision": "UNKNOWN",
+    "modelRevisionWhy": "The local onnx/model.onnx_data matches no upstream revision: 42,988 of 2,266,820,608 bytes differ from the pinned-revision file (docs/ai/new1-r12/model-revision-recovery.json). Four of five files pin cleanly to 4de13258303883538bd53b696b452bf8099f0858; the weights do not. UNKNOWN stays UNKNOWN — the locally hashed identity above, plus the byte-verified off-machine copy in R2, is the identity evidence, and it is not the same claim as a recovered revision."
+  },
+  "population": {
+    "CURRENT_ELIGIBLE_DOCUMENTS": 8444960,
+    "CURRENT_ELIGIBLE_CONTENT_IDENTITIES": 7675588,
+    "EMBEDDED_DOCUMENTS": 7675603,
+    "EMBEDDED_CONTENT_IDENTITIES": 7675588,
+    "CONTENT_HASH_ALREADY_COVERED": 769357,
+    "QUEUED": 0,
+    "EXPLICITLY_REFUSED_INSIDE_ELIGIBLE": 0,
+    "UNNAMED_RESIDUAL": 0,
+    "accountingCloses": true,
+    "censusMeasuredAt": "2026-09-16T07:08:29.301Z",
+    "censusElapsedSec": 883.1,
+    "censusSource": "terminal-census.json in this round's directory, regenerated this run",
+    "refusalLedger": {
+      "ROWS": 72099,
+      "STILL_TIER_A_ELIGIBLE": 0,
+      "NO_ELIGIBILITY_ROW": 0,
+      "why": "EXPLICITLY_REFUSED above counts refusals INSIDE the eligible population and is 0. That is not \"nothing was refused\": the walk refused 72099 documents, and the live eligibility predicate independently excludes every one of them. Two mechanisms, same verdict, on all of them."
+    }
+  },
+  "EMBEDDING_COMPLETE": true,
+  "completenessRule": "QUEUED = 0 AND UNNAMED_RESIDUAL = 0 AND EMBEDDED_CONTENT_IDENTITIES = ELIGIBLE_CONTENT_IDENTITIES AND the four-state identity closes exactly.",
+  "refusals": {
+    "totalRows": 72099,
+    "byClass": [
+      {
+        "refusedClass": "text_unsafe:damaged_other",
+        "rows": 67071
+      },
+      {
+        "refusedClass": "procedural_disposal",
+        "rows": 5021
+      },
+      {
+        "refusedClass": "legacy_font_ascii",
+        "rows": 5
+      },
+      {
+        "refusedClass": "damaged_other",
+        "rows": 2
+      }
+    ],
+    "note": "Every refusal is a named row. A refusal that left no ledger row is precisely what UNNAMED_RESIDUAL exists to catch, and there are none."
+  },
+  "stageTable": {
+    "rowsAll": 8162558,
+    "currentGenerationRows": 7675603,
+    "legacyNullRows": 486955,
+    "distinctNonNullLabels": 1,
+    "legacyNote": "The legacy rows are the SEALED UNIDENTIFIED_LEGACY_V1 generation. The HNSW predicate excludes them; any whole-stage metric double-counts them."
+  },
+  "VECTOR_INTEGRITY": "PASS",
+  "vectorIntegrity": {
+    "measuredAt": "2026-09-16T07:11:12.902Z",
+    "elapsedSec": 163.5,
+    "normTolerance": 0.001,
+    "generations": [
+      {
+        "generation": "5b5d02384b46c96c",
+        "rows": 7675603,
+        "nullEmbeddings": 0,
+        "wrongDimensions": 0,
+        "zeroVectors": 0,
+        "nonUnitBeyondTolerance": 0,
+        "minNorm": 0.9999997615813925,
+        "maxNorm": 1.0000002384185507
+      },
+      {
+        "generation": "NULL_OLD_GENERATION",
+        "rows": 486955,
+        "nullEmbeddings": 0,
+        "wrongDimensions": 0,
+        "zeroVectors": 0,
+        "nonUnitBeyondTolerance": 0,
+        "minNorm": 0.9999998211860497,
+        "maxNorm": 1.0000001788139183
+      }
+    ],
+    "duplicateContentIdentity": {
+      "DUPLICATE_CONTENT_HASHES": 15,
+      "SURPLUS_ROWS": 15,
+      "reading": "The stage is keyed on judgment_id, so two judgment rows sharing a content hash is legal and each is a wasted embed, not a corruption. JUDGMENT_ID duplicates are structurally impossible — new1_doc_vector_stage_pkey is UNIQUE on judgment_id."
+    },
+    "source": "docs/ai/new1-r15/vector-integrity.json"
+  },
+  "incrementalQueue": {
+    "INCREMENTAL_QUEUE": "HEALTHY",
+    "INCREMENTAL_WATERMARK": "2026-09-15T18:12:59.605Z",
+    "newestJudgmentCreatedAt": "2026-09-15T18:12:59.605Z",
+    "watermarkHasReachedFrontier": true,
+    "passes": 110,
+    "embeddedSinceQueueStart": 4960,
+    "lastPassAt": "2026-09-16T06:59:06.936Z",
+    "lastPassKind": "queue_nothing_to_embed",
+    "oldestPendingAge": "none — the last pass classified every row it considered and emitted zero: {\"EMBEDDED\":2,\"REFUSED_NO_ELIGIBILITY_ROW\":0,\"REFUSED_NOT_ELIGIBLE\":0,\"REFUSED_TEXT_UNSAFE\":0,\"REFUSED_BAND_EXCLUDED\":0,\"CONTENT_HASH_ALREADY_COVERED\":0,\"QUEUED\":0}",
+    "unnamedInLastPass": 0,
+    "predicatesAgreeInLastPass": true,
+    "flatWatermarkNote": "A flat watermark is correct, not stalled: it sits at max(judgments.created_at), which is where an empty pass advances it to. The stall signal is a missing RECEIPT, not a still number."
+  },
+  "backgroundWorkers": {
+    "COARSE_BACKFILL": "TERMINAL",
+    "FULL_BACKFILL_WORKER_RUNNING": "NO",
+    "SECOND_GPU_WRITER": "NO",
+    "jobs": [
+      {
+        "jobId": "new1-doc-vector-embed",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.432Z"
+      },
+      {
+        "jobId": "new1-gpu-sidecar",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.593Z"
+      },
+      {
+        "jobId": "new1-sidecar-keeper",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.669Z"
+      },
+      {
+        "jobId": "new1-production-route-benchmark",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": null
+      },
+      {
+        "jobId": "new1-tranche-embed",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-08-26T01:40:11.749Z"
+      },
+      {
+        "jobId": "new1-coarse-walk",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:27:37.291Z"
+      },
+      {
+        "jobId": "new1-coarse-telemetry",
+        "status": "FINISHED",
+        "scheduledTask": null,
+        "retiredAt": "2026-09-10T05:36:44.258Z"
+      },
+      {
+        "jobId": "new1-delta-queue",
+        "status": "RUNNING",
+        "scheduledTask": "Lawmind-new1-delta-queue",
+        "retiredAt": null
+      }
+    ],
+    "scheduledTaskStateNote": "Task Scheduler is the authority on whether a recurring worker can still fire; the registry records intent. Both are reported in NEW1_TERMINAL_RECEIPT.md."
+  },
+  "hnsw": {
+    "HNSW_STATE": "OFFLOAD_REQUIRED",
+    "productionIndexName": "new1_doc_vector_stage_hnsw",
+    "productionIndexExists": false,
+    "productionIndexDef": null,
+    "anyHnswIndexOnStageTable": [],
+    "buildInProgress": false,
+    "LOCAL_FULL_HNSW_BUILD": "PROHIBITED_BY_MEASURED_RAM_CONSTRAINT",
+    "MEASURED_HNSW_RAM_REQUIREMENT_GIB": 19.52,
+    "measuredBytesPerVector": 2731,
+    "measuredBytesPerVectorSource": "docs/ai/new1-r10/hnsw-build-measurements.json",
+    "CURRENT_SAFE_RAM_GIB": 12.38,
+    "currentSafeRamCaveat": "A point reading taken immediately after two full-corpus scans, so the page cache is hot and this is a LOWER bound on what a quiesced box would offer. The conclusion does not depend on the precision: the requirement exceeds even the machine total minus shared_buffers on a good day.",
+    "machineTotalRamGiB": 31.75,
+    "HNSW_OFFLOAD_REQUIRED": true,
+    "shortfallGiB": 7.14,
+    "offloadPackage": "docs/ai/new1-r15/NEW1_HNSW_OFFLOAD.md",
+    "buildScript": "services/harness/src/new1-final-hnsw-build.mjs",
+    "SELECTED_EF_SEARCH": "DEFER_UNTIL_FULL_INDEX_EVALUATION",
+    "efSearchWhy": "The R14 probe findings describe a 1,000,000-row index. HNSW recall at a fixed ef_search falls as the graph grows, so a 1M figure carried to 7.67M would be a claim nobody measured.",
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED"
+  },
+  "host": {
+    "postgres": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+    "pgvector": "0.8.5",
+    "settings": [
+      {
+        "name": "maintenance_work_mem",
+        "setting": "524288",
+        "unit": "kB"
+      },
+      {
+        "name": "max_parallel_maintenance_workers",
+        "setting": "4",
+        "unit": null
+      },
+      {
+        "name": "shared_buffers",
+        "setting": "262144",
+        "unit": "8kB"
+      }
+    ]
+  }
+}

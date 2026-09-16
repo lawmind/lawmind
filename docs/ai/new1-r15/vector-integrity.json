@@ -1,0 +1,38 @@
+{
+  "kind": "new1_vector_integrity",
+  "measuredAt": "2026-09-16T07:11:12.902Z",
+  "elapsedSec": 163.5,
+  "otherActiveBackendsAtStart": 0,
+  "activeSnapshotHash": "5b5d02384b46c96c",
+  "normTolerance": 0.001,
+  "method": "Full scan of new1_doc_vector_stage grouped by generation. Norm computed as sqrt(-(embedding <#> embedding)) — the exact fp32 inner product — because two l2_norm() overloads resolve ambiguously on this install.",
+  "generations": [
+    {
+      "generation": "5b5d02384b46c96c",
+      "rows": 7675603,
+      "nullEmbeddings": 0,
+      "wrongDimensions": 0,
+      "zeroVectors": 0,
+      "nonUnitBeyondTolerance": 0,
+      "minNorm": 0.9999997615813925,
+      "maxNorm": 1.0000002384185507
+    },
+    {
+      "generation": "NULL_OLD_GENERATION",
+      "rows": 486955,
+      "nullEmbeddings": 0,
+      "wrongDimensions": 0,
+      "zeroVectors": 0,
+      "nonUnitBeyondTolerance": 0,
+      "minNorm": 0.9999998211860497,
+      "maxNorm": 1.0000001788139183
+    }
+  ],
+  "duplicateContentIdentity": {
+    "DUPLICATE_CONTENT_HASHES": 15,
+    "SURPLUS_ROWS": 15,
+    "reading": "The stage is keyed on judgment_id, so two judgment rows sharing a content hash is legal and each is a wasted embed, not a corruption. JUDGMENT_ID duplicates are structurally impossible — new1_doc_vector_stage_pkey is UNIQUE on judgment_id."
+  },
+  "nonFiniteNote": "pgvector rejects NaN and Infinity at input, so non-finite values cannot be stored. The norm bounds above are the positive evidence that none is present.",
+  "VECTOR_INTEGRITY": "PASS"
+}

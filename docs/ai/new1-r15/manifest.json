@@ -1,0 +1,41 @@
+{
+  "kind": "new1_evidence_manifest",
+  "writtenAt": "2026-09-16T07:13:33.685Z",
+  "head": "3a30b3fc1ac085e7f12f4212e3dd750c5aed33c8",
+  "directory": "docs/ai/new1-r15/",
+  "verifyWith": "node src/new1-evidence-manifest.mjs --verify",
+  "covers": "Every file in this directory except the manifest, enumerated from the directory rather than from a hand-written list, so an artifact added later is covered automatically instead of being silently omitted.",
+  "whyThisExists": "R14's finalization receipt bound terminal-census.json to a hash that the NEXT commit of the same round invalidated. Nothing checked it, so the broken chain read as an intact one. A binding nobody verifies is worse than no binding.",
+  "files": [
+    {
+      "path": "NEW1_HNSW_OFFLOAD.md",
+      "bytes": 19290,
+      "sha256": "ce67fcba063999d99331405a9d1e0c4a661ee54d8eebffdd660d5f2c2bcc8022"
+    },
+    {
+      "path": "NEW1_TERMINAL_RECEIPT.json",
+      "bytes": 10974,
+      "sha256": "62b049af8666418e48dba647e8832433cfe10cd0b47417e92afda223875d1589"
+    },
+    {
+      "path": "NEW1_TERMINAL_RECEIPT.md",
+      "bytes": 24472,
+      "sha256": "c8861c33b64432eae6723d8be8b06ff8b8d320ad01568025c842b35884ebd0cf"
+    },
+    {
+      "path": "terminal-census.json",
+      "bytes": 1640,
+      "sha256": "c94e988a2eb50fd047238f2900e76b4ba9745740197e3693253d72a76b7a0efd"
+    },
+    {
+      "path": "terminal-verify.json",
+      "bytes": 1882,
+      "sha256": "7c9212701a78a4ea130e1815581d4522dd0d81c5b304192ced371a40f5d71d1f"
+    },
+    {
+      "path": "vector-integrity.json",
+      "bytes": 1551,
+      "sha256": "aad00b69f2eac0889aceb5162e404b983df049750de4ad1eb9ff10b5479a9ae0"
+    }
+  ]
+}

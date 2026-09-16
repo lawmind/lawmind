@@ -34,7 +34,14 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const ROOT = new URL('../../../', import.meta.url);
 const url = readFileSync(new URL('.env', ROOT), 'utf8').match(/^DATABASE_URL=(.*)$/m)[1].trim();
-const OUT_DIR = new URL('docs/ai/new1-r14/', ROOT);
+/**
+ * The round that RUNS this owns the artifact. R14 wrote to its own directory and
+ * that file is its evidence; a later round re-running the census must not
+ * overwrite it, because "the census R14 took" and "the census we just took" are
+ * different facts and only one of them is what R14's receipt refers to.
+ * Default stays r14 so an unparameterised run still behaves as it did.
+ */
+const OUT_DIR = new URL(process.env.NEW1_OUT_DIR ?? 'docs/ai/new1-r14/', ROOT);
 mkdirSync(OUT_DIR, { recursive: true });
 const SNAPSHOT = process.env.NEW1_SNAPSHOT_HASH ?? '5b5d02384b46c96c';
 

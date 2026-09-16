@@ -77,7 +77,15 @@
     "rep:lab3": "tsx --env-file=../../.env src/representation-lab-v3-cli.ts",
     "frame:eligibility": "tsx --env-file=../../.env src/eligibility-frame-cli.ts",
     "long:posed": "tsx --env-file=../../.env src/long-fact-posed-cli.ts",
-    "product:ten": "tsx --env-file=../../.env src/new3-ten-matter-cli.ts"
+    "product:ten": "tsx --env-file=../../.env src/new3-ten-matter-cli.ts",
+    "new1:census": "node src/new1-terminal-census.mjs",
+    "new1:integrity": "node src/new1-vector-integrity.mjs",
+    "new1:receipt": "node src/new1-terminal-receipt.mjs",
+    "new1:receipt:r14": "node src/new1-completion-receipt.mjs",
+    "new1:terminal": "node src/new1-terminal-verify.mjs",
+    "new1:manifest": "node src/new1-evidence-manifest.mjs",
+    "new1:manifest:verify": "node src/new1-evidence-manifest.mjs --verify",
+    "ef:sweep": "node src/ef-search-sweep-cli.mjs"
   },
   "dependencies": {
     "@lawmind/api": "workspace:*",

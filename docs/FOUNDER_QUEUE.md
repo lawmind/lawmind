@@ -7544,3 +7544,63 @@ embedding is finished), `docs/ai/new1-r14/NEW1_R14_FINALIZATION.md` (the round).
 
 
 ---
+
+## FQ-NEW1-R15-LOGON — the embedding top-up only runs after someone logs in
+
+**Raised:** 16 September 2026 · **Lane:** NEW1 · **Urgency:** low, but it is
+silent when it bites · **Costs:** nothing, it is a setting
+
+The job that embeds newly ingested judgments (`Lawmind-new1-delta-queue`) is
+registered to run **interactively** — meaning it waits for a user to log in
+before it will fire, rather than starting with the machine.
+
+This showed up as a **9¼-hour hole** in its records overnight, between 20:59 on
+15 September and 06:14 on 16 September. That particular hole was innocent: the
+machine was switched off, and the job resumed by itself **six minutes** after it
+came back on.
+
+**Why it is still worth a line here.** A powered-off machine and a machine that
+booted but sat at the login screen produce *the same record* — a gap. The only
+thing that tells them apart is the boot time, and nobody is watching that. So the
+day this does bite, new judgments quietly go un-embedded and nothing anywhere says
+so.
+
+**Nothing is broken today and nothing is waiting on you to proceed.** The queue is
+caught up, it reports zero outstanding work, and the round it belongs to is
+finished and committed. This is recorded because changing how that job is
+registered affects how the machine schedules *all* the lanes' jobs, not only
+NEW1's, and that is a decision about the machine rather than about embedding.
+
+**What NEW1 suggests, when it is convenient:** register it to run whether or not
+anyone is logged in. It is a one-line change to the task, it costs nothing, and it
+removes a failure that is invisible by construction.
+
+Evidence: `docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.md` §5.
+
+---
+
+## FQ-NEW1-R15-HNSW-OFFLOAD — the build instructions now exist, ready for whichever option you pick
+
+**Raised:** 16 September 2026 · **Lane:** NEW1 · **This is not a new decision** —
+it is the missing half of `FQ-NEW1-R14-RAM`, which is still the live question.
+
+`FQ-NEW1-R14-RAM` asked you to choose between doing nothing, adding memory to this
+machine, or renting one for an afternoon. That question stands unchanged, and
+NEW1's view is unchanged: **adding memory, whenever convenient.**
+
+What is new is that **the build is now fully written down**, so whichever option
+you choose, nobody has to work it out again:
+`docs/ai/new1-r15/NEW1_HNSW_OFFLOAD.md`. It specifies exactly what to build, on
+what kind of machine, how to watch it, when to stop it, and what to check
+afterwards. The script that does it already exists and refuses to run against the
+wrong data.
+
+**One number has moved since 15 September, and not enough to matter.** Free memory
+on this machine read 11.7 GB then and 14.2 GB today. The build needs 19.5 GB. It
+is closer and still short.
+
+**Nothing is waiting on you.** The embedding itself is finished, proven, and now
+backed up off this machine. The index only affects a search feature that is
+switched off and stays switched off either way.
+
+---

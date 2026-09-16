@@ -1,0 +1,62 @@
+{
+  "kind": "new1_terminal_verify",
+  "ranAt": "2026-09-16T07:11:18.623Z",
+  "snapshotHash": "5b5d02384b46c96c",
+  "command": "pnpm --filter @lawmind/harness new1:terminal",
+  "stagesRun": [
+    "census",
+    "integrity",
+    "receipt",
+    "manifest"
+  ],
+  "stagesDefined": [
+    "census",
+    "integrity",
+    "receipt",
+    "manifest"
+  ],
+  "fullRun": true,
+  "stages": [
+    {
+      "id": "census",
+      "script": "services/harness/src/new1-terminal-census.mjs",
+      "exitCode": 0,
+      "seconds": 883.1
+    },
+    {
+      "id": "integrity",
+      "script": "services/harness/src/new1-vector-integrity.mjs",
+      "exitCode": 0,
+      "seconds": 163.6
+    },
+    {
+      "id": "receipt",
+      "script": "services/harness/src/new1-terminal-receipt.mjs",
+      "exitCode": 0,
+      "seconds": 5.6
+    },
+    {
+      "id": "manifest",
+      "script": "services/harness/src/new1-evidence-manifest.mjs",
+      "exitCode": 0,
+      "seconds": 0.1
+    }
+  ],
+  "allStagesPassed": true,
+  "fourState": {
+    "ELIGIBLE_DOCUMENTS": 8444960,
+    "ELIGIBLE_CONTENT_IDENTITIES": 7675588,
+    "EMBEDDED_DOCUMENTS": 7675603,
+    "EMBEDDED_CONTENT_IDENTITIES": 7675588,
+    "CONTENT_HASH_ALREADY_COVERED": 769357,
+    "QUEUED": 0,
+    "EXPLICITLY_REFUSED": 0,
+    "UNNAMED_RESIDUAL": 0
+  },
+  "accountingCloses": true,
+  "VECTOR_INTEGRITY": "PASS",
+  "terminalReceipt": "docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.json",
+  "EMBEDDING_COMPLETE": true,
+  "completenessRule": "QUEUED = 0 AND UNNAMED_RESIDUAL = 0 AND EMBEDDED_CONTENT_IDENTITIES = ELIGIBLE_CONTENT_IDENTITIES AND the four-state identity closes exactly.",
+  "notTerminalMeansStopped": "EMBEDDING_COMPLETE describes the coarse backfill reaching its frontier. It does NOT say the corpus stopped growing — new ingest raises the denominator and the incremental queue raises the numerator behind it, which is the system working."
+}
