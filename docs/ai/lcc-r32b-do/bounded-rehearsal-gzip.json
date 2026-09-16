@@ -6,15 +6,15 @@
   "steps": [
     {
       "step": "migrate",
-      "at": "2026-09-16T17:50:37.447Z",
-      "ms": 1090,
+      "at": "2026-09-16T18:12:26.745Z",
+      "ms": 1577,
       "tail": "migrations applied · pg_extension: pg_trgm, plpgsql, vector"
     },
     {
       "step": "export",
-      "at": "2026-09-16T17:50:42.043Z",
-      "ms": 4595,
-      "pack": "C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT",
+      "at": "2026-09-16T18:12:50.776Z",
+      "ms": 24030,
+      "pack": "C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-hEFlBN",
       "tables": [
         {
           "table": "judgments",
@@ -68,7 +68,7 @@
     },
     {
       "step": "pack_paragraph_bound",
-      "at": "2026-09-16T17:50:42.081Z",
+      "at": "2026-09-16T18:12:51.098Z",
       "boundJudgments": 500,
       "paragraphRows": 2355,
       "manifestRows": 2355,
@@ -77,8 +77,8 @@
     },
     {
       "step": "restore",
-      "at": "2026-09-16T17:50:53.582Z",
-      "ms": 11501,
+      "at": "2026-09-16T18:13:05.076Z",
+      "ms": 13978,
       "copyPhases": [
         "file_integrity",
         "truncate",
@@ -123,7 +123,7 @@
       ],
       "snapshot": {
         "isolation": "repeatable read",
-        "snapshotId": "0000000A-00000FCB-1"
+        "snapshotId": "0000004D-00002357-1"
       },
       "verify": [
         {
@@ -187,20 +187,20 @@
         "",
         "search smoke (the real retrieval path, on this generation):",
         "",
-        "  exact citation                    5ms    1 hit(s)  matched",
-        "  CNR                               2ms    1 hit(s)  matched",
-        "  filtered lexical                  4ms    5 hit(s)  matched",
-        "  normal research query             7ms    1 hit(s)  hybrid",
+        "  exact citation                    7ms    1 hit(s)  matched",
+        "  CNR                               3ms    1 hit(s)  matched",
+        "  filtered lexical                 15ms    5 hit(s)  matched",
+        "  normal research query             8ms    1 hit(s)  hybrid",
         "",
         "ACTIVATION ACTIVATE",
         "",
-        "trace written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT\\RESTORE_TRACE.jsonl",
-        "activation record written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-l2m9HT\\ACTIVATION.json"
+        "trace written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-hEFlBN\\RESTORE_TRACE.jsonl",
+        "activation record written to C:\\Users\\Xerxus\\AppData\\Local\\Temp\\lawmind-r32b-hEFlBN\\ACTIVATION.json"
       ]
     },
     {
       "step": "fk_load_order",
-      "at": "2026-09-16T17:50:53.582Z",
+      "at": "2026-09-16T18:13:05.077Z",
       "firstJudgmentsCopy": 24,
       "lastJudgmentsCopy": 26,
       "firstParagraphsCopy": 27,
@@ -208,7 +208,7 @@
     },
     {
       "step": "paragraph_proof",
-      "at": "2026-09-16T17:50:53.995Z",
+      "at": "2026-09-16T18:13:06.138Z",
       "pass": true,
       "checks": [
         {
@@ -270,7 +270,7 @@
                 "q": "VISHAKANTA",
                 "hits": 1,
                 "withParagraphEvidence": 1,
-                "ms": 7,
+                "ms": 8,
                 "degraded": []
               }
             ]
@@ -280,7 +280,7 @@
     },
     {
       "step": "cleanup",
-      "at": "2026-09-16T17:50:54.251Z",
+      "at": "2026-09-16T18:13:06.679Z",
       "dropped": "lawmind_r32b_rehearsal"
     }
   ],

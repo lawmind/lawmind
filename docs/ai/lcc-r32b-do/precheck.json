@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-16T17:56:10.410Z",
+  "account": {
+    "status": "active",
+    "dropletLimit": 30,
+    "emailVerified": true
+  },
+  "existingDroplets": [
+    {
+      "id": 566518737,
+      "name": "ubuntu-s-vikas",
+      "region": "sgp1",
+      "size": "s-1vcpu-1gb",
+      "classification": "FOREIGN_EXISTING_RESOURCE_DO_NOT_TOUCH"
+    }
+  ],
+  "quotaHeadroom": 29,
+  "region": {
+    "slug": "sgp1",
+    "available": true
+  },
+  "machines": [
+    {
+      "name": "lawmind-gatec-corpus",
+      "size": "so1_5-4vcpu-32gb",
+      "role": "corpus",
+      "available": true,
+      "vcpus": 4,
+      "memoryMiB": 32768,
+      "diskGiB": 900,
+      "priceHourly": 0.48512
+    },
+    {
+      "name": "lawmind-gatec-api-user",
+      "size": "s-2vcpu-4gb",
+      "role": "api-user",
+      "available": true,
+      "vcpus": 2,
+      "memoryMiB": 4096,
+      "diskGiB": 80,
+      "priceHourly": 0.03571
+    }
+  ],
+  "projected72hComputeUsd": 37.5,
+  "pass": true
+}

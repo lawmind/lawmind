@@ -549,6 +549,16 @@ async function main(): Promise<void> {
         cb(null, chunk);
       },
     });
+    /**
+     * No sort for the COPY. Every `orderBy` above is served by an index, but
+     * the planner prefers seq scan + sort, and sorting FULL rows spills the
+     * whole table to temp: ~100 GiB each for `judgments` and
+     * `judgment_paragraphs`, onto the disk that holds the live database.
+     * The checksum above sorts only 32-byte digests and keeps its plan.
+     * Unbounded only: a bounded slice sorts a few rows, and forcing index
+     * order there turns `= ANY(ids)` into a scan of the whole primary key.
+     */
+    if (boundIds === null) await copyConn.unsafe('SET enable_sort = off');
     const readable = await copyConn.unsafe(query).readable();
     /**
      * `pipeline()` NEVER RESOLVES here, and that cost an hour.
