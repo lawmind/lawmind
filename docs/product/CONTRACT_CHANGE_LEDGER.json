@@ -1005,18 +1005,86 @@
       "decidedBy": "NEW3 R23",
       "decidedAt": "2026-09-02",
       "earlyHandoff": "Disposition returned to LCC in bus 1761."
+    },
+    {
+      "id": "CCR-NEW3-R24-01",
+      "new3LedgerId": "CCR-2026-09-16-24",
+      "filedBy": "NEW3",
+      "filedVia": "NEW3 R24 local-v1 acceptance; implementation by LCC R29 (94950462), carried at 95986b04.",
+      "endpoints": [
+        "GET /judgments/:id",
+        "GET /judgments/:id/authorities",
+        "GET /judgments/:id/treatment",
+        "GET /judgments/:id/graph",
+        "POST /citations/copies",
+        "POST /verify/confirm",
+        "POST /documents/:id/citations",
+        "POST /judgments/:id/annotations"
+      ],
+      "decision": "AMENDED",
+      "classification": "R17_READ_SIDE_RATIFICATION",
+      "severity": "P2",
+      "frozenSemantics": {
+        "READ": "A well-formed judgment UUID absent from the ACTIVE corpus generation returns HTTP 404, code CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable.",
+        "WRITE": "A write that must validate against a corpus target the active generation cannot hydrate returns HTTP 409, code CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable.",
+        "neverClaims": ["never existed", "deleted", "invalid law", "unverified", "overruled"],
+        "copyRule": "The message states only that the judgment is not available in the selected corpus release (services/api/src/corpus/target-unavailable.ts corpusTargetUnavailableMessage)."
+      },
+      "conformanceEvidence": {
+        "implementation": "services/api/src/corpus/target-unavailable.ts: 404 for reads, 409 when opts.write, details.availability = corpus_unavailable",
+        "test": "pnpm --filter @lawmind/api exec tsx --test src/corpus/target-unavailable.test.ts -> 6/6 pass at 95986b04 (NEW3 R24)",
+        "writeSideReleased": "R17 section 1, accepted NEW3 R23 (missingTargetWrite 409, 0 rows created)"
+      },
+      "requiresAck": false,
+      "CONTRACT_CHANGE_REQUIRED": "NONE BEYOND THIS RATIFICATION. Wire protocol stays 1; the code is additive to R17.",
+      "closes": "CCR-LCC-R28-01 (deferred by NEW3 R23). Its DEFER record above is left unedited as history.",
+      "priorVersion": "R17",
+      "newVersion": "R17 (read side ratified by NEW3 R24)",
+      "releasedToRCC": true,
+      "decidedBy": "NEW3 R24",
+      "decidedAt": "2026-09-16"
+    },
+    {
+      "id": "CCR-NEW3-R24-02",
+      "new3LedgerId": "CCR-2026-09-16-25",
+      "filedBy": "NEW3",
+      "filedVia": "RCC R27B bus 1779: POST /judgments/:id/annotations returns 400 for a 5,458-character paragraph, and the reader cannot select an excerpt.",
+      "endpoints": ["POST /judgments/:id/annotations"],
+      "decision": "REJECTED_WITH_ALTERNATIVE",
+      "classification": "ANNOTATION_QUOTE_SEMANTICS",
+      "severity": "P1",
+      "rejected": "Raising the server quote maximum above 4000 to fit the current client, and any client- or server-side truncation of legal text.",
+      "frozenSemantics": {
+        "ANNOTATION_QUOTE_SEMANTICS": "EXACT_USER_SELECTED_EXCERPT",
+        "rules": [
+          "quote stays required; server maximum stays 4000 characters",
+          "a whole paragraph of 4000 characters or fewer may be sent as the quote, as today",
+          "for a paragraph longer than 4000 characters the client must require the advocate to select an exact excerpt of 4000 characters or fewer, and sends that excerpt verbatim",
+          "legal text is never silently trimmed, by client or server",
+          "the client never shows a highlight the server did not store, and never stores one string while showing another",
+          "paragraph_number / paragraph_index remain the anchor; quote remains the exact evidence excerpt"
+        ]
+      },
+      "requiresAck": true,
+      "CONTRACT_CHANGE_REQUIRED": "NONE ON THE WIRE. Client obligation only; RCC_PATCH_REQUIRED = YES.",
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": true,
+      "decidedBy": "NEW3 R24",
+      "decidedAt": "2026-09-16"
     }
   ],
   "counts": {
-    "received": 23,
-    "amended": 11,
-    "deferred": 5,
-    "rejectedWithAlternative": 3,
+    "received": 25,
+    "amended": 12,
+    "deferred": 4,
+    "rejectedWithAlternative": 4,
     "engineeringDefectRoutedToLCC": 4,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17."
+    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged."
   },
+
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the current released revision; the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object remains unchanged.",
   "revisionIdentities": {

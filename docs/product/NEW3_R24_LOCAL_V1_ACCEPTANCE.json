@@ -1,0 +1,175 @@
+{
+  "kind": "new3-r24-local-v1-acceptance",
+  "round": "NEW3 R24",
+  "decidedAt": "2026-09-16",
+  "companion": "docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.md",
+  "immutable": "A later round that disagrees writes its own ledger; it does not edit this one.",
+  "integration": {
+    "HEAD_START": "95986b043834238db40a1986d20bd411c7754b2a",
+    "ORIGIN_MAIN_AT_START": "95986b043834238db40a1986d20bd411c7754b2a",
+    "ancestry": {
+      "fe96f498": "ANCESTOR (NEW1 R15 handoff)",
+      "9974e336": "ANCESTOR (LCC R30 final handoff on origin)",
+      "10cde3b2": "ANCESTOR (LCC R30 fix on origin)",
+      "a65f1451": "ANCESTOR (LCC R30 fix, local copy, identical patch-id to 10cde3b2)",
+      "1e6510dc": "ANCESTOR (LCC R30 handoff, local copy)",
+      "fc2a54ca": "ANCESTOR (RCC R27B fix)",
+      "95986b04": "HEAD (RCC R27B merge of origin/main LCC R30 with RCC R27 and R27B)"
+    },
+    "integrationPerformedByNew3": "NONE: nothing was missing",
+    "INTEGRATED_HEAD_READY": "YES"
+  },
+  "new1": {
+    "receipt": "docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.json (measuredAt 2026-09-16T07:11:12.975Z)",
+    "CURRENT_ELIGIBLE_CONTENT_IDENTITIES": 7675588,
+    "EMBEDDED_CONTENT_IDENTITIES": 7675588,
+    "EMBEDDED_DOCUMENTS": 7675603,
+    "QUEUED": 0,
+    "UNNAMED_RESIDUAL": 0,
+    "VECTOR_INTEGRITY": "PASS",
+    "INCREMENTAL_QUEUE": "HEALTHY",
+    "JUDGMENT_ID_DUPLICATES": 0,
+    "duplicateContentRuling": "15 content hashes with 15 surplus document rows ACCEPTED as duplicate-content representation: judgment_id is UNIQUE (new1_doc_vector_stage_pkey), content identities close exactly, unnamed residual is 0.",
+    "EMBEDDING_PROGRAM_LOCAL_COMPLETE": "YES",
+    "HNSW": "DEFERRED_HIGH_MEMORY_OFFLOAD",
+    "HNSW_BLOCKS_LOCAL_V1": "NO",
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED",
+    "reopen": "NO"
+  },
+  "r16": {
+    "evidence": [
+      "docs/ai/lcc-r30/ROUND.md",
+      "docs/ai/lcc-r30/r16-real-route-single-fixed.json",
+      "docs/ai/lcc-r30/r16-real-route-split-fixed.json",
+      "docs/ai/lcc-r30/r16-real-route-single-legacy.json"
+    ],
+    "sixRoutesSingle": "PASS 6/6",
+    "sixRoutesStrictSplit": "PASS 6/6",
+    "sameKeyReplayNoDuplicate": "PASS",
+    "mismatchWritesNothing": "PASS (409 IDEMPOTENCY_KEY_REUSE_MISMATCH, 0 rows)",
+    "fiveXxNoPoisonedOutcome": "PASS (0 rows, 0 ledger rows, retry executes)",
+    "falsifier": "--wiring legacy reproduces the 500 on all six",
+    "R16_RUNTIME_COMPLETE": "YES",
+    "physicalSubset": "EVENT_DOUBLE_TAP, MATTER_CREATE, ADJOURNMENT, IDENTITY_ONLY_DELETE all PASS on SM-S921B (RCC R27B)",
+    "R16_PHYSICAL_COMPLETE": "YES"
+  },
+  "physicalAndroid": {
+    "evidence": "docs/ai/rcc-r27b/DEVICE.md",
+    "device": "SM-S921B Galaxy S24, Android 16, USB, adb reverse, local API at 1e6510dc, DB_SPLIT_MODE inferred single",
+    "EVENT_DOUBLE_TAP": "PASS",
+    "MATTER_CREATE": "PASS",
+    "ADJOURNMENT": "PASS",
+    "ANNOTATION_VALID_QUOTE": "PASS",
+    "VERIFY_CONFIRM": "NOT_REACHABLE_BY_CONSTRUCTION",
+    "IDENTITY_ONLY_DELETE": "PASS",
+    "AUTH_DEEP_LINK": "PASS",
+    "ANNOTATION_LONG_PARAGRAPH": "FAIL_UNDER_FROZEN_SEMANTICS (no excerpt selection; refused highlight stays tinted locally)",
+    "CORE_ANDROID_PHYSICAL": "NOT_PASS (6 of 7 core rows PASS; VERIFY_CONFIRM not reached)"
+  },
+  "verifyConfirm": {
+    "VERIFY_CONFIRM_LOCAL": "NOT_PASS",
+    "whyUnreachable": "UnverifiedCitationScreen is the only caller of POST /verify/confirm and opens only from JudgmentScreen's existence.kind === 'unconfirmed' band. GET /judgments/:id sets verificationState 'verified' / verifiedBySource 'corpus' because a corpus row resolves to itself (services/api/src/judgments/route.ts:421-423); as-at.ts and treatment.ts do the same.",
+    "whyNoCurrentProducer": "No ENABLED_V1 surface produces an unconfirmed citation: search serves corpus rows, documents.upload_and_ocr is DISABLED_EXTERNAL_BLOCK, drafting has no capability row (V1_CAPABILITY_REGISTRY_R16.json).",
+    "serverWrite": "POST /verify/confirm PASS on the LCC R30 real-route matrix, single and strict split",
+    "ruling": "NEW3 does not accept an unreachable row as a pass, and does not authorise a server change that makes a corpus read report itself unconfirmed. Fixing this requires a bounded decision and patch, recorded as BLOCKER B4."
+  },
+  "annotation": {
+    "ANNOTATION_QUOTE_SEMANTICS": "EXACT_USER_SELECTED_EXCERPT",
+    "contractLedger": "CCR-NEW3-R24-02",
+    "serverLimit": "4000 characters, unchanged",
+    "LONG_PARAGRAPH_CLIENT_SUPPORT": "NO",
+    "RCC_PATCH_REQUIRED": "YES"
+  },
+  "authResume": {
+    "AUTH_RESUME": "FIXED",
+    "reproduced": "3/3 crash (identity-only link into an app signed in as a full advocate); 3/3 stranded in the reverse direction",
+    "fix": "fc2a54ca: resumeAction waits for this link's own exchange",
+    "postFix": "5/5 clean in each direction",
+    "notExercised": "other status flips on a protected route, e.g. profile removed server-side while the app is open"
+  },
+  "reader": {
+    "READER_2022_INSC_690": "FIXED",
+    "server": "503 5/5 before; 200 5/5 after at 214/62/37/29/29 ms (LCC R30); timeout unchanged",
+    "device": "200 5/5 at 52-56 ms (RCC R27B)",
+    "openRisk": "cite: search uses the same citation fragment in prepared statements; generic-plan exposure NOT MEASURED (LCC bus 1778). Recorded as BLOCKER B3."
+  },
+  "r17": {
+    "R17_READ_SIDE_DECISION": "RATIFIED",
+    "R17_READ_STATUS": "404 CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable",
+    "R17_WRITE_STATUS": "409 CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable",
+    "contractLedger": "CCR-NEW3-R24-01",
+    "check": "src/corpus/target-unavailable.test.ts 6/6 pass at HEAD (NEW3 R24)"
+  },
+  "serving": {
+    "STRICT_SPLIT_LOCAL": "PASS (LCC R30 strict-split real-route 6/6; NEW3 R23 combined split probe; device run was single-DB and is not counted as split evidence)",
+    "FOUNDER_DB_SERVING_GUARD": "PASS",
+    "founderGuardEvidence": "services/api/src/ops/serving-contract.ts refuses staging/production with an empty LAWMIND_FORBIDDEN_DB_SYSTEM_IDENTIFIERS; development unaffected; src/ops/serving-contract.test.ts green at HEAD (27/27 alongside the callers file, 1 failure belongs to production-callers)",
+    "READY_CONTRACT_STATUS": "PASS",
+    "readyEvidence": "docs/API_CONTRACTS.md status table line 61 lists GET /ready as BUILT; node scripts/check-contract-status.mjs -> 'contract status ok · 107 endpoints · 94 built · 13 specced', exit 0"
+  },
+  "premiumPreview": {
+    "PREMIUM_PREVIEW_STATE": "POST_V1_PROVISIONAL_SILENT",
+    "evidence": "MatterScreen.tsx:255-257 renders PremiumPreviewCard only when the response is ok; a 404 leaves no visible state. The request still fires on every owner matter load.",
+    "localV1Blocker": "NO"
+  },
+  "apiSuite": {
+    "production-callers.test.ts": "FAIL at HEAD: release/activation.ts calls hybridSearch (line 330) and is not in PRODUCTION_CALLERS; red since LCC R27 5d84e870. Recorded as BLOCKER B2."
+  },
+  "acceptance": {
+    "BACKEND_LOCAL_COMPLETE": "NO",
+    "CLIENT_LOCAL_COMPLETE": "NO",
+    "ANDROID_PHYSICAL_COMPLETE": "NO",
+    "EMBEDDING_LOCAL_COMPLETE": "YES",
+    "LEGAL_TRUTH_GATES_COMPLETE": "YES",
+    "STRICT_SPLIT_LOCAL_COMPLETE": "YES",
+    "ACCOUNT_DELETION_IN_APP_COMPLETE": "YES",
+    "CURRENT_V1_REQUIRED_SURFACE_COMPLETE": "NO",
+    "CURRENT_V1_DESIGN_COMPLETE": "NO",
+    "CURRENT_CAPABILITY_GATING_COMPLETE": "YES",
+    "CURRENT_V1_FUNCTIONALLY_COMPLETE": "NO",
+    "LOCAL_V1_ACCEPTED": "NO"
+  },
+  "blockers": [
+    {
+      "id": "B1",
+      "owner": "RCC",
+      "item": "Annotation excerpt selection for paragraphs over 4000 characters, rollback of the optimistic tint on refusal, product copy in place of the raw validator text, and one physical long-paragraph test on the S24."
+    },
+    {
+      "id": "B2",
+      "owner": "LCC",
+      "item": "production-callers.test.ts red at HEAD. Decide whether release/activation.ts belongs in PRODUCTION_CALLERS, with a reason, and make the full API suite green."
+    },
+    {
+      "id": "B3",
+      "owner": "LCC",
+      "item": "Measure the cite: search path for the generic-plan failure that hit the reader: 5 controlled quiet reads after at least 6 executions of the prepared statement. FIXED + 5/5, or NOT_REPRODUCED under 5/5."
+    },
+    {
+      "id": "B4",
+      "owner": "NEW3 decision, then LCC+RCC",
+      "item": "VERIFY_CONFIRM is unreachable. Either the founder removes the physical row from local-v1 because no enabled surface can produce an unconfirmed citation, or LCC exposes a stored unconfirmed citation_checks state through GET /citations/:id and RCC opens UnverifiedCitationScreen from that check handle, proved with one disposable local fixture."
+    }
+  ],
+  "deferred": {
+    "CITATION_BULK_APPLY": "HOLD",
+    "CITATION_EDGE_APPLY_BLOCKS_GATE_C": "NO",
+    "STATUTE_LINKED_PUBLIC": "DISABLED",
+    "PUBLIC_SEMANTIC_SEARCH": "DISABLED",
+    "HNSW": "OFFLOAD_REQUIRED / DEFERRED",
+    "NEW2_INCREMENTAL": "may continue independently"
+  },
+  "remote": {
+    "EXTERNAL_DELETE_WEB": "MISSING (https://lawmind.co/delete-account -> 404, https://lawmind.co/ -> 200, probed 2026-09-16)",
+    "APPLE_PRODUCTION_BUILD_PROOF": "NOT_DONE",
+    "STAGING_GATE_S1": "NOT_DONE",
+    "REMOTE_MOBILE_DATA_GATE_C": "NOT_DONE",
+    "READY_FOR_REMOTE_SPEND_DECISION": "NO",
+    "PAID_REMOTE_INFRA_AUTHORIZED": "NO"
+  },
+  "nextGate": {
+    "NEXT_GATE": "NEW3_R24B_LOCAL_V1_RECHECK",
+    "entersWhen": "B1-B4 are closed with evidence",
+    "thenFrozen": "GATE_C_REMOTE_ALPHA, not entered until LOCAL_V1_ACCEPTED = YES and READY_FOR_REMOTE_SPEND_DECISION = YES"
+  }
+}

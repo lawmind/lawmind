@@ -7604,3 +7604,33 @@ backed up off this machine. The index only affects a search feature that is
 switched off and stays switched off either way.
 
 ---
+
+## FQ-NEW3-R24-VERIFY-ROW — one yes/no before the app can be signed off on this machine (16 Sep 2026)
+
+**What is needed from you.** The pre-launch checklist asks for one test on the phone: an
+advocate confirms, by hand, a citation we could not confirm ourselves. The test cannot be run
+today, because the app can never reach that state. Everything it currently shows comes straight
+from our own library of judgments, and a judgment from our library is confirmed by definition.
+The only feature that could bring in an unconfirmed citation, uploading a case file, stays
+switched off until the data-processing agreement is signed.
+
+Please choose one:
+
+- **(a) Recommended.** Take this test off the list until uploads or drafting are switched on, and
+  put it back at that point.
+- **(b)** Build a small extra path so that the test can be run now. That path would exist only
+  for the test.
+
+**What was built anyway.** The server side of the confirmation passed its tests. The screen
+exists in the app. Nothing was faked to make the test pass.
+
+**What stays blocked without an answer.** The local sign-off ("local v1 accepted"). Three other
+fixes, already assigned to the engineering lanes, block it too.
+
+**Separately, and unchanged.** Paying for remote servers is **not** authorised and is not being
+asked for yet. The public delete-account page, lawmind.co/delete-account, still returns "not
+found"; it will be needed before the Play Store submission.
+
+Record: `docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.md`, blocker B4.
+
+---
