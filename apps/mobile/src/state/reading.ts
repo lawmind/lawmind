@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
-import { newAttemptKey, runAttempt } from '../api/attempt';
+import { INVALID_IDEMPOTENCY_KEY, newAttemptKey, runAttempt } from '../api/attempt';
 import { api } from '../api/client';
+import { EXCERPT_TOO_LONG_COPY, isSendableQuote } from '../screens/judgment/excerpt';
 
 /**
  * READING PROGRESS AND HIGHLIGHTS — PD-9, items 3 and 6.
@@ -126,6 +127,20 @@ type ReadingState = {
 };
 
 const KEY = 'lawmind.reading.v1';
+
+/** Refusals no retry can change. See the rollback in `addHighlight`. */
+const DETERMINISTIC_REFUSALS = new Set(['INVALID_REQUEST', INVALID_IDEMPOTENCY_KEY]);
+
+/**
+ * The server's validator speaks zod (`quote: String must contain at most 4000
+ * character(s)`). An advocate is told what happened and what to do instead.
+ */
+function refusalCopy(serverMessage: string): string {
+  if (/^quote\b/.test(serverMessage)) {
+    return `This passage was not saved. ${EXCERPT_TOO_LONG_COPY}`;
+  }
+  return 'This passage was not saved — Lawmind could not accept it. Nothing was highlighted.';
+}
 
 /** 17px is the `holding` row of the scale and the reading default. */
 export const TEXT_SIZE_MIN = 16;
@@ -275,6 +290,15 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
 
   addHighlight: async (highlight) => {
     /*
+      THE BOUNDARY GUARD — NEW3 R24, `EXACT_USER_SELECTED_EXCERPT`. The reader
+      only ever hands this a sendable quote; if an impossible one arrives, it is
+      refused HERE, before a local tint and before a request. Never shortened:
+      a truncated quote is a different passage.
+    */
+    if (!isSendableQuote(highlight.text)) {
+      return { ok: false, message: EXCERPT_TOO_LONG_COPY };
+    }
+    /*
       THE KEY IS MINTED WITH THE HIGHLIGHT AND PERSISTED WITH IT. `??=` rather
       than always minting: a highlight arriving here a second time — a retry, or
       a rehydrated pending write — is the SAME intentional annotation and must
@@ -313,6 +337,25 @@ export const useReadingStore = create<ReadingState>((set, get) => ({
       set({ highlights: withId });
       persist({ ...get(), highlights: withId });
       return { ok: true };
+    }
+
+    /**
+     * A DETERMINISTIC REFUSAL DISPROVES THE HIGHLIGHT — rolled back, not held.
+     *
+     * Offline-first holds a pending write because nothing has said it failed.
+     * `INVALID_REQUEST` says exactly that: this payload will be refused on every
+     * retry. Keeping it would tint a passage the server never stored and keep a
+     * key that can only repeat the refusal. `INVALID_IDEMPOTENCY_KEY` is the same
+     * shape — the key itself was refused and nothing was created.
+     *
+     * Deliberately NOT every 4xx: `AUTHORITY_SET_ASIDE` has its own rule below,
+     * and a `409` key-reuse mismatch may sit beside a row that did commit.
+     */
+    if (DETERMINISTIC_REFUSALS.has(res.error.code)) {
+      const rolledBack = get().highlights.filter((h) => h !== held);
+      set({ highlights: rolledBack });
+      persist({ ...get(), highlights: rolledBack });
+      return { ok: false, message: refusalCopy(res.error.message) };
     }
 
     /**

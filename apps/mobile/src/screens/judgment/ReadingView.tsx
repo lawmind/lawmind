@@ -23,6 +23,8 @@ import { easing } from '../../theme/easing';
 import { haptics } from '../../theme/haptics';
 import { color, radius, space, state } from '../../theme/tokens';
 import { findInJudgment, matchLabel, stepMatch } from './findInJudgment';
+import { needsExcerpt } from './excerpt';
+import { ExcerptSheet } from './ExcerptSheet';
 import { MatterPicker } from './MatterPicker';
 import { ReadingControls } from './ReadingControls';
 import { ReadingSheet } from './ReadingSheet';
@@ -110,7 +112,20 @@ export function ReadingView({
   const [term, setTerm] = useState('');
   const [hitIndex, setHitIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [pickerFor, setPickerFor] = useState<JudgmentParagraph | null>(null);
+  /**
+   * THE MATTER PICKER CARRIES THE QUOTE, NOT ONLY THE PARAGRAPH. On a long
+   * paragraph the quote is the advocate's selected excerpt, and the picker must
+   * never fall back to `paragraph.text` — RCC R28, B1.
+   */
+  const [pickerFor, setPickerFor] = useState<{ paragraph: JudgmentParagraph; quote: string } | null>(
+    null,
+  );
+  /** The long paragraph whose excerpt is being chosen. Kept after close so the exit animates with its text. */
+  const [excerptFor, setExcerptFor] = useState<{
+    paragraph: JudgmentParagraph;
+    primary: 'bare' | 'matter';
+  } | null>(null);
+  const [excerptOpen, setExcerptOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const textSize = useReadingStore((s) => s.textSize);
@@ -142,7 +157,7 @@ export function ReadingView({
    * reports that refusal here rather than swallowing it.
    */
   const saveHighlight = useCallback(
-    async (paragraph: JudgmentParagraph, matterId?: string) => {
+    async (paragraph: JudgmentParagraph, quote: string, matterId?: string) => {
       /**
        * NO GUARD ON AN UNNUMBERED PARAGRAPH — removed 11 Aug 2026.
        *
@@ -161,7 +176,8 @@ export function ReadingView({
         judgmentId: judgment.judgmentId,
         paragraphIndex: paragraph.paragraphIndex,
         paragraphNumber: paragraph.paragraphNumber,
-        text: paragraph.text,
+        // The whole paragraph on the fast path, the selected excerpt otherwise.
+        text: quote,
         savedAt: new Date().toISOString(),
         matterId,
       };
@@ -169,6 +185,25 @@ export function ReadingView({
       if (!result.ok) setToastMessage(result.message);
     },
     [addHighlight, judgment.judgmentId],
+  );
+
+  /**
+   * EVERY SAVE ENTERS HERE. A paragraph the server takes whole (≤ 4,000) keeps
+   * the one-gesture path exactly as before. A longer one sends NOTHING until
+   * the advocate has selected the exact passage — NEW3 R24,
+   * `EXACT_USER_SELECTED_EXCERPT`; never truncated, never retyped.
+   */
+  const beginSave = useCallback(
+    (paragraph: JudgmentParagraph, destination: 'bare' | 'matter') => {
+      if (needsExcerpt(paragraph.text)) {
+        setExcerptFor({ paragraph, primary: destination });
+        setExcerptOpen(true);
+        return;
+      }
+      if (destination === 'matter') setPickerFor({ paragraph, quote: paragraph.text });
+      else void saveHighlight(paragraph, paragraph.text);
+    },
+    [saveHighlight],
   );
 
   /**
@@ -715,7 +750,7 @@ export function ReadingView({
                 void Clipboard.setStringAsync(`${judgment.caseTitle} ¶ ${item.paragraphNumber}`);
                 setToastMessage('Copied.');
               }}
-              onPickMatter={() => setPickerFor(item)}
+              onPickMatter={() => beginSave(item, 'matter')}
               onRemoveHighlight={() => {
                 /*
                 The highlight to remove is the one on THIS paragraph, found by
@@ -773,7 +808,7 @@ export function ReadingView({
                  * passage on its own." The action row's own "Save to matter"
                  * button opens the picker (`onPickMatter`) instead.
                  */
-                () => void saveHighlight(item)
+                () => beginSave(item, 'bare')
               }
               paragraph={item}
               selected={selected === item.paragraphIndex}
@@ -816,7 +851,7 @@ export function ReadingView({
               ? undefined
               : () => {
                   const paragraph = judgment.paragraphs[current];
-                  if (paragraph) void saveHighlight(paragraph);
+                  if (paragraph) beginSave(paragraph, 'bare');
                 }
           }
           onTextSize={() => setSheetOpen(true)}
@@ -892,17 +927,34 @@ export function ReadingView({
                 kind: 'annotation' as const,
                 judgmentId: judgment.judgmentId,
                 caseTitle: judgment.caseTitle,
-                paragraphIndex: pickerFor.paragraphIndex,
-                paragraphNumber: pickerFor.paragraphNumber ?? null,
-                quote: pickerFor.text,
+                paragraphIndex: pickerFor.paragraph.paragraphIndex,
+                paragraphNumber: pickerFor.paragraph.paragraphNumber ?? null,
+                quote: pickerFor.quote,
               },
             }
           : {})}
         onDismiss={() => setPickerFor(null)}
         onPick={(matterId) => {
-          if (pickerFor) void saveHighlight(pickerFor, matterId);
+          if (pickerFor) void saveHighlight(pickerFor.paragraph, pickerFor.quote, matterId);
         }}
         visible={pickerFor !== null}
+      />
+
+      <ExcerptSheet
+        onDismiss={() => setExcerptOpen(false)}
+        onSave={(excerpt) => {
+          const target = excerptFor;
+          setExcerptOpen(false);
+          if (target) void saveHighlight(target.paragraph, excerpt);
+        }}
+        onSaveToMatter={(excerpt) => {
+          const target = excerptFor;
+          setExcerptOpen(false);
+          if (target) setPickerFor({ paragraph: target.paragraph, quote: excerpt });
+        }}
+        primary={excerptFor?.primary ?? 'bare'}
+        source={excerptFor?.paragraph.text ?? ''}
+        visible={excerptOpen}
       />
 
       <Toast message={toastMessage} onDone={() => setToastMessage(null)} />

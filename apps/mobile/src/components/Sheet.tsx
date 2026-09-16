@@ -65,10 +65,17 @@ export function Sheet({
   visible,
   onDismiss,
   children,
+  dragToDismiss = true,
 }: {
   visible: boolean;
   onDismiss: () => void;
   children?: ReactNode;
+  /**
+   * FALSE WHERE THE CONTENT OWNS VERTICAL DRAGS. Native text-selection handles
+   * move vertically too, and a sheet-wide pan activating at 10px cancels them
+   * mid-drag. The backdrop tap and the back button still dismiss.
+   */
+  dragToDismiss?: boolean;
 }) {
   const { height: screenHeight } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
@@ -150,7 +157,7 @@ export function Sheet({
    * to: it cross-fades in place, and the backdrop tap dismisses it.
    */
   const pan = Gesture.Pan()
-    .enabled(!reduceMotion)
+    .enabled(!reduceMotion && dragToDismiss)
     .activeOffsetY([-DRAG_THRESHOLD, DRAG_THRESHOLD])
     .onBegin(() => {
       startY.value = translateY.value;
