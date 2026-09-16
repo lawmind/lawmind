@@ -23,8 +23,15 @@ say() { echo "$(date -u +%FT%TZ) $*"; }
 
 ship() {
   local f=$1 attempt local_sum remote_sum
+  local_sum=$(sha256sum "$PACK/$f" | cut -d' ' -f1)
+  # Already there, byte-identical (a re-export of unchanged data): do not resend.
+  remote_sum=$("${SSH[@]}" "$HOST" "test -f '$RDIR/$f' && sha256sum '$RDIR/$f' | cut -d' ' -f1" || true)
+  if [ "$local_sum" = "$remote_sum" ]; then
+    say "ALREADY_PRESENT $f sha256=$local_sum"
+    echo "$f" >> "$SHIPPED"
+    return 0
+  fi
   for attempt in 1 2 3; do
-    local_sum=$(sha256sum "$PACK/$f" | cut -d' ' -f1)
     local t0=$(date +%s)
     if "${SSH[@]}" "$HOST" "cat > '$RDIR/$f.part' && mv '$RDIR/$f.part' '$RDIR/$f'" < "$PACK/$f"; then
       remote_sum=$("${SSH[@]}" "$HOST" "sha256sum '$RDIR/$f' | cut -d' ' -f1")

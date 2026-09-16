@@ -58,8 +58,8 @@
  * the difference instead of discovering it in production.
  */
 import { createHash } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
+import { copyFile, link, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
 import { Transform } from 'node:stream';
 import { createGzip } from 'node:zlib';
 import { join } from 'node:path';
@@ -422,6 +422,13 @@ async function main(): Promise<void> {
    */
   const gzip = argv.includes('--gzip');
   const gzipLevel = Number(arg('gzip-level') ?? 6);
+  /**
+   * `--reuse-dir <pack>`: a table file from an earlier export is reused ONLY
+   * when this run, inside ITS OWN snapshot, computes exactly the rows and
+   * checksum recorded in that file's `.meta.json` sidecar. The data is then
+   * proven identical and re-streaming it would only cost hours.
+   */
+  const reuseDir = arg('reuse-dir');
 
   const sql = postgres(url, { max: 2, onnotice: () => {} });
   await pinSessionRendering(sql);
@@ -437,7 +444,14 @@ async function main(): Promise<void> {
    * its snapshot, and every per-table connection joins it — the same mechanism
    * `pg_dump` uses. It is held until the last table is written.
    */
-  const snapHolder = postgres(url, { max: 1, onnotice: () => {} });
+  /**
+   * `max_lifetime: 0` (disabled) is load-bearing. postgres.js closes a connection
+   * after a random 30-60 minutes by default, whenever it is idle client-side,
+   * and this one IS idle client-side for hours. It closed silently, taking
+   * the transaction and the exported snapshot with it. Two full exports died
+   * three hours in, at the next table (LCC R32B).
+   */
+  const snapHolder = postgres(url, { max: 1, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
   // The holder sits idle in its transaction for hours while tables stream.
   // The founder box sets idle_in_transaction_session_timeout = 1h, which
   // killed it three hours into the first full export (LCC R32B: the next
@@ -542,12 +556,44 @@ async function main(): Promise<void> {
      * A dedicated connection per table costs seven handshakes and cannot wedge
      * anything the next statement needs.
      */
-    const copyConn = postgres(url, { max: 1, onnotice: () => {} });
+    const copyConn = postgres(url, { max: 1, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
     await pinSessionRendering(copyConn);
     await copyConn.unsafe('SET idle_in_transaction_session_timeout = 0');
     await copyConn.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     await copyConn.unsafe(`SET TRANSACTION SNAPSHOT '${snapshotId}'`);
     const { rows, checksum: ck } = await checksum(copyConn, table, orderBy, where, columns);
+    const compression = gzip ? ('gzip' as const) : null;
+    const sidecar = (dir: string) => join(dir, `${file}.meta.json`);
+    const writeSidecar = (entry: Manifest['tables'][number]) =>
+      writeFile(sidecar(outDir), `${JSON.stringify({ ...entry, snapshotId }, null, 2)}\n`, 'utf8');
+
+    if (reuseDir) {
+      const prior = await readFile(sidecar(reuseDir), 'utf8')
+        .then((t) => JSON.parse(t) as Manifest['tables'][number])
+        .catch(() => null);
+      if (
+        prior &&
+        prior.rows === rows &&
+        prior.checksum === ck &&
+        prior.compression === compression &&
+        JSON.stringify(prior.columns) === JSON.stringify(columns)
+      ) {
+        await copyConn.end();
+        const from = join(reuseDir, file);
+        await link(from, path).catch(() => copyFile(from, path));
+        const h = createHash('sha256');
+        await new Promise<void>((resolve, reject) =>
+          createReadStream(path).on('data', (d) => h.update(d)).on('end', resolve).on('error', reject),
+        );
+        const sha = h.digest('hex');
+        const { size: reusedSize } = await stat(path);
+        const entry = { table, rows, checksum: ck, bytes: reusedSize, file, columns, sha256: sha, compression };
+        tables.push(entry);
+        await writeSidecar(entry);
+        console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${reusedSize} bytes  ${new Date().toISOString()}  REUSED (checksum matched in this snapshot)`);
+        continue;
+      }
+    }
     const fileHash = createHash('sha256');
     const hashTap = new Transform({
       transform(chunk: Buffer, _enc, cb) {
@@ -602,9 +648,11 @@ async function main(): Promise<void> {
     // so ending the connection releases it with nothing lost.
     await copyConn.end();
 
-    const { size } = await (await import('node:fs/promises')).stat(path);
+    const { size } = await stat(path);
     const sha256 = fileHash.digest('hex');
-    tables.push({ table, rows, checksum: ck, bytes: size, file, columns, sha256, compression: gzip ? 'gzip' : null });
+    const entry = { table, rows, checksum: ck, bytes: size, file, columns, sha256, compression };
+    tables.push(entry);
+    await writeSidecar(entry);
     console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes  ${new Date().toISOString()}`);
   }
 
