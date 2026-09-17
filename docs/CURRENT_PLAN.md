@@ -15957,3 +15957,24 @@ source-unavailable · 0 material temporal errors**. India Code migrated hosts;
 was shown stale and almost nothing was shown fresh. `statutes` has no repeal
 column, so that dimension is UNKNOWN for the whole corpus — handed to LCC.
 No applicability conclusion is drawn anywhere; `DOMAIN_TRUTH.md` is untouched.
+
+## RCC — Gate C mobile-data row (17 Sep 2026): HELD, not landed
+
+`RCC_GATE_C_MOBILE = HOLD`. The Galaxy S24 is locked behind a secure credential
+(`deviceLocked=1`, `strongAuthRequired` non-zero), which is a person's to clear.
+Search, Reader, Save, Matter and relaunch persistence were **not attempted** and
+nothing is claimed for them.
+
+Already in place, so resuming costs nothing: mobile data proven as the only route
+(no `wlan0`, no `adb reverse`/`forward`, no VPN), and a standalone staging release
+built at `8def684c` with `https://alpha-api.lawmind.co` baked in, installed fresh.
+The old on-device build was a Metro debug build and would have required the very
+`adb reverse` the gate forbids.
+
+**Next action is the founder's**: unlock the phone. `docs/FOUNDER_QUEUE.md`
+FQ-RCC-S24-UNLOCK. Deadline is the DigitalOcean destroy at 2026-09-19T17:57Z.
+
+Handed to LCC, evidenced but not confirmed: the emailed sign-in link from this
+deployment appears to land nowhere — better-auth's handler is not mounted, five
+landing paths 404 with no redirect, and the client claims no https host.
+`docs/ai/rcc-r31/magic-link-origin-question.json`.
