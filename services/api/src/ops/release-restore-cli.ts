@@ -337,7 +337,16 @@ async function main(): Promise<void> {
   const COPY_DEADLINE_MS = arg('copy-deadline')
     ? Number(arg('copy-deadline')) * 1000
     : COPY_DEADLINE_DEFAULT_MS;
-  const sql = postgres(target, { max: poolMax, onnotice: () => {} });
+  /**
+   * `max_lifetime: 0` — never recycle this session. postgres.js otherwise
+   * replaces a connection after 30-60 minutes, and everything this restore SET
+   * on it (session_replication_role, TimeZone, DateStyle) silently goes with
+   * it. The first full remote restore (LCC R32B) loaded `judgment_paragraphs`
+   * and `judgment_citations` on replacement sessions: FK triggers fired on
+   * 114M rows and the load took hours longer. Correct, but only by luck on
+   * the rendering settings.
+   */
+  const sql = postgres(target, { max: poolMax, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
   trace('connect_begin', { pool: poolMax });
   await pinSessionRendering(sql);
   const [who] = await sql<{ db: string; usr: string; su: boolean; pid: number }[]>`
