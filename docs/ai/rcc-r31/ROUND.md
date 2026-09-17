@@ -174,3 +174,47 @@ keyguard, so that is not evidence of stability under use.
 SSH, deployments, HNSW and semantic search, citation and statute work, latency
 thresholds and server timeouts. No DigitalOcean resource was created, changed or
 destroyed.
+
+## HTTP_ERRORS, CRASHES, ANRs, OOM
+
+No client request was made, so there is nothing to report from the product. For
+completeness, the probes RCC ran **from the workstation, not the phone**:
+
+| probe | result |
+| --- | --- |
+| `GET /version`, `/health`, `/ready`, `/release/capabilities` | 200 |
+| `POST /search {"query":"2022 INSC 690","language":"en"}` | 200 in 0.355 s, 1 result, `SATENDER KUMAR ANTIL v. CBI`, `verificationState verified`, `verifiedBySource corpus`, `overruledStatus none`, `canAddToMatter true`, `retrievalOutcome.state answered` |
+| `POST /search` with no `language` | 400 `INVALID_REQUEST` — correct validation, recorded so it is not mistaken for an outage |
+| the five magic-link landing paths | 404, no redirect (see above) |
+
+`logcat -b crash` was empty and the app process stayed alive behind the keyguard.
+That is **not** a stability result: the app was never used.
+
+## The phone was left ready, deliberately
+
+Wi-Fi is still **off** and mobile data still **on**. That is not a fault and it
+is not an oversight — it is the state the test needs, left in place so the run can
+continue the moment the phone is unlocked. Turning Wi-Fi back on before the run
+would void the row. The founder can of course restore it; the round would then
+re-prove the network state from scratch rather than trust it.
+
+## COMMITS and evidence paths
+
+| | |
+| --- | --- |
+| `HEAD_START` | `8def684c74cc1e8c02b7dd6890dc5ecd77a4ad2f` |
+| commits | `b9afb186` (this evidence set and the founder-queue entry), `f9cf0d99` (bus handoffs and the held queue item), and the commit carrying this closing section — `git log -1 -- docs/ai/rcc-r31/ROUND.md` names it |
+| `HEAD_FINAL` | that third commit |
+
+- [`ROUND.md`](ROUND.md) — this record
+- [`build-provenance.json`](build-provenance.json) — SHAs, build env, baked-origin proof, install proof
+- [`magic-link-origin-question.json`](magic-link-origin-question.json) — the LCC handoff, with what is verified and what is not
+- [`android-release-build.txt`](android-release-build.txt) — the full Gradle log, `BUILD SUCCESSFUL`, exit 0
+- [`device/network-proof-before.txt`](device/network-proof-before.txt) — the network state, captured before anything else
+- [`device/01-launch.png`](device/01-launch.png) — the lock screen, showing Vi India / 5G and no Wi-Fi glyph
+- [`device/02-unlock-attempt.png`](device/02-unlock-attempt.png) — blank, because Android marks the bouncer secure
+- bus `1795` (FIFTH), `1796` (NEW3), `1797` (LCC)
+- [`../../FOUNDER_QUEUE.md`](../../FOUNDER_QUEUE.md) — FQ-RCC-S24-UNLOCK
+
+**`RCC_GATE_C_MOBILE = HOLD — the S24 is locked behind a secure credential; the
+product flow was not run and nothing is claimed for it.`**
