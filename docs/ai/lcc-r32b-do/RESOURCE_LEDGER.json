@@ -69,7 +69,7 @@
       "id": "424dd1be-8e34-483b-a93b-e3cbf6cb1164",
       "name": "lawmind-gatec-corpus-fw",
       "hourlyUsd": 0,
-      "adminIp": "110.224.222.92",
+      "adminIp": "171.48.42.37",
       "region": "sgp1",
       "createdAt": "2026-09-16T17:57:51.327Z",
       "hardDestroyDeadline": "2026-09-19T17:57:51.327Z",
@@ -81,7 +81,7 @@
       "id": "53b49b45-d85a-4150-a5b6-e0d8d69a91d4",
       "name": "lawmind-gatec-api-user-fw",
       "hourlyUsd": 0,
-      "adminIp": "110.224.222.92",
+      "adminIp": "171.48.42.37",
       "region": "sgp1",
       "createdAt": "2026-09-16T17:57:52.132Z",
       "hardDestroyDeadline": "2026-09-19T17:57:52.132Z",
@@ -147,10 +147,10 @@
     "projected72hComputeUsd": 37.5,
     "pass": true
   },
-  "updatedAt": "2026-09-16T19:17:34.704Z",
+  "updatedAt": "2026-09-17T14:33:09.925Z",
   "cost": {
-    "at": "2026-09-16T17:57:53.262Z",
-    "accruedComputeUsd": 0.52,
+    "at": "2026-09-17T14:33:09.924Z",
+    "accruedComputeUsd": 10.94,
     "projected72hComputeUsd": 37.5,
     "band": "NORMAL"
   }

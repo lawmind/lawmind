@@ -1,0 +1,233 @@
+{
+  "kind": "lcc-r32b-remote-smoke",
+  "at": "2026-09-17T14:32:36.280Z",
+  "api": "https://alpha-api.lawmind.co",
+  "sha": "27b55fa45c902c9ce83a2f4214698c181cd3054e",
+  "matterId": "489ee72a-24b2-4d58-a8bb-19ade1a81e16",
+  "authority": {
+    "authorityId": "5e3ec847-696e-40d5-9005-a5699777abf4",
+    "judgmentId": "0c13f977-1152-4d03-a8a1-9e489f98bf2e",
+    "caseTitle": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR.",
+    "neutralCitation": "2022 INSC 690",
+    "reporterCitations": [
+      "[2022] 10 S.C.R. 351"
+    ],
+    "addedBy": "9654685e-bdfd-4788-abd5-78e31bd374cb",
+    "addedAt": "2026-09-17T14:32:28.831Z",
+    "removedAt": null,
+    "verificationState": "verified",
+    "verifiedBySource": "corpus",
+    "overruledStatus": "none",
+    "overruledByJudgmentId": null,
+    "overruledByTitle": null,
+    "overruledParas": null,
+    "overruledNote": null,
+    "precedentialEffect": "none",
+    "canAddToMatter": true,
+    "citableForUntouchedPropositions": true
+  },
+  "pass": true,
+  "checks": [
+    {
+      "name": "health",
+      "pass": true,
+      "status": 200,
+      "sha": "27b55fa45c902c9ce83a2f4214698c181cd3054e"
+    },
+    {
+      "name": "ready",
+      "pass": true,
+      "status": "ready",
+      "sha": "27b55fa45c902c9ce83a2f4214698c181cd3054e",
+      "corpusReachable": true,
+      "userReachable": true,
+      "splitMode": "split",
+      "rolesDistinct": true,
+      "servingEnv": "staging"
+    },
+    {
+      "name": "version",
+      "pass": true,
+      "status": 200,
+      "gitSha": "27b55fa45c902c9ce83a2f4214698c181cd3054e"
+    },
+    {
+      "name": "capabilities",
+      "pass": true,
+      "status": 200,
+      "registryVersion": "RELEASE_CAPABILITIES_R8_3.5",
+      "semantic": [
+        {
+          "k": "search.semantic.broad",
+          "state": "EXPERIMENTAL_INTERNAL"
+        },
+        {
+          "k": "search.semantic.supporting_authority",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.adverse_authority",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.counterarguments",
+          "state": "DISABLED"
+        },
+        {
+          "k": "search.semantic.long_input",
+          "state": "LIMITED"
+        },
+        {
+          "k": "search.semantic.abstention",
+          "state": "DISABLED"
+        }
+      ]
+    },
+    {
+      "name": "no public semantic search",
+      "pass": true,
+      "semantic": [
+        "search.semantic.broad=EXPERIMENTAL_INTERNAL",
+        "search.semantic.supporting_authority=DISABLED",
+        "search.semantic.adverse_authority=DISABLED",
+        "search.semantic.counterarguments=DISABLED",
+        "search.semantic.long_input=LIMITED",
+        "search.semantic.abstention=DISABLED"
+      ]
+    },
+    {
+      "name": "auth: no token refused",
+      "pass": true,
+      "status": 401,
+      "code": "AUTH_REQUIRED"
+    },
+    {
+      "name": "auth: bearer accepted",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "search: normal lexical",
+      "pass": true,
+      "status": 200,
+      "ms": 1330,
+      "results": 5,
+      "outcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.0012827786960061178,
+        "contractVersion": 1
+      },
+      "withParagraphEvidence": 5
+    },
+    {
+      "name": "search: exact citation 2022 INSC 690",
+      "pass": true,
+      "status": 200,
+      "ms": 184,
+      "results": 1,
+      "outcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "first": "0c13f977-1152-4d03-a8a1-9e489f98bf2e"
+    },
+    {
+      "name": "search: CNR",
+      "pass": true,
+      "status": 200,
+      "ms": 99,
+      "results": 1,
+      "outcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      }
+    },
+    {
+      "name": "search: filtered structured",
+      "pass": true,
+      "status": 200,
+      "ms": 199,
+      "results": 5,
+      "outcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.0012827786960061178,
+        "contractVersion": 1
+      }
+    },
+    {
+      "name": "reader: paragraphs",
+      "pass": true,
+      "status": 200,
+      "ms": 317,
+      "paragraphs": 76
+    },
+    {
+      "name": "matter: create",
+      "pass": true,
+      "status": 201,
+      "matterId": "489ee72a-24b2-4d58-a8bb-19ade1a81e16"
+    },
+    {
+      "name": "R16: idempotent replay returns the same matter",
+      "pass": true,
+      "status": 201,
+      "replayed": "489ee72a-24b2-4d58-a8bb-19ade1a81e16"
+    },
+    {
+      "name": "matter: detail",
+      "pass": true,
+      "status": 200
+    },
+    {
+      "name": "matter: event create",
+      "pass": true,
+      "status": 201
+    },
+    {
+      "name": "matter: save authority",
+      "pass": true,
+      "status": 201,
+      "authorityId": "5e3ec847-696e-40d5-9005-a5699777abf4",
+      "addedAt": "2026-09-17T14:32:28.831Z"
+    },
+    {
+      "name": "R17: unavailable target refused without a false existential claim",
+      "pass": true,
+      "status": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "message": "That judgment is not available in the selected corpus release, so it cannot be added to a matter right now."
+    },
+    {
+      "name": "annotation: create",
+      "pass": true,
+      "status": 200,
+      "annotationId": "73045343-baec-43a1-be43-d7be902d3d2f"
+    },
+    {
+      "name": "identity-only deletion request",
+      "pass": true,
+      "status": 200,
+      "kind": "erasure"
+    }
+  ]
+}
