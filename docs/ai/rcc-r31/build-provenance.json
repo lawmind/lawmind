@@ -1,0 +1,36 @@
+{
+  "kind": "rcc-r31-client-build-provenance",
+  "round": "rcc-r31",
+  "builtAt": "2026-09-17T19:41:00Z",
+  "clientSha": "8def684c74cc1e8c02b7dd6890dc5ecd77a4ad2f",
+  "clientTreeClean": {
+    "scope": "apps/**",
+    "porcelainCount": 0,
+    "note": "The APK is built from committed client code at HEAD. The working tree is dirty elsewhere (other lanes' artifacts); apps/** is not."
+  },
+  "remoteApiSha": "27b55fa45c902c9ce83a2f4214698c181cd3054e",
+  "shaRelationship": {
+    "commitsBetween": ["8def684c docs(lcc-r32b): Gate C backend round record and handoff to RCC and FIFTH"],
+    "codePathsChanged": [],
+    "note": "The only commit between the DEPLOYED server sha and the CLIENT sha is documentation. apps/**, services/** and packages/** are byte-identical across the two shas, so the client and the server are the same release in every code path."
+  },
+  "buildCommand": "gradlew :app:assembleRelease --no-daemon",
+  "buildEnv": {
+    "EXPO_PUBLIC_API_URL": "https://alpha-api.lawmind.co",
+    "EXPO_PUBLIC_APP_ENV": "staging",
+    "JAVA_HOME": "C:\Users\Xerxus\.gradle\jdks\eclipse_adoptium-17-amd64-windows.2"
+  },
+  "buildResult": "BUILD SUCCESSFUL in 7m 41s, EXITCODE=0",
+  "apk": "apps/mobile/android/app/build/outputs/apk/release/app-release.apk (104.3 MB)",
+  "bakedOriginProof": {
+    "method": "unzip assets/index.android.bundle from the APK and search the Hermes string table",
+    "found": "https://alpha-api.lawmind.co",
+    "context": "b\"...leftToRigh|ttps://alpha-api.lawmind.co|llapsed...\" (overlapping Hermes strings)",
+    "note": "`localhost:3000` also appears once. That is the DEVELOPMENT branch literal inside resolveBaseUrl (apps/mobile/src/api/client.ts); APP_ENVIRONMENT is `staging` in this binary, so that branch is unreachable. No request was observed to it."
+  },
+  "installedBuildIsRelease": {
+    "before": "flags=[ DEBUGGABLE HAS_CODE ... ], lastUpdateTime 2026-08-31 21:56:10 (the old Metro dev build)",
+    "after": "flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP KILL_AFTER_RESTORE ], firstInstallTime == lastUpdateTime == 2026-09-18 01:08:42",
+    "note": "DEBUGGABLE is gone and firstInstallTime equals lastUpdateTime, so this is a standalone release binary on a clean install. It needs no Metro and holds no prior app state, which is what makes a cached-corpus false positive impossible."
+  }
+}

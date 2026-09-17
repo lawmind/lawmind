@@ -7643,3 +7643,42 @@ found"; it will be needed before the Play Store submission.
 Record: `docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.md`, blocker B4.
 
 ---
+
+## FQ-RCC-S24-UNLOCK — please unlock the Galaxy S24 (17 Sep 2026)
+
+**What is needed from you: unlock the phone, and leave it unlocked.** That is the
+whole ask. No decision, no account, no money.
+
+**Why.** The last Gate C row is the app running over ordinary mobile data against
+the temporary server in Singapore — the same thing an advocate on a train would
+do. The phone is plugged in, Wi-Fi is off, mobile data is on, and the app is
+installed and already running. It is sitting behind the lock screen, and the lock
+needs a PIN, which is yours to enter and not something an agent may type.
+
+**What was built anyway.** All of it, up to the lock screen:
+
+- A proper standalone app was built and installed. The build that was on the
+  phone from 31 August was a developer build — it only runs while a bundler on
+  this workstation feeds it, which would have made the test meaningless. The new
+  one is self-contained, points at the Singapore server, and was installed fresh
+  so nothing left over from earlier testing can be mistaken for a live result.
+- The network was put into, and proved to be in, the right state: no Wi-Fi at
+  all, no cable shortcut of any kind, no VPN, the carrier as the only route.
+- While preparing the sign-in step, a real problem was found in the emailed
+  sign-in link and written up for the server lane. Briefly: **the link in the
+  sign-in email looks like it points nowhere.** It does not stop the test — the
+  app can be signed in another way — but it would stop a real advocate, so it is
+  now on the server lane's list.
+
+**What stays blocked without it.** The whole product half of Gate C: search,
+reading a judgment, saving an authority, putting it in a matter, and checking it
+is still there after restarting the app. None of it is claimed as passing,
+because none of it was watched happening.
+
+**Timing.** The Singapore machines are deleted automatically on **19 September,
+17:57 UTC**, and the server lane asked for this test before about 12:00 UTC that
+day. Unlocking any time before then is enough; there is no rush tonight.
+
+Record: `docs/ai/rcc-r31/ROUND.md`.
+
+---

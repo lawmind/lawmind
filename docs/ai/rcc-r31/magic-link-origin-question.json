@@ -1,0 +1,40 @@
+{
+  "kind": "rcc-r31-handoff-to-lcc",
+  "title": "The emailed sign-in link from alpha-api.lawmind.co appears to land nowhere",
+  "status": "EVIDENCED, NOT CONFIRMED — one observation is missing and only LCC can make it",
+  "why_this_matters": "Gate C's auth row is 'the real advocate loop'. An advocate signs in by tapping the link in the email. If the minted URL does not reach the app, the loop cannot complete by its designed path even when every API route is healthy.",
+  "observed": [
+    {
+      "what": "better-auth's own HTTP handler is not mounted on the API at the DEPLOYED sha",
+      "how": "git show 27b55fa45c902c9ce83a2f4214698c181cd3054e:services/api/src/app.ts — no auth.handler, no /api/auth mount. Only POST /auth/magic-link, /auth/verify, /auth/refresh, /auth/logout exist.",
+      "verdict": "VERIFIED"
+    },
+    {
+      "what": "every plausible magic-link landing path 404s on the live API",
+      "how": "GET against https://alpha-api.lawmind.co",
+      "results": {
+        "/api/auth/magic-link/verify?token=X": 404,
+        "/auth/magic-link/verify?token=X": 404,
+        "/magic-link/verify?token=X": 404,
+        "/api/auth/ok": 404,
+        "/api/auth/session": 404
+      },
+      "note": "No 3xx on any of them, so no Caddy or app-level redirect is rewriting the link into the deep link either.",
+      "verdict": "VERIFIED"
+    },
+    {
+      "what": "the Android client claims no https host, so an https link cannot open the app",
+      "how": "apps/mobile/android/app/src/main/AndroidManifest.xml — MainActivity's only VIEW intent-filter is android:scheme=\"lawmind\". The one https entry in the file is inside <queries>, which is a visibility declaration for canOpenURL, not an intent filter.",
+      "verdict": "VERIFIED"
+    }
+  ],
+  "notObserved": {
+    "what": "the runtime value of AUTH_BASE_URL in /etc/lawmind/api.env on the API host",
+    "whyItMatters": "packages/auth passes it to better-auth as baseURL, and better-auth builds the emailed URL from it. Its value decides the exact dead end, not whether there is one.",
+    "whoCanSee": "LCC — the host is LCC-owned and RCC does not read or change it."
+  },
+  "reasoning": "Whatever AUTH_BASE_URL holds, the link cannot currently land on the screen that consumes it. If it is the documented https://alpha-api.lawmind.co (docs/ops/REMOTE_ALPHA_PACKAGE.md requires https://), the URL 404s. If it were instead a lawmind:// origin, the app would open and route to +not-found, because the minted path is /magic-link/verify and the app's route is auth/verify. Neither reaches apps/mobile/app/auth/verify.tsx. This is INFERRED from the three verified observations above; it becomes CONFIRMED the moment anyone reads one real sign-in email.",
+  "notRccOwned": "services/**, packages/auth/** and deployment configuration are LCC's. RCC did not modify any of them and proposes no fix here.",
+  "cheapestConfirmation": "Send one magic link to a mailbox LCC can read and print the URL out of the message. That single line settles it.",
+  "rccWorkaroundForGateC": "RCC does not need the emailed link to exercise the client's auth path: POST /auth/magic-link is sent by the app itself, and the token can be replayed into the app as lawmind://auth/verify?token=<t>, which makes the app call POST /auth/verify over the same network. That tests the client honestly and leaves this defect where it belongs."
+}

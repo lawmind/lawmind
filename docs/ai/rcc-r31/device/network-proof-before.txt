@@ -1,0 +1,28 @@
+=== captured 2026-09-17T19:30:48Z ===
+--- adb devices -l ---
+List of devices attached
+RZCX90X1BNF            device product:e1sxins model:SM_S921B device:e1s transport_id:7
+
+--- adb reverse --list ---
+
+(empty above = no reverse route at all)
+--- adb forward --list ---
+
+(empty above = no forward route)
+--- settings global wifi_on ---
+0
+--- settings global mobile_data ---
+1
+--- settings global always_on_vpn_app ---
+null
+--- settings global private_dns_mode ---
+null
+--- ip -o addr show ---
+1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
+1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft forever
+2: dummy0    inet6 fe80::82c:a3ff:fea2:aeec/64 scope link \       valid_lft forever preferred_lft forever
+15: rmnet0    inet 10.105.141.11/24 brd 10.105.141.255 scope global rmnet0\       valid_lft forever preferred_lft forever
+15: rmnet0    inet6 2402:8100:2728:d909:9c29:7ba2:1d95:69d4/64 scope global \       valid_lft forever preferred_lft forever
+16: rmnet1    inet6 2402:8100:708a:a5d1:7968:c09e:754a:908d/64 scope global \       valid_lft forever preferred_lft forever
+--- active default network ---
+Active default network: 103
