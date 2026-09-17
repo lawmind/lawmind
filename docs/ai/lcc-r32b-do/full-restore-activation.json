@@ -1,0 +1,128 @@
+{
+  "kind": "lawmind-corpus-generation-activation",
+  "releaseVersion": "2026-09-17.mu4rlyak",
+  "target": "lawmind_corpus_a",
+  "checkedAt": "2026-09-17T14:05:07.915Z",
+  "restoreVerified": true,
+  "statistics": {
+    "verdict": {
+      "ready": true,
+      "unanalyzed": [],
+      "absent": [],
+      "empty": [
+        "judgment_chunks"
+      ]
+    },
+    "tables": [
+      {
+        "table": "judgments",
+        "hasRows": true,
+        "sizeBytes": 128209920000,
+        "plannerRowEstimate": 18777298,
+        "lastAnalyze": "2026-09-17 13:39:32.746485+00",
+        "lastAutoanalyze": "2026-09-17 12:08:18.498176+00",
+        "statisticRows": 42
+      },
+      {
+        "table": "judgment_chunks",
+        "hasRows": false,
+        "sizeBytes": 8192,
+        "plannerRowEstimate": 0,
+        "lastAnalyze": "2026-09-17 13:39:32.749727+00",
+        "lastAutoanalyze": null,
+        "statisticRows": 0
+      },
+      {
+        "table": "judgment_citations",
+        "hasRows": true,
+        "sizeBytes": 2288001024,
+        "plannerRowEstimate": 22451126,
+        "lastAnalyze": "2026-09-17 13:39:33.728888+00",
+        "lastAutoanalyze": "2026-09-17 13:37:49.803868+00",
+        "statisticRows": 10
+      },
+      {
+        "table": "statutes",
+        "hasRows": true,
+        "sizeBytes": 557056,
+        "plannerRowEstimate": 849,
+        "lastAnalyze": "2026-09-17 13:39:22.073017+00",
+        "lastAutoanalyze": "2026-09-17 13:36:41.720412+00",
+        "statisticRows": 11
+      },
+      {
+        "table": "statute_sections",
+        "hasRows": true,
+        "sizeBytes": 72826880,
+        "plannerRowEstimate": 36663,
+        "lastAnalyze": "2026-09-17 13:39:22.065778+00",
+        "lastAutoanalyze": "2026-09-17 13:36:41.70193+00",
+        "statisticRows": 10
+      },
+      {
+        "table": "lexeme_document_frequency",
+        "hasRows": true,
+        "sizeBytes": 8429568,
+        "plannerRowEstimate": 128243,
+        "lastAnalyze": "2026-09-17 13:39:22.219065+00",
+        "lastAutoanalyze": "2026-09-17 13:37:38.296025+00",
+        "statisticRows": 4
+      }
+    ]
+  },
+  "searchSmoke": {
+    "verdict": {
+      "ready": true,
+      "failed": [],
+      "allEmpty": false,
+      "slowestMs": 1862
+    },
+    "probes": [
+      {
+        "name": "exact citation",
+        "query": "cite:\"1950 INSC 1\"",
+        "ms": 8,
+        "results": 1,
+        "degraded": [],
+        "outcome": "matched",
+        "error": null
+      },
+      {
+        "name": "CNR",
+        "query": "HCMA010891742018",
+        "ms": 3,
+        "results": 1,
+        "degraded": [],
+        "outcome": "matched",
+        "error": null
+      },
+      {
+        "name": "filtered lexical",
+        "query": "court:\"Allahabad High Court\" AND bail",
+        "ms": 10,
+        "results": 0,
+        "degraded": [
+          "sparse_unbounded"
+        ],
+        "outcome": "unbounded",
+        "error": null
+      },
+      {
+        "name": "normal research query",
+        "query": "anticipatory bail in a dowry harassment case",
+        "ms": 1862,
+        "results": 5,
+        "degraded": [],
+        "outcome": "hybrid",
+        "error": null
+      }
+    ]
+  },
+  "activation": {
+    "verdict": "ACTIVATE",
+    "activate": true,
+    "reasons": []
+  },
+  "requiresStatistics": true,
+  "requiresSearchSmoke": true
+}

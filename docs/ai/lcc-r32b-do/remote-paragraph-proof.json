@@ -1,0 +1,86 @@
+{
+  "at": "2026-09-17T14:06:27.478Z",
+  "pass": true,
+  "checks": [
+    {
+      "name": "paragraphs present, no orphans",
+      "pass": true,
+      "detail": {
+        "j": "18793342",
+        "p": "92083253",
+        "pj": "18769565",
+        "ch": "0",
+        "orphans": "0"
+      }
+    },
+    {
+      "name": "Reader paragraph retrieval",
+      "pass": true,
+      "detail": {
+        "judgmentId": "0000018e-0efb-43a4-b43d-32cafffaecf9",
+        "status": 200,
+        "paragraphs": 11,
+        "title": "SRI GOPAL RAO Vs THE STATE OF KARNATAKA"
+      }
+    },
+    {
+      "name": "Search paragraph fallback",
+      "pass": true,
+      "detail": {
+        "hitsTotal": 10,
+        "withEvidence": 10,
+        "perQuery": [
+          {
+            "q": "anticipatory bail",
+            "hits": 0,
+            "withParagraphEvidence": 0,
+            "ms": 17,
+            "degraded": [
+              "sparse_unbounded"
+            ]
+          },
+          {
+            "q": "appeal dismissed",
+            "hits": 0,
+            "withParagraphEvidence": 0,
+            "ms": 2,
+            "degraded": [
+              "sparse_unbounded"
+            ]
+          },
+          {
+            "q": "evidence witness",
+            "hits": 0,
+            "withParagraphEvidence": 0,
+            "ms": 2,
+            "degraded": [
+              "sparse_unbounded"
+            ]
+          },
+          {
+            "q": "VISHAKANTA",
+            "hits": 10,
+            "withParagraphEvidence": 10,
+            "ms": 143,
+            "degraded": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "exact citation 2022 INSC 690",
+      "pass": true,
+      "detail": {
+        "kind": "matched",
+        "hits": 1,
+        "judgmentId": "0c13f977-1152-4d03-a8a1-9e489f98bf2e",
+        "reader": {
+          "status": 200,
+          "paragraphs": 76,
+          "title": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR."
+        },
+        "storedParagraphs": "76"
+      }
+    }
+  ]
+}

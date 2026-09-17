@@ -384,7 +384,9 @@ serve({ fetch: app.fetch, port: env.port }, (info) => {
  * Installed after `serve`, deliberately, for the same reason the embedder warm
  * is: nothing here may delay `/health` answering.
  */
-const activationOutbox = new ActivationOutbox(rawSql);
+// `activation_events` is a USER table. On the corpus handle every write failed
+// its FK in split mode and was retried, then dropped (LCC R32B, Gate C).
+const activationOutbox = new ActivationOutbox(userSql);
 installActivationOutbox(activationOutbox);
 
 /**

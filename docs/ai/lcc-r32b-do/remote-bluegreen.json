@@ -1,0 +1,88 @@
+{
+  "kind": "lcc-r32b-remote-bluegreen",
+  "api": "https://alpha-api.lawmind.co",
+  "pass": true,
+  "steps": [
+    {
+      "step": "generations",
+      "at": "2026-09-17T14:10:19.011Z",
+      "target": "0c13f977-1152-4d03-a8a1-9e489f98bf2e",
+      "presence": {
+        "A": "1",
+        "B": "0"
+      }
+    },
+    {
+      "step": "switched",
+      "at": "2026-09-17T14:10:29.909Z",
+      "to": "lawmind_corpus_a",
+      "active": "lawmind_corpus_a",
+      "ready": true
+    },
+    {
+      "step": "active_A",
+      "at": "2026-09-17T14:10:32.531Z",
+      "created": 201,
+      "saved": 201,
+      "authorityId": "492d1c29-e520-4d86-88f9-2d0e400f8b30",
+      "addedAt": "2026-09-17T14:10:25.136Z",
+      "caseTitle": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR."
+    },
+    {
+      "step": "user_digest_before",
+      "at": "2026-09-17T14:10:35.187Z",
+      "tables": 87
+    },
+    {
+      "step": "switched",
+      "at": "2026-09-17T14:10:44.064Z",
+      "to": "lawmind_corpus_b",
+      "active": "lawmind_corpus_b",
+      "ready": true
+    },
+    {
+      "step": "under_B",
+      "at": "2026-09-17T14:10:46.856Z",
+      "status": 200,
+      "availability": "corpus_unavailable",
+      "sameAuthorityId": true,
+      "sameAddedAt": true,
+      "noFabricatedFields": true,
+      "inAvailableList": false
+    },
+    {
+      "step": "resave_under_B",
+      "at": "2026-09-17T14:10:46.966Z",
+      "status": 200,
+      "sameAuthorityId": true
+    },
+    {
+      "step": "new_save_under_B",
+      "at": "2026-09-17T14:10:47.057Z",
+      "status": 409,
+      "code": "CORPUS_TARGET_UNAVAILABLE",
+      "falseExistentialClaim": false
+    },
+    {
+      "step": "switched",
+      "at": "2026-09-17T14:11:00.623Z",
+      "to": "lawmind_corpus_a",
+      "active": "lawmind_corpus_a",
+      "ready": true
+    },
+    {
+      "step": "back_on_A",
+      "at": "2026-09-17T14:11:00.972Z",
+      "status": 200,
+      "caseTitle": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR.",
+      "sameAuthorityId": true,
+      "sameAddedAt": true
+    },
+    {
+      "step": "user_digest_after",
+      "at": "2026-09-17T14:11:03.857Z",
+      "tables": 87,
+      "changedTables": []
+    }
+  ]
+}

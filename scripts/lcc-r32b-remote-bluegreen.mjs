@@ -10,7 +10,8 @@
  *   A  save an authority that exists only in A      201, hydrates with a title
  *   B  read the same matter                         the row is an unavailable shell,
  *                                                  same authorityId/addedAt, nothing fabricated
- *   B  a new save of that target                    409 CORPUS_TARGET_UNAVAILABLE
+ *   B  re-save of that same target                  200 { unavailableAuthority }, no mutation
+ *   B  a new save of a target B does not carry      409 CORPUS_TARGET_UNAVAILABLE
  *   A  read again                                   hydrated, same authorityId/addedAt
  *
  * Usage:
@@ -136,7 +137,16 @@ try {
       !!shell && shell.caseTitle === undefined && shell.neutralCitation === undefined && shell.verificationState === undefined,
     inAvailableList: (readB.body?.data?.authorities ?? []).some((a) => a.judgmentId === TARGET),
   });
-  const newSave = await call('POST', `/matters/${matterId}/authorities`, { judgmentId: TARGET });
+  // R17: re-saving the row that already exists is the already-satisfied save,
+  // `200 { unavailableAuthority }` with no mutation (authorities.ts, R17 item 3).
+  const resave = await call('POST', `/matters/${matterId}/authorities`, { judgmentId: TARGET });
+  record('resave_under_B', {
+    status: resave.status,
+    sameAuthorityId: resave.body?.data?.unavailableAuthority?.authorityId === authorityId,
+  });
+  // A NEW save of a target this generation does not carry is refused, and the
+  // refusal never claims the judgment does not exist.
+  const newSave = await call('POST', `/matters/${matterId}/authorities`, { judgmentId: randomUUID() });
   record('new_save_under_B', {
     status: newSave.status,
     code: newSave.body?.error?.code ?? null,
@@ -162,6 +172,7 @@ try {
     s.active_A.saved === 201 && !!s.active_A.caseTitle &&
     s.under_B.availability === 'corpus_unavailable' && s.under_B.sameAuthorityId && s.under_B.sameAddedAt &&
     s.under_B.noFabricatedFields && !s.under_B.inAvailableList &&
+    s.resave_under_B.status === 200 && s.resave_under_B.sameAuthorityId &&
     s.new_save_under_B.status === 409 && s.new_save_under_B.code === 'CORPUS_TARGET_UNAVAILABLE' &&
     !s.new_save_under_B.falseExistentialClaim &&
     !!s.back_on_A.caseTitle && s.back_on_A.sameAuthorityId && s.back_on_A.sameAddedAt &&
