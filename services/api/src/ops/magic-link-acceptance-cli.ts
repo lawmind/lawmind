@@ -17,6 +17,8 @@
 import { createAuth } from '@lawmind/auth';
 import postgres from 'postgres';
 
+import { sslFor } from '../db-ssl.ts';
+
 const email = process.argv[2];
 if (!email) throw new Error('usage: magic-link-acceptance-cli.ts <email>');
 
@@ -28,7 +30,9 @@ if (!origin || !secret || !databaseUrl) throw new Error('AUTH_BASE_URL, AUTH_SEC
 const out: Record<string, unknown> = { origin, email };
 const redact = (text: string, token: string) => text.split(token).join(`REDACTED(${token.length})`);
 
-const sql = postgres(databaseUrl, { max: 1, onnotice: () => {} });
+// The same TLS decision the service itself makes. A plain client is refused by
+// pg_hba on the Gate-C host, which is the correct posture and not a fault.
+const sql = postgres(databaseUrl, { max: 1, onnotice: () => {}, ssl: sslFor(databaseUrl) });
 
 let minted: string | null = null;
 const auth = createAuth({
@@ -43,10 +47,24 @@ const auth = createAuth({
   },
 });
 
-await auth.api.signInMagicLink({
-  body: { email },
-  headers: new Headers({ origin, 'user-agent': 'lcc-r33-acceptance' }),
-});
+/**
+ * A DRIVER ERROR PRINTS ITS PARAMETERS, AND ONE OF THEM IS THE TOKEN.
+ *
+ * The first run of this script failed on TLS and the Drizzle error carried the
+ * verification identifier straight to a terminal. The row was never written so
+ * nothing live escaped, but the shape of that accident is a credential in a log.
+ * Only the message survives here; the cause, with its parameters, does not.
+ */
+try {
+  await auth.api.signInMagicLink({
+    body: { email },
+    headers: new Headers({ origin, 'user-agent': 'lcc-r33-acceptance' }),
+  });
+} catch (error) {
+  const reason = error instanceof Error ? error.message.split('\n')[0] : String(error);
+  // eslint-disable-next-line preserve-caught-error -- the cause carries the token
+  throw new Error(`signInMagicLink failed (cause withheld — it carries the token): ${reason}`);
+}
 if (minted === null) throw new Error('the mailer was never called');
 
 const mintedUrl = new URL(minted);
