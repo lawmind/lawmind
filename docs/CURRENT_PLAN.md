@@ -15998,6 +15998,35 @@ use Wi-Fi. The Wi-Fi run was still genuinely remote — public HTTPS origin bake
 into the binary, no `adb reverse`/`forward`, no VPN — but the carrier was not the
 bearer, so that row stays open.
 
+### LCC R33 — the sign-in link is fixed, deployed and proved · 18 Sep 2026
+
+`LCC_GATE_C_AUTH = PASS`. `DEPLOYED_SHA = a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a`,
+read live from `GET /version`. Record: `docs/ai/lcc-r33/ROUND.md`.
+
+**Root cause.** better-auth mints its DEFAULT `/api/auth/magic-link/verify` from
+`AUTH_BASE_URL`. This API deliberately mounts no better-auth HTTP handler — that
+handler CONSUMES the one-time token into a browser cookie session the Expo client
+cannot use, so mounting it would have removed the 404 and left sign-in equally
+impossible. Nothing ever reconciled the minted URL with the app's
+`lawmind://auth/verify` route. Two correct halves, no join.
+
+**Fix.** The email URL is now ours, minted from the raw `token` the plugin hands
+`sendMagicLink`: `<AUTH_BASE_URL>/auth/magic-link/open?token=…`, a mounted route
+that 302s to the fixed deep link. A handoff, not a verifier — better-auth still
+owns expiry, single use and replay through `POST /auth/verify`. The redirect
+target is a constant, so `callbackURL` cannot steer a live credential.
+
+**Proved remotely, not inferred.** A real email was **delivered** and read back
+from Resend: one URL in it, the mounted one. A fresh identity went emailed URL →
+302 → deep link → `POST /auth/verify` 200 → `GET /me` 200; replay and an unissued
+token both 401. `/health`, `/ready`, `/version`, search and reader unchanged;
+semantic still not public. Gate-C restore and Gate-S1 were not re-run — this adds
+one route and alters no query or threshold.
+
+**`apps/**` was not touched and no client change is required.** What is left is
+the one step only a phone can answer: the Custom Tab handing the 302 to the app.
+Asked of RCC on the bus. `REMOTE_MOBILE_DATA` is unchanged and still not LCC's.
+
 Landed in `apps/**`: the transport's timeout message named "the search" on every
 route and was shown on the SIGN-IN screen. Fixed, regression-tested with a test
 proven able to fail, and retested on the phone.

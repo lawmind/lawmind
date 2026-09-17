@@ -1,0 +1,109 @@
+{
+  "round": "lcc-r33",
+  "recordedAt": "2026-09-17T22:45:00Z",
+  "api": "https://alpha-api.lawmind.co",
+  "deployedSha": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a",
+  "tokenHandling": "No token is recorded here. The acceptance CLI redacts to REDACTED(n) before printing, and the delivered email was inspected through a filter that replaces the token with its length. Nothing in this file was ever a live credential.",
+
+  "before": {
+    "sha": "27b55fa45c902c9ce83a2f4214698c181cd3054e",
+    "observedBy": "RCC on a physical S24, 17 Sep 2026, and re-observed by LCC from the workstation before any change",
+    "emailedUrlShape": "https://alpha-api.lawmind.co/api/auth/magic-link/verify?token=<redacted>&callbackURL=%2F",
+    "GET /api/auth/magic-link/verify": {
+      "status": 404,
+      "body": "{\"ok\":false,\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"no route for GET /api/auth/magic-link/verify\"}}"
+    },
+    "AUTH_BASE_URL": "https://alpha-api.lawmind.co — read from /etc/lawmind/api.env on the host, which settles the one thing RCC listed as notObserved"
+  },
+
+  "after": {
+    "deliveredEmail": {
+      "source": "Resend API, GET /emails/01a0b186-e73c-70a2-a4ae-0645d657e37f",
+      "to": "delivered@resend.dev",
+      "from": "Lawmind <no-reply@lawmind.co>",
+      "subject": "Your Lawmind sign-in link",
+      "last_event": "delivered",
+      "urlsInEmail": ["https://alpha-api.lawmind.co/auth/magic-link/open?token=REDACTED(32)"],
+      "note": "The genuine article: what a recipient receives from this deployment, not a URL a test built."
+    },
+    "acceptanceRun": {
+      "identity": "gatec-r33-4d08d011-2111-4f58-8ccd-ca5359ce16ef@lawmind.test — fresh, never RCC's",
+      "mintedOrigin": "https://alpha-api.lawmind.co",
+      "mintedPath": "/auth/magic-link/open",
+      "mintedUrlRedacted": "https://alpha-api.lawmind.co/auth/magic-link/open?token=REDACTED(32)",
+      "isBetterAuthDefaultPath": false,
+      "landingStatus": 302,
+      "landingLocationRedacted": "lawmind://auth/verify?token=REDACTED(32)",
+      "landingCacheControl": "no-store",
+      "landingBodyLength": 0,
+      "deepLinkCarriesTheSameToken": true,
+      "verifyStatus": 200,
+      "verifyOk": true,
+      "verifyUserEmail": "gatec-r33-4d08d011-2111-4f58-8ccd-ca5359ce16ef@lawmind.test",
+      "verifyProfileComplete": false,
+      "accessTokenIssued": true,
+      "meStatus": 200,
+      "meEmail": "gatec-r33-4d08d011-2111-4f58-8ccd-ca5359ce16ef@lawmind.test",
+      "replayStatus": 401,
+      "replayCode": "LINK_INVALID",
+      "invalidStatus": 401,
+      "invalidCode": "LINK_INVALID"
+    },
+    "publicProbes": {
+      "GET /auth/magic-link/open?token=probe-not-a-real-token": {
+        "status": 302,
+        "location": "lawmind://auth/verify?token=probe-not-a-real-token",
+        "cacheControl": "no-store",
+        "referrerPolicy": "no-referrer",
+        "via": "1.1 Caddy",
+        "note": "Caddy passes a non-http scheme through in Location unchanged."
+      },
+      "GET /api/auth/magic-link/verify?token=x": {
+        "status": 404,
+        "note": "STILL 404, and deliberately. better-auth's own handler consumes the token into a browser cookie session the Expo client cannot use."
+      },
+      "POST /auth/magic-link": {
+        "delivered@resend.dev": { "status": 200, "body": { "ok": true, "data": { "sent": true } } },
+        "lcc-r33-nobody@lawmind.test": { "status": 200, "body": { "ok": true, "data": { "sent": true } } },
+        "note": "Identical for both, which is the membership-oracle rule holding. A 200 proves Resend ACCEPTED; the delivery event above is what proves delivery."
+      }
+    },
+    "regression": {
+      "GET /version": { "status": 200, "gitSha": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a", "environment": "production" },
+      "GET /health": { "status": 200, "database": { "reachable": true, "latencyMs": 2 } },
+      "GET /ready": { "status": 200, "splitMode": "split", "rolesDistinct": true, "servingEnv": "staging" },
+      "POST /search {\"query\":\"2022 INSC 690\"}": {
+        "status": 200,
+        "seconds": 0.327,
+        "first": {
+          "caseTitle": "SATENDER KUMAR ANTIL versus CENTRAL BUREAU OF INVESTIGATION & ANR.",
+          "verificationState": "verified",
+          "verifiedBySource": "corpus",
+          "overruledStatus": "none",
+          "canAddToMatter": true
+        }
+      },
+      "GET /judgments/0c13f977-1152-4d03-a8a1-9e489f98bf2e": {
+        "status": 200,
+        "seconds": 1.251,
+        "court": "Supreme Court of India",
+        "overruledStatus": "none",
+        "paragraphs": 76
+      },
+      "semanticStates": {
+        "search.semantic.broad": "EXPERIMENTAL_INTERNAL",
+        "search.semantic.supporting_authority": "DISABLED",
+        "search.semantic.adverse_authority": "DISABLED",
+        "search.semantic.counterarguments": "DISABLED",
+        "search.semantic.long_input": "LIMITED",
+        "search.semantic.abstention": "DISABLED",
+        "note": "Unchanged by this round. Nothing public is ENABLED."
+      }
+    },
+    "cleanup": {
+      "identitiesRemoved": ["delivered@resend.dev", "gatec-r33-4d08d011-…@lawmind.test"],
+      "remainingR33Identities": 0,
+      "note": "auth_user, auth_session, auth_account, auth_verification and refresh_tokens rows this round created were deleted from the alpha USER database."
+    }
+  }
+}

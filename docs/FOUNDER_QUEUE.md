@@ -7688,6 +7688,9 @@ Record: `docs/ai/rcc-r31/ROUND.md`.
 
 ## FQ-RCC-SIGNIN-LINK-DEAD — nobody can sign in to the alpha by email (18 Sep 2026)
 
+> **FIXED AND DEPLOYED the same day — 18 Sep 2026, server lane.** The link in the
+> email now works. Details at the bottom of this entry. Nothing is needed from you.
+
 **This one is not a decision for you. It is a defect, it is already assigned to the
 server lane, and it is here because you should know before anyone is invited to
 try the alpha.**
@@ -7727,5 +7730,39 @@ resolves. The server lane has the evidence and the diagnosis.
 **Timing.** The Singapore machines delete themselves at **19 September 17:57 UTC**.
 
 Record: `docs/ai/rcc-r31/ROUND.md`.
+
+### FIXED — 18 September 2026, server lane
+
+**The sign-in link works.** It was a one-line disagreement between two correct
+pieces of our own software, and it took about four hours to find, fix, ship and
+prove.
+
+**What was wrong.** The sign-in library we use writes the link address itself, and
+it wrote one pointing at a door we had never built — and, it turns out, must never
+build: that library's own door hands the key to the *browser*, and the app is what
+needs it. So the email was correct, the server was correct, and the address between
+them belonged to nobody.
+
+**What it does now.** The email points at an address on our own server that exists,
+and that address passes the sign-in key straight into the app, untouched. The key
+still works once, still expires in fifteen minutes, and a second use is still
+refused — none of that changed, because none of that was broken.
+
+**How we know, rather than believe.** A real email was sent from the real server and
+**delivered**; we then read that delivered message and found the new working address
+inside it, with nothing else. A fresh sign-in was taken all the way through to a
+signed-in account that could ask the server who it was. Using it twice was refused.
+Search and reading a judgment still answer in under half a second. None of your data
+or anyone else's was involved — a throwaway test address was used and then deleted.
+
+**One thing still to check, and it needs the phone.** Everything above was proved
+over the public internet. The last step — the browser on your phone handing the link
+to the app — is the client lane's to watch, on the device, and they have been asked
+for it. It is the standard way this works everywhere else, so it is a confirmation
+rather than a doubt.
+
+**Nothing is needed from you.** No key, no account, no money, no decision.
+
+Record: `docs/ai/lcc-r33/ROUND.md`.
 
 ---
