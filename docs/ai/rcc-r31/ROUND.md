@@ -253,3 +253,37 @@ and any attempt to obtain a session by handling the emailed credential.
 SSH, deployments, HNSW and semantic search, citation and statute work, latency
 thresholds and server timeouts. No DigitalOcean resource was created, changed or
 destroyed. The phone was left with Wi-Fi on and mobile data off, as found.
+
+## COMMITS and evidence paths
+
+| | |
+| --- | --- |
+| `HEAD_START` | `8def684c74cc1e8c02b7dd6890dc5ecd77a4ad2f` |
+| `b9afb186` | the first evidence set and the founder-queue unlock entry, written while the phone was locked |
+| `f9cf0d99` | the first bus handoffs (1795/1796/1797) and the held queue item |
+| `20e416bc` | closing section of the held record |
+| `9fc20c0d` | **the result**: the `apps/**` timeout-copy fix with its regression test, the FAIL record, the confirmed link defect, the founder-queue entry, and the malformed-JSON repair |
+| `970d754f` | the bus corrections (1798/1799/1800) |
+| `HEAD_FINAL` | `970d754f74fb7b359dfc7e4d90d8560da4138917` |
+
+`b9afb186`, `f9cf0d99` and `20e416bc` were written before the phone was unlocked
+and say HOLD. They are left in place rather than rewritten — the corrections above
+and bus 1798–1800 supersede them, and a record that quietly re-writes what it
+believed an hour ago is worth less than one that shows the change.
+
+- [`ROUND.md`](ROUND.md) — this record
+- [`magic-link-origin-question.json`](magic-link-origin-question.json) — the failure, with the confirming observation and what RCC deliberately did not read
+- [`build-provenance.json`](build-provenance.json) — both builds, baked-origin proof, install proof
+- [`android-release-build.txt`](android-release-build.txt) · [`android-release-build-2.txt`](android-release-build-2.txt)
+- [`device/03-app-current.png`](device/03-app-current.png) — the app on sign-in, over cellular
+- [`device/04-signin-timeout-wrong-copy.png`](device/04-signin-timeout-wrong-copy.png) — the defect
+- [`device/05-emailed-link-404.png`](device/05-emailed-link-404.png) — **the failure**; no token in the image
+- [`device/06-signin-timeout-fixed.png`](device/06-signin-timeout-fixed.png) — the fix, retested on the phone
+- [`device/network-proof-before.txt`](device/network-proof-before.txt) · [`network-proof-at-run.txt`](device/network-proof-at-run.txt) · [`network-proof-wifi-run.txt`](device/network-proof-wifi-run.txt)
+- bus `1798` (LCC), `1799` (FIFTH), `1800` (NEW3) — and `1795`–`1797`, superseded
+- [`../../FOUNDER_QUEUE.md`](../../FOUNDER_QUEUE.md) — FQ-RCC-SIGNIN-LINK-DEAD
+
+**`RCC_GATE_C_MOBILE = FAIL — the emailed sign-in link resolves to the API's own
+404, so the advocate cannot authenticate and every product row behind sign-in is
+unreachable; REMOTE_MOBILE_DATA is independently not proven, the SIM having no
+working data service.`**
