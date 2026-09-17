@@ -150,7 +150,7 @@ decoration, and this one was checked rather than assumed.
 ### The full API suite, once
 
 `1293 tests · 1288 pass · 1 fail · 4 skipped · 405 s` —
-[`api-suite.log`](api-suite.log).
+[`api-suite.txt`](api-suite.txt).
 
 The one failure is a **latency assertion**, `src/search/sparse-bound.test.ts`
 "admits a globally common term inside a NARROW court+date population": *the fenced
