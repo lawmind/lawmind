@@ -84,7 +84,7 @@ is, and a staging box legitimately runs it.
 | `USER_DATABASE_URL` | **Required explicitly. No fallback to `DATABASE_URL`.** |
 | `DB_SPLIT_MODE` | Must be `split`. The declaration is what turns on the runtime identity verification; an inferred mode verifies nothing. |
 | `AUTH_SECRET` | Required. No development default anywhere. |
-| `AUTH_BASE_URL` | Required, and must be `https://`. A sign-in link is a bearer credential. |
+| `AUTH_BASE_URL` | Required, and must be `https://`. A sign-in link is a bearer credential. **It is this API’s own public origin**: the emailed link is `<AUTH_BASE_URL>/auth/magic-link/open?token=…`, which 302s to `lawmind://auth/verify`. Point it anywhere else and every link 404s while every send reports success — LCC R33. |
 | `RESEND_API_KEY` | Required. Send-only key (`DEPLOYMENT.md` §Mail). |
 | release identity | One of `LAWMIND_RELEASE_ID`, `RAILWAY_GIT_COMMIT_SHA`, `GITHUB_SHA`, `GIT_SHA`. |
 | `LAWMIND_ALLOW_PRIVATE_DB_HOST` | Optional, `1`. States that the API and its database share a provider's private network. Without it a private-range literal is refused. |

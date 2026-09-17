@@ -62,11 +62,75 @@ export * from './tokens.ts';
 /** How long a magic link stays usable. Stated in the email, not implied. */
 export const MAGIC_LINK_TTL_SECONDS = 15 * 60;
 
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHERE A SIGN-IN LINK LANDS — AND WHY IT IS NOT better-auth'S OWN PATH
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * The magic link is the ONLY credential in this product. Until 18 Sep 2026 the
+ * emailed link was whatever better-auth's magicLink plugin minted by default —
+ * `<baseURL><basePath>/magic-link/verify`, which for a bare origin is
+ * `/api/auth/magic-link/verify`. This API mounts no better-auth HTTP handler, so
+ * every emailed link resolved to our own 404 and nobody could sign in at all
+ * (observed on a physical device, `docs/ai/rcc-r31/ROUND.md`).
+ *
+ * **The repair is NOT to mount better-auth's handler at that path.** Its
+ * `magicLinkVerify` endpoint CONSUMES the verification value and sets a browser
+ * session cookie (`node_modules/better-auth/dist/plugins/magic-link/index.mjs` —
+ * `consumeVerificationValue` then `setSessionCookie`). A cookie in the mail
+ * app's browser is not a session in the Expo client, and the token is single-use,
+ * so letting the browser reach that endpoint would spend the credential on a
+ * surface that cannot hold it. The link would stop 404ing and sign-in would still
+ * be impossible — a worse failure, because it would look fixed.
+ *
+ * The contract that DOES work, and has since S5, is the one the client already
+ * implements (`apps/mobile/app/auth/verify.tsx`): the raw token reaches the app,
+ * the app posts it to `POST /auth/verify`, and THAT calls
+ * `auth.api.magicLinkVerify` — canonical better-auth validation, one use,
+ * fifteen minutes, on the server where the session actually lives.
+ *
+ * So the email carries an `https` URL on this API — it must be `https`, because
+ * a mail client will not linkify `lawmind://` — and that URL's only job is to
+ * hand the token, UNSPENT, to the app's deep link.
+ *
+ * **Both ends of that handoff are these three exports.** The path is minted here
+ * and mounted from here (`services/api/src/app.ts`), so the email and the route
+ * cannot drift apart again — drifting apart is exactly what happened, and it was
+ * invisible until a real advocate tapped a real link.
+ */
+export const MAGIC_LINK_LANDING_PATH = '/auth/magic-link/open';
+
+/**
+ * The app route that consumes the token. A CONSTANT, never derived from the
+ * request: a landing route that redirects wherever a query parameter says is an
+ * open redirect carrying a live credential. better-auth's own `callbackURL` is
+ * deliberately not honoured here for that reason — there is one destination.
+ */
+export const MAGIC_LINK_APP_URL = 'lawmind://auth/verify';
+
+/** The exact URL that goes in the email. */
+export function magicLinkLandingUrl(baseUrl: string, token: string): string {
+  // Appended rather than resolved: `new URL(path, base)` would discard a base
+  // that carries a path prefix, and this must survive one.
+  const url = new URL(`${baseUrl.replace(/\/+$/, '')}${MAGIC_LINK_LANDING_PATH}`);
+  url.searchParams.set('token', token);
+  return url.toString();
+}
+
+/** The deep link the landing route redirects to. */
+export function magicLinkAppUrl(token: string): string {
+  return `${MAGIC_LINK_APP_URL}?token=${encodeURIComponent(token)}`;
+}
+
 export type AuthConfig = {
   sql: Sql;
   /** Signs access tokens and better-auth's own state. Never in the repo. */
   secret: string;
-  /** Where the link points. The client resolves it to a screen. */
+  /**
+   * The public `https` origin of THIS API — the host that appears in the sign-in
+   * email and serves `MAGIC_LINK_LANDING_PATH`. It is not the app, and it is not
+   * a screen: it is the one origin that can hand a token to the deep link.
+   */
   baseUrl: string;
   mailer: Mailer;
 };
@@ -98,10 +162,13 @@ export function createAuth(config: AuthConfig) {
         // details, and gating here blocks legitimate users before they have seen
         // any value at all.
         disableSignUp: false,
-        sendMagicLink: async ({ email, url }) => {
+        // `url` is also offered and is deliberately NOT used: it is
+        // better-auth's own `/api/auth/magic-link/verify`, which this API does
+        // not serve and must not. See MAGIC_LINK_LANDING_PATH above.
+        sendMagicLink: async ({ email, token }) => {
           await config.mailer.send({
             to: email,
-            url,
+            url: magicLinkLandingUrl(config.baseUrl, token),
             expiresInMinutes: MAGIC_LINK_TTL_SECONDS / 60,
           });
         },

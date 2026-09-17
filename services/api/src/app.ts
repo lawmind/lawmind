@@ -61,6 +61,7 @@ import {
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
 import { authMiddleware, profileIdFor } from './auth/middleware.ts';
+import { handleMagicLinkLanding } from './auth/magic-link-landing.ts';
 import { requireAdmin } from './auth/admin.ts';
 import { knownAddress, callerIdentity, rateLimit, RATE_LIMITS } from './rate-limit.ts';
 import {
@@ -411,6 +412,33 @@ export function createApp(deps: AppDeps) {
     app.post('/auth/magic-link', validate('json', magicLinkRequest), (c) =>
       handleMagicLink(c, auth, c.req.valid('json')),
     );
+    /**
+     * WHERE THE EMAILED LINK LANDS. The ONE route the sign-in email points at,
+     * and the reason it exists at all is that until 18 Sep 2026 nothing did:
+     * better-auth minted `/api/auth/magic-link/verify` against
+     * `AUTH_BASE_URL` and this API served a 404 there, so on the alpha an
+     * advocate who followed the email could not sign in at all
+     * (`docs/ai/rcc-r31/ROUND.md`, `docs/ai/lcc-r33/ROUND.md`).
+     *
+     * The path is written out rather than imported from
+     * `MAGIC_LINK_LANDING_PATH`, because `scripts/check-contract-status.mjs`
+     * reads this file as TEXT and a constant is invisible to it — an unmounted
+     * route is exactly what that guard exists to catch. The join to the mailer
+     * is therefore enforced where it is real instead: `magic-link-landing.test`
+     * requests the URL the MAILER was handed, so the two drifting apart fails a
+     * test rather than an advocate's sign-in.
+     *
+     * NOT rate limited, deliberately. It reads nothing, writes nothing and
+     * decides nothing: it hands a token to the app, and `POST /auth/verify`
+     * (which IS limited) is where a grinder meets resistance. A limiter here
+     * would only add a way for an honest advocate behind a shared address to be
+     * refused their own sign-in link.
+     *
+     * The mail-cannon limiters above are mounted on `/auth/magic-link` exactly,
+     * not `/auth/magic-link/*`, so this sub-path does not consume their buckets
+     * — `magic-link-landing.test.ts` asserts that rather than trusting it.
+     */
+    app.get('/auth/magic-link/open', (c) => handleMagicLinkLanding(c));
     app.post('/auth/verify', validate('json', verifyRequest), (c) =>
       handleVerify(c, auth, c.req.valid('json')),
     );

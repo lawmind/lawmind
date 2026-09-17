@@ -66,6 +66,7 @@ endpoint.
 | endpoint | status |
 |---|---|
 | `POST /auth/magic-link` | BUILT |
+| `GET /auth/magic-link/open` | BUILT |
 | `POST /auth/verify` | BUILT |
 | `POST /auth/refresh` | BUILT |
 | `POST /auth/logout` | BUILT |
@@ -306,9 +307,34 @@ stays green while the database is down keeps Railway routing traffic at it.
 ## Auth — RCC owns
 ```
 POST /auth/magic-link   { email }            → { sent: true }
+GET  /auth/magic-link/open  ?token=…         → 302 lawmind://auth/verify?token=…
 POST /auth/verify       { token }            → { accessToken, refreshToken, user }
 POST /auth/refresh      { refreshToken }     → { accessToken, refreshToken }
 POST /auth/logout       —                    → { ok }
+
+**`GET /auth/magic-link/open` — where the emailed link lands. Added 18 Sep 2026,
+strictly additive; no existing request or response shape changed and the client
+was not touched.**
+
+It exists because the link in the sign-in email pointed at nothing. better-auth
+minted `/api/auth/magic-link/verify` from `AUTH_BASE_URL` and this API serves no
+such route, so on the DigitalOcean alpha an advocate who followed the email got
+our own 404 and could not sign in at all — observed on a physical device,
+`docs/ai/rcc-r31/ROUND.md`.
+
+It is a HANDOFF, not a verifier. It reads no database, consumes nothing, and
+cannot tell a live token from a forged one; it answers `302` to the constant
+`lawmind://auth/verify?token=…` and the app then runs the exchange it already
+implements. `POST /auth/verify` remains the only place a token is validated, and
+better-auth remains the thing that validates it — expiry, single use and replay
+are unchanged.
+
+The redirect target is a constant. better-auth's `callbackURL` and every other
+query parameter are ignored, because this URL carries a live credential and a
+destination a caller can choose is a way to take it.
+
+A request with no token, or one over 512 characters, answers `400 LINK_INVALID`
+rather than launching the app on a link that cannot work.
 GET  /me                —                    → { user }
 PATCH /me               { fullName?, phone?, preferredLanguage?, barEnrolmentNumber?,
                           expoPushToken? } → { user }

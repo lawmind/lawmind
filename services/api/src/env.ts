@@ -35,6 +35,24 @@ const port = Number(process.env['PORT'] ?? 3000);
  * Kept as a default rather than made required because a developer who must set an
  * environment variable to receive a console-printed link will set it once, wrongly,
  * and never look again.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT THIS VARIABLE ACTUALLY OWNS — corrected 18 September 2026
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * It is **the public origin of THIS API**, and the origin of exactly one URL
+ * that matters: the sign-in link, which is
+ * `<AUTH_BASE_URL>/auth/magic-link/open?token=…` (`MAGIC_LINK_LANDING_PATH` in
+ * `@lawmind/auth`). That route hands the token to the app's deep link.
+ *
+ * It is **not** the app, and the older comment on `AuthConfig.baseUrl` — "the
+ * client resolves it to a screen" — was wrong in a way that cost the alpha its
+ * only credential. better-auth also mints ITS own paths from this value, and
+ * until 18 Sep 2026 the emailed link was one of those: a correctly configured
+ * `AUTH_BASE_URL` produced `/api/auth/magic-link/verify`, which this API does
+ * not serve, so every link resolved to our own 404 (`docs/ai/rcc-r31/ROUND.md`).
+ * The variable was right and the link was dead — which is why the refusal below
+ * is necessary but was never sufficient.
  */
 export function resolveAuthBaseUrl(config: {
   authBaseUrl: string | undefined;
@@ -109,7 +127,7 @@ export const env = {
    */
   authSecret: () => required('AUTH_SECRET'),
 
-  /** Where a magic link points. The client resolves it to a screen. */
+  /** This deployment's own public origin. See `resolveAuthBaseUrl` above. */
   authBaseUrl: () =>
     resolveAuthBaseUrl({ authBaseUrl: process.env['AUTH_BASE_URL'], nodeEnv, port }),
 
