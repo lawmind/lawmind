@@ -115,6 +115,41 @@ describe('a cancelled request is reported as a timeout, whatever it throws', () 
   });
 
   /**
+   * AND IT NAMES NO OPERATION.
+   *
+   * OBSERVED on the physical S24, 17 September 2026, over a cellular link that
+   * had attached but carried no data: the advocate tapped `Send me a link` on
+   * the SIGN-IN screen and was told **"The search took longer than we wait for.
+   * It may still be running."** There is no search on that screen. The sentence
+   * was the transport's, written for `/search` and then handed to every route,
+   * and `SignInScreen` renders `error.message` verbatim because it has no
+   * timeout copy of its own.
+   *
+   * It also mis-stated the stakes. "It may still be running" invites the
+   * advocate to wait for a search to land; what was actually in doubt was
+   * whether a sign-in email had been sent — a thing you retry, not a thing you
+   * wait for.
+   *
+   * This asserts on a route that is NOT search, which is the point: the message
+   * travels with the transport, so it has to be true of every caller. It fails
+   * against the old copy and passes against the new.
+   */
+  it('names no operation, because every route shares this one sentence', async () => {
+    fetchMock.mockImplementation((_url: string, init: { signal: AbortSignal }) => {
+      Object.defineProperty(init.signal, 'aborted', { value: true, configurable: true });
+      return Promise.reject(expoCancellation());
+    });
+
+    // `statutes` is not a search, and neither is signing in.
+    const r = await api.statutes();
+
+    if (r.ok) throw new Error('unreachable');
+    expect(r.error.message).not.toMatch(/\bsearch(es|ing)?\b/i);
+    // Still says whose deadline it was - that part was always right.
+    expect(r.error.message).toMatch(/longer than we wait for/i);
+  });
+
+  /**
    * THE ONE THAT MUST NOT MOVE. A real connection failure did not abort, so the
    * signal is clean, and "you may be offline" is the true thing to say.
    */

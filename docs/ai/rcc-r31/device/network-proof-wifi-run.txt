@@ -1,0 +1,24 @@
+=== captured 2026-09-17T20:36:04Z — WI-FI RUN (mobile data proved dead, see cellular-not-validated.txt) ===
+--- adb reverse --list ---
+
+(empty above = none)
+--- adb forward --list ---
+
+(empty above = none)
+--- wifi_on / mobile_data ---
+1
+0
+--- always_on_vpn_app / private_dns_mode ---
+null
+null
+--- ip -o addr show ---
+1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
+1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft forever
+2: dummy0    inet6 fe80::82c:a3ff:fea2:aeec/64 scope link \       valid_lft forever preferred_lft forever
+16: rmnet1    inet6 2402:8100:708a:a5d1:7968:c09e:754a:908d/64 scope global \       valid_lft forever preferred_lft forever
+55: wlan0    inet 192.168.1.21/24 brd 192.168.1.255 scope global dynamic wlan0\       valid_lft 86381sec preferred_lft 86381sec
+55: wlan0    inet6 2401:4900:1ca2:1fd4:8c52:375e:3e7c:3fbb/64 scope global temporary dynamic \       valid_lft 86382sec preferred_lft 86349sec
+55: wlan0    inet6 2401:4900:1ca2:1fd4:946d:d7ff:fe3f:bda2/64 scope global dynamic mngtmpaddr \       valid_lft 86382sec preferred_lft 86382sec
+55: wlan0    inet6 fe80::946d:d7ff:fe3f:bda2/64 scope link \       valid_lft forever preferred_lft forever
+--- default network 104 ---
+  NetworkAgentInfo{network{104}  handle{450082295821}  ni{WIFI CONNECTED extra: } created=2026-09-17T20:35:38.091Z Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&IS_UNMETERED&ACCEPT_UNVALIDATED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 5076334 firstValidated 5076770 lastValidated 5076770 acceptUnvalidated acceptPartialConnectivity  lp{{InterfaceName: wlan0 LinkAddresses: [ fe80::946d:d7ff:fe3f:bda2/64,192.168.1.21/24,2401:4900:1ca2:1fd4:946d:d7ff:fe3f:bda2/64,2401:4900:1ca2:1fd4:8c52:375e:3e7c:3fbb/64 ] DnsAddresses: [ /fe80::1%wlan0,/192.168.1.1 ] Domains: null MTU: 0 ServerAddress: /192.168.1.1 TcpBufferSizes: 2097152,4194304,16777216,2097152,4194304,8388608 Routes: [ fe80::/64 -> :: wlan0 mtu 0,::/0 -> fe80::1 wlan0 mtu 0,2401:4900:1ca2:1fd4::/64 -> fe80::1 wlan0 mtu 0,2401:4900:1ca2:1fd4::/64 -> :: wlan0 mtu 0,192.168.1.0/24 -> 0.0.0.0 wlan0 mtu 0,0.0.0.0/0 -> 192.168.1.1 wlan0 mtu 0 ]}}  nc{[ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED LinkUpBandwidth>=21492Kbps LinkDnBandwidth>=43435Kbps Specifier: <WifiNetworkAgentSpecifier [WifiConfiguration=, SSID="X_5G", BSSID=12:36:23:de:a0:da, band=2, mMatchLocalOnlySpecifiers=false]> TransportInfo: <SSID: "X_5G", BSSID: 12:36:23:de:a0:da, MAC: 96:6d:d7:3f:bd:a2, IP: /192.168.1.21, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 11ax, RSSI: -51, Link speed: 864Mbps, Tx Link speed: 864Mbps, Max Supported Tx Link speed: 2401Mbps, Rx Link speed: 576Mbps, Max Supported Rx Link speed: 2401Mbps, Frequency: 5200MHz, Net ID: 148, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"X_5G"wpa2-pskMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>> SignalStrength: -51 OwnerUid: 1000 AdminUids: [1000] SSID: "X_5G" UnderlyingNetworks: Null]}  factorySerialNumber=7}

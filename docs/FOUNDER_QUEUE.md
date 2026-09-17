@@ -7646,6 +7646,9 @@ Record: `docs/product/NEW3_R24_LOCAL_V1_ACCEPTANCE.md`, blocker B4.
 
 ## FQ-RCC-S24-UNLOCK — please unlock the Galaxy S24 (17 Sep 2026)
 
+> **CLOSED the same night — you unlocked it, thank you.** The test then ran and
+> found something worse than a locked phone. See FQ-RCC-SIGNIN-LINK-DEAD below.
+
 **What is needed from you: unlock the phone, and leave it unlocked.** That is the
 whole ask. No decision, no account, no money.
 
@@ -7678,6 +7681,50 @@ because none of it was watched happening.
 **Timing.** The Singapore machines are deleted automatically on **19 September,
 17:57 UTC**, and the server lane asked for this test before about 12:00 UTC that
 day. Unlocking any time before then is enough; there is no rush tonight.
+
+Record: `docs/ai/rcc-r31/ROUND.md`.
+
+---
+
+## FQ-RCC-SIGNIN-LINK-DEAD — nobody can sign in to the alpha by email (18 Sep 2026)
+
+**This one is not a decision for you. It is a defect, it is already assigned to the
+server lane, and it is here because you should know before anyone is invited to
+try the alpha.**
+
+**What happened.** On your phone, on the real app, against the real server: the
+app sent a sign-in email, the email arrived in under a minute and looked right.
+Tapping **Sign in** in it opened a browser showing an error page from our own
+server — *no route for GET /api/auth/magic-link/verify*. The address the email
+points at does not exist on the server.
+
+A sign-in link is the only credential this product has. There is no password. So
+right now, on the alpha, **an advocate who follows the email cannot get in at
+all**, and nothing behind sign-in — search, reading a judgment, saving an
+authority, matters — can be reached or tested.
+
+**What was built anyway.** A proper standalone app, pointing at the Singapore
+server, installed fresh on your phone. It is still there and still works up to the
+sign-in screen. The app's own half is fine: it sends the link correctly and says
+so honestly.
+
+**One real bug in our app was found and fixed on the spot.** When the network was
+dead, the sign-in screen said *"The search took longer than we wait for"* — a
+sentence about a search, on a screen with no search on it. That one message was
+being used for every action in the app. It now says something true for all of
+them, it has a test that fails if anyone puts the old wording back, and the fix
+was re-checked on your phone.
+
+**Two things about the test itself, so the record is straight.** It was **not** a
+mobile-data test — your SIM has no working data, which was confirmed on the device
+before switching to Wi-Fi, so the "works on the train" question is still open. And
+I briefly reported the sign-in email as undelivered when it had in fact arrived: I
+had searched the wrong mailbox. That is corrected in the record.
+
+**What stays blocked.** The whole product half of Gate C, until the sign-in link
+resolves. The server lane has the evidence and the diagnosis.
+
+**Timing.** The Singapore machines delete themselves at **19 September 17:57 UTC**.
 
 Record: `docs/ai/rcc-r31/ROUND.md`.
 

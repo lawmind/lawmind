@@ -537,7 +537,7 @@ describe('SearchScreen — a reachability failure reads differently from a serve
       ok: false,
       error: {
         code: 'timeout',
-        message: 'The search took longer than we wait for. It may still be running.',
+        message: 'That took longer than we wait for. It may still have gone through.',
       },
     });
     await render(<SearchScreen />);

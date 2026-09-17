@@ -15978,3 +15978,26 @@ Handed to LCC, evidenced but not confirmed: the emailed sign-in link from this
 deployment appears to land nowhere — better-auth's handler is not mounted, five
 landing paths 404 with no redirect, and the client claims no https host.
 `docs/ai/rcc-r31/magic-link-origin-question.json`.
+
+### RCC — Gate C mobile-data row, corrected 18 Sep 2026: FAIL, not HOLD
+
+The phone was unlocked the same night and the run went ahead. The earlier HOLD
+entry above is superseded.
+
+`RCC_GATE_C_MOBILE = FAIL`. **The emailed sign-in link does not resolve** —
+tapped on the S24, it opens `{"code":"NOT_FOUND","message":"no route for GET
+/api/auth/magic-link/verify"}` from our own API. CONFIRMED by observation, not
+inferred. It is the only credential in the product, so Search, Reader, Save,
+Matter and relaunch persistence are all unreachable and none is claimed. LCC owns
+it: `docs/ai/rcc-r31/magic-link-origin-question.json`, FQ-RCC-SIGNIN-LINK-DEAD.
+
+`REMOTE_MOBILE_DATA = NOT PROVEN` and independently so: the SIM carries no working
+data service (cellular network declares `INTERNET` but never reached `VALIDATED`,
+and DNS failed on it), confirmed on the device before the founder's instruction to
+use Wi-Fi. The Wi-Fi run was still genuinely remote — public HTTPS origin baked
+into the binary, no `adb reverse`/`forward`, no VPN — but the carrier was not the
+bearer, so that row stays open.
+
+Landed in `apps/**`: the transport's timeout message named "the search" on every
+route and was shown on the SIGN-IN screen. Fixed, regression-tested with a test
+proven able to fail, and retested on the phone.

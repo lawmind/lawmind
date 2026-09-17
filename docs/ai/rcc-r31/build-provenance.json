@@ -10,7 +10,9 @@
   },
   "remoteApiSha": "27b55fa45c902c9ce83a2f4214698c181cd3054e",
   "shaRelationship": {
-    "commitsBetween": ["8def684c docs(lcc-r32b): Gate C backend round record and handoff to RCC and FIFTH"],
+    "commitsBetween": [
+      "8def684c docs(lcc-r32b): Gate C backend round record and handoff to RCC and FIFTH"
+    ],
     "codePathsChanged": [],
     "note": "The only commit between the DEPLOYED server sha and the CLIENT sha is documentation. apps/**, services/** and packages/** are byte-identical across the two shas, so the client and the server are the same release in every code path."
   },
@@ -18,7 +20,7 @@
   "buildEnv": {
     "EXPO_PUBLIC_API_URL": "https://alpha-api.lawmind.co",
     "EXPO_PUBLIC_APP_ENV": "staging",
-    "JAVA_HOME": "C:\Users\Xerxus\.gradle\jdks\eclipse_adoptium-17-amd64-windows.2"
+    "JAVA_HOME": "C:/Users/Xerxus/.gradle/jdks/eclipse_adoptium-17-amd64-windows.2"
   },
   "buildResult": "BUILD SUCCESSFUL in 7m 41s, EXITCODE=0",
   "apk": "apps/mobile/android/app/build/outputs/apk/release/app-release.apk (104.3 MB)",
@@ -32,5 +34,15 @@
     "before": "flags=[ DEBUGGABLE HAS_CODE ... ], lastUpdateTime 2026-08-31 21:56:10 (the old Metro dev build)",
     "after": "flags=[ HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP KILL_AFTER_RESTORE ], firstInstallTime == lastUpdateTime == 2026-09-18 01:08:42",
     "note": "DEBUGGABLE is gone and firstInstallTime equals lastUpdateTime, so this is a standalone release binary on a clean install. It needs no Metro and holds no prior app state, which is what makes a cached-corpus false positive impossible."
-  }
+  },
+  "_jsonValidityNote": "This file was committed malformed in b9afb186: a shell heredoc collapsed the doubled backslashes in JAVA_HOME, so no consumer could parse it. Repaired here with forward slashes; the file is now json.loads-clean.",
+  "secondBuild": {
+    "why": "the RCC copy fix found during the run - the transport timeout message named \"the search\" on every route",
+    "builtAt": "2026-09-18T00:53Z",
+    "buildResult": "BUILD SUCCESSFUL in 2m 2s, EXITCODE=0 (incremental; native artifacts cached)",
+    "log": "android-release-build-2.txt",
+    "installedOver": "the first release build, same debug keystore, streamed install Success",
+    "retested": "the original dead-cellular condition was deliberately restored and the same tap repeated; the screen then read \"That took longer than we wait for. It may still have gone through.\""
+  },
+  "clientShaNote": "The FIRST build is byte-for-byte HEAD (8def684c) and is what the Gate rows describe. The SECOND build carries the apps/** fix made during this round and is what is installed on the phone now."
 }

@@ -1,7 +1,7 @@
 {
   "kind": "rcc-r31-handoff-to-lcc",
   "title": "The emailed sign-in link from alpha-api.lawmind.co appears to land nowhere",
-  "status": "EVIDENCED, NOT CONFIRMED — one observation is missing and only LCC can make it",
+  "status": "CONFIRMED 17 Sep 2026 on the physical S24. The missing observation was made: a real sign-in email was opened on the phone and its link was tapped.",
   "why_this_matters": "Gate C's auth row is 'the real advocate loop'. An advocate signs in by tapping the link in the email. If the minted URL does not reach the app, the loop cannot complete by its designed path even when every API route is healthy.",
   "observed": [
     {
@@ -29,12 +29,22 @@
     }
   ],
   "notObserved": {
-    "what": "the runtime value of AUTH_BASE_URL in /etc/lawmind/api.env on the API host",
-    "whyItMatters": "packages/auth passes it to better-auth as baseURL, and better-auth builds the emailed URL from it. Its value decides the exact dead end, not whether there is one.",
-    "whoCanSee": "LCC — the host is LCC-owned and RCC does not read or change it."
+    "what": "the runtime value of AUTH_BASE_URL",
+    "status": "STILL NOT READ BY RCC, and no longer needed — the minted URL itself was observed, which settles the question the variable was a proxy for."
   },
   "reasoning": "Whatever AUTH_BASE_URL holds, the link cannot currently land on the screen that consumes it. If it is the documented https://alpha-api.lawmind.co (docs/ops/REMOTE_ALPHA_PACKAGE.md requires https://), the URL 404s. If it were instead a lawmind:// origin, the app would open and route to +not-found, because the minted path is /magic-link/verify and the app's route is auth/verify. Neither reaches apps/mobile/app/auth/verify.tsx. This is INFERRED from the three verified observations above; it becomes CONFIRMED the moment anyone reads one real sign-in email.",
   "notRccOwned": "services/**, packages/auth/** and deployment configuration are LCC's. RCC did not modify any of them and proposes no fix here.",
   "cheapestConfirmation": "Send one magic link to a mailbox LCC can read and print the URL out of the message. That single line settles it.",
-  "rccWorkaroundForGateC": "RCC does not need the emailed link to exercise the client's auth path: POST /auth/magic-link is sent by the app itself, and the token can be replayed into the app as lawmind://auth/verify?token=<t>, which makes the app call POST /auth/verify over the same network. That tests the client honestly and leaves this defect where it belongs."
+  "rccWorkaroundForGateC": "RCC does not need the emailed link to exercise the client's auth path: POST /auth/magic-link is sent by the app itself, and the token can be replayed into the app as lawmind://auth/verify?token=<t>, which makes the app call POST /auth/verify over the same network. That tests the client honestly and leaves this defect where it belongs.",
+  "confirmation": {
+    "observedAt": "2026-09-17T20:45Z",
+    "mailbox": "sof9tk@gmail.com — a real Gmail account on the test device. The message arrived within ~20s of the app sending it, subject \"Your Lawmind sign-in link\", from Lawmind.",
+    "urlShape": "https://alpha-api.lawmind.co/api/auth/magic-link/verify?token=<redacted>&callbackURL=%2F",
+    "whatHappenedWhenTapped": "Brave opened as a custom tab and rendered the API's own error: {\"ok\":false,\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"no route for GET /api/auth/magic-link/verify\"}}",
+    "evidence": "device/05-emailed-link-404.png — the token is NOT in this image; the address bar truncates it and the body carries only the path",
+    "tokenHandling": "RCC did not extract, store or transcribe the token. The link was tapped on the device, which is what an advocate does. No screenshot containing the token was committed.",
+    "verdict": "The inference recorded earlier was correct and is now an observation. AUTH_BASE_URL is the documented https origin, and better-auth mints /api/auth/magic-link/verify against it, which this API does not serve."
+  },
+  "severity": "RELEASE BLOCKING. The magic link is the only credential in this product — there is no password path. An advocate who follows the email cannot sign in at all.",
+  "consequenceForGateC": "Gate C's auth row is falsified by observation, not merely unreached. Every product row behind it (Search, Reader, Save, Matter, relaunch persistence) sits behind AuthBoundary and app/index.tsx redirects a signed-out launch to /sign-in, so none of them is reachable without a session."
 }

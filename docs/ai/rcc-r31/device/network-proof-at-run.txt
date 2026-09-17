@@ -1,0 +1,25 @@
+=== captured 2026-09-17T20:32:44Z — AFTER UNLOCK, before the product run ===
+--- adb reverse --list ---
+
+(empty above = none)
+--- adb forward --list ---
+
+(empty above = none)
+--- wifi_on / mobile_data ---
+0
+1
+--- always_on_vpn_app / private_dns_mode ---
+null
+null
+--- ip -o addr show ---
+1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
+1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft forever
+2: dummy0    inet6 fe80::82c:a3ff:fea2:aeec/64 scope link \       valid_lft forever preferred_lft forever
+15: rmnet0    inet 10.105.141.11/24 brd 10.105.141.255 scope global rmnet0\       valid_lft forever preferred_lft forever
+15: rmnet0    inet6 2402:8100:2728:d909:9c29:7ba2:1d95:69d4/64 scope global \       valid_lft forever preferred_lft forever
+16: rmnet1    inet6 2402:8100:708a:a5d1:7968:c09e:754a:908d/64 scope global \       valid_lft forever preferred_lft forever
+--- tun/tap/ppp ---
+request send failed: Permission denied
+(empty above = no tunnel)
+--- active default network ---
+Active default network: 103

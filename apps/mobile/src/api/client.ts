@@ -417,7 +417,20 @@ async function once<T>(path: string, options?: RequestOptions): Promise<ApiRespo
           ? // OUR deadline, not a fact about their connection — a timed-out request
             // may well have been answered a moment later. Observed 31 Aug 2026:
             // `/search` returned 200 in 15,334ms against a 15,000ms budget.
-            'The search took longer than we wait for. It may still be running.'
+            //
+            // AND IT NAMES NO OPERATION. This is the TRANSPORT's message, so it
+            // is what every route gets, and a screen with no timeout copy of its
+            // own renders it verbatim. It read "The search took longer..." until
+            // 17 Sep 2026, when the SIGN-IN screen said exactly that on a dead
+            // cellular link: a sentence about a search, on a screen that has no
+            // search on it, about a sign-in link that was never sent. Observed on
+            // the physical S24, docs/ai/rcc-r31/ROUND.md.
+            //
+            // Being confidently wrong about WHICH operation failed is worse than
+            // being unspecific about it, so this sentence is unspecific on
+            // purpose. A screen that wants to name the operation owns copy of its
+            // own, as `SearchScreen` does.
+            'That took longer than we wait for. It may still have gone through.'
           : 'We could not reach Lawmind. You may be offline.',
       },
     };
