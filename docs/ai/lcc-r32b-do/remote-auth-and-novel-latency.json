@@ -1,0 +1,96 @@
+{
+  "kind": "lcc-r32b-remote-auth-and-novel-latency",
+  "api": "https://alpha-api.lawmind.co",
+  "sha": "f7f532b1",
+  "auth": {
+    "magicLink": {
+      "to": "delivered@resend.dev (Resend test inbox)",
+      "status": 200,
+      "body": {
+        "sent": true
+      }
+    },
+    "verify": {
+      "status": 200,
+      "fields": [
+        "accessToken",
+        "refreshToken",
+        "expiresIn",
+        "user"
+      ]
+    },
+    "me": {
+      "status": 200,
+      "profileComplete": false
+    },
+    "replayedVerify": 401,
+    "AUTH": "PASS"
+  },
+  "activationEventsWrongRole": {
+    "before": "corpus log: activation_events_user_id_fkey violations; unhandled rejections",
+    "fix": "f7f532b1",
+    "after": {
+      "userActivationEvents": "8 -> 10",
+      "corpusErrors": 0,
+      "unhandledRejections": 0
+    }
+  },
+  "caddyRestartWindow": {
+    "before": "39x no upstreams available during a restart (voided one Gate-S1 run)",
+    "after": "10/10 x 200 across a restart with health_interval 5s, lb_try_duration 15s"
+  },
+  "novelQueriesAfterFix3": {
+    "note": "never-seen research queries, TOAST cold; state=degraded is semantic_index_insufficient (semantic search disabled by design)",
+    "samples": [
+      {
+        "seconds": 2.398309,
+        "results": 5,
+        "state": "degraded",
+        "query": "domestic violence protection order residence right"
+      },
+      {
+        "seconds": 1.461013,
+        "results": 5,
+        "state": "degraded",
+        "query": "income tax reassessment reason to believe"
+      },
+      {
+        "seconds": 3.510533,
+        "results": 5,
+        "state": "degraded",
+        "query": "tenant eviction bona fide need landlord"
+      },
+      {
+        "seconds": 1.004655,
+        "results": 5,
+        "state": "degraded",
+        "query": "negligence medical consumer compensation hospital"
+      },
+      {
+        "seconds": 1.659332,
+        "results": 5,
+        "state": "degraded",
+        "query": "maintenance wife husband income capacity"
+      },
+      {
+        "seconds": 1.477157,
+        "results": 5,
+        "state": "degraded",
+        "query": "juvenile age determination school certificate"
+      },
+      {
+        "seconds": 1.77015,
+        "results": 5,
+        "state": "degraded",
+        "query": "electricity tariff regulatory commission appeal"
+      },
+      {
+        "seconds": 0.939456,
+        "results": 5,
+        "state": "degraded",
+        "query": "partition suit coparcenary daughter share"
+      }
+    ],
+    "over3s": 1
+  }
+}

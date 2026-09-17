@@ -1,0 +1,106 @@
+{
+  "gate-s1": {
+    "n": 36,
+    "p50": 198,
+    "p95": 4774,
+    "p99": 6749,
+    "max": 6749,
+    "gate": "FAIL",
+    "phaseLinesMatched": 19,
+    "maxPhaseMs": {
+      "poolWait": 0,
+      "admission": 0,
+      "structured": 385,
+      "pins": 411,
+      "sparse": 6484,
+      "fallback": 88,
+      "hydrate": 11,
+      "serialization": 3,
+      "total": 6592
+    },
+    "degradedSamples": 9,
+    "degradedReasons": [
+      "ambiguous_identity",
+      "sparse_unbounded",
+      "semantic_index_insufficient"
+    ]
+  },
+  "gate-s1-fix1-cold": {
+    "n": 36,
+    "p50": 233,
+    "p95": 4053,
+    "p99": 5339,
+    "max": 5339,
+    "gate": "FAIL",
+    "phaseLinesMatched": 19,
+    "maxPhaseMs": {
+      "poolWait": 0,
+      "admission": 0,
+      "structured": 404,
+      "pins": 451,
+      "sparse": 5056,
+      "fallback": 89,
+      "hydrate": 10,
+      "serialization": 8,
+      "total": 5172
+    },
+    "degradedSamples": 9,
+    "degradedReasons": [
+      "ambiguous_identity",
+      "sparse_unbounded",
+      "semantic_index_insufficient"
+    ]
+  },
+  "gate-s1-fix2-cold": {
+    "n": 36,
+    "p50": 215,
+    "p95": 3181,
+    "p99": 4101,
+    "max": 4101,
+    "gate": "FAIL",
+    "phaseLinesMatched": 18,
+    "maxPhaseMs": {
+      "poolWait": 0,
+      "admission": 0,
+      "structured": 383,
+      "pins": 381,
+      "sparse": 3834,
+      "fallback": 91,
+      "hydrate": 12,
+      "serialization": 9,
+      "total": 3945
+    },
+    "degradedSamples": 9,
+    "degradedReasons": [
+      "ambiguous_identity",
+      "sparse_unbounded",
+      "semantic_index_insufficient"
+    ]
+  },
+  "gate-s1-fix3": {
+    "n": 36,
+    "p50": 350,
+    "p95": 2748,
+    "p99": 3453,
+    "max": 3453,
+    "gate": "PASS",
+    "phaseLinesMatched": 23,
+    "maxPhaseMs": {
+      "poolWait": 0,
+      "admission": 0,
+      "structured": 946,
+      "pins": 440,
+      "sparse": 3190,
+      "fallback": 80,
+      "hydrate": 13,
+      "serialization": 4,
+      "total": 3298
+    },
+    "degradedSamples": 9,
+    "degradedReasons": [
+      "ambiguous_identity",
+      "sparse_unbounded",
+      "semantic_index_insufficient"
+    ]
+  }
+}

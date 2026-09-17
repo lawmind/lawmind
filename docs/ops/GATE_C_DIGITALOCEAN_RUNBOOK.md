@@ -61,6 +61,45 @@ stay on during load, and a judgment row whose `overruled_by_judgment_id`
 points at a later row makes the load fail. Every FK is validated after the
 load either way.
 
+### After activation: warm the generation, then measure
+
+A freshly restored generation is cold. The first remote Gate-S1 run failed on
+cold reads alone: p95 4,774 ms, the same query took 6.5 s cold and 0.6 s warm,
+and pool wait was 0. Run `scripts/lcc-r32b-prewarm.sh <db>` on the corpus host
+after every activation and every corpus cluster restart (about 60 s).
+
+Corpus cluster settings that Gate-S1 measured
+(`/etc/postgresql/18/corpus/conf.d/10-lawmind-gatec.conf`):
+
+| setting | value | why |
+|---|---|---|
+| `max_parallel_workers_per_gather` | 6 | `ts_rank` top-N is I/O-bound, so more readers than cores helps. Measured cold p95: 2 workers 4,774 ms, 3 workers 4,053 ms, 6 workers 3,181 ms |
+| `max_parallel_workers` / `max_worker_processes` | 8 / 12 | room for the above |
+| `shared_buffers` / `effective_cache_size` | 8GB / 22GB | 32 GiB box |
+| `wal_level` | minimal | nothing replicates from this box; faster bulk load |
+
+With prewarm, the Gate-S1 p95 is 2,748 ms (PASS). Evidence:
+[`../ai/lcc-r32b-do/gate-s1-summary.json`](../ai/lcc-r32b-do/gate-s1-summary.json).
+
+**Known limitation.** The stored tsvectors live in a 98 GB TOAST table, which
+cannot be held in 31 GiB of RAM. A research query nobody has sent before can
+take longer than 3 s while its TOAST pages are cold: 1 of 8 novel queries
+measured 3.5 s. Fixing this for good takes more memory or a smaller ranking
+vector. That is a sizing or design decision, not something a setting can fix.
+
+## Staging sign-in
+
+`POST /auth/magic-link {email}` sends a real message through Resend from
+`no-reply@lawmind.co`, and `POST /auth/verify {token}` exchanges the link for
+tokens. Proven end to end with Resend's test inbox `delivered@resend.dev`:
+send 200, verify returned tokens, `/me` 200, and a replayed token was refused
+with 401. The access token lives 15 minutes and the refresh token rotates.
+Scripted smoke principals (`gatec-smoke-*@lawmind.test`) use tokens signed
+with the deployment's `AUTH_SECRET` and exist only for the smoke scripts.
+
+Caddy: `health_interval 5s` and `lb_try_duration 15s`. After an API restart,
+requests wait for the upstream instead of getting a 503.
+
 ## USER backup → restore
 
 1. Dump: `scripts/lcc-user-backup.mjs` with `USER_DATABASE_URL` set and

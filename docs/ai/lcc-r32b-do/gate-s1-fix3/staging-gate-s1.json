@@ -1,0 +1,943 @@
+{
+  "kind": "lawmind-staging-gate-s1",
+  "label": "STAGING_DO_SGP1_FIX3_PREWARMED",
+  "collectedAt": "2026-09-17T14:27:09.649Z",
+  "api": "https://alpha-api.lawmind.co",
+  "repeat": 3,
+  "querySource": "pinned: docs/ai/lcc-r32b-do/gate-s1-queries.json",
+  "target": {
+    "wholeRequestP95Ms": 3000,
+    "appliesTo": "staging"
+  },
+  "requestTimeoutMs": 15000,
+  "release": {
+    "ok": true,
+    "data": {
+      "gitSha": "f7f532b11ddc2f559c789fa5cf7bdfdbe9c3a10b",
+      "deployedAt": null,
+      "environment": "production",
+      "imageDigest": null,
+      "contract": 1,
+      "minSupportedContract": 1
+    }
+  },
+  "readiness": {
+    "httpStatus": 200,
+    "body": {
+      "ok": true,
+      "data": {
+        "status": "ready",
+        "sha": "f7f532b11ddc2f559c789fa5cf7bdfdbe9c3a10b",
+        "corpusReachable": true,
+        "userReachable": true,
+        "splitMode": "split",
+        "rolesDistinct": true,
+        "servingEnv": "staging"
+      }
+    }
+  },
+  "serverPhaseLines": null,
+  "counts": {
+    "samples": 36,
+    "http200": 36
+  },
+  "wholeRequest": {
+    "p50": 350,
+    "p95": 2748,
+    "p99": 3453,
+    "max": 3453
+  },
+  "byClass": {
+    "exact citation": {
+      "n": 3,
+      "nonHttp200": 0,
+      "p50": 91,
+      "p95": 2154,
+      "max": 2154,
+      "degradedSamples": 0
+    },
+    "CNR": {
+      "n": 9,
+      "nonHttp200": 0,
+      "p50": 94,
+      "p95": 106,
+      "max": 106,
+      "degradedSamples": 0
+    },
+    "case number": {
+      "n": 9,
+      "nonHttp200": 0,
+      "p50": 465,
+      "p95": 1979,
+      "max": 1979,
+      "degradedSamples": 0
+    },
+    "filtered lexical": {
+      "n": 3,
+      "nonHttp200": 0,
+      "p50": 97,
+      "p95": 123,
+      "max": 123,
+      "degradedSamples": 3
+    },
+    "normal research query": {
+      "n": 9,
+      "nonHttp200": 0,
+      "p50": 735,
+      "p95": 3453,
+      "max": 3453,
+      "degradedSamples": 0
+    },
+    "broad / refused query": {
+      "n": 3,
+      "nonHttp200": 0,
+      "p50": 93,
+      "p95": 97,
+      "max": 97,
+      "degradedSamples": 3
+    }
+  },
+  "samples": [
+    {
+      "askedClass": "exact citation",
+      "query": "cite:\"1950 INSC 1\"",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "c6cb471a-bef8-4c69-8c2c-9a558f82bc75",
+      "wholeRequestMs": 2154,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "exact citation",
+      "query": "cite:\"1950 INSC 1\"",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "57b7a2e4-121b-4237-a482-25ae246194c3",
+      "wholeRequestMs": 89,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "exact citation",
+      "query": "cite:\"1950 INSC 1\"",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "12b9696f-198a-4dea-954a-f5d7139385ec",
+      "wholeRequestMs": 91,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA010891742018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "f14316e0-a3ec-4aa0-ae80-a7b27178e276",
+      "wholeRequestMs": 106,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "UPHC012126912013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "5050206b-b91f-486c-a1e9-4eb3ac99dc72",
+      "wholeRequestMs": 90,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA011919092025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "21aba19a-8913-407b-bdb4-a3079a8eec73",
+      "wholeRequestMs": 89,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA010891742018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "8a71e61a-ad33-4352-ba9c-fdfcf350b602",
+      "wholeRequestMs": 94,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "UPHC012126912013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "f6d25e43-41dd-40ac-ae62-51a4f99a84e0",
+      "wholeRequestMs": 90,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA011919092025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "e9e5f636-2d92-460d-9a32-604257af22c3",
+      "wholeRequestMs": 104,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA010891742018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "c353ce0a-f5ac-4584-853d-0755b71a7545",
+      "wholeRequestMs": 104,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "UPHC012126912013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "8bb2bd88-060d-47d8-897c-d537851b9a5f",
+      "wholeRequestMs": 103,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "CNR",
+      "query": "HCMA011919092025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "2177dfb0-8bef-419f-85d7-a0e823dbf143",
+      "wholeRequestMs": 87,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "WP/287/2018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "069680a9-7be4-4273-aaaf-68d8fb51e6d0",
+      "wholeRequestMs": 1979,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "review_required",
+        "reasons": [
+          "ambiguous_identity"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": false,
+        "resultCount": 5,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "A482/21116/2013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "f925249b-d2d6-4fa7-89cf-c8c5ea38ecb5",
+      "wholeRequestMs": 880,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "SUO MOTU TR/2721/2025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "d971473e-5b7e-4842-bf2b-da0f2c216dda",
+      "wholeRequestMs": 1027,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "WP/287/2018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "7e825b05-942f-4a14-839c-41d80f917455",
+      "wholeRequestMs": 445,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "review_required",
+        "reasons": [
+          "ambiguous_identity"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": false,
+        "resultCount": 5,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "A482/21116/2013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "fd4441ec-dee1-4caa-b936-539c879385f1",
+      "wholeRequestMs": 467,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "SUO MOTU TR/2721/2025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "141cc498-b19e-4bb8-bedb-7af19b8fefaf",
+      "wholeRequestMs": 443,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "WP/287/2018",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "643fb17f-8c01-4138-a22e-bb191c0087cd",
+      "wholeRequestMs": 448,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "review_required",
+        "reasons": [
+          "ambiguous_identity"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": false,
+        "resultCount": 5,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "A482/21116/2013",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "a5c8c8a2-6856-4d87-8a9a-c6de54d56fc6",
+      "wholeRequestMs": 465,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "case number",
+      "query": "SUO MOTU TR/2721/2025",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "f6305ff0-ed47-4aab-bdbd-4348524a5049",
+      "wholeRequestMs": 441,
+      "queryClass": null,
+      "resultCount": 1,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "answered",
+        "reasons": [],
+        "safeForGeneration": true,
+        "exactIdentityUsable": true,
+        "resultCount": 1,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "filtered lexical",
+      "query": "court:\"High Court of Karnataka\" AND bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "eb98b10c-cf16-48e6-b8e4-d77abde790f8",
+      "wholeRequestMs": 123,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    },
+    {
+      "askedClass": "filtered lexical",
+      "query": "court:\"High Court of Karnataka\" AND bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "5dc6bb7e-af0f-4161-9e36-86980bc19d35",
+      "wholeRequestMs": 92,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    },
+    {
+      "askedClass": "filtered lexical",
+      "query": "court:\"High Court of Karnataka\" AND bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "62c4b042-4254-430a-b14d-636515535137",
+      "wholeRequestMs": 97,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "anticipatory bail in a dowry harassment case",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "84adad66-a325-40ee-9347-35df3f6edef9",
+      "wholeRequestMs": 1139,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.015812714310383107,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "dying declaration corroboration requirement",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "aaa85c22-a80f-4642-a4c0-e69ca2b0efbf",
+      "wholeRequestMs": 2748,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.011372326516515775,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "specific performance of agreement to sell",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "539ca210-4920-4497-9d95-be5388ffbad3",
+      "wholeRequestMs": 3453,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.013839208624219848,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "anticipatory bail in a dowry harassment case",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "1d4dc627-d895-41e9-b356-311b1e605205",
+      "wholeRequestMs": 350,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.015812714310383107,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "dying declaration corroboration requirement",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "e8a94d19-2ddc-49db-97f1-3b71894432c0",
+      "wholeRequestMs": 751,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.011372326516515775,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "specific performance of agreement to sell",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "649e3e4e-a8f7-4f72-b013-c99531be8909",
+      "wholeRequestMs": 664,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.013839208624219848,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "anticipatory bail in a dowry harassment case",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "4626cd6e-af53-4d88-859b-861b1afcd06d",
+      "wholeRequestMs": 510,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.015812714310383107,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "dying declaration corroboration requirement",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "8f945aab-a735-44f5-98e7-f12f4d6e6138",
+      "wholeRequestMs": 735,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.011372326516515775,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "normal research query",
+      "query": "specific performance of agreement to sell",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "161bf0fd-dce0-42bf-a32b-cf3e86aafe31",
+      "wholeRequestMs": 658,
+      "queryClass": null,
+      "resultCount": 5,
+      "degraded": null,
+      "retrievalOutcome": {
+        "state": "degraded",
+        "reasons": [
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 5,
+        "rarestDf": 0.013839208624219848,
+        "contractVersion": 1
+      },
+      "emptyBecause": null,
+      "server": null
+    },
+    {
+      "askedClass": "broad / refused query",
+      "query": "bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "8f3aa448-c614-4f4e-9974-5b5c5d5503e7",
+      "wholeRequestMs": 97,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded",
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    },
+    {
+      "askedClass": "broad / refused query",
+      "query": "bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "2dcc1768-715f-4edf-8ef8-5ea632d6288b",
+      "wholeRequestMs": 91,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded",
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    },
+    {
+      "askedClass": "broad / refused query",
+      "query": "bail",
+      "httpStatus": 200,
+      "transportError": null,
+      "requestId": "7874a583-f1b9-4c65-8484-c4fc3b5eaab3",
+      "wholeRequestMs": 93,
+      "queryClass": null,
+      "resultCount": 0,
+      "degraded": [
+        "sparse_unbounded"
+      ],
+      "retrievalOutcome": {
+        "state": "coverage_unknown",
+        "reasons": [
+          "sparse_unbounded",
+          "semantic_index_insufficient"
+        ],
+        "safeForGeneration": false,
+        "exactIdentityUsable": true,
+        "resultCount": 0,
+        "rarestDf": 0.25773984261292154,
+        "contractVersion": 1
+      },
+      "emptyBecause": {
+        "reason": "query_too_broad_to_rank",
+        "remedy": "add_more_terms"
+      },
+      "server": null
+    }
+  ],
+  "gate": "PASS"
+}
