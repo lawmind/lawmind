@@ -59,13 +59,22 @@ while :; do
     ship "$f" || exit 1
   done
   if grep -q '^release .* written to' "$LOG" 2>/dev/null; then
+    # The table list above was read BEFORE any shipping in this pass. Tables
+    # that finished while a big file was uploading are not in it, and the first
+    # version sent the manifest without them (LCC R32B). Loop again until every
+    # table the finished log names is shipped.
+    pending=0
+    for t in $(grep -E '^\s+[a-z_]+\s+[0-9]+ rows' "$LOG" | awk '{print $1}'); do
+      grep -qx "$t.copy.gz" "$SHIPPED" || pending=1
+    done
+    [ "$pending" = 1 ] && continue
     for f in MANIFEST.json MANIFEST.sha256; do
       grep -qx "$f" "$SHIPPED" || ship "$f" || exit 1
     done
     "${SSH[@]}" "$HOST" "cd '$RDIR' && sha256sum -c MANIFEST.sha256" && say "MANIFEST_VERIFIED" && say "DONE" && exit 0
     say "MANIFEST_CHECK_FAILED"; exit 1
   fi
-  if grep -qiE 'error|refusing' "$PACK/../export.err" 2>/dev/null; then
+  if grep -qiE 'error|refusing' "${LOG%.log}.err" 2>/dev/null; then
     say "EXPORT_ERROR_SEEN"; exit 1
   fi
   sleep 60

@@ -1,0 +1,152 @@
+{
+  "kind": "lcc-r32b-full-export",
+  "releaseVersion": "2026-09-17.mu4rlyak",
+  "createdAt": "2026-09-17T02:48:50.862Z",
+  "source": {
+    "database": "lawmind",
+    "serverVersion": "18.6",
+    "collation": "English_United States.1252",
+    "ctype": "English_United States.1252",
+    "encoding": "UTF8",
+    "extensions": [
+      {
+        "name": "pg_trgm",
+        "version": "1.6"
+      },
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "vector",
+        "version": "0.8.5"
+      }
+    ]
+  },
+  "schemaVersion": {
+    "highestMigration": "0104_ops_job_state_check_all_states",
+    "migrationCount": 105
+  },
+  "bounded": {
+    "judgmentLimit": null
+  },
+  "consistency": {
+    "isolation": "repeatable read",
+    "snapshotId": "00000055-0000009C-1"
+  },
+  "exporterSha": "bca8cb9c",
+  "gzipLevel": 3,
+  "tables": [
+    {
+      "table": "judgments",
+      "rows": 18793342,
+      "checksum": "9b81f1ea9e820f5a9c27e16c6ca6a063",
+      "bytes": 37475765266,
+      "sha256": "60b3f4dbf64e9e148d199f7960814c74049b6817bece1df6e62cc3defdab95f7",
+      "compression": "gzip"
+    },
+    {
+      "table": "judgment_paragraphs",
+      "rows": 92083253,
+      "checksum": "7c9805b56090edde2b8b1257c6644357",
+      "bytes": 39129715061,
+      "sha256": "12104d381a033a258ed27d8510c9ead768c40d49d3af15c5df9a10cd33b27b96",
+      "compression": "gzip"
+    },
+    {
+      "table": "judgment_citations",
+      "rows": 22451373,
+      "checksum": "bf456f08d3be7e42cab06ba639e3900b",
+      "bytes": 1272955231,
+      "sha256": "a76502d451c18cd5c21e4bd119a70d3add1028c81f74389d8573fdb9bbf45e06",
+      "compression": "gzip"
+    },
+    {
+      "table": "judgment_judges",
+      "rows": 44360,
+      "checksum": "217e009bbe669c0b672be28e00e45c52",
+      "bytes": 2127639,
+      "sha256": "acb291ae46f500b316aefea85f8b55d2cf27f9783d0994ce9b0085de2967400c",
+      "compression": "gzip"
+    },
+    {
+      "table": "judgment_statute_refs",
+      "rows": 928805,
+      "checksum": "991ee46f3bc88f080bf4c8f17157ede2",
+      "bytes": 62874612,
+      "sha256": "583e7115fdb7c187682723e8d0a8e40c51e7e6f92e3a8fbd85369bc1032eaafa",
+      "compression": "gzip"
+    },
+    {
+      "table": "statutes",
+      "rows": 849,
+      "checksum": "b4869bb67fd2ccad2a8779cb9de43ef1",
+      "bytes": 99939,
+      "sha256": "d72a20108d7103d5aa714e3c71f93134a2ae64e4455c82e9cd558663af7aee4f",
+      "compression": "gzip"
+    },
+    {
+      "table": "statute_sections",
+      "rows": 36663,
+      "checksum": "840f0ec1080ec5690733a725f4efd62e",
+      "bytes": 16435536,
+      "sha256": "508d6005f5c23d9953f15aca374b28d27092f804fe5575c0c89219bd8b79f7c3",
+      "compression": "gzip"
+    },
+    {
+      "table": "lexeme_document_frequency",
+      "rows": 128243,
+      "checksum": "af4db3b47dba9795f02867c970760ff7",
+      "bytes": 631779,
+      "sha256": "625206615f50f8fc7a619fb924cf805f78905e8750aec03ade74f432b35b9fa4",
+      "compression": "gzip"
+    }
+  ],
+  "totalCompressedBytes": 77960605063,
+  "runs": [
+    {
+      "run": 1,
+      "started": "2026-09-16T18:12:12Z",
+      "outcome": "FAILED 21:13Z at judgment_paragraphs: snapshot does not exist",
+      "judgments": {
+        "rows": 18793342,
+        "checksum": "9b81f1ea9e820f5a9c27e16c6ca6a063",
+        "bytes": 37475765266,
+        "sha256": "60b3f4dbf64e9e148d199f7960814c74049b6817bece1df6e62cc3defdab95f7"
+      }
+    },
+    {
+      "run": 2,
+      "started": "2026-09-16T22:14:40Z",
+      "outcome": "FAILED 23:56Z, same error; judgments byte-identical to run 1",
+      "cause": "postgres.js default max_lifetime (30-60 min) closed the idle snapshot-holder connection; idle_in_transaction_session_timeout=1h was a second hazard"
+    },
+    {
+      "run": 3,
+      "started": "2026-09-17T00:01:58Z",
+      "finished": "2026-09-17T02:48Z",
+      "outcome": "PASS",
+      "note": "judgments reused only after this run recomputed checksum 9b81f1ea inside its own snapshot; all other tables streamed fresh"
+    }
+  ],
+  "durations": {
+    "judgmentsChecksumAndCopy": "run 2: 22:14:40Z -> 23:56:27Z (1h42m, warm cache); run 1 cold: 3h01m",
+    "paragraphsChecksumAndCopy": "run 3: 00:33Z -> 02:33Z (2h00m)",
+    "run3Wall": "2h46m"
+  },
+  "transfer": {
+    "uplinkMeasured": "~11.5-19 MB/s single stream",
+    "log": [
+      "2026-09-17T03:37:53Z SHIPPED judgment_paragraphs.copy.gz bytes=39129715061 secs=3606 sha256=12104d381a033a258ed27d8510c9ead768c40d49d3af15c5df9a10cd33b27b96",
+      "2026-09-17T03:37:56Z SHIPPED MANIFEST.json bytes=6508 secs=2 sha256=30abec9677b2ee2c5f66940b0b9388c19ce7ae08d052c9e0b5d623eeca1860fd",
+      "2026-09-17T03:38:00Z SHIPPED MANIFEST.sha256 bytes=80 secs=2 sha256=e7df0f8c9ec8a8eef0f169dfab106c42ee437a2c32f16c577072a453d76f51d4",
+      "MANIFEST.json: OK",
+      "2026-09-17T03:38:01Z MANIFEST_VERIFIED",
+      "2026-09-17T03:38:01Z DONE"
+    ],
+    "remainingSixTablesShippedManually": "shipper bug (sent manifest before re-scanning); fixed in lcc-r32b-ship-pack.sh",
+    "remoteVerification": "MANIFEST.sha256 OK + all 8 file sha256 OK -> TRANSFER_INTEGRITY PASS"
+  },
+  "JUDGMENT_PARAGRAPHS_ROWS": 92083253,
+  "JUDGMENT_PARAGRAPHS_CHECKSUM": "7c9805b56090edde2b8b1257c6644357"
+}
