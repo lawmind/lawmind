@@ -1,0 +1,561 @@
+{
+  "kind": "data_s4_d0_continuity_receipt",
+  "version": 1,
+  "lane": "DATA",
+  "round": "S4-D0",
+  "sessionId": "0cc32cdc-da78-4801-87d3-8cf181554fc7",
+  "measuredFrom": "2026-09-18T19:55:15Z",
+  "measuredTo": "2026-09-18T20:20:00Z",
+  "prose": "docs/ai/data-s4-d0/CONTINUITY_RECEIPT.md",
+  "busAuthority": "1818 SHIP->DATA 2026-09-18T03:01:39Z",
+  "mutating": false,
+  "readOnlyProof": "every session opened with 'set session characteristics as transaction read only'",
+
+  "anchor": {
+    "HEAD_START": "868d54f894e4971e135e5e59517aad939ba36cdb",
+    "HEAD_FINAL": "868d54f894e4971e135e5e59517aad939ba36cdb",
+    "ORIGIN_MAIN_START": "868d54f894e4971e135e5e59517aad939ba36cdb",
+    "ANCHOR_MATCH": true,
+    "COMMITS_BETWEEN": 0,
+    "STAGED": 0,
+    "TRACKED_DIRT": 86,
+    "UNTRACKED": 4800,
+    "leases": {
+      "GIT_COMMIT": "RELEASED 2026-09-18T10:52:01Z by SHIP",
+      "MIGRATION_SLOT": "RELEASED 2026-09-04T20:33:11Z by LCC",
+      "HEAVY_BOX": "RELEASED 2026-09-17T02:52:25Z by LCC",
+      "takenByThisRound": "NONE"
+    },
+    "ACTIVE_WORKERS": 0,
+    "GPU_WRITER": "NONE"
+  },
+
+  "corpus": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T19:56:27Z",
+    "TOTAL_HELD_JUDGMENTS": 18799522,
+    "HIGH_COURT_HELD": 18761062,
+    "SUPREME_COURT_HELD": 38460,
+    "distinctCourtLabels": 27,
+    "reltuplesEstimate": 18752608,
+    "reltuplesNote": "planner estimate is 46914 low and is not used anywhere",
+    "NEWEST_HELD_DECISION_DATE": { "SC": "2026-09-18", "HC": "2026-09-17" },
+    "OLDEST_HELD_DECISION_DATE": { "SC": "1950-03-14", "HC": "1950-01-01" },
+    "newestCreatedAt": "2026-09-18T14:18:29.587881Z",
+    "ingestedLast3Days": { "2026-09-18": 4065, "2026-09-17": 2115, "2026-09-16": 1877 },
+    "CORPUS_CONTINUITY": "HEALTHY_INGESTING_TODAY",
+
+    "currency": {
+      "source": "docs/ai/new2-r9/source-ledger.json",
+      "state": "SNAPSHOT",
+      "takenAt": "2026-09-18T14:22:17.433Z",
+      "aws_open_data_hc": {
+        "held": 18761062,
+        "newestLocalDecision": "2026-09-17",
+        "naiveLagDays": 1,
+        "honestCurrencyFrontier": "2026-07-01",
+        "honestLagDays": 79,
+        "newestUpstreamWrite": "2026-09-18T10:06:53Z",
+        "baselineDocumentsPerMonth": 113558,
+        "recentMonthsPartial": { "2026-09": 0.2503, "2026-08": 0.5095 }
+      },
+      "aws_open_data_sc": {
+        "held": 38358,
+        "newestLocalDecision": "2026-08-12",
+        "naiveLagDays": 37,
+        "honestCurrencyFrontier": "2026-05-01",
+        "honestLagDays": 140,
+        "newestUpstreamWrite": "2026-08-30T19:23:42Z"
+      },
+      "ecourts": { "held": 0, "note": "adapter has never run" },
+      "USE_HONEST_LAG_NOT_NAIVE": true
+    },
+
+    "completeness": {
+      "ACTUALLY_HELD": 18799522,
+      "SOURCE_UNAVAILABLE_COUNT": 219858,
+      "FAILED_OR_UNRESOLVED_SOURCE_COUNT": 10881,
+      "ACCOUNTED": 19030261,
+      "ledgerTotal": 230739,
+      "arithmeticCloses": true,
+      "SINGLE_COMPLETENESS_PERCENT": null,
+      "whyNull": "the upstream denominator 20239701 is CARRIED_FORWARD_NOT_REMEASURED (20 Aug 2026) and counts parquet ROWS not documents; a percentage over it is a lower bound on an unknown quantity, not coverage",
+      "failureClasses": [
+        { "outcome": "pdf_absent", "permanent": true, "n": 219858, "latest": "2026-09-18T14:15:01Z", "class": "SOURCE_UNAVAILABLE" },
+        { "outcome": "no_text", "permanent": false, "n": 10403, "latest": "2026-09-18T14:01:47Z", "class": "OBSERVATION_FAILED_RETRYABLE" },
+        { "outcome": "pdf_failed", "permanent": true, "n": 225, "latest": "2026-09-09T11:53:47Z", "class": "OBSERVATION_FAILED_TERMINAL" },
+        { "outcome": "no_text", "permanent": true, "n": 180, "latest": "2026-09-04T15:32:51Z", "class": "OBSERVATION_FAILED_TERMINAL" },
+        { "outcome": "pdf_failed", "permanent": false, "n": 70, "latest": "2026-09-15T17:47:03Z", "class": "OBSERVATION_FAILED_RETRYABLE" },
+        { "outcome": "no_title", "permanent": true, "n": 3, "latest": "2026-08-19T00:11:16Z", "class": "OBSERVATION_FAILED_TERMINAL" }
+      ],
+      "permanentFailureConcentration": { "27_1": 148099, "23_23": 42695, "9_13": 22407, "shareOfPermanent": 0.975 },
+      "NO_LEGAL_CLAIM_FROM_FETCH_FAILURE": "pdf_absent means our fetch found no document at a source URL; it does NOT mean the court delivered no judgment",
+      "frontier": {
+        "INGEST_CHECKPOINT_FILES": 111,
+        "NEWEST_CHECKPOINT_WRITE": "2026-09-18T16:16:20.950Z",
+        "OLDEST_CHECKPOINT_WRITE": "2026-08-14T11:18:28.681Z"
+      }
+    },
+
+    "provenance": {
+      "measuredAt": "2026-09-18T20:00Z",
+      "rows": [
+        { "source_id": null, "authorization_basis": null, "n": 18752630, "share": 0.99751 },
+        { "source_id": "aws_hc", "authorization_basis": "aws_open_data", "n": 46809 },
+        { "source_id": "sci_pdf", "authorization_basis": "public_official", "n": 77 },
+        { "source_id": "aws_sc", "authorization_basis": "aws_open_data", "n": 6 }
+      ],
+      "finding": "DATA_CONTINUITY_2"
+    },
+
+    "overruled": { "none": 18799424, "set_aside": 73, "doubted": 17, "partly_set_aside": 8, "totalFlagged": 98 }
+  },
+
+  "sci": {
+    "SCI_RUNNING_BASIS": "PUBLIC_OFFICIAL_FEED",
+    "runningBasisDetail": "sci.gov.in server-rendered Judgments feed, type=j Court links only, official PDF path, PDF and in-document Court heading verified; adapter services/ingest/src/sci-live.ts; no CAPTCHA handling on this path",
+    "runningBasisEvidence": { "rows": 77, "source_id": "sci_pdf", "newestDecision": "2026-09-18", "newestIngest": "2026-09-18T14:18:29Z" },
+    "SCI_DIRECT_EXPANDED_GRANT": "NOT_ACTIVATED",
+    "expandedGrantDetail": "founder confirmed 27 Aug 2026 a separate written SC permission to 2029 permitting automated CAPTCHA handling; its confidential attribution reference and request limits are NOT on file, no SCI-specific guard is configured, route not activated",
+    "SCI_AUTHORISATION_STATE": "UNCHANGED",
+    "FULLY_RESOLVED_ASSERTED": false,
+    "source": "docs/SCI_AUTHORISATION.md"
+  },
+
+  "citationCorrection": {
+    "R24_CORRECTION_RECEIPT_PRESENT": true,
+    "EXPECTED_CORRECTED_ROWS": 539,
+    "READBACK_RECEIPT_STATE": "CONFIRMED_LIVE",
+    "QUARANTINE_PRESERVED": true,
+    "verifiedAt": "2026-09-18T19:58:23Z",
+    "method": "539 ids read from the frozen R23 SAFE population (populationHash e5caecc2...b990b4) and looked up live by primary key, read-only",
+    "rowsFound": 539,
+    "matchingCorrectedValue": 539,
+    "missing": 0,
+    "contentHashDrift": 0,
+    "perDisposition": { "DETERMINISTIC_TO_NULL": 441, "DETERMINISTIC_TO_REPLACE": 86, "DETERMINISTIC_SUFFIX_REPLACE": 12 },
+    "quarantineRowsPresent": 32,
+    "quarantineNullCitations": 0,
+    "citationKeyDirtyNow": 0,
+    "reapplied": false,
+    "historicalRowsRepaired": 0
+  },
+
+  "citationPopulation": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T19:58:52Z",
+    "DIRTY_CITATION_KEY_COUNT": 0,
+    "citationKeyFrontierRows": 1,
+    "judgmentCitationKeys": 1441900,
+    "judgmentCitationAliases": 4394,
+    "TOTAL_CITATION_ROWS": 22459364,
+    "CURRENT_APPLIED_EDGE_STATE": {
+      "appliedEdges": 228554,
+      "distinctCited": 35364,
+      "distinctCiting": 105745,
+      "newestAppliedEdge": "2026-09-18T14:17:25Z",
+      "relationships": { "cites": 217796, "followed": 9446, "distinguished": 1157, "overruled": 97, "doubted": 21, "overruled_in_part": 19, "approved": 18 }
+    },
+    "unresolvedRows": 22230810,
+    "emptyStringSentinel": 16162242,
+    "sentinelShareOfUnresolved": 0.727,
+    "deltaSinceR24": {
+      "r24MeasuredAt": "2026-09-01T14:20:19Z",
+      "totalRows": 48099,
+      "appliedEdges": 932,
+      "unresolved": 47167,
+      "aliases": 0,
+      "cause": "ordinary ingest-time resolution through the production gate; an existing incremental job already owns these writes",
+      "bulkApplyOccurred": false
+    },
+    "CURRENT_EDGE_CANDIDATE_STATE": {
+      "classification": "CARRIED_FORWARD_NOT_REMEASURED",
+      "populationId": "NEW2-R24-EDGE-CANDIDATE-cdd96b0f3b6c7215",
+      "generatedAt": "2026-09-02",
+      "candidate": 1556947,
+      "AMBIGUOUS_COUNT": 354196,
+      "SELF_IDENTITY_COUNT": 1003934,
+      "NO_HELD_TARGET_COUNT": 3137718,
+      "UNTESTABLE_COUNT": 5,
+      "refusedBeforeLookup": 16130843,
+      "note": "lower bound only; unresolved population has grown 47167 rows since"
+    },
+    "CITATION_BULK_APPLY": "HOLD",
+    "applyManifestPrepared": false,
+    "redInvoked": false
+  },
+
+  "citedAuthorityDrift": {
+    "finding": "DATA_CONTINUITY_3",
+    "measuredAt": "2026-09-18T19:59Z",
+    "objectType": "materialised view",
+    "matviewRows": 35890,
+    "liveRows": 35364,
+    "inMatviewNotLive": 826,
+    "inLiveNotMatview": 300,
+    "symmetricDifference": 1126,
+    "whyItMatters": "cited_authority is joined into judgment_embedding_eligibility as the is_cited_authority axis; SNAPSHOT_HASH hashes the view DEFINITION, so matview CONTENT can drift arbitrarily while the hash stays byte-identical",
+    "boundedImpact": "up to 300 documents excluded from eligibility that the current citation graph would admit = 0.0039% of eligible content identities",
+    "refreshed": false,
+    "whyNotRefreshed": "REFRESH MATERIALIZED VIEW is a write and would move the eligibility population"
+  },
+
+  "statutes": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T20:00Z",
+    "RAW_JUDGMENT_STATUTE_REFS": 933014,
+    "totalOccurrences": 1554035,
+    "judgmentsCarryingRefs": 459873,
+    "newestRef": "2026-09-18T14:22:16Z",
+    "RESOLVER_CONFIRMED": 0,
+    "UNRESOLVED_NULL_NEVER_ADJUDICATED": 932923,
+    "AMBIGUOUS": 0,
+    "adjudicatedRefusals": { "refused_pre_enactment": 49, "unresolved_pre_commencement": 42, "total": 91 },
+    "nullSafetyNote": "resolution_state is NULL on 932923 of 933014 rows; refused-by-a-rule and never-looked-at are different populations and are not merged",
+    "identityMapping": {
+      "statuteIdNotNull": 703768,
+      "statuteIdNull": 229246,
+      "IS_NOT_RESOLVER_CONFIRMED": true,
+      "note": "statute_id is an identity mapping from act name to catalogue row; no chronology or applicability is inferred from it"
+    },
+    "catalogue": { "statutes": 849, "statute_sections": 36663, "statute_mappings": 226, "statute_amendments": 18590, "amendments_unparsed": 596 },
+    "STATUTE_PUBLIC_LINK_STATE": "LINKABLE_BUT_NOT_LINKED",
+    "sectionsWithSourceUrl": 36663,
+    "newPublicLinksCreated": 0,
+    "capabilities": {
+      "statute.lookup": "ENABLED_V1",
+      "statute.linked_judgments": "POST_V1",
+      "statute.old_new_correspondence": "DISABLED_NOT_READY"
+    }
+  },
+
+  "embeddings": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T20:17:38.861Z",
+    "elapsedSec": 1033.7,
+    "otherActiveBackendsAtStart": 0,
+    "artifact": "docs/ai/data-s4-d0/terminal-census.json",
+    "command": "pnpm --filter @lawmind/harness new1:census with NEW1_OUT_DIR=docs/ai/data-s4-d0/",
+    "CURRENT_ELIGIBLE_DOCUMENTS": 8450170,
+    "CURRENT_ELIGIBLE_CONTENT_IDENTITIES": 7680357,
+    "CURRENT_EMBEDDED_DOCUMENTS": 7680372,
+    "CURRENT_EMBEDDED_CONTENT_IDENTITIES": 7680357,
+    "CONTENT_HASH_ALREADY_COVERED": 769798,
+    "CURRENT_QUEUE_DEPTH": 0,
+    "OLDEST_PENDING_AGE": null,
+    "UNNAMED_RESIDUAL": 0,
+    "FAILED_ITEMS": 0,
+    "REFUSED_ITEMS_INSIDE_ELIGIBLE": 0,
+    "EMBEDDING_COMPLETE": true,
+    "accountingCloses": true,
+    "deltaSinceR15": {
+      "r15MeasuredAt": "2026-09-16T07:08:29Z",
+      "ELIGIBLE_DOCUMENTS": 5210,
+      "ELIGIBLE_CONTENT_IDENTITIES": 4769,
+      "EMBEDDED_DOCUMENTS": 4769,
+      "CONTENT_HASH_ALREADY_COVERED": 441,
+      "deltaAlsoCloses": true,
+      "note": "4769 + 441 = 5210, the exact growth in eligible documents"
+    },
+    "threeIndependentSourcesAgree": {
+      "censusEmbeddedDelta": 4769,
+      "stageTableRowCountDelta": 4769,
+      "deltaQueueLifetimeCounterDelta": 4769
+    },
+    "snapshotIdentity": {
+      "liveSnapshotHash": "5b5d02384b46c96c",
+      "censusSnapshotHash": "5b5d02384b46c96c",
+      "IDENTITY_MATCH": true,
+      "generations": { "5b5d02384b46c96c": { "state": "ACTIVE", "rows": 7680372 }, "NULL_OLD_GENERATION": { "state": "SEALED", "rows": 486955 } }
+    },
+    "queue": {
+      "INCREMENTAL_WATERMARK": "2026-09-18T14:18:29.587Z",
+      "maxJudgmentsCreatedAt": "2026-09-18T14:18:29.587881Z",
+      "WATERMARK_AT_FRONTIER": true,
+      "passes": 341,
+      "lifetimeEmbedded": 9729,
+      "lastPassAt": "2026-09-18T19:59:02.440Z",
+      "lastPassKind": "queue_nothing_to_embed",
+      "residual": { "considered": 6, "named": 6, "unnamed": 0, "predicatesAgree": true }
+    },
+    "refusalLedger": { "rows": 72099, "STILL_TIER_A_ELIGIBLE": 0, "NO_ELIGIBILITY_ROW": 0 },
+    "identityIntegrity": { "JUDGMENT_ID_DUPLICATES": 0, "enforcedBy": "new1_doc_vector_stage_pkey UNIQUE", "CONTENT_HASH_COLLISIONS": 15, "CONTENT_HASH_SURPLUS_ROWS": 15 },
+    "VECTOR_INTEGRITY_RECEIPT": "INTACT",
+    "manifestVerify": { "command": "node services/harness/src/new1-evidence-manifest.mjs --verify", "result": "EVIDENCE_MANIFEST=INTACT files=6", "exitCode": 0, "at": "2026-09-18T20:04Z" },
+    "FULL_SCAN_RERUN": false,
+    "carriedForwardIntegrity": "VECTOR_INTEGRITY=PASS, full scan of 8162558 rows, 163.5s, 2026-09-16T07:11:12Z, zero nulls/wrong dims/zero vectors/non-unit norms"
+  },
+
+  "gpuWriter": {
+    "ONE_GPU_WRITER": "NOT_RUNNING_EXPECTED",
+    "measuredAt": "2026-09-18T20:05Z",
+    "notInferredFromPid": true,
+    "evidence": {
+      "lease": "HEAVY_BOX RELEASED 2026-09-17T02:52:25Z; no lane lease held",
+      "queueOwnership": "watermark == max(judgments.created_at) to the ms; pending 6, alreadyCovered 6, emitted 0",
+      "durableProgress": "last receipt 2026-09-18T19:59:02.440Z, queue_nothing_to_embed, unnamed 0, predicatesAgree true",
+      "hardware": "nvidia-smi 0% utilisation, 824MiB/8188MiB, no node or python compute process"
+    },
+    "SECOND_GPU_WRITER": false,
+    "FULL_BACKFILL_WORKER_RUNNING": false
+  },
+
+  "deltaScheduler": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T20:04Z",
+    "timezoneNote": "scheduler times are LOCAL UTC+04:00; all other timestamps are UTC",
+    "DELTA_SCHEDULER_MODE": "Interactive",
+    "STARTS_AFTER_REBOOT_WITHOUT_LOGIN": false,
+    "LAST_SCHEDULED_START_LOCAL": "2026-09-18 23:59:01",
+    "LAST_SCHEDULED_START_UTC": "2026-09-18T19:59:01Z",
+    "LAST_DURABLE_PROGRESS": "2026-09-18T19:59:02.440Z",
+    "NEXT_EXPECTED_START_LOCAL": "2026-09-19 00:14:00",
+    "NEXT_EXPECTED_START_UTC": "2026-09-18T20:14:00Z",
+    "lastTaskResult": 0,
+    "numberOfMissedRuns": 0,
+    "taskName": "Lawmind-new1-delta-queue",
+    "runLevel": "Limited",
+    "userId": "Xerxus",
+    "unchangedSinceLastAccepted": true,
+    "siblingTasksAlreadyS4U": ["Lawmind-alert-poll", "Lawmind-citation-keys", "Lawmind-citations", "Lawmind-paragraphs"],
+    "onlyActiveInteractiveTask": true,
+    "riskObservedToday": {
+      "lastReceiptBeforeGap": "2026-09-18T16:29:01.901Z",
+      "shutdownInitiatedUtc": "2026-09-18T16:34:05Z",
+      "bootUtc": "2026-09-18T19:43:40Z",
+      "firstReceiptAfterBoot": "2026-09-18T19:59:02.440Z",
+      "gapMinutes": 210,
+      "cause": "machine powered off, not a stall",
+      "costThisInstance": "none - queue resumed and found nothing outstanding",
+      "whatItProves": "the failure mode is reachable and its ledger signature is indistinguishable from healthy quiet"
+    },
+    "independentCorroboration": {
+      "observer": "Lawmind-alert-poll job-health",
+      "observedAt": "2026-09-18T19:52:12.467Z",
+      "state": "RUNNING_STALLED",
+      "why": "scheduled task last fired 203m ago, cadence 15m x tolerance 2 - and its principal is Interactive, so a locked machine fires it never",
+      "note": "correct at 19:52Z, superseded at 19:59Z; timestamp-relative, not a standing failure"
+    },
+    "hostSchedulingChangedByData": false,
+    "opsHandoffSent": "bus 1819"
+  },
+
+  "model": {
+    "MODEL_MANIFEST_PRESENT": true,
+    "manifests": ["docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.json", "docs/ai/lcc-r13/model-artifact-manifest.json"],
+    "EXACT_MODEL_HASHES_PRESENT": true,
+    "fileCount": 5,
+    "filesPresentOnDiskToday": 5,
+    "byteSizeMatches": 5,
+    "sha256Recomputed": false,
+    "sha256State": "CARRIED_FORWARD from two agreeing manifests",
+    "OFF_MACHINE_MODEL_BACKUP_REFERENCE_PRESENT": true,
+    "backup": {
+      "destination": "Cloudflare R2, bucket lawmind-corpus, key backups/postgres/2026-08-30T00-10-01-494Z-new1-model-pack-v2",
+      "method": "rclone check --download --multi-thread-streams 0, byte-for-byte, 2026-08-30",
+      "result": "0 differences, 5 matching files",
+      "whySingleStream": "the default multi-threaded copy has silently truncated large R2 objects before"
+    },
+    "UPSTREAM_REVISION": "UNKNOWN",
+    "upstreamRevisionWhy": "four of five files pin to 4de13258...; the weights match no upstream revision, differing in 42988 of 2266820608 bytes from the only blob of that size upstream",
+    "localBytesReplacedWithNominalUpstream": false,
+    "modelFilesExposedOrShared": false,
+    "identity": "BGE-M3 ONNX fp32, CLS-pooled, L2-normalised, recipe HEAD:4800, 1024 dims, cosine"
+  },
+
+  "hnsw": {
+    "FULL_HNSW_EXISTS": false,
+    "LOCAL_BUILD_ALLOWED_BY_CURRENT_RAM": false,
+    "HNSW_STATE": "DEFERRED_HIGH_MEMORY_OFFLOAD",
+    "PUBLIC_SEMANTIC": "DISABLED",
+    "buildAttempted": false,
+    "productionStageIndexes": ["new1_doc_vector_stage_pkey (btree on judgment_id)"],
+    "existingHnswIndexes": [
+      { "index": "judgment_chunks_embedding_hnsw", "table": "judgment_chunks", "rows": 620928, "sizeMB": 4839, "what": "legacy chunk-level index; ~40161 documents, 0.21% of corpus", "accountedFor": true },
+      { "index": "new1_tranche_passages_hnsw", "table": "new1_tranche_passages", "rows": 418116, "sizeMB": 3244, "what": "NEW1 tranche passage research", "accountedFor": true },
+      { "index": "new1_probe_hnsw_1000000_hnsw", "table": "new1_probe_hnsw_1000000", "rows": 1000000, "sizeMB": 2603, "what": "NEW1 R10 build-cost probe", "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json", "accountedFor": true },
+      { "index": "new1_probe_hnsw_250000_hnsw", "table": "new1_probe_hnsw_250000", "rows": 250000, "sizeMB": 651, "what": "NEW1 R10 build-cost probe", "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json", "accountedFor": true },
+      { "index": "new1_head_baseline_hnsw", "table": "new1_head_baseline", "rows": 20947, "sizeMB": 164, "what": "NEW1 head-offset baseline", "accountedFor": true }
+    ],
+    "unexplainedIndexFound": false,
+    "capabilities": {
+      "search.semantic.broad": "INTERNAL_EXPERIMENTAL",
+      "search.semantic.supporting_authority": "POST_V1",
+      "search.semantic.adverse_authority": "POST_V1"
+    },
+    "carriedForwardRam": { "MEASURED_HNSW_RAM_REQUIREMENT_GiB": 19.52, "CURRENT_SAFE_RAM_GiB": [12.38, 14.2], "machineTotalGiB": 31.75, "shortfallGiB": [5.3, 7.1] }
+  },
+
+  "ecourts": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T19:59Z",
+    "liveQuotaSpentByThisRound": 0,
+    "ECOURTS_OBSERVATION_COUNT": 0,
+    "LATEST_OBSERVATION_AT": null,
+    "FETCH_LEDGER_COUNT": 238,
+    "LAST_SOURCE_OUTCOME_CLASS": "SOURCE_SIDE_CONNECTION_FAILURE",
+    "LAST_SUCCESSFUL_REAL_CAUSE_LIST_OBSERVATION": null,
+    "RETENTION_MEASURED": "NOT_MEASURABLE_ZERO_OBSERVATIONS",
+    "DAILY_PILOT_STATE": "NOT_STARTED",
+    "causeListSyncs": 0,
+    "ecourtsTransition": 0,
+    "killSwitch": { "key": "ecourts_harvest", "enabled": true, "since": "2026-08-29T17:33:52Z" },
+    "killSwitchOnButNoObservations": true,
+    "fetchOutcomes": [
+      { "outcome": "ok", "httpStatus": 200, "n": 110, "latest": "2026-09-16T12:28:16Z", "note": "newest 12 are endpoint test://attribution-probe, not eCourts" },
+      { "outcome": "refused", "reason": "kill_switch_off", "n": 80, "latest": "2026-08-29T16:19:26Z" },
+      { "outcome": "refused", "reason": "attribution_not_on_file", "n": 44, "latest": "2026-08-29T14:00:32Z" },
+      { "outcome": "error", "n": 3, "latest": "2026-08-30T08:34:56Z" },
+      { "outcome": "refused", "reason": "min_interval", "n": 1, "latest": "2026-08-29T22:58:42Z" }
+    ],
+    "lastRealNetworkRequestToSource": "2026-08-30T08:46:40Z",
+    "lastRealEndpoint": "cause_list/submitCauseList",
+    "rules": {
+      "HTTP_200_NOT_OBSERVATION": true,
+      "CAPTCHA_ACCEPTED_NOT_CAUSE_LIST": true,
+      "FAILED_FETCH_NOT_NOTHING_CHANGED": true,
+      "LISTED_OBSERVED_NOT_HEARING_OCCURRED": true,
+      "PARSE_EMPTY_NOT_NO_CASES": true
+    },
+    "refutedHypothesesReopened": false,
+    "refutedHypotheses": ["User-Agent / attribution transport (TESTED_REFUTED)", "fillDistrict (SOLVED)"],
+    "quota": { "ledgerRowsLifetime": 238, "encodedHourlyCeiling": 100, "encodedDailyCeiling": 1000, "addedByThisRound": 0 },
+    "REAL_CAUSE_LIST_FIXTURE": "NOT_OBTAINED"
+  },
+
+  "monitoring": {
+    "MONITORING_12_CONDITIONS_PASSED": 0,
+    "MONITORING_12_CONDITIONS_TOTAL": 12,
+    "allConditionsState": "UNMEASURED",
+    "unmeasuredIsNotFailed": true,
+    "rootCause": "every condition is downstream of condition 1 (one complete raw -> parsed -> ecourts_observation path) and ecourts_observation = 0",
+    "LAUNCH_SHAPE": "B",
+    "launchShapeMeaning": "RESEARCH ONLY",
+    "capabilities": {
+      "monitoring.user_product": "DISABLED_NOT_READY",
+      "briefing.daily_loop": "DISABLED_NOT_READY",
+      "alerts.saved_authority_moved": "DISABLED_NOT_READY",
+      "alerts.filed_citation_moved": "DISABLED_NOT_READY",
+      "alerts.push_delivery": "DISABLED_NOT_READY",
+      "ecourts.raw_observation_pipeline": "DISABLED_NOT_READY",
+      "ecourts.parser": "DISABLED_NOT_READY",
+      "ecourts.daily_pilot": "DISABLED_NOT_READY",
+      "documents.upload_and_ocr": "DISABLED_EXTERNAL_BLOCK"
+    },
+    "anythingRecommendedForEnabling": false,
+    "monitoringWorkCreatedForShip": false
+  },
+
+  "sizing": {
+    "state": "LIVE",
+    "measuredAt": "2026-09-18T20:03Z",
+    "newExportGenerated": false,
+    "CURRENT_CORPUS_DB_SIZE_BYTES": 368443168447,
+    "CURRENT_CORPUS_DB_SIZE_PRETTY": "343 GB",
+    "CURRENT_USER_DB_SIZE_BYTES": 8380416,
+    "CURRENT_USER_DB_SIZE_PRETTY": "8184 kB",
+    "separateUserDatabaseExists": false,
+    "userDbNote": "user tables live inside the lawmind database; the figure is those tables summed",
+    "CURRENT_VECTOR_FOOTPRINT_BYTES": 75132182528,
+    "CURRENT_VECTOR_FOOTPRINT_PRETTY": "70 GB",
+    "productionVectorStageBytes": 47940034560,
+    "CURRENT_TSVECTOR_FOOTPRINT_BYTES": 21221875712,
+    "CURRENT_TSVECTOR_FOOTPRINT_PRETTY": "20 GB",
+    "judgmentsFullTextIdxBytes": 17711980544,
+    "servingEightTablesBytes": 269057155072,
+    "servingEightTablesPretty": "~250 GB",
+    "doNotPrice343GB": "roughly 93 GB is research and probe artifact that need not ship",
+    "userSideRowCounts": { "users": 748, "matters": 10, "matter_authorities": 5, "saved_searches": 6, "alerts": 6, "llm_calls": 40166, "audit_log": 1080 },
+    "otherDatabases": [{ "name": "lawmind_restore_rehearsal", "pretty": "122 MB", "what": "rehearsal artifact, not a serving database" }],
+
+    "CURRENT_RELEASE_PACK_REFERENCE": "D:/lawmind-release-r32b/pack3",
+    "releaseVersion": "2026-09-17.mu4rlyak",
+    "packCreatedAt": "2026-09-17T02:48:50.862Z",
+    "packIsolation": "repeatable read, snapshot 00000055-0000009C-1",
+    "LAST_FULL_EXPORT_SIZE_BYTES": 77960605063,
+    "LAST_FULL_EXPORT_SIZE_PRETTY": "72.6 GiB gzip, 8 tables",
+    "LAST_FULL_EXPORT_DURATION": "~2h15m wall (00:33:21Z to 02:48:50Z), judgments.copy.gz REUSED by checksum within the same snapshot",
+    "LAST_FULL_RESTORE_DURATION": "UNKNOWN",
+    "RELEASE_PACK_LINEAGE_VALID": "PARTIAL",
+    "lineageProven": {
+      "manifestSha256Match": true,
+      "manifestSha256": "30abec9677b2ee2c5f66940b0b9388c19ce7ae08d052c9e0b5d623eeca1860fd",
+      "filesPresent": "8 of 8",
+      "byteSizesMatchManifest": "8 of 8",
+      "schemaLineageMatchesHead": true,
+      "manifestHighestMigration": "0104_ops_job_state_check_all_states",
+      "manifestMigrationCount": 105,
+      "repoJournalEntries": 105,
+      "repoJournalLastTag": "0104_ops_job_state_check_all_states"
+    },
+    "lineageNotProven": "per-file sha256 values recorded in MANIFEST.json",
+    "cheapComparisonToResolve": "stream-hash the 8 .copy.gz files (72.6 GiB, ~20-40 min of disk reads); no database, no network, no lease required",
+    "byteLengthCaveat": "byte-length matching excludes the truncation class but not in-place corruption",
+    "CURRENT_DELTA_SINCE_GATE_C_PACK": {
+      "judgments": { "pack": 18793342, "live": 18799522, "delta": 6180, "sharePercent": 0.033 },
+      "judgment_citations": { "pack": 22451373, "live": 22459364, "delta": 7991 },
+      "judgment_statute_refs": { "pack": 928805, "live": 933014, "delta": 4209 },
+      "judgment_paragraphs": { "pack": 92083253, "live": null, "note": "not re-counted" }
+    },
+    "GATE_C_PACK_REUSE_CANDIDATE": "YES",
+    "hostingCorrectnessFact": {
+      "sourceCollation": "English_United States.1252",
+      "sourceCtype": "English_United States.1252",
+      "encoding": "UTF8",
+      "serverVersion": "18.6",
+      "extensions": ["pg_trgm 1.6", "vector 0.8.5", "plpgsql 1.0"],
+      "warning": "a Linux target CANNOT match this collation; text ordering and collation-dependent indexes differ on restore",
+      "exposedIndexes": ["judgments_case_title_normalised_idx", "btree citation indexes"],
+      "classification": "CORRECTNESS not cost; settle before choosing a provider"
+    }
+  },
+
+  "outcomes": {
+    "SHIP_OPS_HANDOFFS": [
+      { "id": 1, "bus": 1819, "subject": "delta-queue scheduler principal is Interactive", "answers": "bus 1818 item 3" },
+      { "id": 2, "bus": 1819, "subject": "platform_config.signups is DISABLED with reason 'test cleanup'", "impactToday": "none (PRODUCTION=NONE, PERSISTENT_BETA=NONE)", "impactAtS4R1": "a persistent beta from this database comes up with signups off" }
+    ],
+    "DATA_CONTINUITY": [
+      { "id": "DATA_CONTINUITY_1", "what": "source freshness ledger has no row for sci-live, understating SC currency by 37 days" },
+      { "id": "DATA_CONTINUITY_2", "what": "source_id/authorization_basis NULL on 99.75% of judgments; provenance legible only on the frontier" },
+      { "id": "DATA_CONTINUITY_3", "what": "cited_authority matview drifted 1126 rows; the eligibility snapshot hash cannot see it" }
+    ],
+    "DEFERRED_RESEARCH": [],
+    "DATA_BLOCKERS": [],
+    "UNKNOWN": [
+      "UPSTREAM_MODEL_REVISION",
+      "RELEASE_PACK payload sha256 (not recomputed)",
+      "19-row SC discrepancy vs the source ledger (no mechanism asserted)",
+      "20239701 upstream denominator (CARRIED_FORWARD, not re-measured)",
+      "LAST_FULL_RESTORE_DURATION"
+    ],
+    "CORRECTIONS": [
+      "reltuples for judgments (18752608) is 46914 below the true count (18799522)",
+      "NEW1 R15 census figures are a 16 Sep snapshot, not constants",
+      "R15's Interactive-principal scheduler RISK became an OBSERVED event on 18 Sep",
+      "the ok/200 latest timestamp in the eCourts fetch ledger (2026-09-16T12:28:16Z) is an internal attribution probe; the last real eCourts request was 2026-08-30T08:46:40Z"
+    ],
+    "NOT_DONE": [
+      "no canonical mutation", "no citation edge apply", "no HNSW build",
+      "no matview refresh", "no capability change", "no public link created",
+      "no candidate population regeneration", "no vector-integrity full scan",
+      "no host scheduling change", "no eCourts live request", "no new full export",
+      "no RED invocation", "no worker stopped or started", "no lease taken or broken"
+    ]
+  },
+
+  "acceptance": {
+    "measurementsCurrentOrLabelled": "MET",
+    "noStaleRoadmapNumberAsCurrent": "MET",
+    "noHealthyWorkerDisturbed": "MET",
+    "noCanonicalMutation": "MET",
+    "noPublicCapabilityChanged": "MET",
+    "citationBulkApplyRemainsHold": "MET",
+    "noHnswBuildAttempted": "MET",
+    "monitoringRemainsTruthful": "MET",
+    "shipReceivesSchedulerAndSizingFacts": "MET",
+    "stopTheLineConditionMet": false
+  },
+
+  "DATA_S4_D0_CONTINUITY": "PASS"
+}

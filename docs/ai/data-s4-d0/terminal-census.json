@@ -1,0 +1,34 @@
+{
+  "kind": "new1_terminal_embedding_census",
+  "measuredAt": "2026-09-18T20:17:38.861Z",
+  "elapsedSec": 1033.7,
+  "otherActiveBackendsAtStart": 0,
+  "snapshotHash": "5b5d02384b46c96c",
+  "denominatorSource": "judgment_embedding_eligibility, LIVE, Tier A bands [standard, full, substantial], non-bail",
+  "frozenRepresentativeDenominator": 7654179,
+  "frozenDenominatorIsStale": "yes — the 27-Aug representative cut. Reported for continuity with earlier rounds, NOT used as the denominator.",
+  "fourState": {
+    "ELIGIBLE_DOCUMENTS": 8450170,
+    "ELIGIBLE_CONTENT_IDENTITIES": 7680357,
+    "EMBEDDED_DOCUMENTS": 7680372,
+    "EMBEDDED_CONTENT_IDENTITIES": 7680357,
+    "CONTENT_HASH_ALREADY_COVERED": 769798,
+    "QUEUED": 0,
+    "EXPLICITLY_REFUSED": 0,
+    "UNNAMED_RESIDUAL": 0
+  },
+  "queuedSource": "docs/ai/new1-r9/delta/queue-ledger.jsonl — every pass reports QUEUED and the unnamed residual of its own window; the value is read from the queue, not inferred here.",
+  "refusalLedger": {
+    "ROWS": 72099,
+    "STILL_TIER_A_ELIGIBLE": 0,
+    "NO_ELIGIBILITY_ROW": 0,
+    "why": "EXPLICITLY_REFUSED above counts refusals INSIDE the eligible population and is 0. That is not \"nothing was refused\": the walk refused 72099 documents, and the live eligibility predicate independently excludes every one of them. Two mechanisms, same verdict, on all of them."
+  },
+  "identityIntegrity": {
+    "JUDGMENT_ID_DUPLICATES": 0,
+    "JUDGMENT_ID_DUPLICATES_HOW": "enforced — new1_doc_vector_stage_pkey is UNIQUE on judgment_id",
+    "CONTENT_HASH_COLLISIONS": 15,
+    "CONTENT_HASH_SURPLUS_ROWS": 15
+  },
+  "accountingCloses": true
+}
