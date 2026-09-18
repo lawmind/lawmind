@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-09-18",
+  "repository_anchor_when_prepared": "lawmind/lawmind@6b1355eb96ae46e6ad0c7d0441306dd6ea76618a",
+  "supersedes_for_current_execution": {
+    "roadmap": [
+      "LAWMIND_MASTER_ROADMAP_V7_3.md",
+      "LAWMIND_MASTER_ROADMAP_V7_2.md"
+    ],
+    "prompts": [
+      "LAWMIND_SPRINT_PROMPTS_V4.md",
+      "LAWMIND_SPRINT_PROMPTS_V3.md"
+    ]
+  },
+  "founder_amendments": {
+    "advocate_product": "mobile iOS + Android",
+    "advocate_desktop_web": "DO_NOT_BUILD",
+    "promotional_website": "TEMPORARY_NONCORE_REBUILD_AFTER_APP_COMPLETE",
+    "compliance_urls": "STABLE_RELEASE_CONTRACT",
+    "agent_topology": [
+      "SHIP",
+      "DATA",
+      "RED"
+    ]
+  },
+  "files": {
+    "LAWMIND_MASTER_ROADMAP_V7_4.md": {
+      "bytes": 52277,
+      "sha256": "4a0f5faf1ae979e99c755b1246acccd9978e154e6f8ed9561bbd94186c655ec1"
+    },
+    "LAWMIND_SPRINT_PROMPTS_V5.md": {
+      "bytes": 20126,
+      "sha256": "070e541c02d365bf9ba9a6dff6821701ea486f86ed3504ab7553407b3d152f06"
+    },
+    "LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
+      "bytes": 4565,
+      "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd"
+    },
+    "LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
+      "bytes": 11892,
+      "sha256": "4aa230ab328073377f2efefb1b8272c82ae1096cd187442c2283838855ac195b"
+    }
+  }
+}
