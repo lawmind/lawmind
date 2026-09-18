@@ -527,3 +527,41 @@ HISTORICAL_DEPLOYMENT_EVIDENCE_REWRITTEN = NO
 ```
 
 SHIP_S4_T0_2_RUNTIME_CI_RECONCILIATION = PASS
+
+---
+
+## Addendum — the first push-triggered run, observed
+
+The trigger change was verified against GitHub rather than asserted. Pushing
+`444af1a1` / `85f342c4` queued run `35305042663` within seconds — the first
+workflow run on this repository since **7 Aug 2026** — which also validates the
+workflow syntax, since GitHub parses the file before it queues anything.
+
+```text
+design rules                                  success
+deployed safety                               success — step "No deployed target" ran,
+                                              every other step skipped, 5s
+server checks                                 FAILURE at `node scripts/check-alert-coverage.mjs`
+```
+
+**The failure is pre-existing and unrelated.** `check-alert-coverage.mjs` exits 1
+against `HEAD_START` (`7630c275`) in a clean `git archive` tree, before any change
+in this round: PD-5 and PD-6 promise four alert kinds and `alert_kind` holds two,
+so the app persists switches for notifications the system cannot produce. That is
+the defect the guard was written to find, and `scripts/ci-local.mjs` has said so
+in a comment since 11 Aug 2026 ("added knowing `ci:local` goes red"). Turning CI
+back on did not break it; it made it visible for the first time in six weeks.
+Every step after it was skipped, so `pnpm lint` / `pnpm format` / typecheck have
+still not been observed on a runner — they are red locally and expected red there.
+
+**One correction made after watching the run.** The `deployed safety` job reported
+a green tick while doing nothing, which is exactly the misreading the job exists
+to prevent — the machine-readable reason was in the log and the step summary, but
+the run list showed a checkmark. The job's DISPLAY NAME now carries the state:
+
+```yaml
+name: ${{ vars.PROBE_BASE_URL != '' && 'deployed safety' || 'deployed safety (NOT_RUN_NO_DEPLOYED_TARGET)' }}
+```
+
+so the run summary says `NOT_RUN_NO_DEPLOYED_TARGET` without anyone opening a log,
+and says plain `deployed safety` once S4-R1 sets the variable.

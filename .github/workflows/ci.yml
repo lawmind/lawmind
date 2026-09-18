@@ -173,7 +173,11 @@ jobs:
   # variable when the persistent beta exists, and the probe becomes a
   # deployment-acceptance gate again with none of its assertions touched.
   deployed-safety:
-    name: deployed safety
+    # The DISPLAY NAME carries the state, because a green tick beside the words
+    # "deployed safety" is exactly the misreading this job exists to prevent.
+    # With no target the job is correct-and-skipped, not passing, and the run
+    # summary now says so without anyone opening the log.
+    name: ${{ vars.PROBE_BASE_URL != '' && 'deployed safety' || 'deployed safety (NOT_RUN_NO_DEPLOYED_TARGET)' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
