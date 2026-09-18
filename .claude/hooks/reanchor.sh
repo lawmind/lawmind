@@ -74,9 +74,12 @@ LAWMIND NON-NEGOTIABLE:
 - Hindi = Noto Sans Devanagari everywhere incl. PDF export.
 - Stack fixed: Expo · Hono · Railway PG + pgvector · Drizzle · better-auth.
   NOT Neon/Vercel/Qdrant/Clerk/Supabase. Ask before adding any vendor.
-- Four core features PLUS the daily loop. Tier B (the loop) ships before Tier A
-  (the library): the loop creates the habit, the library prevents a comparison
-  loss. PRODUCT_BRIEF.md
+- CURRENT V1 = evidence-first mobile legal research for practising Indian
+  advocates, native iOS + Android only. Loop: Search → Reader → Source/Evidence →
+  Save → Matter. Advocate desktop/web = DO NOT BUILD. Promo website = temporary,
+  noncore; only its compliance URLs are release contracts. Drafting, briefings,
+  monitoring, uploads, Hindi generation, public semantic = deferred/disabled per
+  the current capability registry. PRODUCT_BRIEF.md is long-term vision only.
 - Ponytail ladder applies to every build decision. The best code is the code you
   never wrote. EXEMPT: the citation verification pipeline is never simplified.
   A package with no direct import may still be a declared peer — check
@@ -84,8 +87,11 @@ LAWMIND NON-NEGOTIABLE:
 - OSS FIRST: search for a maintained project before building anything
   non-differentiating. MIT/Apache/BSD ok. AGPL is NOT. docs/OSS_STACK.md
 - Never resolve an OPEN_DECISION alone. docs/OPEN_DECISIONS.md
-- TWO lanes only: LCC=server, RCC=client. Write only inside yours. Contract
-  (docs/API_CONTRACTS.md) is FROZEN per sprint. BUILD_GUIDE.md
+- ACTIVE agents: SHIP (product/client/server/ops/release), DATA (corpus/legal
+  truth/retrieval), RED (independent audit, FROZEN unless invoked). LCC, RCC,
+  NEW1, NEW2, NEW3, FIFTH, AUDIT-RO are LEGACY history, never current lanes.
+  Contract changes: CCR → freeze → implement → separate acceptance (roadmap
+  v7.4 §3.7). Stop-the-line only for the six roadmap §3.6 conditions.
 
 HOW TO WORK — the founder has asked for this repeatedly and it survives
 compaction, a new session, and a fresh agent:
@@ -106,12 +112,13 @@ compaction, a new session, and a fresh agent:
   be made from the CLI — both were wrongly queued as blockers.
 - Batch reporting into ONE final message when the work is actually finished.
 
-THE PLAN LIVES IN docs/CURRENT_PLAN.md — the single ordered queue, what is done,
-what is next, and what is waiting on the founder. A plan held only in a todo tool
-does not survive compaction; that file does. Read it before choosing a task and
-update it when a queue item lands.
+CURRENT AUTHORITY: docs/CURRENT_STATE.md (live pointer: gate, current capability
+registry, stops, founder actions) → docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md →
+docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md. docs/CURRENT_PLAN.md is a HISTORICAL
+journal, not the task queue. SHIP updates CURRENT_STATE.md after every gate, scope
+decision, registry release or production deploy.
 
-If context was compacted: re-read docs/CURRENT_PLAN.md, docs/OPEN_DECISIONS.md,
+If context was compacted: re-read docs/CURRENT_STATE.md, docs/OPEN_DECISIONS.md,
 docs/SCHEMA_TRUTH.md, docs/CITATION_HARNESS.md before your next edit.
 </lawmind-core>
 CORE_TEXT

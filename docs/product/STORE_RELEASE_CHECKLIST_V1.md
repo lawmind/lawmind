@@ -1,5 +1,73 @@
 # STORE / RELEASE PRODUCT CHECKLIST V1
 
+## 0 · CURRENT RELEASE STATE — SHIP, 18 September 2026 (S4-T0.1) — read before §1
+
+Owner: **SHIP** (NEW3/RCC/LCC below are legacy lane names). Authority: roadmap v7.4
+§14 (Amendment A1). Claims: `V1_CLAIMS_REGISTER_R17.md` against the current capability
+registry named in `docs/CURRENT_STATE.md`. §1 onward is the 25 Aug checklist as
+written. Where it says "no website exists" or "RCC builds `apps/site`", it is
+superseded by 0.2.
+
+### 0.1 Account readiness (roadmap §14.14): measure, do not assume
+
+`VERIFIED` = observed in console/CLI/API · `FOUNDER_CONFIRMED` = founder statement with date · `UNKNOWN`.
+
+| Row | State 18 Sep 2026 | Evidence / next step |
+|---|---|---|
+| APPLE_DEVELOPER_MEMBERSHIP | UNKNOWN | founder: confirm membership + type |
+| APPLE_ACCOUNT_TYPE | UNKNOWN | individual vs organization (seller name = legal entity if org) |
+| APPLE_ORGANIZATION_VERIFIED | UNKNOWN | — |
+| APPLE_DUNS_IF_ORG | UNKNOWN | Helmor Pvt Ltd D-U-N-S, if org |
+| APPLE_BINDING_AUTHORITY | UNKNOWN | enrolling person must be able to bind the entity |
+| APPLE_WORK_EMAIL | UNKNOWN | on the org's domain |
+| APPLE_TEAM_ID | UNKNOWN | not in `eas.json` / `app.config.ts` |
+| APPSTORE_CONNECT_APP_RECORD | UNKNOWN | — |
+| IOS_BUNDLE_ID_RESERVED | UNKNOWN | configured value `co.lawmind.app` (VERIFIED in `app.config.ts`); reservation unobserved |
+| SIGNING_CERTIFICATES | UNKNOWN | — |
+| PROVISIONING | UNKNOWN | — |
+| TESTFLIGHT_ACCESS | UNKNOWN | — |
+| PLAY_ACCOUNT_TYPE | UNKNOWN | personal vs organization; do NOT infer the closed-testing rule |
+| PLAY_ORGANIZATION_VERIFIED_IF_APPLICABLE | UNKNOWN | — |
+| PLAY_DUNS_IF_ORG | UNKNOWN | — |
+| PLAY_LEGAL_NAME_ADDRESS | UNKNOWN | — |
+| PLAY_CONTACT_VERIFIED | UNKNOWN | — |
+| PLAY_PAYMENT_PROFILE_IF_APPLICABLE | UNKNOWN | only if paid |
+| PLAY_APP_REGISTERED | UNKNOWN | **deadline 30 Sep 2026**: unregistered Play packages are removed |
+| PLAY_PACKAGE_ID | configured `co.lawmind.app` (VERIFIED in `app.config.ts`) | registration unobserved |
+| PLAY_DATA_SAFETY | NOT STARTED | needs working deletion URL (0.2) |
+| PLAY_SIGN_IN_DETAILS | NOT READY | `REVIEW_ACCESS_V1` (roadmap §14.7) |
+| EAS_ACCOUNT | UNKNOWN | `eas` CLI not installed on the workstation; no `owner` in `app.config.ts` |
+| EAS_PROJECT / EAS_PROJECT_ID | ABSENT in config (VERIFIED: no `extra.eas.projectId`) | create/link before any EAS build; **not** gated on push |
+| EAS_ORG | UNKNOWN | — |
+| IOS_CREDENTIAL_OWNER | UNKNOWN | — |
+| ANDROID_SIGNING_OWNER | UNKNOWN | — |
+| iOS toolchain image | VERIFIED config: `eas.json` production `macos-tahoe-26.5-xcode-26.6` | build/archive proof = NOT PROVEN |
+
+Push stays a deferred feature (Shape B makes no push or monitoring claim). EAS
+project/build readiness is a separate, current release obligation.
+
+### 0.2 Compliance URLs: stable release contracts, not promo-site work
+
+| URL | Last observed | Note |
+|---|---|---|
+| `https://lawmind.co/privacy` | 200 (15 Sep) | copy must match runtime data practice (`DATA_SAFETY_MATCHES_RUNTIME`) |
+| `https://lawmind.co/contact` (support) | 200 (15 Sep) | support mailbox must be real |
+| `https://lawmind.co/terms` | 200 (15 Sep) | if submitted |
+| `https://lawmind.co/delete-account` | **404** (15 Sep) | `EXTERNAL_DELETE_AUTH_V1`, `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` |
+
+Served from `lawmind/lawmind-site` (external repo). These URLs must survive any
+promotional-site teardown/rebuild. Not re-probed in this docs-only round.
+
+### 0.3 Also required at Gate D
+
+`SECURITY_RELEASE_BASELINE` (roadmap §14.15) · alert delivery proof (§13.5) ·
+Android targetSdk ≥ 36 from the real release artifact · Xcode 26+/iOS 26 SDK+ real
+archive · `supportsTablet` decided · iOS party-search default OFF ·
+`LAUNCH_COMMERCE` chosen. **If PAID_V1:** a supported **PBL8+** (PBL9 current),
+re-measured before implementation. No billing SDK if FREE_BETA.
+
+---
+
 **NEW3, 25 August 2026.** Sprint plan V2 §10 NEW3-6. NEW3 owns the product
 content and the claims. **RCC implements client corrections; LCC implements
 server corrections.** Store copy is bound by

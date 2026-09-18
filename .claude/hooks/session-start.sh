@@ -35,21 +35,20 @@ fi
 
 IFS='' read -r -d '' TEMPLATE <<'TEMPLATE_TEXT'
 <lawmind-session-start>
-MANDATORY READ ORDER: PRODUCT_BRIEF.md -> .ai/README.md -> docs/OPEN_DECISIONS.md -> PRODUCT_DECISIONS.md -> docs/SCHEMA_TRUTH.md -> docs/CITATION_HARNESS.md
+MANDATORY READ ORDER: docs/CURRENT_STATE.md -> docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md -> docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md -> docs/OPEN_DECISIONS.md -> PRODUCT_DECISIONS.md -> docs/SCHEMA_TRUTH.md -> docs/CITATION_HARNESS.md -> .ai/README.md
 
-PRODUCT_BRIEF.md is the north star. PD-1..PD-12 in PRODUCT_DECISIONS.md are SETTLED — never silently reopen.
+CURRENT_STATE.md names the gate, the current capability registry, active stops and founder actions. PRODUCT_BRIEF.md is long-term vision; current v1 scope is narrower (v7.4 + current capability registry). PRODUCT_DECISIONS.md decisions are SETTLED — never silently reopen.
 
 OPEN DECISIONS (never resolve alone):
 __OPEN_DECISIONS__
 
-BLOCKING: nothing blocks S0 or S1. Eight ODs closed 2 Aug 2026.
-          OD-1 (court vendor) is open — trial pending, does NOT block S3: the
-          adapter ships with the manual path working. OD-10 (alt billing)
-          deferred to 1,000 paying users.
-          Still owed, not sprint blockers: the countersigned DPA for
-          sensitive-class routing, and counsel's written residency view.
-Gate S2 (citation accuracy) is a HARD STOP. See BUILD_GUIDE.md
-TWO LANES: LCC=server, RCC=client. Contract frozen per sprint. sprints/SPRINT_N.md
+PHASE: Gate C accepted → Sprint 4 / Gate D (docs/CURRENT_STATE.md is authoritative).
+          Countersigned DPA still REQUIRED before uploads or sensitive model
+          routing (roadmap v7.4 §12.5). Old S0–S7 gates in BUILD_GUIDE.md are
+          historical.
+AGENTS: SHIP (active) · DATA (continuous) · RED (frozen unless invoked). Legacy
+          LCC/RCC/NEW1/NEW2/NEW3/FIFTH/AUDIT-RO are history only. Bind with
+          `echo SHIP > .agents/bus/.lane-<session_id>` (or DATA / RED).
 </lawmind-session-start>
 TEMPLATE_TEXT
 

@@ -13,6 +13,28 @@
 
 > **v7.4 fixes an error in v7.3:** reducing the number of agents must reduce coordination overhead, not compress the project specification. LawMind still has distinct product, legal-truth, corpus, retrieval, monitoring, privacy, serving, store, beta, commercial, and release programs. They are now owned by fewer agents, not deleted from the roadmap.
 
+> **AMENDMENT A1 — SHIP S4-T0.1 authority + orchestration repair, 18 September 2026.**
+> Patched in place; the version stays v7.4 (no v7.5 for corrections). The founder's
+> original bytes are preserved in git as the first install commit and are hashed in
+> `LAWMIND_V7_4_AUTHORITY_MANIFEST.json` → `amendments[0].preEditSha256`.
+> Round record: `docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`.
+>
+> | § | Change |
+> |---|---|
+> | 1.3 | Dated ledger = snapshot provenance; `docs/CURRENT_STATE.md` = live pointer, updated by SHIP after every gate, scope decision, registry release or production deploy |
+> | 3.5 | Bus runtime: `ACTIVE_LANES = SHIP DATA RED`, `LEGACY_LANES` read-only; FOUNDER = `docs/FOUNDER_QUEUE.md`, not a bus lane |
+> | 3.6 | **NEW** stop-the-line policy restored |
+> | 3.7 | **NEW** contract change control moved to SHIP (CCR → freeze → implement → separate post-implement acceptance) |
+> | 4.2, 14.12, 14.13 | "current capability registry" = the latest accepted registry named in `docs/CURRENT_STATE.md` (R17 at this amendment), never a hard-coded R16 |
+> | 11.2, 14.5 | R33 fixed mobile redirect is an invariant; the external deletion web flow needs a separate `EXTERNAL_DELETE_AUTH_V1` |
+> | 12.4 | **NEW** privacy / DPDP section restored with primary-source dates |
+> | 12.5 | **NEW** third-party AI / DPA triggers and the verify-confirm trigger restored |
+> | 13.5 | **NEW** real alert delivery proof before production readiness |
+> | 14.14 | **NEW** store / release account readiness (Apple, Play, EAS) |
+> | 14.15 | **NEW** `SECURITY_RELEASE_BASELINE` (Gate D + Gate E) |
+> | 15.2 | billing wording: supported PBL8+ (PBL9 is current), re-measure before implementing |
+> | 20.4 | **NEW** official policy rechecks recorded 18 Sep 2026 |
+
 ---
 
 # 0. FOUNDER AMENDMENTS — BINDING
@@ -158,6 +180,25 @@ It should fit in a few pages and point to:
 - latest accepted release/beta environment.
 
 `CURRENT_PLAN.md` remains a historical operational journal unless deliberately retired.
+
+**A1 — two current-state files, two different jobs:**
+
+```text
+docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md = snapshot provenance (immutable, dated)
+docs/CURRENT_STATE.md                                     = current mutable execution pointer (LIVE)
+```
+
+The dated ledger records what was true when v7.4 was prepared and is never edited to
+track later events. `docs/CURRENT_STATE.md` is seeded from it and then moves.
+
+**SHIP must update `docs/CURRENT_STATE.md` after every:**
+- gate result (PASS/HOLD/FAIL);
+- founder scope decision;
+- capability-registry release (it names the exact current registry file);
+- production (or persistent-beta) deployment.
+
+`pnpm authority:check` verifies it exists, names an existing registry, and points at
+the canonical roadmap paths.
 
 ---
 
@@ -364,6 +405,59 @@ Actionable message classes remain:
 
 Delivery ≠ acceptance. Receiving agent verifies the claim.
 
+**A1 — bus runtime as implemented (`.claude/hooks/lane-common.sh`, `scripts/lane-*.mjs`, `scripts/resource-lease.mjs`):**
+
+```text
+ACTIVE_LANES = SHIP DATA RED
+LEGACY_LANES = LCC RCC NEW1 NEW2 NEW3 FIFTH AUDIT-RO
+DOWNSTREAM   = SHIP → DATA · DATA → SHIP · RED → SHIP
+```
+
+- new sessions bind only to an active lane; a legacy binding is refused for new work and told why;
+- new sends and `ALL` broadcasts target active lanes only;
+- legacy messages, filenames and cursors stay untouched and remain readable in `pnpm lane:inbox`;
+- **FOUNDER is not a bus lane.** Anything for the founder goes to `docs/FOUNDER_QUEUE.md`;
+- RED stays FROZEN unless invoked; the RED → SHIP route exists so a RED report has somewhere to land, not to create a three-agent ring.
+
+## 3.6 Stop-the-line policy (A1, restored)
+
+These stop the **affected** work immediately:
+
+```text
+canonical legal-data corruption
+unauthorized source access
+security/privacy exposure
+migration/schema divergence risking data
+user/matter data loss
+production-corrupting release/rollback failure
+```
+
+On a stop: freeze the affected mutation path, preserve evidence, record the incident in
+`docs/CURRENT_STATE.md` → "Active stops", notify the owner (bus P0 or founder queue), and
+resume only on a written clearance that names the evidence.
+
+Ordinary P1/P2 defects are **not** stops. They become owned backlog items with a named
+owner and gate, and they do not falsely freeze the whole project.
+
+## 3.7 Contract change control — SHIP-owned (A1)
+
+`docs/product/CONTRACT_CHANGE_CONTROL.md` is the process. Historical RCC/NEW3/LCC ledger
+rows stay as they are. From S4 onward:
+
+1. **CCR_PROPOSED**: current contract version, exact problem, safe current fallback,
+   user-truth impact, additive/breaking delta, client impact, server impact, tests
+   required. The proposal is frozen in `CONTRACT_CHANGE_LEDGER.json` **before** any
+   implementation edit.
+2. **IMPLEMENT**: SHIP implements.
+3. **POST_IMPLEMENT_ACCEPTANCE**: re-anchor, then a separate acceptance pass against
+   the frozen proposal. A contract is never "released" merely because SHIP wrote both
+   sides.
+4. **Legal/data semantics** (canonical legal truth, citation, statute, retrieval
+   truth states): DATA independently reviews the semantic contract.
+5. **High risk** (authentication, authorization, deletion/erasure, sensitive-data
+   routing, gate criteria, canonical legal mutation safety): invoke `RED_READ_ONLY`
+   where independent falsification is materially useful. RED does not implement.
+
 ---
 
 # 4. COMPANY / PRODUCT THESIS
@@ -409,7 +503,7 @@ Supporting product metrics:
 
 ## 4.2 Current launch-visible capability class
 
-Current accepted v1 includes, subject to current capability registry:
+Current accepted v1 includes, subject to the **latest accepted current capability registry** (named in `docs/CURRENT_STATE.md`; R17 at A1):
 - exact neutral/reporter citation identity where supported;
 - CNR identity over held data;
 - case-number search with ambiguity;
@@ -931,6 +1025,18 @@ Accepted design:
 
 Do not replace this with an alternate custom verifier.
 
+**A1 — R33 invariant, stated exactly** (`services/api/src/auth/magic-link-landing.ts` + test, `docs/ai/lcc-r33/ROUND.md`):
+`GET /auth/magic-link/open` redirects only to the fixed `lawmind://auth/verify?token=…`
+(`MAGIC_LINK_APP_URL`). It deliberately ignores better-auth's `callbackURL`, `redirect`
+and `newUserCallbackURL`, so nobody can steer a live credential.
+
+```text
+R33_MOBILE_MAGIC_LINK_REDIRECT = FIXED — never configurable, never weakened
+```
+
+Any web flow that needs proof of account ownership (external deletion, §14.5) gets its
+own separately specified mechanism. It never makes this landing configurable.
+
 ## 11.3 Split databases
 
 Remote Gate C proved physically distinct:
@@ -1011,6 +1117,76 @@ Persistent beta/prod must have:
 - release/rollback receipt;
 - user-state survival;
 - no dependence on a founder workstation during service.
+
+## 12.4 Privacy / DPDP (A1, restored from v7.2 and re-dated from primary sources)
+
+Checked 18 September 2026; sources in `LAWMIND_V7_4_RECONCILIATION_MEMO.md` §19.
+
+Digital Personal Data Protection Act, 2023: commencement notification **G.S.R. 843(E)**,
+dated **13 November 2025**. Rules: **DPDP Rules, 2025, G.S.R. 846(E)**, published
+**13 November 2025**.
+
+| Instrument | What | In force |
+|---|---|---|
+| Act, clause (a) | definitions, Data Protection Board (ss. 18–26), penalty framework and related provisions | on publication, **13 Nov 2025** |
+| Act, clause (b) | s. 6(9), s. 27(1)(d) | one year later, **13 Nov 2026** |
+| Act, clause (c) | the major Data Fiduciary obligations: ss. 3–5, 6(1)–(8),(10), 7–17, 27 (other than (1)(d)), 28–34, 36–37, 44(2) | eighteen months later, **13 May 2027** |
+| Rules 1, 2, 17–21 | title/definitions, Board | publication, **13 Nov 2025** |
+| Rule 4 | (as notified) | one year after publication, **13 Nov 2026** |
+| Rules 3, 5–16, 22, 23 | the bulk of compliance, per secondary summary: notices, consent standards, security safeguards, breach reporting, retention/deletion, Data Principal rights, cross-border conditions | eighteen months after publication, **13 May 2027** |
+
+One secondary source dates the "on publication" tranche 14 Nov 2025. Gazette
+publication date governs, and the recheck below settles it.
+
+**Do not represent all DPDP obligations as already fully effective at an October 2026
+launch.** Most Data-Fiduciary obligations start 13 May 2027.
+
+**Retain now anyway, because each is expensive to retrofit:**
+- a truthful privacy notice (what is collected, why, which processors, how to erase);
+- data minimisation;
+- deletion/erasure architecture (`POST /me/data-requests {kind:'erasure'}`, in-app + external);
+- access isolation (tenant authorization, split CORPUS/USER DBs);
+- auditability of privileged actions;
+- a data inventory;
+- a provider/subprocessor inventory;
+- consent/permission architecture where applicable (terms consent is already recorded in `users`).
+
+```text
+DPDP_EFFECTIVE_DATE_RECHECK = REQUIRED_BEFORE_PUBLIC_LAUNCH
+```
+
+## 12.5 Third-party AI / DPA triggers (A1, restored)
+
+Current v1 ships no sensitive-content AI path:
+
+```text
+DOCUMENT_UPLOAD_OCR = DISABLED
+DRAFTING             = POST_V1
+HINDI_GENERATION     = POST_V1
+```
+
+**Before any future feature sends sensitive matter/document content to a third-party AI
+provider, all of these hold:**
+- a countersigned DPA with that provider;
+- provider/subprocessor list reviewed and published in the privacy notice;
+- the data purpose disclosed;
+- required consent/permission obtained;
+- partial pseudonymisation described honestly, **never** a claim of complete PII removal;
+- one matter / one document per call (isolation preserved);
+- telemetry and logging receive no raw sensitive content.
+
+```text
+COUNTERSIGNED_DPA = REQUIRED_BEFORE_UPLOADS_OR_SENSITIVE_MODEL_ROUTING
+```
+
+**R24B verify-confirm trigger (preserved).** Before any feature can introduce or display an
+unconfirmed citation:
+
+```text
+VERIFY_CONFIRM_PHYSICAL_ACCEPTANCE = MANDATORY
+```
+
+Current state: `NOT_APPLICABLE_UNREACHABLE_CURRENT_V1` (NEW3 R24B), with the trigger intact.
 
 ---
 
@@ -1100,6 +1276,27 @@ Choose one explicit design:
 - prove cold performance already satisfies product limits.
 
 Do not claim warm service merely because the process is up.
+
+## 13.5 Real alert delivery (A1)
+
+Persistent beta observability must prove **notification**, not merely metrics. Before
+anything is declared production-ready, inject one bounded synthetic alert condition and
+prove the whole chain:
+
+```text
+condition detected
+→ alert rule fired
+→ dedup/cooldown path exercised
+→ human notification delivered
+```
+
+Record the channel and timestamps for each step, never secret values.
+
+```text
+ALERT_DELIVERY_PROVEN = REQUIRED_BEFORE_PRODUCTION_READINESS
+```
+
+This is operational alerting. It is separate from the disabled advocate monitoring product.
 
 ---
 
@@ -1196,8 +1393,13 @@ Do not turn this into a marketing-site project.
 
 The route may be minimal, but it must be functional and branded.
 
-Preferred security design:
-- use existing magic-link ownership proof;
+Preferred security design (**A1 corrected**, since the mobile magic link cannot be reused unchanged; see §11.2):
+- ownership proof via a separately specified **`EXTERNAL_DELETE_AUTH_V1`**
+  (contract: `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` §3.3), purpose-bounded,
+  short-lived, rate limited, raw tokens never logged, no reusable broad auth bypass,
+  no regression of the R33 mobile redirect;
+- the surface lives in the external site repository `lawmind/lawmind-site`
+  (`https://lawmind.co/delete-account`), not in `apps/site` in this repo;
 - avoid account-existence oracle;
 - reuse `/me/data-requests {kind:'erasure'}`;
 - no second deletion backend;
@@ -1322,8 +1524,100 @@ Gate D requires:
 17. commerce decision explicit;
 18. monitoring claims do not exceed measured capability;
 19. current capability registry matches every platform surface.
+20. (A1) store / release account readiness rows measured (§14.14);
+21. (A1) `SECURITY_RELEASE_BASELINE` rows evidenced (§14.15);
+22. (A1) real alert delivery proven on the persistent beta plane (§13.5);
+23. (A1) `EXTERNAL_DELETE_AUTH_V1` implemented to its contract, R33 mobile redirect unchanged.
 
 RED does not run Gate D.
+
+## 14.14 Store / release account readiness (A1)
+
+**Measure, do not assume.** Every row is `VERIFIED` (observed in the console, CLI or API),
+`FOUNDER_CONFIRMED` (founder states it, with the date), or `UNKNOWN`. Current values live in
+`docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0.
+
+### Apple
+```text
+APPLE_DEVELOPER_MEMBERSHIP
+APPLE_ACCOUNT_TYPE              (individual | organization)
+APPLE_ORGANIZATION_VERIFIED
+APPLE_DUNS_IF_ORG
+APPLE_BINDING_AUTHORITY
+APPLE_WORK_EMAIL                (on the organization's domain)
+APPLE_TEAM_ID
+APPSTORE_CONNECT_APP_RECORD
+IOS_BUNDLE_ID_RESERVED          (co.lawmind.app)
+SIGNING_CERTIFICATES
+PROVISIONING
+TESTFLIGHT_ACCESS
+```
+Apple's organization enrollment requires a publicly available, functional website on a
+domain associated with the organization. The temporary promotional site may satisfy
+that. **Satisfying it does not make the promotional site product architecture.**
+
+### Google Play
+The planned launch falls after 30 Sep 2026, so the current Play Console requirements
+apply (§20.4):
+```text
+PLAY_ACCOUNT_TYPE               (personal | organization)
+PLAY_ORGANIZATION_VERIFIED_IF_APPLICABLE
+PLAY_DUNS_IF_ORG
+PLAY_LEGAL_NAME_ADDRESS
+PLAY_CONTACT_VERIFIED
+PLAY_PAYMENT_PROFILE_IF_APPLICABLE
+PLAY_APP_REGISTERED             (package registration for developer verification)
+PLAY_PACKAGE_ID                 (co.lawmind.app)
+PLAY_DATA_SAFETY
+PLAY_SIGN_IN_DETAILS            (reusable, always valid, location-independent)
+```
+Do not infer the personal-account closed-testing rule (testers/days). Read the actual
+account type first.
+
+### Expo / EAS
+```text
+EAS_ACCOUNT
+EAS_PROJECT
+EAS_PROJECT_ID                  (apps/mobile/app.config.ts carries none at A1)
+EAS_ORG
+IOS_CREDENTIAL_OWNER
+ANDROID_SIGNING_OWNER
+```
+`EAS_PROJECT_REQUIRED_FOR_BUILD/DELIVERY` is **not** `PUSH_NOTIFICATIONS_FEATURE`. Push may
+stay deferred (Shape B makes no push/monitoring claim) while the EAS project and build
+pipeline become release-ready.
+
+## 14.15 SECURITY_RELEASE_BASELINE (A1) — Gate D evidences, Gate E attacks
+
+Evidence comes from code, config or runtime observation as each row requires. An
+expensive external penetration test is **not** required to tick a row.
+
+```text
+TENANT_AUTHORIZATION
+PROTECTED_ROUTE_AUTH_BEFORE_SENSITIVE_WORK      (includes N-7: POST /matters body validation before auth)
+SESSION_EXPIRY_RECOVERY
+MAGIC_LINK_REPLAY
+MAGIC_LINK_REDIRECT_CLOSED                      (R33)
+RATE_LIMITING
+SECRETS_NOT_COMMITTED
+TOKENS_NOT_LOGGED
+QUERY_STRINGS_NOT_LOGGING_TOKENS
+TLS_PUBLIC_API
+PUBLIC_POSTGRES_CLOSED
+ADMIN_ISOLATION
+MOBILE_SECURE_STORAGE
+BACKUP_ENCRYPTION
+BACKUP_KEY_ESCROW                               (founder: FQ-BACKUP-KEY-ESCROW)
+DEPENDENCY_VULNERABILITY_REVIEW
+SENTRY_DATA_ALLOWLIST
+POSTHOG_DATA_ALLOWLIST
+NO_RAW_MATTER_DOCUMENT_CONTENT_IN_TELEMETRY
+NO_RAW_SENSITIVE_QUERY_TEXT_UNLESS_EXPLICITLY_APPROVED
+DATA_SAFETY_MATCHES_RUNTIME
+```
+
+Each row: `PASS | FAIL | HOLD | UNKNOWN`, with evidence path. Gate D requires none FAIL and
+none UNKNOWN. Gate E re-attacks every row.
 
 ---
 
@@ -1353,7 +1647,7 @@ Do not infer it.
 
 Separate implementation gate:
 - Apple IAP / StoreKit path;
-- Google Play Billing supported current major (PBL8+ as of current plan);
+- Google Play Billing: a **supported PBL8+** version (A1: PBL8 and PBL9 are both supported; PBL9 is current as of 18 Sep 2026; PBL7 left support for new apps/updates on 31 Aug 2026). **Re-measure the actual current stable version before implementation**;
 - products configured;
 - receipt/entitlement validation;
 - reinstall/device-switch recovery;
@@ -1364,7 +1658,7 @@ Separate implementation gate:
 - physical purchase tests;
 - store-review compliance.
 
-Do not choose a billing vendor from an old founder-queue recommendation without rechecking current requirements.
+Do not choose a billing vendor from an old founder-queue recommendation without rechecking current requirements. Old RevenueCat/OpenIAP recommendations (FOUNDER_QUEUE, 8 Aug 2026) are historical input, not binding decisions.
 
 ## 15.3 Monitoring premium
 
@@ -1601,7 +1895,10 @@ Minimum Gate-E attack:
 - no unsupported third-party AI sharing;
 - auth protection before protected data/work;
 - secrets not committed;
-- review credentials narrow and revocable.
+- review credentials narrow and revocable;
+- (A1) every `SECURITY_RELEASE_BASELINE` row in §14.15;
+- (A1) `EXTERNAL_DELETE_AUTH_V1`: no account-existence oracle, no broad bypass, R33 redirect intact;
+- (A1) alert delivery actually reached a human (§13.5).
 
 ### Claims
 - store metadata <= capability registry;
@@ -1661,6 +1958,22 @@ Monitor:
 If desired, rebuild the promotional site **after the application candidate is stable** using actual launch claims.
 
 It may launch before/with the app, but it never determines app architecture.
+
+## 20.4 Official policy rechecks (A1, primary sources read 18 Sep 2026; URLs in memo §19)
+
+```text
+GOOGLE_TARGET_API          = Android 16 / API 36+ for ordinary new apps and updates since 31 Aug 2026 (extension to 1 Nov 2026 on request)
+APPLE_UPLOAD_TOOLCHAIN     = Xcode 26+ with the iOS 26 SDK+, required for App Store Connect uploads since 28 Apr 2026
+GOOGLE_EXTERNAL_DELETION   = in-app deletion path + a web link resource (functional, relevant, identifiable)
+GOOGLE_REVIEW_ACCESS       = sign-in details accessible at all times, reusable, valid regardless of user location
+APPLE_REVIEW_ACCESS        = an active demo account, or a fully featured demo mode with Apple's prior approval
+PLAY_CONSOLE_2026_09_30    = Android developer verification: Play packages must be registered by 30 Sep 2026 or be removed
+APPLE_ORG_ENROLLMENT       = legal entity (no DBA), D-U-N-S, binding authority, work email on the org domain, functional public website on the org domain
+PBL                        = supported PBL8+ if paid (PBL9 current); recheck the actual current version before implementation
+DPDP                       = §12.4; DPDP_EFFECTIVE_DATE_RECHECK = REQUIRED_BEFORE_PUBLIC_LAUNCH
+```
+
+Re-check every row immediately before submission. Store policy moves faster than this roadmap.
 
 ---
 
@@ -1775,6 +2088,11 @@ Every metric includes denominator + measurement timestamp.
 | Direct SCI authorization conflated with public official feed | authorization error | source-path distinction |
 | Beta thresholds tuned after seeing full beta | metric gaming | 3–5 advocate baseline first |
 | Paid launch creates billing work under deadline | schedule risk | explicit founder FREE_BETA vs PAID_V1 decision |
+| (A1) External delete reuses the mobile magic link and weakens R33 | credential steering / account takeover | separate `EXTERNAL_DELETE_AUTH_V1`; R33 redirect fixed |
+| (A1) Play package not registered by 30 Sep 2026 | app removal / cannot publish | measure `PLAY_APP_REGISTERED` now (§14.14) |
+| (A1) No EAS project id in `app.config.ts` | no store build pipeline | measure EAS rows; separate from push |
+| (A1) DPDP obligations misstated as fully in force (or ignored) | legal/claims | §12.4 dates + launch recheck |
+| (A1) Alerts that never reach a human | silent outage in beta | §13.5 synthetic alert delivery proof |
 
 ---
 

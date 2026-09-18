@@ -1,5 +1,24 @@
 # The external account-deletion web resource — requirement, not implementation
 
+> **CURRENT (SHIP S4-T0.1, 18 September 2026) — two corrections, both binding:**
+>
+> 1. **Where:** the surface is `https://lawmind.co/delete-account` in the external
+>    site repository **`lawmind/lawmind-site`**, not `apps/site` in this repo (§2 is
+>    corrected below). The promotional site around it is temporary; this URL is a
+>    stable release contract that must survive any promotional-site rebuild.
+> 2. **How ownership is proved:** the old §3.3 said to reuse the app's magic-link
+>    sign-in unchanged. **That no longer works and must not be forced to work.**
+>    Since LCC R33 the emailed link lands on `GET /auth/magic-link/open`, which
+>    redirects **only** to the fixed mobile `lawmind://auth/verify?token=…` and
+>    deliberately ignores `callbackURL`, `redirect` and `newUserCallbackURL`
+>    (`services/api/src/auth/magic-link-landing.ts` + test). A web page cannot
+>    receive that credential, and making the landing configurable would reopen the
+>    credential-steering hole R33 closed. The web flow therefore needs its own
+>    **`EXTERNAL_DELETE_AUTH_V1`**, specified in §3.3 below. This round specifies it;
+>    SHIP implements it in Gate-D work under roadmap v7.4 §3.7 (high-risk CCR).
+>
+> Owner now: **SHIP** (NEW3 and RCC are legacy lanes).
+
 **RCC R25, 2 September 2026.** `EXTERNAL_DELETE_WEB = BLOCKED_REPOSITORY_OWNER`.
 
 Google Play's Data Safety form requires a **web URL** at which a user can request
@@ -74,14 +93,18 @@ recommendation, but it does change one thing: **the deletion page is the one pag
 on that site that cannot be a static export alone**, because it has to accept a
 request and prove who is making it.
 
-| requirement | value |
-| --- | --- |
-| repository | this one |
-| path | `apps/site` |
-| route | `/delete-account` |
-| public URL | `https://lawmind.co/delete-account` |
-| owner of the surface | RCC implements, NEW3 accepts — `FQ-SITE`'s existing split |
-| blocking gate | Play Console Data Safety, and therefore any Play submission |
+> **Superseded 18 Sep 2026:** the `apps/site` / "this one" rows below were the
+> R25 plan. Current values: repository `lawmind/lawmind-site` (external), route
+> `/delete-account`, owner SHIP. Do not create `apps/site`.
+
+| requirement | value (R25, historical) | current |
+| --- | --- | --- |
+| repository | this one | **`lawmind/lawmind-site`** (external) |
+| path | `apps/site` | that repository's app router |
+| route | `/delete-account` | `/delete-account` |
+| public URL | `https://lawmind.co/delete-account` | unchanged; a **stable** release contract |
+| owner of the surface | RCC implements, NEW3 accepts — `FQ-SITE`'s existing split | **SHIP** |
+| blocking gate | Play Console Data Safety, and therefore any Play submission | unchanged; also Gate D row "external delete resource" |
 
 `lawmind.co` is the domain to use. `SubscriptionScreen.tsx` opens
 `hello@lawmind.in` and verified outbound mail is `no-reply@lawmind.co` —
@@ -131,12 +154,46 @@ data as the price of deleting personal data is the defect RCC reported at bus
 **A typed email address is not a deletion request.** The page must never let an
 unverified visitor destroy an account by typing an address into a box.
 
-Use the mechanism the product already has: **magic-link sign-in**
+> **SUPERSEDED 18 Sep 2026 — do not implement the next paragraph.** It assumed the
+> emailed magic link could land back on a web page. Since R33 it cannot, by design
+> (see the banner at the top). It is kept to show what changed.
+
+~~Use the mechanism the product already has: **magic-link sign-in**
 (`POST /auth/request-link` → `POST /auth/verify`), which is the same proof of
 ownership the app uses and needs no new credential type, no password and no new
 security surface. The user submits an address, receives a link, and lands back on
 `/delete-account` **authenticated**; the erasure request is submitted from there
-with a real bearer token.
+with a real bearer token.~~
+
+#### `EXTERNAL_DELETE_AUTH_V1` — the contract (specified 18 Sep 2026, not built)
+
+**Job:** prove, from the external web deletion resource and without the app, that
+the requester controls the account's email, then file the existing erasure
+request. Nothing more.
+
+**Invariants — each is an acceptance test:**
+
+| # | Invariant |
+|---|---|
+| 1 | **No R33 regression.** `GET /auth/magic-link/open` and `MAGIC_LINK_APP_URL` are untouched; `callbackURL` / `redirect` / `newUserCallbackURL` stay ignored; the existing landing test passes unmodified. |
+| 2 | **No account-existence oracle.** "Send me a deletion link" returns the same status, body and timing class whether or not the address has an account (profile-backed, `identity_only`, or none). |
+| 3 | **Purpose-bounded.** Any new token is typed `external_delete` (or equivalent), can do exactly one thing — authorise one erasure request for the email's account — and is **not** a session: it cannot read matters, search, or call any other `/me/*` route. |
+| 4 | **Short-lived and one-use.** Bounded expiry (value set in the CCR, never invented in copy); a spent or expired token is refused the same way the app's spent link is. |
+| 5 | **No reusable broad bypass.** No shared secret, no master code, no admin-style override reachable from the public page. |
+| 6 | **Rate limited** per address and per client on the request-link step, reusing the existing anti-abuse path. |
+| 7 | **Raw tokens never logged**, including query strings in access logs, Sentry and PostHog (`SECURITY_RELEASE_BASELINE` rows `TOKENS_NOT_LOGGED`, `QUERY_STRINGS_NOT_LOGGING_TOKENS`). |
+| 8 | **`identity_only` accounts supported** (no `users` row required). |
+| 9 | **One deletion backend.** The final step is `POST /me/data-requests {kind:'erasure'}` semantics (same table, same `auth_id` principal, same `received` + real `dueAt`). No second deletion data model. |
+| 10 | **Truthful result page:** renders the real received/due state; invents no retention period. |
+
+**Shape (proposal; the CCR freezes the exact wire):** a deletion-specific
+request-link endpoint emails a link to `https://lawmind.co/delete-account?t=…`;
+the page exchanges `t` once, server-side, for the erasure filing. The link never
+touches `/auth/magic-link/open` and never mints an app session.
+
+**Process:** auth + deletion = high risk under roadmap v7.4 §3.7. It needs a
+`CCR_PROPOSED` row frozen before code, a separate post-implement acceptance, and
+`RED_READ_ONLY` falsification of invariants 1–5 when it is built.
 
 Two constraints on the wording of that first step:
 
@@ -206,6 +263,17 @@ PLAY_ACCOUNT_DELETION_URL             = https://lawmind.co/delete-account
 EXTERNAL_DELETE_APP_REQUIRED          = NO   (by design of this specification)
 PLAY_CONSOLE_EDITED                   = NO   (out of scope this round)
 OWNER                                 = NEW3 / website lane (bus 1753, bus 1767)
+```
+
+Current (18 Sep 2026, SHIP S4-T0.1):
+
+```
+EXTERNAL_DELETE_SURFACE               = lawmind/lawmind-site  /delete-account  (external repo)
+EXTERNAL_DELETE_ROUTE_LIVE            = NO (404 at last observation, 15 Sep 2026; not re-probed)
+EXTERNAL_DELETE_AUTH_V1               = SPECIFIED (§3.3), NOT IMPLEMENTED
+R33_MOBILE_MAGIC_LINK_REDIRECT        = UNCHANGED, FIXED
+OWNER                                 = SHIP
+GATE                                  = Gate D
 ```
 
 **Nothing about the in-app path is blocked by this.** In-app deletion works for

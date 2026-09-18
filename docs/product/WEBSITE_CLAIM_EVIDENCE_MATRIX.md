@@ -1,5 +1,13 @@
 # WEBSITE CLAIM / EVIDENCE MATRIX
 
+> **HISTORICAL PROMOTIONAL-SITE SPEC · NOT CURRENT PRODUCT AUTHORITY.**
+> **CURRENT PROMO SITE IS TEMPORARY. ONLY COMPLIANCE-URL REQUIREMENTS REMAIN RELEASE-CRITICAL.**
+> (SHIP S4-T0.1, 18 Sep 2026; roadmap v7.4 §0.2, §18.) Current claim discipline for
+> store listings, review notes and any launch claim the founder chooses to publish:
+> `docs/product/V1_CLAIMS_REGISTER_R17.md` bound to the current capability registry
+> (named in `docs/CURRENT_STATE.md`). The matrix below is kept as written. Promo-site
+> copy is not product source of truth and is not chased for parity each sprint.
+
 **NEW3, 25 August 2026.** Sprint plan V2 §10 NEW3-4. This is the binding
 document: **no sentence reaches the public website unless it appears in the
 ALLOWED COPY column of a row whose STATUS is `PROVEN` or `QUALIFIED`.** A claim

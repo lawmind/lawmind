@@ -13,8 +13,9 @@
 #
 # This fires when a lane finishes its turn. If mail is waiting it returns
 # `{"decision":"block"}`, which tells Claude Code not to stop and hands the
-# messages over as the reason to keep going. The ring becomes event-driven: NEW2
-# finishing an ingest run wakes LCC, LCC finishing enrichment wakes NEW1.
+# messages over as the reason to keep going. The bus becomes event-driven: DATA
+# finishing a continuity receipt wakes SHIP, SHIP's handoff wakes DATA. (Written
+# for the historical five-lane ring; the mechanics are unchanged for SHIP/DATA/RED.)
 #
 # ─────────────────────────────────────────────────────────────────────────────
 # WHY THIS CANNOT SPIN FOREVER — the only real risk in a Stop hook
@@ -55,7 +56,7 @@ case "$PAYLOAD" in
   *'"stop_hook_active"'*:*true*) exit 0 ;;
 esac
 
-read -r SESSION_ID LANE <<<"$(lane_resolve "$PAYLOAD")"
+lane_unpack "$(lane_resolve "$PAYLOAD")"
 # Unbound: say nothing. lane-bus.sh already nags on every prompt, and a Stop
 # hook that blocked an unbound session would trap a stranger's session in a loop
 # over mail that is not theirs.

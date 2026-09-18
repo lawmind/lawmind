@@ -38,29 +38,33 @@ BUS="${PROJECT_DIR}/.agents/bus"
 # stdin is read whole and once — it is not seekable, and a later read gets
 # nothing.
 PAYLOAD="$(cat 2>/dev/null || true)"
-read -r SESSION_ID LANE <<<"$(lane_resolve "$PAYLOAD")"
+lane_unpack "$(lane_resolve "$PAYLOAD")"
 
 if [ -z "$LANE" ]; then
   [ -n "$SESSION_ID" ] || exit 0
+  LEGACY_NOTE=""
+  if [ -n "$LEGACY_BINDING" ]; then
+    LEGACY_NOTE="
+This session is bound to LEGACY lane ${LEGACY_BINDING}. Legacy lanes are history:
+their messages stay readable in \`pnpm lane:inbox\`, but no new work binds to one.
+Rebind to an active lane below (the echo overwrites the legacy binding).
+"
+  fi
   printf '%s\n' "<lane-bus lane=\"UNBOUND\">
-This session is not bound to a lane, so the message bus is delivering nothing to
-it. Messages may be waiting.
-
-Five lanes exist. Four form a ring, each feeding the next:
-  NEW3 (discovery) -> NEW2 (ingestion) -> LCC (enrichment) -> NEW1 (retrieval) -> NEW3
-RCC (client) sits outside the ring and consumes what it produces.
+This session is not bound to an active lane, so the message bus is delivering
+nothing to it. Messages may be waiting.
+${LEGACY_NOTE}
+Three lanes are active (roadmap v7.4 §2, §3.5). Current state: docs/CURRENT_STATE.md.
 
 Run the matching line ONCE — it binds this session id only:
 
-  echo LCC  > .agents/bus/.lane-${SESSION_ID}     # server / enrichment
-  echo RCC  > .agents/bus/.lane-${SESSION_ID}     # client
-  echo NEW1 > .agents/bus/.lane-${SESSION_ID}     # retrieval, ranking, evidence
-  echo NEW2 > .agents/bus/.lane-${SESSION_ID}     # ingestion, normalization
-  echo NEW3 > .agents/bus/.lane-${SESSION_ID}     # discovery, acquisition
+  echo SHIP > .agents/bus/.lane-${SESSION_ID}     # product, client, server, ops, release
+  echo DATA > .agents/bus/.lane-${SESSION_ID}     # corpus, legal truth, retrieval
+  echo RED  > .agents/bus/.lane-${SESSION_ID}     # independent audit, only when invoked
 
-Then \`pnpm lane:inbox\` for the whole thread, \`pnpm lane:status\` for who is
-behind. If you are none of these, ignore this — it will keep appearing and that
-is harmless.
+Then \`pnpm lane:inbox\` for the whole thread (legacy LCC/RCC/NEW1/NEW2/NEW3/FIFTH
+history included), \`pnpm lane:status\` for who is behind. If you are none of
+these, ignore this — it will keep appearing and that is harmless.
 </lane-bus>"
   exit 0
 fi

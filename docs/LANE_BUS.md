@@ -1,4 +1,29 @@
-# THE LANE BUS — LCC and RCC talk to each other directly
+# THE LANE BUS — every message is a file, delivered by a hook
+
+## 0 · CURRENT (v7.4 Amendment A1, 18 Sep 2026) — read this first
+
+```text
+ACTIVE_LANES = SHIP DATA RED
+LEGACY_LANES = LCC RCC NEW1 NEW2 NEW3 FIFTH AUDIT-RO   (history only)
+DOWNSTREAM   = SHIP → DATA · DATA → SHIP · RED → SHIP
+FOUNDER      = docs/FOUNDER_QUEUE.md, not a bus lane
+```
+
+- Bind: `echo SHIP > .agents/bus/.lane-<session_id>` (or `DATA` / `RED`). A session
+  still bound to a legacy name is told so and receives nothing.
+- Send: `node scripts/lane-send.mjs <SHIP|DATA|RED|ALL|--downstream> "subject" < body.md`.
+  `ALL` reaches active lanes only. Sending to or from a legacy lane is refused.
+- History: `pnpm lane:inbox` still shows every legacy message with its original
+  delivery state; filenames, sequence numbers and cursors are never rewritten.
+  New messages continue the same global sequence.
+- Tests: `bash scripts/lane-bus.test.sh`.
+
+Everything below describes the bus as built for LCC and RCC (11 Aug) and widened
+to five lanes (12 Aug). The mechanics (hooks, cursors, contiguous delivery,
+budget, wake-up guards) are unchanged; the lane names in the examples are
+historical.
+
+---
 
 **Built 11 August 2026** so the founder stops being the relay between the two
 lanes. Every message is a file, in git, delivered by a hook.

@@ -7,10 +7,10 @@
  * WHY A FILE AND NOT A SERVICE
  * ─────────────────────────────────────────────────────────────────────────────
  *
- * LCC and RCC run as two sessions **on one machine against one working tree** —
- * that is already true, and it is how RCC's `apps/**` edits show up in LCC's
- * `git status`. So the cheapest correct bus is the filesystem they already
- * share. No port, no daemon, no vendor, nothing to be running for a message to
+ * The lanes run as sessions **on one machine against one working tree** (first
+ * true of LCC and RCC, now of SHIP and DATA), which is how one lane's edits
+ * show up in another's `git status`. So the cheapest correct bus is the
+ * filesystem they already share. No port, no daemon, no vendor, nothing to be running for a message to
  * arrive. `CLAUDE.md`: the best code is the code you never wrote.
  *
  * It also survives the two things that kill a conversation here: **compaction**
@@ -37,41 +37,48 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const BUS = join(ROOT, '.agents', 'bus');
+// LAWMIND_BUS_DIR exists for scripts/lane-bus.test.sh, which must never write to
+// the real bus. Unset in normal use.
+const BUS = process.env['LAWMIND_BUS_DIR'] || join(ROOT, '.agents', 'bus');
 
 /**
- * FIVE LANES, and four of them form a RING rather than a hierarchy:
+ * THREE ACTIVE LANES (roadmap v7.4 §2, §3.5, Amendment A1, 18 Sep 2026):
  *
- *     NEW3  discovers what is missing        →  acquisition queue
- *     NEW2  ingests it                       →  searchable corpus
- *     LCC   structures and enriches it       →  citations, treatment, evidence
- *     NEW1  tests retrieval and evidence     →  finds the next gap
- *     back to NEW3
+ *     SHIP  product, client, server, ops, release     →  DATA
+ *     DATA  corpus, legal truth, retrieval             →  SHIP
+ *     RED   independent audit, FROZEN unless invoked   →  SHIP
  *
- * RCC (the client lane) sits outside the ring and consumes what the ring
- * produces. It is kept in the same bus because a lane boundary is a lane
- * boundary — there is no second mechanism to learn.
+ * The historical five-lane ring (NEW3 → NEW2 → LCC → NEW1 → NEW3, RCC outside
+ * it, FIFTH and AUDIT-RO as auditors) is LEGACY. Its messages stay on the bus
+ * under their original filenames and remain readable in `pnpm lane:inbox`,
+ * but nothing new is sent to or from a legacy lane: a message from "LCC" today
+ * would forge the provenance of a lane that no longer exists.
  *
- * The ring matters for one practical reason: **each lane's output is the next
- * lane's input**, so a message to the next lane downstream is the common case
- * and a broadcast is the exception. `ALL` exists for the exception — a schema
- * change, a shared-resource conflict, a finding that invalidates someone else's
- * assumption — and fans out to one file per recipient so every lane's cursor
- * advances independently.
+ * RED → SHIP exists so a RED report has somewhere to land. It is deliberately
+ * not a ring: RED never feeds DATA, and SHIP ↔ DATA is a pair.
+ *
+ * `ALL` fans out to one file per ACTIVE recipient so every cursor advances
+ * independently. FOUNDER is not a lane: founder items go to docs/FOUNDER_QUEUE.md.
  */
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
+const LANES = ['SHIP', 'DATA', 'RED'];
+const LEGACY_LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH', 'AUDIT-RO', 'AUDITRO'];
 /** Who each lane feeds, so `--downstream` needs no argument. */
-const DOWNSTREAM = { NEW3: 'NEW2', NEW2: 'LCC', LCC: 'NEW1', NEW1: 'NEW3', RCC: 'LCC' };
+const DOWNSTREAM = { SHIP: 'DATA', DATA: 'SHIP', RED: 'SHIP' };
 
 const [, , toRaw, ...subjectParts] = process.argv;
 let to = (toRaw ?? '').toUpperCase();
 const subject = subjectParts.join(' ').trim();
 
+if (LEGACY_LANES.includes(to)) {
+  console.error(`refusing to send to ${to}: it is a LEGACY lane (history only). Active lanes: ${LANES.join(', ')}.`);
+  console.error('  Legacy messages stay readable with `pnpm lane:inbox`. Re-address still-valid work to SHIP or DATA.');
+  process.exit(2);
+}
 if ((!LANES.includes(to) && to !== 'ALL' && to !== '--DOWNSTREAM') || subject === '') {
-  console.error('usage: node scripts/lane-send.mjs <LCC|RCC|NEW1|NEW2|NEW3|FIFTH|ALL|--downstream> <subject>   # body on stdin');
-  console.error('  e.g. node scripts/lane-send.mjs NEW1 "treatment coverage is live" < msg.md');
-  console.error('       node scripts/lane-send.mjs --downstream "batch ready" < msg.md   # to the next lane in the ring');
-  console.error('       node scripts/lane-send.mjs ALL "migration 0045 applied" < msg.md');
+  console.error('usage: node scripts/lane-send.mjs <SHIP|DATA|RED|ALL|--downstream> <subject>   # body on stdin');
+  console.error('  e.g. node scripts/lane-send.mjs DATA "continuity census due" < msg.md');
+  console.error('       node scripts/lane-send.mjs --downstream "batch ready" < msg.md   # SHIP→DATA, DATA→SHIP, RED→SHIP');
+  console.error('       node scripts/lane-send.mjs ALL "migration 0045 applied" < msg.md   # active lanes only');
   process.exit(2);
 }
 
@@ -97,10 +104,15 @@ const laneFromBinding = () => {
 };
 
 const from = ((process.env['LAWMIND_LANE'] || laneFromBinding()) ?? '').toUpperCase();
+if (LEGACY_LANES.includes(from)) {
+  console.error(`This session is bound to LEGACY lane ${from}. Legacy lanes send nothing new.`);
+  console.error(`  echo SHIP > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}   # or DATA / RED`);
+  process.exit(2);
+}
 if (!LANES.includes(from)) {
   console.error('This session has no lane, so a message would have no author.');
-  console.error('  export LAWMIND_LANE=LCC          # this shell only');
-  console.error(`  echo LCC > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}   # this session, persists`);
+  console.error('  export LAWMIND_LANE=SHIP         # this shell only');
+  console.error(`  echo SHIP > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}   # this session, persists`);
   process.exit(2);
 }
 if (to === '--DOWNSTREAM') {

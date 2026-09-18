@@ -54,20 +54,26 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEASE_DIR = join(ROOT, '.agents', 'bus', 'leases');
 const BUS = join(ROOT, '.agents', 'bus');
 
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
+/**
+ * Active lanes only (roadmap v7.4 §3.5, A1). A lease record left by a legacy
+ * holder (LCC, NEW1, …) stays readable and `--force` clears it on the same
+ * dead-pid evidence as before; no legacy lane can acquire anything new.
+ */
+const LANES = ['SHIP', 'DATA', 'RED'];
 
 /**
  * The domains, and who is allowed to hold each.
  *
- * `MIGRATION_SLOT` is LCC-only because the orchestration lock says so: LCC owns
- * migration numbering and journal truth, and NEW1/NEW2 REQUEST a slot rather
- * than allocating one. Encoding that here means the rule survives a fresh agent
+ * `MIGRATION_SLOT` is server-owner-only because the orchestration lock says so:
+ * the server owner (LCC historically, SHIP since v7.4 A1) owns migration
+ * numbering and journal truth, and other lanes (now DATA) REQUEST a slot rather
+ * than allocating one. HEAVY_BOX is SHIP/DATA: RED does not run heavy work. Encoding that here means the rule survives a fresh agent
  * who never read §4.
  */
 const DOMAINS = {
   HEAVY_BOX: {
     heavy: true,
-    holders: LANES,
+    holders: ['SHIP', 'DATA'],
     purpose: 'the single box: GPU, large DB writes/scans, OCR fleets, restore/replay, mixed load',
   },
   GIT_COMMIT: {
@@ -78,16 +84,16 @@ const DOMAINS = {
   },
   MIGRATION_SLOT: {
     heavy: false,
-    holders: ['LCC'],
-    purpose: 'migration ordinal allocation and journal truth; other lanes request a slot from LCC',
+    holders: ['SHIP'],
+    purpose: 'migration ordinal allocation and journal truth; DATA requests a slot from SHIP',
   },
   DB_MIGRATION: {
     heavy: false,
-    holders: ['LCC'],
+    holders: ['SHIP'],
     purpose: 'legacy R7 file-scope lease over packages/db/drizzle; superseded by MIGRATION_SLOT',
     deprecated: 'MIGRATION_SLOT',
   },
-  CLIENT_APPS: { heavy: false, holders: ['RCC'], purpose: 'apps/** implementation' },
+  CLIENT_APPS: { heavy: false, holders: ['SHIP'], purpose: 'apps/** implementation' },
 };
 
 const recPath = (d) => join(LEASE_DIR, `${d}.json`);
@@ -216,7 +222,7 @@ function main() {
   const me = whoAmI();
   if (!me) {
     console.error('This session has no lane, so a lease would have no holder.');
-    console.error(`  echo LCC > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}`);
+    console.error(`  echo SHIP > .agents/bus/.lane-${process.env['CLAUDE_CODE_SESSION_ID'] ?? '<session-id>'}`);
     process.exit(2);
   }
   if (!spec.holders.includes(me)) {

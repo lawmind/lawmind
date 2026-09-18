@@ -10,9 +10,10 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * LOCAL V1 — Master Roadmap v7.1 governs and places the advocate research
- * workstation in v1. NEW3 R14 still records every public advocate-web
- * capability as `DISABLED_NOT_READY`, so this remains a local Expo web surface
+ * FROZEN / INERT — current founder instruction (roadmap v7.4 §0.1, 18 Sep 2026):
+ * ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD; registry R17 marks every web capability
+ * `OUT_OF_SCOPE_CURRENT_FOUNDER`. Kept, not extended. (Historical: written when
+ * v7.1 placed the workstation in v1.) This remains a local Expo web surface
  * and authorises no public route, claim or deployment. Below
  * `size.researchTwoPane` it still renders exactly the phone screen, so the
  * mobile path is unchanged.

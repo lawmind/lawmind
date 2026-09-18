@@ -41,10 +41,13 @@ run() { # run <hook> <session_id> [extra json]
 
 echo 'lane bus regression'
 
-# ── 1 · a lane name containing a digit resolves ───────────────────────────────
-# `tr -cd 'A-Za-z'` ate the digit, so NEW1 read as "NEW", matched nothing, and
-# three correctly-bound lanes were told they were unbound for weeks.
-for lane in LCC RCC NEW1 NEW2 NEW3; do
+# ── 1 · every ACTIVE lane binds and receives ─────────────────────────────────
+# Since v7.4 A1 the active lanes are SHIP DATA RED. The historical digit bug
+# (`tr -cd 'A-Za-z'` turned NEW1 into "NEW", so three correctly-bound lanes were
+# told they were unbound for weeks) stays guarded by case 10, and by case 11,
+# which recognises a digit-named LEGACY binding by name — only possible if the
+# digit survives the sanitiser.
+for lane in SHIP DATA RED; do
   sid="sess-$lane"
   printf '%s\n' "$lane" > "$BUSDIR/.lane-$sid"
   mk 1 LCC "$lane" 100
@@ -64,9 +67,9 @@ done
 # message and let a smaller later one through, so the cursor jumped the gap and
 # lost 9 more. Draining and counting is the only check that sees either.
 sid=sess-drain
-printf 'NEW1\n' > "$BUSDIR/.lane-$sid"
+printf 'DATA\n' > "$BUSDIR/.lane-$sid"
 TOTAL=25
-for i in $(seq 1 $TOTAL); do mk "$i" LCC NEW1 $((i * 300)); done
+for i in $(seq 1 $TOTAL); do mk "$i" SHIP DATA $((i * 300)); done
 
 seen=0
 rounds=0
@@ -91,7 +94,7 @@ fi
 # one. This asserts the sequence arrives in order with no gaps.
 missing=""
 for i in $(seq 1 $TOTAL); do
-  key="$(printf '%04d--LCC-to-NEW1--subject.md' "$i")"
+  key="$(printf '%04d--SHIP-to-DATA--subject.md' "$i")"
   [ -n "${got[$key]:-}" ] || missing="$missing $i"
 done
 [ -z "$missing" ] && ok "no gaps in the delivered sequence" \
@@ -107,7 +110,7 @@ out="$(run lane-wake.sh "$sid")"
 [ -z "$out" ] && ok "wake: does not block when there is no mail" \
   || no "wake: does not block when there is no mail" "$out"
 
-mk 90 NEW2 NEW1 200
+mk 90 RED DATA 200
 out="$(run lane-wake.sh "$sid")"
 if printf '%s' "$out" | grep -q '"decision":"block"'; then
   ok "wake: blocks when mail arrives"
@@ -123,7 +126,7 @@ out="$(run lane-wake.sh "$sid")"
   || no "wake: same message never wakes twice" "blocked again on consumed mail"
 
 # ── 7 · stop_hook_active is honoured ─────────────────────────────────────────
-mk 91 NEW2 NEW1 200
+mk 91 RED DATA 200
 out="$(run lane-wake.sh "$sid" ',"stop_hook_active":true')"
 [ -z "$out" ] && ok "wake: honours stop_hook_active" \
   || no "wake: honours stop_hook_active" "blocked while already continuing"
@@ -132,7 +135,7 @@ out="$(run lane-wake.sh "$sid" ',"stop_hook_active":true')"
 # Messages are arbitrary markdown full of quotes and backslashes; hand-rolled
 # shell escaping is exactly how that breaks.
 printf 'a "quoted" \\ backslash\n\ttab and $dollar `backtick`\n' \
-  > "$BUSDIR/0092--NEW2-to-NEW1--nasty.md"
+  > "$BUSDIR/0092--RED-to-DATA--nasty.md"
 out="$(run lane-wake.sh "$sid")"
 if printf '%s' "$out" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{JSON.parse(s);process.exit(0)})' 2>/dev/null; then
   ok "wake: emits valid JSON for messages with quotes and backslashes"
@@ -143,7 +146,7 @@ fi
 # ── 9 · an unbound session is never woken ────────────────────────────────────
 # A Stop hook that blocked a stranger's session would trap it in a loop over
 # mail that is not theirs.
-mk 93 LCC NEW1 200
+mk 93 SHIP DATA 200
 out="$(run lane-wake.sh "no-such-session")"
 [ -z "$out" ] && ok "wake: unbound session is left alone" \
   || no "wake: unbound session is left alone" "$out"
@@ -167,6 +170,78 @@ if [ -n "$send_re" ] && [ "$send_re" = "$status_re" ]; then
 else
   no "lane-send.mjs strips like lane-status.mjs" \
     "lane-send.mjs: '${send_re:-<not found>}' vs lane-status.mjs: '${status_re:-<not found>}'"
+fi
+
+# ── 11 · a LEGACY binding is refused for new work, and says so ──────────────
+# v7.4 A1: sessions bind only to SHIP/DATA/RED. A session still carrying an old
+# NEW1 binding must be told it is legacy, must receive nothing, and must not
+# consume the legacy lane's history by advancing its cursor.
+mk 94 LCC NEW1 200
+printf 'NEW1\n' > "$BUSDIR/.lane-sess-legacy"
+out="$(run lane-bus.sh sess-legacy)"
+if printf '%s' "$out" | grep -q 'UNBOUND' && printf '%s' "$out" | grep -q 'LEGACY lane NEW1' \
+  && ! printf '%s' "$out" | grep -q -- '--- message ' && [ ! -f "$BUSDIR/.cursor-new1" ]; then
+  ok "legacy NEW1 binding refused for new work, named, and consumes nothing"
+else
+  no "legacy binding refused" "got: ${out:0:300}"
+fi
+out="$(run lane-wake.sh sess-legacy)"
+[ -z "$out" ] && ok "wake: a legacy-bound session is never woken" \
+  || no "wake: a legacy-bound session is never woken" "$out"
+
+# ── 12 · the unbound notice offers only the active lanes ─────────────────────
+out="$(run lane-bus.sh sess-nobody)"
+if printf '%s' "$out" | grep -q 'echo SHIP' && printf '%s' "$out" | grep -q 'echo DATA' \
+  && printf '%s' "$out" | grep -q 'echo RED' && ! printf '%s' "$out" | grep -Eq 'echo (LCC|RCC|NEW[123])'; then
+  ok "unbound notice offers SHIP/DATA/RED and no legacy lane"
+else
+  no "unbound notice offers only active lanes" "${out:0:300}"
+fi
+
+# ── 13 · lane-send: broadcast reaches active lanes only; legacy refused ──────
+# Runs against the throwaway bus through LAWMIND_BUS_DIR, never .agents/bus.
+SCRIPTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+seqs() { ls "$BUSDIR" | grep -E '^[0-9]{4}--' | sort; }
+hash_upto() { # hash_upto <maxseq> -> sha256 of every message at or below it
+  (cd "$BUSDIR" && seqs | awk -v m="$1" '(substr($0,1,4)+0) <= m' | xargs cat | sha256sum | cut -c1-64)
+}
+maxseq="$(seqs | tail -1 | cut -c1-4 | sed 's/^0*//')"
+before="$(hash_upto "$maxseq")"
+printf 'broadcast body\n' | env LAWMIND_BUS_DIR="$BUSDIR" LAWMIND_LANE=SHIP \
+  node "$SCRIPTS/lane-send.mjs" ALL "topology test" >/dev/null 2>&1
+new="$(seqs | awk -v m="$maxseq" '(substr($0,1,4)+0) > m')"
+if [ "$(printf '%s\n' "$new" | grep -c .)" -eq 2 ] && printf '%s' "$new" | grep -q -- '--SHIP-to-DATA--' \
+  && printf '%s' "$new" | grep -q -- '--SHIP-to-RED--' \
+  && ! printf '%s' "$new" | grep -Eq -- '-to-(LCC|RCC|NEW[123]|FIFTH|AUDIT)'; then
+  ok "ALL from SHIP fans out to DATA and RED only"
+else
+  no "broadcast targets only active lanes" "new files: $new"
+fi
+first="$(printf '%s\n' "$new" | head -1 | cut -c1-4 | sed 's/^0*//')"
+[ "${first:-0}" -eq $((maxseq + 1)) ] && ok "sequence stays contiguous after the legacy history (next = $first)" \
+  || no "sequence contiguous" "max legacy $maxseq, first new ${first:-none}"
+printf 'x\n' | env LAWMIND_BUS_DIR="$BUSDIR" LAWMIND_LANE=SHIP \
+  node "$SCRIPTS/lane-send.mjs" NEW2 "to legacy" >/dev/null 2>&1
+rc=$?; [ "$rc" -eq 2 ] && ok "send to a legacy lane is refused" || no "send to a legacy lane is refused" "exit $rc"
+printf 'x\n' | env LAWMIND_BUS_DIR="$BUSDIR" LAWMIND_LANE=LCC \
+  node "$SCRIPTS/lane-send.mjs" DATA "from legacy" >/dev/null 2>&1
+rc=$?; [ "$rc" -eq 2 ] && ok "send from a legacy lane is refused" || no "send from a legacy lane is refused" "exit $rc"
+[ "$before" = "$(hash_upto "$maxseq")" ] && ok "no historical message renamed or rewritten by a send" \
+  || no "historical messages untouched" "pre-existing content hash changed"
+
+# ── 14 · historical inbox renders legacy delivery state unchanged ────────────
+# A legacy message at or below its legacy cursor must still read [delivered],
+# not suddenly PENDING because its lane is no longer active.
+# lane-inbox reads the front-matter, so this fixture carries real front-matter
+# (mk writes none), at a sequence nothing above can have used.
+printf -- '---\nseq: 900\nfrom: LCC\nto: NEW2\nsentAt: 2026-09-01T00:00:00Z\nsubject: "legacy"\n---\n\nbody\n' \
+  > "$BUSDIR/0900--LCC-to-NEW2--legacy.md"
+printf '900\n' > "$BUSDIR/.cursor-new2"
+out="$(env LAWMIND_BUS_DIR="$BUSDIR" node "$SCRIPTS/lane-inbox.mjs" 2>&1)"
+if printf '%s\n' "$out" | grep -Eq '^ +0900 +LCC → NEW2 +\[delivered\] \(legacy\)'; then
+  ok "lane-inbox shows a delivered legacy message as delivered (legacy)"
+else
+  no "historical inbox renders" "$(printf '%s\n' "$out" | grep 0900)"
 fi
 
 echo

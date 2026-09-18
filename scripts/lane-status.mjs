@@ -34,10 +34,17 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const BUS = join(ROOT, '.agents', 'bus');
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
-/** Who each lane feeds. RCC sits outside the ring. */
-const DOWNSTREAM = { NEW3: 'NEW2', NEW2: 'LCC', LCC: 'NEW1', NEW1: 'NEW3', RCC: '—', FIFTH: '—' };
+// LAWMIND_BUS_DIR: test override only (scripts/lane-bus.test.sh).
+const BUS = process.env['LAWMIND_BUS_DIR'] || join(ROOT, '.agents', 'bus');
+/**
+ * ACTIVE lanes get the full table. LEGACY lanes (roadmap v7.4 §3.5, A1) get one
+ * summary line each: they take no new sessions or mail, so "NOT BOUND" or
+ * "waiting" is not an alarm for them. Their history is intact in lane:inbox.
+ */
+const LANES = ['SHIP', 'DATA', 'RED'];
+const LEGACY_LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH', 'AUDIT-RO'];
+/** Who each lane feeds. RED is FROZEN unless invoked and reports to SHIP. */
+const DOWNSTREAM = { SHIP: 'DATA', DATA: 'SHIP', RED: 'SHIP' };
 
 if (!existsSync(BUS)) {
   console.log('no bus yet.');
@@ -78,7 +85,9 @@ for (const lane of LANES) {
    */
   const state =
     bound === 0
-      ? 'NOT BOUND — no session claims this lane'
+      ? lane === 'RED'
+        ? 'not bound — RED is FROZEN unless invoked'
+        : 'NOT BOUND — no session claims this lane'
       : cur === null && inbox.length > 0
         ? `NEVER DELIVERED — ${inbox.length} message(s) addressed to it, hook may not be firing`
         : cur === null
@@ -90,6 +99,17 @@ for (const lane of LANES) {
   console.log(
     `${lane.padEnd(6)} ${String(bound).padStart(5)}  ${String(cur ?? '—').padStart(6)}   ` +
       `${String(pending).padStart(7)}  ${DOWNSTREAM[lane].padEnd(6)}  ${state}`,
+  );
+}
+
+console.log('');
+console.log('legacy lanes (history only; no new sessions, no new mail):');
+for (const lane of LEGACY_LANES) {
+  const inbox = files.filter((f) => f.includes(`-to-${lane}--`));
+  const bound = bindings.filter((b) => b === lane.replace(/[^A-Za-z0-9]/g, '')).length;
+  console.log(
+    `  ${lane.padEnd(8)} ${String(inbox.length).padStart(5)} received · cursor ${String(cursor(lane) ?? '—').padStart(5)} · ` +
+      `${bound} stale session binding(s), refused for new work`,
   );
 }
 
@@ -111,7 +131,7 @@ for (const [lane, n] of [...from].sort((a, b) => b[1] - a[1])) {
  * input, so a lane that has sent nothing is either blocked or working without
  * telling anyone, and both are worth a question.
  */
-const silent = LANES.filter((l) => !from.has(l));
+const silent = LANES.filter((l) => l !== 'RED' && !from.has(l));
 if (silent.length > 0) {
   console.log('');
   console.log(`SENT NOTHING: ${silent.join(', ')} — blocked, or working without saying so?`);

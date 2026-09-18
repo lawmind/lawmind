@@ -516,8 +516,9 @@ design/          screen specs and renders (referenced, not audited this
 sprints/         per-sprint task breakdowns
 scripts/         6 CI guard scripts + ci-local.mjs + measure-recall.mjs +
                  agent-lane coordination tooling (lane-inbox.mjs, lane-send.mjs)
-.agents/         inter-agent message bus (LCC=server lane, RCC=client lane
-                 coordination — a build-process artifact, not product code)
+.agents/         inter-agent message bus (active lanes SHIP/DATA/RED since v7.4 A1;
+                 legacy LCC/RCC/NEW1-3/FIFTH history kept as written — a
+                 build-process artifact, not product code)
 ```
 
 Root also carries several large `.zip` files (`3sxc.zip`, `qaw.zip`, `qw2.zip`,

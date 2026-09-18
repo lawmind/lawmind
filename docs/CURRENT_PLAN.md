@@ -1,4 +1,18 @@
-# CURRENT PLAN — the single ordered queue
+# CURRENT PLAN — HISTORICAL OPERATIONAL JOURNAL
+
+> **HISTORICAL OPERATIONAL JOURNAL. NOT THE CURRENT TASK QUEUE.**
+> **CURRENT AUTHORITY:**
+> - **v7.4 roadmap:** `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md`
+> - **Sprint Prompts v5:** `docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md`
+> - **`docs/CURRENT_STATE.md`** — the live pointer to gate, registry, stops and founder actions
+>
+> (SHIP S4-T0.1, 18 Sep 2026.) Everything below this box is the journal as it was
+> written. Any line saying a roadmap version "governs" records what governed AT
+> THAT TIME, not now. Rounds are not rewritten.
+
+---
+
+*Journal, as written from 30 August 2026:*
 
 > **Master Roadmap v7.1 governs roadmap and gate interpretation.**
 > `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_1.md` — supplied by the founder,

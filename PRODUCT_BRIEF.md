@@ -1,5 +1,16 @@
 # LAWMIND — PRODUCT BRIEF
 
+> **CURRENT_V1_SCOPE IS NARROWER THAN THIS LONG-TERM VISION.**
+> **CURRENT WORK IS GOVERNED BY v7.4 + CURRENT CAPABILITY REGISTRY.**
+> (SHIP S4-T0.1, 18 Sep 2026.) Current v1 = evidence-first mobile legal research
+> for practising Indian advocates, native iOS + Android only:
+> Search → Reader → Source/Evidence → Save → Matter. Drafting, hearing
+> briefings, the daily loop, monitoring, uploads/OCR, Hindi generation and any
+> pricing below are **vision**, deferred or disabled per
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md` §4.3 and the registry named in
+> `docs/CURRENT_STATE.md`. They create no current implementation task. The
+> founder's mobile-only decision stands: no advocate desktop/web.
+
 **Read this before any session. It is the north star. If something you are about
 to build does not serve one of the four core features or the daily loop below,
 stop and ask.**

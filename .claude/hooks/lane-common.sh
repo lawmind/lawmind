@@ -19,24 +19,46 @@
 # One copy, one place to fix. Adding a hook must never mean re-deriving how a
 # lane name is parsed or when a cursor may move.
 
-LANE_NAMES='LCC RCC NEW1 NEW2 NEW3'
+# ACTIVE lanes take new sessions and new mail. LEGACY lanes are history: their
+# messages, filenames and cursors stay exactly as they are and stay readable in
+# `pnpm lane:inbox`, but no new session binds to one and nothing new is sent to
+# one. Roadmap v7.4 §3.5 (Amendment A1, 18 Sep 2026). Do not mass-rename legacy
+# names to active ones: that would rewrite who said what.
+#
+# LEGACY_LANE_MATCH is the sanitised form (AUDIT-RO loses its hyphen to the
+# [A-Za-z0-9] sanitiser below), used only to recognise a stale binding.
+LANE_NAMES='SHIP DATA RED'
+LEGACY_LANE_NAMES='LCC RCC NEW1 NEW2 NEW3 FIFTH AUDIT-RO'
+LEGACY_LANE_MATCH='LCC RCC NEW1 NEW2 NEW3 FIFTH AUDITRO'
 
 # Claude Code truncates hook output at 10,000 characters. The budget is applied
 # BEFORE the cursor moves, never as a slice afterwards.
 LANE_MAX_PAYLOAD=8000
 
 lane_is_valid() {
+  [ -n "$1" ] || return 1
   case " $LANE_NAMES " in *" $1 "*) return 0 ;; *) return 1 ;; esac
 }
 
-# lane_resolve <payload> -> echoes "SESSION_ID LANE" (LANE empty when unbound).
+lane_is_legacy() {
+  [ -n "$1" ] || return 1
+  case " $LEGACY_LANE_MATCH " in *" $1 "*) return 0 ;; *) return 1 ;; esac
+}
+
+# lane_resolve <payload> -> echoes "SESSION_ID LANE LEGACY", three fields, with
+# "-" standing for empty. `read` collapses runs of whitespace, so an empty middle
+# field would silently shift LEGACY into LANE and bind a refused legacy lane.
+# Callers turn "-" back into "" (see lane_unpack).
+#
+# LANE is an ACTIVE lane or "-". LEGACY names a legacy binding that was refused
+# for new work, so the hook can say why instead of just "unbound".
 #
 # Order is strongest-first: the environment, then the per-session binding file.
 # NEVER infer a lane from anything shared — cwd, a lone marker file, the git
 # branch. Delivering RCC's mail to LCC marks it read and destroys it for the
 # lane that was owed it, which is worse than delivering nothing.
 lane_resolve() {
-  local payload="$1" sid lane
+  local payload="$1" sid lane legacy=""
 
   # sed, not jq: jq is not installed on the founder's machine. The value becomes
   # part of a filename, so it is reduced to path-safe characters — a crafted
@@ -52,9 +74,21 @@ lane_resolve() {
   if ! lane_is_valid "$lane" && [ -n "$sid" ] && [ -f "${BUS}/.lane-${sid}" ]; then
     lane="$(tr -cd 'A-Za-z0-9' < "${BUS}/.lane-${sid}" | tr '[:lower:]' '[:upper:]')"
   fi
-  lane_is_valid "$lane" || lane=""
+  if ! lane_is_valid "$lane"; then
+    lane_is_legacy "$lane" && legacy="$lane"
+    lane=""
+  fi
 
-  printf '%s %s' "$sid" "$lane"
+  printf '%s %s %s' "${sid:--}" "${lane:--}" "${legacy:--}"
+}
+
+# lane_unpack <resolved> -> sets SESSION_ID, LANE, LEGACY_BINDING ("" for "-").
+lane_unpack() {
+  read -r SESSION_ID LANE LEGACY_BINDING <<<"$1"
+  [ "$SESSION_ID" = "-" ] && SESSION_ID=""
+  [ "$LANE" = "-" ] && LANE=""
+  [ "$LEGACY_BINDING" = "-" ] && LEGACY_BINDING=""
+  return 0
 }
 
 lane_cursor_file() {

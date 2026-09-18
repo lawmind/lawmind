@@ -4,6 +4,16 @@
 
 Historical lane artifacts remain provenance and are never renamed.
 
+> **AMENDMENT A1 — SHIP S4-T0.1, 18 September 2026.** Patched in place, version unchanged.
+> Mirrors roadmap v7.4 Amendment A1. Changes: (1) the hard-coded
+> `V1_CAPABILITY_REGISTRY_R16.json` becomes "the latest accepted current capability
+> registry", with the exact file bound in `docs/CURRENT_STATE.md` (R17 at A1); (2) every
+> prompt starts by reading `docs/CURRENT_STATE.md`; (3) S4-R1 gains real alert delivery;
+> (4) S4-R2 gains store/release account readiness, `SECURITY_RELEASE_BASELINE` and
+> `EXTERNAL_DELETE_AUTH_V1`; (5) the Gate-D checklist and the RED Gate-E attack list gain
+> the matching rows; (6) SHIP contract changes follow roadmap §3.7; stop-the-line follows
+> §3.6. S4-T0 ran as S4-T0.1: record `docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`.
+
 ---
 
 # 0. COMMON OPERATING PREAMBLE
@@ -54,6 +64,16 @@ Stable compliance URLs are separate release contracts.
 
 MOBILE PRODUCT
 No advocate desktop/web work unless a newer founder instruction explicitly reopens it.
+
+CURRENT STATE (A1)
+Read docs/CURRENT_STATE.md first. It names the current registry, gate, stops and founder actions.
+"Current capability registry" = the latest accepted registry named there, never a hard-coded R-number.
+After a gate, scope decision, registry release or production deploy, SHIP updates it.
+
+STOP-THE-LINE (A1)
+Roadmap §3.6. Legal-data corruption, unauthorized source access, security/privacy exposure,
+data-risking schema divergence, user/matter data loss, production-corrupting release/rollback → stop that work.
+P1/P2 defects → owned backlog, not a project freeze.
 ```
 
 ---
@@ -91,7 +111,7 @@ Install v7.4 as current repo authority and migrate the runtime orchestration fro
    - `docs/ai/rcc-r32/ROUND.md`
    - `docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.md`
    - `docs/ai/new2-r24/NEW2_R24.md`
-   - `docs/product/V1_CAPABILITY_REGISTRY_R16.json`
+   - the latest accepted current capability registry named in `docs/CURRENT_STATE.md` (A1: `docs/product/V1_CAPABILITY_REGISTRY_R17.json`; R16 stays historical evidence)
    - `docs/ai/lcc-r13/ECOURTS_BOUNDED_STOP_REPORT.md`
    - `docs/product/MONITORING_12_CONDITION_MATRIX.json`
    - current `AGENTS.md`
@@ -483,6 +503,11 @@ Re-prove magic-link handoff after deployment.
 Take/verify current USER backup + restore.
 Corpus restore receipt bound to release.
 
+### I. Real alert delivery (A1, roadmap §13.5)
+Inject one bounded synthetic alert condition and prove
+condition detected → rule fired → dedup/cooldown → human notification delivered.
+Record channel + timestamps, never secret values.
+
 ## Search
 
 Run frozen Gate-S1 and one bounded cold-query diagnostic.
@@ -500,6 +525,7 @@ MATTER_AUTHORITIES_ROLLBACK =
 FULL_API_SUITE =
 REVIEW_ACCESS =
 AUTH =
+ALERT_DELIVERY =
 USER_BACKUP_RESTORE =
 CORPUS_ROLLBACK =
 GATE_S1 =
@@ -589,6 +615,20 @@ iOS party search:
 - stable external delete resource;
 - privacy/support URLs;
 - these are compliance endpoints, not a promo-site redesign.
+- (A1) the external resource authenticates through `EXTERNAL_DELETE_AUTH_V1`
+  (`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` §3.3), lives in `lawmind/lawmind-site`, and reuses
+  `POST /me/data-requests {kind:'erasure'}`. Do not make the R33 mobile landing configurable.
+  This is an auth/deletion CCR, so it is high risk: roadmap §3.7, RED_READ_ONLY where useful.
+
+## Accounts (A1, roadmap §14.14)
+
+Measure every Apple / Google Play / EAS row. Mark each VERIFIED, FOUNDER_CONFIRMED or UNKNOWN.
+Keep EAS project/build readiness separate from the push feature.
+Record the values in `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0.
+
+## Security (A1, roadmap §14.15)
+
+Evidence every `SECURITY_RELEASE_BASELINE` row from code/config/runtime. None FAIL, none UNKNOWN.
 
 ## Store pack
 
@@ -705,6 +745,10 @@ COMMERCE_DECISION
 MONITORING_CLAIMS
 PLATFORM_CAPABILITY_PARITY
 SHADOW_BETA_THRESHOLDS
+STORE_ACCOUNT_READINESS          (A1)
+SECURITY_RELEASE_BASELINE        (A1)
+ALERT_DELIVERY                   (A1)
+EXTERNAL_DELETE_AUTH_V1          (A1)
 ```
 
 Commerce:
@@ -840,7 +884,10 @@ Attack:
 13. privacy/data-safety truth;
 14. no static cadence claim without runtime evidence;
 15. current beta thresholds/results not massaged after observation;
-16. no P0 security/data issue.
+16. no P0 security/data issue;
+17. (A1) every SECURITY_RELEASE_BASELINE row;
+18. (A1) EXTERNAL_DELETE_AUTH_V1: no existence oracle, no broad bypass, R33 redirect intact;
+19. (A1) alert delivery reached a human.
 
 Do not audit the promotional site's design.
 Only validate stable compliance URLs and any actual launch claims the founder has chosen to publish.

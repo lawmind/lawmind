@@ -1,4 +1,29 @@
-# The lane protocol — five agents, one working tree
+# The lane protocol — agents on one working tree
+
+## 0 · CURRENT TOPOLOGY (v7.4 Amendment A1, 18 Sep 2026) — supersedes §1 onward where they conflict
+
+| Agent | State | Owns | Feeds |
+|---|---|---|---|
+| **SHIP** | ACTIVE | product, `apps/mobile/**`, `services/api/**`, `services/cron/**`, ops, release, capability registry, contract change control | DATA |
+| **DATA** | CONTINUOUS | `services/ingest/**`, source/provenance, legal truth, `services/embed/**`, relevant `services/harness/**`, retrieval evaluation | SHIP |
+| **RED** | FROZEN | fresh independent audit only (`RED_READ_ONLY` · `RED_GATE` · `RED_P0`); implements nothing | SHIP |
+
+- Authority: `docs/CURRENT_STATE.md` → roadmap v7.4 §2–§3 → Sprint Prompts v5.
+- Legacy lanes (LCC, RCC, NEW1, NEW2, NEW3, FIFTH, AUDIT-RO) are provenance: their
+  messages and receipts are never renamed or rewritten, and no new work binds to them.
+- Actionable classes: P0 · CCR · HANDOFF · ACTION_REQUIRED · BLOCKER. Delivery is
+  not acceptance; the receiver verifies.
+- Resource leases (`scripts/resource-lease.mjs`): `GIT_COMMIT` SHIP/DATA/RED ·
+  `HEAVY_BOX` SHIP/DATA · `MIGRATION_SLOT` SHIP (DATA requests a slot).
+- Stop-the-line: roadmap §3.6. Contract change: roadmap §3.7.
+- Legacy actionable items still valid at the migration were reissued with their
+  original bus numbers: `docs/ai/ship-s4-t0-1/LEGACY_BUS_REISSUE.md`.
+
+Everything below is the five-agent protocol as written on 12 Aug 2026, kept as
+history. Its rules on evidence, commits and messages as data still apply where they
+do not name a lane.
+
+---
 
 **Read this before sending anything on the bus.** It is the contract between
 LCC, RCC, NEW1, NEW2 and NEW3. Written 12 Aug 2026, when the bus went from two

@@ -60,7 +60,9 @@ import { STALE_AFTER_MS, findSessionPid, health } from './lib/process-identity.m
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEASE_DIR = join(ROOT, '.agents', 'bus', 'leases');
-const LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
+/** Active lanes acquire; legacy lease files stay readable via `status <LANE>`. Roadmap v7.4 §3.5 (A1). */
+const LANES = ['SHIP', 'DATA', 'RED'];
+const LEGACY_LANES = ['LCC', 'RCC', 'NEW1', 'NEW2', 'NEW3', 'FIFTH'];
 
 /** A heartbeat older than this is cold. An agent turn can legitimately run for
  *  a long time, so this is generous — it is a staleness floor, not a liveness
@@ -116,7 +118,12 @@ function arg(name, argv) {
 
 function main() {
   const [cmd, ...rest] = process.argv.slice(2);
-  const lane = rest[0] && LANES.includes(rest[0].toUpperCase()) ? rest[0].toUpperCase() : undefined;
+  const named = rest[0] ? rest[0].toUpperCase() : '';
+  const lane = LANES.includes(named) || (cmd === 'status' && LEGACY_LANES.includes(named)) ? named : undefined;
+  if (cmd !== 'status' && LEGACY_LANES.includes(named)) {
+    console.error(`${named} is a LEGACY lane: its lease is history and cannot be acquired or renewed. Active lanes: ${LANES.join(', ')}.`);
+    return 2;
+  }
   const sessionId = arg('session', rest);
   const task = arg('task', rest);
   const progress = arg('progress', rest);

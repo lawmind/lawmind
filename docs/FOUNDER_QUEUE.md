@@ -18,6 +18,29 @@ point here, so a fresh agent finds it without being told.
 
 ---
 
+## CURRENT STATUS — S4-T0.1 normalization · SHIP, 18 September 2026
+
+**Read this block first.** It supersedes the headline state of the entries it
+names; the entries themselves are untouched below, each now carrying a dated
+status note under its heading. Writers are now **SHIP** and **DATA** (LCC, RCC,
+NEW1–3 and FIFTH are legacy lanes). Current pointer: `docs/CURRENT_STATE.md`.
+
+| Entry | Current state |
+|---|---|
+| **FQ-NEW3-R25-ROTATE** (security) | `DO_TOKEN_ROTATED = OPEN` · `RESEND_KEY_ROTATED = OPEN` · `SPACESHIP_KEY_SECRET_ROTATED = OPEN`. Teardown is proven (18 Sep 01:13Z), so rotation is due now. Only the founder can close these; no agent marks them done. |
+| **FQ-BACKUP-KEY-ESCROW** (security) | `R2_BACKUP_KEY_ESCROWED = OPEN`. Key must be escrowed off the workstation (password manager or equivalent). Never paste its value anywhere in the repo. |
+| **FQ-HOSTING / FQ-LCC-R13-HOSTING** | Gate-C temporary hosting ran and was destroyed (USD 16.67). Superseded by `PERSISTENT_BETA_HOSTING = PENDING_SHIP_COST_PACKAGE_AND_FOUNDER_SPEND_APPROVAL`. SHIP S4-R0 delivers the package; nothing is purchased before you approve it. |
+| **FQ-APPLE-TOOLCHAIN** | `IMAGE_PINNED = YES` (`eas.json` production `macos-tahoe-26.5-xcode-26.6`) · `ACTUAL_IOS_PRODUCTION_BUILD = NOT_PROVEN` · `APPLE_ACCOUNT/TEAM = VERIFY`. Not resolved until a real build/archive exists. |
+| **FQ-SITE** | `PROMO_SITE = EXISTS_BUT_NONCORE` (lawmind.co, repo lawmind/lawmind-site) · `FULL_REBUILD = DEFER` (after the app candidate is mature) · `COMPLIANCE_URLS = CURRENT RELEASE OBLIGATION` · `EXTERNAL_DELETE = CURRENT GAP UNTIL IMPLEMENTED`. No website design decision is needed from you. |
+| **FQ-WEB-SURFACE** | Its closure on "v7.1 puts advocate web in v1" is `SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION`: `ADVOCATE_WEB = DO_NOT_BUILD` (registry R17: web `OUT_OF_SCOPE_CURRENT_FOUNDER`). |
+| **FQ-PUSH-PROJECT** | Launch Shape B makes no push/monitoring claim, so `PUSH_PRODUCT = DEFERRED / NONBLOCKING`. **Separate and still current:** `EAS_PROJECT_ID` is absent from `app.config.ts`, and an EAS project is needed for store builds regardless of push (roadmap §14.14). |
+| **FQ-DELETE-WEB** | Owner SHIP. The route belongs in lawmind/lawmind-site and needs `EXTERNAL_DELETE_AUTH_V1` (the R33 mobile magic link cannot be reused). Not a founder item. |
+| **In-app purchase: vendor pick** (8 Aug) | Old RevenueCat/OpenIAP recommendations are historical input. At Gate D you choose `FREE_BETA` or `PAID_V1`; only PAID_V1 re-opens billing, on a supported PBL8+ re-measured then. |
+| **Store accounts (new)** | Please confirm Apple Developer Program membership/type/Team ID and Google Play Console account type and verification state. **`PLAY_APP_REGISTERED` has a 30 Sep 2026 deadline** under Android developer verification. Rows: `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0. |
+| **Countersigned DPA** | Still `REQUIRED_BEFORE_UPLOADS_OR_SENSITIVE_MODEL_ROUTING`. Not a v1 blocker (uploads disabled). |
+
+---
+
 ## FOUNDER DATA AUTHORIZATION — CURRENT / SETTLED
 
 **Founder decision — 11 Aug 2026. This section is authoritative for the current
@@ -215,6 +238,8 @@ round brief in one session. Nothing needs configuring first.
 ---
 
 ### [OPEN — NEEDS AN ACCOUNT AND ONE BUILD, NOT A DECISION] FQ-APPLE-TOOLCHAIN — the iOS build toolchain is not pinned anywhere, so nobody can prove it meets Apple's floor · RCC · 2 Sep 2026
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** IMAGE_PINNED = YES (`macos-tahoe-26.5-xcode-26.6`); ACTUAL_IOS_PRODUCTION_BUILD = NOT_PROVEN; APPLE_ACCOUNT/TEAM = VERIFY. The headline "not pinned anywhere" is stale. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 **Needs:** an Apple Developer Program enrolment and one EAS iOS build actually
 run, so the Xcode / iOS-SDK versions behind our production profile become an
@@ -1963,6 +1988,8 @@ and court-rules text, sourced the same way the fee schedule would need to be.
 ---
 
 ### [OPEN] In-app purchase — vendor pick and store account setup · RCC · 8 Aug 2026
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** Vendor recommendations here are historical input, not binding. LAUNCH_COMMERCE = FREE_BETA | PAID_V1 at Gate D; if PAID_V1, re-measure the current supported PBL8+ first. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 **Needs:** (1) approval to add `react-native-purchases` (RevenueCat) as a
 dependency — a new vendor, proprietary SaaS behind an MIT-licensed SDK, not
@@ -4978,6 +5005,8 @@ answered once rather than assumed under time pressure later.
 
 ## FQ-HOSTING · STAGING_REQUIRED — public serving needs a remotely-reachable box eventually, but not yet, and not without your approval · NEW3, 22 Aug 2026, corrected same day
 
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** Gate-C hosting happened and was destroyed. PERSISTENT_BETA_HOSTING = PENDING_SHIP_COST_PACKAGE_AND_FOUNDER_SPEND_APPROVAL. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
+
 **Founder direction received mid-session, stated plainly: stay local-first.**
 No Railway re-enable, no new managed cloud DB, no cloud GPU, no recurring
 infra spend without explicit approval. This entry records a real gap
@@ -5346,6 +5375,8 @@ numbers, or ask for a different search.
 ---
 
 ## FQ-PUSH-PROJECT · Push notifications are wired end-to-end in code and cannot deliver a single notification without an EAS project · NEW3, 23 Aug 2026
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** PUSH_PRODUCT = DEFERRED / NONBLOCKING under launch Shape B. EAS project/build readiness is separate and current. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 **What is built.** `apps/mobile/src/push/register.ts` — permission request,
 Android notification channel, `expo-notifications`/`expo-device` now real
@@ -5939,6 +5970,8 @@ returns nothing concludes the app does not work.
 ---
 
 ## FQ-SITE — there is no website, and it is a store gate rather than a marketing nicety
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** PROMO_SITE = EXISTS_BUT_NONCORE; FULL_REBUILD = DEFER; COMPLIANCE_URLS = CURRENT RELEASE OBLIGATION; EXTERNAL_DELETE = CURRENT GAP UNTIL IMPLEMENTED. "There is no website" is false (lawmind.co, lawmind/lawmind-site). See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 **Raised 25 Aug 2026, NEW3.** `docs/product/WEBSITE_PRODUCT_SPEC_V1.md` §0.
 
@@ -6884,6 +6917,8 @@ deliberately left to you.
 
 ## FQ-BACKUP-KEY-ESCROW — the moat backup is now encrypted, and the key exists in one place  ·  LCC, 30 Aug 2026 · **five minutes, and it is urgent in the way backups are**
 
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** R2_BACKUP_KEY_ESCROWED = OPEN until the founder confirms. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
+
 **What is needed:** copy `R2_BACKUP_ENCRYPTION_KEY` out of
 `C:\Users\Xerxus\Documents\Lawmind\.env` into a password manager, or anywhere
 that is not this workstation. Then confirm here that it is escrowed.
@@ -6967,6 +7002,8 @@ the rule was not followed, and you should hear that from us rather than notice i
 ---
 
 ## FQ-WEB-SURFACE — ~~the roadmap plans a desktop you cancelled on 12 August~~  ·  NEW3, 30 Aug 2026 · **CLOSED the same day — nothing is needed from you**
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** The closure below rested on "v7.1 puts advocate web in v1". SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION: ADVOCATE_WEB = DO_NOT_BUILD. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 > ### CLOSED · `RESOLVED_BY_CURRENT_FOUNDER_ROADMAP_V7_1` · NEW3, 30 Aug 2026
 >
@@ -7068,6 +7105,8 @@ and in `V1_CAPABILITY_REGISTRY_R14.json`.
 ---
 
 ## FQ-LCC-R13-HOSTING · The hosting choice is made and documented. Only the purchase is outstanding · LCC, 30 Aug 2026 · **~$122–132/month, cancellable**
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** Superseded by PERSISTENT_BETA_HOSTING = PENDING_SHIP_COST_PACKAGE_AND_FOUNDER_SPEND_APPROVAL (roadmap v7.4 §13.1). See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 **What is needed:** authorisation to open a DigitalOcean Managed PostgreSQL
 instance, 8 GiB / 4 vCPU, in **blr1 (Bangalore)**. Plus roughly **$10–25 once**
@@ -7768,6 +7807,8 @@ Record: `docs/ai/lcc-r33/ROUND.md`.
 ---
 
 ## FQ-NEW3-R25-ROTATE — three keys to revoke once the Singapore machines are gone (18 Sep 2026)
+
+> **STATUS 18 Sep 2026 (SHIP S4-T0.1):** DO_TOKEN_ROTATED / RESEND_KEY_ROTATED / SPACESHIP_KEY_SECRET_ROTATED = OPEN until the founder confirms. No agent marks these complete. See "CURRENT STATUS — S4-T0.1" at the top. The entry below is unchanged history.
 
 > **THE MACHINES ARE GONE — 18 Sep 2026, 01:13 UTC, server lane. This is now due
 > and it is the only thing outstanding.** Proof at the bottom of this entry.

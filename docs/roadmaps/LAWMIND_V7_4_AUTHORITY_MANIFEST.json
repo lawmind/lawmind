@@ -22,22 +22,73 @@
       "RED"
     ]
   },
+  "canonicalRoot": "docs/roadmaps",
+  "livePointer": "docs/CURRENT_STATE.md (mutable; deliberately NOT hashed here)",
+  "selfHash": "A manifest cannot contain its own hash. Its pre-edit hash is recorded under amendments[0].preEditFiles.",
   "files": {
-    "LAWMIND_MASTER_ROADMAP_V7_4.md": {
-      "bytes": 52277,
-      "sha256": "4a0f5faf1ae979e99c755b1246acccd9978e154e6f8ed9561bbd94186c655ec1"
+    "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
+      "bytes": 68099,
+      "sha256": "da712ba267970399f96f623f2c57a912db3a9c8181e481d3d163e7dd4ab7e6f8",
+      "role": "current master roadmap",
+      "amendedByA1": true
     },
-    "LAWMIND_SPRINT_PROMPTS_V5.md": {
-      "bytes": 20126,
-      "sha256": "070e541c02d365bf9ba9a6dff6821701ea486f86ed3504ab7553407b3d152f06"
+    "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
+      "bytes": 22960,
+      "sha256": "0cfdb542f372324942de67d75e2ee832c8c5b328bd292b9dfaa40351b33a75e1",
+      "role": "current sprint prompts",
+      "amendedByA1": true
     },
-    "LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
+    "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
+      "bytes": 14867,
+      "sha256": "937b214538dac5ee8f940cb23f7b39237af7b2165d5e48138855364892a9fb81",
+      "role": "reconciliation memo (design rationale + A1 policy recheck)",
+      "amendedByA1": true
+    },
+    "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
       "bytes": 4565,
-      "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd"
-    },
-    "LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
-      "bytes": 11892,
-      "sha256": "4aa230ab328073377f2efefb1b8272c82ae1096cd187442c2283838855ac195b"
+      "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd",
+      "role": "dated current-state snapshot (provenance; immutable). Live pointer is docs/CURRENT_STATE.md",
+      "amendedByA1": false
     }
-  }
+  },
+  "amendments": [
+    {
+      "id": "A1",
+      "date": "2026-09-18",
+      "round": "SHIP S4-T0.1 authority + orchestration + governance repair",
+      "record": "docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md",
+      "installedFrom": "docs/ (founder local copy) -> docs/roadmaps/ (canonical); no duplicate kept",
+      "preEditCheck": "PASS: all four founder-supplied files matched this manifest byte-for-byte and sha256 before any edit",
+      "preEditBytesCommitted": "yes: the first S4-T0.1 commit installs the founder bytes verbatim; see the record for its SHA",
+      "preEditFiles": {
+        "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
+          "bytes": 52277,
+          "sha256": "4a0f5faf1ae979e99c755b1246acccd9978e154e6f8ed9561bbd94186c655ec1"
+        },
+        "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
+          "bytes": 20126,
+          "sha256": "070e541c02d365bf9ba9a6dff6821701ea486f86ed3504ab7553407b3d152f06"
+        },
+        "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
+          "bytes": 4565,
+          "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd"
+        },
+        "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
+          "bytes": 11892,
+          "sha256": "4aa230ab328073377f2efefb1b8272c82ae1096cd187442c2283838855ac195b"
+        },
+        "docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json": {
+          "bytes": 1334,
+          "sha256": "5c9cc5abde3b3ad02273f0a7e2a9c4201348ad758aaf76724931cd3f09daecd4"
+        }
+      },
+      "editedFiles": [
+        "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md",
+        "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md",
+        "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md"
+      ],
+      "versionUnchanged": "v7.4 / prompts v5 patched in place; no v7.5 for corrections"
+    }
+  ],
+  "verify": "pnpm authority:check (scripts/lawmind-authority-check.mjs) recomputes every entry"
 }

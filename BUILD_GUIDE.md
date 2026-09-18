@@ -1,5 +1,13 @@
 # LAWMIND — BUILD GUIDE
 
+> **HISTORICAL BUILD PLAN — NOT CURRENT EXECUTION AUTHORITY.** (SHIP S4-T0.1,
+> 18 Sep 2026.) The S0–S7 sprint table, the LCC/RCC lane split and the gate
+> wording below record how LawMind was built through Gate C, and they are kept as
+> written. Current execution: `docs/CURRENT_STATE.md` →
+> `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md` →
+> `docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md`. Current agents: SHIP · DATA · RED
+> (roadmap §2). Old gate results are not rewritten.
+
 > Restructured 1 Aug 2026. **Four lanes collapsed to two.** This changed the
 > sprint plan more than it changed the code.
 

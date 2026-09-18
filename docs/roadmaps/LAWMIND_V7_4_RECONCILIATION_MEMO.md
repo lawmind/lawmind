@@ -415,3 +415,27 @@ launch
 ```
 
 That is the project plan v7.4 is designed to execute.
+
+---
+
+# 19. AMENDMENT A1 — PRIMARY-SOURCE POLICY RECHECK, 18 SEPTEMBER 2026
+
+Recorded by SHIP S4-T0.1. Every row was read from the source named, on 18 Sep 2026.
+Round record: `docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`.
+
+| Key | Observed | Source |
+|---|---|---|
+| `GOOGLE_TARGET_API` | "New apps and app updates must target Android 16 (API level 36) or higher" from 31 Aug 2026; extension to 1 Nov 2026 on request | https://support.google.com/googleplay/android-developer/answer/11926878 |
+| `APPLE_UPLOAD_TOOLCHAIN` | "Since April 28, 2026 … must be built with Xcode 26 or later using an SDK for iOS 26" | https://developer.apple.com/news/upcoming-requirements/ |
+| `GOOGLE_EXTERNAL_DELETION` | in-app path **and** "a web link resource where users can request app account deletion"; functional, relevant, identifiable | https://support.google.com/googleplay/android-developer/answer/13327111 |
+| `GOOGLE_REVIEW_ACCESS` | "accessible at all times, reusable, and valid regardless of user location" | https://support.google.com/googleplay/android-developer/answer/15748846 |
+| `APPLE_REVIEW_ACCESS` | 2.1(a): "an active demo account or fully-featured demo mode"; demo mode in lieu of an account needs prior approval; 5.1.1(v) in-app account deletion | https://developer.apple.com/app-store/review/guidelines/ |
+| `PLAY_CONSOLE_2026_09_30` | Android developer verification: Play packages must be registered by 30 Sep 2026 or be removed from Play; broader enforcement on certified devices in 2027 | https://android-developers.googleblog.com/2026/06/android-developer-verification.html · https://support.google.com/googleplay/android-developer/answer/16984799 |
+| `APPLE_ORG_ENROLLMENT` | legal entity (no DBAs), D-U-N-S, legal binding authority, work email on the org domain, public functional website on the org domain, 2FA | https://developer.apple.com/programs/enroll/ |
+| `PBL` | versions 8 and 9 supported; 9 is latest; 7's new-app/update deadline was 31 Aug 2026 | https://developer.android.com/google/play/billing/deprecation-faq |
+| `DPDP` (Act) | G.S.R. 843(E), 13 Nov 2025: clause (a) on publication; (b) s.6(9), s.27(1)(d) after one year; (c) the bulk after eighteen months (13 May 2027) | https://cadp.in/news/dpdp-act-commencement-and-data-protection-board-notified/ (secondary; Gazette text not machine-readable from the PIB PDF this round) |
+| `DPDP` (Rules) | G.S.R. 846(E), 13 Nov 2025: Rules 1, 2, 17–21 on publication; Rule 4 after one year (13 Nov 2026); Rules 3, 5–16, 22, 23 after eighteen months (13 May 2027) | https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf · https://www.mondaq.com/india/privacy-protection/1759134/ |
+
+`UNKNOWN`: the Gazette PDF text itself (the PIB copy did not decode), so the Act's clause
+lettering and the exact publication day (13 vs 14 Nov 2025 in one secondary source) rest on
+secondary sources. Hence `DPDP_EFFECTIVE_DATE_RECHECK = REQUIRED_BEFORE_PUBLIC_LAUNCH`.

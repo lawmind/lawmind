@@ -12,9 +12,10 @@ import { color, size, space } from '../../theme/tokens';
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * LOCAL V1 — Master Roadmap v7.1 governs and restores the advocate research
- * workstation to v1 scope. NEW3 R14 still records public advocate web as
- * `DISABLED_NOT_READY`; this is the local Expo web shell only. See the matching
+ * FROZEN / INERT — current founder instruction (roadmap v7.4 §0.1, 18 Sep 2026):
+ * ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD; registry R17 marks web
+ * `OUT_OF_SCOPE_CURRENT_FOUNDER`. Kept, not extended. (Historical: written when
+ * v7.1 placed the workstation in v1.) This is the local Expo web shell only. See the matching
  * boundary at the top of `ResearchWorkspace.tsx`.
  * ─────────────────────────────────────────────────────────────────────────────
  *

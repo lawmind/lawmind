@@ -1,6 +1,6 @@
 {
   "ledger": "NEW3_CONTRACT_CHANGE_LEDGER",
-  "owner": "NEW3",
+  "owner": "SHIP",
   "process": "docs/product/CONTRACT_CHANGE_CONTROL.md",
   "openedAt": "2026-08-30",
   "baseline": {
@@ -1150,17 +1150,75 @@
       },
       "decidedBy": "NEW3 R25",
       "decidedAt": "2026-09-18"
+    },
+    {
+      "id": "CCR-SHIP-S4T0-01",
+      "filedBy": "SHIP",
+      "filedVia": "SHIP S4-T0.1 authority + orchestration repair round, 18 September 2026, on current explicit founder instruction (advocate product = native iOS + Android; ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD).",
+      "classification": "CAPABILITY_REGISTRY_VOCABULARY",
+      "riskClass": "NORMAL — registry vocabulary + web-platform state only; no endpoint, field, auth, deletion, sensitive-data routing or legal-truth semantics change",
+      "endpoints": [],
+      "severity": "P1",
+      "phase": "POST_IMPLEMENT_ACCEPTED",
+      "proposal": {
+        "currentContractVersion": "R17 (wire protocol 1) — unchanged by this request",
+        "currentCapabilityRegistry": "docs/product/V1_CAPABILITY_REGISTRY_R16.json (NEW3, 2 Sep 2026)",
+        "exactProblem": "R16 platformStatus.web = IN_SCOPE_V1_NOT_BUILT and every web cell reads DISABLED_NOT_READY/POST_V1/INTERNAL_EXPERIMENTAL/DISABLED_EXTERNAL_BLOCK on the basis that Master Roadmap v7.1 put advocate desktop/web in v1. Current founder instruction (v7.4 §0.1, 18 Sep 2026) is ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD. DISABLED_NOT_READY means the gap is OURS to close, which now instructs work the founder has forbidden. No existing state means out of scope by founder instruction: POST_V1 means deliberately deferred to a later version, which overstates the plan.",
+        "safeCurrentFallback": "Advocate web stays unreachable either way: zero web rows are ENABLED in R16 and no advocate web client exists. Until R17 lands, readers must treat R16 web cells as superseded by v7.4 §0.1.",
+        "userTruthImpact": "None on the wire. The truth impact is internal: a registry reading DISABLED_NOT_READY for web tells agents to build an advocate web app, the exact scope drift the founder closed.",
+        "proposedDelta": "ADDITIVE vocabulary: add OUT_OF_SCOPE_CURRENT_FOUNDER = \"Not a v1 product platform/surface by current explicit founder instruction. Not a gap, not ours to close, not deferred work. Reopening requires a newer founder instruction.\" Then in a NEW snapshot R17 (R16 untouched): platformStatus.web.state = OUT_OF_SCOPE_CURRENT_FOUNDER; every capabilities[].platforms.web = OUT_OF_SCOPE_CURRENT_FOUNDER with the R16 value preserved as webStatePriorR16. iOS/Android cells, evidence references, runtime observations and every other field inherit from R16 unchanged.",
+        "breaking": false,
+        "clientImpact": "none — the mobile client never renders the web platform; X-Lawmind-Platform: web remains a server selector and is NOT changed in this round (mutation boundary: no product behavior change).",
+        "serverImpact": "none in this round. Observed: GET /release/capabilities?platform=web still resolves (R16 runtimeObservationR16.partySearch.web = ENABLED). That is a selector reading, not an advocate web client; any server change to refuse platform=web is a separate SHIP CCR.",
+        "testsRequired": [
+          "R17 parses as JSON",
+          "R16 bytes unchanged (git diff empty)",
+          "every R17 web cell = OUT_OF_SCOPE_CURRENT_FOUNDER and carries webStatePriorR16",
+          "every R17 ios/android cell equals R16",
+          "no R17 row reads DISABLED_NOT_READY on web",
+          "pnpm authority:check names R17 as the current registry"
+        ],
+        "frozenAt": "2026-09-18, before R17 was written"
+      },
+      "dataSemanticReview": "NOT_REQUIRED — no citation, statute, canonical legal truth or retrieval truth-state semantics change.",
+      "redReadOnly": "NOT_INVOKED — not high-risk (no auth/authorization/deletion/sensitive routing/gate-criteria/canonical mutation).",
+      "historicalRowsTouched": 0,
+      "decision": "AMENDED_REGISTRY_VOCABULARY",
+      "implemented": {
+        "at": "2026-09-18",
+        "artifacts": [
+          "docs/product/V1_CAPABILITY_REGISTRY_R17.json",
+          "docs/product/V1_CLAIMS_REGISTER_R17.md"
+        ],
+        "r16Edited": false
+      },
+      "postImplementAcceptance": {
+        "performedBy": "SHIP, as a separate pass after re-anchor (HEAD 6b1355eb, origin/main 6b1355eb, 18 Sep 2026). Same agent as the implementer: a procedural separation, not an independent review. No independent reviewer is required at this risk class.",
+        "results": {
+          "R17 parses as JSON": "PASS",
+          "R16 bytes unchanged (git diff empty)": "PASS",
+          "every R17 web cell = OUT_OF_SCOPE_CURRENT_FOUNDER and carries webStatePriorR16": "PASS (30/30)",
+          "every R17 ios/android cell equals R16": "PASS (30/30)",
+          "no R17 row reads DISABLED_NOT_READY on web": "PASS (0)",
+          "pnpm authority:check names R17 as the current registry": "PASS"
+        },
+        "verdict": "ACCEPTED"
+      },
+      "releasedAsCurrentRegistry": true,
+      "wireContractChanged": false
     }
   ],
   "counts": {
-    "received": 26,
+    "received": 27,
     "amended": 13,
     "deferred": 4,
     "rejectedWithAlternative": 4,
     "engineeringDefectRoutedToLCC": 4,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged. NEW3 R24B, 16 September 2026, at 256904c4: CCR-NEW3-R24-02 is closed by implementation (RCC 5df329a2 + 34a70a3d) and physical S24 observation (docs/ai/rcc-r28/DEVICE.md); no new CCR; counts unchanged. NEW3 R25, 18 September 2026, at HEAD 523626bc: CCR-NEW3-R25-01 records the founder's current instruction superseding the Gate-C cellular/mobile-data bearer requirement with REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW (Wi-Fi or cellular both accepted, eight invariants unchanged). It is an ACCEPTANCE_POLICY amendment with NO wire change: CONTRACT_REVISION stays R17, WIRE_PROTOCOL_VERSION stays 1, no endpoint or field moves. CELLULAR_BEARER_REQUIREMENT = SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION, explicitly NOT REMOTE_MOBILE_DATA = PASS; historical cellular HOLD readings stand unedited. On FIFTH's GATE_C = PASS, GATE_C_ACCEPTED = YES was frozen and all deferred capability states were preserved unchanged."
+    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged. NEW3 R24B, 16 September 2026, at 256904c4: CCR-NEW3-R24-02 is closed by implementation (RCC 5df329a2 + 34a70a3d) and physical S24 observation (docs/ai/rcc-r28/DEVICE.md); no new CCR; counts unchanged. NEW3 R25, 18 September 2026, at HEAD 523626bc: CCR-NEW3-R25-01 records the founder's current instruction superseding the Gate-C cellular/mobile-data bearer requirement with REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW (Wi-Fi or cellular both accepted, eight invariants unchanged). It is an ACCEPTANCE_POLICY amendment with NO wire change: CONTRACT_REVISION stays R17, WIRE_PROTOCOL_VERSION stays 1, no endpoint or field moves. CELLULAR_BEARER_REQUIREMENT = SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION, explicitly NOT REMOTE_MOBILE_DATA = PASS; historical cellular HOLD readings stand unedited. On FIFTH's GATE_C = PASS, GATE_C_ACCEPTED = YES was frozen and all deferred capability states were preserved unchanged.",
+    "registryVocabularyAmended": 1,
+    "noteShipS4T0": "SHIP S4-T0.1, 18 Sep 2026: CCR-SHIP-S4T0-01 accepted (registry vocabulary + web platform state only). Wire contract R17 / protocol 1 unchanged."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the current released revision; the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object remains unchanged.",
@@ -1234,8 +1292,8 @@
       }
     }
   },
-  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R16.json",
-  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R16.md",
+  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R17.json",
+  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R17.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
     "observedVia": "committed source read at HEAD, plus the committed Hono app executed in-process to observe GET /release/capabilities under seven selector forms",
@@ -1339,5 +1397,24 @@
     "entries": [
       "CCR-NEW3-R25-01"
     ]
-  }
+  },
+  "ownerHistory": [
+    {
+      "owner": "NEW3",
+      "from": "2026-08-30",
+      "until": "2026-09-18",
+      "note": "rows up to CCR-NEW3-R25-01; unchanged"
+    },
+    {
+      "owner": "SHIP",
+      "from": "2026-09-18",
+      "process": "docs/product/CONTRACT_CHANGE_CONTROL.md §7"
+    }
+  ],
+  "capabilityRegistryArtifactHistory": [
+    "docs/product/V1_CAPABILITY_REGISTRY_R16.json"
+  ],
+  "claimsRegisterArtifactHistory": [
+    "docs/product/V1_CLAIMS_REGISTER_R16.md"
+  ]
 }

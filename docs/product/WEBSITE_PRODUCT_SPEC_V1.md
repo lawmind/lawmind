@@ -1,5 +1,18 @@
 # LAUNCH WEBSITE — product specification V1
 
+> **HISTORICAL PROMOTIONAL-SITE SPEC · NOT CURRENT PRODUCT AUTHORITY.**
+> **CURRENT PROMO SITE IS TEMPORARY. ONLY COMPLIANCE-URL REQUIREMENTS REMAIN RELEASE-CRITICAL.**
+> (SHIP S4-T0.1, 18 Sep 2026, on current founder instruction; roadmap v7.4 §0.2, §18.)
+> The live promotional site is `lawmind.co`, repo `lawmind/lawmind-site`, **outside
+> this repository**. Do not create `apps/site` because this spec says to. Do not
+> redesign the promo site as part of product work; it is rebuilt after the app
+> candidate is mature, from the frozen capability registry and final store claims.
+> Still release-critical from this document: working privacy, support/contact,
+> terms (if used) and the external account-deletion URL
+> (`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md`), tracked in
+> `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0. Any sentence below implying an
+> advocate web product is superseded (registry R17: web `OUT_OF_SCOPE_CURRENT_FOUNDER`).
+
 **NEW3, 25 August 2026.** Sprint plan V2 §10 NEW3-4 and §11.
 **NEW3 owns strategy, IA, copy, claims. RCC owns implementation.** This file
 contains no code and makes no implementation decision that is RCC's.

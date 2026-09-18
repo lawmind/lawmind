@@ -8,21 +8,27 @@ mandatory reading set.
 
 Session start, in this order, before Section 2 of the global file:
 
-1. **`PRODUCT_BRIEF.md`** → the north star. **Read first, every session.** If what
-   you are about to build does not serve one of its four features, stop and ask
-2. `.ai/README.md` → loads the whole `.ai/` module set (11 files)
-3. `docs/OPEN_DECISIONS.md` → what is NOT settled; never silently decide one
-4. **`PRODUCT_DECISIONS.md`** → PD-1…PD-14, **settled**. Do not silently reopen
+1. **`docs/CURRENT_STATE.md`** → the **live** pointer: current gate, current
+   capability registry, active agents, active stops, founder actions. **Read
+   first, every session.**
+2. **`docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md`** → current roadmap (with
+   Amendment A1). Hashes in `docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json`
+3. **`docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md`** → current execution prompts
+4. `docs/OPEN_DECISIONS.md` → what is NOT settled; never silently decide one
+5. **`PRODUCT_DECISIONS.md`** → PD-1…PD-14, **settled**. Do not silently reopen
    one. Reasoning is recorded because the reasoning is what keeps the next
    decision consistent
-4b. **`docs/CURRENT_PLAN.md`** → **the single ordered queue, and what to pick
-   next.** It exists because a plan held only in a todo tool does not survive
-   compaction or a fresh agent. Read it before choosing any task; update it when
-   a queue item lands
-5. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes
-6. `docs/CITATION_HARNESS.md` → the rule that can end this product
+6. `docs/SCHEMA_TRUTH.md` → the only authority on data shapes
+7. `docs/CITATION_HARNESS.md` → the rule that can end this product
+8. `.ai/README.md` → the `.ai/` module set; `PRODUCT_BRIEF.md` → long-term
+   vision, **not** current v1 scope
 
-More than 20 turns deep, or context was compacted → re-read items 3–6 before your
+`docs/CURRENT_PLAN.md` is a **historical operational journal**, not the task
+queue. Older roadmaps (v7.2, v7.1, v5), prompts v2/v3 and the S0–S7 plan in
+`BUILD_GUIDE.md` are historical. `pnpm authority:check` fails if a bootstrap file
+claims otherwise.
+
+More than 20 turns deep, or context was compacted → re-read items 1, 4, 6 and 7 before your
 next edit. The `UserPromptSubmit` hook re-injects the core each turn; that core is
 a pointer, not a replacement for the files.
 
@@ -31,9 +37,21 @@ first is what nobody may decide alone, the second is what nobody may re-decide.
 
 ## 1. WHAT LAWMIND IS
 
-AI research and drafting assistant for practising Indian advocates. Criminal and
-civil litigation. **Native iOS + Android (Expo) only. Admin is a separate
-service; web is admin only.**
+**Current v1: evidence-first mobile legal research for practising Indian
+advocates.** Criminal and civil litigation. **Native iOS + Android (Expo) only.
+Admin is a separate service; web is admin only.** Current v1 loop:
+
+`Search → Reader → Source/Evidence → Save → Matter`
+
+What v1 ships is exactly what the **current capability registry** (named in
+`docs/CURRENT_STATE.md`; R17 at 18 Sep 2026) enables per platform.
+
+**Website (founder, 18 Sep 2026):** `lawmind.co` is a temporary promotional
+surface (repo `lawmind/lawmind-site`, outside this one), not the product, not an
+advocate web app, and not an architecture authority. It is rebuilt after the app
+candidate is mature. Only its compliance URLs (privacy, support/contact,
+external account deletion, terms if used) are stable release contracts.
+`ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD`.
 
 **PD-15 (11 Aug 2026, desktop research workspace) is REVERSED — 12 Aug 2026,
 founder direction.** This is a phone app; there is no planned desktop surface
@@ -45,11 +63,14 @@ and the Cmd/Ctrl+K web listener in `app/_layout.tsx` are left in place —
 inert, not deleted, per the founder's explicit call — but nothing further is
 built against them. See `PRODUCT_DECISIONS.md` PD-15 for the full history.
 
-Four core features PLUS the daily loop (Tier B, approved 2 Aug 2026). **Tier B
-ships before Tier A** — the loop creates the habit, the library only prevents a
-feature-comparison loss. `PRODUCT_BRIEF.md`, `BUILD_GUIDE.md` §Sequencing rule.
+**Long-term vision, not current v1 scope.** The list below is the product
+vision from `PRODUCT_BRIEF.md` (2 Aug 2026). Drafting, hearing briefings, the
+daily loop, monitoring, uploads/OCR and Hindi generation are **deferred or
+disabled** capabilities under roadmap v7.4 §4.3 and the current capability
+registry. They create no current implementation task. Their specifications are
+kept, not deleted.
 
-Tier A — the four core features, priority order:
+Vision — the four core features, historical priority order:
 
 1. Court decision search with server-verified citations
 2. 24-hour hearing briefings (the wedge — no Indian competitor has it)
@@ -315,10 +336,23 @@ three failed attempts at the same thing. The founder data authorization in §6a 
 already settled and is not an OPEN_DECISION. Continuous does not mean reckless:
 it means not handing the founder a decision they have already delegated.
 
-## 7. SPRINT DISCIPLINE
+## 7. AGENTS AND GATES (roadmap v7.4 §2, §3; Amendment A1)
 
-Four disjoint agent file-sets in parallel within a sprint. Hard gate. Then
-advance. Never two sprints at once. `BUILD_GUIDE.md` holds the dispatch pattern.
+```text
+SHIP   ACTIVE      product · client · server · ops · release · contract change control
+DATA   CONTINUOUS  corpus · source · legal truth · retrieval · embeddings
+RED    FROZEN      fresh independent audit, only as RED_READ_ONLY / RED_GATE / RED_P0
+```
 
-Gate S2 (citation accuracy) is a hard stop. Nothing downstream matters if it
-fails. Do not proceed to "keep momentum".
+Bind a session with `echo SHIP > .agents/bus/.lane-<session_id>` (or DATA / RED).
+LCC, RCC, NEW1, NEW2, NEW3, FIFTH and AUDIT-RO are **legacy** lanes: their bus
+messages, receipts and commits are immutable provenance, and no new session binds
+to them. Fewer agents does not mean fewer programs.
+
+Gates: A, B, C passed; current is **Gate D** (SHIP, no RED), then **Gate E** (RED).
+Stop-the-line is limited to the six conditions in roadmap §3.6; P1/P2 defects are
+owned backlog. Contract changes follow roadmap §3.7. The shared-worktree controls
+(atomic `GIT_COMMIT` / `MIGRATION_SLOT` / `HEAVY_BOX`, exact-path staging) still bind.
+
+The historical S0–S7 plan and its Gate S2 wording live in `BUILD_GUIDE.md` as
+history. Citation accuracy remains non-negotiable through §2 above.

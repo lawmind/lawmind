@@ -78,6 +78,11 @@ jobs:
       # 11 Aug 2026 after this guard was found running NOWHERE — not here, not in
       # ci-local, not in a test suite — and red the first time anyone ran it.
       - run: node scripts/check-alert-coverage.mjs
+      # Bootstrap files must point at the current roadmap (v7.4), the live
+      # docs/CURRENT_STATE.md and the SHIP/DATA/RED lanes. They drifted three
+      # versions stale silently before 18 Sep 2026. Reads active files only,
+      # never history. Needs neither deps nor a database.
+      - run: node scripts/lawmind-authority-check.mjs
 
       # apps/** is RCC's lane and still carries npm lockfiles; installing it here
       # would make this job red for reasons outside this lane. Flagged, not converged.

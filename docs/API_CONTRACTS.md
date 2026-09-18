@@ -1,5 +1,10 @@
 # API CONTRACTS
 
+> **Current (18 Sep 2026):** SHIP owns both sides of this contract; changes go
+> through `docs/product/CONTRACT_CHANGE_CONTROL.md` §7 (CCR frozen before code,
+> separate post-implement acceptance). The paragraph below describes the
+> historical LCC/RCC split.
+
 The seam between the two lanes. **RCC builds against this with mocks and never
 waits on LCC; LCC implements to it.** Shapes freeze for the sprint — a mid-sprint change requires telling
 both consuming lanes.

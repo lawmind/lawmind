@@ -1,8 +1,13 @@
 # CONTRACT CHANGE CONTROL — the process, not a change
 
-**Owner:** NEW3. **Filed by:** RCC. **Implemented by:** LCC.
+> **CURRENT (from 18 Sep 2026, SHIP S4-T0.1):** owner **SHIP**. Authority: Master
+> Roadmap v7.4 §3.7 (Amendment A1). Future changes follow **§7** below. §1–§6
+> describe the three-owner process (NEW3 decides, RCC files, LCC implements) that
+> produced every ledger row up to `CCR-NEW3-R25-01`. Those rows stay as written.
+
+**Historical owner (R13–R25):** NEW3. **Filed by:** RCC. **Implemented by:** LCC.
 **Established:** 30 August 2026, NEW3 Sprint-2 R13.
-**Authority:** Master Roadmap v7.1 §7.4.
+**Authority at the time:** Master Roadmap v7.1 §7.4.
 
 This file says how the frozen RCC API contract changes. It is the process. The
 decisions live in [`CONTRACT_CHANGE_LEDGER.json`](CONTRACT_CHANGE_LEDGER.json),
@@ -149,3 +154,55 @@ is released yet.
 
 **A CCR is never decided in conversation.** If it is not in the ledger, it did
 not happen.
+
+---
+
+## 7. FROM SPRINT 4 — SHIP-OWNED CHANGE CONTROL (roadmap v7.4 §3.7)
+
+One agent, SHIP, now writes both sides of most contracts. That removes a
+handoff. It does not remove the need for a frozen proposal and a separate
+acceptance: **a contract is never "released" merely because SHIP wrote both
+sides.**
+
+### 7.1 Low / normal risk
+
+1. **`CCR_PROPOSED`** — a ledger row, frozen **before** any implementation edit:
+
+   ```
+   id                      CCR-SHIP-<round>-<nn>
+   currentContractVersion  the version in force
+   exactProblem            what is wrong or missing, with evidence
+   safeCurrentFallback     what users get today, safely, without the change
+   userTruthImpact         what a user would wrongly believe without it ("none" → probably a feature request)
+   proposedDelta           the exact additive or breaking change
+   breaking                true | false (breaking moves minSupportedContract: separate decision)
+   clientImpact            apps/mobile effect
+   serverImpact            services/api effect
+   testsRequired           the checks acceptance will run
+   frozenAt                timestamp, before implementation
+   ```
+
+2. **`IMPLEMENT`** — SHIP implements against the frozen proposal only.
+3. **`POST_IMPLEMENT_ACCEPTANCE`** — re-anchor HEAD, then a separate pass runs
+   `testsRequired` against the frozen proposal and records the result on the row.
+   Scope creep beyond the proposal is a new CCR, not an amendment of this one.
+
+### 7.2 Legal / data semantics
+
+If the change touches canonical legal truth, citation semantics, statute
+semantics or retrieval truth states, **DATA independently reviews the semantic
+contract** and records `dataSemanticReview` on the row before acceptance.
+
+### 7.3 High risk
+
+Authentication · authorization · deletion/erasure · sensitive-data routing ·
+gate criteria · canonical legal mutation safety: invoke **`RED_READ_ONLY`** when
+independent falsification is materially useful, and record `redReadOnly` on the
+row either way. RED attacks. RED does not implement.
+
+### 7.4 Unchanged
+
+§3 severity, §4's rule that a DEFER names its reconsideration gate, §5's one-way
+flow contract → capability → claim, and "if it is not in the ledger, it did not
+happen". Filing is a ledger row plus, when DATA or RED must act, a bus message
+(`CCR:` subject) to that lane.
