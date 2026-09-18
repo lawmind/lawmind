@@ -10,9 +10,10 @@ corpus, cloud resource or spend.
 
 ```text
 HEAD_START = 7630c275be791e4d03935ec633923ecf6ec8c24b
-HEAD_FINAL = (recorded by the commit after the content commit; a commit cannot
-              name itself — see git log)
-COMMITS    = (same)
+HEAD_FINAL = 444af1a144aae8386a9cb7e81173253fbd9ded00   (content head; the commit after it changes only this file,
+             because a commit cannot name itself — see git log)
+COMMITS    = 444af1a144aae8386a9cb7e81173253fbd9ded00  ci(ship-s4-t0-2): CI runs on push, and no probe invents a deployment
+             (next)  records this SHA in this file only
 ```
 
 ## Re-anchor (start)
