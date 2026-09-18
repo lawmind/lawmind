@@ -87,7 +87,10 @@ const CONTROL = new RegExp('[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]', 'g'
  */
 const CONTROL_LIMIT = 5;
 
-const PROVENANCE_BY_TYPE: Record<New3Row['queryType'], { provenance: GoldProvenanceType; construction: QueryConstruction }> = {
+const PROVENANCE_BY_TYPE: Record<
+  New3Row['queryType'],
+  { provenance: GoldProvenanceType; construction: QueryConstruction }
+> = {
   // The target's citation string and title words are removed by NEW3 before the
   // passage is emitted — `provenance.redacted` lists exactly what went.
   proposition: { provenance: 'citation_edge', construction: 'redacted_passage' },
@@ -121,7 +124,11 @@ export function loadNew3Gold(
 
     const control = (r.query.match(CONTROL) ?? []).length;
     if (dropControl && control >= CONTROL_LIMIT) {
-      dropped.push({ queryId: r.id, reason: 'control_characters', detail: `${control} control characters` });
+      dropped.push({
+        queryId: r.id,
+        reason: 'control_characters',
+        detail: `${control} control characters`,
+      });
       continue;
     }
 
@@ -154,6 +161,10 @@ export function loadNew3Gold(
   return {
     rows,
     dropped,
-    totals: { rowsInFile: file.rows.length, distinctAuthorities: authorities.size, distinctEdges: edges.size },
+    totals: {
+      rowsInFile: file.rows.length,
+      distinctAuthorities: authorities.size,
+      distinctEdges: edges.size,
+    },
   };
 }

@@ -108,9 +108,7 @@ export async function getCorpusFreshness(c: Context, sql: Sql): Promise<Response
   const baselineMonths = series.slice(0, Math.max(series.length - MONTHS_UNDER_TEST, 0));
   const baseline =
     baselineMonths.length > 0
-      ? Math.round(
-          baselineMonths.reduce((a, b) => a + b.documents, 0) / baselineMonths.length,
-        )
+      ? Math.round(baselineMonths.reduce((a, b) => a + b.documents, 0) / baselineMonths.length)
       : 0;
 
   const graded = series.map((s) => {
@@ -131,13 +129,7 @@ export async function getCorpusFreshness(c: Context, sql: Sql): Promise<Response
    */
   const frontier = [...graded].reverse().find((g) => g.state === 'CURRENT') ?? null;
   const dataAsOf = frontier
-    ? new Date(
-        Date.UTC(
-          Number(frontier.month.slice(0, 4)),
-          Number(frontier.month.slice(5, 7)),
-          0,
-        ),
-      )
+    ? new Date(Date.UTC(Number(frontier.month.slice(0, 4)), Number(frontier.month.slice(5, 7)), 0))
         .toISOString()
         .slice(0, 10)
     : null;
@@ -176,9 +168,7 @@ export async function getCorpusFreshness(c: Context, sql: Sql): Promise<Response
    * `judgments.created_at`, which is index-backed and exists precisely because
    * something worked.
    */
-  const [hc] = await sql<
-    { failures: string; permanent: string; last_attempt: string | null }[]
-  >`
+  const [hc] = await sql<{ failures: string; permanent: string; last_attempt: string | null }[]>`
     SELECT count(*)::text AS failures,
            count(*) FILTER (WHERE permanent)::text AS permanent,
            ${sql.unsafe(isoColumn('max(last_attempted_at)'))} AS last_attempt
@@ -190,9 +180,7 @@ export async function getCorpusFreshness(c: Context, sql: Sql): Promise<Response
   const failureKinds = await sql<{ outcome: string; n: string }[]>`
     SELECT outcome, count(*)::text AS n FROM hc_ingest_ledger GROUP BY outcome ORDER BY count(*) DESC`;
 
-  const [enumerated] = await sql<
-    { source: string; at: string | null; total: string | null }[]
-  >`
+  const [enumerated] = await sql<{ source: string; at: string | null; total: string | null }[]>`
     SELECT source, ${sql.unsafe(isoColumn('max(enumerated_at)'))} AS at,
            max(source_total)::text AS total
       FROM corpus_coverage GROUP BY source ORDER BY source LIMIT 1`;
@@ -208,7 +196,12 @@ export async function getCorpusFreshness(c: Context, sql: Sql): Promise<Response
    * quiet — not a holdings count. Holdings per court are `/corpus/coverage`.
    */
   const courts = await sql<
-    { court_code: string; last_attempt: string | null; attempts: string; newest_year: number | null }[]
+    {
+      court_code: string;
+      last_attempt: string | null;
+      attempts: string;
+      newest_year: number | null;
+    }[]
   >`
     SELECT court_code,
            ${sql.unsafe(isoColumn('max(last_attempted_at)'))} AS last_attempt,

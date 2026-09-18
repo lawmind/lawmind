@@ -73,7 +73,10 @@ const PIN_LIMIT = 2;
 const PROBE_DEPTH = 20;
 
 const OUT = new URL('../../../docs/ai/new1-tier-a/case-title-decomposition.json', import.meta.url);
-const CKPT = new URL('../../../docs/ai/new1-tier-a/case-title-decomposition.checkpoint.jsonl', import.meta.url);
+const CKPT = new URL(
+  '../../../docs/ai/new1-tier-a/case-title-decomposition.checkpoint.jsonl',
+  import.meta.url,
+);
 
 type Row = {
   queryId: string;
@@ -198,7 +201,12 @@ async function main(): Promise<void> {
 
     // ── Step 2: the gold row itself, and how many judgments share its title ──
     const goldRow = await sql<
-      { case_title: string; court: string | null; judgment_date: string | null; case_number: string | null }[]
+      {
+        case_title: string;
+        court: string | null;
+        judgment_date: string | null;
+        case_number: string | null;
+      }[]
     >`SELECT case_title, court, judgment_date::text AS judgment_date, case_number
         FROM judgments WHERE id = ${g.goldAuthorityId}`;
     if (goldRow.length === 1) {
@@ -231,7 +239,9 @@ async function main(): Promise<void> {
         ),
       ];
       if (words.length > 0) {
-        const freq = await sql<{ word: string; lexeme: string | null; document_count: string | null }[]>`
+        const freq = await sql<
+          { word: string; lexeme: string | null; document_count: string | null }[]
+        >`
           WITH w(word) AS (SELECT unnest(${words}::text[]))
           SELECT w.word, l.lexeme, f.document_count
             FROM w
@@ -272,7 +282,9 @@ async function main(): Promise<void> {
         try {
           const probe = await sql.begin(async (tx) => {
             await tx.unsafe(`SET LOCAL statement_timeout = ${CASE_TITLE_BUDGET_MS}`);
-            return await tx<{ id: string; case_title: string; ws: number; case_number: string | null }[]>`
+            return await tx<
+              { id: string; case_title: string; ws: number; case_number: string | null }[]
+            >`
               SELECT j.id, j.case_title, word_similarity(${q}, j.case_title) AS ws, j.case_number
                 FROM judgments j
                WHERE j.case_title ILIKE ${'%' + r.rarestToken + '%'}
@@ -309,7 +321,9 @@ async function main(): Promise<void> {
     // What production would actually pin, given all of the above.
     r.pinnedId = r.exactPathFires
       ? // exactCaseTitle returns the single match
-        (r.exactPathHitsGold ? g.goldAuthorityId : (r.topHitId ?? 'OTHER'))
+        r.exactPathHitsGold
+        ? g.goldAuthorityId
+        : (r.topHitId ?? 'OTHER')
       : r.goldRankInProbe !== null && r.goldRankInProbe <= PIN_LIMIT
         ? g.goldAuthorityId
         : r.topHitId;
@@ -328,12 +342,20 @@ async function main(): Promise<void> {
   for (const r of rows) byFamily[r.family] = (byFamily[r.family] ?? 0) + 1;
   const rankDist: Record<string, number> = {};
   for (const r of rows) {
-    const k = r.goldRankInProbe === null ? 'absent' : r.goldRankInProbe <= 5 ? String(r.goldRankInProbe) : '6-20';
+    const k =
+      r.goldRankInProbe === null
+        ? 'absent'
+        : r.goldRankInProbe <= 5
+          ? String(r.goldRankInProbe)
+          : '6-20';
     rankDist[k] = (rankDist[k] ?? 0) + 1;
   }
-  const scored = rows.filter((r) => r.goldWordSimilarity !== null).map((r) => r.goldWordSimilarity!);
+  const scored = rows
+    .filter((r) => r.goldWordSimilarity !== null)
+    .map((r) => r.goldWordSimilarity!);
   scored.sort((a, b) => a - b);
-  const pct = (p: number): number | null => (scored.length === 0 ? null : scored[Math.floor(scored.length * p)]!);
+  const pct = (p: number): number | null =>
+    scored.length === 0 ? null : scored[Math.floor(scored.length * p)]!;
 
   const summary = {
     kind: 'new1_case_title_decomposition',
@@ -344,13 +366,23 @@ async function main(): Promise<void> {
     queries: rows.length,
     byFamily,
     goldRankInProbeDistribution: rankDist,
-    goldWordSimilarity: { p10: pct(0.1), p25: pct(0.25), p50: pct(0.5), p75: pct(0.75), p90: pct(0.9) },
+    goldWordSimilarity: {
+      p10: pct(0.1),
+      p25: pct(0.25),
+      p50: pct(0.5),
+      p75: pct(0.75),
+      p90: pct(0.9),
+    },
     shapeNotCaseName: rows.filter((r) => !r.shapeIsCaseName).length,
     duplicateTitleDisabledExact: rows.filter((r) => (r.normalisedTitleMatches ?? 0) > 1).length,
     probeTimeouts: rows.filter((r) => r.probeTimedOut).length,
     probeMs: {
-      p50: [...rows.map((r) => r.probeMs)].sort((a, b) => a - b)[Math.floor(rows.length * 0.5)] ?? null,
-      p95: [...rows.map((r) => r.probeMs)].sort((a, b) => a - b)[Math.floor(rows.length * 0.95)] ?? null,
+      p50:
+        [...rows.map((r) => r.probeMs)].sort((a, b) => a - b)[Math.floor(rows.length * 0.5)] ??
+        null,
+      p95:
+        [...rows.map((r) => r.probeMs)].sort((a, b) => a - b)[Math.floor(rows.length * 0.95)] ??
+        null,
     },
     rows,
   };

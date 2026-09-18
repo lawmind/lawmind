@@ -64,8 +64,14 @@ describe('billingClass — verified against Cloudflare pricing, 10 Aug 2026', ()
 
 describe('cost arithmetic', () => {
   it('prices a million of each class at the published rate', () => {
-    assert.equal(operationCostUsd({ classA: 1_000_000, classB: 0, free: 0 }), CLASS_A_USD_PER_MILLION);
-    assert.equal(operationCostUsd({ classA: 0, classB: 1_000_000, free: 0 }), CLASS_B_USD_PER_MILLION);
+    assert.equal(
+      operationCostUsd({ classA: 1_000_000, classB: 0, free: 0 }),
+      CLASS_A_USD_PER_MILLION,
+    );
+    assert.equal(
+      operationCostUsd({ classA: 0, classB: 1_000_000, free: 0 }),
+      CLASS_B_USD_PER_MILLION,
+    );
   });
 
   it('free operations cost nothing however many there are', () => {

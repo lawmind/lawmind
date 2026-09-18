@@ -93,7 +93,10 @@ async function withDbRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
     try {
       return await run();
     } catch (err) {
-      const m = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
+      const m =
+        err instanceof Error
+          ? `${err.message} ${(err as { code?: string }).code ?? ''}`
+          : String(err);
       /** See `./db-transient.ts` — a restarting Postgres matches no word in this regex. */
       if (attempt >= 8 || (!isTransientDbOrNetworkError(err) && !TRANSIENT.test(m))) throw err;
       const wait = Math.min(30_000, 1000 * 2 ** attempt);
@@ -133,7 +136,9 @@ function pdftotext(bytes: Uint8Array): string {
 
 console.log('RE-EXTRACTION — poppler pdftotext over corrupt documents');
 console.log('='.repeat(74));
-console.log(`court "${COURT}" · mode ${MODE} · limit ${LIMIT} · ${APPLY ? "APPLY (will write full_text)" : "DRY RUN"}`);
+console.log(
+  `court "${COURT}" · mode ${MODE} · limit ${LIMIT} · ${APPLY ? 'APPLY (will write full_text)' : 'DRY RUN'}`,
+);
 
 /**
  * IDENTIFIERS AND LENGTHS ONLY — never the corpus.
@@ -169,7 +174,12 @@ const started = Date.now();
 
 for (const row of rows) {
   if (
-    repaired + refusedStillCorrupt + refusedShorter + refusedNoGain + refusedScriptLoss + fetchFailed >=
+    repaired +
+      refusedStillCorrupt +
+      refusedShorter +
+      refusedNoGain +
+      refusedScriptLoss +
+      fetchFailed >=
     LIMIT
   )
     break;
@@ -182,8 +192,12 @@ for (const row of rows) {
   let before: ReturnType<typeof classifyCorruption> = null;
   let storedText: string | null = null;
   if (MODE === 'corrupt') {
-    const got = await withDbRetry('load text', () =>
-      sql<{ fullText: string }[]>`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
+    const got = await withDbRetry(
+      'load text',
+      () =>
+        sql<
+          { fullText: string }[]
+        >`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
     );
     storedText = got[0]?.fullText ?? null;
     if (!storedText) continue;
@@ -201,7 +215,9 @@ for (const row of rows) {
     text = stripUnstorable(pdftotext(new Uint8Array(await res.arrayBuffer())));
   } catch (err) {
     fetchFailed++;
-    console.log(`  FETCH FAILED ${row.caseTitle.slice(0, 40)} — ${err instanceof Error ? err.message : String(err)}`);
+    console.log(
+      `  FETCH FAILED ${row.caseTitle.slice(0, 40)} — ${err instanceof Error ? err.message : String(err)}`,
+    );
     continue;
   }
 
@@ -210,7 +226,9 @@ for (const row of rows) {
 
   if (!after || after.corrupt) {
     refusedStillCorrupt++;
-    console.log(`  still corrupt   ${label} single=${after?.signals.singleCharRatio.toFixed(2) ?? 'n/a'}`);
+    console.log(
+      `  still corrupt   ${label} single=${after?.signals.singleCharRatio.toFixed(2) ?? 'n/a'}`,
+    );
     continue;
   }
   /**
@@ -256,8 +274,12 @@ for (const row of rows) {
    * pdftotext run this document has already paid for.
    */
   if (storedText === null) {
-    const got = await withDbRetry('load text for script gate', () =>
-      sql<{ fullText: string }[]>`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
+    const got = await withDbRetry(
+      'load text for script gate',
+      () =>
+        sql<
+          { fullText: string }[]
+        >`SELECT full_text AS "fullText" FROM judgments WHERE id = ${row.id}`,
     );
     storedText = got[0]?.fullText ?? null;
   }
@@ -273,7 +295,9 @@ for (const row of rows) {
   const retention = checkScriptRetention(storedText, text);
   if (!retention.accept) {
     refusedScriptLoss++;
-    console.log(`  ${retention.reason === 'CHARACTER_LOSS' ? 'char loss     ' : 'SCRIPT LOSS   '}  ${label} ${retention.detail}`);
+    console.log(
+      `  ${retention.reason === 'CHARACTER_LOSS' ? 'char loss     ' : 'SCRIPT LOSS   '}  ${label} ${retention.detail}`,
+    );
     continue;
   }
 
@@ -295,7 +319,9 @@ console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`examined            ${examined}`);
 console.log(`${MODE === 'corrupt' ? 'corrupt found     ' : 'considered        '} ${considered}`);
-console.log(`REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run — nothing written)'}`);
+console.log(
+  `REPAIRED            ${repaired}${APPLY ? ' (written)' : ' (dry run — nothing written)'}`,
+);
 console.log(`refused still corrupt ${refusedStillCorrupt}`);
 console.log(`refused shorter     ${refusedShorter}`);
 console.log(`refused no gain     ${refusedNoGain}`);

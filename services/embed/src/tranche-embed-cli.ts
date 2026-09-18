@@ -59,7 +59,10 @@ const LOG = new URL('docs/ai/new1-tier-a/tranche-embed.log', ROOT);
  * full route for the walk. Rather than demand that every caller remember which
  * convention it is under, a trailing `/embed` is stripped here.
  */
-const GPU_URL = (process.env['EMBED_GPU_URL'] ?? 'http://127.0.0.1:8799').replace(/\/embed\/?$/, '');
+const GPU_URL = (process.env['EMBED_GPU_URL'] ?? 'http://127.0.0.1:8799').replace(
+  /\/embed\/?$/,
+  '',
+);
 /** Documents fetched and embedded per transaction. Small enough that a kill is cheap. */
 const BATCH = Number(process.env['TRANCHE_BATCH'] ?? 200);
 /** Chunks handed to the GPU in one request. The sidecar batches by chars internally. */
@@ -117,14 +120,17 @@ async function embedWithRetry(
     try {
       const out = await embed.embed(texts);
       if (attempt > 1)
-        note(`  embed RECOVERED on attempt ${attempt}/${EMBED_ATTEMPTS} · batch ${batchNo} slice ${sliceNo}`);
+        note(
+          `  embed RECOVERED on attempt ${attempt}/${EMBED_ATTEMPTS} · batch ${batchNo} slice ${sliceNo}`,
+        );
       return out;
     } catch (error) {
       lastError = error;
       const name = error instanceof Error ? error.name : 'unknown';
       const message = error instanceof Error ? error.message : String(error);
       if (attempt === EMBED_ATTEMPTS) break;
-      const wait = RETRY_BACKOFF_MS[attempt - 1] ?? RETRY_BACKOFF_MS[RETRY_BACKOFF_MS.length - 1] ?? 45_000;
+      const wait =
+        RETRY_BACKOFF_MS[attempt - 1] ?? RETRY_BACKOFF_MS[RETRY_BACKOFF_MS.length - 1] ?? 45_000;
       note(
         `  embed FAILED attempt ${attempt}/${EMBED_ATTEMPTS} · batch ${batchNo} slice ${sliceNo} · ${name}: ${message.slice(0, 160)} · retrying in ${wait / 1000}s`,
       );
@@ -142,7 +148,9 @@ async function embedWithRetry(
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) {
-    console.error('DATABASE_URL is not set. Export it — an unreadable gate and a busy one print the same word.');
+    console.error(
+      'DATABASE_URL is not set. Export it — an unreadable gate and a busy one print the same word.',
+    );
     process.exit(2);
   }
 
@@ -194,7 +202,9 @@ async function main(): Promise<void> {
    * tranche's own in expectation. That makes stopping early an honest,
    * reportable choice rather than a biased one.
    */
-  const natural = [...manifest.documents].sort((a, b) => (a.priority < b.priority ? -1 : a.priority > b.priority ? 1 : 0)).map((d) => d.id);
+  const natural = [...manifest.documents]
+    .sort((a, b) => (a.priority < b.priority ? -1 : a.priority > b.priority ? 1 : 0))
+    .map((d) => d.id);
 
   const ids = [...forced, ...natural];
   note(
@@ -226,8 +236,12 @@ async function main(): Promise<void> {
     const done = await sql<{ judgment_id: string }[]>`
       SELECT DISTINCT judgment_id::text AS judgment_id FROM new1_tranche_passages`;
     const doneSet = new Set(done.map((r) => r.judgment_id));
-    const todo = ids.filter((id) => !doneSet.has(id)).slice(0, LIMIT === Infinity ? undefined : LIMIT);
-    note(`already embedded ${doneSet.size.toLocaleString()} · remaining ${todo.length.toLocaleString()}`);
+    const todo = ids
+      .filter((id) => !doneSet.has(id))
+      .slice(0, LIMIT === Infinity ? undefined : LIMIT);
+    note(
+      `already embedded ${doneSet.size.toLocaleString()} · remaining ${todo.length.toLocaleString()}`,
+    );
 
     let docs = 0;
     let chunksWritten = 0;
@@ -275,7 +289,12 @@ async function main(): Promise<void> {
       const embedded: { vector: Float32Array; tokenCount: number }[] = [];
       for (let s = 0; s < pending.length; s += EMBED_SLICE) {
         const part = pending.slice(s, s + EMBED_SLICE);
-        const out = await embedWithRetry(embed, part.map((p) => p.text), i / BATCH, s / EMBED_SLICE);
+        const out = await embedWithRetry(
+          embed,
+          part.map((p) => p.text),
+          i / BATCH,
+          s / EMBED_SLICE,
+        );
         if (out.length !== part.length) {
           throw new Error(
             `embedder returned ${out.length} vectors for ${part.length} chunks — refusing to write a misaligned slice`,

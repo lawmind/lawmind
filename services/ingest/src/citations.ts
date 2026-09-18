@@ -222,19 +222,21 @@ const PATTERNS: readonly RegExp[] = [
 const UNSPACED_REPORTERS = /(?<=[0-9])(SCC|SCR|SCALE)|(SCC|SCR|SCALE)(?=[0-9])/g;
 
 export function normaliseCitation(raw: string): string {
-  return raw
-    .toUpperCase()
-    .replace(/[[\]]/g, (m) => (m === '[' ? '(' : ')'))
-    .replace(/\./g, '')
-    /* Insert BEFORE the collapse below, so a space added here and a space that
-     * was already there end up identical rather than doubled. */
-    .replace(UNSPACED_REPORTERS, (m) => ` ${m} `)
-    .replace(/\s+/g, ' ')
-    .replace(/\(\s*/g, '(')
-    .replace(/\s*\)/g, ')')
-    .replace(/\)(\S)/g, ') $1')
-    .replace(/^(\d{4}) \((\d{1,3})\) /, '($1) $2 ')
-    .trim();
+  return (
+    raw
+      .toUpperCase()
+      .replace(/[[\]]/g, (m) => (m === '[' ? '(' : ')'))
+      .replace(/\./g, '')
+      /* Insert BEFORE the collapse below, so a space added here and a space that
+       * was already there end up identical rather than doubled. */
+      .replace(UNSPACED_REPORTERS, (m) => ` ${m} `)
+      .replace(/\s+/g, ' ')
+      .replace(/\(\s*/g, '(')
+      .replace(/\s*\)/g, ')')
+      .replace(/\)(\S)/g, ') $1')
+      .replace(/^(\d{4}) \((\d{1,3})\) /, '($1) $2 ')
+      .trim()
+  );
 }
 
 /** Every citation in a judgment's text, de-duplicated on first appearance. */

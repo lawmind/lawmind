@@ -106,19 +106,20 @@ const TRANSIENT_MESSAGE =
 const TRANSIENT_STORAGE_READ = /could not (read|write) blocks? [\d.]+ (of|in file) /i;
 
 export function isTransientDbOrNetworkError(error: unknown): boolean {
-  const err = error as
-    | (NodeJS.ErrnoException & { cause?: unknown; message?: string })
-    | undefined;
+  const err = error as (NodeJS.ErrnoException & { cause?: unknown; message?: string }) | undefined;
   if (!err) return false;
   if (err.code && (TRANSIENT_ERRNO.has(err.code) || TRANSIENT_SQLSTATE.has(err.code))) return true;
-  if (err.message && (TRANSIENT_MESSAGE.test(err.message) || TRANSIENT_STORAGE_READ.test(err.message)))
+  if (
+    err.message &&
+    (TRANSIENT_MESSAGE.test(err.message) || TRANSIENT_STORAGE_READ.test(err.message))
+  )
     return true;
   const cause = err.cause as (NodeJS.ErrnoException & { message?: string }) | undefined;
   if (cause?.code && (TRANSIENT_ERRNO.has(cause.code) || TRANSIENT_SQLSTATE.has(cause.code)))
     return true;
   return (
-    cause?.message !== undefined
-    && (TRANSIENT_MESSAGE.test(cause.message) || TRANSIENT_STORAGE_READ.test(cause.message))
+    cause?.message !== undefined &&
+    (TRANSIENT_MESSAGE.test(cause.message) || TRANSIENT_STORAGE_READ.test(cause.message))
   );
 }
 

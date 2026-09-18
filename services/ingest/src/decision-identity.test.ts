@@ -79,17 +79,11 @@ describe('a common order is NOT one decision, and this is the refusal that matte
 
 describe('a decision is one court on one day', () => {
   it('different courts never link, however identical everything else is', () => {
-    assert.equal(
-      candidate(row({ id: 'a' }), row({ id: 'b', court: 'Delhi High Court' })),
-      null,
-    );
+    assert.equal(candidate(row({ id: 'a' }), row({ id: 'b', court: 'Delhi High Court' })), null);
   });
 
   it('different dates never link', () => {
-    assert.equal(
-      candidate(row({ id: 'a' }), row({ id: 'b', judgmentDate: '2021-06-15' })),
-      null,
-    );
+    assert.equal(candidate(row({ id: 'a' }), row({ id: 'b', judgmentDate: '2021-06-15' })), null);
   });
 
   it('THE CORRECTION: a shared CNR on two dates is one CASE, not one decision', () => {
@@ -192,10 +186,7 @@ describe('normalisation is narrow, and narrow is the point', () => {
 
 describe('nothing here merges anything', () => {
   it('every candidate carries both ids and neither is marked as surviving', () => {
-    const c = candidate(
-      row({ id: 'a', cnr: 'X' }),
-      row({ id: 'b', cnr: 'X' }),
-    )!;
+    const c = candidate(row({ id: 'a', cnr: 'X' }), row({ id: 'b', cnr: 'X' }))!;
     assert.equal(c.aId, 'a');
     assert.equal(c.bId, 'b');
     assert.ok(!('winner' in c) && !('survivor' in c) && !('mergeInto' in c));

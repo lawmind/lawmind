@@ -111,7 +111,8 @@ test('two issues in one judgment both come back, in document order', () => {
 });
 
 test('the same sentence twice is returned once', () => {
-  const one = 'The question that arises for consideration is whether the presumption stands rebutted.';
+  const one =
+    'The question that arises for consideration is whether the presumption stands rebutted.';
   const found = extractIssueStatements(`${PREAMBLE}${one} Then again. ${one}`);
   assert.equal(found.length, 1);
 });

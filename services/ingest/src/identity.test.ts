@@ -8,7 +8,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { caseIdentity, documentKey, isSameCase, isSameDocument, sourceArtifactKey } from './identity.ts';
+import {
+  caseIdentity,
+  documentKey,
+  isSameCase,
+  isSameDocument,
+  sourceArtifactKey,
+} from './identity.ts';
 import type { IdentityRow } from './identity.ts';
 
 const base: IdentityRow = {
@@ -27,7 +33,10 @@ test('documentKey is stable for identical contentHash', () => {
 });
 
 test('documentKey is distinct for distinct contentHash', () => {
-  assert.notEqual(documentKey({ ...base, contentHash: 'hash-x' }), documentKey({ ...base, contentHash: 'hash-y' }));
+  assert.notEqual(
+    documentKey({ ...base, contentHash: 'hash-x' }),
+    documentKey({ ...base, contentHash: 'hash-y' }),
+  );
 });
 
 test('documentKey does not throw and returns null when contentHash is not yet computed', () => {

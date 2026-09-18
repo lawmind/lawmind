@@ -211,7 +211,10 @@ const MONTHS = [
 ];
 const MONTH_GROUP = `(${MONTHS.join('|')})\\.?`;
 /** `MARCH 8, 2007` — month first, the Supreme Court Reports shape. */
-const MDY = new RegExp(`\\b${MONTH_GROUP}\\s+(\\d{1,2})(?:st|nd|rd|th)?\\s*,?\\s*(\\d{4})\\b`, 'gi');
+const MDY = new RegExp(
+  `\\b${MONTH_GROUP}\\s+(\\d{1,2})(?:st|nd|rd|th)?\\s*,?\\s*(\\d{4})\\b`,
+  'gi',
+);
 /** `8th March, 2007` and `8th day of March, 2007` — the High Court shape. */
 const DMY_NAMED = new RegExp(
   `\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:day\\s+of\\s+)?${MONTH_GROUP}\\s*,?\\s*(\\d{4})\\b`,
@@ -221,7 +224,20 @@ const DMY_NAMED = new RegExp(
 /** Index of a month name, from any of its accepted spellings. */
 function monthIndex(raw: string): number {
   const key = raw.toLowerCase().replace(/\./g, '').slice(0, 3);
-  const order = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  const order = [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ];
   return order.indexOf(key) + 1;
 }
 
@@ -255,11 +271,13 @@ export function printedDates(text: string | null): Set<string> {
    * unlike the numeric branch above there is no both-ways emission. */
   for (const m of text.matchAll(MDY)) {
     const mm = monthIndex(m[1]!);
-    if (mm > 0) out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[2])).padStart(2, '0')}`);
+    if (mm > 0)
+      out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[2])).padStart(2, '0')}`);
   }
   for (const m of text.matchAll(DMY_NAMED)) {
     const mm = monthIndex(m[2]!);
-    if (mm > 0) out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[1])).padStart(2, '0')}`);
+    if (mm > 0)
+      out.add(`${m[3]}-${String(mm).padStart(2, '0')}-${String(Number(m[1])).padStart(2, '0')}`);
   }
   return out;
 }

@@ -92,15 +92,21 @@ console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`documents scanned          ${scanned.toLocaleString()}`);
-console.log(`too short to judge         ${tooShort.toLocaleString()} (reported UNKNOWN, never corrupt)`);
-console.log(`CORRUPT                    ${corrupt.toLocaleString()} (${((100 * corrupt) / Math.max(scanned, 1)).toFixed(3)}%)`);
+console.log(
+  `too short to judge         ${tooShort.toLocaleString()} (reported UNKNOWN, never corrupt)`,
+);
+console.log(
+  `CORRUPT                    ${corrupt.toLocaleString()} (${((100 * corrupt) / Math.max(scanned, 1)).toFixed(3)}%)`,
+);
 console.log(
   `  of which text_quality > 0.95  ${missedByTextQuality} — invisible to the existing metric`,
 );
 console.log('');
 console.log('worst offenders, with the score the current metric gives them:');
 for (const w of worst) {
-  console.log(`  tq=${w.tq.padEnd(6)} single=${w.ratio.toFixed(2)} ${w.title.padEnd(40)} :: ${w.head.slice(0, 56)}`);
+  console.log(
+    `  tq=${w.tq.padEnd(6)} single=${w.ratio.toFixed(2)} ${w.title.padEnd(40)} :: ${w.head.slice(0, 56)}`,
+  );
 }
 
 await sql.end();

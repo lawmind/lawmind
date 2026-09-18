@@ -128,16 +128,17 @@ export async function runRecheck(
   `;
 
   const shownIds = [...new Set(shown.map((r) => r.judgment_id))];
-  const corpusRows = shownIds.length === 0
-    ? []
-    : await corpusSql<
-        {
-          judgment_id: string;
-          case_title: string;
-          stored: OverruledStatus;
-          edges: TreatmentEdge[];
-        }[]
-      >`
+  const corpusRows =
+    shownIds.length === 0
+      ? []
+      : await corpusSql<
+          {
+            judgment_id: string;
+            case_title: string;
+            stored: OverruledStatus;
+            edges: TreatmentEdge[];
+          }[]
+        >`
         SELECT j.id                       AS judgment_id,
                j.case_title,
                j.overruled_status::text   AS stored,

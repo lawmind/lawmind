@@ -58,7 +58,10 @@ async function main(): Promise<number> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
   const sql = postgres(url, { max: 1, ssl: sslFor(url), onnotice: () => {} });
-  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as { cases: GoldCase[]; sharedFacts: Record<string, unknown> };
+  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as {
+    cases: GoldCase[];
+    sharedFacts: Record<string, unknown>;
+  };
 
   const scored: Scored[] = [];
   try {
@@ -67,7 +70,11 @@ async function main(): Promise<number> {
         const got = await correspondingProvisions(sql, c.input.act, c.input.section);
         const expectHeld = c.expected['held'] === true;
         const actual: Record<string, unknown> = got.held
-          ? { held: true, rowCount: got.rows.length, relationships: [...new Set(got.rows.map((r) => r.relationship))] }
+          ? {
+              held: true,
+              rowCount: got.rows.length,
+              relationships: [...new Set(got.rows.map((r) => r.relationship))],
+            }
           : { held: false, why: got.why };
 
         let pass = got.held === expectHeld;
@@ -78,12 +85,19 @@ async function main(): Promise<number> {
           // correspondence, and one that does not is asserting only that it is
           // held. Inventing the stricter reading would fail a case the gold
           // never made a claim about.
-          if (typeof c.expected['rowCount'] === 'number' && got.rows.length !== c.expected['rowCount']) {
+          if (
+            typeof c.expected['rowCount'] === 'number' &&
+            got.rows.length !== c.expected['rowCount']
+          ) {
             pass = false;
             note = `rowCount ${got.rows.length}, expected ${String(c.expected['rowCount'])}`;
           }
           const wantRel = c.expected['relationship'];
-          if (pass && typeof wantRel === 'string' && !got.rows.some((r) => r.relationship === wantRel)) {
+          if (
+            pass &&
+            typeof wantRel === 'string' &&
+            !got.rows.some((r) => r.relationship === wantRel)
+          ) {
             pass = false;
             note = `no row with relationship ${wantRel}`;
           }
@@ -106,10 +120,18 @@ async function main(): Promise<number> {
           const saysIgnorance = /unmapped|nobody has read|not been read/.test(why);
           if (!saysIgnorance) {
             pass = false;
-            note = 'held:false wording does not say UNMAPPED — a reader could take it as a finding of no counterpart';
+            note =
+              'held:false wording does not say UNMAPPED — a reader could take it as a finding of no counterpart';
           }
         }
-        scored.push({ caseId: c.case_id, category: c.category, pass, expected: c.expected, actual, note });
+        scored.push({
+          caseId: c.case_id,
+          category: c.category,
+          pass,
+          expected: c.expected,
+          actual,
+          note,
+        });
         continue;
       }
 
@@ -117,7 +139,10 @@ async function main(): Promise<number> {
         text: c.input.text ?? '',
         ...(c.input.offenceDate ? { offenceDate: c.input.offenceDate } : {}),
       });
-      const actual: Record<string, unknown> = { kind: verdict.kind, ...(('regime' in verdict) ? { regime: verdict.regime } : {}) };
+      const actual: Record<string, unknown> = {
+        kind: verdict.kind,
+        ...('regime' in verdict ? { regime: verdict.regime } : {}),
+      };
       let pass = verdict.kind === c.expected['kind'];
       let note = '';
       if (pass && c.expected['regime'] && actual['regime'] !== c.expected['regime']) {
@@ -133,7 +158,14 @@ async function main(): Promise<number> {
           note = 'indeterminate but does not ask for the offence date';
         }
       }
-      scored.push({ caseId: c.case_id, category: c.category, pass, expected: c.expected, actual, note });
+      scored.push({
+        caseId: c.case_id,
+        category: c.category,
+        pass,
+        expected: c.expected,
+        actual,
+        note,
+      });
     }
   } finally {
     await sql.end({ timeout: 10 });
@@ -165,7 +197,8 @@ async function main(): Promise<number> {
   );
 
   console.log(`STATUTE TRANSITION GOLD  ${passed}/${scored.length}`);
-  for (const [cat, b] of Object.entries(byCategory)) console.log(`  ${cat.padEnd(30)} ${b.pass}/${b.total}`);
+  for (const [cat, b] of Object.entries(byCategory))
+    console.log(`  ${cat.padEnd(30)} ${b.pass}/${b.total}`);
   for (const s of scored.filter((x) => !x.pass)) {
     console.log(`\n  FAIL ${s.caseId} (${s.category}) ${s.note}`);
     console.log(`    expected ${JSON.stringify(s.expected)}`);

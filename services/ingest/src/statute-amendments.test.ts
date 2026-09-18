@@ -44,7 +44,9 @@ describe('splitting a footnote into its printed entries', () => {
   it('handles a footnote whose numbering does not start at 1', () => {
     // Real: Prevention and Control of Infectious and Contagious Diseases s.7
     // begins at `3.` — the earlier notes belong to other provisions.
-    const entries = splitFootnoteEntries('3. Ins. by Act 8 of 2026, s. 2 and Sch. (w.e.f. 01-07-2026).');
+    const entries = splitFootnoteEntries(
+      '3. Ins. by Act 8 of 2026, s. 2 and Sch. (w.e.f. 01-07-2026).',
+    );
     assert.equal(entries.length, 1);
     assert.equal(entries[0]!.ordinal, 3);
   });
@@ -67,12 +69,18 @@ describe('splitting a footnote into its printed entries', () => {
 
 describe('the effective date', () => {
   it('reads the ordinary printed form', () => {
-    assert.equal(effectiveDateFrom('Ins. by Act 99 of 1976, s. 12 (w.e.f. 1-8-1976).'), '1976-08-01');
+    assert.equal(
+      effectiveDateFrom('Ins. by Act 99 of 1976, s. 12 (w.e.f. 1-8-1976).'),
+      '1976-08-01',
+    );
   });
 
   it('reads a zero-padded date', () => {
     // Real: Prevention and Control of Infectious and Contagious Diseases s.7.
-    assert.equal(effectiveDateFrom('Ins. by Act 8 of 2026, s. 2 and Sch. (w.e.f. 01-07-2026).'), '2026-07-01');
+    assert.equal(
+      effectiveDateFrom('Ins. by Act 8 of 2026, s. 2 and Sch. (w.e.f. 01-07-2026).'),
+      '2026-07-01',
+    );
   });
 
   it('reads a date printed WITH SPACES INSIDE IT — 54 sections hang on this', () => {
@@ -80,17 +88,25 @@ describe('the effective date', () => {
     // `[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}` matches 7,276 sections; tolerating the
     // spaces matches 7,330. The 54 would have vanished with no error anywhere.
     assert.equal(
-      effectiveDateFrom('The words "except the State of Jammu and Kashmir" omitted by Act 34 of 2019, s. 95 and the Fifth Schedule (w.e.f. 31- 10- 2019).'),
+      effectiveDateFrom(
+        'The words "except the State of Jammu and Kashmir" omitted by Act 34 of 2019, s. 95 and the Fifth Schedule (w.e.f. 31- 10- 2019).',
+      ),
       '2019-10-31',
     );
-    assert.equal(effectiveDateFrom('omitted by Act 34 of 2019 (w.e.f. 31-10- 2019).'), '2019-10-31');
+    assert.equal(
+      effectiveDateFrom('omitted by Act 34 of 2019 (w.e.f. 31-10- 2019).'),
+      '2019-10-31',
+    );
   });
 
   it('is DAY-first, because that is how the source prints it', () => {
     // `13-1-2012` is 13 January 2012. Read month-first it is 1 December — a
     // silently wrong legal date on a field that answers "was this in force
     // when I filed".
-    assert.equal(effectiveDateFrom('Subs. by Delhi Act 12 of 2011, s. 2 (w.e.f. 13-1-2012)'), '2012-01-13');
+    assert.equal(
+      effectiveDateFrom('Subs. by Delhi Act 12 of 2011, s. 2 (w.e.f. 13-1-2012)'),
+      '2012-01-13',
+    );
   });
 
   it('returns null when the note states no date, rather than inventing one', () => {
@@ -119,13 +135,17 @@ describe('the amending Act', () => {
     // NOT resolved to a jurisdiction — a Central Act amended in one state does
     // not read the same in another, and guessing which prefixes are states
     // would put confident wrong rows in front of advocates.
-    const a = amendingActFrom('Subs. by Delhi Act 12 of 2011, s. 2 “the Corporation” (w.e.f. 13-1-2012)');
+    const a = amendingActFrom(
+      'Subs. by Delhi Act 12 of 2011, s. 2 “the Corporation” (w.e.f. 13-1-2012)',
+    );
     assert.equal(a.raw, 'Delhi Act 12 of 2011');
     assert.equal(a.number, 12);
   });
 
   it('returns nulls where no Act is named, rather than half an answer', () => {
-    const a = amendingActFrom('Subs. by s. 8, ibid ., for "enter any coal mine" (w.e.f. 1-4-1966).');
+    const a = amendingActFrom(
+      'Subs. by s. 8, ibid ., for "enter any coal mine" (w.e.f. 1-4-1966).',
+    );
     assert.equal(a.raw, null);
     assert.equal(a.number, null);
     assert.equal(a.year, null);
@@ -147,7 +167,9 @@ describe('classifying the event', () => {
   it('reads renumbering before substitution — the same sentence does both', () => {
     // Real: Negotiable Instruments Act s.64.
     assert.equal(
-      eventTypeFrom('Section 64 renumbered as sub-section (1) thereof by Act 55 of 2002, s. 3 (w.e.f. 6-2-2003).'),
+      eventTypeFrom(
+        'Section 64 renumbered as sub-section (1) thereof by Act 55 of 2002, s. 3 (w.e.f. 6-2-2003).',
+      ),
       'renumbered',
     );
   });
@@ -167,31 +189,54 @@ describe('classifying the event', () => {
     // running the parser over all 9,064 footnotes and reading what it failed
     // on — the corpus-wide pass earning its keep, exactly as it did for
     // `parties.ts` and `citations.ts`.
-    assert.equal(eventTypeFrom('Subs by Act 62 of 1952, s. 35, for "the Indian Air Force Volunteer Reserve"'), 'substituted');
-    assert.equal(eventTypeFrom('Subs. bys. 17, ibid .,for section 35 (w.e.f. 1-4-1988).'), 'substituted');
+    assert.equal(
+      eventTypeFrom('Subs by Act 62 of 1952, s. 35, for "the Indian Air Force Volunteer Reserve"'),
+      'substituted',
+    );
+    assert.equal(
+      eventTypeFrom('Subs. bys. 17, ibid .,for section 35 (w.e.f. 1-4-1988).'),
+      'substituted',
+    );
     assert.equal(eventTypeFrom('Subs. ibid ., for clause (h) .'), 'substituted');
     assert.equal(eventTypeFrom('Subs., ibid ., for "the L.G.".'), 'substituted');
-    assert.equal(eventTypeFrom('Ins by Act 4 of 1986, s. 2 and the Schedule ( w.e.f. 15-5-1986).'), 'inserted');
-    assert.equal(eventTypeFrom('The words and letter "or the land forces of a Part B State" omitted, ibid .'), 'omitted');
+    assert.equal(
+      eventTypeFrom('Ins by Act 4 of 1986, s. 2 and the Schedule ( w.e.f. 15-5-1986).'),
+      'inserted',
+    );
+    assert.equal(
+      eventTypeFrom('The words and letter "or the land forces of a Part B State" omitted, ibid .'),
+      'omitted',
+    );
   });
 
   it('reads re-numbered and relettered, not only renumbered', () => {
-    assert.equal(eventTypeFrom('Section 3 re-numbered as sub-section (1) thereof by Act 20 of 1983, s. 2'), 'renumbered');
-    assert.equal(eventTypeFrom('Clause (2) relettered as sub-clause (a) thereof by Act 34 of 1972. s. 4'), 'renumbered');
+    assert.equal(
+      eventTypeFrom('Section 3 re-numbered as sub-section (1) thereof by Act 20 of 1983, s. 2'),
+      'renumbered',
+    );
+    assert.equal(
+      eventTypeFrom('Clause (2) relettered as sub-clause (a) thereof by Act 34 of 1972. s. 4'),
+      'renumbered',
+    );
   });
 
   it('produces NO event for an editorial cross-reference', () => {
     // Real: Indian Easements Act s.13 and s.24. 107 sections carry these.
     // Parsing them as amendments would invent legal history.
     assert.equal(eventTypeFrom('See now the Land Acquisition Act, 1894 (1 of 1894).'), null);
-    assert.equal(eventTypeFrom('But see s. 36, infra, as to abatement of obstruction of easement.'), null);
+    assert.equal(
+      eventTypeFrom('But see s. 36, infra, as to abatement of obstruction of easement.'),
+      null,
+    );
   });
 });
 
 describe('the prior wording', () => {
   it('keeps a quoted fragment in both quote styles the corpus uses', () => {
     assert.equal(
-      substitutedTextFrom('Subs. by s. 8, ibid ., for "enter any coal mine or its office" (w.e.f. 1-4-1966).'),
+      substitutedTextFrom(
+        'Subs. by s. 8, ibid ., for "enter any coal mine or its office" (w.e.f. 1-4-1966).',
+      ),
       'enter any coal mine or its office',
     );
     assert.equal(
@@ -201,7 +246,10 @@ describe('the prior wording', () => {
   });
 
   it('is null where the note quotes nothing', () => {
-    assert.equal(substitutedTextFrom('Subs. by Act 28 of 2018, s. 12, for sub-section (1) (w.e.f. 3-5-2018).'), null);
+    assert.equal(
+      substitutedTextFrom('Subs. by Act 28 of 2018, s. 12, for sub-section (1) (w.e.f. 3-5-2018).'),
+      null,
+    );
   });
 });
 
@@ -255,7 +303,9 @@ describe('parsing a whole footnote', () => {
   });
 
   it('reports a cross-reference footnote as unparsed, never as zero events silently', () => {
-    const { events, unparsed } = parseFootnote('See now the Land Acquisition Act, 1894 (1 of 1894).');
+    const { events, unparsed } = parseFootnote(
+      'See now the Land Acquisition Act, 1894 (1 of 1894).',
+    );
     assert.deepEqual(events, []);
     assert.equal(unparsed.length, 1, 'the note must be counted, not absorbed');
   });
@@ -271,8 +321,13 @@ describe('parsing a whole footnote', () => {
 
   it('every event keeps its own verbatim text', () => {
     // The row must be auditable without re-fetching indiacode.
-    const { events } = parseFootnote('1. Ins. by Act 99 of 1976, s. 12 (w.e.f. 1-8-1976). 2. Subs. by Act 45 of 1965, s. 8.');
+    const { events } = parseFootnote(
+      '1. Ins. by Act 99 of 1976, s. 12 (w.e.f. 1-8-1976). 2. Subs. by Act 45 of 1965, s. 8.',
+    );
     assert.ok(events[0]!.verbatim.includes('Act 99 of 1976'));
-    assert.ok(!events[0]!.verbatim.includes('Act 45 of 1965'), 'entries must not bleed into each other');
+    assert.ok(
+      !events[0]!.verbatim.includes('Act 45 of 1965'),
+      'entries must not bleed into each other',
+    );
   });
 });

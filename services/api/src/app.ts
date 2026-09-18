@@ -292,9 +292,15 @@ export function createApp(deps: AppDeps) {
         (report.splitMode === 'single' || report.rolesDistinct === true);
       if (!ready) {
         logger.error({ request_id: c.get('requestId'), readiness: report }, 'readiness failed');
-        return fail(c, 'NOT_READY', `this deployment is not ready to serve (build ${buildSha})`, 503, {
-          ...report,
-        });
+        return fail(
+          c,
+          'NOT_READY',
+          `this deployment is not ready to serve (build ${buildSha})`,
+          503,
+          {
+            ...report,
+          },
+        );
       }
       return ok(c, { status: 'ready', sha: buildSha, ...report });
     } catch (error) {
@@ -645,28 +651,31 @@ export function createApp(deps: AppDeps) {
     );
     // Counter-arguments. Grounded in retrieved corpus authorities only; set_aside
     // authorities are excluded AND named, never silently dropped.
-    app.post('/arguments/counter', validate('json', counterRequest), (c) =>
-      // R8.3 §5.6 / §6. `generation.counterarguments` is DISABLED: the adverse
-      // authority that would change the argument is exactly the one that did not
-      // get ranked, and `adverse_authority` scores 0 for every representation
-      // arm tested. The registry refuses the ROUTE here rather than letting it
-      // produce a confident answer from a set nothing vouches for.
-      refuseIfDisabled(c, 'search.semantic.counterarguments') ??
-      handleCounter(
-        c,
-        {
-          sql,
-          /* The `citation_checks` write. Corpus for the ranker, user for the
-           * record of what it showed. */
-          userSql,
-          // The SAME isolation /search gets. Until now this route ran the same
-          // ranker on the core pool with no admission slot — see CounterDeps.
-          researchSql: search.researchSql,
-          admission: search.admission,
-          embedQuery: search.embedQuery,
-        },
-        c.req.valid('json'),
-      ),
+    app.post(
+      '/arguments/counter',
+      validate('json', counterRequest),
+      (c) =>
+        // R8.3 §5.6 / §6. `generation.counterarguments` is DISABLED: the adverse
+        // authority that would change the argument is exactly the one that did not
+        // get ranked, and `adverse_authority` scores 0 for every representation
+        // arm tested. The registry refuses the ROUTE here rather than letting it
+        // produce a confident answer from a set nothing vouches for.
+        refuseIfDisabled(c, 'search.semantic.counterarguments') ??
+        handleCounter(
+          c,
+          {
+            sql,
+            /* The `citation_checks` write. Corpus for the ranker, user for the
+             * record of what it showed. */
+            userSql,
+            // The SAME isolation /search gets. Until now this route ran the same
+            // ranker on the core pool with no admission slot — see CounterDeps.
+            researchSql: search.researchSql,
+            admission: search.admission,
+            embedQuery: search.embedQuery,
+          },
+          c.req.valid('json'),
+        ),
     );
     // What each verification tier did, and when. Unblocks the verification sheet
     // and the unverified-citation screen, both of which were on a mock because
@@ -942,9 +951,7 @@ export function createApp(deps: AppDeps) {
      * as easy as granting. It is one call on the same path, it needs nobody's
      * approval, and it is not a support ticket.
      */
-    app.get('/me/training-consent', async (c) =>
-      getTrainingConsent(c, userSql, await userFor(c)),
-    );
+    app.get('/me/training-consent', async (c) => getTrainingConsent(c, userSql, await userFor(c)));
     // R16. A grant is a `users` update AND a `training_consent_events` append, so
     // the handler opens its own transaction; under a key that becomes a savepoint
     // inside this one. `atomically` is what makes both spellings work.
@@ -955,8 +962,7 @@ export function createApp(deps: AppDeps) {
         c,
         userSql,
         { authId: c.get('authId'), userId, route: '/me/training-consent', body },
-        (tx) =>
-        grantTrainingConsent(c, tx, userId, body),
+        (tx) => grantTrainingConsent(c, tx, userId, body),
       );
     });
     app.delete('/me/training-consent', async (c) =>
@@ -1007,14 +1013,17 @@ export function createApp(deps: AppDeps) {
     app.get('/matters/:id/premium-preview', async (c) =>
       getPremiumPreview(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
-    app.post('/premium/jobs', validate('json', startJobBody), async (c) =>
-      // R8.3 §5.4/§5.6. Premium generation is not required for LIMITED V1 and
-      // every generation route depends on a semantic evidence set that is off.
-      // Guarded at ADMISSION rather than at read: an already-running job may
-      // still be polled and cancelled, and refusing those would strand a job a
-      // user started before the freeze.
-      refuseIfDisabled(c, 'generation.premium_jobs') ??
-      (await postPremiumJob(c, userSql, await userFor(c), c.req.valid('json'))),
+    app.post(
+      '/premium/jobs',
+      validate('json', startJobBody),
+      async (c) =>
+        // R8.3 §5.4/§5.6. Premium generation is not required for LIMITED V1 and
+        // every generation route depends on a semantic evidence set that is off.
+        // Guarded at ADMISSION rather than at read: an already-running job may
+        // still be polled and cancelled, and refusing those would strand a job a
+        // user started before the freeze.
+        refuseIfDisabled(c, 'generation.premium_jobs') ??
+        (await postPremiumJob(c, userSql, await userFor(c), c.req.valid('json'))),
     );
     app.get('/premium/jobs/:id', async (c) =>
       getPremiumJob(c, userSql, c.req.param('id'), await userFor(c)),
@@ -1034,7 +1043,14 @@ export function createApp(deps: AppDeps) {
       patchDocument(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.post('/documents/:id/citations', validate('json', addCitationBody), async (c) =>
-      addDocumentCitation(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json'), sql),
+      addDocumentCitation(
+        c,
+        userSql,
+        c.req.param('id'),
+        await userFor(c),
+        c.req.valid('json'),
+        sql,
+      ),
     );
     app.delete('/documents/:id/citations/:citationCheckId', async (c) =>
       removeDocumentCitation(

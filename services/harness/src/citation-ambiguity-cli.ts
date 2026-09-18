@@ -46,8 +46,14 @@ import postgres from 'postgres';
 import { sslFor } from './db-url.js';
 import { buildLaunchGold } from './launch-gold.js';
 
-const BENCH = new URL('../../../docs/ai/new1-tier-a/launch-benchmark-v1-citation-v2.json', import.meta.url);
-const OUT = new URL('../../../docs/ai/new1-tier-a/citation-ambiguity-regrade.json', import.meta.url);
+const BENCH = new URL(
+  '../../../docs/ai/new1-tier-a/launch-benchmark-v1-citation-v2.json',
+  import.meta.url,
+);
+const OUT = new URL(
+  '../../../docs/ai/new1-tier-a/citation-ambiguity-regrade.json',
+  import.meta.url,
+);
 
 type BenchRow = {
   queryId: string;
@@ -68,7 +74,12 @@ async function main(): Promise<void> {
   const gold = buildLaunchGold();
   const goldById = new Map(gold.rows.map((r) => [r.queryId, r]));
 
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 30_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 30_000 },
+  });
 
   const rows: {
     queryId: string;
@@ -110,12 +121,14 @@ async function main(): Promise<void> {
 
   const uniq = rows.filter((r) => !r.ambiguous);
   const amb = rows.filter((r) => r.ambiguous);
-  const pct = (a: number, b: number): number | null => (b === 0 ? null : Number(((100 * a) / b).toFixed(2)));
+  const pct = (a: number, b: number): number | null =>
+    b === 0 ? null : Number(((100 * a) / b).toFixed(2));
   const summary = {
     kind: 'new1_citation_ambiguity_regrade',
     measuredAt: new Date().toISOString(),
     frozenHash: gold.frozenHash,
-    regradedFrom: 'launch-benchmark-v1-citation-v2.json — the measurement is unchanged, the grading is not',
+    regradedFrom:
+      'launch-benchmark-v1-citation-v2.json — the measurement is unchanged, the grading is not',
     queries: rows.length,
     UNIQUE_CITATION_EXACTNESS: {
       n: uniq.length,

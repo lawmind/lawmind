@@ -33,7 +33,9 @@ describe('sparse arm — the bound on the ranked set', () => {
   });
 
   it('refuses to rank a query whose rarest term is common, and SAYS SO', async (t) => {
-    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    const [row] = await sql<
+      { n: number }[]
+    >`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
     if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
 
     // `court` appears in 90.7% of the corpus. ANDed terms cannot match more
@@ -57,7 +59,9 @@ describe('sparse arm — the bound on the ranked set', () => {
   });
 
   it('does NOT refuse an ordinary advocate query', async (t) => {
-    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    const [row] = await sql<
+      { n: number }[]
+    >`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
     if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
 
     /**
@@ -75,7 +79,9 @@ describe('sparse arm — the bound on the ranked set', () => {
   });
 
   it('keeps the all-common fallback alive rather than deleting it', async (t) => {
-    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    const [row] = await sql<
+      { n: number }[]
+    >`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
     if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
 
     /**
@@ -108,7 +114,9 @@ describe('sparse arm — the bound on the ranked set', () => {
    * and of nothing else.
    */
   it('admits a globally common term inside a NARROW court+date population', async (t) => {
-    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    const [row] = await sql<
+      { n: number }[]
+    >`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
     if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
 
     /**
@@ -208,7 +216,9 @@ describe('sparse arm — the bound on the ranked set', () => {
   });
 
   it('still refuses a globally common term over a population it has NOT bounded', async (t) => {
-    const [row] = await sql<{ n: number }[]>`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
+    const [row] = await sql<
+      { n: number }[]
+    >`SELECT count(*)::int AS n FROM lexeme_document_frequency`;
     if (!row?.n) return t.skip('lexeme_document_frequency is not populated');
 
     /**

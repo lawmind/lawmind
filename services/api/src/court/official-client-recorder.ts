@@ -283,8 +283,14 @@ export function recordOfficialRequests(options: RecordOptions): RecordingResult 
     return node(String(selector));
   }) as unknown as Record<string, unknown> & ((s: unknown) => unknown);
 
-  function record(path: string, url: string, body: string, headers: Record<string, string>,
-    method: string, dataType: string | undefined): void {
+  function record(
+    path: string,
+    url: string,
+    body: string,
+    headers: Record<string, string>,
+    method: string,
+    dataType: string | undefined,
+  ): void {
     requests.push({
       path,
       url,
@@ -336,7 +342,14 @@ export function recordOfficialRequests(options: RecordOptions): RecordingResult 
     return { done: (): unknown => undefined, fail: (): unknown => undefined };
   };
   jquery['getJSON'] = (url: unknown, data: unknown): unknown => {
-    record(String(url).replace(/^.*\/\?p=/, ''), String(url), String(data ?? ''), {}, 'GET', 'json');
+    record(
+      String(url).replace(/^.*\/\?p=/, ''),
+      String(url),
+      String(data ?? ''),
+      {},
+      'GET',
+      'json',
+    );
     return { done: (): unknown => undefined, fail: (): unknown => undefined };
   };
   jquery['each'] = (): unknown => undefined;

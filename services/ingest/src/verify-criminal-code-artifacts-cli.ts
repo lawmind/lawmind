@@ -55,7 +55,9 @@ await warmPdfEngine();
 const artifacts = [];
 for (const source of sources) {
   const started = Date.now();
-  const response = await fetch(source.url, { headers: { 'user-agent': 'Lawmind/1.0 official-artifact-verifier' } });
+  const response = await fetch(source.url, {
+    headers: { 'user-agent': 'Lawmind/1.0 official-artifact-verifier' },
+  });
   const bytes = new Uint8Array(await response.arrayBuffer());
   const pdfMagic = bytes.length >= 5 && String.fromCharCode(...bytes.subarray(0, 5)) === '%PDF-';
   let text = '';
@@ -88,13 +90,18 @@ for (const source of sources) {
     durationMs: Date.now() - started,
     bytes: bytes.byteLength,
     sha256: createHash('sha256').update(bytes).digest('hex'),
-    payloadKind: pdfMagic ? 'pdf' : method === 'official_text_bitstream' ? 'official_text_bitstream' : 'unexpected',
+    payloadKind: pdfMagic
+      ? 'pdf'
+      : method === 'official_text_bitstream'
+        ? 'official_text_bitstream'
+        : 'unexpected',
     pages,
     extractionMethod: method,
     extractionError,
     titleVerified: titleMatch !== null,
     requiredProvisionVerified: provisionMatch !== null,
-    provisionEvidence: provisionOffset < 0 ? null : text.slice(provisionOffset, provisionOffset + 1800),
+    provisionEvidence:
+      provisionOffset < 0 ? null : text.slice(provisionOffset, provisionOffset + 1800),
   });
 }
 
@@ -106,9 +113,30 @@ const report = {
     'Artifact identity and enacted savings text are machine-observed. Product legal-status rules remain inactive until advocate signoff under DOMAIN_TRUTH.md.',
   artifacts,
   allVerified: artifacts.every(
-    (row) => row.httpStatus === 200 && row.payloadKind !== 'unexpected' && row.titleVerified && row.requiredProvisionVerified,
+    (row) =>
+      row.httpStatus === 200 &&
+      row.payloadKind !== 'unexpected' &&
+      row.titleVerified &&
+      row.requiredProvisionVerified,
   ),
 };
 await mkdir(dirname(OUTPUT), { recursive: true });
 await writeFile(OUTPUT, JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ output: OUTPUT, allVerified: report.allVerified, artifacts: artifacts.map((row) => ({ key: row.key, status: row.httpStatus, bytes: row.bytes, sha256: row.sha256, title: row.titleVerified, provision: row.requiredProvisionVerified })) }, null, 2));
+console.log(
+  JSON.stringify(
+    {
+      output: OUTPUT,
+      allVerified: report.allVerified,
+      artifacts: artifacts.map((row) => ({
+        key: row.key,
+        status: row.httpStatus,
+        bytes: row.bytes,
+        sha256: row.sha256,
+        title: row.titleVerified,
+        provision: row.requiredProvisionVerified,
+      })),
+    },
+    null,
+    2,
+  ),
+);

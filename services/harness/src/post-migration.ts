@@ -267,6 +267,21 @@ function describe(outcome: StructuredOutcome): string {
       return `invalid at offset ${outcome.offset}: ${outcome.message}`;
     case 'not_structured':
       return 'not_structured';
+    /**
+     * `timed_out` and `unbounded` were added to `StructuredOutcome` after this
+     * gate was written, and nothing here knew. The switch had no arm for them,
+     * so `describe()` returned `undefined` while its signature promised a
+     * string, and the AMBIGUOUS arm below read `.hits` off a variant that has
+     * none — a TypeError inside the probe that grades the citation path.
+     *
+     * Both are `coverage_unknown`: the structured arm was attempted and did not
+     * finish. That is neither "resolved to the right judgment" nor "fell
+     * through to semantic search", and the gate must say which it saw.
+     */
+    case 'timed_out':
+      return 'timed_out (the structured arm did not finish)';
+    case 'unbounded':
+      return `unbounded (rarest df ${outcome.rarestDf})`;
   }
 }
 
@@ -321,6 +336,22 @@ export function gradeCitationIdentity(
         ...opts,
         actual: `${describe(outcome)} → ${outcome.hits.map((h) => h.judgmentId).join(', ')}`,
       },
+    );
+  }
+  /**
+   * Before the `.hits` read, because these two variants do not have it. A
+   * citation query that times out or refuses as unbounded has NOT been shown
+   * safe: the one thing this gate exists to prove is that a structured citation
+   * resolved to the expected judgment, and an arm that never finished proves
+   * nothing either way. It is a FAIL with its own reason rather than a crash.
+   */
+  if (outcome.kind === 'timed_out' || outcome.kind === 'unbounded') {
+    return check(
+      'A',
+      id,
+      'FAIL',
+      `cite:"${citation}" did not complete post-migration (${outcome.kind}) — coverage is unknown, which is not proof the citation still resolves`,
+      opts,
     );
   }
   const ids = outcome.hits.map((h) => h.judgmentId);

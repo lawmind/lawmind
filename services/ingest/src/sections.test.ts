@@ -22,13 +22,17 @@ test('the abbreviated form advocates actually write', () => {
 });
 
 test('the full act name, with its year', () => {
-  const r = one('filed a complaint under s.138 of the Negotiable Instruments Act, 1881 in the Court');
+  const r = one(
+    'filed a complaint under s.138 of the Negotiable Instruments Act, 1881 in the Court',
+  );
   assert.equal(r?.section, '138');
   assert.match(r!.actNamed, /Negotiable Instruments Act, 1881/);
 });
 
 test('a Code, not an Act', () => {
-  const r = one('In view of the provisions of Section 317 of the Code of Criminal Procedure, 1973, the Court');
+  const r = one(
+    'In view of the provisions of Section 317 of the Code of Criminal Procedure, 1973, the Court',
+  );
   assert.equal(r?.section, '317');
   assert.match(r!.actNamed, /Code of Criminal Procedure/);
 });
@@ -140,11 +144,28 @@ test('THE SAME ACT UNDER SEVERAL NAMES COLLAPSES TO ONE KEY', () => {
    * Procedure Code` 1,426. Without this an advocate asking for CrPC s.482 sees
    * a third of the cases and has no way to know.
    */
-  const ipc = ['Indian Penal Code, 1860', 'Indian Penal Code', 'The Indian Penal Code, 1860', 'Penal Code'];
-  assert.equal(new Set(ipc.map(canonicalAct)).size, 1, `IPC did not collapse: ${ipc.map(canonicalAct)}`);
+  const ipc = [
+    'Indian Penal Code, 1860',
+    'Indian Penal Code',
+    'The Indian Penal Code, 1860',
+    'Penal Code',
+  ];
+  assert.equal(
+    new Set(ipc.map(canonicalAct)).size,
+    1,
+    `IPC did not collapse: ${ipc.map(canonicalAct)}`,
+  );
 
-  const crpc = ['Code of Criminal Procedure, 1973', 'Code of Criminal Procedure', 'Criminal Procedure Code'];
-  assert.equal(new Set(crpc.map(canonicalAct)).size, 1, `CrPC did not collapse: ${crpc.map(canonicalAct)}`);
+  const crpc = [
+    'Code of Criminal Procedure, 1973',
+    'Code of Criminal Procedure',
+    'Criminal Procedure Code',
+  ];
+  assert.equal(
+    new Set(crpc.map(canonicalAct)).size,
+    1,
+    `CrPC did not collapse: ${crpc.map(canonicalAct)}`,
+  );
 
   const cpc = ['Code of Civil Procedure, 1908', 'Code of Civil Procedure', 'Civil Procedure Code'];
   assert.equal(new Set(cpc.map(canonicalAct)).size, 1);
@@ -153,7 +174,10 @@ test('THE SAME ACT UNDER SEVERAL NAMES COLLAPSES TO ONE KEY', () => {
 test('CRIMINAL AND CIVIL PROCEDURE MUST NOT COLLAPSE INTO EACH OTHER', () => {
   // Merging two different statutes returns the WRONG law; failing to merge two
   // spellings returns less of the right law. Only the first is unacceptable.
-  assert.notEqual(canonicalAct('Code of Criminal Procedure, 1973'), canonicalAct('Code of Civil Procedure, 1908'));
+  assert.notEqual(
+    canonicalAct('Code of Criminal Procedure, 1973'),
+    canonicalAct('Code of Civil Procedure, 1908'),
+  );
 });
 
 test('an act not in the synonym list keeps its own cleaned name', () => {
@@ -166,7 +190,10 @@ test('an act not in the synonym list keeps its own cleaned name', () => {
 test('the new codes keep distinct keys from the ones they replaced', () => {
   // BNS replaced the IPC on 1 July 2024. They are different statutes with
   // different numbering, and a search for one must never return the other.
-  assert.notEqual(canonicalAct('Bharatiya Nyaya Sanhita, 2023'), canonicalAct('Indian Penal Code, 1860'));
+  assert.notEqual(
+    canonicalAct('Bharatiya Nyaya Sanhita, 2023'),
+    canonicalAct('Indian Penal Code, 1860'),
+  );
 });
 
 /**

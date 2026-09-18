@@ -228,7 +228,9 @@ async function main(): Promise<void> {
     `${target.length} HELD_NOT_RETRIEVED of ${all.length} classified · ` +
       `${done.size} already checkpointed · ${pending.length} pending`,
   );
-  console.log(`cut points measured against: annDepth=${ANN_DEPTH} chunks, candidateDepth=${CANDIDATE_DEPTH} judgments`);
+  console.log(
+    `cut points measured against: annDepth=${ANN_DEPTH} chunks, candidateDepth=${CANDIDATE_DEPTH} judgments`,
+  );
 
   const sql = await openDb(url, 4);
   try {
@@ -256,7 +258,9 @@ async function main(): Promise<void> {
      */
     for (const s of snapshot) {
       const n = Number(s.approx);
-      console.log(`  ${s.relname.padEnd(20)} ${n < 0 ? 'not analyzed (no estimate)' : `~${s.approx}`}`);
+      console.log(
+        `  ${s.relname.padEnd(20)} ${n < 0 ? 'not analyzed (no estimate)' : `~${s.approx}`}`,
+      );
     }
     console.log(`  ${'embeddedChunks'.padEnd(20)}  ${embeddedChunks}`);
     console.log(`  ${'measuredAt'.padEnd(20)}  ${new Date().toISOString()}`);
@@ -398,11 +402,15 @@ async function main(): Promise<void> {
         } catch (err) {
           // Not checkpointed: a failure is not a measurement, and writing one
           // in would make a re-run treat it as permanently resolved.
-          console.log(`[!] ${c.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`);
+          console.log(
+            `[!] ${c.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`,
+          );
         }
       }
     }
-    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()));
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()),
+    );
 
     report(readJsonl<Row>(CHECKPOINT_PATH), target.length, embeddedChunks);
   } finally {

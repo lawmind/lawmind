@@ -106,7 +106,7 @@ async function withRetry<T>(fn: () => Promise<T>, label: string): Promise<T> {
     try {
       return await fn();
     } catch (e) {
-      if (attempt >= 4) throw new Error(`${label}: ${(e as Error).message}`);
+      if (attempt >= 4) throw new Error(`${label}: ${(e as Error).message}`, { cause: e });
       await new Promise((r) => setTimeout(r, 800 * 2 ** attempt));
     }
   }

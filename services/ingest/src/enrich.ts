@@ -100,7 +100,12 @@ export function headExcerpt(fullText: string, chars: number): string {
   return fullText.slice(0, chars);
 }
 
-export function windowAround(fullText: string, offset: number, before: number, after: number): string {
+export function windowAround(
+  fullText: string,
+  offset: number,
+  before: number,
+  after: number,
+): string {
   return fullText.slice(Math.max(0, offset - before), Math.min(fullText.length, offset + after));
 }
 
@@ -373,7 +378,10 @@ ${text}`;
 export function stripFence(raw: string): string {
   const t = raw.trim();
   if (!t.startsWith('```')) return t;
-  return t.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+  return t
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```\s*$/, '')
+    .trim();
 }
 
 export function parseJson(raw: string): unknown | null {
@@ -395,7 +403,8 @@ export function parseJson(raw: string): unknown | null {
   }
 }
 
-const str = (v: unknown): string | null => (typeof v === 'string' && v.trim() !== '' ? v.trim() : null);
+const str = (v: unknown): string | null =>
+  typeof v === 'string' && v.trim() !== '' ? v.trim() : null;
 
 export type Claim = {
   /** What the model asserts — a citation, a judge name, a relationship. */
@@ -430,7 +439,12 @@ export function claimsFromMetadata(parsed: unknown): Claim[] {
   if (Array.isArray(judges)) {
     for (const j of judges) {
       const value = str((j as Record<string, unknown>)?.['name']);
-      if (value) out.push({ value, evidence: str((j as Record<string, unknown>)?.['evidence']), kind: 'judge' });
+      if (value)
+        out.push({
+          value,
+          evidence: str((j as Record<string, unknown>)?.['evidence']),
+          kind: 'judge',
+        });
     }
   }
   for (const field of ['neutral_citation', 'case_number'] as const) {
@@ -443,7 +457,11 @@ export function claimsFromMetadata(parsed: unknown): Claim[] {
 
 /** The five the rule-based classifier uses. A sixth value is a fabrication. */
 const DOCUMENT_CLASSES = new Set([
-  'bail_order', 'procedural_disposal', 'reference_stub', 'decided', 'decided_brief',
+  'bail_order',
+  'procedural_disposal',
+  'reference_stub',
+  'decided',
+  'decided_brief',
 ]);
 
 export function claimsFromDocumentClass(parsed: unknown): Claim[] {
@@ -451,12 +469,28 @@ export function claimsFromDocumentClass(parsed: unknown): Claim[] {
   // null is a REFUSAL and a valid outcome, not a failure. An out-of-vocabulary
   // class is a fabrication and is dropped rather than coerced to a neighbour.
   if (!value || !DOCUMENT_CLASSES.has(value)) return [];
-  return [{ value, evidence: str((parsed as Record<string, unknown>)?.['evidence']), kind: 'document_class' }];
+  return [
+    {
+      value,
+      evidence: str((parsed as Record<string, unknown>)?.['evidence']),
+      kind: 'document_class',
+    },
+  ];
 }
 
 const TREATMENTS = new Set([
-  'followed', 'approved', 'applied', 'distinguished', 'doubted', 'overruled',
-  'overruled_in_part', 'not_followed', 'affirmed', 'reversed', 'explained', 'cites',
+  'followed',
+  'approved',
+  'applied',
+  'distinguished',
+  'doubted',
+  'overruled',
+  'overruled_in_part',
+  'not_followed',
+  'affirmed',
+  'reversed',
+  'explained',
+  'cites',
 ]);
 
 export function claimsFromTreatment(parsed: unknown): Claim[] {
@@ -551,8 +585,16 @@ export function claimsFromArguments(parsed: unknown): Claim[] {
  */
 export function claimsFromAuthorities(parsed: unknown): Claim[] {
   return [
-    ...claimsFromQuoteBuckets(parsed, [['authorities', 'authority_relied_on']], ['name', 'proposition']),
-    ...claimsFromQuoteBuckets(parsed, [['provisions', 'provision_applied']], ['provision', 'proposition']),
+    ...claimsFromQuoteBuckets(
+      parsed,
+      [['authorities', 'authority_relied_on']],
+      ['name', 'proposition'],
+    ),
+    ...claimsFromQuoteBuckets(
+      parsed,
+      [['provisions', 'provision_applied']],
+      ['provision', 'proposition'],
+    ),
   ];
 }
 
@@ -629,7 +671,11 @@ export function verifyClaims(claims: readonly Claim[], sourceText: string): Verd
     if (!claim.evidence) return { claim, verified: false, reason: 'no evidence span offered' };
     const needle = flatten(claim.evidence);
     if (needle.length < MIN_EVIDENCE_CHARS) {
-      return { claim, verified: false, reason: `evidence shorter than ${MIN_EVIDENCE_CHARS} chars` };
+      return {
+        claim,
+        verified: false,
+        reason: `evidence shorter than ${MIN_EVIDENCE_CHARS} chars`,
+      };
     }
     /**
      * CASE-FOLDED, AS OF 15 AUG 2026 — and this is the SAME decision already
@@ -676,7 +722,9 @@ export function verifyClaims(claims: readonly Claim[], sourceText: string): Verd
   });
 }
 
-export function verificationState(verdicts: readonly Verdict[]): 'verified' | 'partial' | 'rejected' | 'unverified' {
+export function verificationState(
+  verdicts: readonly Verdict[],
+): 'verified' | 'partial' | 'rejected' | 'unverified' {
   if (verdicts.length === 0) return 'unverified'; // nothing claimed — not a failure
   const ok = verdicts.filter((v) => v.verified).length;
   if (ok === verdicts.length) return 'verified';
@@ -684,6 +732,10 @@ export function verificationState(verdicts: readonly Verdict[]): 'verified' | 'p
   return 'partial';
 }
 
-export function enrichmentInputHash(task: EnrichTask, promptVersion: string, excerpt: string): string {
+export function enrichmentInputHash(
+  task: EnrichTask,
+  promptVersion: string,
+  excerpt: string,
+): string {
   return sha256(`${task}|${promptVersion}|${excerpt}`);
 }

@@ -83,7 +83,8 @@ function mcnemarExactP(b: number, c: number): number | null {
     for (let i = 2; i <= k; i++) s += Math.log(i);
     return s;
   };
-  const pmf = (k: number): number => Math.exp(logFact(n) - logFact(k) - logFact(n - k) - n * Math.log(2));
+  const pmf = (k: number): number =>
+    Math.exp(logFact(n) - logFact(k) - logFact(n - k) - n * Math.log(2));
   const target = pmf(Math.min(b, c)) * (1 + 1e-9);
   let p = 0;
   for (let k = 0; k <= n; k++) if (pmf(k) <= target) p += pmf(k);
@@ -128,7 +129,9 @@ for (const [label, key] of [
   const p = mcnemarExactP(gained, lost);
   console.log(
     `${label}: gained ${gained} · lost ${lost} · both ${both} · neither ${neither}` +
-      (p === null ? '  (no discordant pairs — the runs agree on every query)' : `  McNemar exact p=${p.toFixed(4)}`),
+      (p === null
+        ? '  (no discordant pairs — the runs agree on every query)'
+        : `  McNemar exact p=${p.toFixed(4)}`),
   );
   if (gainedIds.length) console.log(`   gained: ${gainedIds.join(', ')}`);
   if (lostIds.length) console.log(`   lost:   ${lostIds.join(', ')}`);

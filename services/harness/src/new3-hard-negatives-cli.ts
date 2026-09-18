@@ -32,7 +32,7 @@
  * negative ids per query (target <=1,700 ids total). Not a scan.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import postgres, { type Sql } from 'postgres';
+import postgres from 'postgres';
 import { sslFor } from './db-url.ts';
 
 const NEGATIVES_PER_QUERY = 5;
@@ -47,8 +47,29 @@ type PoolsDoc = {
 };
 
 function titleTokenOverlap(a: string, b: string): number {
-  const stop = new Set(['the', 'and', 'of', 'v', 'vs', 'in', 're', 'state', 'union', 'india', 'ors', 'anr', 'others']);
-  const tok = (s: string) => new Set(s.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((t) => t.length > 2 && !stop.has(t)));
+  const stop = new Set([
+    'the',
+    'and',
+    'of',
+    'v',
+    'vs',
+    'in',
+    're',
+    'state',
+    'union',
+    'india',
+    'ors',
+    'anr',
+    'others',
+  ]);
+  const tok = (s: string) =>
+    new Set(
+      s
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter((t) => t.length > 2 && !stop.has(t)),
+    );
   const ta = tok(a);
   const tb = tok(b);
   if (ta.size === 0 || tb.size === 0) return 0;
@@ -65,7 +86,9 @@ async function main() {
   }
   const poolsPath = new URL('../../../docs/ai/new1-rerank/pools.json', import.meta.url);
   const pools: PoolsDoc = JSON.parse(readFileSync(poolsPath, 'utf8'));
-  console.log(`pools.json: ${pools.queries.length} queries, built ${pools.builtAt}, depth ${pools.depth}`);
+  console.log(
+    `pools.json: ${pools.queries.length} queries, built ${pools.builtAt}, depth ${pools.depth}`,
+  );
 
   type Picked = { queryId: string; judgmentId: string; dist: number; rank: number };
   const picks: Picked[] = [];
@@ -77,21 +100,29 @@ async function main() {
       const cur = byJudgment.get(p.judgment_id);
       if (cur === undefined || p.dist < cur) byJudgment.set(p.judgment_id, p.dist);
     }
-    const ranked = [...byJudgment.entries()].filter(([jid]) => !goldSet.has(jid)).sort((a, b) => a[1] - b[1]);
+    const ranked = [...byJudgment.entries()]
+      .filter(([jid]) => !goldSet.has(jid))
+      .sort((a, b) => a[1] - b[1]);
     ranked.slice(0, NEGATIVES_PER_QUERY).forEach(([jid, dist], i) => {
       picks.push({ queryId: q.id, judgmentId: jid, dist, rank: i + 1 });
     });
   }
-  console.log(`mined ${picks.length} query-relative candidate negatives across ${pools.queries.length} queries`);
+  console.log(
+    `mined ${picks.length} query-relative candidate negatives across ${pools.queries.length} queries`,
+  );
 
   const sql = postgres(url, { ssl: sslFor(url), max: 3 });
   try {
     const goldIds = [...new Set(pools.queries.flatMap((q) => q.gold))];
     const negIds = [...new Set(picks.map((p) => p.judgmentId))];
     const allIds = [...new Set([...goldIds, ...negIds])];
-    console.log(`fetching metadata for ${allIds.length} ids (${goldIds.length} gold + ${negIds.length} distinct negatives)`);
+    console.log(
+      `fetching metadata for ${allIds.length} ids (${goldIds.length} gold + ${negIds.length} distinct negatives)`,
+    );
 
-    const rows = await sql<{ id: string; case_title: string; court: string; judgment_date: string | null }[]>`
+    const rows = await sql<
+      { id: string; case_title: string; court: string; judgment_date: string | null }[]
+    >`
       SELECT id::text, case_title, court, judgment_date::text
       FROM judgments
       WHERE id = ANY(${allIds}::uuid[])
@@ -116,12 +147,21 @@ async function main() {
       }
       const signals: Record<string, unknown> = {
         sameCourtAsGold: goldMeta ? negMeta.court === goldMeta.court : null,
-        titleTokenOverlapWithGold: goldMeta ? Number(titleTokenOverlap(negMeta.case_title, goldMeta.case_title).toFixed(3)) : null,
-        laterThanGold: goldMeta?.judgment_date && negMeta.judgment_date ? negMeta.judgment_date > goldMeta.judgment_date : null,
+        titleTokenOverlapWithGold: goldMeta
+          ? Number(titleTokenOverlap(negMeta.case_title, goldMeta.case_title).toFixed(3))
+          : null,
+        laterThanGold:
+          goldMeta?.judgment_date && negMeta.judgment_date
+            ? negMeta.judgment_date > goldMeta.judgment_date
+            : null,
       };
       // Candidate labels are INFER, not asserted fact -- a downstream consumer decides whether to trust them.
       const inferredLabels: string[] = [];
-      if (signals['titleTokenOverlapWithGold'] !== null && (signals['titleTokenOverlapWithGold'] as number) >= 0.5) inferredLabels.push('INFER:similar_case_name');
+      if (
+        signals['titleTokenOverlapWithGold'] !== null &&
+        (signals['titleTokenOverlapWithGold'] as number) >= 0.5
+      )
+        inferredLabels.push('INFER:similar_case_name');
       if (signals['laterThanGold'] === true) inferredLabels.push('INFER:later_authority_candidate');
       if (signals['sameCourtAsGold'] === true) inferredLabels.push('INFER:same_court_near_miss');
       if (inferredLabels.length === 0) inferredLabels.push('INFER:dense_near_miss_unclassified');
@@ -144,7 +184,14 @@ async function main() {
         inferredLabels,
         provenance: {
           method: 'dense_retrieval_near_miss',
-          source: 'docs/ai/new1-rerank/pools.json (NEW1, builtAt ' + pools.builtAt + ', efSearch ' + pools.efSearch + ', depth ' + pools.depth + ')',
+          source:
+            'docs/ai/new1-rerank/pools.json (NEW1, builtAt ' +
+            pools.builtAt +
+            ', efSearch ' +
+            pools.efSearch +
+            ', depth ' +
+            pools.depth +
+            ')',
           queryRelative: true,
           note: 'NEVER a global negative -- valid only against queryId above',
         },
@@ -152,16 +199,20 @@ async function main() {
     }
 
     const byGroup: Record<string, number> = {};
-    for (const r of negRows) byGroup[(r as { queryGroup: string }).queryGroup] = (byGroup[(r as { queryGroup: string }).queryGroup] ?? 0) + 1;
+    for (const r of negRows)
+      byGroup[(r as { queryGroup: string }).queryGroup] =
+        (byGroup[(r as { queryGroup: string }).queryGroup] ?? 0) + 1;
 
     const doc = {
       version: 1,
       generatedAt: new Date().toISOString(),
       generatedBy: 'NEW3',
-      purpose: 'P4 of the mission brief: query-relative hard negatives mined from NEW1 saved dense-retrieval pools, not a fresh DB scan.',
+      purpose:
+        'P4 of the mission brief: query-relative hard negatives mined from NEW1 saved dense-retrieval pools, not a fresh DB scan.',
       minedFrom: `docs/ai/new1-rerank/pools.json (${pools.queries.length} queries, depth ${pools.depth}, built ${pools.builtAt})`,
       method: `top ${NEGATIVES_PER_QUERY} non-gold judgments per query by ascending cosine distance (chunk-deduped to judgment level, min dist kept). Every negative is query-relative and carries its queryId -- never usable as a global negative.`,
-      categorisationPolicy: 'Signals (sameCourtAsGold, titleTokenOverlapWithGold, laterThanGold) are computed mechanically and reported as INFER-tagged candidate labels, not asserted facts. "same issue wrong proposition" and "quoted precedent not supporting" from the brief require semantic judgement this script does not make and are deliberately NOT fabricated.',
+      categorisationPolicy:
+        'Signals (sameCourtAsGold, titleTokenOverlapWithGold, laterThanGold) are computed mechanically and reported as INFER-tagged candidate labels, not asserted facts. "same issue wrong proposition" and "quoted precedent not supporting" from the brief require semantic judgement this script does not make and are deliberately NOT fabricated.',
       totalNegatives: negRows.length,
       totalQueries: pools.queries.length,
       skippedNoMetadata: skippedNoMeta,

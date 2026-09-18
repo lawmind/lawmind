@@ -79,7 +79,12 @@ import { toVectorLiteral } from '@lawmind/embed';
 import { getHarnessEmbedder } from './harness-embedder.ts';
 
 import { createApp } from '@lawmind/api/app';
-import { buildLaunchGold, EXACT_ROUTE_CLASSES, type LaunchClass, type LaunchGoldRow } from './launch-gold.ts';
+import {
+  buildLaunchGold,
+  EXACT_ROUTE_CLASSES,
+  type LaunchClass,
+  type LaunchGoldRow,
+} from './launch-gold.ts';
 import { sslFor } from './db-url.ts';
 
 const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
@@ -166,11 +171,14 @@ export function classifyFailure(input: {
    * were never damaged — a true statement about the row and a false one about
    * the failure, which is exactly what this cascade exists to prevent.
    */
-  if (s.textSafety === 'UNSAFE_VERIFIED' && !EXACT_ROUTE_CLASSES.includes(input.launchClass)) return 'TEXT_UNSAFE';
-  if (s.semanticTier === 'NOT_ELIGIBLE' || s.semanticTier === 'UNRESOLVED_EXPERIMENTAL') return 'NOT_ELIGIBLE';
+  if (s.textSafety === 'UNSAFE_VERIFIED' && !EXACT_ROUTE_CLASSES.includes(input.launchClass))
+    return 'TEXT_UNSAFE';
+  if (s.semanticTier === 'NOT_ELIGIBLE' || s.semanticTier === 'UNRESOLVED_EXPERIMENTAL')
+    return 'NOT_ELIGIBLE';
   // An exact-identity route needs no vector, so absence of one cannot be the
   // reason a citation or a title failed.
-  if (!EXACT_ROUTE_CLASSES.includes(input.launchClass) && !s.embeddedForProduction) return 'NOT_EMBEDDED';
+  if (!EXACT_ROUTE_CLASSES.includes(input.launchClass) && !s.embeddedForProduction)
+    return 'NOT_EMBEDDED';
   if (input.rank === null) return 'RETRIEVAL_MISS';
   return 'BADLY_RANKED';
 }
@@ -232,7 +240,8 @@ const quantile = (xs: number[], q: number): number => {
   const s = [...xs].sort((a, b) => a - b);
   return s[Math.min(s.length - 1, Math.floor(q * s.length))] ?? 0;
 };
-const pct = (a: number, b: number): number | null => (b === 0 ? null : Number(((100 * a) / b).toFixed(2)));
+const pct = (a: number, b: number): number | null =>
+  b === 0 ? null : Number(((100 * a) / b).toFixed(2));
 
 /**
  * Read the state of every gold authority in one pass.
@@ -309,12 +318,15 @@ async function main(): Promise<number> {
 
   const gold = buildLaunchGold();
   const wanted = (process.env['CLASSES'] ?? '').split(',').filter(Boolean);
-  const rows0 = wanted.length > 0 ? gold.rows.filter((r) => wanted.includes(r.launchClass)) : gold.rows;
+  const rows0 =
+    wanted.length > 0 ? gold.rows.filter((r) => wanted.includes(r.launchClass)) : gold.rows;
 
   console.log(`LAUNCH_BENCHMARK_V1  frozenHash=${gold.frozenHash}`);
   console.log(`  classes: ${JSON.stringify(gold.byClass)}`);
   console.log(`  running ${rows0.length} of ${gold.rows.length} rows`);
-  console.log(`  bounds: per-query ${PER_QUERY_MS}ms · statement ${STATEMENT_MS}ms · topK ${TOP_K}`);
+  console.log(
+    `  bounds: per-query ${PER_QUERY_MS}ms · statement ${STATEMENT_MS}ms · topK ${TOP_K}`,
+  );
 
   const sql = postgres(url, {
     max: 4,
@@ -370,7 +382,10 @@ async function main(): Promise<number> {
     }
   };
 
-  const app = createApp({ ping: async () => void (await sql`SELECT 1`), search: { sql, embedQuery } });
+  const app = createApp({
+    ping: async () => void (await sql`SELECT 1`),
+    search: { sql, embedQuery },
+  });
 
   // Warm the embedder once, OUTSIDE the measured loop. Production warms on boot
   // (index.ts), so charging the first query for a model load would report a
@@ -458,7 +473,10 @@ async function main(): Promise<number> {
       topHitId,
       // Only the exact classes can "pin". For a ranked class a non-gold first
       // result is an ordinary ranking outcome, not a false claim of identity.
-      wrongPin: EXACT_ROUTE_CLASSES.includes(g.launchClass) && topHitId !== null && topHitId !== g.goldAuthorityId,
+      wrongPin:
+        EXACT_ROUTE_CLASSES.includes(g.launchClass) &&
+        topHitId !== null &&
+        topHitId !== g.goldAuthorityId,
       goldOverruledStatus: state.overruledStatus,
       currentnessUnsafe,
     };
@@ -472,7 +490,8 @@ async function main(): Promise<number> {
       const row = await run(g);
       results.push(row);
       appendFileSync(CKPT, JSON.stringify({ ...row, frozenHash: gold.frozenHash }) + '\n');
-      if (i % 25 === 0) console.log(`  ${i}/${rows0.length}  last ${row.launchClass} ${row.ms}ms rank=${row.rank}`);
+      if (i % 25 === 0)
+        console.log(`  ${i}/${rows0.length}  last ${row.launchClass} ${row.ms}ms rank=${row.rank}`);
     }
   } finally {
     await sql.end({ timeout: 10 });
@@ -484,14 +503,21 @@ async function main(): Promise<number> {
     const sub = results.filter((r) => r.launchClass === cls);
     const lat = sub.map((r) => r.ms);
     const reasons: Record<string, number> = {};
-    for (const r of sub) if (r.failureReason) reasons[r.failureReason] = (reasons[r.failureReason] ?? 0) + 1;
+    for (const r of sub)
+      if (r.failureReason) reasons[r.failureReason] = (reasons[r.failureReason] ?? 0) + 1;
     byClass[cls] = {
-      route: EXACT_ROUTE_CLASSES.includes(cls as LaunchClass) ? 'exact_identity' : 'ranked_retrieval',
+      route: EXACT_ROUTE_CLASSES.includes(cls as LaunchClass)
+        ? 'exact_identity'
+        : 'ranked_retrieval',
       queries: sub.length,
       successAt1: pct(sub.filter((r) => r.rank === 1).length, sub.length),
       successAt5: pct(sub.filter((r) => r.rank !== null && r.rank <= 5).length, sub.length),
       successAt20: pct(sub.filter((r) => r.rank !== null && r.rank <= TOP_K).length, sub.length),
-      mrr: Number((sub.reduce((a, r) => a + (r.rank ? 1 / r.rank : 0), 0) / Math.max(1, sub.length)).toFixed(4)),
+      mrr: Number(
+        (sub.reduce((a, r) => a + (r.rank ? 1 / r.rank : 0), 0) / Math.max(1, sub.length)).toFixed(
+          4,
+        ),
+      ),
       timeouts: sub.filter((r) => r.timedOut).length,
       /**
        * NULL, not 0, when the field was never recorded.
@@ -502,7 +528,9 @@ async function main(): Promise<number> {
        * clean bill of health issued by a missing column. Reporting null forces
        * a rerun to answer the question instead of letting silence answer it.
        */
-      wrongPins: sub.some((r) => r.topHitId === undefined) ? null : sub.filter((r) => r.wrongPin).length,
+      wrongPins: sub.some((r) => r.topHitId === undefined)
+        ? null
+        : sub.filter((r) => r.wrongPin).length,
       nonOkResponses: sub.filter((r) => r.httpStatus !== 200).length,
       latencyMs: { p50: quantile(lat, 0.5), p95: quantile(lat, 0.95), max: Math.max(0, ...lat) },
       failureReasons: reasons,
@@ -518,7 +546,12 @@ async function main(): Promise<number> {
     diagnosticVerbatimRows: gold.diagnosticVerbatim.length,
     path: "createApp(...).request('/search') — validation, answerStructured, embedQuery, hybridSearch",
     conditions: 'LOCAL_CONTENDED — the Tier-A GPU walk and other lanes were writing throughout',
-    bounds: { perQueryMs: PER_QUERY_MS, statementMs: STATEMENT_MS, embedTimeoutMs: EMBED_TIMEOUT_MS, topK: TOP_K },
+    bounds: {
+      perQueryMs: PER_QUERY_MS,
+      statementMs: STATEMENT_MS,
+      embedTimeoutMs: EMBED_TIMEOUT_MS,
+      topK: TOP_K,
+    },
     poolingRule: 'exact_identity classes are NEVER pooled with ranked_retrieval classes',
     byClass,
     rows: results,
@@ -529,8 +562,12 @@ async function main(): Promise<number> {
   for (const [cls, m] of Object.entries(byClass)) {
     const v = m as Record<string, unknown>;
     console.log(`\n  ${cls}  [${v['route']}]  (${v['queries']} queries)`);
-    console.log(`    s@1 ${v['successAt1']}%  s@5 ${v['successAt5']}%  s@${TOP_K} ${v['successAt20']}%  MRR ${v['mrr']}`);
-    console.log(`    latency ${JSON.stringify(v['latencyMs'])}  timeouts ${v['timeouts']}  non-200 ${v['nonOkResponses']}`);
+    console.log(
+      `    s@1 ${v['successAt1']}%  s@5 ${v['successAt5']}%  s@${TOP_K} ${v['successAt20']}%  MRR ${v['mrr']}`,
+    );
+    console.log(
+      `    latency ${JSON.stringify(v['latencyMs'])}  timeouts ${v['timeouts']}  non-200 ${v['nonOkResponses']}`,
+    );
     console.log(`    failures ${JSON.stringify(v['failureReasons'])}`);
   }
   console.log(`\nwrote ${OUT}`);

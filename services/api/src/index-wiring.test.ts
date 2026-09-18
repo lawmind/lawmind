@@ -26,8 +26,14 @@ describe('index.ts wiring', () => {
   });
 
   it('the activation outbox is constructed on the USER handle', () => {
-    const calls = [...source.matchAll(/new\s+ActivationOutbox\(\s*([A-Za-z_.]+)\s*\)/g)].map((m) => m[1]);
-    assert.ok(calls.length > 0, 'index.ts no longer constructs an ActivationOutbox; update this test');
-    for (const arg of calls) assert.equal(arg, 'userSql', `ActivationOutbox(${arg}) writes a USER table`);
+    const calls = [...source.matchAll(/new\s+ActivationOutbox\(\s*([A-Za-z_.]+)\s*\)/g)].map(
+      (m) => m[1],
+    );
+    assert.ok(
+      calls.length > 0,
+      'index.ts no longer constructs an ActivationOutbox; update this test',
+    );
+    for (const arg of calls)
+      assert.equal(arg, 'userSql', `ActivationOutbox(${arg}) writes a USER table`);
   });
 });

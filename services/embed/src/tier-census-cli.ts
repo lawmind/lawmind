@@ -131,15 +131,28 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
     const v = await mod.check(jobClass);
     return { allow: v.allow, reasons: v.reasons };
   } catch (error) {
-    return { allow: false, reasons: ['resource gate unavailable: ' + String((error as Error).message)] };
+    return {
+      allow: false,
+      reasons: ['resource gate unavailable: ' + String((error as Error).message)],
+    };
   }
 }
 
-async function readProgress(
-  sql: Sql,
-): Promise<{ cursor: string | null; rowsSeen: number; pagesDone: number; version: string; hash: string } | null> {
+async function readProgress(sql: Sql): Promise<{
+  cursor: string | null;
+  rowsSeen: number;
+  pagesDone: number;
+  version: string;
+  hash: string;
+} | null> {
   const rows = await sql<
-    { cursor: string | null; rows_seen: string; pages_done: number; definition_version: string; definition_hash: string }[]
+    {
+      cursor: string | null;
+      rows_seen: string;
+      pages_done: number;
+      definition_version: string;
+      definition_hash: string;
+    }[]
   >`SELECT cursor, rows_seen, pages_done, definition_version, definition_hash
       FROM embedding_census_progress WHERE job = ${JOB}`;
   const r = rows[0];
@@ -173,7 +186,9 @@ async function main(): Promise<number> {
   if (!verdict.allow && !has('--force')) {
     console.error('DEFER DB_SCAN — not running.');
     for (const r of verdict.reasons) console.error('  - ' + r);
-    console.error('Re-run when the box is quieter, or pass --force to accept the cost deliberately.');
+    console.error(
+      'Re-run when the box is quieter, or pass --force to accept the cost deliberately.',
+    );
     return 3;
   }
 
@@ -218,9 +233,15 @@ async function main(): Promise<number> {
     }
 
     console.log(
-      'census ' + CONTRACT_VERSION + ' / ' + defHash +
-        ' — resuming at cursor ' + (prog.cursor ?? '(start)') +
-        ', ' + prog.rowsSeen.toLocaleString() + ' rows already counted',
+      'census ' +
+        CONTRACT_VERSION +
+        ' / ' +
+        defHash +
+        ' — resuming at cursor ' +
+        (prog.cursor ?? '(start)') +
+        ', ' +
+        prog.rowsSeen.toLocaleString() +
+        ' rows already counted',
     );
 
     const startedAt = Date.now();
@@ -231,7 +252,9 @@ async function main(): Promise<number> {
 
     for (;;) {
       if (maxPages > 0 && pagesThisRun >= maxPages) {
-        console.log('stopping: --max-pages ' + maxPages + ' reached (this is a pause, not a finish)');
+        console.log(
+          'stopping: --max-pages ' + maxPages + ' reached (this is a pause, not a finish)',
+        );
         break;
       }
 
@@ -262,7 +285,10 @@ async function main(): Promise<number> {
       // Grouping here rather than in SQL keeps the transaction short: the page
       // is already read, and a long-running transaction on this box is the
       // thing that stalled a DDL for 1,683 seconds.
-      const cells = new Map<string, { court: string; year: number; band: string; bucket: Bucket; rows: number; chars: number }>();
+      const cells = new Map<
+        string,
+        { court: string; year: number; band: string; bucket: Bucket; rows: number; chars: number }
+      >();
       const groups = new Map<string, { minId: string; n: number }>();
 
       for (const r of rows) {
@@ -279,7 +305,14 @@ async function main(): Promise<number> {
           cell.rows += 1;
           cell.chars += r.textLength ?? 0;
         } else {
-          cells.set(key, { court, year, band: r.valueBand, bucket, rows: 1, chars: r.textLength ?? 0 });
+          cells.set(key, {
+            court,
+            year,
+            band: r.valueBand,
+            bucket,
+            rows: 1,
+            chars: r.textLength ?? 0,
+          });
         }
 
         // Representatives are built for the TIER-A population only. A duplicate
@@ -368,8 +401,14 @@ async function main(): Promise<number> {
         const secs = (Date.now() - startedAt) / 1000;
         const rate = Math.round((pagesThisRun * pageSize) / secs);
         console.log(
-          '  ' + rowsSeen.toLocaleString() + ' rows · ' + pagesDone + ' pages · ' +
-            rate.toLocaleString() + ' rows/s · cursor ' + cursor,
+          '  ' +
+            rowsSeen.toLocaleString() +
+            ' rows · ' +
+            pagesDone +
+            ' pages · ' +
+            rate.toLocaleString() +
+            ' rows/s · cursor ' +
+            cursor,
         );
       }
 
@@ -437,7 +476,9 @@ async function main(): Promise<number> {
       duplicateGroups: n(reps[0]?.multi),
       vectorsSavedByDedup: n(reps[0]?.saved),
       buckets: bucketMap,
-      byValueBand: Object.fromEntries(byBand.map((b) => [b.value_band, { rows: n(b.rows), chars: n(b.chars) }])),
+      byValueBand: Object.fromEntries(
+        byBand.map((b) => [b.value_band, { rows: n(b.rows), chars: n(b.chars) }]),
+      ),
       byCourtTierA: Object.fromEntries(byCourt.map((c) => [c.court, n(c.tier_a)])),
       byYearTierA: Object.fromEntries(byYear.map((y) => [String(y.judgment_year), n(y.tier_a)])),
       generatedAt: new Date().toISOString(),
@@ -451,7 +492,11 @@ async function main(): Promise<number> {
     console.log('rows counted        ' + summary.rowsCounted.toLocaleString());
     console.log('TIER A              ' + tierA.toLocaleString());
     console.log('TIER A-CORE         ' + tierACore.toLocaleString() + '  (subset of Tier A)');
-    console.log('distinct texts      ' + summary.tierADistinctTexts.toLocaleString() + '  <- vectors actually needed');
+    console.log(
+      'distinct texts      ' +
+        summary.tierADistinctTexts.toLocaleString() +
+        '  <- vectors actually needed',
+    );
     console.log('duplicate groups    ' + summary.duplicateGroups.toLocaleString());
     console.log('vectors saved       ' + summary.vectorsSavedByDedup.toLocaleString());
     console.log('wrote ' + join(outDir, 'tier-census.json'));

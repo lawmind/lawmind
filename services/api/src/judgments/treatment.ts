@@ -124,8 +124,13 @@ export async function getTreatment(
    * claim survives: `datesContradicted > 0` means a client must not present this
    * page as a reliable chronology. `date-quality.ts`.
    */
-  const dateStates = await dateQualityFor(sql, page.map((r) => r.judgment_id));
-  const datesContradicted = page.filter((r) => isDateContradicted(dateStates.get(r.judgment_id))).length;
+  const dateStates = await dateQualityFor(
+    sql,
+    page.map((r) => r.judgment_id),
+  );
+  const datesContradicted = page.filter((r) =>
+    isDateContradicted(dateStates.get(r.judgment_id)),
+  ).length;
 
   return ok(c, {
     judgmentId: id,
@@ -273,7 +278,10 @@ export async function getGraph(
           FROM judgments WHERE id = ANY(${otherIds})
         `;
 
-  const nodeDateStates = await dateQualityFor(sql, nodes.map((n) => n.id));
+  const nodeDateStates = await dateQualityFor(
+    sql,
+    nodes.map((n) => n.id),
+  );
 
   return ok(c, {
     rootId: id,

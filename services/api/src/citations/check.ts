@@ -90,7 +90,9 @@ export async function getCitationCheck(
   /** The CORPUS role; defaults to `sql` so single-database use is unchanged. */
   corpusSql: Sql = sql,
 ): Promise<Response> {
-  const [check] = await sql<Omit<Row, 'case_title' | 'neutral_citation' | 'court' | 'judgment_date' | 'overruled_status'>[]>`
+  const [check] = await sql<
+    Omit<Row, 'case_title' | 'neutral_citation' | 'court' | 'judgment_date' | 'overruled_status'>[]
+  >`
     SELECT cc.id, cc.citation_claimed, cc.judgment_id_matched,
            cc.verification_state, cc.verified_by_source,
            cc.match_confidence::text AS match_confidence,

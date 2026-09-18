@@ -88,7 +88,9 @@ async function main(): Promise<void> {
    * failures on that table under lane contention, and the run before that died
    * on one with 1,200 groups still to read. */
   for (const k of keys) {
-    const members = await withTransientRetry(`members of ${k.citation_key}`, () => sql<Row[]>`
+    const members = await withTransientRetry(
+      `members of ${k.citation_key}`,
+      () => sql<Row[]>`
       SELECT j.id, j.content_hash, j.source_url, j.storage_key, j.case_number, j.cnr,
              j.judgment_date::text AS judgment_date, j.court, j.case_title,
              length(j.full_text) AS full_text_chars, j.native_text, j.script_quality,
@@ -96,7 +98,8 @@ async function main(): Promise<void> {
         FROM judgments j
        WHERE upper(regexp_replace(coalesce(j.neutral_citation, ''), '[^A-Za-z0-9]', '', 'g'))
              = ${k.citation_key}
-       LIMIT 400`);
+       LIMIT 400`,
+    );
     if (members.length < 2) continue;
     const g = buildGroup(members);
     groups.push(g);
@@ -151,7 +154,9 @@ async function main(): Promise<void> {
   writeFileSync(OUT, JSON.stringify(report, null, 1));
   console.log('\nBY TYPE (weighted by rows)');
   for (const [type, v] of Object.entries(report.by_type)) {
-    console.log(`  ${type.padEnd(36)} ${String(v.groups).padStart(5)} groups · ${String(v.rows).padStart(6)} rows · ${String(v.share_of_sampled_rows_pct).padStart(6)}%`);
+    console.log(
+      `  ${type.padEnd(36)} ${String(v.groups).padStart(5)} groups · ${String(v.rows).padStart(6)} rows · ${String(v.share_of_sampled_rows_pct).padStart(6)}%`,
+    );
   }
   console.log(
     `\nauto-collapse removes ${rowsHidden} of ${rowsSeen} shared rows = ${report.duplication_removed.pct_of_shared_rows_removed}%`,

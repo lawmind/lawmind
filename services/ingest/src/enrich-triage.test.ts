@@ -43,7 +43,9 @@ test('an exactly-quoted span is not something this module is asked about', () =>
 });
 
 test('a quote interrupted only by a page header is the INGEST lane, not the model', () => {
-  const got = d('the petitioner had filed an appeal which also culminated in an order dated 30.12.2025');
+  const got = d(
+    'the petitioner had filed an appeal which also culminated in an order dated 30.12.2025',
+  );
   assert.equal(got.bucket, 'source_page_furniture');
 });
 
@@ -51,12 +53,16 @@ test('a quote that skips the court’s own words is the MODEL, not page furnitur
   /* Same shape as above — a gap in the middle — but the gap is real legal text.
    * If this ever returns source_page_furniture the detector has started
    * laundering omissions. */
-  const got = d('The accused sent Ext.P6 reply raising false and untenable contentions, and the complainant thereafter instituted proceedings under Section 138 of the Negotiable Instruments Act');
+  const got = d(
+    'The accused sent Ext.P6 reply raising false and untenable contentions, and the complainant thereafter instituted proceedings under Section 138 of the Negotiable Instruments Act',
+  );
   assert.notEqual(got.bucket, 'source_page_furniture');
 });
 
 test('a fabricated sentence is never explained away by any rung of the ladder', () => {
-  const got = d('The Court held that the appellant was entitled to compensation of Rs. 15,00,000 with interest at 12% per annum');
+  const got = d(
+    'The Court held that the appellant was entitled to compensation of Rs. 15,00,000 with interest at 12% per annum',
+  );
   assert.ok(
     got.bucket === 'fabrication' || got.bucket === 'paraphrase',
     `fabrication was bucketed as ${got.bucket}`,
@@ -64,15 +70,22 @@ test('a fabricated sentence is never explained away by any rung of the ladder', 
 });
 
 test('a real span from a DIFFERENT document is not rescued by the skip walker', () => {
-  const other = 'The appellant was convicted under Section 302 of the Indian Penal Code and sentenced to imprisonment for life by the Sessions Judge, Gwalior.';
+  const other =
+    'The appellant was convicted under Section 302 of the Indian Penal Code and sentenced to imprisonment for life by the Sessions Judge, Gwalior.';
   const got = d(other);
   assert.ok(got.bucket === 'fabrication' || got.bucket === 'paraphrase');
 });
 
 test('case is separated from punctuation, because they have different fixes', () => {
-  assert.equal(d('THE ACCUSED SENT EXT.P6 REPLY RAISING FALSE AND UNTENABLE CONTENTIONS').bucket, 'case_only');
   assert.equal(
-    d('the petitioner had filed an appeal — which also culminated', 'the petitioner had filed an appeal - which also culminated').bucket,
+    d('THE ACCUSED SENT EXT.P6 REPLY RAISING FALSE AND UNTENABLE CONTENTIONS').bucket,
+    'case_only',
+  );
+  assert.equal(
+    d(
+      'the petitioner had filed an appeal — which also culminated',
+      'the petitioner had filed an appeal - which also culminated',
+    ).bucket,
     'punctuation_only',
   );
 });
@@ -91,8 +104,16 @@ test('a quote that exists only in the excerpt proves the elision join', () => {
 test('page furniture is recognised, running prose is not', () => {
   assert.ok(looksLikePageFurniture('- 6 - HC-KAR NC: 2026:KHC:23440 WP No. 39444 of 2025'));
   assert.ok(looksLikePageFurniture('Crl. Appeal No. 547 & batch : 7 :'));
-  assert.ok(looksLikePageFurniture('Signed by: LOKENDRA JAIN Signing time: 7/31/2023 2:57:58 PM Signature Not Verified 3 Second Appeal No. 176/2023'));
-  assert.ok(!looksLikePageFurniture('the learned counsel for the appellant impeached the finding of the trial court on appreciation of evidence'));
+  assert.ok(
+    looksLikePageFurniture(
+      'Signed by: LOKENDRA JAIN Signing time: 7/31/2023 2:57:58 PM Signature Not Verified 3 Second Appeal No. 176/2023',
+    ),
+  );
+  assert.ok(
+    !looksLikePageFurniture(
+      'the learned counsel for the appellant impeached the finding of the trial court on appreciation of evidence',
+    ),
+  );
   /* No digits at all: not a page rule, not a stamp, not a case number. */
   assert.ok(!looksLikePageFurniture('and the same was registered against the petitioner'));
 });
@@ -101,14 +122,18 @@ test('a substitution run at the end of a quote is refused, not counted as a typo
   /* This is the defect the first version shipped: a 5% budget absorbed the last
    * six characters of a quote that had run into a page header, and reported it
    * as an OCR substitution. */
-  const source = 'the plaintiff has preferred Regular Appeal in RA.No.24 of 1993 on the file of First Appellate - 10 - HC-KAR';
-  const quote = 'the plaintiff has preferred Regular Appeal in RA.No.24 of 1993 on the file of First Appellate Court.';
+  const source =
+    'the plaintiff has preferred Regular Appeal in RA.No.24 of 1993 on the file of First Appellate - 10 - HC-KAR';
+  const quote =
+    'the plaintiff has preferred Regular Appeal in RA.No.24 of 1993 on the file of First Appellate Court.';
   assert.equal(substitutionAlign(quote, source).ok, false);
 });
 
 test('an isolated one-character OCR confusion IS a substitution', () => {
-  const source = 'a charge sheet was Ied against accused on 24.07.2019, on the file of the Magistrate';
-  const quote = 'a charge sheet was led against accused on 24.07.2019, on the file of the Magistrate';
+  const source =
+    'a charge sheet was Ied against accused on 24.07.2019, on the file of the Magistrate';
+  const quote =
+    'a charge sheet was led against accused on 24.07.2019, on the file of the Magistrate';
   const got = substitutionAlign(quote, source);
   assert.equal(got.ok, true);
   assert.equal(got.diffs.length, 1);

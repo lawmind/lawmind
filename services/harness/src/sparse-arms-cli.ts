@@ -74,7 +74,13 @@ const SAMPLE = Number(process.env['ARM_SAMPLE'] ?? 60);
 const OUT = new URL('../../../docs/ai/new1-tier-a/sparse-arms.json', import.meta.url);
 const CKPT = new URL('../../../docs/ai/new1-tier-a/sparse-arms.checkpoint.jsonl', import.meta.url);
 
-type ArmResult = { rows: number; goldRank: number | null; ms: number; timedOut: boolean; note?: string };
+type ArmResult = {
+  rows: number;
+  goldRank: number | null;
+  ms: number;
+  timedOut: boolean;
+  note?: string;
+};
 type Row = {
   queryId: string;
   launchClass: string;
@@ -121,10 +127,15 @@ async function main(): Promise<void> {
       }
     }
   }
-  process.stdout.write(`sparse arms  sample=${picked.length}  done=${done.size}  timeout=${STATEMENT_TIMEOUT_MS}ms  rarestN=${RAREST_N}\n`);
+  process.stdout.write(
+    `sparse arms  sample=${picked.length}  done=${done.size}  timeout=${STATEMENT_TIMEOUT_MS}ms  rarestN=${RAREST_N}\n`,
+  );
 
   /** Every arm runs inside its own transaction with production's ceiling on it. */
-  async function timed(fn: (tx: postgres.TransactionSql) => Promise<{ id: string }[]>, goldId: string): Promise<ArmResult> {
+  async function timed(
+    fn: (tx: postgres.TransactionSql) => Promise<{ id: string }[]>,
+    goldId: string,
+  ): Promise<ArmResult> {
     const t = Date.now();
     try {
       const rows = await sql.begin(async (tx) => {
@@ -132,7 +143,12 @@ async function main(): Promise<void> {
         return await fn(tx);
       });
       const at = rows.findIndex((r) => r.id === goldId);
-      return { rows: rows.length, goldRank: at === -1 ? null : at + 1, ms: Date.now() - t, timedOut: false };
+      return {
+        rows: rows.length,
+        goldRank: at === -1 ? null : at + 1,
+        ms: Date.now() - t,
+        timedOut: false,
+      };
     } catch (e) {
       if (!isTimeout(e)) throw e;
       return { rows: 0, goldRank: null, ms: Date.now() - t, timedOut: true };
@@ -219,7 +235,14 @@ async function main(): Promise<void> {
         measuredAt: new Date().toISOString(),
         frozenHash: gold.frozenHash,
         conditions: 'LOCAL_CONTENDED — the Tier-A GPU walk was staging throughout',
-        constants: { CANDIDATE_DEPTH, SPARSE_MAX_DOCUMENT_FREQUENCY, SPARSE_RELAX_BELOW, SPARSE_AND_MAX_CHARS, STATEMENT_TIMEOUT_MS, RAREST_N },
+        constants: {
+          CANDIDATE_DEPTH,
+          SPARSE_MAX_DOCUMENT_FREQUENCY,
+          SPARSE_RELAX_BELOW,
+          SPARSE_AND_MAX_CHARS,
+          STATEMENT_TIMEOUT_MS,
+          RAREST_N,
+        },
         sample: results.length,
         denseControl: {
           note: 'arm B is a coverage fact, not a query: judgment_chunks holds 40,161 distinct judgments',
@@ -251,7 +274,11 @@ function andSearch(tx: postgres.TransactionSql, q: string): Promise<{ id: string
  * production `sparseAny()`. `dropAllCommon` removes the fallback that ORs every
  * lexeme when none is rare enough — arm C.
  */
-function sparseAny(tx: postgres.TransactionSql, q: string, dropAllCommon = false): Promise<{ id: string }[]> {
+function sparseAny(
+  tx: postgres.TransactionSql,
+  q: string,
+  dropAllCommon = false,
+): Promise<{ id: string }[]> {
   return tx<{ id: string }[]>`
     WITH scored AS (
       SELECT l.lexeme,

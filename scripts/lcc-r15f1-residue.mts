@@ -119,7 +119,7 @@ for (const { key, bearers: bs } of reachable) {
       const [serial, year] = sy.split('|');
       if (serial === serialYearOf(self.case_number)?.split('|')[0]) return false;
       return new RegExp(
-        `\b${serial}\s*/\s*${year}\b|\bNos?\.?\s*[-.:]?\s*${serial}\s+of\s+${year}\b`,
+        `\b${serial}s*/s*${year}\b|\bNos?.?s*[-.:]?s*${serial}s+ofs+${year}\b`,
         'i',
       ).test(head);
     });

@@ -41,7 +41,9 @@ async function distinctScYears(sql: Sql): Promise<number[]> {
   return rows.map((r) => Number(r.year)).filter((y) => Number.isFinite(y));
 }
 
-async function scSourceMetadata(years: number[]): Promise<Map<string, { petitioner: string; respondent: string }>> {
+async function scSourceMetadata(
+  years: number[],
+): Promise<Map<string, { petitioner: string; respondent: string }>> {
   const pairs: UrlParties[] = [];
   for (const year of years) {
     const url = metadataUrl(year);
@@ -55,7 +57,11 @@ async function scSourceMetadata(years: number[]): Promise<Map<string, { petition
     }
     for (const row of rows) {
       if (blank(row.petitioner) && blank(row.respondent)) continue;
-      pairs.push({ url: sourceUrlFor(row), petitioner: row.petitioner ?? '', respondent: row.respondent ?? '' });
+      pairs.push({
+        url: sourceUrlFor(row),
+        petitioner: row.petitioner ?? '',
+        respondent: row.respondent ?? '',
+      });
     }
     console.log(`  SC year=${year}: ${rows.length} rows read`);
   }
@@ -66,7 +72,10 @@ async function scSourceMetadata(years: number[]): Promise<Map<string, { petition
     const existing = map.get(url);
     if (existing === undefined) {
       map.set(url, { petitioner, respondent });
-    } else if (existing !== null && (existing.petitioner !== petitioner || existing.respondent !== respondent)) {
+    } else if (
+      existing !== null &&
+      (existing.petitioner !== petitioner || existing.respondent !== respondent)
+    ) {
       map.set(url, null);
     }
   }
@@ -75,19 +84,24 @@ async function scSourceMetadata(years: number[]): Promise<Map<string, { petition
   return clean;
 }
 
-async function applySourceMetadataPass(sql: Sql, map: Map<string, { petitioner: string; respondent: string }>): Promise<number> {
+async function applySourceMetadataPass(
+  sql: Sql,
+  map: Map<string, { petitioner: string; respondent: string }>,
+): Promise<number> {
   let updated = 0;
   const entries = [...map.entries()];
   const BATCH = 200;
   for (let i = 0; i < entries.length; i += BATCH) {
     const batch = entries.slice(i, i + BATCH);
     await Promise.all(
-      batch.map(([sourceUrl, { petitioner, respondent }]) => sql`
+      batch.map(
+        ([sourceUrl, { petitioner, respondent }]) => sql`
         UPDATE judgments
            SET petitioner = ${blank(petitioner) ? null : petitioner.trim()},
                respondent = ${blank(respondent) ? null : respondent.trim()},
                parties_extraction_method = 'source_metadata'
-         WHERE source_url = ${sourceUrl} AND parties_extraction_method IS NULL`),
+         WHERE source_url = ${sourceUrl} AND parties_extraction_method IS NULL`,
+      ),
     );
     updated += batch.length;
     console.log(`  applied ${updated}/${entries.length}...`);
@@ -154,7 +168,9 @@ async function main(): Promise<void> {
         console.log(`  ${v.petitioner} | ${v.respondent}  <-  ${sourceUrl}`);
         shown++;
       }
-      console.log(`\nremaining rows (High Court + unmatched SC) will use title_parsed against case_title already in Postgres.`);
+      console.log(
+        `\nremaining rows (High Court + unmatched SC) will use title_parsed against case_title already in Postgres.`,
+      );
       console.log('\nDRY RUN — nothing written. Re-run with --confirm to apply.');
       return;
     }

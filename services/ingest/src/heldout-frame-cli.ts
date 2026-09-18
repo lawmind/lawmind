@@ -70,7 +70,12 @@ import { DAMAGE_SPAN, TEXT_DAMAGE_VERSION, damageVerdict } from './text-damage.t
 import { DATE_QUALITY_VERSION, dateQuality } from './date-quality.ts';
 import { ENGLISH_RATE_FLOOR, englishRate } from './quality-state.ts';
 import { MINED_MARKERS, SUSPECT_MARKER_RATE, textSignature } from './legacy-font.ts';
-import { MAX_SINGLE_CHAR_RATIO, MIN_TOKENS_TO_JUDGE, MIN_WORD_LIKE_RATIO, corruptionSignals } from './text-corruption.ts';
+import {
+  MAX_SINGLE_CHAR_RATIO,
+  MIN_TOKENS_TO_JUDGE,
+  MIN_WORD_LIKE_RATIO,
+  corruptionSignals,
+} from './text-corruption.ts';
 
 const url = process.env['DATABASE_URL'];
 if (!url) throw new Error('DATABASE_URL is not set');
@@ -200,9 +205,11 @@ function quality(r: Row) {
     text: head,
     textLength: r.text_len,
     storedScriptQuality: r.script_quality,
-    englishDensityLow: marker.zeroDevanagari && head.length >= 1000 && englishRate(head) < ENGLISH_RATE_FLOOR,
+    englishDensityLow:
+      marker.zeroDevanagari && head.length >= 1000 && englishRate(head) < ENGLISH_RATE_FLOOR,
     tokenShapeAnomaly:
-      judgeable && (sig!.singleCharRatio > MAX_SINGLE_CHAR_RATIO || sig!.wordLikeRatio < MIN_WORD_LIKE_RATIO),
+      judgeable &&
+      (sig!.singleCharRatio > MAX_SINGLE_CHAR_RATIO || sig!.wordLikeRatio < MIN_WORD_LIKE_RATIO),
     legacyFontMarkers: marker.zeroDevanagari && marker.markerRate >= SUSPECT_MARKER_RATE,
   });
   const date = dateQuality({ judgmentDate: r.judgment_date, sourceUrl: r.source_url, text: head });
@@ -221,7 +228,12 @@ for (const cls of CLASSES) {
     const label = `${cls ?? 'unclassified'}:${band}`;
     const { rows: size, draws: bandDraws } = cellSize(cls, band);
     if (size === 0) {
-      frameCells.push({ cell: label, populationRowsEstimated: 0, drawn: 0, note: 'estimated empty; no rows drawn' });
+      frameCells.push({
+        cell: label,
+        populationRowsEstimated: 0,
+        drawn: 0,
+        note: 'estimated empty; no rows drawn',
+      });
       continue;
     }
     /* Over-draw, because DISTINCT ON collapses two random points that landed on
@@ -255,7 +267,11 @@ for (const cls of CLASSES) {
           detector: TEXT_DAMAGE_VERSION,
           span: DAMAGE_SPAN,
         },
-        dateQuality: { state: q.date.state, detector: DATE_QUALITY_VERSION, filenameDeltaDays: q.date.filenameDeltaDays },
+        dateQuality: {
+          state: q.date.state,
+          detector: DATE_QUALITY_VERSION,
+          filenameDeltaDays: q.date.filenameDeltaDays,
+        },
         sourceUrl: r.source_url,
         /* The labeller reads THIS, not the database. */
         head: r.head,
@@ -271,7 +287,9 @@ for (const cls of CLASSES) {
       inclusionProbability: kept.length / size,
       textUnsafeVerifiedInCell: damaged,
     });
-    process.stdout.write(`\r  ${label} — population ${size.toLocaleString()}, drew ${kept.length}          `);
+    process.stdout.write(
+      `\r  ${label} — population ${size.toLocaleString()}, drew ${kept.length}          `,
+    );
   }
 }
 
@@ -313,5 +331,8 @@ writeFileSync(`${OUT}-questions.jsonl`, questions.map((q) => JSON.stringify(q)).
 console.log(`\n\n${questions.length} rows across ${frameCells.length} cells`);
 console.log(`  ${OUT}-frame.json`);
 console.log(`  ${OUT}-questions.jsonl`);
-for (const c of frameCells) console.log(`  ${String(c['cell']).padEnd(30)} pop~${String(c['populationRowsEstimated']).padStart(10)}  drew ${c['drawn']}  damaged ${c['textUnsafeVerifiedInCell'] ?? 0}`);
+for (const c of frameCells)
+  console.log(
+    `  ${String(c['cell']).padEnd(30)} pop~${String(c['populationRowsEstimated']).padStart(10)}  drew ${c['drawn']}  damaged ${c['textUnsafeVerifiedInCell'] ?? 0}`,
+  );
 await sql.end();

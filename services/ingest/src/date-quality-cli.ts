@@ -53,7 +53,8 @@ const COLS = sql`
   j.id, j.court, to_char(j.judgment_date, 'YYYY-MM-DD') AS jd, j.source_url,
   left(j.full_text, ${SPAN}) AS head`;
 
-const judge = (r: Row) => dateQuality({ judgmentDate: r.jd, sourceUrl: r.source_url, text: r.head });
+const judge = (r: Row) =>
+  dateQuality({ judgmentDate: r.jd, sourceUrl: r.source_url, text: r.head });
 
 async function runSample(n: number) {
   const points = Array.from({ length: n }, () => randomUUID());
@@ -79,7 +80,16 @@ async function runSample(n: number) {
       withFilename++;
       if (v.filenameDeltaDays === 0) filenameAgrees++;
       const a = Math.abs(v.filenameDeltaDays);
-      const b = a === 0 ? 'exact' : a === 1 ? 'off_by_one_day' : a <= 90 ? '2_to_90_days' : a <= 366 ? 'under_a_year' : 'over_a_year';
+      const b =
+        a === 0
+          ? 'exact'
+          : a === 1
+            ? 'off_by_one_day'
+            : a <= 90
+              ? '2_to_90_days'
+              : a <= 366
+                ? 'under_a_year'
+                : 'over_a_year';
       deltaBuckets.set(b, (deltaBuckets.get(b) ?? 0) + 1);
     }
     if (v.offByOneDay) {
@@ -157,7 +167,9 @@ async function runExport() {
     walked += page.length;
     cursor = page[page.length - 1]!.id;
     writeFileSync(cursorFile, cursor);
-    process.stdout.write(`\r  walked ${walked.toLocaleString()}  suspect ${written.toLocaleString()}`);
+    process.stdout.write(
+      `\r  walked ${walked.toLocaleString()}  suspect ${written.toLocaleString()}`,
+    );
     if (page.length < PAGE) break;
   }
   console.log(`\nwalked ${walked} · suspect ${written} · cursor ${cursor}`);

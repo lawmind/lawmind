@@ -169,16 +169,16 @@ export function rateLimit(rule: RateLimitRule) {
     if (!result.allowed) {
       const retryAfter = Math.ceil(result.retryAfterMs / 1000);
       logger.warn(
-        { request_id: c.get('requestId'), rule: rule.name, path: c.req.path, retry_after: retryAfter },
+        {
+          request_id: c.get('requestId'),
+          rule: rule.name,
+          path: c.req.path,
+          retry_after: retryAfter,
+        },
         'rate limit exceeded',
       );
       c.header('Retry-After', String(Math.max(1, retryAfter)));
-      return fail(
-        c,
-        'RATE_LIMITED',
-        'Too many requests. Please wait a moment and try again.',
-        429,
-      );
+      return fail(c, 'RATE_LIMITED', 'Too many requests. Please wait a moment and try again.', 429);
     }
     await next();
   };

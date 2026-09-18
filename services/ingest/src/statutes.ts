@@ -97,7 +97,7 @@ export function assertExpectedAct(
   if (expectMinistry === null && !act.actId.startsWith('AC_CEN_')) {
     throw new Error(
       `"${act.shortTitle}" has act id "${act.actId}", which is not a Central Act (AC_CEN_) — ` +
-        'refusing a State enactment under a Central code\'s name',
+        "refusing a State enactment under a Central code's name",
     );
   }
 }

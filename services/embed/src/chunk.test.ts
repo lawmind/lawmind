@@ -149,7 +149,11 @@ describe('chunkJudgment', () => {
     const text = 'A'.repeat(190) + ' ' + 'B'.repeat(35); // 226 chars total
     const chunks = chunkJudgment(text, opts); // maxChars 200, minChars 40
     assert.equal(chunks.length, 1, 'the short tail should have merged into one chunk');
-    assert.equal(chunks[0]!.offset, -1, 'an unverifiable position must not be reported as offset 0 or as a guess');
+    assert.equal(
+      chunks[0]!.offset,
+      -1,
+      'an unverifiable position must not be reported as offset 0 or as a guess',
+    );
   });
 
   it('accounts for leading whitespace in fullText when computing offset', () => {
@@ -158,7 +162,10 @@ describe('chunkJudgment', () => {
     const chunks = chunkJudgment(withLeadingWs, opts);
     for (const c of chunks) {
       const span = withLeadingWs.slice(c.offset, c.offset + c.bodyLength);
-      assert.ok(c.text.endsWith(span), `chunk ${c.index} span not recovered against the untrimmed text`);
+      assert.ok(
+        c.text.endsWith(span),
+        `chunk ${c.index} span not recovered against the untrimmed text`,
+      );
     }
     // The first chunk's body must not start at 0 -- that would be the leading
     // whitespace, not real text.

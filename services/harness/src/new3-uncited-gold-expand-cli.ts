@@ -32,15 +32,21 @@
  * DB cost: 2-3 batched IN/ANY queries over <=1000 ids total. Not a scan.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import postgres, { type Sql } from 'postgres';
+import postgres from 'postgres';
 import { sslFor } from './db-url.ts';
 
 const TARGET_NEW_CASES = 150;
 const MIN_EVIDENCE_CHARS = 100;
 const MAX_EVIDENCE_CHARS = 600;
 
-const CONTROL_CHAR_CODES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-const CONTROL_CHAR_RE = new RegExp(`[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`, 'g');
+const CONTROL_CHAR_CODES = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31,
+];
+const CONTROL_CHAR_RE = new RegExp(
+  `[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`,
+  'g',
+);
 function mojibakeCount(text: string): number {
   return (text.match(CONTROL_CHAR_RE) ?? []).length;
 }
@@ -76,8 +82,17 @@ type HoldingRow = {
   model: string;
 };
 
-const ALLOWED = ['lexical_similarity', 'dense_semantic_similarity', 'court_match', 'date_proximity'];
-const PROHIBITED = ['inbound_citation_count', 'citation_graph_authority_score', 'pagerank_style_score'];
+const ALLOWED = [
+  'lexical_similarity',
+  'dense_semantic_similarity',
+  'court_match',
+  'date_proximity',
+];
+const PROHIBITED = [
+  'inbound_citation_count',
+  'citation_graph_authority_score',
+  'pagerank_style_score',
+];
 
 async function main() {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
@@ -86,10 +101,15 @@ async function main() {
     process.exit(2);
   }
   const v1Path = new URL('../../../docs/ai/new3-uncited-authority-gold.json', import.meta.url);
-  const v1: { generatedAt: string; population: unknown; cases: V1Case[] } = JSON.parse(readFileSync(v1Path, 'utf8'));
+  const v1: { generatedAt: string; population: unknown; cases: V1Case[] } = JSON.parse(
+    readFileSync(v1Path, 'utf8'),
+  );
   console.log(`v1: ${v1.cases.length} cases`);
 
-  const holdingsPath = new URL('../../../docs/ai/embedding-manifests/legal-objects/holdings.jsonl', import.meta.url);
+  const holdingsPath = new URL(
+    '../../../docs/ai/embedding-manifests/legal-objects/holdings.jsonl',
+    import.meta.url,
+  );
   const holdingLines = readFileSync(holdingsPath, 'utf8').trim().split('\n');
   const holdings: HoldingRow[] = holdingLines.map((l) => JSON.parse(l));
   console.log(`holdings.jsonl: ${holdings.length} rows`);
@@ -101,7 +121,9 @@ async function main() {
     arr.push(h);
     byJudgment.set(h.judgmentId, arr);
   }
-  console.log(`distinct judgments in holdings population: ${byJudgment.size} (v1 already used ${v1AuthorityIds.size})`);
+  console.log(
+    `distinct judgments in holdings population: ${byJudgment.size} (v1 already used ${v1AuthorityIds.size})`,
+  );
 
   // One evidence-length-eligible holding per judgment, not already in v1, spread by court.
   const candidates: HoldingRow[] = [];
@@ -109,7 +131,12 @@ async function main() {
   for (const [judgmentId, rows] of byJudgment) {
     if (v1AuthorityIds.has(judgmentId)) continue;
     const pick = rows
-      .filter((r) => r.evidence && r.evidence.length >= MIN_EVIDENCE_CHARS && r.evidence.length <= MAX_EVIDENCE_CHARS)
+      .filter(
+        (r) =>
+          r.evidence &&
+          r.evidence.length >= MIN_EVIDENCE_CHARS &&
+          r.evidence.length <= MAX_EVIDENCE_CHARS,
+      )
       .sort((a, b) => b.evidence.length - a.evidence.length)[0];
     if (!pick) continue;
     candidates.push(pick);
@@ -125,11 +152,15 @@ async function main() {
     byCourtCount.set(c.court, n + 1);
     selected.push(c);
   }
-  console.log(`selected ${selected.length} new candidates across ${byCourtCount.size} courts (pre-verification)`);
+  console.log(
+    `selected ${selected.length} new candidates across ${byCourtCount.size} courts (pre-verification)`,
+  );
 
   const sql = postgres(url, { ssl: sslFor(url), max: 3 });
   try {
-    const allCheckIds = [...new Set([...v1.cases.map((c) => c.authority_id), ...selected.map((c) => c.judgmentId)])];
+    const allCheckIds = [
+      ...new Set([...v1.cases.map((c) => c.authority_id), ...selected.map((c) => c.judgmentId)]),
+    ];
 
     const inbound = await sql<{ cited_judgment_id: string; n: number }[]>`
       SELECT cited_judgment_id::text, count(DISTINCT citing_judgment_id)::int AS n
@@ -138,15 +169,26 @@ async function main() {
       GROUP BY 1
     `;
     const inboundMap = new Map(inbound.map((r) => [r.cited_judgment_id, r.n]));
-    console.log(`inbound-citation check: ${inbound.length} of ${allCheckIds.length} ids have >=1 inbound citation`);
+    console.log(
+      `inbound-citation check: ${inbound.length} of ${allCheckIds.length} ids have >=1 inbound citation`,
+    );
 
-    const idRows = await sql<{ id: string; case_title: string; script_quality: string | null; text_quality: string | null }[]>`
+    const idRows = await sql<
+      {
+        id: string;
+        case_title: string;
+        script_quality: string | null;
+        text_quality: string | null;
+      }[]
+    >`
       SELECT id::text, case_title, script_quality::text, text_quality::text
       FROM judgments
       WHERE id = ANY(${allCheckIds}::uuid[])
     `;
     const byId = new Map(idRows.map((r) => [r.id, r]));
-    console.log(`identity check: ${idRows.length} of ${allCheckIds.length} ids resolve in judgments`);
+    console.log(
+      `identity check: ${idRows.length} of ${allCheckIds.length} ids resolve in judgments`,
+    );
 
     const staging = await sql<{ source_object_id: string }[]>`
       SELECT DISTINCT source_object_id::text
@@ -154,14 +196,24 @@ async function main() {
       WHERE source_object_id = ANY(${allCheckIds}::uuid[])
     `;
     const stagedSet = new Set(staging.map((s) => s.source_object_id));
-    console.log(`reachability check: ${stagedSet.size} of ${allCheckIds.length} ids have a staged document vector`);
+    console.log(
+      `reachability check: ${stagedSet.size} of ${allCheckIds.length} ids have a staged document vector`,
+    );
 
-    function buildCase(id: string, court: string, year: number, evidence: string, seq: number): V1Case | { rejected: string } {
+    function buildCase(
+      id: string,
+      court: string,
+      year: number,
+      evidence: string,
+      seq: number,
+    ): V1Case | { rejected: string } {
       const inboundN = inboundMap.get(id) ?? 0;
-      if (inboundN > 0) return { rejected: `INBOUND_CITATION_FAIL: ${inboundN} citing judgment(s) found live` };
+      if (inboundN > 0)
+        return { rejected: `INBOUND_CITATION_FAIL: ${inboundN} citing judgment(s) found live` };
       const live = byId.get(id);
       if (!live) return { rejected: 'AUTHORITY_IDENTITY_FAIL: id no longer resolves in judgments' };
-      if (mojibakeCount(evidence) > 5) return { rejected: 'TEXT_USABLE_FAIL: >5 control chars in evidence text' };
+      if (mojibakeCount(evidence) > 5)
+        return { rejected: 'TEXT_USABLE_FAIL: >5 control chars in evidence text' };
       return {
         query_id: `UAG2-${String(seq).padStart(3, '0')}`,
         gold_provenance_type: 'HOLDING_DERIVED',
@@ -210,18 +262,23 @@ async function main() {
       version: 2,
       generatedAt: new Date().toISOString(),
       generatedBy: 'NEW3',
-      purpose: 'P3 of the mission brief: substantially expand the uncited-authority gold class. Every row here has ZERO inbound citations verified live, so no measurement built from it can be won by a citation-graph shortcut.',
-      rebuiltFrom: 'docs/ai/new3-uncited-authority-gold.json (v1, 26 cases) -- re-validated, not silently mutated; v1 left on disk untouched',
+      purpose:
+        'P3 of the mission brief: substantially expand the uncited-authority gold class. Every row here has ZERO inbound citations verified live, so no measurement built from it can be won by a citation-graph shortcut.',
+      rebuiltFrom:
+        'docs/ai/new3-uncited-authority-gold.json (v1, 26 cases) -- re-validated, not silently mutated; v1 left on disk untouched',
       population: {
-        source: 'docs/ai/embedding-manifests/legal-objects/holdings.jsonl (LCC LEGAL_OBJECT_VECTOR_MANIFEST_READY v2, bus 0892)',
+        source:
+          'docs/ai/embedding-manifests/legal-objects/holdings.jsonl (LCC LEGAL_OBJECT_VECTOR_MANIFEST_READY v2, bus 0892)',
         distinctJudgmentsInHoldingPopulation: byJudgment.size,
         newCandidatesConsidered: selected.length,
         newCandidatesPromoted: finalCases.length - (v1.cases.length - rejectedV1.length),
         v1CasesReVerified: v1.cases.length,
         v1CasesStillValid: v1.cases.length - rejectedV1.length,
         v1CasesQuarantined: rejectedV1.length,
-        verificationMethod: 'SELECT cited_judgment_id, count(DISTINCT citing_judgment_id) FROM judgment_citations WHERE cited_judgment_id = ANY(ids) GROUP BY 1 -- run live this session against judgment_citations, batched over all v1+candidate ids in one query',
-        samplingMethod: 'one holding per judgment (longest evidence 100-600 chars), deterministic sort by judgmentId, capped at 12 per court for diversity, excluding all 26 v1 authority_ids',
+        verificationMethod:
+          'SELECT cited_judgment_id, count(DISTINCT citing_judgment_id) FROM judgment_citations WHERE cited_judgment_id = ANY(ids) GROUP BY 1 -- run live this session against judgment_citations, batched over all v1+candidate ids in one query',
+        samplingMethod:
+          'one holding per judgment (longest evidence 100-600 chars), deterministic sort by judgmentId, capped at 12 per court for diversity, excluding all 26 v1 authority_ids',
       },
       caveat:
         'Same construction as v1: query text IS a substring of the target (own_text_span), so success rates are an upper bound, not a paraphrase-robustness measurement. NEW1 gold-contract.ts already PROHIBITS sparse_lexical and CAUTIONS dense_similarity for this provenance type -- unchanged.',
@@ -231,10 +288,15 @@ async function main() {
       cases: finalCases,
     };
 
-    const outPath = new URL('../../../docs/ai/new3-uncited-authority-gold-v2.json', import.meta.url);
+    const outPath = new URL(
+      '../../../docs/ai/new3-uncited-authority-gold-v2.json',
+      import.meta.url,
+    );
     writeFileSync(outPath, `${JSON.stringify(doc, null, 2)}\n`);
 
-    console.log(`\nV2: ${finalCases.length} cases (${v1.cases.length - rejectedV1.length} re-verified from v1 + ${finalCases.length - (v1.cases.length - rejectedV1.length)} new)`);
+    console.log(
+      `\nV2: ${finalCases.length} cases (${v1.cases.length - rejectedV1.length} re-verified from v1 + ${finalCases.length - (v1.cases.length - rejectedV1.length)} new)`,
+    );
     console.log(`v1 quarantined: ${rejectedV1.length}`, rejectedV1);
     console.log(`new candidates rejected: ${rejectedNew.length}`);
     console.log('by court:', byCourt);

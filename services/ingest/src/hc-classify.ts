@@ -378,7 +378,8 @@ const DISMISSED_FORMS =
  * discharged is it failing. Both are decisions on the merits, and both are
  * printed with the Bombay/Gujarat numeric prefixes (`38-`, `58-`, `39-`).
  */
-const RULE_OUTCOME = /(RULE ABSOLUTE|RULE MADE ABSOLUTE|RULE DISCHARGED|NOTICE DISCHARGED|\bABSOLUTE\b)/;
+const RULE_OUTCOME =
+  /(RULE ABSOLUTE|RULE MADE ABSOLUTE|RULE DISCHARGED|NOTICE DISCHARGED|\bABSOLUTE\b)/;
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────

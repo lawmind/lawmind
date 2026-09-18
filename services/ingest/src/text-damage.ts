@@ -284,7 +284,8 @@ export function damageVerdict(input: DamageInput): DamageResult {
   }
   if (evidence.puaDensity > MAX_PUA_DENSITY) reasons.push('PRIVATE_USE_AREA');
   if (evidence.replacementDensity > MAX_REPLACEMENT_DENSITY) reasons.push('REPLACEMENT_CHAR');
-  if (evidence.longLetterRunShare > MAX_LONG_LETTER_RUN_SHARE) reasons.push('WORD_SPACING_DESTROYED');
+  if (evidence.longLetterRunShare > MAX_LONG_LETTER_RUN_SHARE)
+    reasons.push('WORD_SPACING_DESTROYED');
   if (
     evidence.truncatedShare !== null &&
     evidence.probeHits >= MIN_PROBE_HITS &&
@@ -296,7 +297,10 @@ export function damageVerdict(input: DamageInput): DamageResult {
   /* A stored verdict outranks a scan: it was made with the PDF's own font
    * dictionary or a second extraction in hand, which no scan of the text has. */
   if (input.storedScriptQuality === 'legacy_font_ascii') reasons.push('LEGACY_FONT_ASCII_STORED');
-  if (input.storedScriptQuality === 'devanagari_deleted' || input.storedScriptQuality === 'damaged_other') {
+  if (
+    input.storedScriptQuality === 'devanagari_deleted' ||
+    input.storedScriptQuality === 'damaged_other'
+  ) {
     reasons.push('SCRIPT_DAMAGE_STORED');
   }
 
@@ -306,7 +310,11 @@ export function damageVerdict(input: DamageInput): DamageResult {
 
   const verified = reasons.some(isVerifiedReason);
   return {
-    verdict: verified ? 'TEXT_UNSAFE_VERIFIED' : reasons.length > 0 ? 'TEXT_DAMAGE_SUSPECT' : 'UNKNOWN',
+    verdict: verified
+      ? 'TEXT_UNSAFE_VERIFIED'
+      : reasons.length > 0
+        ? 'TEXT_DAMAGE_SUSPECT'
+        : 'UNKNOWN',
     reasons,
     detector: TEXT_DAMAGE_VERSION,
     evidence,

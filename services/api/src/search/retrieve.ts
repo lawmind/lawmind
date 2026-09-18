@@ -21,7 +21,6 @@ import { SEARCH_PHASE, type RetrievalTimings } from './timings.ts';
 import { canonicalAct } from '@lawmind/ingest/sections';
 
 import {
-  precedentialEffect,
   precedentialPolicy,
   unappliedTreatment,
   type OverruledStatus,
@@ -965,7 +964,14 @@ export async function admitLexical(
   // admit. Unknown is not small.
   const admitted = !capped && population <= FILTERED_MAX_ELIGIBLE_ROWS;
   if (signals) signals.filteredAdmission = admitted ? 'admitted' : 'refused';
-  return { lexemes, rarestDf, admitted, corpusWideAdmitted: false, population, populationCapped: capped };
+  return {
+    lexemes,
+    rarestDf,
+    admitted,
+    corpusWideAdmitted: false,
+    population,
+    populationCapped: capped,
+  };
 }
 
 async function sparseAny(

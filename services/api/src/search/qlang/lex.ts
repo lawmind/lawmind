@@ -102,8 +102,18 @@ const NEAR_RE = /^NEAR\/(\d{1,3})/i;
  * into four that must all match.
  */
 function isBreak(ch: string): boolean {
-  return ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r' ||
-    ch === '(' || ch === ')' || ch === '[' || ch === ']' || ch === '"' || ch === ':';
+  return (
+    ch === ' ' ||
+    ch === '\t' ||
+    ch === '\n' ||
+    ch === '\r' ||
+    ch === '(' ||
+    ch === ')' ||
+    ch === '[' ||
+    ch === ']' ||
+    ch === '"' ||
+    ch === ':'
+  );
 }
 
 /**

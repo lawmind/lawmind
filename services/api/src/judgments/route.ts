@@ -26,11 +26,7 @@ import {
 } from './precedential-effect.ts';
 import { numberedShare, segmentParagraphs } from './paragraphs.ts';
 import { dateQualityOf, dateQualityState } from './date-quality.ts';
-import {
-  bodyTextGrade,
-  bodyTextState,
-  isBodyTextSafe,
-} from '../search/body-text-safety.ts';
+import { bodyTextGrade, bodyTextState, isBodyTextSafe } from '../search/body-text-safety.ts';
 import { generationEvidenceEligible, textOriginOf } from './text-origin.ts';
 import { isoColumn } from '../iso-time.ts';
 import { logger } from '../logger.ts';
@@ -274,15 +270,11 @@ export async function getJudgment(
    *
    * Only reached after the 404, so a bad id counts nothing.
    */
-  recordStepForAuthIdInBackground(
-    userSql,
-    c.get('authId'),
-    'opened_primary_authority',
-    (err) =>
-      logger.error(
-        { request_id: c.get('requestId'), err, step: 'opened_primary_authority' },
-        'activation step not recorded',
-      ),
+  recordStepForAuthIdInBackground(userSql, c.get('authId'), 'opened_primary_authority', (err) =>
+    logger.error(
+      { request_id: c.get('requestId'), err, step: 'opened_primary_authority' },
+      'activation step not recorded',
+    ),
   );
 
   return ok(c, {

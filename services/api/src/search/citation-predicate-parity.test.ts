@@ -72,7 +72,7 @@ const ARMS = [
   {
     name: 'neutral_citation (normalised)',
     pattern: /regexp_replace\(\s*coalesce\(\s*j\.neutral_citation/,
-    why: 'the court\'s own neutral citation, normalised the way judgments_neutral_citation_key indexes it',
+    why: "the court's own neutral citation, normalised the way judgments_neutral_citation_key indexes it",
   },
   {
     name: 'reporter_citations via lawmind_citation_keys',
@@ -85,7 +85,7 @@ const ARMS = [
     why:
       'the AIR and SCC names advocates actually type. Migration 0027 exists because ' +
       'AIR 1973 SC 1461 — the ordinary way to cite Kesavananda — returned NOTHING, ' +
-      'and "a zero result reads as \'no such case\', which is the worst failure ' +
+      "and \"a zero result reads as 'no such case', which is the worst failure " +
       'available to a product whose promise is that a citation is real."',
   },
 ] as const;
@@ -106,8 +106,13 @@ describe('citation resolution is the same question on every path', () => {
       it(site.what + ' resolves ' + arm.name, () => {
         assert.ok(
           arm.pattern.test(code),
-          site.what + ' does not query ' + arm.name + '.\n' +
-            'Why it must: ' + arm.why + '\n' +
+          site.what +
+            ' does not query ' +
+            arm.name +
+            '.\n' +
+            'Why it must: ' +
+            arm.why +
+            '\n' +
             'A citation resolvable on one path and not the other is the defect this file exists for. ' +
             'If the omission is deliberate, say so in SITES with a reason rather than leaving it silent.',
         );

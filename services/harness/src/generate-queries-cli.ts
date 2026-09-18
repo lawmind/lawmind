@@ -132,7 +132,10 @@ function sourceQueries(which: string): HarnessQuery[] {
 async function generate(): Promise<void> {
   const kind = arg('kind', 'query_expansion') as GeneratedKind;
   const limit = Number(arg('limit', '20'));
-  const source = arg('source', kind === 'difficulty_label' || kind === 'adversarial' ? 'failures' : 'all');
+  const source = arg(
+    'source',
+    kind === 'difficulty_label' || kind === 'adversarial' ? 'failures' : 'all',
+  );
 
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set — the llm_calls ledger is not optional');
@@ -156,7 +159,12 @@ async function generate(): Promise<void> {
     if (kind === 'case_name_variation' || kind === 'citation_phrasing') {
       const ids = [...new Set(queries.flatMap((q) => q.goldJudgmentIds))];
       const rows = await sql<
-        { id: string; case_title: string; neutral_citation: string | null; reporter_citations: string[] }[]
+        {
+          id: string;
+          case_title: string;
+          neutral_citation: string | null;
+          reporter_citations: string[];
+        }[]
       >`SELECT id, case_title, neutral_citation, reporter_citations
           FROM judgments WHERE id = ANY(${ids})`;
       for (const r of rows) {
@@ -246,7 +254,9 @@ async function validate(): Promise<void> {
 
   console.log('CORPUS VALIDATION OF GENERATED ITEMS');
   console.log('='.repeat(78));
-  console.log(`${items.length} items on disk · ${checkable.length} make a claim the corpus can settle`);
+  console.log(
+    `${items.length} items on disk · ${checkable.length} make a claim the corpus can settle`,
+  );
 
   const sql = await openDb(url, 2);
   try {
@@ -296,8 +306,12 @@ async function validate(): Promise<void> {
       }
     }
     writeFileSync(OUT_PATH, out.map((i) => JSON.stringify(i)).join('\n') + '\n');
-    console.log(`\nvalidated ${pass} · rejected ${fail} · ${items.length - pass - fail} left UNKNOWN (null)`);
-    console.log('A rejection is a result. Rejected items stay on disk, marked false, and are never used as queries.');
+    console.log(
+      `\nvalidated ${pass} · rejected ${fail} · ${items.length - pass - fail} left UNKNOWN (null)`,
+    );
+    console.log(
+      'A rejection is a result. Rejected items stay on disk, marked false, and are never used as queries.',
+    );
   } finally {
     await sql.end();
   }

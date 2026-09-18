@@ -157,9 +157,7 @@ if (CONFIRM) {
        AND attempts < 3
     RETURNING 1`;
   if (reclaimed.length > 0) {
-    console.log(
-      `  reclaimed ${reclaimed.length} row(s) stranded in RUNNING by a worker that died`,
-    );
+    console.log(`  reclaimed ${reclaimed.length} row(s) stranded in RUNNING by a worker that died`);
   }
 }
 
@@ -379,9 +377,7 @@ const done = (async () => {
 })();
 
 for (const r of fetchable) {
-  child.stdin.write(
-    JSON.stringify({ judgmentId: r.judgment_id, sourceUrl: r.source_url }) + '\n',
-  );
+  child.stdin.write(JSON.stringify({ judgmentId: r.judgment_id, sourceUrl: r.source_url }) + '\n');
 }
 child.stdin.end();
 await done;
@@ -412,8 +408,8 @@ console.log(
     `  unrecoverable  ${tally.unrecoverable}\n` +
     `  failed         ${tally.failed}\n` +
     (noOutput > 0
-      ? `  NO ENGINE OUTPUT ${noOutput}  — the engine produced no line for these; `
-        + `they stay QUEUED for retry. Read the engine's stderr before trusting the numbers above.\n`
+      ? `  NO ENGINE OUTPUT ${noOutput}  — the engine produced no line for these; ` +
+        `they stay QUEUED for retry. Read the engine's stderr before trusting the numbers above.\n`
       : '') +
     `  digit trust    CROSSCHECKED ${tally.digitTrust['CROSSCHECKED'] ?? 0} · ` +
     `SUSPECT ${tally.digitTrust['SUSPECT'] ?? 0} · UNVERIFIED ${tally.digitTrust['UNVERIFIED'] ?? 0}\n` +
@@ -425,7 +421,13 @@ mkdirSync(dirname(JSON_OUT), { recursive: true });
 writeFileSync(
   JSON_OUT,
   JSON.stringify(
-    { kind: 'new2_recovery_worker', confirmed: CONFIRM, at: new Date().toISOString(), tally, detail },
+    {
+      kind: 'new2_recovery_worker',
+      confirmed: CONFIRM,
+      at: new Date().toISOString(),
+      tally,
+      detail,
+    },
     null,
     1,
   ),

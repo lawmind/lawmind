@@ -52,8 +52,7 @@ export type WebhookOutcome =
   | 'failed';
 
 export type SignatureResult =
-  | { readonly ok: true }
-  | { readonly ok: false; readonly reason: string };
+  { readonly ok: true } | { readonly ok: false; readonly reason: string };
 
 /**
  * Verify a provider signature.
@@ -205,9 +204,7 @@ export async function markApplied(sql: Sql, eventId: string, detail?: string): P
  * arrived before the `renewed` it follows must still be applied second.
  */
 export async function deferredEvents(sql: Sql, limit = 100) {
-  return sql<
-    { id: string; provider: string; event_type: string; capability: string | null }[]
-  >`
+  return sql<{ id: string; provider: string; event_type: string; capability: string | null }[]>`
     SELECT id, provider, event_type, capability
       FROM entitlement_events
      WHERE outcome = 'deferred_unknown_user'

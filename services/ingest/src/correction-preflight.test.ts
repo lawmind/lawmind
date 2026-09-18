@@ -58,7 +58,11 @@ test('accepts an unchanged protected population', () => {
 });
 
 test('refuses duplicate ID and conflicting manifest record before live checks', () => {
-  const duplicate = { ...row, proposedDisposition: 'DETERMINISTIC_TO_NULL', proposedReplacement: null };
+  const duplicate = {
+    ...row,
+    proposedDisposition: 'DETERMINISTIC_TO_NULL',
+    proposedReplacement: null,
+  };
   const changed = rehash({ ...manifest, candidateCount: 2, rows: [row, duplicate] });
   const result = refusal(changed, { ...live, rows: [] });
   assert.match(result, /MANIFEST_INVALID:DUPLICATE_JUDGMENT_ID/);

@@ -56,10 +56,41 @@ import { createHash } from 'node:crypto';
  * built by reading real corpus titles rather than guessed.
  */
 const STOPWORDS = new Set([
-  'state', 'union', 'india', 'ors', 'anr', 'anrs', 'and', 'the', 'of', 'v',
-  'vs', 'versus', 'ltd', 'pvt', 'govt', 'government', 'others', 'etc', 'smt',
-  'shri', 'mr', 'mrs', 'no', 'through', 'represented', 'by', 'its',
-  'secretary', 'co', 'ii', 'iii', 'iv', 'anrothers', 'anr.', 'ors.',
+  'state',
+  'union',
+  'india',
+  'ors',
+  'anr',
+  'anrs',
+  'and',
+  'the',
+  'of',
+  'v',
+  'vs',
+  'versus',
+  'ltd',
+  'pvt',
+  'govt',
+  'government',
+  'others',
+  'etc',
+  'smt',
+  'shri',
+  'mr',
+  'mrs',
+  'no',
+  'through',
+  'represented',
+  'by',
+  'its',
+  'secretary',
+  'co',
+  'ii',
+  'iii',
+  'iv',
+  'anrothers',
+  'anr.',
+  'ors.',
 ]);
 
 /** Upper-cased, punctuation stripped, stopwords removed. Order does not matter — Jaccard is set-based. */
@@ -233,14 +264,12 @@ export function rankCandidates(
       const year = Number(j.judgmentDate.slice(0, 4));
       return Number.isFinite(year) && Math.abs(year - citationYear) <= CANDIDATE_YEAR_WINDOW;
     })
-    .map(
-      (j): Candidate => ({
-        judgmentId: j.id,
-        caseTitle: j.caseTitle,
-        judgmentDate: j.judgmentDate,
-        jaccard: jaccardSimilarity(queryTokens, tokenizeName(j.caseTitle)),
-      }),
-    )
+    .map((j): Candidate => ({
+      judgmentId: j.id,
+      caseTitle: j.caseTitle,
+      judgmentDate: j.judgmentDate,
+      jaccard: jaccardSimilarity(queryTokens, tokenizeName(j.caseTitle)),
+    }))
     .filter((c) => c.jaccard > 0)
     .sort((a, b) => b.jaccard - a.jaccard)
     .slice(0, 5);

@@ -54,10 +54,7 @@ import { fileURLToPath } from 'node:url';
 
 const REPO_ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
-export const GRAPH_COVERAGE_PATH = join(
-  REPO_ROOT,
-  'docs/ai/lcc-r12/citation-graph-coverage.json',
-);
+export const GRAPH_COVERAGE_PATH = join(REPO_ROOT, 'docs/ai/lcc-r12/citation-graph-coverage.json');
 
 export type GraphCoverageArtifact = {
   artifact: string;

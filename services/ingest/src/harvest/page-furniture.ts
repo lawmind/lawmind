@@ -121,7 +121,10 @@ const UNAMBIGUOUS: readonly { readonly name: string; readonly re: RegExp }[] = [
    * citations, 40 of them the document's own — zero references to another
    * judgment. A document does not cite itself, so no edge existed to lose.
    */
-  { name: 'ncStamp', re: /^(?:NC\s*:?\s*)?\d{4}\s*:\s*[A-Z]{2,6}(?:-[A-Z]{1,3})?\s*:\s*\d+(?:-DB)?$/i },
+  {
+    name: 'ncStamp',
+    re: /^(?:NC\s*:?\s*)?\d{4}\s*:\s*[A-Z]{2,6}(?:-[A-Z]{1,3})?\s*:\s*\d+(?:-DB)?$/i,
+  },
   /** e-signature panel. Punctuation required; short; no free-text tail. */
   { name: 'sigVerified', re: /^signature\s+not\s+verified$/i },
   { name: 'sigSignedBy', re: /^signed\s+by\s*:\s*[A-Za-z][A-Za-z. ]{0,38}$/i },

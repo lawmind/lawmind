@@ -68,10 +68,10 @@ export function canEgress(payloadClass: EgressPayloadClass, provider: string): E
   return {
     ok: false,
     reason:
-      `services/ingest may not send ${payloadClass} to ${provider}. This service processes the `
-      + 'published corpus and holds no advocate data; a private payload here is a mistake, not a '
-      + 'routing choice. Route it through services/api/src/llm/provider-policy.ts, which is the '
-      + 'only place a private class is permitted and only against a RECORDED contract.',
+      `services/ingest may not send ${payloadClass} to ${provider}. This service processes the ` +
+      'published corpus and holds no advocate data; a private payload here is a mistake, not a ' +
+      'routing choice. Route it through services/api/src/llm/provider-policy.ts, which is the ' +
+      'only place a private class is permitted and only against a RECORDED contract.',
   };
 }
 

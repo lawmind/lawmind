@@ -95,51 +95,51 @@ export async function measureStructuredGate(
   await sql`SET statement_timeout = 8000`;
   try {
     for (const c of citations) {
-    /**
-     * **`runStructured`'s `cite:` branch (`citationMatchFragment` in
-     * `compile.ts`) can trigger a full-table backward index scan.** Found
-     * running this gate 18 Aug 2026: `EXPLAIN` on a real, common citation
-     * showed the planner choosing `Index Scan Backward using
-     * judgments_judgment_date_idx` — walking the table in date order and
-     * evaluating the (unindexable, correlated) `unnest(reporter_citations)`
-     * predicate row by row — cost estimate 47 MILLION, over `Index Scan using
-     * judgments_neutral_citation_key`, the exact functional index this WHERE
-     * clause matches byte-for-byte. One query ran 31 minutes before being
-     * cancelled. `retrieve.ts`'s `exactCitation` hit and fixed the identical
-     * predicate shape on 17 Aug (see its own header); that fix was never
-     * carried to this sibling call site.
-     *
-     * This is a correctness-adjacent PRODUCTION finding, not a harness-only
-     * one — `search/structured.ts` calls this same `runStructured` for a live
-     * `cite:` field query — and it is server-lane code
-     * (`services/api/src/search/qlang/compile.ts`), not this lane's to fix.
-     * Reported to LCC. Guarded here so one pathological citation cannot hang
-     * this gate for half an hour: a per-query timeout is treated as a
-     * measured FAILURE (the query ran and did not complete), never as a
-     * silent skip — `citationsTested` still counts it. The bound is the `SET
-     * statement_timeout = 8000` immediately above this loop.
-     */
-    let hits: Awaited<ReturnType<typeof runStructured>>;
-    try {
-      hits = await runStructured(sql, parse(`cite:${q(c.alias)}`), 2);
-    } catch {
-      timedOut += 1;
-      failures.push(
-        `cite:${c.alias} → TIMED OUT — likely the full-table backward scan defect, see header`,
-      );
-      continue;
-    }
-    /**
-     * **Rank 1 and nothing else.** A citation naming two judgments is not a
-     * near-miss; it is an ambiguous answer, and `exactCitation` already refuses
-     * to pin in that case. Counting it as a pass would hide the ambiguity.
-     */
-    if (hits.length === 1 && hits[0]?.judgmentId === c.judgment_id) exact++;
-    else {
-      failures.push(
-        `cite:${c.alias} → ${hits.length === 0 ? 'nothing' : `${hits.length} judgment(s), wrong or ambiguous`}`,
-      );
-    }
+      /**
+       * **`runStructured`'s `cite:` branch (`citationMatchFragment` in
+       * `compile.ts`) can trigger a full-table backward index scan.** Found
+       * running this gate 18 Aug 2026: `EXPLAIN` on a real, common citation
+       * showed the planner choosing `Index Scan Backward using
+       * judgments_judgment_date_idx` — walking the table in date order and
+       * evaluating the (unindexable, correlated) `unnest(reporter_citations)`
+       * predicate row by row — cost estimate 47 MILLION, over `Index Scan using
+       * judgments_neutral_citation_key`, the exact functional index this WHERE
+       * clause matches byte-for-byte. One query ran 31 minutes before being
+       * cancelled. `retrieve.ts`'s `exactCitation` hit and fixed the identical
+       * predicate shape on 17 Aug (see its own header); that fix was never
+       * carried to this sibling call site.
+       *
+       * This is a correctness-adjacent PRODUCTION finding, not a harness-only
+       * one — `search/structured.ts` calls this same `runStructured` for a live
+       * `cite:` field query — and it is server-lane code
+       * (`services/api/src/search/qlang/compile.ts`), not this lane's to fix.
+       * Reported to LCC. Guarded here so one pathological citation cannot hang
+       * this gate for half an hour: a per-query timeout is treated as a
+       * measured FAILURE (the query ran and did not complete), never as a
+       * silent skip — `citationsTested` still counts it. The bound is the `SET
+       * statement_timeout = 8000` immediately above this loop.
+       */
+      let hits: Awaited<ReturnType<typeof runStructured>>;
+      try {
+        hits = await runStructured(sql, parse(`cite:${q(c.alias)}`), 2);
+      } catch {
+        timedOut += 1;
+        failures.push(
+          `cite:${c.alias} → TIMED OUT — likely the full-table backward scan defect, see header`,
+        );
+        continue;
+      }
+      /**
+       * **Rank 1 and nothing else.** A citation naming two judgments is not a
+       * near-miss; it is an ambiguous answer, and `exactCitation` already refuses
+       * to pin in that case. Counting it as a pass would hide the ambiguity.
+       */
+      if (hits.length === 1 && hits[0]?.judgmentId === c.judgment_id) exact++;
+      else {
+        failures.push(
+          `cite:${c.alias} → ${hits.length === 0 ? 'nothing' : `${hits.length} judgment(s), wrong or ambiguous`}`,
+        );
+      }
     }
   } finally {
     // Restored even if the loop threw for a reason other than a timeout —

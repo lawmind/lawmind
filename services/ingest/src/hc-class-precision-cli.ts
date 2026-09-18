@@ -72,7 +72,13 @@ const argOf = (name: string, dflt: string | null = null): string | null => {
 const PER_CLASS = Number(argOf('per-class', '50'));
 const JSON_OUT = argOf('json');
 
-const CLASSES = ['decided', 'decided_brief', 'bail_order', 'procedural_disposal', 'reference_stub'] as const;
+const CLASSES = [
+  'decided',
+  'decided_brief',
+  'bail_order',
+  'procedural_disposal',
+  'reference_stub',
+] as const;
 
 type Sample = {
   id: string;
@@ -175,7 +181,9 @@ try {
     takenAt: new Date().toISOString(),
     perClass: PER_CLASS,
     drawn: out.length,
-    methodTally: [...methodTally].sort((a, b) => b[1] - a[1]).map(([method, n]) => ({ method, rows: n })),
+    methodTally: [...methodTally]
+      .sort((a, b) => b[1] - a[1])
+      .map(([method, n]) => ({ method, rows: n })),
     adjudication: {
       status: 'NOT ADJUDICATED',
       instruction:

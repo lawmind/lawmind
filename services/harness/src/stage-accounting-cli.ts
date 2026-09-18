@@ -49,7 +49,10 @@ import postgres from 'postgres';
 import { sslFor } from './db-url.js';
 
 const LOG = new URL('../../../docs/ai/new1-tier-a/stage-embed.log', import.meta.url);
-const MANIFEST = new URL('../../../docs/ai/embedding-manifests/document-vectors/manifest-tier-a.json', import.meta.url);
+const MANIFEST = new URL(
+  '../../../docs/ai/embedding-manifests/document-vectors/manifest-tier-a.json',
+  import.meta.url,
+);
 const OUT = new URL('../../../docs/ai/new1-tier-a/stage-accounting.json', import.meta.url);
 
 type Done = {
@@ -97,8 +100,10 @@ async function main(): Promise<void> {
    * it silently would attribute those rows to nothing. So they default to zero
    * AND `batchesPredatingFields` says how many lines could not answer.
    */
-  const num = (x: number | undefined): number => (typeof x === 'number' && Number.isFinite(x) ? x : 0);
-  const sum = (f: (d: Done) => number | undefined): number => done.reduce((a, d) => a + num(f(d)), 0);
+  const num = (x: number | undefined): number =>
+    typeof x === 'number' && Number.isFinite(x) ? x : 0;
+  const sum = (f: (d: Done) => number | undefined): number =>
+    done.reduce((a, d) => a + num(f(d)), 0);
   const walked = sum((d) => d.rowsInBatch);
   const acc = {
     STAGED_THIS_RUN: sum((d) => d.inserted),
@@ -109,9 +114,17 @@ async function main(): Promise<void> {
     ADMITTED_AS_CITED_AUTHORITY: sum((d) => d.admittedCitedAuthority),
   };
   const batchesPredatingFields = done.filter(
-    (d) => d.skippedTextUnsafe === undefined || d.skippedNowIneligible === undefined || d.skippedAlreadyStaged === undefined,
+    (d) =>
+      d.skippedTextUnsafe === undefined ||
+      d.skippedNowIneligible === undefined ||
+      d.skippedAlreadyStaged === undefined,
   ).length;
-  const attributed = acc.STAGED_THIS_RUN + acc.ALREADY_STAGED + acc.REFUSED_TEXT_UNSAFE + acc.REFUSED_CLASS_OR_TIER + acc.NO_TEXT;
+  const attributed =
+    acc.STAGED_THIS_RUN +
+    acc.ALREADY_STAGED +
+    acc.REFUSED_TEXT_UNSAFE +
+    acc.REFUSED_CLASS_OR_TIER +
+    acc.NO_TEXT;
   const unattributed = walked - attributed;
 
   /**
@@ -125,17 +138,27 @@ async function main(): Promise<void> {
    */
   const residualOf = (d: Done): number =>
     num(d.rowsInBatch) -
-    (num(d.inserted) + num(d.skippedNoText) + num(d.skippedNowIneligible) + num(d.skippedTextUnsafe) + num(d.skippedAlreadyStaged));
+    (num(d.inserted) +
+      num(d.skippedNoText) +
+      num(d.skippedNowIneligible) +
+      num(d.skippedTextUnsafe) +
+      num(d.skippedAlreadyStaged));
   const legacy = done.filter((d) => d.skippedTextUnsafe === undefined);
   const unattributedLegacy = legacy.reduce((a, d) => a + Math.max(0, residualOf(d)), 0);
   const unattributedCurrent = unattributed - unattributedLegacy;
 
   const refusedClasses: Record<string, number> = {};
   for (const d of done)
-    for (const [k, v] of Object.entries(d.skippedByRefusedClass ?? {})) refusedClasses[k] = (refusedClasses[k] ?? 0) + v;
+    for (const [k, v] of Object.entries(d.skippedByRefusedClass ?? {}))
+      refusedClasses[k] = (refusedClasses[k] ?? 0) + v;
 
   // ── the only DB reads, both indexed counts ────────────────────────────────
-  const sql = postgres(url, { max: 1, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 120_000 } });
+  const sql = postgres(url, {
+    max: 1,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 120_000 },
+  });
   const [t] = await sql<{ stage: string; refused: string }[]>`
     SELECT (SELECT count(*)::text FROM new1_doc_vector_stage) AS stage,
            (SELECT count(*)::text FROM new1_doc_vector_stage_refused) AS refused`;
@@ -153,7 +176,8 @@ async function main(): Promise<void> {
   const out = {
     kind: 'new1_stage_accounting',
     measuredAt: new Date().toISOString(),
-    method: 'summed from the walk’s own STAGE DONE lines; each disposition was decided against the LIVE eligibility view when that batch ran',
+    method:
+      'summed from the walk’s own STAGE DONE lines; each disposition was decided against the LIVE eligibility view when that batch ran',
     deployedViewHash: viewHash,
     batchesCompleted: done.length,
     batchesPredatingRefusalFields: batchesPredatingFields,
@@ -176,7 +200,8 @@ async function main(): Promise<void> {
       warning:
         'the manifest population was generated under an older eligibility definition, and two later revisions changed WHICH documents are eligible. A completion percentage against it would use the wrong denominator.',
     },
-    corpusWidePopulation: 'DEFERRED — the three-way join over 18.7M rows exceeded a 900s budget while the walk was staging. Take it in a quiet window; do not estimate it.',
+    corpusWidePopulation:
+      'DEFERRED — the three-way join over 18.7M rows exceeded a 900s budget while the walk was staging. Take it in a quiet window; do not estimate it.',
     verdict:
       unattributedCurrent === 0
         ? `EVERY walked document under the current log format is accounted for: staged, already staged, or refused by a named rule. ${unattributedLegacy} rows sit in 19-Aug batches whose format could not record a refusal reason.`

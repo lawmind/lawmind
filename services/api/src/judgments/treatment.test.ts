@@ -49,7 +49,14 @@ describe('treatment and graph', () => {
     // All SIX real values of judgment_citations.relationship (schema.ts:711) —
     // a fifth was missing here until 11 Aug 2026 (RCC bus 0035): overruledInPart
     // was silently uncounted while `total` (below) already included it.
-    for (const k of ['followed', 'distinguished', 'doubted', 'overruled', 'overruledInPart', 'cites']) {
+    for (const k of [
+      'followed',
+      'distinguished',
+      'doubted',
+      'overruled',
+      'overruledInPart',
+      'cites',
+    ]) {
       assert.equal(typeof counts[k], 'number', `${k} must be a number, not absent`);
     }
   });
@@ -80,7 +87,8 @@ describe('treatment and graph', () => {
       const relationships = rows.map((r) => r.relationship);
       const firstPlainCite = relationships.indexOf('cites');
       const firstPartial = relationships.indexOf('overruled_in_part');
-      if (firstPlainCite === -1 || firstPartial === -1) return t.skip('page did not carry both relationships');
+      if (firstPlainCite === -1 || firstPartial === -1)
+        return t.skip('page did not carry both relationships');
       // A partial overruling is the law moving — it must not be buried behind
       // ordinary citing references in the same page.
       assert.ok(firstPartial < firstPlainCite, 'overruled_in_part must rank ahead of a bare cites');

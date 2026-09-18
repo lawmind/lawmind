@@ -526,7 +526,8 @@ export async function answerStructured(
      * allowed no measurement at all — a negation or a wildcard — which is
      * `never`, not `zero`, and is treated as such everywhere below.
      */
-    const rarestDf = measured.length === 0 ? Infinity : Math.max(...measured.map((m) => m.rarestDf));
+    const rarestDf =
+      measured.length === 0 ? Infinity : Math.max(...measured.map((m) => m.rarestDf));
 
     /**
      * ── ADMISSION 1: is the MATCH SET small? ──────────────────────────────────
@@ -607,7 +608,9 @@ export async function answerStructured(
           /* Present only when a probe actually ran. A query with nothing to
            * narrow it was never counted, and publishing a zero there would read
            * as "we looked and the population was empty". */
-          ...(probe === null ? {} : { population: probe.population, populationCapped: probe.capped }),
+          ...(probe === null
+            ? {}
+            : { population: probe.population, populationCapped: probe.capped }),
         };
       }
     }

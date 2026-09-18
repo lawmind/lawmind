@@ -45,9 +45,21 @@ import {
 
 /** The three rows `assessTransition` reads, as Postgres returns them. */
 const COMMENCEMENT_ROWS = [
-  { short_title: 'The Bharatiya Nyaya Sanhita, 2023', enforcement_date: new Date('2024-07-01T00:00:00Z'), source_url: 'https://www.indiacode.nic.in/handle/123456789/20062' },
-  { short_title: 'The Bharatiya Nagarik Suraksha Sanhita, 2023', enforcement_date: new Date('2024-07-01T00:00:00Z'), source_url: 'https://www.indiacode.nic.in/handle/123456789/20099' },
-  { short_title: 'The Bharatiya Sakshya Adhiniyam, 2023', enforcement_date: new Date('2024-07-01T00:00:00Z'), source_url: 'https://www.indiacode.nic.in/handle/123456789/20063' },
+  {
+    short_title: 'The Bharatiya Nyaya Sanhita, 2023',
+    enforcement_date: new Date('2024-07-01T00:00:00Z'),
+    source_url: 'https://www.indiacode.nic.in/handle/123456789/20062',
+  },
+  {
+    short_title: 'The Bharatiya Nagarik Suraksha Sanhita, 2023',
+    enforcement_date: new Date('2024-07-01T00:00:00Z'),
+    source_url: 'https://www.indiacode.nic.in/handle/123456789/20099',
+  },
+  {
+    short_title: 'The Bharatiya Sakshya Adhiniyam, 2023',
+    enforcement_date: new Date('2024-07-01T00:00:00Z'),
+    source_url: 'https://www.indiacode.nic.in/handle/123456789/20063',
+  },
 ];
 
 /**
@@ -62,7 +74,9 @@ function stubSql(rows: unknown[]): never {
 describe('raisesCriminalQuestion', () => {
   it('routes adv-5 criminal — the string that hits no code name at all', () => {
     assert.equal(
-      raisesCriminalQuestion('My client is charged with cheating. What is the punishment and which section applies?'),
+      raisesCriminalQuestion(
+        'My client is charged with cheating. What is the punishment and which section applies?',
+      ),
       true,
       'adv-5 must route criminal. It contains no code name, no bail, no FIR and no ' +
         '"accused" — a marker list built for retrieval routing lets it through, and ' +
@@ -126,7 +140,10 @@ describe('assessTransition', () => {
       text: 'My client is charged with cheating. What is the punishment and which section applies?',
     });
     assert.equal(v.kind, 'indeterminate');
-    assert.equal((v as Extract<TransitionVerdict, { kind: 'indeterminate' }>).mustAsk, 'offence_date');
+    assert.equal(
+      (v as Extract<TransitionVerdict, { kind: 'indeterminate' }>).mustAsk,
+      'offence_date',
+    );
 
     const ctx = transitionContext(v)!;
     /**
@@ -138,7 +155,10 @@ describe('assessTransition', () => {
     assert.match(ctx, /date/i);
     assert.match(ctx, /2024/);
     assert.match(ctx, /ask when the offence is alleged to have occurred/i);
-    assert.ok(!/\b(417|420|318)\b/.test(ctx), 'the context must not name a section — naming either one is the failure');
+    assert.ok(
+      !/\b(417|420|318)\b/.test(ctx),
+      'the context must not name a section — naming either one is the failure',
+    );
   });
 
   it('an offence the day BEFORE commencement is governed by the old codes', async () => {
@@ -175,7 +195,11 @@ describe('assessTransition', () => {
         text: 'punishment for cheating',
         offenceDate: bad,
       });
-      assert.equal(v.kind, 'indeterminate', JSON.stringify(bad) + ' must not be accepted as a date');
+      assert.equal(
+        v.kind,
+        'indeterminate',
+        JSON.stringify(bad) + ' must not be accepted as a date',
+      );
     }
   });
 
@@ -190,6 +214,10 @@ describe('assessTransition', () => {
       text: 'punishment for cheating',
       offenceDate: '2024-07-15',
     });
-    assert.equal(v.kind, 'unavailable', 'three codes commencing on different days is a per-code question, not a per-date one');
+    assert.equal(
+      v.kind,
+      'unavailable',
+      'three codes commencing on different days is a per-code question, not a per-date one',
+    );
   });
 });

@@ -280,7 +280,7 @@ const CNR_G = /\b([A-Z]{2}HC[0-9]{12,14})\b/g;
  * the date sat 69 characters after it and the row's real number 50 characters
  * further on, so the date won on proximity.
  */
-const CASE_PAIR_G = /(?<!\d[/.\-])(?<!\d)(\d{1,6})\s*(?:of|\/|-)\s*((?:19|20)\d{2})\b/g;
+const CASE_PAIR_G = /(?<!\d[/.-])(?<!\d)(\d{1,6})\s*(?:of|\/|-)\s*((?:19|20)\d{2})\b/g;
 /** Language that introduces somebody else's judgment. */
 const CITING_LEAD_G =
   /(in the case of|reported in|as held in|rel(?:ied|ying) (?:up)?on|reliance (?:up)?on|covered (?:by|under)|by this Court in|passed by this Court|decided by this Court|Cases?\s+Referred|following [a-z ]{0,12}judge?ments?|judge?ments? of this Court|judge?ment dated|order dated|\bv\.\s|\bvs\.?\s|\bversus\b|\bSCC\b|\bSupreme Court\b)/gi;
@@ -340,7 +340,8 @@ export type DocumentIdentity = {
   cnr?: string | null | undefined;
 };
 
-export type OccurrenceVerdict = 'OWN_ID' | 'OWN_POS' | 'FOREIGN_LEAD' | 'FOREIGN_PAIR' | 'FOREIGN_AFTER' | 'UNMARKED';
+export type OccurrenceVerdict =
+  'OWN_ID' | 'OWN_POS' | 'FOREIGN_LEAD' | 'FOREIGN_PAIR' | 'FOREIGN_AFTER' | 'UNMARKED';
 
 /**
  * A citation is introduced by whatever stands CLOSEST to it, not by whatever
@@ -378,7 +379,10 @@ export function classifyOccurrence(
    * the citing phrase works without identity, and it alone accounts for 106 of
    * the 109 measured defects.
    */
-  const ownPairBefore = own === null ? -1 : lastIndexMatching(before, CASE_PAIR_G, (m) => samePair([m[1]!, m[2]!], own));
+  const ownPairBefore =
+    own === null
+      ? -1
+      : lastIndexMatching(before, CASE_PAIR_G, (m) => samePair([m[1]!, m[2]!], own));
   const ownCnrBefore = ownCnr === null ? -1 : before.lastIndexOf(ownCnr);
   const foreignPairBefore =
     own === null
@@ -386,39 +390,62 @@ export function classifyOccurrence(
       : lastIndexMatching(
           before,
           CASE_PAIR_G,
-          (m) => !samePair([m[1]!, m[2]!], own) && before.length - (m.index + m[0]!.length) <= ADJACENT,
+          (m) =>
+            !samePair([m[1]!, m[2]!], own) && before.length - (m.index + m[0]!.length) <= ADJACENT,
         );
-  const foreignCnrBefore = ownCnr === null ? -1 : lastIndexMatching(before, CNR_G, (m) => m[1] !== ownCnr);
+  const foreignCnrBefore =
+    ownCnr === null ? -1 : lastIndexMatching(before, CNR_G, (m) => m[1] !== ownCnr);
   const leadBefore = lastIndexMatching(before, CITING_LEAD_G, () => true);
 
   const ownBefore = Math.max(ownPairBefore, ownCnrBefore);
   const notOwnBefore = Math.max(foreignPairBefore, foreignCnrBefore, leadBefore);
   if (ownBefore >= 0 || notOwnBefore >= 0) {
     if (ownBefore > notOwnBefore) return 'OWN_ID';
-    return Math.max(leadBefore, foreignCnrBefore) > foreignPairBefore ? 'FOREIGN_LEAD' : 'FOREIGN_PAIR';
+    return Math.max(leadBefore, foreignCnrBefore) > foreignPairBefore
+      ? 'FOREIGN_LEAD'
+      : 'FOREIGN_PAIR';
   }
 
   // Nothing introduced it, so the cause title it heads decides — and on this
   // side the FIRST signal is the nearest one.
-  const ownPairAfter = own === null ? -1 : firstIndexMatching(after, CASE_PAIR_G, (m) => samePair([m[1]!, m[2]!], own));
+  const ownPairAfter =
+    own === null
+      ? -1
+      : firstIndexMatching(after, CASE_PAIR_G, (m) => samePair([m[1]!, m[2]!], own));
   const ownCnrAfter = ownCnr === null ? -1 : after.indexOf(ownCnr);
   const foreignPairAfter =
-    own === null ? -1 : firstIndexMatching(after, CASE_PAIR_G, (m) => !samePair([m[1]!, m[2]!], own));
-  const foreignCnrAfter = ownCnr === null ? -1 : firstIndexMatching(after, CNR_G, (m) => m[1] !== ownCnr);
+    own === null
+      ? -1
+      : firstIndexMatching(after, CASE_PAIR_G, (m) => !samePair([m[1]!, m[2]!], own));
+  const foreignCnrAfter =
+    ownCnr === null ? -1 : firstIndexMatching(after, CNR_G, (m) => m[1] !== ownCnr);
   const nearer = (a: number, b: number): number => (a < 0 ? b : b < 0 ? a : Math.min(a, b));
   const ownAfter = nearer(ownPairAfter, ownCnrAfter);
   const notOwnAfter = nearer(foreignPairAfter, foreignCnrAfter);
   if (ownAfter >= 0 || notOwnAfter >= 0)
-    return ownAfter >= 0 && (notOwnAfter < 0 || ownAfter < notOwnAfter) ? 'OWN_ID' : 'FOREIGN_AFTER';
+    return ownAfter >= 0 && (notOwnAfter < 0 || ownAfter < notOwnAfter)
+      ? 'OWN_ID'
+      : 'FOREIGN_AFTER';
 
   return at <= MASTHEAD_MAX ? 'OWN_POS' : 'UNMARKED';
 }
 
-export function neutralCitationFrom(text: string, year: number, identity?: DocumentIdentity): string | null {
+export function neutralCitationFrom(
+  text: string,
+  year: number,
+  identity?: DocumentIdentity,
+): string | null {
   const own = ownCaseNumberPair(identity?.caseNumber);
   const ownCnr = identity?.cnr?.trim() || null;
 
-  type Tally = { id: number; pos: number; lead: number; pair: number; foreignAfter: number; count: number };
+  type Tally = {
+    id: number;
+    pos: number;
+    lead: number;
+    pair: number;
+    foreignAfter: number;
+    count: number;
+  };
   const by = new Map<string, Tally>();
   const scan = new RegExp(NEUTRAL_G.source, NEUTRAL_G.flags);
   for (let m = scan.exec(text); m; m = scan.exec(text)) {
@@ -453,7 +480,9 @@ export function neutralCitationFrom(text: string, year: number, identity?: Docum
   //    case number before it is forgiven only when the citation RECURS, because
   //    a stamp is printed on every page while a footer inherited from a
   //    different order (`CWP/1220/2024`, Punjab & Haryana) is printed once.
-  const furniture = [...by].filter(([, e]) => e.count >= FURNITURE_REPEATS || (e.lead === 0 && e.pair === 0));
+  const furniture = [...by].filter(
+    ([, e]) => e.count >= FURNITURE_REPEATS || (e.lead === 0 && e.pair === 0),
+  );
   if (furniture.length === 1) return furniture[0]![0];
   return only(furniture.filter(([, e]) => e.foreignAfter === 0).map(([c]) => c));
 }

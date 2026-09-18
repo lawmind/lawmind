@@ -68,7 +68,8 @@ type Role =
   | 'COURT_REASONING' | 'FACTS' | 'OTHER_UNKNOWN';
 
 const UNSAFE = new Set<Role>(['SPAN_UNVERIFIABLE', 'DAMAGED_OR_OCR_SUSPECT', 'REPORTER_EDITORIAL', 'PARTY_SUBMISSION', 'QUOTED_PRECEDENT']);
-const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f�]/;
+// eslint-disable-next-line no-control-regex -- detecting control characters is the job
+const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f\ufffd]/;
 const COLLAPSED_GLYPH = /([A-Za-z]\s){12,}/;
 
 /** Identical rules to the prevalence study, so the two numbers are comparable. */

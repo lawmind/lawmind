@@ -77,7 +77,10 @@ async function hcMappings(
       if (!parsed) continue;
       try {
         const file = await withRetry(() => asyncBufferFromUrl({ url: `${HC_BUCKET}/${k.key}` }));
-        const rows = (await parquetReadObjects({ file, columns: ['disposal_nature', 'pdf_link'] })) as Array<{
+        const rows = (await parquetReadObjects({
+          file,
+          columns: ['disposal_nature', 'pdf_link'],
+        })) as Array<{
           disposal_nature?: string;
           pdf_link?: string;
         }>;
@@ -161,9 +164,11 @@ async function main(): Promise<void> {
     for (let i = 0; i < entries.length; i += BATCH) {
       const batch = entries.slice(i, i + BATCH);
       await Promise.all(
-        batch.map(([sourceUrl, value]) => sql`
+        batch.map(
+          ([sourceUrl, value]) => sql`
           UPDATE judgments SET disposal_nature = ${value}
-           WHERE source_url = ${sourceUrl} AND disposal_nature IS NULL`),
+           WHERE source_url = ${sourceUrl} AND disposal_nature IS NULL`,
+        ),
       );
       updated += batch.length;
       console.log(`  applied ${updated}/${entries.length}...`);

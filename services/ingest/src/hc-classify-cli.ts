@@ -49,7 +49,6 @@ function stopIfRequested(): void {
   process.exit(0);
 }
 
-
 // Silent deaths cost three runs today; log the cause instead of vanishing.
 installCrashGuard('hc-classify');
 const BATCH = 1000;
@@ -147,7 +146,8 @@ async function withTransientRetry<T>(what: string, run: () => Promise<T>): Promi
       return await run();
     } catch (err) {
       const code = (err as { code?: string }).code;
-      if (attempt >= WRITE_ATTEMPTS || code === undefined || !TRANSIENT_PG_CODES.has(code)) throw err;
+      if (attempt >= WRITE_ATTEMPTS || code === undefined || !TRANSIENT_PG_CODES.has(code))
+        throw err;
       const waitMs = 2000 * 2 ** (attempt - 1);
       console.error(
         `\n  ${what} retry ${attempt}/${WRITE_ATTEMPTS - 1} after ${code} — waiting ${waitMs / 1000}s`,
@@ -326,7 +326,9 @@ async function main(): Promise<void> {
       process.exit(2);
     }
     if (RESTALE_RULE !== null && (RESUME || RESTALE)) {
-      console.error('--restale-rule selects a population disjoint from --resume and --restale; pass one.');
+      console.error(
+        '--restale-rule selects a population disjoint from --resume and --restale; pass one.',
+      );
       process.exit(2);
     }
     /**
@@ -413,7 +415,9 @@ async function main(): Promise<void> {
       };
       frameIds = (frame.strata ?? []).flatMap((st) => st.ids ?? []);
       if (frameIds.length === 0) {
-        console.error(`${FRAME_PATH} carries no ids — refusing to classify the whole corpus by accident.`);
+        console.error(
+          `${FRAME_PATH} carries no ids — refusing to classify the whole corpus by accident.`,
+        );
         process.exit(2);
       }
       console.log(
@@ -489,7 +493,10 @@ async function main(): Promise<void> {
      * it advanced before `writeClasses`, so the page that killed the run at
      * 706,000 was already counted as walked.
      */
-    const CURSOR_FILE = join(dirname(fileURLToPath(import.meta.url)), '../.checkpoints/hc-classify.cursor');
+    const CURSOR_FILE = join(
+      dirname(fileURLToPath(import.meta.url)),
+      '../.checkpoints/hc-classify.cursor',
+    );
     const ZERO = '00000000-0000-0000-0000-000000000000';
     const usesCursor = RESUME && confirm && frameIds === null;
     let cursor = ZERO;
@@ -499,10 +506,14 @@ async function main(): Promise<void> {
         cursor = saved;
         console.log(`resuming from checkpoint ${cursor}`);
       } else {
-        console.error(`checkpoint file is not a uuid (${JSON.stringify(saved.slice(0, 40))}); starting from zero`);
+        console.error(
+          `checkpoint file is not a uuid (${JSON.stringify(saved.slice(0, 40))}); starting from zero`,
+        );
       }
     } else if (usesCursor) {
-      console.log('no checkpoint — starting from zero; the first page must scan past everything already classified');
+      console.log(
+        'no checkpoint — starting from zero; the first page must scan past everything already classified',
+      );
     }
     let sweeping = false;
     for (;;) {
@@ -522,7 +533,9 @@ async function main(): Promise<void> {
        * The read is trivially safe to repeat — it takes no locks and changes
        * nothing — so unlike the write it needs no idempotence argument.
        */
-      const page = await withTransientRetry('page read', () => sql<Row[]>`
+      const page = await withTransientRetry(
+        'page read',
+        () => sql<Row[]>`
         SELECT id, disposal_nature, case_number, full_text, length(full_text) AS len
         FROM judgments
         WHERE court <> 'Supreme Court of India' AND id > ${cursor}::uuid
@@ -536,13 +549,16 @@ async function main(): Promise<void> {
                     AND full_text ILIKE ${RULE_PREFILTER[RESTALE_RULE]!}`
           }
         ORDER BY id
-        LIMIT ${PAGE}`);
+        LIMIT ${PAGE}`,
+      );
       if (page.length === 0) {
         /* Reached the end. If a checkpoint was used, the walk has only proved
          * the corpus is clean ABOVE where it started, so sweep from zero once
          * before claiming a full pass. */
         if (usesCursor && !sweeping && cursor !== ZERO && !process.argv.includes('--no-sweep')) {
-          console.log(`\n  end of walk — sweeping from zero to verify nothing below ${cursor} was skipped`);
+          console.log(
+            `\n  end of walk — sweeping from zero to verify nothing below ${cursor} was skipped`,
+          );
           sweeping = true;
           cursor = ZERO;
           continue;
@@ -567,7 +583,9 @@ async function main(): Promise<void> {
       cursor = pageEnd;
       if (usesCursor && !sweeping) writeFileSync(CURSOR_FILE, cursor);
 
-      process.stdout.write(`\r  ${confirm ? 'classified + wrote' : 'classified'} ${total.toLocaleString()}`);
+      process.stdout.write(
+        `\r  ${confirm ? 'classified + wrote' : 'classified'} ${total.toLocaleString()}`,
+      );
       if (page.length < PAGE) break;
     }
     const scopeLabel = RESUME
@@ -586,7 +604,9 @@ async function main(): Promise<void> {
     for (const [k, n] of [...byClass.entries()].sort((a, b) => b[1] - a[1])) {
       const pct = ((n / total) * 100).toFixed(1);
       const mean = Math.round((chars.get(k) ?? 0) / n);
-      console.log(`  ${k.padEnd(22)} ${String(n).padStart(6)}  ${pct.padStart(6)}%  ${String(mean).padStart(8)}`);
+      console.log(
+        `  ${k.padEnd(22)} ${String(n).padStart(6)}  ${pct.padStart(6)}%  ${String(mean).padStart(8)}`,
+      );
     }
     console.log('\nrule that fired:');
     for (const [k, n] of [...byMethod.entries()].sort((a, b) => b[1] - a[1])) {
@@ -598,7 +618,9 @@ async function main(): Promise<void> {
       for (const [k, bucket] of samples) {
         console.log(`\n████ ${k}`);
         for (const r of bucket) {
-          console.log(`  [${r.len} chars] ${r.disposal_nature ?? '(no disposal)'} · ${r.case_number}`);
+          console.log(
+            `  [${r.len} chars] ${r.disposal_nature ?? '(no disposal)'} · ${r.case_number}`,
+          );
           console.log(`     ${r.full_text.replace(/\s+/g, ' ').slice(0, 240)}`);
         }
       }

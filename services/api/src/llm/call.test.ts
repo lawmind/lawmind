@@ -186,7 +186,10 @@ test('a search call prefers inferx over OpenRouter when both keys are present', 
       fetchImpl: (async (url: unknown) => {
         calledUrls.push(String(url));
         return new Response(
-          JSON.stringify({ choices: [{ message: { content: 'hi' } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }),
+          JSON.stringify({
+            choices: [{ message: { content: 'hi' } }],
+            usage: { prompt_tokens: 1, completion_tokens: 1 },
+          }),
           { status: 200 },
         );
       }) as unknown as typeof fetch,
@@ -213,7 +216,10 @@ test('falls back to OpenRouter when no inferx key is configured', async () => {
       fetchImpl: (async (url: unknown) => {
         calledUrls.push(String(url));
         return new Response(
-          JSON.stringify({ choices: [{ message: { content: 'hi' } }], usage: { prompt_tokens: 1, completion_tokens: 1, cost: 0.001 } }),
+          JSON.stringify({
+            choices: [{ message: { content: 'hi' } }],
+            usage: { prompt_tokens: 1, completion_tokens: 1, cost: 0.001 },
+          }),
           { status: 200 },
         );
       }) as unknown as typeof fetch,
@@ -238,7 +244,9 @@ test('inferx is never used for a model other than DeepSeek V4 Flash', async () =
       inferxKey: 'ix-key',
       fetchImpl: (async (url: unknown) => {
         calledUrls.push(String(url));
-        return new Response(JSON.stringify({ content: [{ text: 'ok' }], usage: {} }), { status: 200 });
+        return new Response(JSON.stringify({ content: [{ text: 'ok' }], usage: {} }), {
+          status: 200,
+        });
       }) as unknown as typeof fetch,
     },
   );

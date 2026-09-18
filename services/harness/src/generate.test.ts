@@ -126,7 +126,10 @@ test('inferx is preferred over OpenRouter for GENERATION_MODEL when both keys ex
   const fetchImpl = (async (url: unknown) => {
     calledUrls.push(String(url));
     return new Response(
-      JSON.stringify({ choices: [{ message: { content: '[E1]' } }], usage: { prompt_tokens: 1, completion_tokens: 1 } }),
+      JSON.stringify({
+        choices: [{ message: { content: '[E1]' } }],
+        usage: { prompt_tokens: 1, completion_tokens: 1 },
+      }),
       { status: 200 },
     );
   }) as unknown as typeof fetch;

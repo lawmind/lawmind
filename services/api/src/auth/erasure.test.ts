@@ -37,7 +37,12 @@ async function seed(tag: string, role: 'advocate' | 'admin' = 'advocate') {
     INSERT INTO users (auth_id, full_name, phone, email, enrolment_status, role)
     VALUES (${authId}, 'Priya Sharma', '+919999999999', ${email}, 'unverified', ${role})
     RETURNING id`;
-  return { authId, email, userId: u!.id, token: await signAccessToken({ sub: authId, email }, SECRET) };
+  return {
+    authId,
+    email,
+    userId: u!.id,
+    token: await signAccessToken({ sub: authId, email }, SECRET),
+  };
 }
 
 /**
@@ -178,7 +183,10 @@ describe('account deletion', () => {
     assert.ok(row, 'the users row must SURVIVE — audit_log references it and cannot be edited');
     assert.equal(row.full_name, 'Deleted account');
     assert.equal(row.phone, '');
-    assert.ok(!row.email.includes(victim.email.split('@')[0]!), 'the old address is still readable');
+    assert.ok(
+      !row.email.includes(victim.email.split('@')[0]!),
+      'the old address is still readable',
+    );
     assert.ok(row.auth_id.startsWith('erased-'), 'the identity could still sign in');
   });
 

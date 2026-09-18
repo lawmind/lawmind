@@ -64,7 +64,7 @@ const reach = await sql<
 `;
 const byId = new Map(reach.map((r) => [r.id, r]));
 
-const [{ chunk_docs, tranche_docs, union_docs }] = await sql<
+const [countRow] = await sql<
   { chunk_docs: string; tranche_docs: string; union_docs: string }[]
 >`
   WITH c AS (SELECT DISTINCT judgment_id FROM judgment_chunks WHERE embedding IS NOT NULL),
@@ -73,6 +73,9 @@ const [{ chunk_docs, tranche_docs, union_docs }] = await sql<
          (SELECT count(*) FROM t) AS tranche_docs,
          (SELECT count(*) FROM (SELECT judgment_id FROM c UNION SELECT judgment_id FROM t) u) AS union_docs
 `;
+// Three bare `count(*)` sub-selects: exactly one row, always. The assertion is
+// that claim, which `noUncheckedIndexedAccess` cannot make for us.
+const { chunk_docs, tranche_docs, union_docs } = countRow!;
 
 type Cell = {
   queries: number;

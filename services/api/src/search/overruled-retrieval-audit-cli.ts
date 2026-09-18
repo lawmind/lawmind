@@ -91,10 +91,14 @@ async function main(): Promise<void> {
     console.log(`  status matched (returned overruledStatus === db row):     ${statusMatched}`);
     console.log(`  status STALE (returned value differs from the db row):    ${statusStale}`);
     console.log(`  not found in top 10 for its own title (recall, not staleness): ${notFound}`);
-    console.log(`  checked total: ${statusMatched + statusStale} / ${rows.length} found-and-checked`);
+    console.log(
+      `  checked total: ${statusMatched + statusStale} / ${rows.length} found-and-checked`,
+    );
 
     if (statusStale > 0) {
-      console.log('\nSTALE-OVERRULED RATE IS NOT ZERO. This is a defect per CITATION_HARNESS.md, not a warning.');
+      console.log(
+        '\nSTALE-OVERRULED RATE IS NOT ZERO. This is a defect per CITATION_HARNESS.md, not a warning.',
+      );
       exitCode = 1;
     } else {
       console.log('\nstale-overruled rate: 0 -- holds at this sample size.');

@@ -23,9 +23,17 @@ import { after, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const url = process.env['DATABASE_URL'] ?? '';
-const sql = postgres(url, { max: 4, onnotice: () => {}, connection: { statement_timeout: 60_000 } });
+const sql = postgres(url, {
+  max: 4,
+  onnotice: () => {},
+  connection: { statement_timeout: 60_000 },
+});
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 const app = createApp({
   ping: async () => {},
@@ -162,7 +170,8 @@ describe('search continuation', () => {
     );
   });
 
-  it('a page past the end is empty and says so, rather than wrapping to page 1', async () => {
+  it('a page past the end is empty and says so, rather than wrapping to page 1', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const q = 'anticipatory bail twin conditions';
     const first = await search({ query: q });
     const far = await search({ query: q, page: 90, pageSize: 5 });
@@ -175,7 +184,13 @@ describe('search continuation', () => {
   });
 
   it('rejects paging inputs that are not paging inputs', async () => {
-    for (const bad of [{ page: 0 }, { page: -1 }, { pageSize: 0 }, { pageSize: 500 }, { page: 1.5 }]) {
+    for (const bad of [
+      { page: 0 },
+      { page: -1 },
+      { pageSize: 0 },
+      { pageSize: 500 },
+      { page: 1.5 },
+    ]) {
       const res = await app.request('/search', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },

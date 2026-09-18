@@ -144,8 +144,10 @@ type Row = {
  * than discovered.
  */
 async function resolveValueIds(): Promise<string[]> {
-  const rows = await withTransientRetry('resolve value population', async () =>
-    sql<{ id: string }[]>`
+  const rows = await withTransientRetry(
+    'resolve value population',
+    async () =>
+      sql<{ id: string }[]>`
       WITH wanted AS (
         SELECT judgment_id AS id FROM cited_authority
         UNION
@@ -194,9 +196,14 @@ if (!ALL) {
 }
 /* Where in `valueIds` the checkpoint's cursor left off. A binary search would be
  * tidier; the list is one pass and this runs once. */
-let at = ALL ? 0 : valueIds.findIndex((id) => id > ckpt.cursor) === -1 && ckpt.cursor !== ZERO_UUID
-  ? valueIds.length
-  : Math.max(0, valueIds.findIndex((id) => id > ckpt.cursor));
+let at = ALL
+  ? 0
+  : valueIds.findIndex((id) => id > ckpt.cursor) === -1 && ckpt.cursor !== ZERO_UUID
+    ? valueIds.length
+    : Math.max(
+        0,
+        valueIds.findIndex((id) => id > ckpt.cursor),
+      );
 
 for (;;) {
   if (LIMIT > 0 && ckpt.read >= LIMIT) break;

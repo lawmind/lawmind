@@ -59,9 +59,7 @@ export const isTreatmentItem = (item: ChecklistItem): boolean =>
  * generated instruction here would be this lane broadening treatment semantics
  * on its own. It is already sent on the render side, so it is not silent.
  */
-export function treatmentChecklistItems(
-  states: Iterable<PrecedentialState>,
-): ChecklistItem[] {
+export function treatmentChecklistItems(states: Iterable<PrecedentialState>): ChecklistItem[] {
   const items: ChecklistItem[] = [];
 
   for (const m of states) {

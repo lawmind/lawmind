@@ -44,11 +44,7 @@ import {
 } from '../body-text-safety.ts';
 import { distinctCourts } from '../court-category.ts';
 import type { Field, Node } from './parse.ts';
-import {
-  caseNumberSuffixPattern,
-  normaliseTypeToken,
-  parseCaseNumber,
-} from '../case-number.ts';
+import { caseNumberSuffixPattern, normaliseTypeToken, parseCaseNumber } from '../case-number.ts';
 
 /** A nested `postgres.js` fragment. Composable, and always parameterised. */
 export type Frag = ReturnType<Sql>;

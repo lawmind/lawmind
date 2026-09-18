@@ -79,7 +79,8 @@ async function main(): Promise<void> {
     console.log(
       `${missing.length} Hindi quer(y/ies) have no English pair in the CURRENT eval set (derivedFrom not found) — reported, not skipped:`,
     );
-    for (const m of missing) console.log(`  ${m.hi.id} -> ${m.hi.provenance?.derivedFrom ?? 'none recorded'}`);
+    for (const m of missing)
+      console.log(`  ${m.hi.id} -> ${m.hi.provenance?.derivedFrom ?? 'none recorded'}`);
     console.log('');
   }
 
@@ -107,7 +108,17 @@ async function main(): Promise<void> {
         query: q.query,
         goldJudgmentIds: [...q.goldJudgmentIds],
       };
-      const scored = await scoreQuery(sql, hq, embedQuery, 20, undefined, false, undefined, MODE, {});
+      const scored = await scoreQuery(
+        sql,
+        hq,
+        embedQuery,
+        20,
+        undefined,
+        false,
+        undefined,
+        MODE,
+        {},
+      );
       rows.push({
         id: q.id,
         language: tag,
@@ -129,7 +140,9 @@ async function main(): Promise<void> {
     return {
       n,
       successAt5:
-        n === 0 ? 0 : subset.filter((r) => r.foundAtAnyRank !== null && r.foundAtAnyRank <= 5).length / n,
+        n === 0
+          ? 0
+          : subset.filter((r) => r.foundAtAnyRank !== null && r.foundAtAnyRank <= 5).length / n,
       recallAt20: n === 0 ? 0 : subset.filter((r) => r.foundAtAnyRank !== null).length / n,
     };
   };

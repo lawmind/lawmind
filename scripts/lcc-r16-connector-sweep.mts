@@ -50,7 +50,7 @@ const CONNECTOR_SPLIT =
 /** Bounded leading noise a registry prints before the type: a serial, a bullet,
  *  a bracket, the Allahabad `Case :-` label. Bounded on purpose — it strips a
  *  prefix, it never searches for a matter. */
-const LEAD = /^[\s(\[*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]+)?[\s(\[*\-–—.:;,#•]*/;
+const LEAD = /^[\s([*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]+)?[\s([*\-–—.:;,#•]*/;
 const LABEL = /^(?:case|matter|item)[ \t]*:[-–—\s]*/i;
 
 const PARENT_MATTER = /\b(?:IN|ARISING\s+(?:OUT\s+)?(?:OF|FROM)|FROM)[ \t]*$/i;

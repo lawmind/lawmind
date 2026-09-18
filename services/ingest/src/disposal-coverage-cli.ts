@@ -145,7 +145,12 @@ try {
       fullText: INERT_TEXT,
     });
 
-    const entry = { disposal: r.raw_disposal, rows: n, wouldBe: verdict.documentClass, method: verdict.method };
+    const entry = {
+      disposal: r.raw_disposal,
+      rows: n,
+      wouldBe: verdict.documentClass,
+      method: verdict.method,
+    };
 
     if (verdict.documentClass !== null) {
       buckets.stale.push(entry);
@@ -161,15 +166,29 @@ try {
 
   const pct = (x: number) => `${((100 * x) / total).toFixed(1)}%`;
 
-  console.log(`\nDISPOSAL COVERAGE REPLAY — top ${rows.length} distinct strings, ${total.toLocaleString()} rows\n`);
-  console.log(`  STALE      ${String(counts.stale).padStart(9)}  ${pct(counts.stale).padStart(6)}  today's rules DO classify these`);
-  console.log(`  RESIDUE    ${String(counts.residue).padStart(9)}  ${pct(counts.residue).padStart(6)}  refused on purpose (DISPOSED/CLOSED family)`);
-  console.log(`  CANDIDATE  ${String(counts.candidate).padStart(9)}  ${pct(counts.candidate).padStart(6)}  refused, and NOT by a documented decision\n`);
+  console.log(
+    `\nDISPOSAL COVERAGE REPLAY — top ${rows.length} distinct strings, ${total.toLocaleString()} rows\n`,
+  );
+  console.log(
+    `  STALE      ${String(counts.stale).padStart(9)}  ${pct(counts.stale).padStart(6)}  today's rules DO classify these`,
+  );
+  console.log(
+    `  RESIDUE    ${String(counts.residue).padStart(9)}  ${pct(counts.residue).padStart(6)}  refused on purpose (DISPOSED/CLOSED family)`,
+  );
+  console.log(
+    `  CANDIDATE  ${String(counts.candidate).padStart(9)}  ${pct(counts.candidate).padStart(6)}  refused, and NOT by a documented decision\n`,
+  );
 
-  const show = (label: string, list: { disposal: string; rows: number; wouldBe: string | null }[], k: number) => {
+  const show = (
+    label: string,
+    list: { disposal: string; rows: number; wouldBe: string | null }[],
+    k: number,
+  ) => {
     console.log(`  ── ${label} — top ${Math.min(k, list.length)} of ${list.length} distinct ──`);
     for (const e of list.slice(0, k)) {
-      console.log(`     ${String(e.rows).padStart(8)}  ${(e.wouldBe ?? '—').padEnd(20)} ${e.disposal}`);
+      console.log(
+        `     ${String(e.rows).padStart(8)}  ${(e.wouldBe ?? '—').padEnd(20)} ${e.disposal}`,
+      );
     }
     console.log('');
   };

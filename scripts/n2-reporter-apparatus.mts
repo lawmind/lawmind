@@ -89,7 +89,7 @@ const MARKERS: { name: string; re: RegExp; why: string }[] = [
   },
   {
     name: 'DISPOSAL_APPARATUS',
-    re: /^\s*(CIVIL|CRIMINAL) APPELLATE JURISDICTION\s*[:\-]?\s*$/gim,
+    re: /^\s*(CIVIL|CRIMINAL) APPELLATE JURISDICTION\s*[:-]?\s*$/gim,
     why: 'the reporter\'s standard jurisdiction banner above the case',
   },
 ];

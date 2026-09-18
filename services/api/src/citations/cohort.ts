@@ -288,7 +288,8 @@ const MATTER_LONG = new RegExp(
 );
 
 /** `MA/134/2018`, `APPLN/3717/2023`. The slash layout, same anchor. */
-const MATTER_SLASH = /^([A-Za-z][A-Za-z.&'-]{0,15})[ \t]*\/[ \t]*(\d{1,7})[ \t]*\/[ \t]*((?:19|20)\d{2})\b/i;
+const MATTER_SLASH =
+  /^([A-Za-z][A-Za-z.&'-]{0,15})[ \t]*\/[ \t]*(\d{1,7})[ \t]*\/[ \t]*((?:19|20)\d{2})\b/i;
 
 /**
  * Bounded noise a registry prints before the type, stripped so the anchor still
@@ -299,7 +300,7 @@ const MATTER_SLASH = /^([A-Za-z][A-Za-z.&'-]{0,15})[ \t]*\/[ \t]*(\d{1,7})[ \t]*
  * It strips a PREFIX. It never searches for a matter, which is the difference
  * between this and the unbounded "find any number" the round forbade.
  */
-const LEAD = /^[\s(\[*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]*)?[\s(\[*\-–—.:;,#•]*/;
+const LEAD = /^[\s([*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]*)?[\s([*\-–—.:;,#•]*/;
 
 /** Allahabad's cause-title label: `Case :- FIRST APPEAL FROM ORDER No. - 1202 of
  *  1999`. The colon is required, so `Case No.2570 of 2020` — where `Case` IS the

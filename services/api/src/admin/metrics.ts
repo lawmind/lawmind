@@ -224,10 +224,7 @@ export type MetricsSnapshot = {
  * collector that cannot run as its own alert, because "no alerts" and "could
  * not look" are the same silence.
  */
-export async function collectMetrics(
-  sql: Sql,
-  deps: MetricsDeps = {},
-): Promise<MetricsSnapshot> {
+export async function collectMetrics(sql: Sql, deps: MetricsDeps = {}): Promise<MetricsSnapshot> {
   const alerts: Alert[] = [];
   const add = (
     key: keyof typeof ALERT_RULES,
@@ -287,8 +284,16 @@ export async function collectMetrics(
     const failedCount = Number(search?.failed ?? 0);
     if (searchN >= MIN_SAMPLE) {
       add('degradedRate', degradedRate, `${(degradedRate * 100).toFixed(1)}% of searches degraded`);
-      add('zeroResultRate', zeroRate, `${(zeroRate * 100).toFixed(1)}% of searches returned nothing`);
-      add('serverErrorRate', failedRate, `${(failedRate * 100).toFixed(1)}% of searches returned 5xx`);
+      add(
+        'zeroResultRate',
+        zeroRate,
+        `${(zeroRate * 100).toFixed(1)}% of searches returned nothing`,
+      );
+      add(
+        'serverErrorRate',
+        failedRate,
+        `${(failedRate * 100).toFixed(1)}% of searches returned 5xx`,
+      );
       add(
         'admissionRefusalRate',
         refusedRate,
@@ -344,7 +349,11 @@ export async function collectMetrics(
     const [freshness] = await (deps.corpusSql ?? sql)<{ hours: string | null }[]>`
       SELECT EXTRACT(EPOCH FROM (now() - max(created_at))) / 3600 AS hours FROM judgments`;
     const ageHours = Number(freshness?.hours ?? 0);
-    add('releaseDataAgeHours', ageHours, `newest corpus row was written ${Math.round(ageHours)}h ago`);
+    add(
+      'releaseDataAgeHours',
+      ageHours,
+      `newest corpus row was written ${Math.round(ageHours)}h ago`,
+    );
 
     /**
      * Free disk. `statfs` rather than a shelled-out `df`/`wmic`: it is in the
@@ -421,7 +430,8 @@ export async function collectMetrics(
     const generatedForDue = Number(briefing?.generated_for_due ?? 0);
     const recentBriefings = Number(briefing?.recent ?? 0);
     const undelivered = Number(briefing?.undelivered ?? 0);
-    const briefingAgeHours = briefing?.newest_hours === null ? null : Number(briefing?.newest_hours);
+    const briefingAgeHours =
+      briefing?.newest_hours === null ? null : Number(briefing?.newest_hours);
 
     /**
      * Only alerted on once a briefing has EVER been generated. On a database
@@ -718,11 +728,7 @@ export async function collectMetrics(
  * every one of them user-owned — plus one corpus freshness read, which
  * {@link MetricsDeps.corpusSql} supplies and which defaults to `sql`.
  */
-export async function getMetrics(
-  c: Context,
-  sql: Sql,
-  deps: MetricsDeps = {},
-): Promise<Response> {
+export async function getMetrics(c: Context, sql: Sql, deps: MetricsDeps = {}): Promise<Response> {
   try {
     const { payload } = await collectMetrics(sql, deps);
     return ok(c, payload);

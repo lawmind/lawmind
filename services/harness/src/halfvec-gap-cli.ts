@@ -84,9 +84,9 @@ const K = Number(process.env['HALFVEC_GAP_K'] ?? 50);
 const PROBES = Number(process.env['HALFVEC_GAP_PROBES'] ?? 20);
 const EF_SEARCH = Number(process.env['HNSW_EF_SEARCH'] ?? 200);
 
-const doc = JSON.parse(
-  readFileSync('services/harness/src/fixtures/queries.eval.json', 'utf8'),
-) as { queries: { id: string; query: string }[] };
+const doc = JSON.parse(readFileSync('services/harness/src/fixtures/queries.eval.json', 'utf8')) as {
+  queries: { id: string; query: string }[];
+};
 
 const sql = await openDb(url, 3);
 
@@ -135,7 +135,9 @@ async function main(): Promise<void> {
     const q = (p: number) => all[Math.min(all.length - 1, Math.floor(all.length * p))]!;
     const atRisk = (t: number) => all.filter((g) => g < t).length;
 
-    console.log(`adjacent-neighbour gaps in the top ${K}, ${rows.length} probes, ${all.length} gaps`);
+    console.log(
+      `adjacent-neighbour gaps in the top ${K}, ${rows.length} probes, ${all.length} gaps`,
+    );
     console.log('────────────────────────────────────────────────────────────────────────');
     console.log(
       `  min ${all[0]!.toExponential(3)}  p01 ${q(0.01).toExponential(3)}  ` +
@@ -185,10 +187,16 @@ async function main(): Promise<void> {
       top5Gaps: { n: top5.length, min: top5[0], belowMaxThreshold: top5AtRisk },
       limits: [
         'representation loss only — says nothing about ANN approximation under a halfvec-built HNSW graph (C3)',
-        'gaps are measured through the fp32 HNSW index at ef_search=' + EF_SEARCH + ', not by exact scan',
+        'gaps are measured through the fp32 HNSW index at ef_search=' +
+          EF_SEARCH +
+          ', not by exact scan',
         'CX1 error figures are from 5,000 copied vectors; only the GAPS here are at production scale',
       ],
-      perProbe: rows.map((r) => ({ id: r.id, minGap: Math.min(...r.gaps), nearest: r.distances[0] })),
+      perProbe: rows.map((r) => ({
+        id: r.id,
+        minGap: Math.min(...r.gaps),
+        nearest: r.distances[0],
+      })),
     };
     writeFileSync('docs/ai/new1-post-0055/halfvec-gap-at-scale.json', JSON.stringify(out, null, 2));
     console.log('\nwrote docs/ai/new1-post-0055/halfvec-gap-at-scale.json');

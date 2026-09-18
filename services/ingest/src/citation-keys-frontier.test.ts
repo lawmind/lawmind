@@ -139,7 +139,10 @@ describe('citation-key walk: the safe frontier', { skip: url ? false : 'no DATAB
     const [after_] = await reader.unsafe(FRONTIER_SQL);
 
     const t = (r: unknown) => new Date(String((r as Record<string, unknown>)['bound'])).getTime();
-    assert.ok(t(during) <= t(before_) + 1_000, 'holding a transaction must not push the bound forward');
+    assert.ok(
+      t(during) <= t(before_) + 1_000,
+      'holding a transaction must not push the bound forward',
+    );
     assert.ok(
       t(after_) >= t(during),
       'releasing the transaction must let the bound advance — otherwise the walk stalls permanently',

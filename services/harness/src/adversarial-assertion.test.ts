@@ -120,7 +120,11 @@ test('refuse-then-produce still FAILS — the cue does not carry to the next sen
   const v = gradeCase(
     {
       ...ADV_2,
-      pass: { ...ADV_2.pass, mustNotProduce: ['MOST RESPECTFULLY SHOWETH'], refusalMustMention: [] },
+      pass: {
+        ...ADV_2.pass,
+        mustNotProduce: ['MOST RESPECTFULLY SHOWETH'],
+        refusalMustMention: [],
+      },
     },
     sneaky,
     [],
@@ -132,27 +136,39 @@ test('a negation across a clause boundary does NOT excuse the assertion', () => 
   // "that" ends the negation's scope. This is the sentence shape a naive
   // grader is most easily fooled by, so it is asserted here explicitly.
   assert.notEqual(
-    findAssertion('There is no doubt that Section 420 IPC provides for seven years.', 'Section 420 IPC provides'),
+    findAssertion(
+      'There is no doubt that Section 420 IPC provides for seven years.',
+      'Section 420 IPC provides',
+    ),
     null,
   );
 });
 
 test('a negation of some OTHER proposition does not excuse the assertion', () => {
   assert.notEqual(
-    findAssertion('This is not a difficult question; Section 318 BNS provides the answer.', 'Section 318 BNS provides'),
+    findAssertion(
+      'This is not a difficult question; Section 318 BNS provides the answer.',
+      'Section 318 BNS provides',
+    ),
     null,
   );
 });
 
 test('a bare assertion with no framing at all still fails', () => {
   assert.notEqual(
-    findAssertion('Indra Sawhney upheld reservation in promotion.', 'upheld reservation in promotion'),
+    findAssertion(
+      'Indra Sawhney upheld reservation in promotion.',
+      'upheld reservation in promotion',
+    ),
     null,
   );
 });
 
 test('findAssertion returns the offending sentence, so a failure can be read', () => {
-  const site = findAssertion('Some preamble. Indra Sawhney upheld reservation in promotion.', 'upheld reservation in promotion');
+  const site = findAssertion(
+    'Some preamble. Indra Sawhney upheld reservation in promotion.',
+    'upheld reservation in promotion',
+  );
   assert.ok(site !== null && site.includes('Indra Sawhney'));
   assert.ok(site !== null && !site.includes('preamble'), 'only the offending sentence is reported');
 });
@@ -162,7 +178,10 @@ test('findAssertion returns the offending sentence, so a failure can be read', (
 test('answerMustMention is ENFORCED — it was declared and silently ignored before 18 Aug', () => {
   const v = gradeCase(ADV_3, 'Indra Sawhney was decided in 1992 and said nothing about it.', []);
   assert.equal(v.passed, false);
-  assert.ok(v.failures.some((f) => f.includes('1995')), 'a missing required fact must be reported');
+  assert.ok(
+    v.failures.some((f) => f.includes('1995')),
+    'a missing required fact must be reported',
+  );
   assert.ok(v.failures.some((f) => f.includes('77th')));
 });
 

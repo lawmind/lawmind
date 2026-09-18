@@ -15,7 +15,13 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { isAbsolute, join } from 'node:path';
 import { loadNew3Gold } from './new3-gold-adapter.ts';
-import { allowedAcross, featurePolicy, splitByFamily, ALL_FEATURE_FAMILIES, type FeatureFamily } from './gold-contract.ts';
+import {
+  allowedAcross,
+  featurePolicy,
+  splitByFamily,
+  ALL_FEATURE_FAMILIES,
+  type FeatureFamily,
+} from './gold-contract.ts';
 
 const arg = (name: string, fallback: string): string => {
   const i = process.argv.indexOf(name);
@@ -42,19 +48,25 @@ console.log(`rows usable          ${loaded.rows.length}`);
 const byReason = new Map<string, number>();
 for (const d of loaded.dropped) byReason.set(d.reason, (byReason.get(d.reason) ?? 0) + 1);
 console.log(`rows dropped         ${loaded.dropped.length}`);
-for (const [reason, n] of [...byReason].sort((a, b) => b[1] - a[1])) console.log(`  ${reason.padEnd(22)} ${n}`);
+for (const [reason, n] of [...byReason].sort((a, b) => b[1] - a[1]))
+  console.log(`  ${reason.padEnd(22)} ${n}`);
 
 // Per query type, because pooling them is the mistake this report exists to stop.
 // `exact_citation` hands the authority's own citation string back as the query and
 // `case_title` hands back its title; a single "success@5" over all three would be
 // a number about nothing.
 const types = [...new Set(loaded.rows.map((r) => r.queryType))].sort();
-const perType: Record<string, { rows: number; allowed: FeatureFamily[]; prohibited: string[] }> = {};
+const perType: Record<string, { rows: number; allowed: FeatureFamily[]; prohibited: string[] }> =
+  {};
 console.log('\nper query type — what each can measure:');
 for (const t of types) {
   const rows = loaded.rows.filter((r) => r.queryType === t);
   const allowed = allowedAcross(rows);
-  const prohibited = [...new Set(rows.flatMap((r) => featurePolicy(r).prohibited.map((p) => `${p.family}: ${p.why}`)))];
+  const prohibited = [
+    ...new Set(
+      rows.flatMap((r) => featurePolicy(r).prohibited.map((p) => `${p.family}: ${p.why}`)),
+    ),
+  ];
   perType[t] = { rows: rows.length, allowed, prohibited };
   console.log(`\n  ${t}  (${rows.length} rows)`);
   console.log(`    allowed    ${allowed.join(', ')}`);
@@ -62,13 +74,19 @@ for (const t of types) {
 }
 
 const pooledAllowed = allowedAcross(loaded.rows);
-console.log(`\nif pooled across all types, only these survive: ${pooledAllowed.join(', ') || '(none)'}`);
-console.log(`  ${ALL_FEATURE_FAMILIES.length - pooledAllowed.length} of ${ALL_FEATURE_FAMILIES.length} families are lost to pooling`);
+console.log(
+  `\nif pooled across all types, only these survive: ${pooledAllowed.join(', ') || '(none)'}`,
+);
+console.log(
+  `  ${ALL_FEATURE_FAMILIES.length - pooledAllowed.length} of ${ALL_FEATURE_FAMILIES.length} families are lost to pooling`,
+);
 
 const { train, test } = splitByFamily(loaded.rows, 0.3);
 const trainFamilies = new Set(train.map((r) => r.caseFamily));
 const straddle = test.filter((r) => trainFamilies.has(r.caseFamily));
-console.log(`\nsplit by case family: train ${train.length}, held ${test.length}, straddling ${straddle.length}`);
+console.log(
+  `\nsplit by case family: train ${train.length}, held ${test.length}, straddling ${straddle.length}`,
+);
 
 const report = {
   kind: 'new1_gold_contract_report',

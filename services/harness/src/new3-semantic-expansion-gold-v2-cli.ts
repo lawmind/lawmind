@@ -36,21 +36,29 @@
  * total. Not a scan. Resource-gate: DB_SCAN not required.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import postgres, { type Sql } from 'postgres';
+import postgres from 'postgres';
 import { sslFor } from './db-url.ts';
 
 const QUALITY_CONTRACT_VERSION = {
   schema_migration_snapshot: '0056 (judgments.script_quality live)',
   text_quality_column: 'judgments.text_quality numeric(4,3), SCHEMA_TRUTH.md L150/333',
-  script_quality_vocab: 'clean | devanagari_deleted | legacy_font_ascii | mixed_script_ok (+ others), SCHEMA_TRUTH.md L1748-1749',
-  date_plausibility_method: 'live re-fetch of judgments.judgment_date at V2 build time, cited <= citing required; NOT the frozen v1 provenance copy',
+  script_quality_vocab:
+    'clean | devanagari_deleted | legacy_font_ascii | mixed_script_ok (+ others), SCHEMA_TRUTH.md L1748-1749',
+  date_plausibility_method:
+    'live re-fetch of judgments.judgment_date at V2 build time, cited <= citing required; NOT the frozen v1 provenance copy',
   recorded_at: new Date().toISOString(),
 };
 
 // Built from char codes rather than a literal regex escape sequence to avoid
 // any editor/tool round-trip inserting raw control bytes into this source file.
-const CONTROL_CHAR_CODES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-const CONTROL_CHAR_RE = new RegExp(`[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`, 'g');
+const CONTROL_CHAR_CODES = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31,
+];
+const CONTROL_CHAR_RE = new RegExp(
+  `[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`,
+  'g',
+);
 
 function mojibakeCount(text: string): number {
   return (text.match(CONTROL_CHAR_RE) ?? []).length;
@@ -94,7 +102,15 @@ async function main() {
     const citingIds = [...new Set(v1.rows.map((r) => r.provenance.citingJudgmentId))];
     const allIds = [...new Set([...citedIds, ...citingIds])];
 
-    const idRows = await sql<{ id: string; case_title: string; judgment_date: string | null; script_quality: string | null; text_quality: string | null }[]>`
+    const idRows = await sql<
+      {
+        id: string;
+        case_title: string;
+        judgment_date: string | null;
+        script_quality: string | null;
+        text_quality: string | null;
+      }[]
+    >`
       SELECT id::text, case_title, judgment_date::text, script_quality::text, text_quality::text
       FROM judgments
       WHERE id = ANY(${allIds}::uuid[])
@@ -102,7 +118,9 @@ async function main() {
     const byId = new Map(idRows.map((r) => [r.id, r]));
     console.log(`live judgments rows found: ${idRows.length} of ${allIds.length} requested ids`);
 
-    const edgePairs = [...new Set(v1.rows.map((r) => `${r.provenance.citingJudgmentId}::${r.goldJudgmentId}`))].map((p) => p.split('::'));
+    const edgePairs = [
+      ...new Set(v1.rows.map((r) => `${r.provenance.citingJudgmentId}::${r.goldJudgmentId}`)),
+    ].map((p) => p.split('::'));
     const edgeRows = await sql<{ citing_judgment_id: string; cited_judgment_id: string }[]>`
       SELECT DISTINCT citing_judgment_id::text, cited_judgment_id::text
       FROM judgment_citations
@@ -112,7 +130,12 @@ async function main() {
     console.log(`live edges confirmed: ${edgeSet.size} of ${edgePairs.length} requested pairs`);
 
     const v2Rows: V1Row[] = [];
-    const rejected: Array<{ goldJudgmentId: string; citingJudgmentId: string; reasons: string[]; rowIds: string[] }> = [];
+    const rejected: Array<{
+      goldJudgmentId: string;
+      citingJudgmentId: string;
+      reasons: string[];
+      rowIds: string[];
+    }> = [];
     const byCourt: Record<string, number> = {};
     const byRelationship: Record<string, number> = {};
 
@@ -123,25 +146,35 @@ async function main() {
 
       const goldLive = byId.get(goldId);
       const citingLive = byId.get(citingId);
-      if (!goldLive) reasons.push('AUTHORITY_IDENTITY_FAIL: goldJudgmentId no longer resolves in judgments');
+      if (!goldLive)
+        reasons.push('AUTHORITY_IDENTITY_FAIL: goldJudgmentId no longer resolves in judgments');
       else if (goldLive.case_title !== prop.provenance.citedCase) {
-        reasons.push(`AUTHORITY_IDENTITY_FAIL: case_title changed since v1 build ("${prop.provenance.citedCase}" -> "${goldLive.case_title}")`);
+        reasons.push(
+          `AUTHORITY_IDENTITY_FAIL: case_title changed since v1 build ("${prop.provenance.citedCase}" -> "${goldLive.case_title}")`,
+        );
       }
-      if (!citingLive) reasons.push('AUTHORITY_IDENTITY_FAIL: citingJudgmentId no longer resolves in judgments');
+      if (!citingLive)
+        reasons.push('AUTHORITY_IDENTITY_FAIL: citingJudgmentId no longer resolves in judgments');
 
-      if (!edgeSet.has(`${citingId}::${goldId}`)) reasons.push('SOURCE_EDGE_FAIL: citation edge no longer present in judgment_citations');
+      if (!edgeSet.has(`${citingId}::${goldId}`))
+        reasons.push('SOURCE_EDGE_FAIL: citation edge no longer present in judgment_citations');
 
       let dateVerdict: 'PASS' | 'FAIL' | 'DATE_UNKNOWN' = 'DATE_UNKNOWN';
       if (goldLive?.judgment_date && citingLive?.judgment_date) {
-        dateVerdict = new Date(goldLive.judgment_date) > new Date(citingLive.judgment_date) ? 'FAIL' : 'PASS';
+        dateVerdict =
+          new Date(goldLive.judgment_date) > new Date(citingLive.judgment_date) ? 'FAIL' : 'PASS';
         if (dateVerdict === 'FAIL') {
-          reasons.push(`DATE_PLAUSIBILITY_FAIL: cited judgment_date ${goldLive.judgment_date} is AFTER citing judgment_date ${citingLive.judgment_date}`);
+          reasons.push(
+            `DATE_PLAUSIBILITY_FAIL: cited judgment_date ${goldLive.judgment_date} is AFTER citing judgment_date ${citingLive.judgment_date}`,
+          );
         }
       }
 
       const mojibakeRows = rows.filter((r) => mojibakeCount(r.query) > 5);
       if (mojibakeRows.length > 0) {
-        reasons.push(`TEXT_USABLE_FAIL: ${mojibakeRows.length} row(s) contain >5 control chars (mojibake) in query text`);
+        reasons.push(
+          `TEXT_USABLE_FAIL: ${mojibakeRows.length} row(s) contain >5 control chars (mojibake) in query text`,
+        );
       }
 
       if (reasons.length === 0) {
@@ -162,7 +195,12 @@ async function main() {
         byCourt[court] = (byCourt[court] ?? 0) + 1;
         byRelationship[prop.relationship] = (byRelationship[prop.relationship] ?? 0) + 1;
       } else {
-        rejected.push({ goldJudgmentId: goldId, citingJudgmentId: citingId, reasons, rowIds: rows.map((r) => r.id) });
+        rejected.push({
+          goldJudgmentId: goldId,
+          citingJudgmentId: citingId,
+          reasons,
+          rowIds: rows.map((r) => r.id),
+        });
       }
     }
 
@@ -171,9 +209,11 @@ async function main() {
       builtAt: new Date().toISOString(),
       builtBy: 'NEW3',
       rebuiltFrom: 'docs/ai/new3-semantic-expansion-gold.json (v1, 250 authorities / 750 rows)',
-      method: 'v1 rows re-validated against LIVE corpus: authority identity, source edge, date plausibility (re-fetched, not cached), text usability (mojibake scan). Failing rows quarantined, not deleted or silently reused.',
+      method:
+        'v1 rows re-validated against LIVE corpus: authority identity, source edge, date plausibility (re-fetched, not cached), text usability (mojibake scan). Failing rows quarantined, not deleted or silently reused.',
       qualityContractVersion: QUALITY_CONTRACT_VERSION,
-      distinctGoldAuthorities: v2Rows.length > 0 ? new Set(v2Rows.map((r) => r.goldJudgmentId)).size : 0,
+      distinctGoldAuthorities:
+        v2Rows.length > 0 ? new Set(v2Rows.map((r) => r.goldJudgmentId)).size : 0,
       totalRows: v2Rows.length,
       byCourt,
       byRelationship,
@@ -191,12 +231,20 @@ async function main() {
       entries: rejected,
     };
 
-    const v2Path = new URL('../../../docs/ai/new3-semantic-expansion-gold-v2.json', import.meta.url);
-    const rejPath = new URL('../../../docs/ai/new3-semantic-expansion-gold-v2-rejected.json', import.meta.url);
+    const v2Path = new URL(
+      '../../../docs/ai/new3-semantic-expansion-gold-v2.json',
+      import.meta.url,
+    );
+    const rejPath = new URL(
+      '../../../docs/ai/new3-semantic-expansion-gold-v2-rejected.json',
+      import.meta.url,
+    );
     writeFileSync(v2Path, `${JSON.stringify(v2Doc, null, 2)}\n`);
     writeFileSync(rejPath, `${JSON.stringify(rejectedDoc, null, 2)}\n`);
 
-    console.log(`\nV2: ${v2Doc.distinctGoldAuthorities} authorities / ${v2Doc.totalRows} rows PROMOTED`);
+    console.log(
+      `\nV2: ${v2Doc.distinctGoldAuthorities} authorities / ${v2Doc.totalRows} rows PROMOTED`,
+    );
     console.log(`quarantined: ${rejected.length} authorities / ${v2Doc.quarantinedRows} rows`);
     console.log('by court:', byCourt);
     console.log('by relationship:', byRelationship);

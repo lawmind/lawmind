@@ -9,7 +9,10 @@ describe('parseListing', () => {
 <ListBucketResult><Contents><Key>metadata/parquet/year=2024/court=1_12/bench=jammuhc/metadata.parquet</Key><Size>2761931</Size></Contents><Contents><Key>metadata/parquet/year=2024/court=1_12/bench=kashmirhc/metadata.parquet</Key><Size>2314849</Size></Contents><IsTruncated>false</IsTruncated></ListBucketResult>`;
     const { objects, nextToken } = parseListing(xml);
     assert.equal(objects.length, 2);
-    assert.equal(objects[0]!.key, 'metadata/parquet/year=2024/court=1_12/bench=jammuhc/metadata.parquet');
+    assert.equal(
+      objects[0]!.key,
+      'metadata/parquet/year=2024/court=1_12/bench=jammuhc/metadata.parquet',
+    );
     assert.equal(objects[0]!.size, 2761931);
     assert.equal(nextToken, undefined);
   });
@@ -112,9 +115,13 @@ describe('withTimeout', () => {
 
   it('rejects with the underlying error when the promise loses the race by failing, not by hanging', async () => {
     await assert.rejects(
-      withTimeout(async () => {
-        throw new Error('pdf 404');
-      }, 1000, 'fails-fast'),
+      withTimeout(
+        async () => {
+          throw new Error('pdf 404');
+        },
+        1000,
+        'fails-fast',
+      ),
       /pdf 404/,
     );
   });

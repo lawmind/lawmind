@@ -141,12 +141,14 @@ export function paramsHash(capability: Capability, params: Record<string, unknow
   return createHash('sha256').update(`${capability}:${canonical}`).digest('hex');
 }
 
-export type StartRefusal =
-  | { readonly ok: false; readonly reason: string; readonly code: 'USER_CAP' | 'GLOBAL_CAP' };
+export type StartRefusal = {
+  readonly ok: false;
+  readonly reason: string;
+  readonly code: 'USER_CAP' | 'GLOBAL_CAP';
+};
 
 export type StartResult =
-  | { readonly ok: true; readonly job: PremiumJob; readonly created: boolean }
-  | StartRefusal;
+  { readonly ok: true; readonly job: PremiumJob; readonly created: boolean } | StartRefusal;
 
 /**
  * Create the job, or return the one that already exists.
@@ -344,9 +346,7 @@ export async function getJob(sql: Sql, jobId: string, userId: string): Promise<P
 export async function costPerOutcome(
   sql: Sql,
 ): Promise<{ capability: string; succeeded: number; totalUsd: number; usdPerSuccess: number }[]> {
-  const rows = await sql<
-    { capability: string; succeeded: string; total_usd: string }[]
-  >`
+  const rows = await sql<{ capability: string; succeeded: string; total_usd: string }[]>`
     SELECT capability,
            count(*) FILTER (WHERE state = 'succeeded')::text AS succeeded,
            COALESCE(SUM(cost_usd), 0)::text AS total_usd

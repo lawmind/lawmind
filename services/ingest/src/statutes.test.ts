@@ -29,7 +29,11 @@ describe('assertExpectedAct — the 2023 codes', () => {
 
   it('refuses a different Act under the right ministry', () => {
     assert.throws(
-      () => assertExpectedAct(act({ shortTitle: 'The Post Office Act, 2023' }), 'Bharatiya Nyaya Sanhita'),
+      () =>
+        assertExpectedAct(
+          act({ shortTitle: 'The Post Office Act, 2023' }),
+          'Bharatiya Nyaya Sanhita',
+        ),
       /expected "Bharatiya Nyaya Sanhita"/,
     );
   });
@@ -38,7 +42,11 @@ describe('assertExpectedAct — the 2023 codes', () => {
     // indiacode holds state-administration copies and drafts under separate
     // handles with the same short title and act number and zero sections.
     assert.throws(
-      () => assertExpectedAct(act({ ministry: 'Home Department, Government of Maharashtra' }), 'Bharatiya Nyaya Sanhita'),
+      () =>
+        assertExpectedAct(
+          act({ ministry: 'Home Department, Government of Maharashtra' }),
+          'Bharatiya Nyaya Sanhita',
+        ),
       /is published by/,
     );
   });
@@ -64,14 +72,24 @@ describe('assertExpectedAct — the repealed codes, whose ministry is not assert
   it('still refuses a STATE enactment, via the act-id prefix', () => {
     // Dropping the ministry check must not drop the Central-Act check with it.
     assert.throws(
-      () => assertExpectedAct({ ...ipc, actId: 'AC_MH_5_23_00006_186045_1523268114876' }, 'Indian Penal Code', null),
+      () =>
+        assertExpectedAct(
+          { ...ipc, actId: 'AC_MH_5_23_00006_186045_1523268114876' },
+          'Indian Penal Code',
+          null,
+        ),
       /not a Central Act/,
     );
   });
 
   it('still refuses the wrong Act', () => {
     assert.throws(
-      () => assertExpectedAct({ ...ipc, shortTitle: 'The Indian Evidence Act, 1872' }, 'Indian Penal Code', null),
+      () =>
+        assertExpectedAct(
+          { ...ipc, shortTitle: 'The Indian Evidence Act, 1872' },
+          'Indian Penal Code',
+          null,
+        ),
       /expected "Indian Penal Code"/,
     );
   });

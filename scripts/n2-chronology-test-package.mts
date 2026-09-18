@@ -103,7 +103,7 @@ async function main(): Promise<void> {
     entries: { refId: string; statuteId: string }[];
   };
   const clearedIds = rollback.entries.map((e) => e.refId);
-  const clearedStatute = new Map(rollback.entries.map((e) => [e.refId, e.statuteId]));
+  const _clearedStatute = new Map(rollback.entries.map((e) => [e.refId, e.statuteId]));
   const rollbackSha = createHash('sha256').update(readFileSync(join(ROOT, ROLLBACK))).digest('hex');
 
   // ---- live state: the rule's own claim, re-measured now -------------------

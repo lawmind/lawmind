@@ -190,7 +190,9 @@ try {
     console.log(
       '  registry ' + candidate.code.registryVersion + ' / ' + candidate.code.registryDigest,
     );
-    console.log('  migrations ' + candidate.code.migrationFiles + ' / ' + candidate.code.migrationDigest);
+    console.log(
+      '  migrations ' + candidate.code.migrationFiles + ' / ' + candidate.code.migrationDigest,
+    );
     console.log(
       '  writing  ' +
         (locking.length === 0
@@ -198,7 +200,9 @@ try {
           : locking.length + ' BACKEND(S) HOLDING A WRITE LOCK'),
     );
     for (const w of locking) {
-      console.log('    pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode + '  since ' + (w.xactStart ?? '?'));
+      console.log(
+        '    pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode + '  since ' + (w.xactStart ?? '?'),
+      );
     }
     console.log('  advisory ' + writers.length + ' process(es) look like a corpus job (heuristic)');
     for (const w of writers) console.log('    os ' + w.pid + '  ' + w.cmd);
@@ -224,7 +228,8 @@ try {
     // Exit code so a script can gate on it. MUTATED is a fact, not a crash.
     process.exitCode = drift.state === 'FROZEN' ? 0 : 1;
   } else if (cmd === 'pause') {
-    if (!arg) throw new Error('usage: pause "<reason>" — a pause without a reason is not auditable');
+    if (!arg)
+      throw new Error('usage: pause "<reason>" — a pause without a reason is not auditable');
     const at = new Date().toISOString();
     writeFileSync(
       STOP_FILE,
@@ -235,7 +240,9 @@ try {
     console.log(`  reason  ${arg}`);
     // Say what it does and does NOT stop, in the same breath. A worker already
     // mid-run keeps running to completion; the guard is at start and restart.
-    console.log('  effect  enrich-worker.cmd refuses to start AND to restart; supervise.mjs will not restart');
+    console.log(
+      '  effect  enrich-worker.cmd refuses to start AND to restart; supervise.mjs will not restart',
+    );
     console.log('  NOT     a running statement is not interrupted, and no PID is signalled');
     for (const w of await corpusWritersFromPostgres(sql)) {
       console.log('  STILL WRITING pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode);
@@ -252,7 +259,16 @@ try {
     const locking = await corpusWritersFromPostgres(sql);
     if (locking.length === 0) console.log('EVIDENCE: no backend holds a corpus write lock');
     for (const w of locking) {
-      console.log('EVIDENCE pg ' + w.pid + '  ' + w.table + '  ' + w.lockMode + '  since ' + (w.xactStart ?? '?'));
+      console.log(
+        'EVIDENCE pg ' +
+          w.pid +
+          '  ' +
+          w.table +
+          '  ' +
+          w.lockMode +
+          '  since ' +
+          (w.xactStart ?? '?'),
+      );
       console.log('         ' + (w.query ?? ''));
     }
     const writers = corpusWriters();

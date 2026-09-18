@@ -259,7 +259,7 @@ for (;;) {
   const jsonl: string[] = [];
 
   for (const r of rows) {
-    const code = /\/court=([^/]+)\//.exec(r.source_url ?? '')?.[1] ?? (r.court ?? 'unknown');
+    const code = /\/court=([^/]+)\//.exec(r.source_url ?? '')?.[1] ?? r.court ?? 'unknown';
     const c = ckpt.byCourt[code] ?? { screened: 0, written: 0 };
 
     const v = textVerdict({
@@ -396,7 +396,9 @@ for (const [state, n] of Object.entries(ckpt.byState).sort((a, b) => b[1] - a[1]
 }
 console.log(`  worst courts`);
 for (const r of courtRows.slice(0, 8)) {
-  console.log(`    ${r.court.padEnd(10)} ${String(r.written).padStart(8)} / ${String(r.screened).padStart(8)}  ${r.rate}%`);
+  console.log(
+    `    ${r.court.padEnd(10)} ${String(r.written).padStart(8)} / ${String(r.screened).padStart(8)}  ${r.rate}%`,
+  );
 }
 console.log(`  summary             ${JSON_OUT}`);
 console.log(`  per-row evidence    ${JSONL_OUT}`);

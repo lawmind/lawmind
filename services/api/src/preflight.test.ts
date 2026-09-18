@@ -19,7 +19,14 @@ type FakeConfig = {
 };
 
 const ALL_TABLES = ['judgments', 'citation_checks'];
-const ALL_COLUMNS = ['id', 'case_title', 'full_text', 'neutral_citation', 'reporter_citations', 'overruled_status'];
+const ALL_COLUMNS = [
+  'id',
+  'case_title',
+  'full_text',
+  'neutral_citation',
+  'reporter_citations',
+  'overruled_status',
+];
 const PROBE = '(2019) 4 S.C.C. 221';
 
 function fakeSql(config: FakeConfig = {}): Sql {
@@ -58,7 +65,9 @@ test('a missing required table is caught by name', async () => {
 });
 
 test('a missing judgments column is caught by name', async () => {
-  const failures = await runPreflight(fakeSql({ columns: ALL_COLUMNS.filter((c) => c !== 'overruled_status') }));
+  const failures = await runPreflight(
+    fakeSql({ columns: ALL_COLUMNS.filter((c) => c !== 'overruled_status') }),
+  );
   assert.ok(failures.some((f) => f.check === 'column:judgments.overruled_status'));
 });
 

@@ -285,7 +285,9 @@ async function main(): Promise<void> {
   // ── 2 · the policy under oracle vs predicted labels ──
   const equal = queries.map((q) => goldRank(fuse(q, 1, RRF_K), q.gold));
   const dense = queries.map((q) => goldRank(fuse(q, 0, RRF_K), q.gold));
-  const oracle = queries.map((q) => goldRank(fuse(q, q.group === 'criminal' ? 0 : 1, RRF_K), q.gold));
+  const oracle = queries.map((q) =>
+    goldRank(fuse(q, q.group === 'criminal' ? 0 : 1, RRF_K), q.gold),
+  );
   const pred = queries.map((q, i) =>
     goldRank(fuse(q, predicted[i] === 'criminal' ? 0 : 1, RRF_K), q.gold),
   );

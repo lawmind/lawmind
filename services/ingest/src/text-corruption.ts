@@ -196,7 +196,10 @@ export function classifyCorruption(text: string): CorruptionVerdict | null {
         'appear with their first character missing — the extractor is eating leading glyphs',
     );
   }
-  if (signals.wordLikeRatio < MIN_WORD_LIKE_RATIO && signals.meanTokenLength < MIN_MEAN_TOKEN_LENGTH) {
+  if (
+    signals.wordLikeRatio < MIN_WORD_LIKE_RATIO &&
+    signals.meanTokenLength < MIN_MEAN_TOKEN_LENGTH
+  ) {
     reasons.push(
       `only ${(signals.wordLikeRatio * 100).toFixed(0)}% word-like tokens at mean length ` +
         `${signals.meanTokenLength.toFixed(1)} — two weak signals agreeing`,

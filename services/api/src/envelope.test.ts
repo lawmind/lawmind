@@ -46,7 +46,11 @@ describe('fail() — the signed-in-but-not-onboarded distinction', () => {
     // The exact production case: magic link → verify → a valid access token →
     // every user-scoped route answering "sign in to continue".
     const res = await appWith('auth-user-123').request('/needs-profile');
-    assert.equal(res.status, 403, '403 says authenticated-but-not-permitted; 401 invites a token refresh that cannot help');
+    assert.equal(
+      res.status,
+      403,
+      '403 says authenticated-but-not-permitted; 401 invites a token refresh that cannot help',
+    );
     const body = (await res.json()) as Body;
     assert.equal(body.error?.code, 'PROFILE_INCOMPLETE');
     assert.match(body.error?.message ?? '', /onboarding/i);

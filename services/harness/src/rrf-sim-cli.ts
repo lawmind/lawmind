@@ -86,10 +86,14 @@ function assertConstantsStillMatch(): void {
   const ann = /const annDepth = CANDIDATE_DEPTH \* \(filtered \? \d+ : (\d+)\);/.exec(src);
   const k = /const RRF_K = (\d+);/.exec(src);
   if (!depth || Number(depth[1]) !== CANDIDATE_DEPTH) {
-    throw new Error(`retrieve.ts CANDIDATE_DEPTH is ${depth?.[1] ?? 'unreadable'}, this tool assumes ${CANDIDATE_DEPTH}.`);
+    throw new Error(
+      `retrieve.ts CANDIDATE_DEPTH is ${depth?.[1] ?? 'unreadable'}, this tool assumes ${CANDIDATE_DEPTH}.`,
+    );
   }
   if (!ann || CANDIDATE_DEPTH * Number(ann[1]) !== ANN_DEPTH) {
-    throw new Error(`retrieve.ts unfiltered annDepth multiplier is ${ann?.[1] ?? 'unreadable'}, this tool assumes ${ANN_DEPTH / CANDIDATE_DEPTH}.`);
+    throw new Error(
+      `retrieve.ts unfiltered annDepth multiplier is ${ann?.[1] ?? 'unreadable'}, this tool assumes ${ANN_DEPTH / CANDIDATE_DEPTH}.`,
+    );
   }
   if (!k || Number(k[1]) !== RRF_K) {
     throw new Error(`retrieve.ts RRF_K is ${k?.[1] ?? 'unreadable'}, this tool assumes ${RRF_K}.`);
@@ -144,9 +148,13 @@ async function main(): Promise<void> {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
 
-  const decomposed = readJsonl<DecomposeRow>(DECOMPOSE_PATH).filter((r) => r.mechanism === 'DENSE_OK_BUT_MISSED');
+  const decomposed = readJsonl<DecomposeRow>(DECOMPOSE_PATH).filter(
+    (r) => r.mechanism === 'DENSE_OK_BUT_MISSED',
+  );
   if (decomposed.length === 0) {
-    throw new Error('No DENSE_OK_BUT_MISSED rows in held-not-retrieved-checkpoint.jsonl — run `held:decompose` first.');
+    throw new Error(
+      'No DENSE_OK_BUT_MISSED rows in held-not-retrieved-checkpoint.jsonl — run `held:decompose` first.',
+    );
   }
 
   const queries = new Map(
@@ -162,8 +170,12 @@ async function main(): Promise<void> {
 
   console.log('RRF FUSION SIMULATION — KNOW, not INFER, for the 16');
   console.log('='.repeat(78));
-  console.log(`${decomposed.length} DENSE_OK_BUT_MISSED · ${done.size} already checkpointed · ${pending.length} pending`);
-  console.log(`rrf_k=${RRF_K}, candidateDepth=${CANDIDATE_DEPTH}, annDepth=${ANN_DEPTH}, ef_search=${HNSW_EF_SEARCH}\n`);
+  console.log(
+    `${decomposed.length} DENSE_OK_BUT_MISSED · ${done.size} already checkpointed · ${pending.length} pending`,
+  );
+  console.log(
+    `rrf_k=${RRF_K}, candidateDepth=${CANDIDATE_DEPTH}, annDepth=${ANN_DEPTH}, ef_search=${HNSW_EF_SEARCH}\n`,
+  );
 
   if (pending.length === 0) {
     report(readJsonl<SimRow>(CHECKPOINT_PATH));
@@ -177,7 +189,9 @@ async function main(): Promise<void> {
     for (const [i, r] of pending.entries()) {
       const q = queries.get(r.queryId);
       if (!q) {
-        console.log(`  [${i + 1}/${pending.length}] ${r.queryId} — not in fixtures, skipped (not checkpointed)`);
+        console.log(
+          `  [${i + 1}/${pending.length}] ${r.queryId} — not in fixtures, skipped (not checkpointed)`,
+        );
         continue;
       }
 
@@ -208,7 +222,10 @@ async function main(): Promise<void> {
 
         // 2 — sparse arm, isolated. mode='sparse' skips dense entirely inside hybridSearch (retrieve.ts).
         const sparseResults = await hybridSearch(sql, q.query, null, {}, CANDIDATE_DEPTH, 'sparse');
-        const sparseRanked = sparseResults.map((res, idx) => ({ judgmentId: res.judgmentId, rank: idx + 1 }));
+        const sparseRanked = sparseResults.map((res, idx) => ({
+          judgmentId: res.judgmentId,
+          rank: idx + 1,
+        }));
 
         // 3 — the exact rrf() arithmetic, on exactly these two lists.
         const scores = rrf([sparseRanked, denseRanked]);
@@ -216,13 +233,24 @@ async function main(): Promise<void> {
 
         const goldEntry = fused.findIndex(([id]) => r.goldJudgmentIds.includes(id));
         const fusedRank = goldEntry === -1 ? null : goldEntry + 1;
-        const fusedScore = goldEntry === -1 ? (scores.get(r.goldJudgmentIds.find((id) => scores.has(id)) ?? '') ?? null) : fused[goldEntry]![1];
-        const fiftiethScore = fused.length >= CANDIDATE_DEPTH ? fused[CANDIDATE_DEPTH - 1]![1] : null;
+        const fusedScore =
+          goldEntry === -1
+            ? (scores.get(r.goldJudgmentIds.find((id) => scores.has(id)) ?? '') ?? null)
+            : fused[goldEntry]![1];
+        const fiftiethScore =
+          fused.length >= CANDIDATE_DEPTH ? fused[CANDIDATE_DEPTH - 1]![1] : null;
 
-        const denseJudgmentRank = denseRanked.findIndex((d) => r.goldJudgmentIds.includes(d.judgmentId));
-        const sparseJudgmentRank = sparseRanked.findIndex((d) => r.goldJudgmentIds.includes(d.judgmentId));
+        const denseJudgmentRank = denseRanked.findIndex((d) =>
+          r.goldJudgmentIds.includes(d.judgmentId),
+        );
+        const sparseJudgmentRank = sparseRanked.findIndex((d) =>
+          r.goldJudgmentIds.includes(d.judgmentId),
+        );
 
-        const verdict: Verdict = fusedRank !== null && fusedRank <= CANDIDATE_DEPTH ? 'NOT_REPRODUCED_BY_RRF_ALONE' : 'RRF_DISPLACEMENT_CONFIRMED';
+        const verdict: Verdict =
+          fusedRank !== null && fusedRank <= CANDIDATE_DEPTH
+            ? 'NOT_REPRODUCED_BY_RRF_ALONE'
+            : 'RRF_DISPLACEMENT_CONFIRMED';
 
         const row: SimRow = {
           queryId: r.queryId,
@@ -240,7 +268,9 @@ async function main(): Promise<void> {
             `fused=${row.fusedRank ?? 'BEYOND 50'} ${row.verdict} ${(row.ms / 1000).toFixed(1)}s`,
         );
       } catch (err) {
-        console.log(`  [!] ${r.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`);
+        console.log(
+          `  [!] ${r.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`,
+        );
       }
     }
 
@@ -256,13 +286,20 @@ function report(rows: SimRow[]): void {
   console.log('='.repeat(78));
   const confirmed = rows.filter((r) => r.verdict === 'RRF_DISPLACEMENT_CONFIRMED');
   const notReproduced = rows.filter((r) => r.verdict === 'NOT_REPRODUCED_BY_RRF_ALONE');
-  console.log(`  ${String(confirmed.length).padStart(2)} / ${rows.length}  RRF_DISPLACEMENT_CONFIRMED — gold measurably pushed past fused rank 50`);
-  console.log(`  ${String(notReproduced.length).padStart(2)} / ${rows.length}  NOT_REPRODUCED_BY_RRF_ALONE — the two-arm simulation alone says gold should have survived`);
+  console.log(
+    `  ${String(confirmed.length).padStart(2)} / ${rows.length}  RRF_DISPLACEMENT_CONFIRMED — gold measurably pushed past fused rank 50`,
+  );
+  console.log(
+    `  ${String(notReproduced.length).padStart(2)} / ${rows.length}  NOT_REPRODUCED_BY_RRF_ALONE — the two-arm simulation alone says gold should have survived`,
+  );
   if (notReproduced.length > 0) {
-    console.log('\n  NOT_REPRODUCED cases — the residual is the untested pin step, dedup, or corpus drift:');
+    console.log(
+      '\n  NOT_REPRODUCED cases — the residual is the untested pin step, dedup, or corpus drift:',
+    );
     for (const r of notReproduced) console.log(`    ${r.queryId}: fused rank ${r.fusedRank}`);
   }
-  if (rows.length < 16) console.log(`\n  (${16 - rows.length} still unmeasured — re-run to complete)`);
+  if (rows.length < 16)
+    console.log(`\n  (${16 - rows.length} still unmeasured — re-run to complete)`);
 }
 
 await main();

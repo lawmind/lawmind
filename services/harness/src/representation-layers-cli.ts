@@ -116,7 +116,10 @@ async function embedAll(texts: readonly string[], label: string): Promise<Vec[]>
   while (i < texts.length) {
     const batch: string[] = [];
     let chars = 0;
-    while (i < texts.length && (batch.length === 0 || chars + (texts[i] ?? '').length < BATCH_CHARS)) {
+    while (
+      i < texts.length &&
+      (batch.length === 0 || chars + (texts[i] ?? '').length < BATCH_CHARS)
+    ) {
       const t = texts[i] ?? '';
       batch.push(t);
       chars += t.length;
@@ -230,7 +233,9 @@ async function main(): Promise<void> {
   const { pool } = await buildPool();
   console.log('REPRESENTATION LAYERS — P5');
   console.log('='.repeat(78));
-  console.log(`pool ${pool.length} judgments   queries ${qv.queries.length}   span ${SPAN_CHARS} chars`);
+  console.log(
+    `pool ${pool.length} judgments   queries ${qv.queries.length}   span ${SPAN_CHARS} chars`,
+  );
 
   const sql = postgres(url, { ssl: sslFor(url), max: 2, connection: { statement_timeout: 0 } });
 
@@ -369,10 +374,10 @@ async function main(): Promise<void> {
   }
 
   const REPRESENTATIONS: Record<string, (d: Doc) => Vec[]> = {
-    'A_HEAD': (d) => (d.head ? [d.head] : []),
-    'B_HEAD_TAIL': (d) => [d.head, d.tail].filter((v): v is Vec => !!v),
-    'C_HEAD_TAIL_ISSUE': (d) => [d.head, d.tail, d.issue].filter((v): v is Vec => !!v),
-    'D_HEAD_TAIL_ISSUE_MEDOID2': (d) => [
+    A_HEAD: (d) => (d.head ? [d.head] : []),
+    B_HEAD_TAIL: (d) => [d.head, d.tail].filter((v): v is Vec => !!v),
+    C_HEAD_TAIL_ISSUE: (d) => [d.head, d.tail, d.issue].filter((v): v is Vec => !!v),
+    D_HEAD_TAIL_ISSUE_MEDOID2: (d) => [
       ...[d.head, d.tail, d.issue].filter((v): v is Vec => !!v),
       ...medoid2(d),
     ],
@@ -384,18 +389,18 @@ async function main(): Promise<void> {
     // and leave the geometry — the cheaper hypothesis and the cheaper
     // population, since 3 vectors per document instead of 5 is ~17.7M fewer
     // vectors at Tier-A scale.
-    'E_HEAD_MEDOID2': (d) => [...(d.head ? [d.head] : []), ...medoid(d, 2)],
-    'F_HEAD_MEDOID4': (d) => [...(d.head ? [d.head] : []), ...medoid(d, 4)],
-    'G_MEDOID2_ONLY': (d) => medoid(d, 2),
-    'CONTROL_HEAD_RANDOM2': (d) => [
+    E_HEAD_MEDOID2: (d) => [...(d.head ? [d.head] : []), ...medoid(d, 2)],
+    F_HEAD_MEDOID4: (d) => [...(d.head ? [d.head] : []), ...medoid(d, 4)],
+    G_MEDOID2_ONLY: (d) => medoid(d, 2),
+    CONTROL_HEAD_RANDOM2: (d) => [
       ...(d.head ? [d.head] : []),
       ...(randomPick2.get(d.id) ?? []).map((i) => d.chunkVectors[i]).filter((v): v is Vec => !!v),
     ],
-    'CONTROL_HEAD_RANDOM4': (d) => [
+    CONTROL_HEAD_RANDOM4: (d) => [
       ...(d.head ? [d.head] : []),
       ...(randomPick.get(d.id) ?? []).map((i) => d.chunkVectors[i]).filter((v): v is Vec => !!v),
     ],
-    'CEILING_ALL_CHUNKS': (d) => d.chunkVectors,
+    CEILING_ALL_CHUNKS: (d) => d.chunkVectors,
   };
 
   console.log('');
@@ -488,7 +493,12 @@ async function main(): Promise<void> {
           spanChars: SPAN_CHARS,
           seed: SEED,
           chunkVectorSource: 'judgment_chunks.embedding, equivalence-checked against the sidecar',
-          equivalence: { sampled: cosines.length, meanCosine: meanCos, minCosine: minCos, floor: EQUIVALENCE_FLOOR },
+          equivalence: {
+            sampled: cosines.length,
+            meanCosine: meanCos,
+            minCosine: minCos,
+            floor: EQUIVALENCE_FLOOR,
+          },
           embedder: 'BGE-M3 fp32 via the GPU sidecar, CLS-pooled and L2-normalised',
           queryVectors: QUERY_VECTORS,
           pooling: 'MAX over a document vectors',

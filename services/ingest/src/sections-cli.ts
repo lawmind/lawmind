@@ -82,7 +82,9 @@ try {
   const sinceIdx = process.argv.indexOf('--since');
   const SINCE = sinceIdx === -1 ? null : (process.argv[sinceIdx + 1] ?? null);
   if (SINCE && Number.isNaN(Date.parse(SINCE))) {
-    console.error(`--since ${JSON.stringify(SINCE)} is not a parseable timestamp. Refusing rather than walking everything.`);
+    console.error(
+      `--since ${JSON.stringify(SINCE)} is not a parseable timestamp. Refusing rather than walking everything.`,
+    );
     process.exit(2);
   }
 
@@ -140,7 +142,9 @@ try {
    * an advocate searching `section:138` and seeing four results concludes there
    * are four cases, not that the index is thin.
    */
-  console.log(`\n\n  judgments with at least one section reference : ${withAny} (${((withAny / total) * 100).toFixed(1)}%)`);
+  console.log(
+    `\n\n  judgments with at least one section reference : ${withAny} (${((withAny / total) * 100).toFixed(1)}%)`,
+  );
   console.log(`  (judgment, act, section) rows                 : ${rowsFound}`);
   console.log('\n  most-referenced acts:');
   for (const [act, n] of [...byAct].sort((a, b) => b[1] - a[1]).slice(0, 12)) {

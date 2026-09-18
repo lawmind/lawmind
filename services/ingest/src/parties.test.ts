@@ -6,10 +6,14 @@ import { extractParties, extractPartiesFromTitle, partiesFromSourceMetadata } fr
 // --- source metadata method — real Supreme Court sample, year=2018 --------
 
 test('source metadata: both fields present, straightforward', () => {
-  const r = partiesFromSourceMetadata('V. RAVI KUMAR', 'STATE, REP. BY INSPECTOR OF POLICE, DISTRICT CRIME BRANCH, SALEM, TAMIL NADU & ORS.');
+  const r = partiesFromSourceMetadata(
+    'V. RAVI KUMAR',
+    'STATE, REP. BY INSPECTOR OF POLICE, DISTRICT CRIME BRANCH, SALEM, TAMIL NADU & ORS.',
+  );
   assert.deepEqual(r, {
     petitioner: 'V. RAVI KUMAR',
-    respondent: 'STATE, REP. BY INSPECTOR OF POLICE, DISTRICT CRIME BRANCH, SALEM, TAMIL NADU & ORS.',
+    respondent:
+      'STATE, REP. BY INSPECTOR OF POLICE, DISTRICT CRIME BRANCH, SALEM, TAMIL NADU & ORS.',
     method: 'source_metadata',
   });
 });
@@ -21,13 +25,19 @@ test('source metadata: both blank returns null, not an empty extraction', () => 
 
 test('source metadata: one side present is still a real extraction', () => {
   const r = partiesFromSourceMetadata('SOME PETITIONER', '');
-  assert.deepEqual(r, { petitioner: 'SOME PETITIONER', respondent: null, method: 'source_metadata' });
+  assert.deepEqual(r, {
+    petitioner: 'SOME PETITIONER',
+    respondent: null,
+    method: 'source_metadata',
+  });
 });
 
 // --- title-parsed method — real corpus case_title samples ------------------
 
 test('title_parsed: Supreme Court "versus" separator', () => {
-  const r = extractPartiesFromTitle('CHINTAMAN RAO AND RAM KRISHNA versus THE STATE OF MADHYA PRADESH');
+  const r = extractPartiesFromTitle(
+    'CHINTAMAN RAO AND RAM KRISHNA versus THE STATE OF MADHYA PRADESH',
+  );
   assert.deepEqual(r, {
     petitioner: 'CHINTAMAN RAO AND RAM KRISHNA',
     respondent: 'THE STATE OF MADHYA PRADESH',
@@ -36,7 +46,9 @@ test('title_parsed: Supreme Court "versus" separator', () => {
 });
 
 test('title_parsed: High Court "Vs" separator', () => {
-  const r = extractPartiesFromTitle('SHRI BASWANTRAO @ PANDITRAO HUKKERI Vs THE STATE OF MAHARASHTRA AND OTHERS');
+  const r = extractPartiesFromTitle(
+    'SHRI BASWANTRAO @ PANDITRAO HUKKERI Vs THE STATE OF MAHARASHTRA AND OTHERS',
+  );
   assert.deepEqual(r, {
     petitioner: 'SHRI BASWANTRAO @ PANDITRAO HUKKERI',
     respondent: 'THE STATE OF MAHARASHTRA AND OTHERS',
@@ -46,7 +58,11 @@ test('title_parsed: High Court "Vs" separator', () => {
 
 test('title_parsed: "Vs." with a trailing period also splits', () => {
   const r = extractPartiesFromTitle('DENA BANK Vs. MRS. M.D. NATHAN and ANR.');
-  assert.deepEqual(r, { petitioner: 'DENA BANK', respondent: 'MRS. M.D. NATHAN and ANR.', method: 'title_parsed' });
+  assert.deepEqual(r, {
+    petitioner: 'DENA BANK',
+    respondent: 'MRS. M.D. NATHAN and ANR.',
+    method: 'title_parsed',
+  });
 });
 
 // --- real edge cases: 64 corpus-wide rows with no separator or an empty side
@@ -63,11 +79,17 @@ test('edge case: petitioner present, respondent absent — "SATTO YADAV Vs"', ()
 
 test('edge case: petitioner absent, respondent present — "Vs M/S.ZU-ZU WIRES LTD."', () => {
   const r = extractPartiesFromTitle('Vs M/S.ZU-ZU WIRES LTD.');
-  assert.deepEqual(r, { petitioner: null, respondent: 'M/S.ZU-ZU WIRES LTD.', method: 'title_parsed' });
+  assert.deepEqual(r, {
+    petitioner: null,
+    respondent: 'M/S.ZU-ZU WIRES LTD.',
+    method: 'title_parsed',
+  });
 });
 
 test('edge case: a genuine suo motu / reference matter — "versus" with nothing after it', () => {
-  const r = extractPartiesFromTitle('IN RE: ALARMING RISE IN THE NUMBER OF REPORTED CHILD RAPE INCIDENTS versus');
+  const r = extractPartiesFromTitle(
+    'IN RE: ALARMING RISE IN THE NUMBER OF REPORTED CHILD RAPE INCIDENTS versus',
+  );
   assert.deepEqual(r, {
     petitioner: 'IN RE: ALARMING RISE IN THE NUMBER OF REPORTED CHILD RAPE INCIDENTS',
     respondent: null,
@@ -104,7 +126,11 @@ test('extractParties falls back to title parsing when source metadata is absent'
 });
 
 test('extractParties falls back to title parsing when source metadata is present but blank', () => {
-  const r = extractParties({ caseTitle: 'DENA BANK Vs MRS. M.D. NATHAN', sourcePetitioner: '', sourceRespondent: '' });
+  const r = extractParties({
+    caseTitle: 'DENA BANK Vs MRS. M.D. NATHAN',
+    sourcePetitioner: '',
+    sourceRespondent: '',
+  });
   assert.equal(r.method, 'title_parsed');
 });
 

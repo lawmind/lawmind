@@ -40,7 +40,10 @@ type Report = {
       nativeTextFalse: number;
     }[];
   };
-  metadata: { sourceDocumentTypeCoverage: number; sourceDocumentTypeByCourt: { court: string; coverage: number }[] };
+  metadata: {
+    sourceDocumentTypeCoverage: number;
+    sourceDocumentTypeByCourt: { court: string; coverage: number }[];
+  };
   quality: {
     textQualityAvg: number | null;
     belowNinetyPercent: number;
@@ -74,14 +77,16 @@ async function main(): Promise<void> {
         SELECT count(*) AS n FROM judgments WHERE content_hash IS NOT NULL
         GROUP BY content_hash HAVING count(*) > 1
       ) t`;
-    const byCourtClassRows = await sql<{
-      class: 'Supreme Court' | 'High Court';
-      total: string;
-      hash_cov: string;
-      cnr_cov: string;
-      native_true: string;
-      native_false: string;
-    }[]>`
+    const byCourtClassRows = await sql<
+      {
+        class: 'Supreme Court' | 'High Court';
+        total: string;
+        hash_cov: string;
+        cnr_cov: string;
+        native_true: string;
+        native_false: string;
+      }[]
+    >`
       SELECT
         CASE WHEN court = 'Supreme Court of India' THEN 'Supreme Court' ELSE 'High Court' END AS class,
         count(*)::text AS total,
@@ -104,7 +109,9 @@ async function main(): Promise<void> {
              count(*) FILTER (WHERE text_quality < 0.9)::text AS below90,
              count(*) FILTER (WHERE text_quality IS NULL)::text AS missing
       FROM judgments`;
-    const qualityByCourtClassRows = await sql<{ class: 'Supreme Court' | 'High Court'; avg: string | null; below90: string }[]>`
+    const qualityByCourtClassRows = await sql<
+      { class: 'Supreme Court' | 'High Court'; avg: string | null; below90: string }[]
+    >`
       SELECT
         CASE WHEN court = 'Supreme Court of India' THEN 'Supreme Court' ELSE 'High Court' END AS class,
         avg(text_quality)::text AS avg,
@@ -140,7 +147,8 @@ async function main(): Promise<void> {
         highCourt: Number(corpus?.hc ?? 0),
       },
       identity: {
-        contentHashCoverage: Number(identity?.hash_cov ?? 0) / Math.max(1, Number(identity?.total ?? 1)),
+        contentHashCoverage:
+          Number(identity?.hash_cov ?? 0) / Math.max(1, Number(identity?.total ?? 1)),
         cnrCoverage: Number(identity?.cnr_cov ?? 0) / Math.max(1, Number(identity?.total ?? 1)),
         duplicateGroups: Number(dupes?.groups ?? 0),
         duplicateRows: Number(dupes?.rows ?? 0),
@@ -160,7 +168,8 @@ async function main(): Promise<void> {
         }),
       },
       metadata: {
-        sourceDocumentTypeCoverage: Number(docType?.cov ?? 0) / Math.max(1, Number(docType?.total ?? 1)),
+        sourceDocumentTypeCoverage:
+          Number(docType?.cov ?? 0) / Math.max(1, Number(docType?.total ?? 1)),
         sourceDocumentTypeByCourt: docTypeByCourt.map((r) => ({
           court: r.court,
           coverage: Number(r.cov) / Number(r.total),
@@ -191,7 +200,9 @@ async function main(): Promise<void> {
       },
     };
 
-    const overruledSummary = Object.fromEntries(overruledRows.map((r) => [r.overruled_status, Number(r.n)]));
+    const overruledSummary = Object.fromEntries(
+      overruledRows.map((r) => [r.overruled_status, Number(r.n)]),
+    );
 
     console.log('CORPUS QUALITY REPORT');
     console.log('='.repeat(78));
@@ -202,10 +213,16 @@ async function main(): Promise<void> {
     console.log(`  High Court:    ${report.corpus.highCourt.toLocaleString()}\n`);
 
     console.log('Identity:');
-    console.log(`  content_hash coverage: ${(report.identity.contentHashCoverage * 100).toFixed(1)}%`);
+    console.log(
+      `  content_hash coverage: ${(report.identity.contentHashCoverage * 100).toFixed(1)}%`,
+    );
     console.log(`  cnr coverage:          ${(report.identity.cnrCoverage * 100).toFixed(1)}%`);
-    console.log(`  duplicate groups:      ${report.identity.duplicateGroups} (${report.identity.duplicateRows} rows, ${((report.identity.duplicateRows / report.corpus.total) * 100).toFixed(1)}%)`);
-    console.log('  by court class (content_hash / cnr / native_text coverage, ingested rows only):');
+    console.log(
+      `  duplicate groups:      ${report.identity.duplicateGroups} (${report.identity.duplicateRows} rows, ${((report.identity.duplicateRows / report.corpus.total) * 100).toFixed(1)}%)`,
+    );
+    console.log(
+      '  by court class (content_hash / cnr / native_text coverage, ingested rows only):',
+    );
     for (const c of report.identity.byCourtClass) {
       console.log(
         `    ${c.court.padEnd(15)} n=${c.total.toLocaleString().padStart(7)}  hash ${(c.contentHashCoverage * 100).toFixed(1).padStart(5)}%  cnr ${(c.cnrCoverage * 100).toFixed(1).padStart(5)}%  native_text ${(c.nativeTextCoverage * 100).toFixed(1).padStart(5)}% (true=${c.nativeTextTrue}, false=${c.nativeTextFalse})`,
@@ -214,7 +231,9 @@ async function main(): Promise<void> {
     console.log('');
 
     console.log('Metadata completeness:');
-    console.log(`  source_document_type (corpus-wide): ${(report.metadata.sourceDocumentTypeCoverage * 100).toFixed(1)}%`);
+    console.log(
+      `  source_document_type (corpus-wide): ${(report.metadata.sourceDocumentTypeCoverage * 100).toFixed(1)}%`,
+    );
     console.log('  source_document_type by court (only courts with any coverage):');
     for (const c of report.metadata.sourceDocumentTypeByCourt) {
       console.log(`    ${c.court.padEnd(30)} ${(c.coverage * 100).toFixed(1)}%`);
@@ -224,25 +243,36 @@ async function main(): Promise<void> {
     console.log('Extraction quality (text_quality — visible damage proxy, NOT accuracy):');
     console.log(`  average: ${report.quality.textQualityAvg?.toFixed(3) ?? 'n/a'}`);
     console.log(`  below 0.90: ${report.quality.belowNinetyPercent.toLocaleString()} rows`);
-    console.log(`  missing (not yet computed): ${report.quality.textQualityMissing.toLocaleString()} rows`);
+    console.log(
+      `  missing (not yet computed): ${report.quality.textQualityMissing.toLocaleString()} rows`,
+    );
     for (const c of report.quality.byCourtClass) {
-      console.log(`    ${c.court.padEnd(15)} avg=${c.avg?.toFixed(3) ?? 'n/a'}  below 0.90: ${c.below90.toLocaleString()}`);
+      console.log(
+        `    ${c.court.padEnd(15)} avg=${c.avg?.toFixed(3) ?? 'n/a'}  below 0.90: ${c.below90.toLocaleString()}`,
+      );
     }
     console.log('');
 
     console.log('Citation graph:');
     console.log(`  edges: ${report.citationGraph.edges.toLocaleString()}`);
-    console.log(`  resolved to a held judgment: ${report.citationGraph.resolved.toLocaleString()} (${(report.citationGraph.resolvedRate * 100).toFixed(1)}%)`);
+    console.log(
+      `  resolved to a held judgment: ${report.citationGraph.resolved.toLocaleString()} (${(report.citationGraph.resolvedRate * 100).toFixed(1)}%)`,
+    );
     console.log('  by relationship:');
-    for (const [k, v] of Object.entries(report.treatment)) console.log(`    ${k.padEnd(20)} ${v.toLocaleString()}`);
+    for (const [k, v] of Object.entries(report.treatment))
+      console.log(`    ${k.padEnd(20)} ${v.toLocaleString()}`);
     console.log('');
 
     console.log('Overruled status:');
-    for (const [k, v] of Object.entries(overruledSummary)) console.log(`  ${k.padEnd(20)} ${v.toLocaleString()}`);
+    for (const [k, v] of Object.entries(overruledSummary))
+      console.log(`  ${k.padEnd(20)} ${v.toLocaleString()}`);
     console.log('');
 
-    console.log('Language coverage — every held judgment is the English PDF (docs/ai/DATA_MOAT_PROGRAM.md §7):');
-    for (const [k, v] of Object.entries(report.language)) console.log(`  ${k.padEnd(20)} ${v.toLocaleString()}`);
+    console.log(
+      'Language coverage — every held judgment is the English PDF (docs/ai/DATA_MOAT_PROGRAM.md §7):',
+    );
+    for (const [k, v] of Object.entries(report.language))
+      console.log(`  ${k.padEnd(20)} ${v.toLocaleString()}`);
     console.log('');
 
     console.log('Freshness:');
@@ -253,7 +283,9 @@ async function main(): Promise<void> {
     console.log('Statutes:');
     console.log(`  Acts: ${report.statutes.acts.toLocaleString()}`);
     console.log(`  sections: ${report.statutes.sections.toLocaleString()}`);
-    console.log(`  IPC<->BNS etc. mappings: ${report.statutes.mappings.toLocaleString()} (0 by design — not yet sourced, REB §7)\n`);
+    console.log(
+      `  IPC<->BNS etc. mappings: ${report.statutes.mappings.toLocaleString()} (0 by design — not yet sourced, REB §7)\n`,
+    );
 
     console.log('NOT measured here (see file header): paragraph-extraction quality');
     console.log('(numberedShare) at corpus scale, per-source freshness cursor.');
@@ -262,7 +294,10 @@ async function main(): Promise<void> {
     if (jsonPathIdx !== -1 && process.argv[jsonPathIdx + 1]) {
       const jsonPath = process.argv[jsonPathIdx + 1]!;
       const { writeFileSync } = await import('node:fs');
-      writeFileSync(jsonPath, `${JSON.stringify({ ...report, overruledStatus: overruledSummary }, null, 2)}\n`);
+      writeFileSync(
+        jsonPath,
+        `${JSON.stringify({ ...report, overruledStatus: overruledSummary }, null, 2)}\n`,
+      );
       console.log(`\nwrote ${jsonPath}`);
     }
   } finally {

@@ -96,7 +96,10 @@ describe('Puttaswamy — v1 reported 10 overruled, 8 of them good law', () => {
     const o = names(PUTTASWAMY, 'overruled');
     assert.ok(o.includes('Mohd Saeed Siddiqui'));
     assert.ok(o.includes('Yogendra Kumar Jaiswal'));
-    assert.equal(parseHeadnoteDispositions(PUTTASWAMY).filter((e) => e.disposition === 'overruled').length, 2);
+    assert.equal(
+      parseHeadnoteDispositions(PUTTASWAMY).filter((e) => e.disposition === 'overruled').length,
+      2,
+    );
   });
 
   it('never promotes a case from an earlier "relied on" list', () => {
@@ -139,7 +142,15 @@ describe('the adverse set is narrow on purpose', () => {
 
   it('never treats confirmation or inapplicability as adverse', () => {
     // `distinguished` and `held inapplicable` mean the authority STANDS.
-    for (const d of ['affirmed', 'explained', 'relied on', 'followed', 'distinguished', 'held inapplicable', 'referred to']) {
+    for (const d of [
+      'affirmed',
+      'explained',
+      'relied on',
+      'followed',
+      'distinguished',
+      'held inapplicable',
+      'referred to',
+    ]) {
       assert.ok(!ADVERSE_DISPOSITIONS.has(d), `${d} does not move the law`);
     }
   });
@@ -189,7 +200,10 @@ describe('refusals', () => {
 
   it('ignores prose fragments the old generic pattern matched as dispositions', () => {
     // `– the`, `– see section`, `– of the` all appeared in the corpus survey.
-    assert.deepEqual(parseHeadnoteDispositions('Ram v. State (1999) 1 SCC 1 – the matter rests.'), []);
+    assert.deepEqual(
+      parseHeadnoteDispositions('Ram v. State (1999) 1 SCC 1 – the matter rests.'),
+      [],
+    );
   });
 });
 
@@ -204,7 +218,9 @@ describe('refusals', () => {
 describe('a pair requires the colon, not proximity — NEW3 0230', () => {
   it('pairs a genuine "X : Y" construction', () => {
     const pairs = concordancePairs(
-      parseHeadnoteDispositions('Ram v. State [1996] Supp. 4 SCR 92 : (1996) 5 SCC 670 – overruled.'),
+      parseHeadnoteDispositions(
+        'Ram v. State [1996] Supp. 4 SCR 92 : (1996) 5 SCC 670 – overruled.',
+      ),
     );
     assert.equal(pairs.length, 1);
     assert.equal(pairs[0]?.scr, '(1996) Supp 4 SCR 92');
@@ -223,7 +239,9 @@ describe('a pair requires the colon, not proximity — NEW3 0230', () => {
 
   it('pairs the reverse order too', () => {
     const pairs = concordancePairs(
-      parseHeadnoteDispositions('Ram v. State (1996) 5 SCC 670 : [1996] Supp. 4 SCR 92 – overruled.'),
+      parseHeadnoteDispositions(
+        'Ram v. State (1996) 5 SCC 670 : [1996] Supp. 4 SCR 92 – overruled.',
+      ),
     );
     assert.equal(pairs.length, 1);
   });

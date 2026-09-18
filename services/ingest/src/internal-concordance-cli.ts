@@ -62,12 +62,20 @@ console.log(`candidate pool: ${pool.length.toLocaleString()} Supreme Court judgm
 
 /* Existing aliases -- never re-derive or collide with what concordance.ts already wrote. */
 const existingKeys = new Set(
-  (await sql<{ alias_key: string }[]>`SELECT alias_key FROM judgment_citation_aliases`).map((r) => r.alias_key),
+  (await sql<{ alias_key: string }[]>`SELECT alias_key FROM judgment_citation_aliases`).map(
+    (r) => r.alias_key,
+  ),
 );
 console.log(`existing aliases (skipped if re-encountered): ${existingKeys.size.toLocaleString()}`);
 
 /* ------------------------------------------------------ the target queue -- */
-type Target = { citation_key: string; citation_text: string; n: string; sample_source_keys: string[]; sample_offsets: number[] };
+type Target = {
+  citation_key: string;
+  citation_text: string;
+  n: string;
+  sample_source_keys: string[];
+  sample_offsets: number[];
+};
 
 const targets = await sql<Target[]>`
   SELECT ec.citation_key,
@@ -83,7 +91,9 @@ const targets = await sql<Target[]>`
   ORDER BY count(*) DESC
   LIMIT ${LIMIT}`;
 
-console.log(`${targets.length} unresolved SCC/AIR targets with >= ${MIN_CORROBORATIONS} sightings\n`);
+console.log(
+  `${targets.length} unresolved SCC/AIR targets with >= ${MIN_CORROBORATIONS} sightings\n`,
+);
 
 let fetched = 0;
 let noContext = 0;
@@ -162,11 +172,17 @@ console.log(
 
 /* --------------------------------------------- cross-target collision check -- */
 const { safe, collided } = detectCrossTargetCollisions(safeCandidates);
-console.log(`\ncross-target collision check: ${safe.length} clear · ${collided.length} withheld (shared a target with another citation key)`);
+console.log(
+  `\ncross-target collision check: ${safe.length} clear · ${collided.length} withheld (shared a target with another citation key)`,
+);
 if (collided.length > 0) {
-  console.log('WITHHELD (same judgment, different citation keys -- §3a\'s exact failure mode, not guessed at):');
+  console.log(
+    "WITHHELD (same judgment, different citation keys -- §3a's exact failure mode, not guessed at):",
+  );
   for (const c of collided) {
-    console.log(`  ${c.citationKey.padEnd(20)} ${c.citationText.padEnd(24)} -> ${c.targetJudgmentId} (${c.targetCaseTitle})`);
+    console.log(
+      `  ${c.citationKey.padEnd(20)} ${c.citationText.padEnd(24)} -> ${c.targetJudgmentId} (${c.targetCaseTitle})`,
+    );
   }
 }
 
@@ -197,6 +213,8 @@ for (const c of safe) {
 }
 
 console.log(`\nWROTE ${written} new aliases to judgment_citation_aliases.`);
-console.log('Run `pnpm --filter @lawmind/ingest resolve --apply --external` next to convert them into resolved edges.');
+console.log(
+  'Run `pnpm --filter @lawmind/ingest resolve --apply --external` next to convert them into resolved edges.',
+);
 
 await sql.end();

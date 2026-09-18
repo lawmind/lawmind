@@ -95,9 +95,12 @@ function idFrom(payload: unknown, key: string): string {
   const data = (payload as { data?: Record<string, unknown> } | undefined)?.data ?? {};
   const nested = (data[key] ?? data) as Record<string, unknown>;
   for (const k of Object.keys(nested)) {
-    if (k === 'id' || (k.endsWith('Id') && typeof nested[k] === 'string')) return nested[k] as string;
+    if (k === 'id' || (k.endsWith('Id') && typeof nested[k] === 'string'))
+      return nested[k] as string;
   }
-  throw new Error(`no id found in create response for ${key}: ${JSON.stringify(payload).slice(0, 200)}`);
+  throw new Error(
+    `no id found in create response for ${key}: ${JSON.stringify(payload).slice(0, 200)}`,
+  );
 }
 
 /**
@@ -560,7 +563,10 @@ describe('tenant isolation — USER_A, USER_B, ADMIN', () => {
     const spoof = await app.request(`/me?userId=${A.userId}`, { headers: hdr(B.token) });
     const body = JSON.stringify(await spoof.json());
     record('me?userId=', 'READ', body.includes(A.email) ? 200 : 404);
-    assert.ok(!body.includes(A.email), '/me answered for another user when given a query parameter');
+    assert.ok(
+      !body.includes(A.email),
+      '/me answered for another user when given a query parameter',
+    );
   });
 
   it('TOKEN REPLAY — a token signed with the wrong secret is refused', async () => {

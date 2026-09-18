@@ -54,7 +54,9 @@ const pageSize = arg('--page-size', 100);
 const [before] = await sql<{ total: number; backfilled: number }[]>`
   SELECT count(*)::int AS total, count(*) FILTER (WHERE char_offset IS NOT NULL)::int AS backfilled
   FROM judgment_chunks`;
-console.log(`before: ${before?.backfilled.toLocaleString()} / ${before?.total.toLocaleString()} chunks carry an offset`);
+console.log(
+  `before: ${before?.backfilled.toLocaleString()} / ${before?.total.toLocaleString()} chunks carry an offset`,
+);
 
 const pendingIds = await sql<{ id: string }[]>`
   SELECT DISTINCT c.judgment_id AS id
@@ -76,7 +78,9 @@ for (let i = 0; i < pendingIds.length; i += pageSize) {
 
   const judgments = await sql<{ id: string; full_text: string }[]>`
     SELECT id, full_text FROM judgments WHERE id = ANY(${ids})`;
-  const existingRows = await sql<{ judgment_id: string; chunk_index: number; chunk_text: string }[]>`
+  const existingRows = await sql<
+    { judgment_id: string; chunk_index: number; chunk_text: string }[]
+  >`
     SELECT judgment_id, chunk_index, chunk_text FROM judgment_chunks
     WHERE judgment_id = ANY(${ids}) AND char_offset IS NULL`;
 
@@ -87,7 +91,12 @@ for (let i = 0; i < pendingIds.length; i += pageSize) {
     existingByJudgment.set(row.judgment_id, m);
   }
 
-  const updates: { judgment_id: string; chunk_index: number; char_offset: number; char_length: number }[] = [];
+  const updates: {
+    judgment_id: string;
+    chunk_index: number;
+    char_offset: number;
+    char_length: number;
+  }[] = [];
 
   for (const j of judgments) {
     judgmentsProcessed++;
@@ -163,17 +172,23 @@ console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`judgments processed              ${judgmentsProcessed}`);
-console.log(`judgments with a chunk-count mismatch (not backfilled from) ${judgmentsChunkCountMismatch}`);
+console.log(
+  `judgments with a chunk-count mismatch (not backfilled from) ${judgmentsChunkCountMismatch}`,
+);
 console.log(`chunks matched by (judgment, index) ${chunksMatched}`);
 console.log(`chunks with a chunk_text mismatch, SKIPPED ${chunksTextMismatch}`);
-console.log(`chunks whose offset failed chunk.ts's own self-check, SKIPPED ${chunksOffsetUnverified}`);
+console.log(
+  `chunks whose offset failed chunk.ts's own self-check, SKIPPED ${chunksOffsetUnverified}`,
+);
 console.log(`chunks ${APPLY ? 'updated' : 'that WOULD be updated'} ${chunksUpdated}`);
 
 if (APPLY) {
   const [after] = await sql<{ total: number; backfilled: number }[]>`
     SELECT count(*)::int AS total, count(*) FILTER (WHERE char_offset IS NOT NULL)::int AS backfilled
     FROM judgment_chunks`;
-  console.log(`\nafter: ${after?.backfilled.toLocaleString()} / ${after?.total.toLocaleString()} chunks carry an offset`);
+  console.log(
+    `\nafter: ${after?.backfilled.toLocaleString()} / ${after?.total.toLocaleString()} chunks carry an offset`,
+  );
 } else {
   console.log('\nDRY RUN — nothing written. Re-run with --apply.');
 }

@@ -130,10 +130,18 @@ type Task = {
 
 function loadPosed(): Task[] {
   const gold = JSON.parse(readFileSync(POSED_GOLD, 'utf8')) as {
-    tasks: { task_id: string; query_class: string; query: string; targets: string[]; expected?: string }[];
+    tasks: {
+      task_id: string;
+      query_class: string;
+      query: string;
+      targets: string[];
+      expected?: string;
+    }[];
   };
   return gold.tasks
-    .filter((t) => CONCEPT_CLASSES.has(t.query_class) && t.targets.length > 0 && t.expected !== 'REFUSE')
+    .filter(
+      (t) => CONCEPT_CLASSES.has(t.query_class) && t.targets.length > 0 && t.expected !== 'REFUSE',
+    )
     .map((t) => ({
       taskId: t.task_id,
       provenance: 'POSED' as const,
@@ -186,7 +194,10 @@ function loadLifted(): Task[] {
  * authorities rather than in questions, so that fifteen queries about one
  * judgment cannot present themselves as fifteen independent successes.
  */
-function clusterTasks(tasks: readonly Task[]): { clusterOf: Map<string, number>; clusters: string[][] } {
+function clusterTasks(tasks: readonly Task[]): {
+  clusterOf: Map<string, number>;
+  clusters: string[][];
+} {
   const parent = new Map<string, string>();
   const find = (x: string): string => {
     let r = x;
@@ -228,7 +239,9 @@ function clusterTasks(tasks: readonly Task[]): { clusterOf: Map<string, number>;
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (!url) {
-    console.error('DATABASE_URL is not set. Export it first — an unreadable gate and a busy one print the same word.');
+    console.error(
+      'DATABASE_URL is not set. Export it first — an unreadable gate and a busy one print the same word.',
+    );
     process.exit(2);
   }
   const sql = postgres(url, { max: 2, idle_timeout: 20, connect_timeout: 30, ssl: sslFor(url) });
@@ -295,8 +308,13 @@ async function main(): Promise<void> {
       LIMIT ${fillWanted}`;
     const distractors = fillRows.map((r) => r.judgment_id);
 
-    const [{ n: stageRowsAtFreeze }] = await sql<{ n: string }[]>`
+    // A bare `count(*)` always returns exactly one row, but
+    // `noUncheckedIndexedAccess` cannot know that, and destructuring the field
+    // straight out of `rows[0]` is what broke the typecheck. The assertion is
+    // the claim "this aggregate returns a row", which is true of `count(*)`.
+    const [stageRow] = await sql<{ n: string }[]>`
       SELECT count(*)::bigint AS n FROM new1_doc_vector_stage`;
+    const stageRowsAtFreeze = stageRow!.n;
 
     // Gold first, then distractors: every pool size stays a PREFIX of the next,
     // so the nesting V3 relies on for its scale curve still holds.
@@ -368,7 +386,11 @@ async function main(): Promise<void> {
         clusterId: clusterOf.get(t.taskId) ?? -1,
         targetsInIndexAtFreeze: t.targets.filter((g) => stagedSet.has(g)).length,
       })),
-      clusters: clusters.map((members, i) => ({ clusterId: i, taskIds: members, size: members.length })),
+      clusters: clusters.map((members, i) => ({
+        clusterId: i,
+        taskIds: members,
+        size: members.length,
+      })),
       pool: {
         size: pool.length,
         goldCount: goldIds.length,
@@ -401,12 +423,16 @@ async function main(): Promise<void> {
     console.log(`  file           ${OUT}`);
     console.log(`  contentSha256  ${contentSha256}   <- compare THIS across freezes`);
     console.log(`  manifestSha256 ${manifestSha256}   (file integrity; includes builtAt)`);
-    console.log(`  tasks          ${tasks.length}  (POSED ${posed.length} / LIFTED ${lifted.length})`);
+    console.log(
+      `  tasks          ${tasks.length}  (POSED ${posed.length} / LIFTED ${lifted.length})`,
+    );
     console.log(`  targets        ${goldIds.length} distinct · ${clusters.length} clusters`);
     console.log(
       `  pool           ${pool.length} ids frozen (${goldIds.length} gold + ${pool.length - goldIds.length} distractors)`,
     );
-    console.log(`  NOT_IN_INDEX   ${notInIndex.length}/${goldIds.length} gold have no production vector`);
+    console.log(
+      `  NOT_IN_INDEX   ${notInIndex.length}/${goldIds.length} gold have no production vector`,
+    );
     console.log(`  stage rows     ${Number(stageRowsAtFreeze).toLocaleString()} at freeze time`);
   } finally {
     await sql.end({ timeout: 10 });

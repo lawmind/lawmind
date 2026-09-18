@@ -221,7 +221,9 @@ describe('matter authorities', () => {
     assert.equal(a['neutralCitation'], 'FIX 2024 INSC 1');
     assert.equal(a['removedAt'], null);
 
-    const list = await app.request(`/matters/${matterId}/authorities`, { headers: auth(owner.token) });
+    const list = await app.request(`/matters/${matterId}/authorities`, {
+      headers: auth(owner.token),
+    });
     const authorities = ((await list.json()) as { data: { authorities: { judgmentId: string }[] } })
       .data.authorities;
     assert.ok(authorities.some((x) => x.judgmentId === judgmentId));
@@ -242,9 +244,13 @@ describe('matter authorities', () => {
   });
 
   it('removes an authority, as a timestamp, never a delete', async () => {
-    const list = await app.request(`/matters/${matterId}/authorities`, { headers: auth(owner.token) });
+    const list = await app.request(`/matters/${matterId}/authorities`, {
+      headers: auth(owner.token),
+    });
     const authorityId = (
-      (await list.json()) as { data: { authorities: { authorityId: string; judgmentId: string }[] } }
+      (await list.json()) as {
+        data: { authorities: { authorityId: string; judgmentId: string }[] };
+      }
     ).data.authorities.find((a) => a.judgmentId === judgmentId)!.authorityId;
 
     const res = await app.request(`/matters/${matterId}/authorities/${authorityId}`, {
@@ -291,11 +297,13 @@ describe('matter authorities', () => {
       headers: auth(stranger.token),
       body: JSON.stringify({ judgmentId }),
     });
-    assert.equal(res.status, 404, "not-yours and does-not-exist must be indistinguishable");
+    assert.equal(res.status, 404, 'not-yours and does-not-exist must be indistinguishable');
   });
 
   it('a stranger cannot even list authorities on a matter with no share', async () => {
-    const res = await app.request(`/matters/${matterId}/authorities`, { headers: auth(stranger.token) });
+    const res = await app.request(`/matters/${matterId}/authorities`, {
+      headers: auth(stranger.token),
+    });
     assert.equal(res.status, 404);
   });
 
@@ -423,7 +431,11 @@ describe('matter authorities', () => {
 
     const a = await listAuthority(movesJudgmentId);
     assert.equal(a?.overruledStatus, 'partly_set_aside');
-    assert.deepEqual(a?.overruledParas, [14, 15], 'without the paras there is no "what still stands"');
+    assert.deepEqual(
+      a?.overruledParas,
+      [14, 15],
+      'without the paras there is no "what still stands"',
+    );
   });
 
   it('sends reporterCitations, so a pre-2013 authority is not called uncitable — RCC bus 0049', async () => {

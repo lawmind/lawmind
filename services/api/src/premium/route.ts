@@ -97,15 +97,11 @@ export async function getPremiumPreview(
    * is contextual, so an advocate reaching this screen is the signal, whatever
    * they do next.
    */
-  recordStepInBackground(
-    sql,
-    userId,
-    'premium_intent',
-    (err) =>
-      logger.error(
-        { request_id: c.get('requestId'), err, step: 'premium_intent' },
-        'activation step not recorded',
-      ),
+  recordStepInBackground(sql, userId, 'premium_intent', (err) =>
+    logger.error(
+      { request_id: c.get('requestId'), err, step: 'premium_intent' },
+      'activation step not recorded',
+    ),
   );
 
   return ok(c, await hearingPackPreview(sql, matterId, corpusSql));

@@ -134,7 +134,9 @@ export async function listAlerts(
     ORDER BY a.created_at DESC
   `;
 
-  const ids = [...new Set(rows.map((r) => r.judgment_id).filter((id): id is string => id !== null))];
+  const ids = [
+    ...new Set(rows.map((r) => r.judgment_id).filter((id): id is string => id !== null)),
+  ];
   const status = new Map<string, string>();
   if (ids.length > 0) {
     for (const j of await corpusSql<{ id: string; overruled_status: string }[]>`

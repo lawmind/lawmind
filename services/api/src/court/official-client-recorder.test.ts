@@ -82,7 +82,7 @@ function run(complex: string, establishment: string, date: string, cicri: string
     invoke: [
       { fn: 'fillDistrict', stateCode: '26' },
       { fn: 'fillCourtComplex', distCode: '1' },
-      ...(complex.endsWith('@Y') ? ([{ fn: 'fillEst' } as const]) : []),
+      ...(complex.endsWith('@Y') ? [{ fn: 'fillEst' } as const] : []),
       { fn: 'fillCauseList' },
       { fn: 'submit_causelist', cicri },
     ],
@@ -114,7 +114,10 @@ function pairs(body: string): [string, string][] {
       const eq = p.indexOf('=');
       const name = eq === -1 ? p : p.slice(0, eq);
       const value = eq === -1 ? '' : p.slice(eq + 1);
-      return [decodeURIComponent(name.replace(/\+/g, ' ')), decodeURIComponent(value.replace(/\+/g, ' '))];
+      return [
+        decodeURIComponent(name.replace(/\+/g, ' ')),
+        decodeURIComponent(value.replace(/\+/g, ' ')),
+      ];
     });
 }
 
@@ -305,7 +308,10 @@ describe('our eCourts request equals the licensed client’s', () => {
       }),
       TOKEN,
     );
-    assert.deepEqual(pairs(ours), pairs(official(flagY.requests, 'cause_list/submitCauseList').body));
+    assert.deepEqual(
+      pairs(ours),
+      pairs(official(flagY.requests, 'cause_list/submitCauseList').body),
+    );
   });
 
   it('submitCauseList — a historical date sets selprevdays, as the client does', () => {
@@ -325,7 +331,10 @@ describe('our eCourts request equals the licensed client’s', () => {
       }),
       TOKEN,
     );
-    assert.deepEqual(pairs(ours), pairs(official(historical.requests, 'cause_list/submitCauseList').body));
+    assert.deepEqual(
+      pairs(ours),
+      pairs(official(historical.requests, 'cause_list/submitCauseList').body),
+    );
   });
 
   it('selprevdays is 0 only for today and the future', () => {

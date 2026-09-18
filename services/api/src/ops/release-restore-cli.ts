@@ -97,7 +97,9 @@ function makeTracer(path: string): Trace {
 async function backendStates(
   observer: postgres.Sql,
   database: string,
-): Promise<{ pid: number; state: string | null; wait: string | null; ms: number; query: string }[]> {
+): Promise<
+  { pid: number; state: string | null; wait: string | null; ms: number; query: string }[]
+> {
   return observer.unsafe(
     `SELECT pid, state, coalesce(wait_event_type || ':' || wait_event, 'running') AS wait,
             (extract(epoch FROM (now() - coalesce(query_start, backend_start))) * 1000)::int AS ms,
@@ -106,7 +108,9 @@ async function backendStates(
       WHERE datname = $1 AND pid <> pg_backend_pid()
       ORDER BY pid`,
     [database],
-  ) as Promise<{ pid: number; state: string | null; wait: string | null; ms: number; query: string }[]>;
+  ) as Promise<
+    { pid: number; state: string | null; wait: string | null; ms: number; query: string }[]
+  >;
 }
 
 /**
@@ -240,22 +244,22 @@ async function pinSessionRendering(sql: postgres.Sql): Promise<void> {
  * So: columns are named explicitly on both sides for the COPY, and sorted BY
  * NAME for the checksum. Neither depends on an ordinal agreeing across two
  * machines that were built by different routes.   *
-   * ─────────────────────────────────────────────────────────────────────────
-   * AND THE COMPOSITE RENDERING ITSELF IS PLATFORM-DEPENDENT
-   * ─────────────────────────────────────────────────────────────────────────
-   *
-   * `ROW(...)::text` quotes a field when it "needs" quoting, and the test for
-   * needing it includes `isspace()`, which is **LC_CTYPE-dependent**. Measured
-   * on one real row, byte-identical data, both sessions pinned to UTC:
-   *
-   *     source (Windows-1252 ctype)  ("2026-08-17 23:19:21.945366+00",3,"aiàiáªàåzéã",40537)
-   *     target (C.UTF-8 ctype)       ("2026-08-17 23:19:21.945366+00",3,aiàiáªàåzéã,40537)
-   *
-   * Two bytes of difference, no data difference at all. So the digest is taken
-   * over `concat_ws` of the columns cast individually — `::text` on a text
-   * column is the identity and adds no quoting — with a unit separator that
-   * cannot occur in the data, and NULL rendered explicitly so that
-   * `(NULL, 'a')` and `('a', NULL)` cannot collide.
+ * ─────────────────────────────────────────────────────────────────────────
+ * AND THE COMPOSITE RENDERING ITSELF IS PLATFORM-DEPENDENT
+ * ─────────────────────────────────────────────────────────────────────────
+ *
+ * `ROW(...)::text` quotes a field when it "needs" quoting, and the test for
+ * needing it includes `isspace()`, which is **LC_CTYPE-dependent**. Measured
+ * on one real row, byte-identical data, both sessions pinned to UTC:
+ *
+ *     source (Windows-1252 ctype)  ("2026-08-17 23:19:21.945366+00",3,"aiàiáªàåzéã",40537)
+ *     target (C.UTF-8 ctype)       ("2026-08-17 23:19:21.945366+00",3,aiàiáªàåzéã,40537)
+ *
+ * Two bytes of difference, no data difference at all. So the digest is taken
+ * over `concat_ws` of the columns cast individually — `::text` on a text
+ * column is the identity and adds no quoting — with a unit separator that
+ * cannot occur in the data, and NULL rendered explicitly so that
+ * `(NULL, 'a')` and `('a', NULL)` cannot collide.
  */
 async function checksum(
   sql: postgres.Sql,
@@ -312,7 +316,9 @@ async function main(): Promise<void> {
   const target = process.env['TARGET_DATABASE_URL'];
   if (!target) throw new Error('TARGET_DATABASE_URL is required');
   if (target === process.env['DATABASE_URL']) {
-    throw new Error('TARGET_DATABASE_URL equals DATABASE_URL — refusing to restore onto the source');
+    throw new Error(
+      'TARGET_DATABASE_URL equals DATABASE_URL — refusing to restore onto the source',
+    );
   }
 
   const manifest = JSON.parse(await readFile(join(dir, 'MANIFEST.json'), 'utf8')) as Manifest;
@@ -346,7 +352,12 @@ async function main(): Promise<void> {
    * 114M rows and the load took hours longer. Correct, but only by luck on
    * the rendering settings.
    */
-  const sql = postgres(target, { max: poolMax, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
+  const sql = postgres(target, {
+    max: poolMax,
+    max_lifetime: 0,
+    idle_timeout: 0,
+    onnotice: () => {},
+  });
   trace('connect_begin', { pool: poolMax });
   await pinSessionRendering(sql);
   const [who] = await sql<{ db: string; usr: string; su: boolean; pid: number }[]>`
@@ -532,7 +543,11 @@ async function main(): Promise<void> {
   }
   const loadOrder: Manifest['tables'] = [];
   const placed = new Set<string>();
-  for (let pass = 0; pass < manifest.tables.length && placed.size < manifest.tables.length; pass++) {
+  for (
+    let pass = 0;
+    pass < manifest.tables.length && placed.size < manifest.tables.length;
+    pass++
+  ) {
     for (const t of manifest.tables) {
       if (placed.has(t.table)) continue;
       const parents = parentsOf.get(t.table) ?? new Set<string>();
@@ -590,8 +605,12 @@ async function main(): Promise<void> {
       });
     }
     try {
-      for (const t of manifest.tables) await sql.unsafe(`ALTER TABLE ${t.table} DISABLE TRIGGER USER`);
-      trace('triggers_disabled', { mechanism: 'ALTER TABLE DISABLE TRIGGER USER', tables: manifest.tables.length });
+      for (const t of manifest.tables)
+        await sql.unsafe(`ALTER TABLE ${t.table} DISABLE TRIGGER USER`);
+      trace('triggers_disabled', {
+        mechanism: 'ALTER TABLE DISABLE TRIGGER USER',
+        tables: manifest.tables.length,
+      });
       return 'per_table';
     } catch (err) {
       trace('triggers_disable_failed', { why: err instanceof Error ? err.message : String(err) });
@@ -667,7 +686,9 @@ async function main(): Promise<void> {
     const got = h.digest('hex');
     trace('file_integrity', { table: t.table, file: t.file, ok: got === t.sha256 });
     if (got !== t.sha256) {
-      throw new Error(`${t.file}: sha256 ${got} does not match manifest ${t.sha256}; refusing to restore`);
+      throw new Error(
+        `${t.file}: sha256 ${got} does not match manifest ${t.sha256}; refusing to restore`,
+      );
     }
   }
 
@@ -690,8 +711,13 @@ async function main(): Promise<void> {
     const columnList = t.columns.map((c) => `"${c}"`).join(', ');
 
     trace('copy_open', { table: t.table, file: t.file, bytes: t.bytes, columns: t.columns.length });
-    const writable = await watched(`copy_open ${t.table}`, trace, observer, targetDb, STALL_PROBE_MS, () =>
-      sql.unsafe(`COPY ${t.table} (${columnList}) FROM STDIN`).writable(),
+    const writable = await watched(
+      `copy_open ${t.table}`,
+      trace,
+      observer,
+      targetDb,
+      STALL_PROBE_MS,
+      () => sql.unsafe(`COPY ${t.table} (${columnList}) FROM STDIN`).writable(),
     );
     trace('copy_stream_begin', { table: t.table });
 
@@ -852,15 +878,21 @@ async function main(): Promise<void> {
       WHERE n.nspname = 'public'`,
   );
   trace('indexes', { total: Number(idx?.total ?? 0), invalid: Number(idx?.invalid ?? 0) });
-  if (Number(idx?.invalid ?? 0) > 0) findings.push(`${idx?.invalid} INVALID index(es) on the target`);
+  if (Number(idx?.invalid ?? 0) > 0)
+    findings.push(`${idx?.invalid} INVALID index(es) on the target`);
 
   // ── verify ────────────────────────────────────────────────────────────────
   console.log('\nverifying against the manifest:\n');
   let mismatches = 0;
   for (const t of manifest.tables) {
     const orderBy = ORDER_BY[t.table] ?? 'ctid';
-    const got = await watched(`checksum ${t.table}`, trace, observer, targetDb, STALL_PROBE_MS, () =>
-      checksum(sql, t.table, orderBy, t.columns),
+    const got = await watched(
+      `checksum ${t.table}`,
+      trace,
+      observer,
+      targetDb,
+      STALL_PROBE_MS,
+      () => checksum(sql, t.table, orderBy, t.columns),
     );
     const rowsOk = got.rows === t.rows;
     const ckOk = got.checksum === t.checksum;
@@ -889,7 +921,9 @@ async function main(): Promise<void> {
     console.log('\nFINDINGS:');
     for (const f of findings) console.log(`  ! ${f}`);
   }
-  console.log(`\n${mismatches === 0 ? 'RESTORE VERIFIED' : `RESTORE FAILED — ${mismatches} table(s) do not match`}`);
+  console.log(
+    `\n${mismatches === 0 ? 'RESTORE VERIFIED' : `RESTORE FAILED — ${mismatches} table(s) do not match`}`,
+  );
 
   trace('verdict', {
     mismatches,
@@ -923,22 +957,26 @@ async function main(): Promise<void> {
   const gateSkipped = argv.includes('--skip-activation-gate');
   const stats = gateSkipped ? [] : await readStatistics(sql);
   const statistics = statisticsVerdict(stats);
-  const probes = gateSkipped ? [] : await runSearchSmoke(sql).catch((err: unknown) => {
-    /* A smoke that could not even start is a smoke that did not pass. It must
-     * never fall through to an empty probe list that reads as "nothing failed". */
-    trace('search_smoke_unavailable', { why: err instanceof Error ? err.message : String(err) });
-    return [
-      {
-        name: 'search smoke',
-        query: '',
-        ms: 0,
-        results: 0,
-        degraded: [] as string[],
-        outcome: 'threw',
-        error: err instanceof Error ? err.message : String(err),
-      },
-    ];
-  });
+  const probes = gateSkipped
+    ? []
+    : await runSearchSmoke(sql).catch((err: unknown) => {
+        /* A smoke that could not even start is a smoke that did not pass. It must
+         * never fall through to an empty probe list that reads as "nothing failed". */
+        trace('search_smoke_unavailable', {
+          why: err instanceof Error ? err.message : String(err),
+        });
+        return [
+          {
+            name: 'search smoke',
+            query: '',
+            ms: 0,
+            results: 0,
+            degraded: [] as string[],
+            outcome: 'threw',
+            error: err instanceof Error ? err.message : String(err),
+          },
+        ];
+      });
   const smoke = smokeVerdict(probes);
   const decision = activationDecision({
     restoreVerified: mismatches === 0,
@@ -959,7 +997,13 @@ async function main(): Promise<void> {
     ready: statistics.ready,
   });
   trace('search_smoke', {
-    probes: probes.map((p) => ({ name: p.name, ms: p.ms, n: p.results, outcome: p.outcome, error: p.error })),
+    probes: probes.map((p) => ({
+      name: p.name,
+      ms: p.ms,
+      n: p.results,
+      outcome: p.outcome,
+      error: p.error,
+    })),
     ready: smoke.ready,
     slowestMs: smoke.slowestMs,
   });

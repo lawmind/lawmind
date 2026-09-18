@@ -28,7 +28,9 @@ function fakeSql(config: FakeDbConfig = {}): Sql {
   const citationlessRow =
     config.citationlessRow === undefined ? { id: 'citationless-id' } : config.citationlessRow;
   const overruledRow =
-    config.overruledRow === undefined ? { id: 'overruled-id', overruled_status: 'set_aside' } : config.overruledRow;
+    config.overruledRow === undefined
+      ? { id: 'overruled-id', overruled_status: 'set_aside' }
+      : config.overruledRow;
 
   const sql = ((strings: TemplateStringsArray) => {
     const text = strings.join(' ');
@@ -83,7 +85,10 @@ test('a fabricated citation on a citationless judgment fails, loudly', async () 
   const sql = fakeSql();
   const fetchImpl = fakeFetch({
     'citationless-id': () =>
-      jsonResponse({ ok: true, data: { neutralCitation: '(2019) 4 SCC 221', reporterCitations: [] } }),
+      jsonResponse({
+        ok: true,
+        data: { neutralCitation: '(2019) 4 SCC 221', reporterCitations: [] },
+      }),
     'overruled-id': () => jsonResponse({ ok: true, data: { overruledStatus: 'set_aside' } }),
   });
   const report = await runDeployedJudgmentSafetyProbe('https://example.test', sql, fetchImpl);
@@ -95,7 +100,8 @@ test('a fabricated citation on a citationless judgment fails, loudly', async () 
 test('overruledStatus matching the stored value passes', async () => {
   const sql = fakeSql();
   const fetchImpl = fakeFetch({
-    'citationless-id': () => jsonResponse({ ok: true, data: { neutralCitation: null, reporterCitations: [] } }),
+    'citationless-id': () =>
+      jsonResponse({ ok: true, data: { neutralCitation: null, reporterCitations: [] } }),
     'overruled-id': () => jsonResponse({ ok: true, data: { overruledStatus: 'set_aside' } }),
   });
   const report = await runDeployedJudgmentSafetyProbe('https://example.test', sql, fetchImpl);
@@ -106,7 +112,8 @@ test('overruledStatus matching the stored value passes', async () => {
 test('a stale "none" served for a set_aside row fails — the exact danger this probe exists for', async () => {
   const sql = fakeSql();
   const fetchImpl = fakeFetch({
-    'citationless-id': () => jsonResponse({ ok: true, data: { neutralCitation: null, reporterCitations: [] } }),
+    'citationless-id': () =>
+      jsonResponse({ ok: true, data: { neutralCitation: null, reporterCitations: [] } }),
     'overruled-id': () => jsonResponse({ ok: true, data: { overruledStatus: 'none' } }),
   });
   const report = await runDeployedJudgmentSafetyProbe('https://example.test', sql, fetchImpl);
@@ -118,7 +125,8 @@ test('a stale "none" served for a set_aside row fails — the exact danger this 
 test('a non-200 response fails the case instead of throwing', async () => {
   const sql = fakeSql();
   const fetchImpl = fakeFetch({
-    'citationless-id': () => jsonResponse({ ok: false, error: { code: 'NOT_FOUND', message: 'gone' } }, 404),
+    'citationless-id': () =>
+      jsonResponse({ ok: false, error: { code: 'NOT_FOUND', message: 'gone' } }, 404),
     'overruled-id': () => jsonResponse({ ok: true, data: { overruledStatus: 'set_aside' } }),
   });
   const report = await runDeployedJudgmentSafetyProbe('https://example.test', sql, fetchImpl);

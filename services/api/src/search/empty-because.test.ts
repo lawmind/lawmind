@@ -31,8 +31,12 @@ import { after, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 4, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 /**
  * `embedQuery` returns null on purpose. That is not an artificial handicap — it
@@ -65,7 +69,8 @@ after(async () => {
 });
 
 describe('an empty result says WHY it is empty', () => {
-  it('a query too broad to rank says so, and offers a remedy that works', async () => {
+  it('a query too broad to rank says so, and offers a remedy that works', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const d = await search('bail');
     assert.equal(d?.results?.length, 0);
     assert.ok(d?.degraded?.includes('sparse_unbounded'));
@@ -75,7 +80,8 @@ describe('an empty result says WHY it is empty', () => {
     });
   });
 
-  it('the remedy is TRUE, not an apology — more terms actually returns law', async () => {
+  it('the remedy is TRUE, not an apology — more terms actually returns law', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     /**
      * The half that makes the field worth shipping. Telling an advocate to add
      * terms is only honest if adding terms works, so the test proves the remedy
@@ -105,7 +111,8 @@ describe('an empty result says WHY it is empty', () => {
     );
   });
 
-  it('is absent whenever results exist, so the ordinary response is unchanged', async () => {
+  it('is absent whenever results exist, so the ordinary response is unchanged', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const d = await search('anticipatory bail in economic offences');
     assert.ok((d?.results?.length ?? 0) > 0);
     assert.equal(d?.emptyBecause, undefined);

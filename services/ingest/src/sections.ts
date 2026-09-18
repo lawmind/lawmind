@@ -79,7 +79,7 @@ const FULL_ACT = new RegExp(
     // `Code of Criminal Procedure, 1973` — the words come AFTER "Code", so a
     // pattern ending at the keyword captures only "Code". Read off a real
     // failure, not anticipated.
-    '(?:Code\\s+of\\s+(?:[A-Z][\\w\'-]*\\s*){1,4}(?:,\\s*\\d{4})?',
+    "(?:Code\\s+of\\s+(?:[A-Z][\\w'-]*\\s*){1,4}(?:,\\s*\\d{4})?",
     // `Negotiable Instruments Act, 1881` · `Indian Penal Code` — here the words
     // come BEFORE the keyword. `Code` belongs in BOTH branches: it leads in
     // "Code of Criminal Procedure" and trails in "Indian Penal Code", and
@@ -123,7 +123,10 @@ const ACT_WINDOW = 70;
  */
 const ACT_SYNONYMS: readonly { re: RegExp; key: string }[] = [
   { re: /^(?:INDIAN\s+)?PENAL\s+CODE$|^IPC$/, key: 'INDIAN PENAL CODE' },
-  { re: /^(?:CODE\s+OF\s+)?CRIMINAL\s+PROCEDURE(?:\s+CODE)?$|^CRPC$/, key: 'CODE OF CRIMINAL PROCEDURE' },
+  {
+    re: /^(?:CODE\s+OF\s+)?CRIMINAL\s+PROCEDURE(?:\s+CODE)?$|^CRPC$/,
+    key: 'CODE OF CRIMINAL PROCEDURE',
+  },
   { re: /^(?:CODE\s+OF\s+)?CIVIL\s+PROCEDURE(?:\s+CODE)?$|^CPC$/, key: 'CODE OF CIVIL PROCEDURE' },
   { re: /^(?:INDIAN\s+)?EVIDENCE\s+ACT$/, key: 'INDIAN EVIDENCE ACT' },
   { re: /^(?:NEGOTIABLE\s+INSTRUMENTS?\s+ACT|NI\s+ACT)$/, key: 'NEGOTIABLE INSTRUMENTS ACT' },
@@ -282,12 +285,21 @@ export function extractSectionRefs(text: string): SectionRef[] {
 export function foldSectionRefs(
   refs: readonly SectionRef[],
 ): { actNamed: string; section: string; occurrences: number; firstOffset: number }[] {
-  const map = new Map<string, { actNamed: string; section: string; occurrences: number; firstOffset: number }>();
+  const map = new Map<
+    string,
+    { actNamed: string; section: string; occurrences: number; firstOffset: number }
+  >();
   for (const r of refs) {
     const key = `${r.actNamed.toUpperCase()}|${r.section}`;
     const prev = map.get(key);
     if (prev) prev.occurrences++;
-    else map.set(key, { actNamed: r.actNamed, section: r.section, occurrences: 1, firstOffset: r.offset });
+    else
+      map.set(key, {
+        actNamed: r.actNamed,
+        section: r.section,
+        occurrences: 1,
+        firstOffset: r.offset,
+      });
   }
   return [...map.values()];
 }

@@ -55,17 +55,22 @@ async function main(): Promise<void> {
       if (share === 0) zeroShare++;
     }
 
-    const avg = (xs: number[]): number => (xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length);
+    const avg = (xs: number[]): number =>
+      xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length;
 
     console.log(`\nSAMPLED (not corpus-wide) — TABLESAMPLE SYSTEM, n=${rows.length}:`);
     console.log(`  average numberedShare: ${avg(shares).toFixed(3)}`);
-    console.log(`  rows with 0.0 numberedShare (no printed paragraph numbers found at all): ${zeroShare} (${((zeroShare / rows.length) * 100).toFixed(1)}%)`);
+    console.log(
+      `  rows with 0.0 numberedShare (no printed paragraph numbers found at all): ${zeroShare} (${((zeroShare / rows.length) * 100).toFixed(1)}%)`,
+    );
     for (const [court, xs] of Object.entries(byCourtClass)) {
       if (xs.length === 0) {
         console.log(`  ${court.padEnd(15)} n=0 in this sample`);
         continue;
       }
-      console.log(`  ${court.padEnd(15)} n=${xs.length.toString().padStart(4)}  avg numberedShare=${avg(xs).toFixed(3)}`);
+      console.log(
+        `  ${court.padEnd(15)} n=${xs.length.toString().padStart(4)}  avg numberedShare=${avg(xs).toFixed(3)}`,
+      );
     }
   } finally {
     await sql.end();

@@ -342,22 +342,22 @@ async function pinSessionRendering(sql: postgres.Sql): Promise<void> {
  * So: columns are named explicitly on both sides for the COPY, and sorted BY
  * NAME for the checksum. Neither depends on an ordinal agreeing across two
  * machines that were built by different routes.   *
-   * ─────────────────────────────────────────────────────────────────────────
-   * AND THE COMPOSITE RENDERING ITSELF IS PLATFORM-DEPENDENT
-   * ─────────────────────────────────────────────────────────────────────────
-   *
-   * `ROW(...)::text` quotes a field when it "needs" quoting, and the test for
-   * needing it includes `isspace()`, which is **LC_CTYPE-dependent**. Measured
-   * on one real row, byte-identical data, both sessions pinned to UTC:
-   *
-   *     source (Windows-1252 ctype)  ("2026-08-17 23:19:21.945366+00",3,"aiàiáªàåzéã",40537)
-   *     target (C.UTF-8 ctype)       ("2026-08-17 23:19:21.945366+00",3,aiàiáªàåzéã,40537)
-   *
-   * Two bytes of difference, no data difference at all. So the digest is taken
-   * over `concat_ws` of the columns cast individually — `::text` on a text
-   * column is the identity and adds no quoting — with a unit separator that
-   * cannot occur in the data, and NULL rendered explicitly so that
-   * `(NULL, 'a')` and `('a', NULL)` cannot collide.
+ * ─────────────────────────────────────────────────────────────────────────
+ * AND THE COMPOSITE RENDERING ITSELF IS PLATFORM-DEPENDENT
+ * ─────────────────────────────────────────────────────────────────────────
+ *
+ * `ROW(...)::text` quotes a field when it "needs" quoting, and the test for
+ * needing it includes `isspace()`, which is **LC_CTYPE-dependent**. Measured
+ * on one real row, byte-identical data, both sessions pinned to UTC:
+ *
+ *     source (Windows-1252 ctype)  ("2026-08-17 23:19:21.945366+00",3,"aiàiáªàåzéã",40537)
+ *     target (C.UTF-8 ctype)       ("2026-08-17 23:19:21.945366+00",3,aiàiáªàåzéã,40537)
+ *
+ * Two bytes of difference, no data difference at all. So the digest is taken
+ * over `concat_ws` of the columns cast individually — `::text` on a text
+ * column is the identity and adds no quoting — with a unit separator that
+ * cannot occur in the data, and NULL rendered explicitly so that
+ * `(NULL, 'a')` and `('a', NULL)` cannot collide.
  */
 /**
  * The WHERE clause that confines one serving table to a bounded slice.
@@ -451,7 +451,12 @@ async function main(): Promise<void> {
    * the transaction and the exported snapshot with it. Two full exports died
    * three hours in, at the next table (LCC R32B).
    */
-  const snapHolder = postgres(url, { max: 1, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
+  const snapHolder = postgres(url, {
+    max: 1,
+    max_lifetime: 0,
+    idle_timeout: 0,
+    onnotice: () => {},
+  });
   // The holder sits idle in its transaction for hours while tables stream.
   // The founder box sets idle_in_transaction_session_timeout = 1h, which
   // killed it three hours into the first full export (LCC R32B: the next
@@ -528,9 +533,9 @@ async function main(): Promise<void> {
     if (refusal) {
       throw new Error(
         `refusing to export ${table}: ${refusal.reason}. ` +
-          'A vector export must carry the embedding run\'s own snapshot identity, supplied ' +
+          "A vector export must carry the embedding run's own snapshot identity, supplied " +
           'explicitly by the job or manifest that produced the rows. A constant column DEFAULT ' +
-          'is not an identity — it labels the NEXT snapshot with THIS one\'s name and nothing ' +
+          "is not an identity — it labels the NEXT snapshot with THIS one's name and nothing " +
           `errors when it does. Detail: ${JSON.stringify(refusal)}`,
       );
     }
@@ -556,7 +561,12 @@ async function main(): Promise<void> {
      * A dedicated connection per table costs seven handshakes and cannot wedge
      * anything the next statement needs.
      */
-    const copyConn = postgres(url, { max: 1, max_lifetime: 0, idle_timeout: 0, onnotice: () => {} });
+    const copyConn = postgres(url, {
+      max: 1,
+      max_lifetime: 0,
+      idle_timeout: 0,
+      onnotice: () => {},
+    });
     await pinSessionRendering(copyConn);
     await copyConn.unsafe('SET idle_in_transaction_session_timeout = 0');
     await copyConn.unsafe('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
@@ -583,14 +593,28 @@ async function main(): Promise<void> {
         await link(from, path).catch(() => copyFile(from, path));
         const h = createHash('sha256');
         await new Promise<void>((resolve, reject) =>
-          createReadStream(path).on('data', (d) => h.update(d)).on('end', resolve).on('error', reject),
+          createReadStream(path)
+            .on('data', (d) => h.update(d))
+            .on('end', resolve)
+            .on('error', reject),
         );
         const sha = h.digest('hex');
         const { size: reusedSize } = await stat(path);
-        const entry = { table, rows, checksum: ck, bytes: reusedSize, file, columns, sha256: sha, compression };
+        const entry = {
+          table,
+          rows,
+          checksum: ck,
+          bytes: reusedSize,
+          file,
+          columns,
+          sha256: sha,
+          compression,
+        };
         tables.push(entry);
         await writeSidecar(entry);
-        console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${reusedSize} bytes  ${new Date().toISOString()}  REUSED (checksum matched in this snapshot)`);
+        console.log(
+          `  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${reusedSize} bytes  ${new Date().toISOString()}  REUSED (checksum matched in this snapshot)`,
+        );
         continue;
       }
     }
@@ -653,7 +677,9 @@ async function main(): Promise<void> {
     const entry = { table, rows, checksum: ck, bytes: size, file, columns, sha256, compression };
     tables.push(entry);
     await writeSidecar(entry);
-    console.log(`  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes  ${new Date().toISOString()}`);
+    console.log(
+      `  ${table.padEnd(28)} ${String(rows).padStart(9)} rows  ${ck}  ${size} bytes  ${new Date().toISOString()}`,
+    );
   }
 
   const manifest: Manifest = {

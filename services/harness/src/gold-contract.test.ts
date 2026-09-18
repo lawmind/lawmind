@@ -44,7 +44,10 @@ test('this is the exact experiment that produced the +21.5pt illusion', () => {
 });
 
 test('a query that IS the authority identifier bans the matching route, not the others', () => {
-  const citation = row({ goldProvenanceType: 'own_citation_string', queryConstruction: 'own_identifier' });
+  const citation = row({
+    goldProvenanceType: 'own_citation_string',
+    queryConstruction: 'own_identifier',
+  });
   assert.throws(() => assertFeatureAllowed(citation, 'exact_citation_match'), LeakageError);
   // The title route is a DIFFERENT question on this row and stays measurable.
   assert.doesNotThrow(() => assertFeatureAllowed(citation, 'title_match'));
@@ -59,10 +62,11 @@ test('provenance and query construction compose — a raw passage leaks through 
   const redacted = featurePolicy(row({ queryConstruction: 'redacted_passage' }));
   const raw = featurePolicy(row({ queryConstruction: 'raw_passage' }));
   assert.equal(redacted.prohibited.length, 1);
-  assert.deepEqual(
-    raw.prohibited.map((p) => p.family).sort(),
-    ['exact_citation_match', 'inbound_citation_graph', 'title_match'],
-  );
+  assert.deepEqual(raw.prohibited.map((p) => p.family).sort(), [
+    'exact_citation_match',
+    'inbound_citation_graph',
+    'title_match',
+  ]);
 });
 
 test('legal-object gold bans matching the object back, which is the P9 circularity', () => {
@@ -85,7 +89,11 @@ test('human-adjudicated gold bans nothing', () => {
 test('one row bans a family for the whole run — allowedAcross is the intersection', () => {
   const mixed = [
     row({ queryId: 'a' }),
-    row({ queryId: 'b', goldProvenanceType: 'own_case_title', queryConstruction: 'own_identifier' }),
+    row({
+      queryId: 'b',
+      goldProvenanceType: 'own_case_title',
+      queryConstruction: 'own_identifier',
+    }),
   ];
   const allowed = allowedAcross(mixed);
   assert.ok(!allowed.includes('inbound_citation_graph'));
@@ -98,19 +106,31 @@ test('splitting keeps every row of one authority on the same side', () => {
   const rows: EvalRow[] = [];
   for (let i = 0; i < 60; i += 1) {
     for (const t of ['proposition', 'exact_citation', 'case_title']) {
-      rows.push(row({ queryId: `${t}-${i}`, queryType: t, goldAuthorityId: `auth-${i}`, caseFamily: `auth-${i}` }));
+      rows.push(
+        row({
+          queryId: `${t}-${i}`,
+          queryType: t,
+          goldAuthorityId: `auth-${i}`,
+          caseFamily: `auth-${i}`,
+        }),
+      );
     }
   }
   const { train, test: held } = splitByFamily(rows, 0.3);
   assert.equal(train.length + held.length, rows.length);
   const trainFamilies = new Set(train.map((r) => r.caseFamily));
-  for (const r of held) assert.ok(!trainFamilies.has(r.caseFamily), `${r.caseFamily} straddles the split`);
+  for (const r of held)
+    assert.ok(!trainFamilies.has(r.caseFamily), `${r.caseFamily} straddles the split`);
   // A holdout that is empty or everything is a split that measures nothing.
   assert.ok(held.length > 0 && train.length > 0);
 });
 
 test('the split is deterministic — two runs of the same gold are comparable', () => {
-  const rows = [row({ caseFamily: 'x' }), row({ queryId: 'q2', caseFamily: 'y' }), row({ queryId: 'q3', caseFamily: 'z' })];
+  const rows = [
+    row({ caseFamily: 'x' }),
+    row({ queryId: 'q2', caseFamily: 'y' }),
+    row({ queryId: 'q3', caseFamily: 'z' }),
+  ];
   const a = splitByFamily(rows, 0.5).test.map((r) => r.caseFamily);
   const b = splitByFamily(rows, 0.5).test.map((r) => r.caseFamily);
   assert.deepEqual(a, b);
@@ -119,11 +139,14 @@ test('the split is deterministic — two runs of the same gold are comparable', 
 test('own_text_span prohibits sparse and CAUTIONS dense — the uncited-gold shape', () => {
   const r = row({ goldProvenanceType: 'legal_object_claim', queryConstruction: 'own_text_span' });
   const policy = featurePolicy(r);
+  assert.deepEqual(policy.prohibited.map((p) => p.family).sort(), [
+    'sparse_lexical',
+    'verified_legal_object_match',
+  ]);
   assert.deepEqual(
-    policy.prohibited.map((p) => p.family).sort(),
-    ['sparse_lexical', 'verified_legal_object_match'],
+    policy.cautioned.map((c) => c.family),
+    ['dense_similarity'],
   );
-  assert.deepEqual(policy.cautioned.map((c) => c.family), ['dense_similarity']);
   // A caution never throws. Throwing would discard the only gold that can
   // measure an authority nobody has cited.
   assert.doesNotThrow(() => assertFeatureAllowed(r, 'dense_similarity'));
@@ -142,9 +165,16 @@ test('a prohibition outranks a caution on the same family', () => {
 test('cautionsAcross collects every caution in a set so a report cannot omit one', () => {
   const rows = [
     row({ queryId: 'a' }),
-    row({ queryId: 'b', goldProvenanceType: 'legal_object_claim', queryConstruction: 'own_text_span' }),
+    row({
+      queryId: 'b',
+      goldProvenanceType: 'legal_object_claim',
+      queryConstruction: 'own_text_span',
+    }),
   ];
-  assert.deepEqual(cautionsAcross(rows).map((c) => c.family), ['dense_similarity']);
+  assert.deepEqual(
+    cautionsAcross(rows).map((c) => c.family),
+    ['dense_similarity'],
+  );
 });
 
 // ── adverse-edge guard (LCC bus 0912) ────────────────────────────────────────
@@ -184,7 +214,11 @@ test('an ABSENT relationship does not ban — unknown is not adverse', () => {
   // The opposite default would make every gold that omits the field lose a
   // legitimate feature, which is a silent quality loss rather than a safety win.
   assert.ok(featurePolicy(row({ goldEvidence: {} })).allowed.includes('treatment_and_currentness'));
-  assert.ok(featurePolicy(row({ goldEvidence: { relationship: 42 } })).allowed.includes('treatment_and_currentness'));
+  assert.ok(
+    featurePolicy(row({ goldEvidence: { relationship: 42 } })).allowed.includes(
+      'treatment_and_currentness',
+    ),
+  );
 });
 
 test('assertFeatureAllowed THROWS on an adverse edge, and the message names the edge', () => {

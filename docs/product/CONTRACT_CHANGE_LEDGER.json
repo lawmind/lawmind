@@ -1206,10 +1206,37 @@
       },
       "releasedAsCurrentRegistry": true,
       "wireContractChanged": false
+    },
+    {
+      "id": "CCR-SHIP-S4T03-01",
+      "filedBy": "SHIP",
+      "filedVia": "SHIP S4-T0.3 CI / alert / registry closure round, 18 September 2026.",
+      "classification": "CAPABILITY_REGISTRY_METADATA_AND_ROWS",
+      "riskClass": "NORMAL - registry metadata correction plus three ADDED disabled rows; no endpoint, field, auth, deletion, sensitive-data routing or legal-truth semantics change, and no capability state moves",
+      "endpoints": [],
+      "severity": "P1",
+      "phase": "POST_IMPLEMENT_ACCEPTED",
+      "proposal": {
+        "currentContractVersion": "R17 (wire protocol 1) - unchanged by this request",
+        "currentCapabilityRegistry": "docs/product/V1_CAPABILITY_REGISTRY_R17.json (SHIP, 18 Sep 2026)",
+        "exactProblem": "TWO problems, both about the registry and neither about the wire. (1) STALE CONTRACT METADATA: R17 carries contractRevision 'R16', contractArtifact RCC_V1_API_CONTRACT_R16_AMENDMENT.md and currentContractVersion 'R16' on all 30 rows, while CONTRACT_CHANGE_LEDGER.json records currentVersion R17 with currentVersionArtifact RCC_V1_API_CONTRACT_R17_AMENDMENT.md. R16 established that currentContractVersion means THE CURRENT CONTRACT REVISION, not the revision a row was last measured against, so R16 in an R17-current world is simply stale - R17 moved only the web cell and inherited these fields without re-stating them. (2) AN UNROWED REACHABLE SURFACE: apps/mobile/app/alert-settings.tsx is reachable from Settings and apps/mobile/src/screens/today/TodayScreen.tsx renders alert cards, and the registry had NO alerts.* row. Nothing measured the gap between what that screen promised and what the product can deliver, and the screen promised four triggers, an evening briefing, a mandatory always-on alert and push - while alert_kind holds two values, briefing.daily_loop is DISABLED_NOT_READY, half of trigger 2's audience needs POST_V1 drafting, EAS_PROJECT_ID is absent, and no alert has ever been observed reaching a user.",
+        "safeCurrentFallback": "No alert is reachable in fact either way: the only producers are `pnpm --filter @lawmind/cron recheck` and an upheld admin dispute, and neither runs anywhere (PRODUCTION = NONE, PERSISTENT_BETA = NONE). Until R18 lands, readers must treat R17's contract metadata as superseded by the ledger and the alert surface as unmeasured.",
+        "userTruthImpact": "Real, and on the client. The Alert Settings screen said 'Four things', named 'the evening briefing' as the delivery channel, rendered a disabled always-ON switch beside 'Cannot be turned off', and asked for push permission on a channel with no project id. All four are removed by this request; the screen now states that alerts are not switched on in this version. No wire field changes.",
+        "proposedDelta": "A NEW snapshot R18 (R17 and R16 untouched). (a) contractRevision = R17, contractArtifact = RCC_V1_API_CONTRACT_R17_AMENDMENT.md, currentContractVersion = 'R17' on every row. (b) ADD three rows, all DISABLED_NOT_READY on iOS/Android and OUT_OF_SCOPE_CURRENT_FOUNDER on web: alerts.saved_authority_moved, alerts.filed_citation_moved, alerts.push_delivery - separated because citator alerts, eCourts monitoring, push delivery and the daily briefing are four capabilities and collapsing them is how the strongest one gets claimed. (c) ADDITIVE evidence vocabulary: CODE_PATH_ONLY_NO_DELIVERY_OBSERVED, for a capability whose every code element exists and is tested and whose delivery has never been observed. Every other R17 field on every R17 row inherits unchanged.",
+        "breaking": false,
+        "clientImpact": "The alert surface stops promising what it cannot deliver, and stops asking for a push permission it cannot use. No request or response shape changes. AlertSettings.unavailable is still read from the server and still drives the not-yet rows."
+      },
+      "dataSemanticReview": "Not required: no legal-truth field, citation state, overruled status, verification tier or corpus statement is touched. The three-field citation model is untouched, and alerts remain derived from an overruled_status FLIP recorded by applyOverruledChange rather than from any new stored state.",
+      "historicalRowsTouched": "NONE. V1_CAPABILITY_REGISTRY_R16.json and V1_CAPABILITY_REGISTRY_R17.json are byte-identical to their committed forms (git diff empty, verified). V1_CLAIMS_REGISTER_R17.md is unedited; R18 supersedes only its alert wording.",
+      "decision": "ACCEPTED. Both halves are corrections of statements the repository was making about itself, and neither invents scope: the metadata correction restores a semantic R16 already defined, and the three rows record capabilities that were already reachable. The alternative considered and rejected was to build the two missing PD-5 producers to satisfy the old CI guard - that would ship monitoring and uploads the founder has not scoped.",
+      "implemented": "docs/product/V1_CAPABILITY_REGISTRY_R18.json (33 rows: 30 inherited with zero drift on id/state/platforms/evidence, 3 added) and docs/product/V1_CLAIMS_REGISTER_R18.md. Client: apps/mobile/src/screens/alerts/AlertSettingsScreen.tsx copy, trigger-2 row and push prompt; its test rewritten, 7/7. Guard: scripts/check-alert-surface-truth.mjs added to CI; scripts/check-alert-coverage.mjs renamed scripts/check-pd5-alerts-readiness.mjs and removed from CI as a FUTURE readiness gate.",
+      "postImplementAcceptance": "PASS. Verified separately from implementation: inherited-row drift 0 on id/state/platforms/evidenceArtifact/evidenceState/runtimeRow/coverageDefinition; ENABLED count unchanged at 17; web cells OUT_OF_SCOPE_CURRENT_FOUNDER 33/33; rows with currentContractVersion != R17 = 0; R16 and R17 git-diff empty; check-alert-surface-truth PASS and proven non-vacuous (it convicted the pre-fix screen on five rules, including its own first draft reading comments as copy); pnpm authority:check PASS.",
+      "releasedAsCurrentRegistry": "docs/product/V1_CAPABILITY_REGISTRY_R18.json - named by docs/CURRENT_STATE.md and checked by pnpm authority:check.",
+      "wireContractChanged": false
     }
   ],
   "counts": {
-    "received": 27,
+    "received": 28,
     "amended": 13,
     "deferred": 4,
     "rejectedWithAlternative": 4,
@@ -1217,8 +1244,9 @@
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
     "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged. NEW3 R24B, 16 September 2026, at 256904c4: CCR-NEW3-R24-02 is closed by implementation (RCC 5df329a2 + 34a70a3d) and physical S24 observation (docs/ai/rcc-r28/DEVICE.md); no new CCR; counts unchanged. NEW3 R25, 18 September 2026, at HEAD 523626bc: CCR-NEW3-R25-01 records the founder's current instruction superseding the Gate-C cellular/mobile-data bearer requirement with REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW (Wi-Fi or cellular both accepted, eight invariants unchanged). It is an ACCEPTANCE_POLICY amendment with NO wire change: CONTRACT_REVISION stays R17, WIRE_PROTOCOL_VERSION stays 1, no endpoint or field moves. CELLULAR_BEARER_REQUIREMENT = SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION, explicitly NOT REMOTE_MOBILE_DATA = PASS; historical cellular HOLD readings stand unedited. On FIFTH's GATE_C = PASS, GATE_C_ACCEPTED = YES was frozen and all deferred capability states were preserved unchanged.",
-    "registryVocabularyAmended": 1,
-    "noteShipS4T0": "SHIP S4-T0.1, 18 Sep 2026: CCR-SHIP-S4T0-01 accepted (registry vocabulary + web platform state only). Wire contract R17 / protocol 1 unchanged."
+    "registryVocabularyAmended": 2,
+    "noteShipS4T0": "SHIP S4-T0.1, 18 Sep 2026: CCR-SHIP-S4T0-01 accepted (registry vocabulary + web platform state only). Wire contract R17 / protocol 1 unchanged.",
+    "noteShipS4T03": "SHIP S4-T0.3, 18 Sep 2026: CCR-SHIP-S4T03-01 accepted. Registry metadata corrected to R17 and three alerts.* rows ADDED, all DISABLED_NOT_READY. Wire contract R17 / protocol 1 unchanged, CONTRACT_REVISION stays R17, no endpoint or field moves. R16 and R17 snapshots untouched."
   },
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the current released revision; the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object remains unchanged.",
@@ -1292,8 +1320,8 @@
       }
     }
   },
-  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R17.json",
-  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R17.md",
+  "capabilityRegistryArtifact": "docs/product/V1_CAPABILITY_REGISTRY_R18.json",
+  "claimsRegisterArtifact": "docs/product/V1_CLAIMS_REGISTER_R18.md",
   "measurementBackendR14": {
     "gitSha": "19920c0f2199e4d5afbd543c583a19f235238172",
     "observedVia": "committed source read at HEAD, plus the committed Hono app executed in-process to observe GET /release/capabilities under seven selector forms",
@@ -1412,9 +1440,11 @@
     }
   ],
   "capabilityRegistryArtifactHistory": [
-    "docs/product/V1_CAPABILITY_REGISTRY_R16.json"
+    "docs/product/V1_CAPABILITY_REGISTRY_R16.json",
+    "docs/product/V1_CAPABILITY_REGISTRY_R17.json"
   ],
   "claimsRegisterArtifactHistory": [
-    "docs/product/V1_CLAIMS_REGISTER_R16.md"
+    "docs/product/V1_CLAIMS_REGISTER_R16.md",
+    "docs/product/V1_CLAIMS_REGISTER_R17.md"
   ]
 }

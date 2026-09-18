@@ -89,7 +89,9 @@ let text: string;
 try {
   const pdfPath = join(dir, 'coi.pdf');
   writeFileSync(pdfPath, bytes);
-  execFileSync(PDFTOTEXT, ['-q', '-enc', 'UTF-8', pdfPath, join(dir, 'coi.txt')], { maxBuffer: 200e6 });
+  execFileSync(PDFTOTEXT, ['-q', '-enc', 'UTF-8', pdfPath, join(dir, 'coi.txt')], {
+    maxBuffer: 200e6,
+  });
   text = readFileSync(join(dir, 'coi.txt'), 'utf8');
 } finally {
   rmSync(dir, { recursive: true, force: true });
@@ -109,7 +111,9 @@ if (articles.length === 0) {
   process.exit(1);
 }
 
-console.log(`parsed ${articles.length} Articles (${articles[0]!.number} → ${articles[articles.length - 1]!.number})`);
+console.log(
+  `parsed ${articles.length} Articles (${articles[0]!.number} → ${articles[articles.length - 1]!.number})`,
+);
 
 /**
  * A SANITY GATE ON THE PARSE ITSELF, because a plausible-looking wrong parse is
@@ -130,7 +134,9 @@ const failures = MUST_HAVE.filter(([n, t]) => {
   return !a || !a.title.includes(t);
 });
 if (failures.length > 0) {
-  console.error(`SANITY CHECK FAILED for ${failures.map(([n]) => `Article ${n}`).join(', ')} — refusing to write.`);
+  console.error(
+    `SANITY CHECK FAILED for ${failures.map(([n]) => `Article ${n}`).join(', ')} — refusing to write.`,
+  );
   process.exit(1);
 }
 console.log(`sanity check: all ${MUST_HAVE.length} landmark Articles present and correctly titled`);

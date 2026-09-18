@@ -65,14 +65,22 @@ export function loadUncitedGold(path = 'docs/ai/new3-uncited-authority-gold.json
   for (const c of file.cases) {
     const control = (c.query.match(CONTROL) ?? []).length;
     if (control >= CONTROL_LIMIT) {
-      dropped.push({ queryId: c.query_id, reason: 'control_characters', detail: `${control} control characters` });
+      dropped.push({
+        queryId: c.query_id,
+        reason: 'control_characters',
+        detail: `${control} control characters`,
+      });
       continue;
     }
     // `generated: true` would mean a model wrote the query. None are today, and
     // the check is here so that a later cut which adds them cannot enter the
     // contract silently under a provenance that assumes verbatim text.
     if (c.generated) {
-      dropped.push({ queryId: c.query_id, reason: 'model_generated', detail: 'query was not lifted verbatim' });
+      dropped.push({
+        queryId: c.query_id,
+        reason: 'model_generated',
+        detail: 'query was not lifted verbatim',
+      });
       continue;
     }
     rows.push({

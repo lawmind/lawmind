@@ -73,7 +73,10 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
     // A missing gate must not silently authorise the scan it was meant to hold
     // back, and must not block work either. Say which it is and let the operator
     // decide.
-    return { allow: false, reasons: ['resource gate unavailable: ' + String((error as Error).message)] };
+    return {
+      allow: false,
+      reasons: ['resource gate unavailable: ' + String((error as Error).message)],
+    };
   }
 }
 
@@ -101,7 +104,9 @@ async function main(): Promise<number> {
   if (!verdict.allow && !has('--force')) {
     console.error('DEFER ' + need + ' — not running.');
     for (const r of verdict.reasons) console.error('  - ' + r);
-    console.error('Re-run when the box is quieter, or pass --force to accept the cost deliberately.');
+    console.error(
+      'Re-run when the box is quieter, or pass --force to accept the cost deliberately.',
+    );
     return 3;
   }
 
@@ -139,7 +144,8 @@ async function main(): Promise<number> {
         contentHashes.add(r.contentHash);
       }
       cursor = rows[rows.length - 1]!.id;
-      if (pages % 50 === 0) console.log('  ' + ids.length.toLocaleString() + ' rows, cursor ' + cursor);
+      if (pages % 50 === 0)
+        console.log('  ' + ids.length.toLocaleString() + ' rows, cursor ' + cursor);
     }
 
     // Ids are already in `id` order from the keyset walk, so the hash is stable
@@ -173,13 +179,16 @@ async function main(): Promise<number> {
 
     if (!countOnly) {
       mkdirSync(outDir, { recursive: true });
-      const stem = 'tier-' + tier.toLowerCase() + (pendingOnly ? '-pending' : '') + (bounded ? '-sample' : '');
+      const stem =
+        'tier-' + tier.toLowerCase() + (pendingOnly ? '-pending' : '') + (bounded ? '-sample' : '');
       writeFileSync(join(outDir, stem + '.summary.json'), JSON.stringify(summary, null, 2) + '\n');
       // One id per line. Not JSON: NEW1 streams this into a batch loop, and a
       // 8.5M-element JSON array has to be fully parsed before the first id is
       // available.
       writeFileSync(join(outDir, stem + '.ids.txt'), ids.join('\n') + '\n');
-      console.log('wrote ' + join(outDir, stem + '.ids.txt') + ' (' + ids.length.toLocaleString() + ' ids)');
+      console.log(
+        'wrote ' + join(outDir, stem + '.ids.txt') + ' (' + ids.length.toLocaleString() + ' ids)',
+      );
     }
     return 0;
   } finally {

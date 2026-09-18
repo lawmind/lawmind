@@ -160,8 +160,14 @@ test('the reference table form — treatment then a paragraph pinpoint', () => {
 });
 
 test('the table form handles per incuriam and its negation', () => {
-  assert.equal(readReferenceTableEntry('[2016] 2 SCR 1074 held per incuriam Para 19')?.overruled, 'doubted');
-  assert.equal(readReferenceTableEntry('[2005] 2 SCR 954 held not per incuriam Para 8')?.overruled, null);
+  assert.equal(
+    readReferenceTableEntry('[2016] 2 SCR 1074 held per incuriam Para 19')?.overruled,
+    'doubted',
+  );
+  assert.equal(
+    readReferenceTableEntry('[2005] 2 SCR 954 held not per incuriam Para 8')?.overruled,
+    null,
+  );
 });
 
 test('a table row with no paragraph pinpoint is NOT a table row', () => {

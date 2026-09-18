@@ -46,7 +46,9 @@ try {
   check('RANGED GET returns exactly 32 bytes', range?.byteLength === 32, `${range?.byteLength} B`);
   check(
     'the ranged bytes match the same slice of the whole object',
-    range !== null && got !== null && Buffer.from(range).equals(Buffer.from(got.body.slice(10, 42))),
+    range !== null &&
+      got !== null &&
+      Buffer.from(range).equals(Buffer.from(got.body.slice(10, 42))),
   );
 
   const missing = await store.get(`${key}.does-not-exist`);

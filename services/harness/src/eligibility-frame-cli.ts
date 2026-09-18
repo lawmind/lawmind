@@ -198,7 +198,9 @@ async function main(): Promise<number> {
   });
 
   console.log('ELIGIBILITY_SAMPLING_FRAME');
-  console.log(`  census: TABLESAMPLE SYSTEM (${SAMPLE_PCT}) REPEATABLE (${SEED}) over judgment_embedding_eligibility`);
+  console.log(
+    `  census: TABLESAMPLE SYSTEM (${SAMPLE_PCT}) REPEATABLE (${SEED}) over judgment_embedding_eligibility`,
+  );
 
   const viewHash = await sql<{ h: string }[]>`
     SELECT substr(encode(sha256(pg_get_viewdef('judgment_embedding_eligibility'::regclass, true)::bytea), 'hex'), 1, 16) AS h
@@ -214,7 +216,9 @@ async function main(): Promise<number> {
   const sampled = Number(totals[0]?.sampled ?? 0);
   const inPopulation = Number(totals[0]?.population ?? 0);
   const scale = 100 / SAMPLE_PCT;
-  console.log(`  sampled rows: ${sampled}; in the length-gated uncited population: ${inPopulation}`);
+  console.log(
+    `  sampled rows: ${sampled}; in the length-gated uncited population: ${inPopulation}`,
+  );
 
   // ── the contingency table ─────────────────────────────────────────────────
   const cells = await sql<Cell[]>`
@@ -306,7 +310,11 @@ async function main(): Promise<number> {
       residualCount: residual,
       markerCarryingCount: markerCarrying,
       residualShareOfPopulation: residualShare,
-      allocation: { budget: BUDGET, RESIDUAL_NO_NEGATIVE_MARKER: allocResidual, MARKER_CARRYING: allocMarker },
+      allocation: {
+        budget: BUDGET,
+        RESIDUAL_NO_NEGATIVE_MARKER: allocResidual,
+        MARKER_CARRYING: allocMarker,
+      },
       estimator:
         'Stratified mean: rate = sum_h (N_h / N) * p_h, where N_h is the stratum size from the census and p_h the adjudicated positive rate in stratum h. Variance = sum_h (N_h/N)^2 * p_h(1-p_h)/n_h. Do NOT pool the two strata unweighted — the allocation is deliberately unequal and pooling would report the oversampled stratum as if it were the corpus.',
     },
@@ -340,7 +348,9 @@ async function main(): Promise<number> {
   ] as const) {
     console.log(`  ${label}:`);
     for (const [k, v] of Object.entries(m).sort((a, b) => b[1] - a[1])) {
-      console.log(`    ${k.padEnd(32)} ${String(v).padStart(7)}  ${((100 * v) / Math.max(1, inPopulation)).toFixed(1)}%`);
+      console.log(
+        `    ${k.padEnd(32)} ${String(v).padStart(7)}  ${((100 * v) / Math.max(1, inPopulation)).toFixed(1)}%`,
+      );
     }
   }
   console.log(`\n  artefact: ${OUT}`);

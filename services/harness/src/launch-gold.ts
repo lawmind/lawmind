@@ -112,7 +112,10 @@ export type ExcludedRow = {
 };
 
 const read = (rel: string): Record<string, unknown> =>
-  JSON.parse(readFileSync(new URL(rel, `file://${ROOT.replaceAll('\\', '/')}`), 'utf8')) as Record<string, unknown>;
+  JSON.parse(readFileSync(new URL(rel, `file://${ROOT.replaceAll('\\', '/')}`), 'utf8')) as Record<
+    string,
+    unknown
+  >;
 
 type AnyRow = Record<string, unknown>;
 
@@ -150,7 +153,12 @@ export function buildLaunchGold(): {
 
   const push = (row: LaunchGoldRow, into: LaunchGoldRow[] = rows): void => {
     if (row.query.trim().length === 0) {
-      excluded.push({ queryId: row.queryId, sourceFile: row.sourceFile, reason: 'EMPTY_QUERY', queryChars: 0 });
+      excluded.push({
+        queryId: row.queryId,
+        sourceFile: row.sourceFile,
+        reason: 'EMPTY_QUERY',
+        queryChars: 0,
+      });
       return;
     }
     if (row.goldAuthorityId.length === 0) {

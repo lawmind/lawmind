@@ -82,6 +82,18 @@ const NON_SERVING = new Map([
     'CLI gold scorer — measures target@k against a fixed split, renders nothing to an advocate',
   ],
   ['search/retrieve.ts', 'the ranker itself — it RAISES the degradation, it does not consume it'],
+  [
+    'release/activation.ts',
+    'RESTORE ACTIVATION SMOKE — it runs the real `answerStructured` and `hybridSearch` ' +
+      'against a freshly RESTORED generation to answer "can this thing serve at all", and ' +
+      'writes an operator verdict. Nothing it produces reaches an advocate: its output is a ' +
+      '`SmokeVerdict` an operator reads before activating a generation, and the question it ' +
+      'asks is exactly the one an outcome could not answer, because on a corpus that cannot ' +
+      'search there is no response to qualify. Added 18 Sep 2026 (SHIP S4-T0.3): it had been ' +
+      'failing this guard since it landed on 2 Sep and no workflow ran in between, and the ' +
+      'second complaint was a false positive besides — it DOES pass an onDegrade callback ' +
+      '(`(a) => degraded.push(a)`) and records the result in its probe.',
+  ],
 ]);
 
 const failures = [];

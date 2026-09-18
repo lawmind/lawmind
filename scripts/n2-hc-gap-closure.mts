@@ -476,7 +476,7 @@ async function run(): Promise<void> {
           if (meta.length === 0) metadataMissing++;
           let textState: 'TEXT_AVAILABLE' | 'IMAGE_ONLY_OCR_PENDING' | null = null;
           let judgmentId = target.judgment_id;
-          let observationState: 'verified_judgment' | 'duplicate_linked' = judgmentId
+          const observationState: 'verified_judgment' | 'duplicate_linked' = judgmentId
             ? 'duplicate_linked'
             : 'verified_judgment';
 

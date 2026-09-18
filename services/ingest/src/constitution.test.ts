@@ -72,7 +72,10 @@ test('an article carries its continuation lines, not just its opener', () => {
 
 test('every article resolves to its own offset in the source', () => {
   for (const a of parseArticles(REAL)) {
-    assert.ok(REAL.slice(a.charOffset).startsWith(a.text.split('\n')[0]!), `bad offset for ${a.number}`);
+    assert.ok(
+      REAL.slice(a.charOffset).startsWith(a.text.split('\n')[0]!),
+      `bad offset for ${a.number}`,
+    );
   }
 });
 

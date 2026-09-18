@@ -67,7 +67,11 @@ describe('damageVerdict — the VERIFIED class needs proof, not a density', () =
   });
 
   it('promotes a stored legacy-font verdict, which was made with PDF evidence', () => {
-    const r = damageVerdict({ ...base, text: PATNA_READABLE, storedScriptQuality: 'legacy_font_ascii' });
+    const r = damageVerdict({
+      ...base,
+      text: PATNA_READABLE,
+      storedScriptQuality: 'legacy_font_ascii',
+    });
     assert.equal(r.verdict, 'TEXT_UNSAFE_VERIFIED');
     assert.ok(r.reasons.includes('LEGACY_FONT_ASCII_STORED'));
   });

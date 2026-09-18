@@ -73,6 +73,7 @@ for (const [tail, n] of Object.entries(tails)) {
   let kind: keyof typeof tailShapes;
   if (/^[0-9]{4}:[A-Z]/.test(tail)) kind = 'NEXT_CITATION_CONCATENATED';
   else if (/^[0-9]{1,3}(?:$|[^0-9])/.test(tail)) kind = 'PAGE_OR_PARA_NUMBER_CONCATENATED';
+  // eslint-disable-next-line no-control-regex -- the class being detected IS control characters
   else if (/[\u0000-\u001f\ufffd]/.test(tail)) kind = 'CONTROL_CHAR_OR_MOJIBAKE';
   else if (/^[A-Za-z]/.test(tail)) kind = 'WORD_CONCATENATED';
   else kind = 'OTHER';
@@ -80,7 +81,7 @@ for (const [tail, n] of Object.entries(tails)) {
   // The one shape that could be a longer real suffix: two or more capitals with
   // no lower-case letter following, e.g. a hypothetical `-DBC`.
   if (/^[A-Z]{2,}(?![a-z])/.test(tail)) tailShapes.COULD_BE_A_LONGER_SUFFIX += n;
-  (tailExamples[kind] ??= []).length < 8 && tailExamples[kind]!.push(tail);
+  if ((tailExamples[kind] ??= []).length < 8) tailExamples[kind]!.push(tail);
 }
 
 const glued = occ['occurrence_suffix_GLUED'] ?? 0;
@@ -136,7 +137,7 @@ const artifact = {
     safeToShipForFutureExtraction: negativesMoved.length === 0 && tailShapes.COULD_BE_A_LONGER_SUFFIX === 0,
   },
   DB_SUFFIX_FUTURE_FIX:
-    'services/ingest/src/harvest/hc-load.ts NEUTRAL_G: move the word boundary onto the NUMBER and let the suffix follow it — /\b(\d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(\d{1,6})\b(?:-(?:DB|FB))?/ . Future extraction only.',
+    'services/ingest/src/harvest/hc-load.ts NEUTRAL_G: move the word boundary onto the NUMBER and let the suffix follow it — /\b(d{4}):([A-Z]{2,10}(?:-[A-Z]{1,3})?):(d{1,6})\b(?:-(?:DB|FB))?/ . Future extraction only.',
   notDoneHere: {
     'services/ingest/src/citations.ts': 'carries the same regex for CITED references. Changing it changes the citation EDGE key space while CITATION_BULK_APPLY = HOLD, so it is named and measured here and left alone — the same occurrence count bounds its exposure.',
     existingRows: 'candidate-only, in NEW2-R18-EXISTING; no judgments row is rewritten.',

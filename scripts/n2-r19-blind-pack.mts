@@ -116,7 +116,7 @@ for (const [rule, want] of Object.entries(STRATA)) {
 chosen.sort((x, y) => h('order' + x.a.judgmentId) - h('order' + y.a.judgmentId));
 
 const PFX = ROUND === 2 ? 'C' : 'B';
-const items = chosen.map(({ a, e }, i) => {
+const items = chosen.map(({ a: _a, e }, i) => {
   const token = `${PFX}${String(i + 1).padStart(3, '0')}`;
   const others = e.distinctCitationsInText
     .filter((c) => c.v !== e.storedNow)

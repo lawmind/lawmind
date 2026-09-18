@@ -16,10 +16,9 @@ function fakeSql(): Sql {
 
 const ok = (content: string) =>
   (async () =>
-    new Response(
-      JSON.stringify({ choices: [{ message: { content } }], usage: { cost: 0 } }),
-      { status: 200 },
-    )) as unknown as typeof fetch;
+    new Response(JSON.stringify({ choices: [{ message: { content } }], usage: { cost: 0 } }), {
+      status: 200,
+    })) as unknown as typeof fetch;
 
 afterEach(() => {
   delete process.env['DPA_COUNTERSIGNED'];
@@ -33,7 +32,12 @@ test('EVERY REPORTER FORMAT IS STRIPPED — the model invents all of them', () =
     'The Court in AIR 1978 SC 597 held one thing, in (2019) 4 SCC 221 another, ' +
     'in 2023 INSC 456 a third, and in [1963] 1 SCR 332 a fourth.';
   const out = stripInventedCitations(text);
-  for (const shape of ['AIR 1978 SC 597', '(2019) 4 SCC 221', '2023 INSC 456', '[1963] 1 SCR 332']) {
+  for (const shape of [
+    'AIR 1978 SC 597',
+    '(2019) 4 SCC 221',
+    '2023 INSC 456',
+    '[1963] 1 SCR 332',
+  ]) {
     assert.ok(!out.includes(shape), `survived: ${shape}`);
   }
 });
@@ -105,10 +109,15 @@ test('AN EMPTY OR STUNTED COMPLETION FALLS BACK', async () => {
   // empty content. Embedding that in place of the question is strictly worse
   // than embedding the question.
   for (const stunted of ['', '   ', 'Yes.']) {
-    const r = await hydeText(fakeSql(), 'whether anticipatory bail may be limited in time', 'public', {
-      openRouterKey: 'k',
-      fetchImpl: ok(stunted),
-    });
+    const r = await hydeText(
+      fakeSql(),
+      'whether anticipatory bail may be limited in time',
+      'public',
+      {
+        openRouterKey: 'k',
+        fetchImpl: ok(stunted),
+      },
+    );
     assert.equal(r.generated, false, `accepted a stunted completion: ${JSON.stringify(stunted)}`);
   }
 });
@@ -132,13 +141,18 @@ test('the query is KEPT alongside the hypothetical, not replaced by it', async (
 });
 
 test('a generated citation never reaches the embedded text', async () => {
-  const r = await hydeText(fakeSql(), 'whether anticipatory bail may be limited in time', 'public', {
-    openRouterKey: 'k',
-    fetchImpl: ok(
-      'The settled position, as laid down in AIR 1980 SC 1632, is that the protection ' +
-        'continues and does not lapse merely because a period was mentioned in the order below.',
-    ),
-  });
+  const r = await hydeText(
+    fakeSql(),
+    'whether anticipatory bail may be limited in time',
+    'public',
+    {
+      openRouterKey: 'k',
+      fetchImpl: ok(
+        'The settled position, as laid down in AIR 1980 SC 1632, is that the protection ' +
+          'continues and does not lapse merely because a period was mentioned in the order below.',
+      ),
+    },
+  );
   assert.equal(r.generated, true);
   assert.ok(!r.text.includes('AIR 1980 SC 1632'), 'an invented citation reached the embedder');
 });
@@ -172,24 +186,37 @@ test('a section query is skipped — the number is the strongest lexical signal 
 test('SKIPPED AND FAILED ARE DIFFERENT — a design choice must not read as an outage', async () => {
   // If both reported as one number, a run with the model down would look
   // exactly like a run that was correctly gated.
-  const skipped = await hydeText(fakeSql(), '(2019) 4 SCC 221', 'public', { openRouterKey: 'k', fetchImpl: ok('x') });
-  const failed = await hydeText(fakeSql(), 'whether the protection continues after the period', 'public', {
-    openRouterKey: undefined,
+  const skipped = await hydeText(fakeSql(), '(2019) 4 SCC 221', 'public', {
+    openRouterKey: 'k',
     fetchImpl: ok('x'),
   });
+  const failed = await hydeText(
+    fakeSql(),
+    'whether the protection continues after the period',
+    'public',
+    {
+      openRouterKey: undefined,
+      fetchImpl: ok('x'),
+    },
+  );
   assert.equal(skipped.skipped, true);
   assert.notEqual(failed.skipped, true);
   assert.equal(failed.generated, false);
 });
 
 test('a concept query is NOT skipped — this is the case HyDE exists for', async () => {
-  const r = await hydeText(fakeSql(), 'whether the protection continues after the period fixed', 'public', {
-    openRouterKey: 'k',
-    fetchImpl: ok(
-      'The protection so granted does not ordinarily stand extinguished upon the expiry of any ' +
-        'period fixed by the court, and the accused remains entitled to its benefit throughout.',
-    ),
-  });
+  const r = await hydeText(
+    fakeSql(),
+    'whether the protection continues after the period fixed',
+    'public',
+    {
+      openRouterKey: 'k',
+      fetchImpl: ok(
+        'The protection so granted does not ordinarily stand extinguished upon the expiry of any ' +
+          'period fixed by the court, and the accused remains entitled to its benefit throughout.',
+      ),
+    },
+  );
   assert.notEqual(r.skipped, true);
   assert.equal(r.generated, true);
 });

@@ -118,9 +118,10 @@ try {
 
   for (const c of survey.perCourt) {
     const key = norm(c.name);
-    const src = survey.perCourtPerYear[
-      Object.keys(survey.perCourtPerYear).find((n) => norm(n) === key) ?? ''
-    ];
+    const src =
+      survey.perCourtPerYear[
+        Object.keys(survey.perCourtPerYear).find((n) => norm(n) === key) ?? ''
+      ];
     const h = heldByCourtYear.get(key);
     for (const b of bands) {
       const source = sum(src, b.from, b.to);
@@ -138,7 +139,8 @@ try {
           Math.max(0, source - heldN),
         ].join('\t'),
       );
-      if (source - heldN > 0) gaps.push({ court: c.name, code: c.code, band: b.label, source, heldN });
+      if (source - heldN > 0)
+        gaps.push({ court: c.name, code: c.code, band: b.label, source, heldN });
     }
   }
 

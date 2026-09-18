@@ -71,7 +71,8 @@ async function main(): Promise<number> {
   // Every failure, not a sample of them: a number below 1.0 has to be
   // actionable, and the first twenty are what make it so.
   for (const f of r.failures.slice(0, 40)) console.log(`  ${f}`);
-  if (r.failures.length > 40) console.log(`  ... and ${r.failures.length - 40} more (all in the artifact)`);
+  if (r.failures.length > 40)
+    console.log(`  ... and ${r.failures.length - 40} more (all in the artifact)`);
 
   if (OUT) {
     writeFileSync(

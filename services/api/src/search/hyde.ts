@@ -117,7 +117,10 @@ export function stripInventedCitations(text: string): string {
    * reporter but points just as hard, and the model produces them constantly.
    * The `v.` join is the format-independent tell.
    */
-  out = out.replace(/\b[\p{Lu}][\p{L}.'-]*(?:\s+[\p{Lu}][\p{L}.'-]*){0,4}\s+v\.?\s+[\p{Lu}][\p{L}.'-]*(?:\s+[\p{Lu}][\p{L}.'-]*){0,4}/gu, ' ');
+  out = out.replace(
+    /\b[\p{Lu}][\p{L}.'-]*(?:\s+[\p{Lu}][\p{L}.'-]*){0,4}\s+v\.?\s+[\p{Lu}][\p{L}.'-]*(?:\s+[\p{Lu}][\p{L}.'-]*){0,4}/gu,
+    ' ',
+  );
   return out.replace(/\s{2,}/g, ' ').trim();
 }
 

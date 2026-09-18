@@ -54,7 +54,10 @@ describe('reference stubs — the class that matters most', () => {
     // classified `decided` by a rule that read the disposal first, and would go
     // into the index wearing an authority's clothes.
     const r = classifyHcDocument(
-      doc({ disposalNature: 'ALLOWED', fullText: 'The petition is allowed. Order passed in W.P. No. 3610 of 2001.' }),
+      doc({
+        disposalNature: 'ALLOWED',
+        fullText: 'The petition is allowed. Order passed in W.P. No. 3610 of 2001.',
+      }),
     );
     assert.equal(r.documentClass, 'reference_stub');
   });
@@ -70,15 +73,23 @@ describe('reference stubs — the class that matters most', () => {
   it('does NOT call a long judgment a stub because it cites another order', () => {
     // A reasoned judgment routinely refers to orders. Length is what stops the
     // pointer rule from swallowing real decisions.
-    const r = classifyHcDocument(doc({ fullText: 'Order passed in CWJC 100/2020. ' + 'x'.repeat(9000) }));
+    const r = classifyHcDocument(
+      doc({ fullText: 'Order passed in CWJC 100/2020. ' + 'x'.repeat(9000) }),
+    );
     assert.equal(r.documentClass, 'decided');
   });
 });
 
 describe('classes read from disposal_nature, verbatim from source', () => {
   it('bail, either way — the largest class at 16,716 rows', () => {
-    assert.equal(classifyHcDocument(doc({ disposalNature: 'BAIL GRANTED' })).documentClass, 'bail_order');
-    assert.equal(classifyHcDocument(doc({ disposalNature: 'BAIL REJECTED' })).documentClass, 'bail_order');
+    assert.equal(
+      classifyHcDocument(doc({ disposalNature: 'BAIL GRANTED' })).documentClass,
+      'bail_order',
+    );
+    assert.equal(
+      classifyHcDocument(doc({ disposalNature: 'BAIL REJECTED' })).documentClass,
+      'bail_order',
+    );
   });
 
   it('procedural disposals, in every printed form the corpus uses', () => {
@@ -104,8 +115,9 @@ describe('classes read from disposal_nature, verbatim from source', () => {
     // Real shape: MJC/4114/2025 "In Civil Writ Jurisdiction Case No.10330 of 2020",
     // 854 chars — an application inside another case, not a standalone decision.
     assert.equal(
-      classifyHcDocument(doc({ caseNumber: 'MJC/4114/2025', fullText: 'x'.repeat(BRIEF_MAX_CHARS - 1) }))
-        .documentClass,
+      classifyHcDocument(
+        doc({ caseNumber: 'MJC/4114/2025', fullText: 'x'.repeat(BRIEF_MAX_CHARS - 1) }),
+      ).documentClass,
       'decided_brief',
     );
   });
@@ -120,7 +132,8 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
       doc({
         disposalNature: 'ALLOWED',
         caseNumber: 'CR. MISC./10124/2026',
-        fullText: 'Heard learned counsel. The prayer for anticipatory bail is allowed. ' + 'x'.repeat(3000),
+        fullText:
+          'Heard learned counsel. The prayer for anticipatory bail is allowed. ' + 'x'.repeat(3000),
       }),
     );
     assert.equal(r.documentClass, 'bail_order');
@@ -146,7 +159,11 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
           fullText: wrapped + ' ' + 'x'.repeat(3000),
         }),
       );
-      assert.equal(r.documentClass, 'bail_order', `wrapped phrase missed: ${JSON.stringify(wrapped)}`);
+      assert.equal(
+        r.documentClass,
+        'bail_order',
+        `wrapped phrase missed: ${JSON.stringify(wrapped)}`,
+      );
       assert.equal(r.method, 'text_bail_phrase');
     }
   });
@@ -184,7 +201,11 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
       }),
     );
     assert.equal(r.documentClass, 'procedural_disposal');
-    assert.equal(r.method, 'operative_act_withdrawn', 'recorded as a prose rule, not as a source field');
+    assert.equal(
+      r.method,
+      'operative_act_withdrawn',
+      'recorded as a prose rule, not as a source field',
+    );
   });
 
   it('does NOT demote a judgment that merely RECITES an earlier withdrawal', () => {
@@ -216,7 +237,11 @@ describe('bail hiding behind a merits disposal — found by the validation sampl
       'Registry is directed to transfer the amount of Rs.50,000 to the bank account.',
     ]) {
       const r = classifyHcDocument(
-        doc({ disposalNature: 'ALLOWED', caseNumber: 'CWP/1/2020', fullText: 'x '.repeat(1200) + text }),
+        doc({
+          disposalNature: 'ALLOWED',
+          caseNumber: 'CWP/1/2020',
+          fullText: 'x '.repeat(1200) + text,
+        }),
       );
       assert.equal(r.documentClass, 'decided', `wrongly demoted on: ${text}`);
     }
@@ -259,7 +284,8 @@ describe('unclassified is a result, never a default', () => {
 describe('18 Aug 2026 additions, and the refusals beside them', () => {
   const long = 'x'.repeat(5000);
   const cls = (disposal: string) =>
-    classifyHcDocument({ disposalNature: disposal, caseNumber: null, fullText: long }).documentClass;
+    classifyHcDocument({ disposalNature: disposal, caseNumber: null, fullText: long })
+      .documentClass;
 
   it('reads NOT-PRESSED as a withdrawal — a hyphen was the only thing failing', () => {
     assert.equal(cls('NOT-PRESSED'), 'procedural_disposal');

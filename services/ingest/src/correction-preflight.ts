@@ -8,10 +8,7 @@ export const CORRECTION_DISPOSITIONS = [
 
 export type CorrectionDisposition = (typeof CORRECTION_DISPOSITIONS)[number];
 export type TargetHolderClassification =
-  | 'NOT_APPLICABLE'
-  | 'NO_EXISTING_HOLDER'
-  | 'SAME_JUDGMENT'
-  | 'VERIFIED_COMMON_ORDER_FAMILY';
+  'NOT_APPLICABLE' | 'NO_EXISTING_HOLDER' | 'SAME_JUDGMENT' | 'VERIFIED_COMMON_ORDER_FAMILY';
 
 export type CorrectionCandidateRow = {
   judgmentId: string;

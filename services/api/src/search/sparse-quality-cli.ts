@@ -93,7 +93,12 @@ const GOLD_N = num('--gold', 40);
 const LABEL = str('--label', 'LOCAL_CONTENDED');
 const LIMIT = 50;
 
-const sql = postgres(url, { max: 2, ssl: false, onnotice: () => {}, connection: { statement_timeout: 0 } });
+const sql = postgres(url, {
+  max: 2,
+  ssl: false,
+  onnotice: () => {},
+  connection: { statement_timeout: 0 },
+});
 
 /**
  * What else is on the box, sampled at the moment of measurement.
@@ -195,9 +200,19 @@ async function measure(
   for (let i = 0; i < REPEATS; i += 1) {
     const s: RetrievalSignals = { exactTitleCandidates: 0 };
     const t = performance.now();
-    // eslint-disable-next-line no-await-in-loop -- serial on purpose: concurrent
+
     // runs would measure contention we introduced rather than the query.
-    const results = await hybridSearch(sql, query, null, filters, LIMIT, 'hybrid', (arm) => degraded.add(arm), 0, s);
+    const results = await hybridSearch(
+      sql,
+      query,
+      null,
+      filters,
+      LIMIT,
+      'hybrid',
+      (arm) => degraded.add(arm),
+      0,
+      s,
+    );
     runs.push(Number((performance.now() - t).toFixed(1)));
     last = results;
     signals = s;
@@ -220,7 +235,8 @@ async function measure(
     // The ranker's own decision. `refused` is the state where it declined to
     // scan; zero results after an admitted scan is a different fact and is not
     // collapsed into it.
-    admittedOrRefused: degraded.has('sparse_unbounded') && last.length === 0 ? 'refused' : 'admitted',
+    admittedOrRefused:
+      degraded.has('sparse_unbounded') && last.length === 0 ? 'refused' : 'admitted',
     filteredAdmission: signals.filteredAdmission ?? null,
     filteredPopulationFromRanker: signals.filteredPopulation ?? null,
     filteredPopulationCapped: signals.filteredPopulationCapped ?? null,
@@ -250,13 +266,21 @@ async function filterShapes(): Promise<{ name: string; filters: SearchFilters }[
     SELECT court, count(*)::bigint AS n FROM judgments GROUP BY court ORDER BY count(*) DESC`;
   const sc = courts.find((c) => /supreme court/i.test(c.court));
   const large = courts.find((c) => !/supreme court/i.test(c.court));
-  const small = [...courts].reverse().find((c) => Number(c.n) > 1000 && !/supreme court/i.test(c.court));
+  const small = [...courts]
+    .reverse()
+    .find((c) => Number(c.n) > 1000 && !/supreme court/i.test(c.court));
 
   const shapes: { name: string; filters: SearchFilters }[] = [{ name: 'unfiltered', filters: {} }];
   if (large) {
     shapes.push({ name: 'court:large_hc', filters: { court: large.court } });
-    shapes.push({ name: 'court+month', filters: { court: large.court, dateFrom: '2024-01-01', dateTo: '2024-01-31' } });
-    shapes.push({ name: 'court+year', filters: { court: large.court, dateFrom: '2024-01-01', dateTo: '2024-12-31' } });
+    shapes.push({
+      name: 'court+month',
+      filters: { court: large.court, dateFrom: '2024-01-01', dateTo: '2024-01-31' },
+    });
+    shapes.push({
+      name: 'court+year',
+      filters: { court: large.court, dateFrom: '2024-01-01', dateTo: '2024-12-31' },
+    });
     shapes.push({ name: 'court+caseType', filters: { court: large.court, caseType: 'criminal' } });
   }
   if (sc) shapes.push({ name: 'court:supreme_court', filters: { court: sc.court } });
@@ -270,11 +294,16 @@ async function main(): Promise<void> {
   const shapes = await filterShapes();
 
   // ── the operational half — no adjudicated target exists, and none is invented
-  const OPERATIONAL = ['bail', 'anticipatory bail', 'quashing FIR', 'interim injunction', 'condonation of delay limitation'];
+  const OPERATIONAL = [
+    'bail',
+    'anticipatory bail',
+    'quashing FIR',
+    'interim injunction',
+    'condonation of delay limitation',
+  ];
   const operational: Row[] = [];
   for (const q of OPERATIONAL) {
     for (const shape of shapes) {
-      // eslint-disable-next-line no-await-in-loop -- serial, see measure()
       const row = await measure(`op:${q}:${shape.name}`, q, shape.name, shape.filters, null, pre);
       operational.push(row);
       console.log(
@@ -294,8 +323,9 @@ async function main(): Promise<void> {
 
   const adjudicated: Row[] = [];
   for (const c of slice) {
-    // eslint-disable-next-line no-await-in-loop -- serial, see measure()
-    const held = await sql<{ n: string }[]>`SELECT count(*)::bigint AS n FROM judgments WHERE id = ${c.authority_id}::uuid`;
+    const held = await sql<
+      { n: string }[]
+    >`SELECT count(*)::bigint AS n FROM judgments WHERE id = ${c.authority_id}::uuid`;
     if (Number(held[0]?.n ?? 0) === 0) {
       // The target left the corpus. Recording the absence beats scoring a miss
       // against a query whose answer is genuinely not here any more.
@@ -326,7 +356,7 @@ async function main(): Promise<void> {
       });
       continue;
     }
-    // eslint-disable-next-line no-await-in-loop -- serial, see measure()
+
     const row = await measure(`gold:${c.query_id}`, c.query, 'unfiltered', {}, c.authority_id, pre);
     adjudicated.push(row);
     console.log(
@@ -347,7 +377,8 @@ async function main(): Promise<void> {
     limit: LIMIT,
     method: {
       ranker: 'services/api/src/search/retrieve.ts hybridSearch — the function POST /search calls',
-      queryVector: 'null. semanticArmPermitted() is false in v1, so null is what production passes. This measures the LEXICAL system only.',
+      queryVector:
+        'null. semanticArmPermitted() is false in v1, so null is what production passes. This measures the LEXICAL system only.',
       goldSet: `docs/ai/new3-noncitation-gold.json${gold.version ? ` (${gold.version})` : ''}, first ${GOLD_N} cases with a query and an authority`,
       qualityUnlabeledRule:
         'A query with no previously adjudicated target is recorded QUALITY_UNLABELED. No relevance judgement is invented for it.',
@@ -377,7 +408,9 @@ async function main(): Promise<void> {
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(report, null, 2) + '\n');
-  console.log(`\npresent@10 ${report.summary.knownTargetPresentAt10Fraction}  ·  present@50 ${report.summary.knownTargetPresentAt50Fraction}`);
+  console.log(
+    `\npresent@10 ${report.summary.knownTargetPresentAt10Fraction}  ·  present@50 ${report.summary.knownTargetPresentAt50Fraction}`,
+  );
   console.log(OUT);
   await sql.end({ timeout: 10 });
 }

@@ -48,13 +48,31 @@ async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
-  const rows0 = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
+  const rows0 = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
   const dec = JSON.parse(
-    readFileSync(new URL('../../../docs/ai/new1-tier-a/dense-failure-decomposition.json', import.meta.url), 'utf8'),
-  ) as { rows: { queryId: string; annRank: number | null; exactRank: number | null; family: string; inIndex: boolean }[] };
+    readFileSync(
+      new URL('../../../docs/ai/new1-tier-a/dense-failure-decomposition.json', import.meta.url),
+      'utf8',
+    ),
+  ) as {
+    rows: {
+      queryId: string;
+      annRank: number | null;
+      exactRank: number | null;
+      family: string;
+      inIndex: boolean;
+    }[];
+  };
   const byId = new Map(dec.rows.map((r) => [r.queryId, r]));
 
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 60_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 60_000 },
+  });
 
   const rows: {
     queryId: string;
@@ -92,7 +110,13 @@ async function main(): Promise<void> {
     if ((i + 1) % 100 === 0) process.stdout.write(`  ${i + 1}/${rows0.length}\n`);
   }
 
-  const scored = rows.filter((r) => r.insideHead !== null && r.family !== null && r.family !== 'NOT_STAGED' && r.family !== 'TEXT_UNSAFE');
+  const scored = rows.filter(
+    (r) =>
+      r.insideHead !== null &&
+      r.family !== null &&
+      r.family !== 'NOT_STAGED' &&
+      r.family !== 'TEXT_UNSAFE',
+  );
   const bucket = (inside: boolean): Record<string, number | null> => {
     const rs = scored.filter((r) => r.insideHead === inside);
     const n = rs.length;

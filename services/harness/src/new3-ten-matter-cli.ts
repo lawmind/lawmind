@@ -46,7 +46,7 @@
  * matter, flushed immediately. A run that dies at matter 7 leaves six matters of
  * real evidence.
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -163,9 +163,11 @@ async function main(): Promise<number> {
 
   try {
     if (PREMIUM_LOCAL) {
-      premiumRestore = (await sql<{ key: string; enabled: boolean }[]>`
+      premiumRestore = (
+        await sql<{ key: string; enabled: boolean }[]>`
         SELECT key, enabled FROM platform_config
-        WHERE kind = 'flag' AND key LIKE 'premium%'`).map((r) => ({ ...r }));
+        WHERE kind = 'flag' AND key LIKE 'premium%'`
+      ).map((r) => ({ ...r }));
       await sql`UPDATE platform_config SET enabled = true
                 WHERE kind = 'flag' AND key LIKE 'premium%'`;
     }
@@ -345,7 +347,14 @@ async function runMatter(
     const ms = Date.now() - started;
     const out: StepResult =
       raced === 'TIMEOUT'
-        ? { step, status: null, ms, ok: false, body: null, note: `timed out at ${PER_REQUEST_MS}ms` }
+        ? {
+            step,
+            status: null,
+            ms,
+            ok: false,
+            body: null,
+            note: `timed out at ${PER_REQUEST_MS}ms`,
+          }
         : { step, status: raced.status, ms, ok: raced.status < 400, body: raced.body };
     steps.push(out);
     return out;
@@ -377,7 +386,9 @@ async function runMatter(
     : null;
   observations['returnedJudgmentIds'] = results.map((r) => r['judgmentId']);
   /** M08's whole question. Cheap, and checked on every matter, not just M08. */
-  observations['testCourtRowsInResults'] = results.filter((r) => r['court'] === 'Test Court').length;
+  observations['testCourtRowsInResults'] = results.filter(
+    (r) => r['court'] === 'Test Court',
+  ).length;
   if (fx.anchorJudgmentId) {
     const rank = results.findIndex((r) => r['judgmentId'] === fx.anchorJudgmentId);
     observations['anchorRank'] = rank === -1 ? null : rank + 1;
@@ -411,8 +422,7 @@ async function runMatter(
   }
 
   // ── 2. OPEN THE JUDGMENT + ITS CURRENTNESS ────────────────────────────────
-  const openId =
-    fx.anchorJudgmentId ?? (results[0]?.['judgmentId'] as string | undefined) ?? null;
+  const openId = fx.anchorJudgmentId ?? (results[0]?.['judgmentId'] as string | undefined) ?? null;
   observations['openedJudgmentId'] = openId;
   if (openId) {
     const jd = data(await call('judgment', `/judgments/${openId}`));

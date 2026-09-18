@@ -64,7 +64,10 @@ import { sslFor } from './db-url.js';
 
 const GOLD = new URL('../../../docs/ai/new2/ADVOCATE100.json', import.meta.url);
 const OUT = new URL('../../../docs/ai/new1-tier-a/advocate100-results.json', import.meta.url);
-const CKPT = new URL('../../../docs/ai/new1-tier-a/advocate100-results.checkpoint.jsonl', import.meta.url);
+const CKPT = new URL(
+  '../../../docs/ai/new1-tier-a/advocate100-results.checkpoint.jsonl',
+  import.meta.url,
+);
 /** Production's own input cap, from `searchRequest`. */
 const PRODUCTION_QUERY_MAX_CHARS = 500;
 const EMBED_TIMEOUT_MS = Number(process.env['EMBED_TIMEOUT_MS'] ?? 5_000);
@@ -105,10 +108,18 @@ type Row = {
 async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
-  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as { tasks: Task[]; gold_set_version?: string };
+  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as {
+    tasks: Task[];
+    gold_set_version?: string;
+  };
   const tasks = gold.tasks;
 
-  const sql = postgres(url, { max: 4, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 25_000 } });
+  const sql = postgres(url, {
+    max: 4,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 25_000 },
+  });
   const embedder = (await getHarnessEmbedder()).embedder;
   /** Same budget shape production uses: a bound, and lexical-only rather than a hang. */
   const embedQuery = async (text: string): Promise<string | null> => {
@@ -128,7 +139,10 @@ async function main(): Promise<void> {
       if (timer !== undefined) clearTimeout(timer);
     }
   };
-  const app = createApp({ ping: async () => void (await sql`SELECT 1`), search: { sql, embedQuery } });
+  const app = createApp({
+    ping: async () => void (await sql`SELECT 1`),
+    search: { sql, embedQuery },
+  });
   await embedQuery('warm');
 
   const done = new Set<string>();
@@ -195,7 +209,9 @@ async function main(): Promise<void> {
       topHitIsTarget: ids.length > 0 && targets.has(ids[0] ?? ''),
       ambiguous: body.data?.ambiguous ?? null,
       exactTitleCandidates: body.data?.exactTitleCandidates ?? null,
-      overruledRendered: results.filter((r) => targets.has(r.judgmentId ?? '')).map((r) => r.overruledStatus ?? 'none'),
+      overruledRendered: results
+        .filter((r) => targets.has(r.judgmentId ?? ''))
+        .map((r) => r.overruledStatus ?? 'none'),
       degraded: body.data?.degraded ?? [],
       engineering: 'PENDING',
       taskCompletion: 'PENDING',
@@ -230,7 +246,10 @@ async function main(): Promise<void> {
       // Search cannot refuse; it can only fail to assert. What is gradeable is
       // whether it asserted an authority the task says is not the answer.
       row.taskCompletion = res.status !== 200 ? `HTTP_${res.status}` : 'UNGRADEABLE_BY_SEARCH';
-      row.note = results.length === 0 ? 'search returned nothing' : `search returned ${results.length} authorities`;
+      row.note =
+        results.length === 0
+          ? 'search returned nothing'
+          : `search returned ${results.length} authorities`;
     } else if (t.expected === 'RESOLVE_TO_DISPOSAL_EVENT') {
       row.taskCompletion =
         row.targetsReturned === 0
@@ -252,7 +271,11 @@ async function main(): Promise<void> {
               : 'NO_TREATMENT_TO_RENDER';
     } else if (t.expected.startsWith('RESOLVE')) {
       row.taskCompletion =
-        row.bestRank === null ? 'TARGET_MISSED' : row.bestRank === 1 ? 'RESOLVED_AT_1' : 'RESOLVED_BELOW_1';
+        row.bestRank === null
+          ? 'TARGET_MISSED'
+          : row.bestRank === 1
+            ? 'RESOLVED_AT_1'
+            : 'RESOLVED_BELOW_1';
     } else {
       row.taskCompletion = 'UNGRADEABLE_BY_SEARCH';
       row.note = t.expected;
@@ -302,7 +325,9 @@ async function main(): Promise<void> {
           {
             n: rs.length,
             targetAt1: rs.filter((r) => r.engineering === 'TARGET_AT_1').length,
-            targetInTop5: rs.filter((r) => r.engineering === 'TARGET_AT_1' || r.engineering === 'TARGET_IN_5').length,
+            targetInTop5: rs.filter(
+              (r) => r.engineering === 'TARGET_AT_1' || r.engineering === 'TARGET_IN_5',
+            ).length,
             missed: rs.filter((r) => r.engineering === 'TARGET_MISSED').length,
           },
         ];
@@ -310,7 +335,11 @@ async function main(): Promise<void> {
     ),
     gradeableTasks: gradeable.length,
     ungradeableBySearch: rows.length - gradeable.length,
-    latencyMs: { p50: lat[Math.floor(lat.length * 0.5)] ?? null, p95: lat[Math.floor(lat.length * 0.95)] ?? null, max: lat[lat.length - 1] ?? null },
+    latencyMs: {
+      p50: lat[Math.floor(lat.length * 0.5)] ?? null,
+      p95: lat[Math.floor(lat.length * 0.95)] ?? null,
+      max: lat[lat.length - 1] ?? null,
+    },
     caveats: [
       'ENGINEERING and TASK_COMPLETION are never pooled: 27 tasks expect a refusal, and a system that answers everything scores well on the first and badly on the second.',
       '/search returns authorities, not an answer — proposition characterisation and currentness WORDING are UNGRADEABLE here and are counted as such, never as passes.',

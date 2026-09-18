@@ -143,7 +143,9 @@ describe('court categories', () => {
     // `count(*)` here would be the same defect in miniature — it took 11s on
     // this corpus and the question is only "is anything loaded". EXISTS stops
     // at the first row.
-    const [any] = await sql<{ loaded: boolean }[]>`SELECT EXISTS (SELECT 1 FROM judgments) AS loaded`;
+    const [any] = await sql<
+      { loaded: boolean }[]
+    >`SELECT EXISTS (SELECT 1 FROM judgments) AS loaded`;
     if (!any?.loaded) return t.skip('no corpus loaded');
 
     const unpopulated = await unpopulatedCategories(sql);

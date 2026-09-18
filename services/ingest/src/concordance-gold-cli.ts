@@ -238,7 +238,11 @@ for (const row of rows) {
    * that is not the truth, scored honestly and sorted into its real position.
    * Deterministic, so the input hash is stable and the arm can hit cache.
    */
-  const rivals = rankCandidates(name, year, (poolByYear.get(year) ?? []).filter((j) => j.id !== row.cited_judgment_id));
+  const rivals = rankCandidates(
+    name,
+    year,
+    (poolByYear.get(year) ?? []).filter((j) => j.id !== row.cited_judgment_id),
+  );
   const distractor = rivals.find((c) => !candidates.some((k) => k.judgmentId === c.judgmentId));
   if (distractor) {
     const poisoned: Candidate[] = [...candidates, distractor].sort((a, b) => b.jaccard - a.jaccard);
@@ -262,9 +266,10 @@ for (const row of rows) {
    */
   if (truthInCandidates) {
     const withoutTruth = candidates.filter((c) => c.judgmentId !== row.cited_judgment_id);
-    const filled = distractor && !withoutTruth.some((c) => c.judgmentId === distractor.judgmentId)
-      ? [...withoutTruth, distractor].sort((a, b) => b.jaccard - a.jaccard)
-      : withoutTruth;
+    const filled =
+      distractor && !withoutTruth.some((c) => c.judgmentId === distractor.judgmentId)
+        ? [...withoutTruth, distractor].sort((a, b) => b.jaccard - a.jaccard)
+        : withoutTruth;
     if (filled.length > 0) {
       cases.push({
         kind: 'truth_absent',
@@ -331,7 +336,8 @@ function score(
   callFailed: string | null,
 ): Outcome {
   const selected = decision === 'candidate_selected' && candidateJudgmentId !== null;
-  const selectedTruth = selected && c.trueJudgmentId !== null && candidateJudgmentId === c.trueJudgmentId;
+  const selectedTruth =
+    selected && c.trueJudgmentId !== null && candidateJudgmentId === c.trueJudgmentId;
   const refused = !selected;
   const fabricated = selected && c.kind === 'truth_absent';
   return {
@@ -361,7 +367,9 @@ for (const [i, c] of cases.entries()) {
   const prompt = buildAdjudicationPrompt(input);
   const hash = adjudicationInputHash(input);
 
-  process.stdout.write(`[${i + 1}/${cases.length}] ${c.kind} · ${c.citationText.slice(0, 30)} ... `);
+  process.stdout.write(
+    `[${i + 1}/${cases.length}] ${c.kind} · ${c.citationText.slice(0, 30)} ... `,
+  );
 
   /**
    * CACHE FIRST — audited in, 11 Aug 2026, after three runs re-paid for the
@@ -387,7 +395,14 @@ for (const [i, c] of cases.entries()) {
     LIMIT 1`;
   if (cached.length > 0) {
     const row = cached[0]!;
-    const o = score(c, row.decision, row.candidate_judgment_id, deterministicTop1Correct, row.confidence, null);
+    const o = score(
+      c,
+      row.decision,
+      row.candidate_judgment_id,
+      deterministicTop1Correct,
+      row.confidence,
+      null,
+    );
     console.log(
       `${row.decision}${o.correct ? ' ✓' : o.fabricated ? ' ✗ FABRICATED' : o.selected ? ' ✗ WRONG' : ' ✗ missed'}` +
         ` (${row.confidence}) [cached ${hash.slice(0, 8)}]`,
@@ -498,7 +513,9 @@ type Rates = {
 
 function rates(rows: Outcome[]): Rates {
   const n = rows.length;
-  const unusable = rows.filter((r) => r.modelDecision === 'call_failed' || r.modelDecision === 'unparseable').length;
+  const unusable = rows.filter(
+    (r) => r.modelDecision === 'call_failed' || r.modelDecision === 'unparseable',
+  ).length;
   const answered = rows.filter((r) => r.selected).length;
   const correct = rows.filter((r) => r.correct).length;
   const wrong = rows.filter((r) => r.selected && !r.correct).length;
@@ -534,7 +551,9 @@ const detWrong = resolvable.length - detCorrect;
 console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
-console.log(`candidate-generation reach: ${reachable}/${examined} = ${pct(reach)} — the ceiling on everything below`);
+console.log(
+  `candidate-generation reach: ${reachable}/${examined} = ${pct(reach)} — the ceiling on everything below`,
+);
 console.log('');
 console.log('ARM A · deterministic top-1 alone, on the resolvable arms (it never refuses):');
 console.log(
@@ -557,7 +576,9 @@ for (const [label, rows] of [
 const neg = rates(truthAbsent);
 const fabricated = truthAbsent.filter((o) => o.fabricated).length;
 console.log('');
-console.log('SAFETY ARM · truth REMOVED from the candidate list — the only correct answer is a refusal:');
+console.log(
+  'SAFETY ARM · truth REMOVED from the candidate list — the only correct answer is a refusal:',
+);
 console.log(
   `  n=${neg.n}  correctly refused ${neg.correct} (${pct(neg.recall)})  ` +
     `FABRICATED AUTHORITIES: ${fabricated} (${pct(neg.n ? fabricated / neg.n : null)})  unusable ${neg.unusable}`,
@@ -586,7 +607,9 @@ for (const o of resolvable) {
 }
 console.log('');
 console.log('PAIRED, on the resolvable arms (same cases, both methods):');
-console.log(`  both right ${bothRight} · deterministic only ${detOnly} · model only ${modelOnly} · neither ${neither}`);
+console.log(
+  `  both right ${bothRight} · deterministic only ${detOnly} · model only ${modelOnly} · neither ${neither}`,
+);
 console.log(
   `  the trade: DeepSeek GAVE UP ${detOnly} resolutions the deterministic step got right, ` +
     `and PREVENTED ${resolvable.filter((o) => !o.deterministicTop1Correct && !o.selected).length} wrong authorities it would have produced.`,
@@ -599,7 +622,9 @@ for (const o of outcomes) {
   byTier.set(o.tier, arr);
 }
 console.log('');
-console.log('by confidence tier (all arms) — precision is what a promotion threshold would key on:');
+console.log(
+  'by confidence tier (all arms) — precision is what a promotion threshold would key on:',
+);
 for (const [tier, rows] of [...byTier].sort()) {
   const r = rates(rows);
   const fab = rows.filter((o) => o.fabricated).length;
@@ -633,7 +658,10 @@ await writeFile(
       safetyArm_truthAbsent: { ...neg, fabricated },
       paired: { bothRight, deterministicOnly: detOnly, modelOnly, neither },
       byTier: Object.fromEntries(
-        [...byTier].map(([t, rows]) => [t, { ...rates(rows), fabricated: rows.filter((o) => o.fabricated).length }]),
+        [...byTier].map(([t, rows]) => [
+          t,
+          { ...rates(rows), fabricated: rows.filter((o) => o.fabricated).length },
+        ]),
       ),
       outcomes,
     },

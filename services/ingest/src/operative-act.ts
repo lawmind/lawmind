@@ -173,7 +173,8 @@ export function operativeRegion(text: string): string {
     }
     if (last < 0) continue;
     const footerLen = tail.length - last;
-    if (footerLen <= MAX_FOOTER && footerLen <= tail.length * MAX_FOOTER_SHARE && last < cut) cut = last;
+    if (footerLen <= MAX_FOOTER && footerLen <= tail.length * MAX_FOOTER_SHARE && last < cut)
+      cut = last;
   }
   const body = tail.slice(0, cut);
   return (body.length >= 200 ? body : tail).slice(-OPERATIVE_WINDOW);
@@ -238,7 +239,10 @@ const PATTERNS: readonly (readonly [ProceduralReason, RegExp])[] = [
   ['ADJOURNED', /\bfor\s+further\s+orders\b/i],
   ['TRANSFERRED', /\bpetition\s+for\s+transfer\s+is\s+allowed\b/i],
   ['TRANSFERRED', /\bdirected\s+to\s+transfer\s+the\b/i],
-  ['DIRECTION_TO_CONSIDER', /\bdirect(?:ing|ion|ed|s)?\s+(?:the\s+)?[A-Za-z .,'()-]{0,60}?\bto\s+(consider|decide)\s+the\b/i],
+  [
+    'DIRECTION_TO_CONSIDER',
+    /\bdirect(?:ing|ion|ed|s)?\s+(?:the\s+)?[A-Za-z .,'()-]{0,60}?\bto\s+(consider|decide)\s+the\b/i,
+  ],
   ['DIRECTION_TO_CONSIDER', /\bto\s+decide\s+the\s+(representation|application)\b/i],
   ['NO_OPINION_EXPRESSED', /\bhas\s+not\s+expressed\s+any\s+opinion\b/i],
   ['NO_OPINION_EXPRESSED', /\bdoes\s+not\s+pronounce\s+on\s+the\s+finality\b/i],

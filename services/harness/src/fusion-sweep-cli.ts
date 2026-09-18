@@ -88,7 +88,8 @@ type Query = {
  * (`pnpm --filter` runs it from the package root, a shell usually from the repo).
  */
 const CHECKPOINT =
-  process.env['ARMS_CHECKPOINT'] ?? fileURLToPath(new URL('../../../arms-checkpoint.jsonl', import.meta.url));
+  process.env['ARMS_CHECKPOINT'] ??
+  fileURLToPath(new URL('../../../arms-checkpoint.jsonl', import.meta.url));
 const PASS = (process.env['ARMS_PASS'] ?? 'CONTROLLED').toUpperCase();
 const OUT = process.env['FUSION_SWEEP_JSON'] ?? null;
 const RRF_K = Number(process.env['RRF_K'] ?? 60);
@@ -357,9 +358,7 @@ async function main(): Promise<void> {
         g.successAt5.lost
       } p ${g.successAt5.p === null ? 'n/a' : g.successAt5.p.toFixed(4)}   recall@20 +${
         g.recallAt20.gained
-      }/-${g.recallAt20.lost} p ${
-        g.recallAt20.p === null ? 'n/a' : g.recallAt20.p.toFixed(4)
-      }`,
+      }/-${g.recallAt20.lost} p ${g.recallAt20.p === null ? 'n/a' : g.recallAt20.p.toFixed(4)}`,
     );
   }
   const settleS5 = queriesToSettle(obsS5.gained, obsS5.lost, withHybrid.length);
@@ -458,7 +457,9 @@ async function main(): Promise<void> {
   }
   console.log('');
   console.log('  kept/lost/new are success@5 transitions against DENSE_ONLY on the SAME query.');
-  console.log('  "lost" is a dense win destroyed by fusion. "new" is a query only fusion gets right.');
+  console.log(
+    '  "lost" is a dense win destroyed by fusion. "new" is a query only fusion gets right.',
+  );
   console.log('');
 
   const groups = [...new Set(complete.map((q) => q.group))].sort();
@@ -506,7 +507,9 @@ async function main(): Promise<void> {
 
   const best = results
     .filter((r) => r.config.wDense === 1 && r.config.wSparse > 0 && r.config.wSparse < 1)
-    .sort((a, b) => b.overall.successAt5 - a.overall.successAt5 || b.overall.mrr - a.overall.mrr)[0];
+    .sort(
+      (a, b) => b.overall.successAt5 - a.overall.successAt5 || b.overall.mrr - a.overall.mrr,
+    )[0];
   const kSensitivity: { k: number; denseOnly: Metrics; best: Metrics; equal: Metrics }[] = [];
   for (const k of [10, 20, 60, 120, 300]) {
     const m = (c: Config): Metrics =>

@@ -87,9 +87,37 @@ suite('a test cannot reach the production kill switches', () => {
    * Flip `key` as hard as the fixture allows, commit it, and prove the real row
    * is unchanged in every field.
    */
-  async function falsify(key: string): Promise<void> {
+  /** Keys this suite actually falsified. Guards against the whole thing going quiet. */
+  const falsified: string[] = [];
+
+  async function falsify(key: string, t: { skip: (m: string) => void }): Promise<void> {
     const before = await productionRow(key);
-    assert.ok(before, `${key} must exist in production for this falsifier to mean anything`);
+    /**
+     * A KEY WITH NO ROW CANNOT BE FALSIFIED, AND THAT IS NOT THIS SUITE'S BUG.
+     *
+     * `platform_config`'s CHECK constraint allows six kill-switch keys —
+     * search, drafting, briefings, ocr_intake, signups, ecourts_harvest — and
+     * migration 0013 INSERTS exactly one of them, `ecourts_harvest`. The other
+     * five have never had a row. So on the fresh database CI and `pnpm ci:local`
+     * build, `falsify('signups')` asserted its way to a hard failure over a row
+     * nobody ever created, and it took repository CI red with it.
+     *
+     * The mechanism under test is schema isolation, and `ecourts_harvest` proves
+     * it as completely as two keys would. A key with no production row is
+     * SKIPPED with the reason stated — and the assertion below makes sure the
+     * suite cannot go vacuous by skipping everything.
+     *
+     * The absent five are recorded as a finding rather than seeded here: adding
+     * a `platform_config` row is a migration, and a kill switch nobody has
+     * decided to create is not something a test-repair round should invent.
+     */
+    if (!before) {
+      return t.skip(
+        `${key} has no row in platform_config, so there is nothing to falsify. ` +
+          'Migration 0013 seeds only ecourts_harvest; the CHECK constraint allows six keys.',
+      );
+    }
+    falsified.push(key);
 
     const isolation = await createIsolatedSchema(url!);
     try {
@@ -124,12 +152,20 @@ suite('a test cannot reach the production kill switches', () => {
     }
   }
 
-  it('ecourts_harvest: enabling it in a test does not enable it in production', async () => {
-    await falsify('ecourts_harvest');
+  it('ecourts_harvest: enabling it in a test does not enable it in production', async (t) => {
+    await falsify('ecourts_harvest', t);
   });
 
-  it('signups: enabling it in a test does not enable it in production', async () => {
-    await falsify('signups');
+  it('signups: enabling it in a test does not enable it in production', async (t) => {
+    await falsify('signups', t);
+  });
+
+  it('at least one kill switch was really falsified — the suite may not go quiet', () => {
+    assert.ok(
+      falsified.length > 0,
+      'every falsifier skipped, so nothing proved the isolation holds. A suite that ' +
+        'skips its way to green is the failure this assertion exists to catch.',
+    );
   });
 
   it('no client this fixture hands out can even see the production row', async () => {

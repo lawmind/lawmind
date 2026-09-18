@@ -49,7 +49,9 @@ const at = (id: string, when: string, patch: Partial<Observation>): Observation 
 
 describe('a cause-list appearance is LISTED_OBSERVED and never a hearing', () => {
   it('projects LISTED_OBSERVED and says in the row what it does not mean', () => {
-    const p = project([at('o1', '2026-03-14T04:00:00Z', { listingDate: '2026-03-14', itemNumber: 12 })]);
+    const p = project([
+      at('o1', '2026-03-14T04:00:00Z', { listingDate: '2026-03-14', itemNumber: 12 }),
+    ]);
     const listed = p.find((x) => x.kind === 'LISTED_OBSERVED');
     assert.ok(listed);
     assert.equal(listed.detail['listingDate'], '2026-03-14');
@@ -74,15 +76,12 @@ describe('a cause-list appearance is LISTED_OBSERVED and never a hearing', () =>
       );
     }
     // And every observable field still produced its own honest projection.
-    assert.deepEqual(
-      everything.map((p) => p.kind).sort(),
-      [
-        'DISPOSAL_OBSERVED',
-        'LISTED_OBSERVED',
-        'NEXT_DATE_OBSERVED',
-        'ORDER_AVAILABILITY_CANDIDATE',
-      ],
-    );
+    assert.deepEqual(everything.map((p) => p.kind).sort(), [
+      'DISPOSAL_OBSERVED',
+      'LISTED_OBSERVED',
+      'NEXT_DATE_OBSERVED',
+      'ORDER_AVAILABILITY_CANDIDATE',
+    ]);
   });
 });
 
@@ -163,12 +162,15 @@ describe('failures are visible, and disagreement is not resolved by guessing', (
     assert.equal(p!.kind, 'EXTRACTION_UNUSABLE');
     // The listingDate on the same row is NOT projected — the extraction that
     // produced it failed, so it is not evidence.
-    assert.equal(project([
-      at('o1', '2026-03-14T04:00:00Z', {
-        extractionState: 'captcha_failed',
-        listingDate: '2026-03-14',
-      }),
-    ]).length, 1);
+    assert.equal(
+      project([
+        at('o1', '2026-03-14T04:00:00Z', {
+          extractionState: 'captcha_failed',
+          listingDate: '2026-03-14',
+        }),
+      ]).length,
+      1,
+    );
   });
 
   it('two readings at the same instant that disagree are reported as a conflict', () => {

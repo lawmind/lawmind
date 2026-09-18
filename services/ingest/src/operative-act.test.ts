@@ -15,7 +15,10 @@ const pad = (s: string) => 'x '.repeat(1200) + s;
 describe('procedurallyDisposed — catches the operative act', () => {
   const cases: [string, string][] = [
     ['WITHDRAWN', 'Accordingly, the writ petition is dismissed as withdrawn.'],
-    ['NOT_PRESSED', 'the instant writ petition stands dismissed as not pressed, as such, disposed of.'],
+    [
+      'NOT_PRESSED',
+      'the instant writ petition stands dismissed as not pressed, as such, disposed of.',
+    ],
     ['WANT_OF_PROSECUTION', 'the writ petition is dismissed for want of prosecution.'],
     ['WANT_OF_PROSECUTION', 'Learned counsel for the petitioners pleads no instructions.'],
     ['INFRUCTUOUS', 'the civil miscellaneous appeal is dismissed as having become infructuous.'],
@@ -23,23 +26,37 @@ describe('procedurallyDisposed — catches the operative act', () => {
     ['REGISTRY_DEFAULT', 'the petition stands dismissed for non-compliance of office objections.'],
     ['ADJOURNED', 'At the request of Advocate for the applicant, Stand over to 09/04/2025.'],
     ['ADJOURNED', 'List this matter on 07th May, 2026 for further orders.'],
-    ['NO_OPINION_EXPRESSED', 'It is made clear that this Court has not expressed any opinion on any point.'],
-    ['NO_OPINION_EXPRESSED', 'This order does not pronounce on the finality of the rights of the parties.'],
-    ['DECIDED_BY_REFERENCE', 'For orders see detailed reasons recorded in a separate order of even date.'],
-
+    [
+      'NO_OPINION_EXPRESSED',
+      'It is made clear that this Court has not expressed any opinion on any point.',
+    ],
+    [
+      'NO_OPINION_EXPRESSED',
+      'This order does not pronounce on the finality of the rights of the parties.',
+    ],
+    [
+      'DECIDED_BY_REFERENCE',
+      'For orders see detailed reasons recorded in a separate order of even date.',
+    ],
   ];
   for (const [reason, sentence] of cases) {
     it(`${reason}: ${sentence.slice(0, 46)}…`, () => {
       const v = procedurallyDisposed(pad(sentence));
       assert.equal(v.procedural, true, `not caught: ${sentence}`);
-      assert.ok(v.reasons.includes(reason as never), `expected ${reason}, got ${v.reasons.join(',')}`);
+      assert.ok(
+        v.reasons.includes(reason as never),
+        `expected ${reason}, got ${v.reasons.join(',')}`,
+      );
     });
   }
 
   it('survives a line break inside the phrase', () => {
     // The bail phrase in hc-classify.ts failed on exactly this for as long as it
     // existed. Every phrase rule in this repo starts whitespace-flexible now.
-    assert.equal(procedurallyDisposed(pad('the appeal is dismissed as\nwithdrawn.')).procedural, true);
+    assert.equal(
+      procedurallyDisposed(pad('the appeal is dismissed as\nwithdrawn.')).procedural,
+      true,
+    );
   });
 });
 

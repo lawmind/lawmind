@@ -241,7 +241,11 @@ export function promptFor(kind: GeneratedKind, input: string): string {
  * reply produces zero items and that is a correct outcome, not a bug to patch.
  */
 export function parseStringArray(raw: string): string[] {
-  const trimmed = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```$/, '').trim();
+  const trimmed = raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```$/, '')
+    .trim();
   let parsed: unknown;
   try {
     parsed = JSON.parse(trimmed);
@@ -309,7 +313,10 @@ export function toItems(
  * *checked and wrong* are different facts, and `LANE_PROTOCOL.md` §4 requires
  * UNKNOWN to stay UNKNOWN.
  */
-export const CORPUS_CHECKABLE_KINDS: readonly GeneratedKind[] = ['citation_phrasing', 'case_name_variation'];
+export const CORPUS_CHECKABLE_KINDS: readonly GeneratedKind[] = [
+  'citation_phrasing',
+  'case_name_variation',
+];
 
 export function isCorpusCheckable(kind: GeneratedKind): boolean {
   return CORPUS_CHECKABLE_KINDS.includes(kind);

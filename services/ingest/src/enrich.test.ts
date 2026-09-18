@@ -48,7 +48,11 @@ test('prose around the object is recovered once, and never coerced twice', () =>
 
 test('a real span containing the claimed value verifies', () => {
   const claims: Claim[] = [
-    { value: '(1973) 4 SCC 225', evidence: 'Kesavananda Bharati v. State of Kerala (1973) 4 SCC 225', kind: 'citation' },
+    {
+      value: '(1973) 4 SCC 225',
+      evidence: 'Kesavananda Bharati v. State of Kerala (1973) 4 SCC 225',
+      kind: 'citation',
+    },
   ];
   const [v] = verifyClaims(claims, SOURCE);
   assert.equal(v!.verified, true, v!.reason ?? '');
@@ -57,14 +61,22 @@ test('a real span containing the claimed value verifies', () => {
 test('OCR NEWLINES DO NOT DEFEAT VERIFICATION — whitespace is the only normalisation', () => {
   // The source wraps "held\nthat"; a model copying the sentence cannot know that.
   const claims: Claim[] = [
-    { value: 'basic structure', evidence: 'held that the basic structure could not be abrogated', kind: 'citation' },
+    {
+      value: 'basic structure',
+      evidence: 'held that the basic structure could not be abrogated',
+      kind: 'citation',
+    },
   ];
   assert.equal(verifyClaims(claims, SOURCE)[0]!.verified, true);
 });
 
 test('A FABRICATED SPAN IS REJECTED — this is the whole safety property', () => {
   const claims: Claim[] = [
-    { value: '(1999) 2 SCC 718', evidence: 'This Court in A.P. Pollution Control Board (1999) 2 SCC 718 observed', kind: 'citation' },
+    {
+      value: '(1999) 2 SCC 718',
+      evidence: 'This Court in A.P. Pollution Control Board (1999) 2 SCC 718 observed',
+      kind: 'citation',
+    },
   ];
   const [v] = verifyClaims(claims, SOURCE);
   assert.equal(v!.verified, false);
@@ -74,7 +86,10 @@ test('A FABRICATED SPAN IS REJECTED — this is the whole safety property', () =
 test('a claim with no evidence at all is rejected, however plausible', () => {
   // Kesavananda IS in the source — but an unevidenced claim still fails, because
   // the evidence requirement is what makes the rest of the pipeline checkable.
-  const [v] = verifyClaims([{ value: '(1973) 4 SCC 225', evidence: null, kind: 'citation' }], SOURCE);
+  const [v] = verifyClaims(
+    [{ value: '(1973) 4 SCC 225', evidence: null, kind: 'citation' }],
+    SOURCE,
+  );
   assert.equal(v!.verified, false);
   assert.match(v!.reason!, /no evidence span/);
 });
@@ -104,7 +119,11 @@ test('A REAL SPAN QUOTED TO SUPPORT AN UNRELATED VALUE IS REJECTED', () => {
 test('CASE FOLDING accepts a correctly re-cased name...', () => {
   const source = 'CORAM: HONOURABLE MR. JUSTICE RAJESH KUMAR VERMA\nORAL JUDGMENT';
   const claims: Claim[] = [
-    { value: 'Rajesh Kumar Verma', evidence: 'HONOURABLE MR. JUSTICE RAJESH KUMAR VERMA', kind: 'judge' },
+    {
+      value: 'Rajesh Kumar Verma',
+      evidence: 'HONOURABLE MR. JUSTICE RAJESH KUMAR VERMA',
+      kind: 'judge',
+    },
   ];
   assert.equal(verifyClaims(claims, source)[0]!.verified, true);
 });
@@ -120,14 +139,22 @@ test('...and STILL rejects a fabricated name in any casing — folding is not fu
   // A near-miss must fail too: one wrong word is a different judge, not a typo
   // to be forgiven. No edit-distance tolerance is applied anywhere.
   const near: Claim[] = [
-    { value: 'Rajesh Kumar Sharma', evidence: 'HONOURABLE MR. JUSTICE RAJESH KUMAR VERMA', kind: 'judge' },
+    {
+      value: 'Rajesh Kumar Sharma',
+      evidence: 'HONOURABLE MR. JUSTICE RAJESH KUMAR VERMA',
+      kind: 'judge',
+    },
   ];
   assert.equal(verifyClaims(near, source)[0]!.verified, false);
 });
 
 test('a real judge, evidenced by the coram line, verifies', () => {
   const claims: Claim[] = [
-    { value: 'NAVIN SINHA', evidence: '[KURIAN JOSEPH, MOHAN M. SHANTANAGOUDAR AND NAVIN SINHA, JJ.]', kind: 'judge' },
+    {
+      value: 'NAVIN SINHA',
+      evidence: '[KURIAN JOSEPH, MOHAN M. SHANTANAGOUDAR AND NAVIN SINHA, JJ.]',
+      kind: 'judge',
+    },
   ];
   assert.equal(verifyClaims(claims, SOURCE)[0]!.verified, true);
 });
@@ -136,11 +163,21 @@ test('treatment is exempt from the value-inside-span rule, and correctly so', ()
   // "followed" is a LABEL for what the span says, not a substring of it. Every
   // treatment claim would otherwise be rejected for not containing its own name.
   const claims: Claim[] = [
-    { value: 'followed', evidence: 'This Court in Kesavananda Bharati v. State of Kerala', kind: 'treatment' },
+    {
+      value: 'followed',
+      evidence: 'This Court in Kesavananda Bharati v. State of Kerala',
+      kind: 'treatment',
+    },
   ];
   assert.equal(verifyClaims(claims, SOURCE)[0]!.verified, true);
   // But its span must still be real.
-  const bad: Claim[] = [{ value: 'overruled', evidence: 'we hereby overrule that decision entirely', kind: 'treatment' }];
+  const bad: Claim[] = [
+    {
+      value: 'overruled',
+      evidence: 'we hereby overrule that decision entirely',
+      kind: 'treatment',
+    },
+  ];
   assert.equal(verifyClaims(bad, SOURCE)[0]!.verified, false);
 });
 
@@ -152,7 +189,9 @@ test('an empty answer is a valid answer, not a parse failure', () => {
 });
 
 test('malformed rows are skipped rather than half-read', () => {
-  const claims = claimsFromCitations({ citations: [{ citation: '' }, { nope: 1 }, { citation: '(1973) 4 SCC 225', evidence: 'x' }] });
+  const claims = claimsFromCitations({
+    citations: [{ citation: '' }, { nope: 1 }, { citation: '(1973) 4 SCC 225', evidence: 'x' }],
+  });
   assert.equal(claims.length, 1);
 });
 
@@ -167,13 +206,20 @@ test('metadata claims carry their own kind so verification can differ per field'
     neutral_citation: { value: '2018 INSC 277', evidence: 'reported as 2018 INSC 277' },
     case_number: { value: null, evidence: null },
   });
-  assert.deepEqual(claims.map((c) => c.kind), ['judge', 'neutral_citation']);
+  assert.deepEqual(
+    claims.map((c) => c.kind),
+    ['judge', 'neutral_citation'],
+  );
 });
 
 test('mixed outcomes report as partial, so a half-good answer is never "verified"', () => {
   const claims: Claim[] = [
-    { value: 'NAVIN SINHA', evidence: '[KURIAN JOSEPH, MOHAN M. SHANTANAGOUDAR AND NAVIN SINHA, JJ.]', kind: 'judge' },
-    { value: 'RANJAN GOGOI', evidence: 'Hon\'ble Mr. Justice Ranjan Gogoi presided', kind: 'judge' },
+    {
+      value: 'NAVIN SINHA',
+      evidence: '[KURIAN JOSEPH, MOHAN M. SHANTANAGOUDAR AND NAVIN SINHA, JJ.]',
+      kind: 'judge',
+    },
+    { value: 'RANJAN GOGOI', evidence: "Hon'ble Mr. Justice Ranjan Gogoi presided", kind: 'judge' },
   ];
   assert.equal(verificationState(verifyClaims(claims, SOURCE)), 'partial');
 });
@@ -252,7 +298,12 @@ test('a summarised holding is rejected — paraphrase cannot substitute for a qu
 
 test('a real quote lifted from the wrong judgment is rejected', () => {
   const claims = claimsFromCaseStructure({
-    issues: [{ quote: 'whether the plaintiff is entitled to specific performance', label: 'specific performance' }],
+    issues: [
+      {
+        quote: 'whether the plaintiff is entitled to specific performance',
+        label: 'specific performance',
+      },
+    ],
   });
   const [verdict] = verifyClaims(claims, JUDGMENT);
   assert.equal(verdict!.verified, false);
@@ -265,10 +316,14 @@ test('a real quote lifted from the wrong judgment is rejected', () => {
  * must not admit anything a case-sensitive test refused on CONTENT.
  */
 test('CASE FOLDING ON THE SPAN accepts a prayer the court printed in capitals', () => {
-  const capitals = 'THIS WRIT PETITION IS FILED UNDER ARTICLE 226 OF THE CONSTITUTION OF INDIA, PRAYING TO QUASH THE PROCEEDINGS.';
+  const capitals =
+    'THIS WRIT PETITION IS FILED UNDER ARTICLE 226 OF THE CONSTITUTION OF INDIA, PRAYING TO QUASH THE PROCEEDINGS.';
   const claims = claimsFromCaseStructure({
     relief_sought: [
-      { quote: 'This Writ Petition is filed under Article 226 of the Constitution of India', label: 'writ' },
+      {
+        quote: 'This Writ Petition is filed under Article 226 of the Constitution of India',
+        label: 'writ',
+      },
     ],
   });
   const [verdict] = verifyClaims(claims, capitals);
@@ -281,7 +336,10 @@ test('...and a FABRICATED span is still rejected in every casing', () => {
     'THE APPELLANT WAS AWARDED COMPENSATION OF RS. 15,00,000 WITH INTEREST',
     'The Appellant Was Awarded Compensation Of Rs. 15,00,000 With Interest',
   ]) {
-    const [verdict] = verifyClaims(claimsFromCaseStructure({ facts: [{ quote: q, label: 'award' }] }), JUDGMENT);
+    const [verdict] = verifyClaims(
+      claimsFromCaseStructure({ facts: [{ quote: q, label: 'award' }] }),
+      JUDGMENT,
+    );
     assert.equal(verdict!.verified, false, `folding admitted a fabrication cased as: ${q}`);
   }
 });
@@ -289,7 +347,10 @@ test('...and a FABRICATED span is still rejected in every casing', () => {
 test('...and a real span from ANOTHER judgment is still rejected in every casing', () => {
   const elsewhere = 'whether the plaintiff is entitled to specific performance';
   for (const q of [elsewhere, elsewhere.toUpperCase()]) {
-    const [verdict] = verifyClaims(claimsFromCaseStructure({ issues: [{ quote: q, label: 'issue' }] }), JUDGMENT);
+    const [verdict] = verifyClaims(
+      claimsFromCaseStructure({ issues: [{ quote: q, label: 'issue' }] }),
+      JUDGMENT,
+    );
     assert.equal(verdict!.verified, false, `folding admitted a foreign span cased as: ${q}`);
   }
 });
@@ -298,7 +359,8 @@ test('arguments keep the side the judgment itself used', () => {
   const claims = claimsFromArguments({
     petitioner: [
       {
-        quote: 'Learned counsel for the appellant contends that the statutory notice was never served',
+        quote:
+          'Learned counsel for the appellant contends that the statutory notice was never served',
         label: 'no service of statutory notice',
         side: 'appellant',
       },
@@ -339,7 +401,12 @@ test('a topic label is free-form but its anchoring quote still has to exist', ()
   assert.equal(verifyClaims(good, JUDGMENT)[0]!.verified, true);
 
   const bad = claimsFromTopics({
-    topics: [{ quote: 'a promissory note executed in favour of the plaintiff', label: 'dishonour of cheque' }],
+    topics: [
+      {
+        quote: 'a promissory note executed in favour of the plaintiff',
+        label: 'dishonour of cheque',
+      },
+    ],
   });
   assert.equal(verifyClaims(bad, JUDGMENT)[0]!.verified, false);
 });
@@ -367,7 +434,9 @@ test('none of the five new kinds is a LABEL_KIND — they all take the full chec
     claimsFromCaseStructure({ facts: [{ quote: fabricated, label: 'x' }] }),
     claimsFromHolding({ reasoning: [{ quote: fabricated, label: 'x' }] }),
     claimsFromArguments({ respondent: [{ quote: fabricated, label: 'x', side: 'State' }] }),
-    claimsFromAuthorities({ provisions: [{ provision: 's. 138', quote: fabricated, proposition: 'x' }] }),
+    claimsFromAuthorities({
+      provisions: [{ provision: 's. 138', quote: fabricated, proposition: 'x' }],
+    }),
     claimsFromTopics({ search_concepts: [{ quote: fabricated, label: 'x' }] }),
   ]) {
     assert.equal(claims.length, 1, 'the claim should be produced');

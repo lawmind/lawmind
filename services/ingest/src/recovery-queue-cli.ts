@@ -51,11 +51,7 @@ import { openDb } from './db-host.ts';
 import { withTransientRetry } from './db-transient.ts';
 
 export type RecoveryReason =
-  | 'CITED_AUTHORITY'
-  | 'BENCHMARK_GOLD'
-  | 'MATTER_LINKED'
-  | 'SEARCH_MISS'
-  | 'USER_REQUEST';
+  'CITED_AUTHORITY' | 'BENCHMARK_GOLD' | 'MATTER_LINKED' | 'SEARCH_MISS' | 'USER_REQUEST';
 
 /**
  * Lower runs first.
@@ -287,7 +283,13 @@ mkdirSync(dirname(JSON_OUT), { recursive: true });
 writeFileSync(
   JSON_OUT,
   JSON.stringify(
-    { kind: 'new2_recovery_queue', confirmed: CONFIRM, at: new Date().toISOString(), tranches, state },
+    {
+      kind: 'new2_recovery_queue',
+      confirmed: CONFIRM,
+      at: new Date().toISOString(),
+      tranches,
+      state,
+    },
     null,
     1,
   ),

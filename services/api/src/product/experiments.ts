@@ -53,7 +53,11 @@ export type Variant = string;
  * experiment forever, and a run of experiments would then all be measuring the
  * same subpopulation.
  */
-export function variantFor(experimentId: string, userId: string, variants: readonly Variant[]): Variant {
+export function variantFor(
+  experimentId: string,
+  userId: string,
+  variants: readonly Variant[],
+): Variant {
   if (variants.length === 0) throw new Error('an experiment needs at least one variant');
   const digest = createHash('sha256').update(`${experimentId}:${userId}`).digest();
   return variants[digest.readUInt32BE(0) % variants.length]!;

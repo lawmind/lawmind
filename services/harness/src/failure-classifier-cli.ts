@@ -54,10 +54,7 @@ type FailureClass =
   | 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED'
   | 'SUCCESS';
 
-type SecondaryFlag =
-  | 'EVIDENCE_WRONG'
-  | 'TEXT_QUALITY_BAD'
-  | 'CITATION_UNRESOLVED';
+type SecondaryFlag = 'EVIDENCE_WRONG' | 'TEXT_QUALITY_BAD' | 'CITATION_UNRESOLVED';
 
 type Classification = {
   queryId: string;
@@ -111,7 +108,9 @@ const QUERY_TIMEOUT_MS = Number(process.env['CLASSIFY_TIMEOUT_MS'] ?? 120_000);
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
     p,
-    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`timeout after ${ms}ms: ${label}`)), ms)),
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`timeout after ${ms}ms: ${label}`)), ms),
+    ),
   ]);
 }
 
@@ -126,7 +125,11 @@ async function main(): Promise<void> {
   const evalFx = loadFixture('queries.eval.json');
   const handFx = loadFixture('queries.hand.json');
   const derivedFx = loadFixture('queries.derived.json');
-  const queries = [...(evalFx.queries ?? []), ...(handFx.queries ?? []), ...(derivedFx.queries ?? [])];
+  const queries = [
+    ...(evalFx.queries ?? []),
+    ...(handFx.queries ?? []),
+    ...(derivedFx.queries ?? []),
+  ];
   // De-dupe by id -- queries.eval.json and queries.derived.json overlap by design.
   const byId = new Map(queries.map((q) => [q.id, q]));
   const unique = [...byId.values()];
@@ -194,7 +197,11 @@ async function main(): Promise<void> {
 
       let classification: Classification;
       try {
-        const [embedded] = await withTimeout(embedder.embed([q.query]), QUERY_TIMEOUT_MS, `embed ${q.id}`);
+        const [embedded] = await withTimeout(
+          embedder.embed([q.query]),
+          QUERY_TIMEOUT_MS,
+          `embed ${q.id}`,
+        );
         const vector = embedded ? toVectorLiteral(embedded.vector) : null;
         const excluded = q.provenance?.citingJudgmentId
           ? new Set([q.provenance.citingJudgmentId])
@@ -232,7 +239,10 @@ async function main(): Promise<void> {
 
         const secondary: SecondaryFlag[] = [];
         if (match) {
-          if (match.operativeParagraph.trim().length === 0 || match.operativeParagraphNumber === null) {
+          if (
+            match.operativeParagraph.trim().length === 0 ||
+            match.operativeParagraphNumber === null
+          ) {
             secondary.push('EVIDENCE_WRONG');
           }
           if (match.neutralCitation === null && match.reporterCitations.length === 0) {
@@ -270,15 +280,22 @@ async function main(): Promise<void> {
       );
     }
 
-    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()));
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()),
+    );
 
     if (timedOut > 0) {
-      console.log(`\n${timedOut} quer${timedOut === 1 ? 'y' : 'ies'} timed out or failed -- re-run this command to retry only those.`);
+      console.log(
+        `\n${timedOut} quer${timedOut === 1 ? 'y' : 'ies'} timed out or failed -- re-run this command to retry only those.`,
+      );
     }
 
     // TEXT_QUALITY_BAD: a second pass, batched, only for queries that found a
     // match -- avoids a per-row round trip inside the loop above.
-    const foundIds = results.filter((r) => r.rank !== null).map((r) => r.goldJudgmentIds).flat();
+    const foundIds = results
+      .filter((r) => r.rank !== null)
+      .map((r) => r.goldJudgmentIds)
+      .flat();
     if (foundIds.length > 0) {
       const quality = await sql<{ judgment_id: string; min_quality: string | null }[]>`
         SELECT judgment_id, min(text_quality)::text AS min_quality
@@ -318,7 +335,8 @@ async function main(): Promise<void> {
     }
 
     const secondaryCounts = new Map<SecondaryFlag, number>();
-    for (const r of results) for (const s of r.secondary) secondaryCounts.set(s, (secondaryCounts.get(s) ?? 0) + 1);
+    for (const r of results)
+      for (const s of r.secondary) secondaryCounts.set(s, (secondaryCounts.get(s) ?? 0) + 1);
     console.log('\nSECONDARY FLAGS (on found authorities -- correct case, other problem)');
     console.log('='.repeat(78));
     for (const [flag, n] of secondaryCounts) console.log(`  ${flag.padEnd(20)} ${n}`);

@@ -11,7 +11,7 @@
  */
 import postgres from 'postgres';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { cohortBlocksUnique, cohortVerdict, declaredCohort } from '../services/api/src/citations/cohort.ts';
+import { cohortBlocksUnique, declaredCohort } from '../services/api/src/citations/cohort.ts';
 
 const T0 = '2026-08-18';
 const sql = postgres(process.env.DATABASE_URL!, { max: 1, idle_timeout: 20, connect_timeout: 20 });

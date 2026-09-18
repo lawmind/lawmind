@@ -336,9 +336,7 @@ export const TEN_MATTERS: MatterFixture[] = [
     },
     counterPosition:
       'A compassionate appointment claim cannot be rejected solely on the ground of delay in applying.',
-    invariants: [
-      { kind: 'neutral_citation_count', neutralCitation: '2023:AHC:169979', equals: 2 },
-    ],
+    invariants: [{ kind: 'neutral_citation_count', neutralCitation: '2023:AHC:169979', equals: 2 }],
     acceptance:
       'One citation, two different judgments (MANOJ KUMAR KATIYAR and DHRUV LAL), same court, same date. ' +
       'The product must show BOTH and must never auto-open one as if it were unique. A single confident ' +
@@ -374,8 +372,7 @@ export const TEN_MATTERS: MatterFixture[] = [
   {
     key: 'M07-no-authority',
     scenario: 'no_authority',
-    advocateIntent:
-      'Is there any Indian authority on the doctrine I half-remember from a seminar?',
+    advocateIntent: 'Is there any Indian authority on the doctrine I half-remember from a seminar?',
     query: 'doctrine of anticipatory estoppel by silent acquiescence in tribunal proceedings',
     anchorJudgmentId: null,
     anchorTitle: null,
@@ -423,8 +420,7 @@ export const TEN_MATTERS: MatterFixture[] = [
   {
     key: 'M09-monitoring',
     scenario: 'monitoring',
-    advocateIntent:
-      'I saved this authority two months ago. Tell me if it moves before my hearing.',
+    advocateIntent: 'I saved this authority two months ago. Tell me if it moves before my hearing.',
     query: '2007 INSC 390',
     anchorJudgmentId: 'ddd29e26-8e9d-4711-af96-b0671f5c645e',
     anchorTitle: 'MOHD. SHAFI versus MOHD. RAFIQ & ANR. (2007 INSC 390)',

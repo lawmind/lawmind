@@ -83,7 +83,10 @@ export async function checkView(sql: Sql): Promise<ViewCheck> {
         'scripts/apply-migration-online.mjs rather than running it directly.',
     };
   }
-  return { present: true, definitionHash: createHash('sha256').update(rows[0].def).digest('hex').slice(0, 16) };
+  return {
+    present: true,
+    definitionHash: createHash('sha256').update(rows[0].def).digest('hex').slice(0, 16),
+  };
 }
 
 /**

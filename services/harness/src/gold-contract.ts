@@ -140,27 +140,28 @@ export type QueryConstruction =
   /** Written by a person, or by a model that never saw the target. */
   | 'independent';
 
-const CONSTRUCTION_PROHIBITED: Record<QueryConstruction, { family: FeatureFamily; why: string }[]> = {
-  redacted_passage: [],
-  raw_passage: [
-    {
-      family: 'exact_citation_match',
-      why: 'the query still contains the target’s own citation, so an exact match is a copy of the input',
-    },
-    {
-      family: 'title_match',
-      why: 'the query still contains the target’s own title',
-    },
-  ],
-  own_identifier: [],
-  own_text_span: [
-    {
-      family: 'sparse_lexical',
-      why: 'the query is a verbatim span of the target, so a term-overlap score is measuring the copy, not the retrieval',
-    },
-  ],
-  independent: [],
-};
+const CONSTRUCTION_PROHIBITED: Record<QueryConstruction, { family: FeatureFamily; why: string }[]> =
+  {
+    redacted_passage: [],
+    raw_passage: [
+      {
+        family: 'exact_citation_match',
+        why: 'the query still contains the target’s own citation, so an exact match is a copy of the input',
+      },
+      {
+        family: 'title_match',
+        why: 'the query still contains the target’s own title',
+      },
+    ],
+    own_identifier: [],
+    own_text_span: [
+      {
+        family: 'sparse_lexical',
+        why: 'the query is a verbatim span of the target, so a term-overlap score is measuring the copy, not the retrieval',
+      },
+    ],
+    independent: [],
+  };
 
 /**
  * ALLOWED, but the number it produces is an upper bound rather than an estimate.
@@ -175,23 +176,24 @@ const CONSTRUCTION_PROHIBITED: Record<QueryConstruction, { family: FeatureFamily
  *
  * A caution never throws. It travels with the report and it must be printed.
  */
-const CONSTRUCTION_CAUTIONED: Record<QueryConstruction, { family: FeatureFamily; why: string }[]> = {
-  redacted_passage: [],
-  raw_passage: [
-    {
-      family: 'dense_similarity',
-      why: 'the query is lifted verbatim from a document that quotes the target — an upper bound, not an estimate',
-    },
-  ],
-  own_identifier: [],
-  own_text_span: [
-    {
-      family: 'dense_similarity',
-      why: 'the query is the target’s OWN words, so this is the easiest possible query for it — an upper bound',
-    },
-  ],
-  independent: [],
-};
+const CONSTRUCTION_CAUTIONED: Record<QueryConstruction, { family: FeatureFamily; why: string }[]> =
+  {
+    redacted_passage: [],
+    raw_passage: [
+      {
+        family: 'dense_similarity',
+        why: 'the query is lifted verbatim from a document that quotes the target — an upper bound, not an estimate',
+      },
+    ],
+    own_identifier: [],
+    own_text_span: [
+      {
+        family: 'dense_similarity',
+        why: 'the query is the target’s OWN words, so this is the easiest possible query for it — an upper bound',
+      },
+    ],
+    independent: [],
+  };
 
 /** One evaluation row. Every field here is load-bearing; none is decoration. */
 export type EvalRow = {
@@ -245,7 +247,9 @@ export type FeaturePolicy = {
   cautioned: { family: FeatureFamily; why: string }[];
 };
 
-const dedupe = (xs: { family: FeatureFamily; why: string }[]): { family: FeatureFamily; why: string }[] => {
+const dedupe = (
+  xs: { family: FeatureFamily; why: string }[],
+): { family: FeatureFamily; why: string }[] => {
   // Two doors to the same leak is still one leak, and reporting it twice reads as
   // two problems.
   const seen = new Set<FeatureFamily>();
@@ -296,7 +300,9 @@ function edgeRelationship(evidence: Record<string, unknown> | undefined): string
 
 /** What a scorer may read for one row. Provenance, construction and EDGE compose. */
 export function featurePolicy(
-  row: Pick<EvalRow, 'goldProvenanceType' | 'queryConstruction'> & { goldEvidence?: Record<string, unknown> },
+  row: Pick<EvalRow, 'goldProvenanceType' | 'queryConstruction'> & {
+    goldEvidence?: Record<string, unknown>;
+  },
 ): FeaturePolicy {
   const rel = edgeRelationship(row.goldEvidence);
   const edgeProhibited =
@@ -316,7 +322,9 @@ export function featurePolicy(
   const banned = new Set(prohibited.map((p) => p.family));
   // A prohibition outranks a caution: there is nothing to caution about a family
   // that may not be read at all.
-  const cautioned = dedupe(CONSTRUCTION_CAUTIONED[row.queryConstruction]).filter((c) => !banned.has(c.family));
+  const cautioned = dedupe(CONSTRUCTION_CAUTIONED[row.queryConstruction]).filter(
+    (c) => !banned.has(c.family),
+  );
   return { allowed: ALL_FEATURE_FAMILIES.filter((f) => !banned.has(f)), prohibited, cautioned };
 }
 
@@ -370,7 +378,10 @@ export function allowedAcross(rows: EvalRow[]): FeatureFamily[] {
  * on every machine and in every rerun — a split that moves makes two runs
  * incomparable for a reason nobody will find.
  */
-export function splitByFamily(rows: EvalRow[], holdoutFraction = 0.3): { train: EvalRow[]; test: EvalRow[] } {
+export function splitByFamily(
+  rows: EvalRow[],
+  holdoutFraction = 0.3,
+): { train: EvalRow[]; test: EvalRow[] } {
   const families = [...new Set(rows.map((r) => r.caseFamily))].sort();
   const hash = (s: string): number => {
     let h = 2166136261;

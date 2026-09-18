@@ -4,7 +4,10 @@ import { test } from 'node:test';
 import { callInferx } from './inferx.ts';
 
 function jsonResponse(status: number, body: unknown): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  });
 }
 
 test('a successful call returns the text and token counts', async () => {
@@ -69,7 +72,11 @@ test('a non-429, non-ok status is not retried', async () => {
 test('empty content is reported as a distinct failure, not an empty success', async () => {
   const result = await callInferx('hello', {
     apiKey: 'k',
-    fetchImpl: (async () => jsonResponse(200, { choices: [{ message: { content: '' } }], usage: {} })) as unknown as typeof fetch,
+    fetchImpl: (async () =>
+      jsonResponse(200, {
+        choices: [{ message: { content: '' } }],
+        usage: {},
+      })) as unknown as typeof fetch,
     sleepImpl: async () => {},
   });
   assert.equal(result.ok, false);

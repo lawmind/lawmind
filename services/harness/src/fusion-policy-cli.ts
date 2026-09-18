@@ -568,9 +568,7 @@ async function main(): Promise<void> {
     );
   }
   console.log('');
-  console.log(
-    '  A θ histogram spread across the grid IS the finding: the training half does not',
-  );
+  console.log('  A θ histogram spread across the grid IS the finding: the training half does not');
   console.log('  contain enough signal to identify a weight, so no constant is defensible.');
   console.log('');
 

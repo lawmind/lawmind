@@ -207,7 +207,9 @@ function parseEntry(raw: string, disposition: string, lastInGroup: boolean): Hea
 
   // Both forms present is NOT the same as the reporter having equated them.
   // Only an explicit `X : Y` counts. See PAIRED_* above and NEW3's measurement.
-  const paired = Boolean(scr && scc && (PAIRED_SCR_FIRST.test(text) || PAIRED_SCC_FIRST.test(text)));
+  const paired = Boolean(
+    scr && scc && (PAIRED_SCR_FIRST.test(text) || PAIRED_SCC_FIRST.test(text)),
+  );
 
   const firstCite = Math.min(
     ...[text.search(/\[\d{4}\]/), text.search(/\(\d{4}\)/)].filter((i) => i >= 0),
@@ -282,8 +284,12 @@ export function parseHeadnoteDispositions(fullText: string): HeadnoteEntry[] {
  * So: trust `concordancePairs`. Do NOT trust `disposition` without reading the
  * source text, which is why the CLI writes nothing.
  */
-export function concordancePairs(entries: HeadnoteEntry[]): { name: string; scr: string; scc: string }[] {
+export function concordancePairs(
+  entries: HeadnoteEntry[],
+): { name: string; scr: string; scc: string }[] {
   return entries
-    .filter((e): e is HeadnoteEntry & { scr: string; scc: string } => Boolean(e.paired && e.scr && e.scc))
+    .filter((e): e is HeadnoteEntry & { scr: string; scc: string } =>
+      Boolean(e.paired && e.scr && e.scc),
+    )
     .map(({ name, scr, scc }) => ({ name, scr, scc }));
 }

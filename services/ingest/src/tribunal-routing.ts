@@ -75,7 +75,12 @@ export type TribunalRouting = {
  * variants through into the authority bucket, which is the failure this whole
  * module exists to prevent.
  */
-const RERA_REASONED = new Set(['order', 'judgement', 'judgment', 'operative part in appeal / application']);
+const RERA_REASONED = new Set([
+  'order',
+  'judgement',
+  'judgment',
+  'operative part in appeal / application',
+]);
 const RERA_PROCEDURAL = new Set(['roznama']);
 
 const fold = (value: string) => value.normalize('NFC').replace(/\s+/gu, ' ').trim().toLowerCase();
@@ -186,7 +191,10 @@ export function routeTribunalRecord(source: TribunalSource, rawType: string): Tr
  * the table is High Court and Supreme Court decisions — so this returns false
  * unconditionally and says why.
  */
-export function mayEnterJudgments(routing: TribunalRouting): { readonly allowed: false; readonly reason: string } {
+export function mayEnterJudgments(routing: TribunalRouting): {
+  readonly allowed: false;
+  readonly reason: string;
+} {
   return {
     allowed: false,
     reason:

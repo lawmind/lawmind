@@ -104,7 +104,13 @@ function findLayout(lines: string[]): Layout | null {
       const oldAt = new RegExp(String.raw`\b${h.oldTag}\b`).exec(l)?.index ?? -1;
       if (newAt < 0 || oldAt < 0) continue;
       const summaryAt = l.indexOf('Summary');
-      return { pair: h.pair, newAt, oldAt, subjectAt, summaryAt: summaryAt < 0 ? 10_000 : summaryAt };
+      return {
+        pair: h.pair,
+        newAt,
+        oldAt,
+        subjectAt,
+        summaryAt: summaryAt < 0 ? 10_000 : summaryAt,
+      };
     }
   }
   return null;

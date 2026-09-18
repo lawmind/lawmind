@@ -41,8 +41,7 @@ function loadQueries(): Query[] {
   const out: Query[] = [];
   for (const f of FIXTURES) {
     const j = JSON.parse(readFileSync(new URL(`./fixtures/${f}`, import.meta.url), 'utf8')) as
-      | { queries?: Query[] }
-      | Query[];
+      { queries?: Query[] } | Query[];
     const qs = Array.isArray(j) ? j : (j.queries ?? []);
     for (const q of qs) if (Array.isArray(q.goldJudgmentIds)) out.push(q);
   }
@@ -52,7 +51,9 @@ function loadQueries(): Query[] {
 async function main(): Promise<number> {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) {
-    console.error('CORPUS_DATABASE_URL is not set. There is nothing to check a gold label against.');
+    console.error(
+      'CORPUS_DATABASE_URL is not set. There is nothing to check a gold label against.',
+    );
     return 2;
   }
   const sql = postgres(url, { ssl: sslFor(url), max: 2, connection: { statement_timeout: 0 } });
@@ -83,9 +84,15 @@ async function main(): Promise<number> {
 
     console.log('per gold judgment id');
     console.log('─'.repeat(78));
-    console.log(`  ABSENT      ${String(tally.ABSENT).padStart(5)}  not in judgments at all — a CORPUS gap`);
-    console.log(`  UNEMBEDDED  ${String(tally.UNEMBEDDED).padStart(5)}  present, zero chunks — the dense arm cannot reach it`);
-    console.log(`  REACHABLE   ${String(tally.REACHABLE).padStart(5)}  present and embedded — only these can be retrieval failures`);
+    console.log(
+      `  ABSENT      ${String(tally.ABSENT).padStart(5)}  not in judgments at all — a CORPUS gap`,
+    );
+    console.log(
+      `  UNEMBEDDED  ${String(tally.UNEMBEDDED).padStart(5)}  present, zero chunks — the dense arm cannot reach it`,
+    );
+    console.log(
+      `  REACHABLE   ${String(tally.REACHABLE).padStart(5)}  present and embedded — only these can be retrieval failures`,
+    );
     console.log('');
 
     console.log('per query, worst gold state (a query is only as reachable as its best authority)');

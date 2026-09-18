@@ -349,7 +349,8 @@ const summary = {
   claimAcceptRate:
     ckpt.claims === 0 ? 0 : Number(((100 * acceptedClaims) / ckpt.claims).toFixed(2)),
   rowsPromoted: ckpt.promotedRows,
-  rowPromotionRate: ckpt.rows === 0 ? 0 : Number(((100 * ckpt.promotedRows) / ckpt.rows).toFixed(2)),
+  rowPromotionRate:
+    ckpt.rows === 0 ? 0 : Number(((100 * ckpt.promotedRows) / ckpt.rows).toFixed(2)),
   byOutcome: ckpt.byOutcome,
   byRoleOutcome: ckpt.byRoleOutcome,
   byRule: ckpt.byRule,
@@ -364,7 +365,9 @@ console.log('');
 console.log(`RESULTS  ${CONFIRM ? 'WRITTEN' : 'DRY RUN — nothing written'}`);
 console.log(`  rows walked         ${ckpt.rows.toLocaleString()}`);
 console.log(`  claims adjudicated  ${ckpt.claims.toLocaleString()}`);
-console.log(`  rows promoted       ${ckpt.promotedRows.toLocaleString()} (${summary.rowPromotionRate}%)`);
+console.log(
+  `  rows promoted       ${ckpt.promotedRows.toLocaleString()} (${summary.rowPromotionRate}%)`,
+);
 console.log('  by outcome');
 for (const [o, n] of Object.entries(ckpt.byOutcome).sort((a, b) => b[1] - a[1])) {
   const pct = ckpt.claims === 0 ? 0 : ((100 * n) / ckpt.claims).toFixed(1);

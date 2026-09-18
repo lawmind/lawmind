@@ -49,7 +49,7 @@
  *   tsx scripts/n2-citation-falsifier-r14.mts --stage report
  */
 import { createHash } from 'node:crypto';
-import { appendFileSync, createReadStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, createReadStream, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -112,7 +112,7 @@ function databaseUrl(): string {
 }
 const sql = postgres(databaseUrl(), { max: 3, idle_timeout: 120, connect_timeout: 30 });
 
-const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
+const _sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
 async function fileSha256(path: string): Promise<string> {
   const h = createHash('sha256');
   for await (const c of createReadStream(path)) h.update(c);

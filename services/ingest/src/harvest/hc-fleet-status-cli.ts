@@ -60,7 +60,9 @@ try {
 
   console.log('=== FLEET WRITE LIVENESS (production, not process table) ===');
   console.log(`latest created_at   : ${overall?.latest ?? 'NOTHING in the last 2 hours'}`);
-  console.log(`rows last ${String(RECENT).padStart(2)} min     : ${(overall?.recent ?? 0).toLocaleString()}`);
+  console.log(
+    `rows last ${String(RECENT).padStart(2)} min     : ${(overall?.recent ?? 0).toLocaleString()}`,
+  );
   console.log(`rows last 60 min    : ${(overall?.hour ?? 0).toLocaleString()}`);
 
   if ((overall?.hour ?? 0) === 0) {

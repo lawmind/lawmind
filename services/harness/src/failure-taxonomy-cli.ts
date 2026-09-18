@@ -30,7 +30,11 @@ type Classification = {
   group: string;
   query: string;
   goldJudgmentIds: string[];
-  primary: 'SUCCESS' | 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED' | 'AUTHORITY_HELD_BUT_NOT_RETRIEVED' | 'NO_AUTHORITY_FOUND';
+  primary:
+    | 'SUCCESS'
+    | 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED'
+    | 'AUTHORITY_HELD_BUT_NOT_RETRIEVED'
+    | 'NO_AUTHORITY_FOUND';
   rank: number | null;
   secondary: string[];
 };
@@ -46,11 +50,15 @@ async function main(): Promise<void> {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
 
-  const lines = readFileSync(CHECKPOINT_PATH, 'utf8').split('\n').filter((l) => l.trim());
+  const lines = readFileSync(CHECKPOINT_PATH, 'utf8')
+    .split('\n')
+    .filter((l) => l.trim());
   const all = lines.map((l) => JSON.parse(l) as Classification);
   const failures = all.filter((c) => c.primary !== 'SUCCESS');
 
-  console.log(`${all.length} total classified, ${failures.length} non-SUCCESS (the population this run covers)`);
+  console.log(
+    `${all.length} total classified, ${failures.length} non-SUCCESS (the population this run covers)`,
+  );
 
   // Success RATE by the benchmark's own build-time group (criminal/civil/
   // hindi), over ALL 288 -- not just failures. This is the fair comparison;
@@ -70,7 +78,9 @@ async function main(): Promise<void> {
 
   const sql = await openDb(url, 4);
   try {
-    const goldIds = [...new Set(failures.map((f) => f.goldJudgmentIds[0]).filter((id): id is string => !!id))];
+    const goldIds = [
+      ...new Set(failures.map((f) => f.goldJudgmentIds[0]).filter((id): id is string => !!id)),
+    ];
     const rows = await sql<
       {
         id: string;
@@ -133,22 +143,36 @@ async function main(): Promise<void> {
         else if (e.c.primary === 'AUTHORITY_RETRIEVED_BUT_BADLY_RANKED') cur.badly++;
         counts.set(k, cur);
       }
-      const sorted = [...counts.entries()].sort((a, b) => (b[1].held + b[1].badly) - (a[1].held + a[1].badly));
+      const sorted = [...counts.entries()].sort(
+        (a, b) => b[1].held + b[1].badly - (a[1].held + a[1].badly),
+      );
       for (const [k, v] of sorted) {
-        console.log(`  ${k.padEnd(40)} HELD_NOT_RETRIEVED ${String(v.held).padStart(3)}  BADLY_RANKED ${String(v.badly).padStart(3)}  total ${v.held + v.badly}`);
+        console.log(
+          `  ${k.padEnd(40)} HELD_NOT_RETRIEVED ${String(v.held).padStart(3)}  BADLY_RANKED ${String(v.badly).padStart(3)}  total ${v.held + v.badly}`,
+        );
       }
     };
 
-    tally('BY BENCHMARK GROUP (criminal/civil/hindi -- among failures only, raw counts)', (e) => e.c.group);
+    tally(
+      'BY BENCHMARK GROUP (criminal/civil/hindi -- among failures only, raw counts)',
+      (e) => e.c.group,
+    );
     tally('BY QUERY SHAPE (query-shape.ts classifier)', (e) => e.shape);
     tally('BY GOLD JUDGMENT COURT', (e) => e.court);
-    tally('BY GOLD JUDGMENT hc_document_class (null = SC or not yet classified)', (e) => e.docClass);
+    tally(
+      'BY GOLD JUDGMENT hc_document_class (null = SC or not yet classified)',
+      (e) => e.docClass,
+    );
     tally('BY GOLD JUDGMENT case_type', (e) => e.caseType);
     tally('BY QUERY carries a citation-shaped span', (e) => (e.hasCitationSpan ? 'yes' : 'no'));
     tally('BY QUERY carries a section-shaped span', (e) => (e.hasSectionSpan ? 'yes' : 'no'));
-    tally('BY QUERY carries a case-name-shaped span (X v Y)', (e) => (e.hasCaseNameSpan ? 'yes' : 'no'));
+    tally('BY QUERY carries a case-name-shaped span (X v Y)', (e) =>
+      e.hasCaseNameSpan ? 'yes' : 'no',
+    );
     tally('BY GOLD JUDGMENT has a neutral citation', (e) => (e.hasNeutralCitation ? 'yes' : 'no'));
-    tally('BY GOLD JUDGMENT has a reporter citation', (e) => (e.hasReporterCitation ? 'yes' : 'no'));
+    tally('BY GOLD JUDGMENT has a reporter citation', (e) =>
+      e.hasReporterCitation ? 'yes' : 'no',
+    );
 
     // Query length buckets -- fixed bucket edges chosen from the eval set's
     // own documented MIN/MAX_QUERY_CHARS (200/900, build-queries.ts), so the
@@ -168,7 +192,8 @@ async function main(): Promise<void> {
       const bucket = r <= 10 ? '6-10' : r <= 20 ? '11-20' : r <= 35 ? '21-35' : '36-50';
       rankBuckets.set(bucket, (rankBuckets.get(bucket) ?? 0) + 1);
     }
-    for (const [k, v] of [...rankBuckets.entries()].sort()) console.log(`  rank ${k.padEnd(10)} ${v}`);
+    for (const [k, v] of [...rankBuckets.entries()].sort())
+      console.log(`  rank ${k.padEnd(10)} ${v}`);
 
     // Cross-tab most likely to reveal an actual cause: shape x court, since
     // that is where a systematic gap (e.g. "case-name queries against High

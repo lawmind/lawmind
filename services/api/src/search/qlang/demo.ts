@@ -57,10 +57,7 @@ try {
     try {
       const ast = parse(q);
       console.log(`  understood as: ${explainQuery(ast)}`);
-      const [n, hits] = await Promise.all([
-        countStructured(sql, ast),
-        runStructured(sql, ast, 3),
-      ]);
+      const [n, hits] = await Promise.all([countStructured(sql, ast), runStructured(sql, ast, 3)]);
       const ms = Date.now() - started;
       console.log(`  ${n} judgment(s) · ${ms} ms`);
       for (const h of hits) {

@@ -74,8 +74,7 @@ const line = (a: OpsAlert) => `[${a.severity.toUpperCase()}] ${a.rule} — ${a.d
 export function alertSubject(alerts: readonly OpsAlert[], context: NotifyContext): string {
   const pages = alerts.filter((a) => a.severity === 'page').length;
   const prefix = context.injected ? 'DRILL — ' : '';
-  const what =
-    alerts.length === 1 ? (alerts[0]?.rule ?? 'alert') : `${alerts.length} conditions`;
+  const what = alerts.length === 1 ? (alerts[0]?.rule ?? 'alert') : `${alerts.length} conditions`;
   return `${prefix}Lawmind ${context.environment}: ${pages} page — ${what}`;
 }
 
@@ -209,7 +208,9 @@ export function consoleNotifier(log: (s: string) => void): Notifier {
   return {
     name: 'console (nothing was sent)',
     async send(alerts, context) {
-      log(`OPS ALERT — nothing was sent, this is the console transport\n${alertBody(alerts, context).text}`);
+      log(
+        `OPS ALERT — nothing was sent, this is the console transport\n${alertBody(alerts, context).text}`,
+      );
     },
   };
 }

@@ -31,7 +31,11 @@ const SAMPLE = Number(arg('--sample', '1500'));
 const SHOW = Number(arg('--show', '25'));
 const COURT = argv.indexOf('--court') >= 0 ? arg('--court', '') : null;
 
-const url = process.env['DATABASE_URL'] ?? readFileSync('../../.env', 'utf8').match(/^DATABASE_URL=(.*)$/m)?.[1]?.trim();
+const url =
+  process.env['DATABASE_URL'] ??
+  readFileSync('../../.env', 'utf8')
+    .match(/^DATABASE_URL=(.*)$/m)?.[1]
+    ?.trim();
 if (!url) {
   console.error('DATABASE_URL is not set.');
   process.exit(2);
@@ -58,7 +62,14 @@ const rows = COURT
 /** Compare on alphanumerics only: `NC: 2025:KHC-D:1` and `2025:KHC-D:1` are one citation. */
 const key = (s: string) => s.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 
-type Agg = { docs: number; touched: number; chars: number; lines: number; citLost: number; citLostForeign: number };
+type Agg = {
+  docs: number;
+  touched: number;
+  chars: number;
+  lines: number;
+  citLost: number;
+  citLostForeign: number;
+};
 const byCourt = new Map<string, Agg>();
 const removedLines = new Map<string, number>();
 const byRule: Record<string, number> = {};
@@ -72,7 +83,14 @@ for (const r of rows) {
   charsBefore += rep.charsBefore;
   charsAfter += rep.charsAfter;
 
-  const a = byCourt.get(r.court) ?? { docs: 0, touched: 0, chars: 0, lines: 0, citLost: 0, citLostForeign: 0 };
+  const a = byCourt.get(r.court) ?? {
+    docs: 0,
+    touched: 0,
+    chars: 0,
+    lines: 0,
+    citLost: 0,
+    citLostForeign: 0,
+  };
   a.docs++;
   if (rep.linesRemoved > 0) a.touched++;
   a.chars += rep.charsBefore - rep.charsAfter;
@@ -101,14 +119,26 @@ for (const r of rows) {
     const foreign = lost.filter((c) => key(c) !== own);
     a.citLost += lost.length;
     a.citLostForeign += foreign.length;
-    if (citationLosses.length < 40) citationLosses.push({ id: r.id, court: r.court, lost, foreign });
+    if (citationLosses.length < 40)
+      citationLosses.push({ id: r.id, court: r.court, lost, foreign });
   }
   byCourt.set(r.court, a);
 }
 
-console.log(`\nPAGE FURNITURE — measured on ${rows.length} documents${COURT ? ` from ${COURT}` : ''}\n`);
-console.log('court'.padEnd(36), 'docs'.padStart(5), 'touched%'.padStart(9), 'linesGone'.padStart(10), 'charsGone'.padStart(10), 'citLost'.padStart(8));
-for (const [court, a] of [...byCourt.entries()].sort((x, y) => y[1].touched / y[1].docs - x[1].touched / x[1].docs)) {
+console.log(
+  `\nPAGE FURNITURE — measured on ${rows.length} documents${COURT ? ` from ${COURT}` : ''}\n`,
+);
+console.log(
+  'court'.padEnd(36),
+  'docs'.padStart(5),
+  'touched%'.padStart(9),
+  'linesGone'.padStart(10),
+  'charsGone'.padStart(10),
+  'citLost'.padStart(8),
+);
+for (const [court, a] of [...byCourt.entries()].sort(
+  (x, y) => y[1].touched / y[1].docs - x[1].touched / x[1].docs,
+)) {
   if (a.docs < 5) continue;
   console.log(
     court.slice(0, 36).padEnd(36),
@@ -127,10 +157,18 @@ for (const [k, n] of Object.entries(byRule).sort((a, b) => b[1] - a[1])) {
 
 const totalLost = citationLosses.reduce((s, c) => s + c.lost.length, 0);
 const totalForeign = citationLosses.reduce((s, c) => s + c.foreign.length, 0);
-console.log(`\nTEXT      ${charsBefore.toLocaleString()} -> ${charsAfter.toLocaleString()} chars (${(((charsBefore - charsAfter) / charsBefore) * 100).toFixed(2)}% removed)`);
-console.log(`CITATIONS lost ${totalLost} across ${citationLosses.length} of ${rows.length} documents`);
-console.log(`   SELF    (the document's own neutral citation — no edge exists to lose) : ${totalLost - totalForeign}`);
-console.log(`   FOREIGN (a reference to ANOTHER judgment — a defect) .................. : ${totalForeign}`);
+console.log(
+  `\nTEXT      ${charsBefore.toLocaleString()} -> ${charsAfter.toLocaleString()} chars (${(((charsBefore - charsAfter) / charsBefore) * 100).toFixed(2)}% removed)`,
+);
+console.log(
+  `CITATIONS lost ${totalLost} across ${citationLosses.length} of ${rows.length} documents`,
+);
+console.log(
+  `   SELF    (the document's own neutral citation — no edge exists to lose) : ${totalLost - totalForeign}`,
+);
+console.log(
+  `   FOREIGN (a reference to ANOTHER judgment — a defect) .................. : ${totalForeign}`,
+);
 if (totalForeign > 0) {
   console.log('\n  FOREIGN LOSSES ARE DEFECTS. DO NOT APPLY THIS CLEANER UNTIL THEY ARE ZERO:');
   for (const c of citationLosses.filter((x) => x.foreign.length > 0).slice(0, 15)) {

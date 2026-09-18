@@ -28,10 +28,14 @@ describe('document_class claims', () => {
 });
 
 describe('the span still decides whether it is believed', () => {
-  const SOURCE = 'The applicant seeks regular bail. Having heard counsel, bail is granted subject to conditions.';
+  const SOURCE =
+    'The applicant seeks regular bail. Having heard counsel, bail is granted subject to conditions.';
 
   it('verifies a class whose evidence is really in the text', () => {
-    const v = verifyClaims(claimsFromDocumentClass({ class: 'bail_order', evidence: 'bail is granted' }), SOURCE);
+    const v = verifyClaims(
+      claimsFromDocumentClass({ class: 'bail_order', evidence: 'bail is granted' }),
+      SOURCE,
+    );
     assert.equal(v.length, 1);
     assert.equal(v[0]?.verified, true, 'a locatable span must verify');
   });
@@ -39,7 +43,10 @@ describe('the span still decides whether it is believed', () => {
   it('rejects a class whose evidence is not in the text', () => {
     // The failure this whole pipeline exists to catch: fluent, plausible, absent.
     const v = verifyClaims(
-      claimsFromDocumentClass({ class: 'procedural_disposal', evidence: 'the petition is withdrawn' }),
+      claimsFromDocumentClass({
+        class: 'procedural_disposal',
+        evidence: 'the petition is withdrawn',
+      }),
       SOURCE,
     );
     assert.equal(v.length, 1);
@@ -52,7 +59,13 @@ describe('the span still decides whether it is believed', () => {
 describe('the prompt', () => {
   it('names all five classes and demands a verbatim span', () => {
     const p = buildDocumentClassPrompt('some judgment text');
-    for (const cls of ['bail_order', 'procedural_disposal', 'reference_stub', 'decided', 'decided_brief']) {
+    for (const cls of [
+      'bail_order',
+      'procedural_disposal',
+      'reference_stub',
+      'decided',
+      'decided_brief',
+    ]) {
       assert.ok(p.includes(cls), `${cls} must be offered`);
     }
     assert.ok(p.includes('verbatim substring'));

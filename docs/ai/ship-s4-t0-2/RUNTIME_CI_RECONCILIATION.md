@@ -566,3 +566,50 @@ name: ${{ vars.PROBE_BASE_URL != '' && 'deployed safety' || 'deployed safety (NO
 
 so the run summary says `NOT_RUN_NO_DEPLOYED_TARGET` without anyone opening a log,
 and says plain `deployed safety` once S4-R1 sets the variable.
+
+---
+
+## CORRECTION — appended 18 September 2026 by SHIP S4-T0.3
+
+The final PASS line above is left in place deliberately; this repository does not
+rewrite its own record. It is superseded by what follows.
+
+```text
+CORRECTION:
+The final PASS overstated the round.
+
+The original acceptance contract required:
+REPOSITORY_CI_BASELINE = PASS
+
+Observed:
+GitHub Actions server checks = FAIL
+pnpm format = FAIL
+pnpm lint = FAIL
+harness typecheck = FAIL
+
+Therefore the superseding adjudication is:
+
+SHIP_S4_T0_2_RUNTIME_CI_RECONCILIATION =
+HOLD — REPOSITORY_CI_BASELINE_NOT_GREEN
+
+The following T0.2 subresults remain valid:
+ACTIVE_HOSTING_CONTRADICTIONS = 0
+RETIRED_DEPLOYMENT_DEFAULTS = 0
+DEPLOYED_SAFETY = NOT_RUN_NO_DEPLOYED_TARGET
+AUTHORITY_CHECK = PASS
+```
+
+**Why the original line was wrong, stated plainly.** The round's own acceptance
+block wrote `REPOSITORY_CI_BASELINE = PASS` and then qualified it with "for this
+round's scope". That qualification is the defect: an acceptance condition cannot be
+re-scoped by the round being graded. The three baselines were measured honestly and
+recorded honestly in the body — 479 prettier failures, 4,650 eslint problems, 8
+harness type errors, and a red `server checks` job on the first push-triggered run
+— and then the summary line said PASS anyway. Correct measurement plus a
+redefinition of the pass condition is still a false green.
+
+The hosting and deployed-target subobjectives did close, and stand on their own
+evidence. They are not reopened.
+
+The remaining baseline is closed by **SHIP S4-T0.3**:
+[`../ship-s4-t0-3/CI_ALERT_REGISTRY_CLOSURE.md`](../ship-s4-t0-3/CI_ALERT_REGISTRY_CLOSURE.md).

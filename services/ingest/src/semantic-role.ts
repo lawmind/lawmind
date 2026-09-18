@@ -316,11 +316,7 @@ function windowAround(flatText: string, offset: number, spanLength: number): str
   return flatText.slice(from, to);
 }
 
-const OUT = (
-  outcome: RoleOutcome,
-  rule: string,
-  rest: Partial<RoleVerdict> = {},
-): RoleVerdict => ({
+const OUT = (outcome: RoleOutcome, rule: string, rest: Partial<RoleVerdict> = {}): RoleVerdict => ({
   outcome,
   rule,
   offset: null,
@@ -479,12 +475,18 @@ export function verifyRole(input: {
      */
     case 'argument_petitioner':
     case 'argument_respondent':
-    /**
-     * `relief` is RELIEF SOUGHT — a prayer, which is a party's position and not
-     * the court's. It belongs here and not with `relief_granted`, and putting it
-     * in the wrong branch certified three prayers as operative directions in v1.
-     */
     case 'relief': {
+      /**
+       * `relief` is RELIEF SOUGHT — a prayer, which is a party's position and
+       * not the court's. It belongs here and not with `relief_granted`, and
+       * putting it in the wrong branch certified three prayers as operative
+       * directions in v1.
+       *
+       * The comment moved INSIDE the block 18 Sep 2026: sitting between two
+       * case labels it made `argument_respondent` a comment-only clause, which
+       * `no-fallthrough` reports — `allowEmptyCase` is false by default and a
+       * comment is not empty. The grouping it explains is unchanged.
+       */
       const nearArg = nearest(found, offset);
       if (nearArg === null) {
         return { ...OUT('ROLE_UNPROVEN', 'no_voice_marker_within_reach'), ...base };
@@ -544,7 +546,10 @@ export function extractDate(span: string): Date | null {
   }
   const MONTHS =
     'january|february|march|april|may|june|july|august|september|october|november|december';
-  const named = new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:day\\s+of\\s+)?(${MONTHS})[,\\s]+(\\d{4})\\b`, 'i').exec(span);
+  const named = new RegExp(
+    `\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:day\\s+of\\s+)?(${MONTHS})[,\\s]+(\\d{4})\\b`,
+    'i',
+  ).exec(span);
   if (named) {
     const month = MONTHS.split('|').indexOf(named[2]!.toLowerCase());
     const d = new Date(Date.UTC(Number(named[3]), month, Number(named[1])));

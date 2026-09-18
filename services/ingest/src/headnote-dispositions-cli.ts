@@ -16,7 +16,11 @@
  */
 import { openDb } from './db-host.ts';
 import type { HeadnoteEntry } from './headnote-dispositions.ts';
-import { ADVERSE_DISPOSITIONS, concordancePairs, parseHeadnoteDispositions } from './headnote-dispositions.ts';
+import {
+  ADVERSE_DISPOSITIONS,
+  concordancePairs,
+  parseHeadnoteDispositions,
+} from './headnote-dispositions.ts';
 
 const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
 if (!dbUrl) {
@@ -26,7 +30,9 @@ if (!dbUrl) {
 
 const sql = await openDb(dbUrl, 3);
 
-const judgments = await sql<{ id: string; neutral_citation: string | null; case_title: string; full_text: string }[]>`
+const judgments = await sql<
+  { id: string; neutral_citation: string | null; case_title: string; full_text: string }[]
+>`
   SELECT id, neutral_citation, case_title, full_text
   FROM judgments
   WHERE full_text LIKE '%– overruled.%'
@@ -50,19 +56,26 @@ for (const j of judgments) {
     const label = j.neutral_citation ?? j.case_title.slice(0, 40);
     for (const e of adverse) adverseAll.push({ ...e, from: label });
 
-    console.log(`${label}  —  ${adverse.length} adverse, ${adverse.filter((e) => e.lastInGroup).length} caught today`);
+    console.log(
+      `${label}  —  ${adverse.length} adverse, ${adverse.filter((e) => e.lastInGroup).length} caught today`,
+    );
     for (const e of adverse) {
-      console.log(`   ${e.lastInGroup ? '[caught]' : '[MISSED]'} ${e.disposition.padEnd(10)} ${(e.scc ?? e.scr ?? '?').padEnd(24)} ${e.name.slice(0, 52)}`);
+      console.log(
+        `   ${e.lastInGroup ? '[caught]' : '[MISSED]'} ${e.disposition.padEnd(10)} ${(e.scc ?? e.scr ?? '?').padEnd(24)} ${e.name.slice(0, 52)}`,
+      );
     }
   }
 
   for (const p of concordancePairs(entries)) {
-    if (!pairs.has(p.scc)) pairs.set(p.scc, { scr: p.scr, name: p.name, from: j.neutral_citation ?? j.id });
+    if (!pairs.has(p.scc))
+      pairs.set(p.scc, { scr: p.scr, name: p.name, from: j.neutral_citation ?? j.id });
   }
 }
 
 console.log(`\n${'='.repeat(78)}`);
-console.log(`ADVERSE DISPOSITIONS: ${totalAdverse} found · ${wouldHaveCaught} the extractor catches today`);
+console.log(
+  `ADVERSE DISPOSITIONS: ${totalAdverse} found · ${wouldHaveCaught} the extractor catches today`,
+);
 console.log(`MISSED: ${totalAdverse - wouldHaveCaught}`);
 console.log(`CONCORDANCE PAIRS (SCR↔SCC): ${pairs.size} distinct`);
 
@@ -77,7 +90,9 @@ if (sccList.length > 0) {
   const held = await sql<{ n: number }[]>`
     SELECT count(*)::int n FROM judgment_citations
     WHERE normalised_citation = ANY(${sccList}) AND cited_judgment_id IS NOT NULL`;
-  console.log(`\nof ${sccList.length} adverse SCC citations, ${held[0]?.n ?? 0} already resolve to a held judgment`);
+  console.log(
+    `\nof ${sccList.length} adverse SCC citations, ${held[0]?.n ?? 0} already resolve to a held judgment`,
+  );
 }
 
 // Do the harvested pairs actually unlock the 34 unresolved overruled edges?
@@ -87,10 +102,14 @@ const unresolved = await sql<{ normalised_citation: string; citation_text: strin
   WHERE relationship IN ('overruled','overruled_in_part','doubted') AND cited_judgment_id IS NULL`;
 
 const unlocked = unresolved.filter((u) => pairs.has(u.normalised_citation));
-console.log(`\nUNRESOLVED adverse edges: ${unresolved.length} · with a harvested SCR form: ${unlocked.length}`);
+console.log(
+  `\nUNRESOLVED adverse edges: ${unresolved.length} · with a harvested SCR form: ${unlocked.length}`,
+);
 for (const u of unlocked.slice(0, 20)) {
   const p = pairs.get(u.normalised_citation)!;
-  console.log(`   ${u.normalised_citation.padEnd(24)} -> ${p.scr.padEnd(22)} ${p.name.slice(0, 44)}`);
+  console.log(
+    `   ${u.normalised_citation.padEnd(24)} -> ${p.scr.padEnd(22)} ${p.name.slice(0, 44)}`,
+  );
 }
 
 console.log('\nNothing was written. This is a report.');

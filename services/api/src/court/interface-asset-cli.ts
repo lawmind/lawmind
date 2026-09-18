@@ -93,7 +93,9 @@ const apply = process.argv.includes('--apply');
 const wantFixture = process.argv.includes('--fixture');
 const asset = (arg('asset') ?? 'search_by_causelist') as InterfaceAssetName;
 if (!(asset in ECOURTS_INTERFACE_ASSETS)) {
-  console.error(`unknown asset ${asset}; known: ${Object.keys(ECOURTS_INTERFACE_ASSETS).join(', ')}`);
+  console.error(
+    `unknown asset ${asset}; known: ${Object.keys(ECOURTS_INTERFACE_ASSETS).join(', ')}`,
+  );
   process.exit(2);
 }
 
@@ -106,7 +108,9 @@ const sql = postgres(url, {
 try {
   const preflight = await decide(sql, `PROBE_interface_asset_${asset}`);
   console.log(`asset           ${asset}`);
-  console.log(`endpoint        ${ECOURTS_INTERFACE_ASSETS[asset]}${arg('query') ? `?${arg('query')}` : ''}`);
+  console.log(
+    `endpoint        ${ECOURTS_INTERFACE_ASSETS[asset]}${arg('query') ? `?${arg('query')}` : ''}`,
+  );
   console.log(`grant expires   ${AUTHORISATION?.expiresAt ?? '(no grant on file)'}`);
   console.log(
     `guard preflight ${preflight.allowed ? 'ALLOWED' : `REFUSED (${preflight.reason}: ${preflight.detail})`}`,

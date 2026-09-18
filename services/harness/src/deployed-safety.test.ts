@@ -36,7 +36,10 @@ const productionBrokenResponse = () =>
     data: {
       results: [
         { judgmentId: 'x', caseTitle: 'KAUSHAL KISHOR versus STATE OF UTTAR PRADESH & ORS.' },
-        { judgmentId: 'y', caseTitle: 'VIJAY MADANLAL CHOUDHARY & ORS. versus UNION OF INDIA & ORS.' },
+        {
+          judgmentId: 'y',
+          caseTitle: 'VIJAY MADANLAL CHOUDHARY & ORS. versus UNION OF INDIA & ORS.',
+        },
       ],
       unverifiedReferences: [],
       searchId: null,
@@ -47,14 +50,22 @@ const productionBrokenResponse = () =>
 const correctedZeroResponse = () =>
   jsonResponse({
     ok: true,
-    data: { results: [], unverifiedReferences: [], searchId: null, parsed: 'Judgments reported as "(9999) 99 SCC 999".', total: 0 },
+    data: {
+      results: [],
+      unverifiedReferences: [],
+      searchId: null,
+      parsed: 'Judgments reported as "(9999) 99 SCC 999".',
+      total: 0,
+    },
   });
 
 const correctedMatchResponse = () =>
   jsonResponse({
     ok: true,
     data: {
-      results: [{ judgmentId: 'a66596f5', caseTitle: 'S.R. BOMMAI versus UNION OF INDIA AND ORS.' }],
+      results: [
+        { judgmentId: 'a66596f5', caseTitle: 'S.R. BOMMAI versus UNION OF INDIA AND ORS.' },
+      ],
       unverifiedReferences: [],
       searchId: null,
       parsed: 'Judgments reported as "(1994) 3 SCC 1".',
@@ -67,9 +78,18 @@ const correctedAmbiguousResponse = () =>
     ok: true,
     data: {
       results: [
-        { judgmentId: 'ee64c180', caseTitle: 'SOBHA HIBISCUS CONDOMINIUM versus MANAGING DIRECTOR...' },
-        { judgmentId: 'baef360d', caseTitle: 'MONU KUMAR & ORS. versus M/S. METROMAX INFRASTRUCTURE PVT. LTD.' },
-        { judgmentId: 'c7ff7a4e', caseTitle: 'SUBHECHHA WELFARE SOCIETY versus M/S. EARTH INFRASTRUCTURE PVT. LTD.' },
+        {
+          judgmentId: 'ee64c180',
+          caseTitle: 'SOBHA HIBISCUS CONDOMINIUM versus MANAGING DIRECTOR...',
+        },
+        {
+          judgmentId: 'baef360d',
+          caseTitle: 'MONU KUMAR & ORS. versus M/S. METROMAX INFRASTRUCTURE PVT. LTD.',
+        },
+        {
+          judgmentId: 'c7ff7a4e',
+          caseTitle: 'SUBHECHHA WELFARE SOCIETY versus M/S. EARTH INFRASTRUCTURE PVT. LTD.',
+        },
       ],
       unverifiedReferences: [],
       searchId: null,
@@ -108,14 +128,14 @@ test('a citation that cannot exist returning even one result FAILS, however plau
   const fetchImpl = (async () =>
     jsonResponse({
       ok: true,
-      data: { results: [{ judgmentId: 'z', caseTitle: 'ANY REAL CASE AT ALL' }], parsed: 'Judgments reported as "x".', total: 1 },
+      data: {
+        results: [{ judgmentId: 'z', caseTitle: 'ANY REAL CASE AT ALL' }],
+        parsed: 'Judgments reported as "x".',
+        total: 1,
+      },
     })) as unknown as typeof fetch;
 
-  const report = await runDeployedSafetyProbe(
-    'http://fake',
-    [PROBE_CASES[0]!],
-    fetchImpl,
-  );
+  const report = await runDeployedSafetyProbe('http://fake', [PROBE_CASES[0]!], fetchImpl);
   assert.equal(report.passed, false);
   assert.match(report.cases[0]!.reason, /cannot exist/);
 });
@@ -125,17 +145,15 @@ test('a resolving citation returning a DIFFERENT case FAILS, never treated as cl
     jsonResponse({
       ok: true,
       data: {
-        results: [{ judgmentId: 'w', caseTitle: 'KAUSHAL KISHOR versus STATE OF UTTAR PRADESH & ORS.' }],
+        results: [
+          { judgmentId: 'w', caseTitle: 'KAUSHAL KISHOR versus STATE OF UTTAR PRADESH & ORS.' },
+        ],
         parsed: 'Judgments reported as "(1994) 3 SCC 1".',
         total: 1,
       },
     })) as unknown as typeof fetch;
 
-  const report = await runDeployedSafetyProbe(
-    'http://fake',
-    [PROBE_CASES[1]!],
-    fetchImpl,
-  );
+  const report = await runDeployedSafetyProbe('http://fake', [PROBE_CASES[1]!], fetchImpl);
   assert.equal(report.passed, false);
   assert.match(report.cases[0]!.reason, /different case/);
 });
@@ -183,17 +201,16 @@ test('only one result where ambiguity was expected FAILS loudly rather than sile
 
 test('an explicit not-found for a real citation PASSES — honesty, not omniscience, is required', async () => {
   const fetchImpl = (async () => correctedZeroResponse()) as unknown as typeof fetch;
-  const report = await runDeployedSafetyProbe(
-    'http://fake',
-    [PROBE_CASES[1]!],
-    fetchImpl,
-  );
+  const report = await runDeployedSafetyProbe('http://fake', [PROBE_CASES[1]!], fetchImpl);
   assert.equal(report.passed, true);
 });
 
 test('an error envelope (e.g. INVALID_QUERY) FAILS rather than being read as a pass', async () => {
   const fetchImpl = (async () =>
-    jsonResponse({ ok: false, error: { code: 'INVALID_QUERY', message: 'boom' } }, 400)) as unknown as typeof fetch;
+    jsonResponse(
+      { ok: false, error: { code: 'INVALID_QUERY', message: 'boom' } },
+      400,
+    )) as unknown as typeof fetch;
   const report = await runDeployedSafetyProbe('http://fake', PROBE_CASES, fetchImpl);
   assert.equal(report.passed, false);
 });

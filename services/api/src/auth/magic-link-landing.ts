@@ -69,4 +69,3 @@ export function handleMagicLinkLanding(c: Context): Response {
     'referrer-policy': 'no-referrer',
   });
 }
-

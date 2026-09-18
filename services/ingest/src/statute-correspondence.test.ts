@@ -12,7 +12,7 @@ import { parseCorrespondence, parseOldSide } from './statute-correspondence.ts';
 const BNS = [
   'BNS        Subject                                 IPC      Summary of comparison',
   'Sections                                           Sections',
-  '4           Punishments.                            53       ‘Community service\' is added.',
+  "4           Punishments.                            53       ‘Community service' is added.",
   '5           Commutation of sentence.                54 & 55  given in BNS, but the explanation',
   '                                                    55A      23 of the BNSS defines it as',
   '8(6)        Imprisonment to terminate on            68 & 69  Heading is dropped as two sections',
@@ -46,12 +46,18 @@ describe('multi-section mappings — never collapsed to a partial', () => {
 
   it('reads an inline pair without a continuation', () => {
     const r = rows.find((x) => x.newSection === '8(6)');
-    assert.deepEqual(r?.oldRefs.map((o) => o.section), ['68', '69']);
+    assert.deepEqual(
+      r?.oldRefs.map((o) => o.section),
+      ['68', '69'],
+    );
   });
 
   it('does not leak a continuation into the wrong row', () => {
     // 55A belongs to 5, never to 4.
-    assert.deepEqual(rows.find((x) => x.newSection === '4')?.oldRefs.map((o) => o.section), ['53']);
+    assert.deepEqual(
+      rows.find((x) => x.newSection === '4')?.oldRefs.map((o) => o.section),
+      ['53'],
+    );
   });
 
   it('keeps New as an explicit non-counterpart', () => {
@@ -74,7 +80,10 @@ describe('the other column order', () => {
   });
 
   it('keeps a letter-suffixed section', () => {
-    assert.deepEqual(rows.find((x) => x.newSection === '62')?.oldRefs.map((o) => o.section), ['65A']);
+    assert.deepEqual(
+      rows.find((x) => x.newSection === '62')?.oldRefs.map((o) => o.section),
+      ['65A'],
+    );
   });
 
   it('marks 170 as newly added', () => {
@@ -85,7 +94,11 @@ describe('the other column order', () => {
 describe('parseOldSide', () => {
   it('splits every separator the source uses', () => {
     for (const s of ['54 & 55', '54 and 55', '54, 55']) {
-      assert.deepEqual((parseOldSide(s) as { section: string }[]).map((o) => o.section), ['54', '55'], s);
+      assert.deepEqual(
+        (parseOldSide(s) as { section: string }[]).map((o) => o.section),
+        ['54', '55'],
+        s,
+      );
     }
   });
 

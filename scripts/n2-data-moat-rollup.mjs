@@ -13,7 +13,7 @@ const DIR = 'docs/ai/new2-r7/data-moat-census';
 const read = (n) => (existsSync(join(DIR, `${n}.json`)) ? JSON.parse(readFileSync(join(DIR, `${n}.json`), 'utf8')) : null);
 
 const num = (v) => (v === null || v === undefined ? 0 : Number(v));
-const sum = (rows, k) => rows.reduce((a, r) => a + num(r[k]), 0);
+const _sum = (rows, k) => rows.reduce((a, r) => a + num(r[k]), 0);
 
 const passes = {};
 for (const n of ['base', 'body', 'keys', 'citations', 'statutes', 'vectors', 'duplicates', 'passages', 'text_bands', 'eligibility_tiers']) {

@@ -242,7 +242,8 @@ describe('activation funnel — wired through the real routes', () => {
       body: JSON.stringify({ query: 'bail', language: 'en' }),
     });
     assert.equal(found.status, 200);
-    const results = ((await found.json()) as { data?: { results?: unknown[] } }).data?.results ?? [];
+    const results =
+      ((await found.json()) as { data?: { results?: unknown[] } }).data?.results ?? [];
     if (results.length === 0) return; // an empty corpus proves nothing either way
     assert.ok(
       await waitForStep('first_successful_search'),

@@ -84,9 +84,13 @@ async function main(): Promise<void> {
     console.log('='.repeat(78));
     console.log(`total judgments classified: ${total.toLocaleString()}\n`);
 
-    console.log('Buckets (A research-ready · B usable with limitations · C poor extraction · D unusable/blocked):');
+    console.log(
+      'Buckets (A research-ready · B usable with limitations · C poor extraction · D unusable/blocked):',
+    );
     for (const b of ['A', 'B', 'C', 'D'] as const) {
-      console.log(`  ${b}: ${counts[b].toLocaleString().padStart(7)}  (${((counts[b] / total) * 100).toFixed(1)}%)`);
+      console.log(
+        `  ${b}: ${counts[b].toLocaleString().padStart(7)}  (${((counts[b] / total) * 100).toFixed(1)}%)`,
+      );
     }
     console.log('');
 
@@ -96,7 +100,10 @@ async function main(): Promise<void> {
       console.log(
         `  ${court.padEnd(15)} n=${courtTotal.toLocaleString().padStart(7)}  ` +
           (['A', 'B', 'C', 'D'] as const)
-            .map((b) => `${b}=${c[b].toLocaleString()} (${courtTotal > 0 ? ((c[b] / courtTotal) * 100).toFixed(1) : '0.0'}%)`)
+            .map(
+              (b) =>
+                `${b}=${c[b].toLocaleString()} (${courtTotal > 0 ? ((c[b] / courtTotal) * 100).toFixed(1) : '0.0'}%)`,
+            )
             .join('  '),
       );
     }

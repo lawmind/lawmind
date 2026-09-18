@@ -227,7 +227,7 @@ export function normaliseCaseNumber(raw: string | null): string | null {
  */
 export function normaliseCaption(raw: string | null): string | null {
   if (!raw) return null;
-  let s = raw
+  const s = raw
     .toUpperCase()
     .replace(/\b(VERSUS|VS\.?|V\.?)\b/g, ' V ')
     .replace(/\b(AND\s+)?(ORS|ANR|OTHERS|ANOTHER|ETC)\.?\b/g, ' ')

@@ -17,10 +17,7 @@ import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { buildFreshnessObject } from './freshness-object.ts';
-import {
-  publishFreshnessObservation,
-  readPublishedObservation,
-} from './freshness-publication.ts';
+import { publishFreshnessObservation, readPublishedObservation } from './freshness-publication.ts';
 
 import type { Sql } from 'postgres';
 
@@ -359,10 +356,7 @@ describe('the committed observation is the one the route serves', () => {
     assert.equal(served.definitionVersion, published.definitionVersion);
     assert.equal(served.upstreamMeasuredAt, source['latestUpstreamMeasuredAt']);
     assert.equal(served.latestUpstreamDecisionDate, source['latestUpstreamDecisionDate']);
-    assert.equal(
-      served.courtMonthDetail.length,
-      (source['courtMonthDetail'] as unknown[]).length,
-    );
+    assert.equal(served.courtMonthDetail.length, (source['courtMonthDetail'] as unknown[]).length);
     assert.ok(!('freshnessScore' in served));
     assert.ok(served.courtMonthDetail.length < 10_000, 'shape must stay court/month-bounded');
 

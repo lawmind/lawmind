@@ -178,9 +178,11 @@ async function main(): Promise<void> {
     for (let i = 0; i < entries.length; i += BATCH) {
       const batch = entries.slice(i, i + BATCH);
       await Promise.all(
-        batch.map(([sourceUrl, cnr]) => sql`
+        batch.map(
+          ([sourceUrl, cnr]) => sql`
           UPDATE judgments SET cnr = ${cnr}
-           WHERE source_url = ${sourceUrl} AND cnr IS NULL`),
+           WHERE source_url = ${sourceUrl} AND cnr IS NULL`,
+        ),
       );
       updated += batch.length;
       console.log(`  applied ${updated}/${entries.length}...`);

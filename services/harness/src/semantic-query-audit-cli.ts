@@ -65,9 +65,12 @@ const PHRASE_SAMPLE = Number(process.env['PHRASE_SAMPLE'] ?? 120);
 
 /** Odd-character density: anything outside what an English legal sentence uses. */
 function damageScore(q: string): { odd: number; vowelless: number } {
-  const odd = (q.match(/[^A-Za-z0-9\s.,;:()'"@/&%₹°\-–—[\]]/g) ?? []).length / Math.max(1, q.length);
+  const odd =
+    (q.match(/[^A-Za-z0-9\s.,;:()'"@/&%₹°\-–—[\]]/g) ?? []).length / Math.max(1, q.length);
   const tokens = q.split(/\s+/).filter((t) => /[A-Za-z]/.test(t));
-  const vowelless = tokens.filter((t) => t.length >= 4 && !/[aeiouAEIOU]/.test(t)).length / Math.max(1, tokens.length);
+  const vowelless =
+    tokens.filter((t) => t.length >= 4 && !/[aeiouAEIOU]/.test(t)).length /
+    Math.max(1, tokens.length);
   return { odd, vowelless };
 }
 
@@ -75,7 +78,8 @@ function damageScore(q: string): { odd: number; vowelless: number } {
 function factHeaviness(q: string): number {
   const tokens = q.split(/\s+/).filter((t) => t.length > 0);
   const numeric = tokens.filter(
-    (t) => /^\W*\d/.test(t) || /\d{2,}/.test(t) || /(No\.|Nos\.|App\.|W\.P\.|C\.R\.|S\.L\.P\.)/i.test(t),
+    (t) =>
+      /^\W*\d/.test(t) || /\d{2,}/.test(t) || /(No\.|Nos\.|App\.|W\.P\.|C\.R\.|S\.L\.P\.)/i.test(t),
   ).length;
   return numeric / Math.max(1, tokens.length);
 }
@@ -84,8 +88,15 @@ async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
-  const rows0 = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 20_000 } });
+  const rows0 = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 20_000 },
+  });
 
   type Row = {
     queryId: string;
@@ -153,10 +164,12 @@ async function main(): Promise<void> {
       }
     }
 
-    if (r.oddCharDensity >= 0.02 || r.vowellessTokenShare >= 0.15) r.labels.push('QUERY_TEXT_DAMAGED');
+    if (r.oddCharDensity >= 0.02 || r.vowellessTokenShare >= 0.15)
+      r.labels.push('QUERY_TEXT_DAMAGED');
     if (r.factHeaviness >= 0.2) r.labels.push('QUERY_TOO_FACT_HEAVY');
     if (r.queryInGold === false) r.labels.push('QUERY_NOT_IN_GOLD');
-    if (r.phraseJudgments !== null && r.phraseJudgments >= BOILERPLATE_AT) r.labels.push('QUERY_IS_BOILERPLATE');
+    if (r.phraseJudgments !== null && r.phraseJudgments >= BOILERPLATE_AT)
+      r.labels.push('QUERY_IS_BOILERPLATE');
     if (r.labels.length === 0) r.labels.push('QUERY_LOOKS_ANSWERABLE');
     rows.push(r);
     if ((i + 1) % 50 === 0) process.stdout.write(`  ${i + 1}/${rows0.length}\n`);
@@ -169,7 +182,13 @@ async function main(): Promise<void> {
     kind: 'new1_semantic_query_audit',
     measuredAt: new Date().toISOString(),
     frozenHash: gold.frozenHash,
-    thresholds: { BOILERPLATE_AT, PHRASE_CAP, oddCharDensity: 0.02, vowellessTokenShare: 0.15, factHeaviness: 0.2 },
+    thresholds: {
+      BOILERPLATE_AT,
+      PHRASE_CAP,
+      oddCharDensity: 0.02,
+      vowellessTokenShare: 0.15,
+      factHeaviness: 0.2,
+    },
     queries: rows.length,
     byLabel,
     phraseProbe: {
@@ -180,13 +199,17 @@ async function main(): Promise<void> {
       median:
         probed.length === 0
           ? null
-          : [...probed.map((r) => r.phraseJudgments!)].sort((a, b) => a - b)[Math.floor(probed.length / 2)],
+          : [...probed.map((r) => r.phraseJudgments!)].sort((a, b) => a - b)[
+              Math.floor(probed.length / 2)
+            ],
     },
     queryNotInGold: rows.filter((r) => r.queryInGold === false).length,
     rows,
   };
   writeFileSync(OUT, `${JSON.stringify(summary, null, 2)}\n`);
-  process.stdout.write(`\n${JSON.stringify({ byLabel, phraseProbe: summary.phraseProbe, queryNotInGold: summary.queryNotInGold }, null, 2)}\n`);
+  process.stdout.write(
+    `\n${JSON.stringify({ byLabel, phraseProbe: summary.phraseProbe, queryNotInGold: summary.queryNotInGold }, null, 2)}\n`,
+  );
   await sql.end();
 }
 

@@ -123,7 +123,13 @@ const JSON_OUT = argOf('json');
  */
 const ELIGIBLE_ONLY = !process.argv.includes('--all-outcomes');
 
-type LedgerRow = { source_url: string; outcome: string; court_code: string; year: number; permanent: boolean };
+type LedgerRow = {
+  source_url: string;
+  outcome: string;
+  court_code: string;
+  year: number;
+  permanent: boolean;
+};
 
 /**
  * `.../data/pdf/year=2023/court=27_1/bench=bombay/FOO.pdf` -> its metadata keys.
@@ -151,7 +157,9 @@ type LedgerRow = { source_url: string; outcome: string; court_code: string; year
  * ROWS rather than documents (NEW2 bus 0692). It has now produced two different
  * wrong numbers in this repo, in opposite directions.
  */
-function metadataKeysFor(sourceUrl: string): { keys: string[]; partitionId: string; file: string } | null {
+function metadataKeysFor(
+  sourceUrl: string,
+): { keys: string[]; partitionId: string; file: string } | null {
   const m = sourceUrl.match(/year=(\d{4})\/court=([^/]+)\/bench=([^/]+)\/([^/]+)$/);
   if (!m) return null;
   const prefix = `metadata/parquet/year=${m[1]}/court=${m[2]}/bench=${m[3]}`;
@@ -177,7 +185,9 @@ try {
   const byCourt = new Map<string, number>();
   for (const r of population) byCourt.set(r.court_code, (byCourt.get(r.court_code) ?? 0) + r.n);
 
-  console.log(`\nMISSING-PDF POPULATION — ${total.toLocaleString()} records, ${byCourt.size} courts\n`);
+  console.log(
+    `\nMISSING-PDF POPULATION — ${total.toLocaleString()} records, ${byCourt.size} courts\n`,
+  );
   for (const [c, n] of [...byCourt].sort((a, b) => b[1] - a[1]).slice(0, 8)) {
     console.log(`  ${c.padEnd(8)} ${String(n).padStart(8)}  ${((100 * n) / total).toFixed(1)}%`);
   }
@@ -191,7 +201,11 @@ try {
    */
   const strata = [...byCourt.keys()].map((court) => ({
     court,
-    take: Math.min(PER_COURT, Math.max(1, Math.round((SIZE * (byCourt.get(court) ?? 0)) / total)), byCourt.get(court) ?? 0),
+    take: Math.min(
+      PER_COURT,
+      Math.max(1, Math.round((SIZE * (byCourt.get(court) ?? 0)) / total)),
+      byCourt.get(court) ?? 0,
+    ),
   }));
 
   const drawn: LedgerRow[] = [];
@@ -226,7 +240,9 @@ try {
     drawn.push(...rows);
   }
 
-  console.log(`\ndrew ${drawn.length} records across ${strata.length} court strata (cap ${PER_COURT}/court)\n`);
+  console.log(
+    `\ndrew ${drawn.length} records across ${strata.length} court strata (cap ${PER_COURT}/court)\n`,
+  );
 
   /**
    * Identity, one parquet read per PARTITION rather than per record.
@@ -256,7 +272,10 @@ try {
       try {
         const byFile = new Map<string, Record<string, unknown>>();
         const variantsRead: string[] = [];
-        for (const key of [`${partitionId}/metadata.parquet`, `${partitionId}/metadata-mobile.parquet`]) {
+        for (const key of [
+          `${partitionId}/metadata.parquet`,
+          `${partitionId}/metadata-mobile.parquet`,
+        ]) {
           try {
             const n = await rowCount(key);
             /* Bounded: the whole file, but only four columns of it, and only for
@@ -272,7 +291,9 @@ try {
             ]);
             variantsRead.push(key.endsWith('-mobile.parquet') ? 'mobile' : 'plain');
             for (const m of meta) {
-              const base = String(m['pdf_link'] ?? '').split('/').pop();
+              const base = String(m['pdf_link'] ?? '')
+                .split('/')
+                .pop();
               /* Plain wins a collision: it is the variant `hc-load` ingests from,
                * so its identity is the one the rest of the pipeline would have
                * recorded had the PDF been fetchable. */
@@ -303,7 +324,8 @@ try {
                   title: String(m['title'] ?? ''),
                   caseNumber: String(m['case_number'] ?? ''),
                   date: String(m['date'] ?? ''),
-                  disposalNature: m['disposal_nature'] == null ? null : String(m['disposal_nature']),
+                  disposalNature:
+                    m['disposal_nature'] == null ? null : String(m['disposal_nature']),
                 }
               : null,
           };
@@ -360,7 +382,9 @@ try {
   console.log(
     `\n  ${identified} of ${drawn.length} records carry a case identity and are queryable against a provider.`,
   );
-  console.log(`  ${unidentified} carry only a filename and are NOT — they are excluded, not sent thin.\n`);
+  console.log(
+    `  ${unidentified} carry only a filename and are NOT — they are excluded, not sent thin.\n`,
+  );
 
   const tokenPresent = Boolean(process.env['INDIANKANOON_API_TOKEN']);
   console.log(
@@ -375,7 +399,9 @@ try {
     takenAt: new Date().toISOString(),
     population: {
       total,
-      byCourt: [...byCourt].sort((a, b) => b[1] - a[1]).map(([court, n]) => ({ court, records: n, share: n / total })),
+      byCourt: [...byCourt]
+        .sort((a, b) => b[1] - a[1])
+        .map(([court, n]) => ({ court, records: n, share: n / total })),
       note:
         'Three courts hold 92% of this population (27_1 65.9%, 23_23 15.8%, 9_13 10.3%). ' +
         'The recovery decision is therefore mostly a decision about Bombay, and a rate measured ' +
@@ -392,9 +418,14 @@ try {
       partitionsFailed,
       identityByYear: [...byYear]
         .sort((a, b) => a[0] - b[0])
-        .map(([year, s]) => ({ year, resolved: s.resolved, total: s.total, rate: s.resolved / Math.max(1, s.total) })),
+        .map(([year, s]) => ({
+          year,
+          resolved: s.resolved,
+          total: s.total,
+          rate: s.resolved / Math.max(1, s.total),
+        })),
       identityWarning:
-        'An earlier draw of this same population, taken from each court\'s EARLIEST years only, ' +
+        "An earlier draw of this same population, taken from each court's EARLIEST years only, " +
         'reported 85.7% identifiable. Spread across years it is 44.4%. Quote the per-year table, ' +
         'never the single figure. A record whose case cannot be identified cannot be recovered ' +
         'from any provider at any price, so this is a ceiling that exists before any lookup is bought.',

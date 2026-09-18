@@ -74,7 +74,8 @@ export const ROLES = [
 ];
 
 // ── NEW2's rules, copied verbatim ────────────────────────────────────────────
-const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f�]/;
+// eslint-disable-next-line no-control-regex -- detecting control characters is the job
+const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f\ufffd]/;
 const COLLAPSED_GLYPH = /([A-Za-z]\s){12,}/;
 
 export function classify(text, spanOk) {

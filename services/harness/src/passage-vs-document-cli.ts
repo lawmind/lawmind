@@ -51,7 +51,6 @@
  */
 import { writeFileSync } from 'node:fs';
 
-import { toVectorLiteral } from '@lawmind/embed';
 // GPU sidecar, not the in-process CPU embedder. See harness-embedder.ts: the CPU
 // default is right for production and was silently starving the Tier-A walk here.
 import { getHarnessEmbedder } from './harness-embedder.ts';
@@ -91,17 +90,25 @@ async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
-  const semantic = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
+  const semantic = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
 
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 120_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 120_000 },
+  });
 
   // Gold targets that are actually in the probe — the only ones either arm can find.
   const goldIds = [...new Set(semantic.map((r) => r.goldAuthorityId))];
   const present = new Set<string>();
   for (let i = 0; i < goldIds.length; i += 500) {
-    const r = await sql.unsafe(`SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`, [
-      goldIds.slice(i, i + 500),
-    ]);
+    const r = await sql.unsafe(
+      `SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
+      [goldIds.slice(i, i + 500)],
+    );
     for (const x of r) present.add(x['judgment_id'] as string);
   }
   const targets = [...present];
@@ -126,7 +133,8 @@ async function main(): Promise<void> {
       `SELECT judgment_id, embedding::text AS v FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
       [subset.slice(i, i + 500)],
     );
-    for (const r of rows) docVecs.set(r['judgment_id'] as string, JSON.parse(r['v'] as string) as number[]);
+    for (const r of rows)
+      docVecs.set(r['judgment_id'] as string, JSON.parse(r['v'] as string) as number[]);
   }
   process.stdout.write(`arm DOC: ${docVecs.size} stored vectors read\n`);
 
@@ -160,13 +168,23 @@ async function main(): Promise<void> {
       }
       embedded += chunk.length;
     }
-    if ((i / 100) % 5 === 0) process.stdout.write(`  passages embedded ${embedded} (docs ${i + ids.length}/${subset.length})\n`);
+    if ((i / 100) % 5 === 0)
+      process.stdout.write(
+        `  passages embedded ${embedded} (docs ${i + ids.length}/${subset.length})\n`,
+      );
   }
   const gpuSeconds = (Date.now() - t0) / 1000;
-  process.stdout.write(`arm PASSAGE: ${embedded} passages, ${(charsEmbedded / 1e6).toFixed(1)}M chars, ${gpuSeconds.toFixed(0)}s\n`);
+  process.stdout.write(
+    `arm PASSAGE: ${embedded} passages, ${(charsEmbedded / 1e6).toFixed(1)}M chars, ${gpuSeconds.toFixed(0)}s\n`,
+  );
 
   // Score both arms with the same query vectors.
-  const rows: { queryId: string; launchClass: string; docRank: number | null; passageRank: number | null }[] = [];
+  const rows: {
+    queryId: string;
+    launchClass: string;
+    docRank: number | null;
+    passageRank: number | null;
+  }[] = [];
   for (const [n, g] of queries.entries()) {
     const [e] = await embedder.embed([g.query]);
     if (e === undefined) continue;
@@ -210,7 +228,11 @@ async function main(): Promise<void> {
     queries: rows.length,
     passageRecipe: { HEAD_CHARS, PASSAGE_CHARS, PASSAGE_STRIDE },
     storageMultiplier: Number((passageVecs.length / Math.max(1, docVecs.size)).toFixed(2)),
-    gpu: { passagesEmbedded: embedded, millionChars: Number((charsEmbedded / 1e6).toFixed(2)), seconds: Math.round(gpuSeconds) },
+    gpu: {
+      passagesEmbedded: embedded,
+      millionChars: Number((charsEmbedded / 1e6).toFixed(2)),
+      seconds: Math.round(gpuSeconds),
+    },
     ARM_DOC: {
       successAt1: pct((r) => r.docRank === 1),
       successAt5: pct((r) => r.docRank !== null && r.docRank <= 5),

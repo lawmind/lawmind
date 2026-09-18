@@ -128,7 +128,9 @@ const cumulative = [
 console.log('\nscenario                 vectors    fp32 GiB   halfvec GiB');
 console.log('────────────────────────────────────────────────────────────');
 const scenarios = cumulative.map((c) => {
-  const v = byTier.filter((t) => (c.tiers as readonly string[]).includes(t.tier)).reduce((a, t) => a + t.vectors, 0);
+  const v = byTier
+    .filter((t) => (c.tiers as readonly string[]).includes(t.tier))
+    .reduce((a, t) => a + t.vectors, 0);
   console.log(
     `${c.name.padEnd(22)} ${v.toLocaleString().padStart(11)}  ${((v * BYTES_PER_VECTOR.fp32) / GIB).toFixed(0).padStart(10)}  ${((v * BYTES_PER_VECTOR.halfvec) / GIB).toFixed(0).padStart(12)}`,
   );
@@ -145,7 +147,7 @@ console.log(
     `${(byTier[0]!.vectors / 620300).toFixed(0)}x the current index.`,
 );
 console.log(
-  'INHERITED LIMIT: class populations and mean chars are CX1\'s 200-document\n' +
+  "INHERITED LIMIT: class populations and mean chars are CX1's 200-document\n" +
     'purposive sample. Order of magnitude, not the last digit. What is measured\n' +
     'here is the MULTIPLIER, which was 1 and is not 1.',
 );
@@ -162,7 +164,10 @@ writeFileSync(
         documentsWithVectors: 40161,
         vectors: 620300,
         vectorsPerDocument: { mean: 15.45, p50: 11, p90: 29, p99: 90, max: 1276 },
-        byCourt: { supremeCourt: { docs: 38341, vectors: 616197 }, highCourt: { docs: 1820, vectors: 4103 } },
+        byCourt: {
+          supremeCourt: { docs: 38341, vectors: 616197 },
+          highCourt: { docs: 1820, vectors: 4103 },
+        },
       },
       classes: rows,
       tiers: byTier,

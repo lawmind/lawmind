@@ -59,7 +59,12 @@ async function main(): Promise<number> {
   // A statement timeout so ONE pathological query cannot consume the run. A
   // timed-out query is recorded as a miss with its duration, which is a datum;
   // a hung run is not.
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 30000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 30000 },
+  });
 
   const loaded = loadNew3Gold('docs/ai/new3-semantic-expansion-gold.json');
   /**
@@ -85,7 +90,9 @@ async function main(): Promise<number> {
    */
   const only = (process.env['QUERY_TYPES'] ?? 'exact_citation,case_title').split(',');
   const rows0 = loaded.rows.filter((r) => only.includes(r.queryType));
-  console.log(`gold: ${rows0.length} of ${loaded.rows.length} usable rows, types ${only.join(',')}`);
+  console.log(
+    `gold: ${rows0.length} of ${loaded.rows.length} usable rows, types ${only.join(',')}`,
+  );
 
   const rows: Row[] = [];
   try {
@@ -93,7 +100,14 @@ async function main(): Promise<number> {
       const t = Date.now();
       const hits = await hybridSearch(sql, g.query, null, {}, LIMIT).catch(() => null);
       if (hits === null) {
-        rows.push({ queryId: g.queryId, queryType: g.queryType, goldAuthorityId: g.goldAuthorityId, rank: null, pinnedFirst: false, ms: Date.now() - t });
+        rows.push({
+          queryId: g.queryId,
+          queryType: g.queryType,
+          goldAuthorityId: g.goldAuthorityId,
+          rank: null,
+          pinnedFirst: false,
+          ms: Date.now() - t,
+        });
         continue;
       }
       const ms = Date.now() - t;
@@ -115,7 +129,8 @@ async function main(): Promise<number> {
     await sql.end({ timeout: 10 });
   }
 
-  const pct = (a: number, b: number): number | null => (b === 0 ? null : Number(((100 * a) / b).toFixed(2)));
+  const pct = (a: number, b: number): number | null =>
+    b === 0 ? null : Number(((100 * a) / b).toFixed(2));
   const quantile = (xs: number[], q: number): number => {
     const s = [...xs].sort((a, b) => a - b);
     return s[Math.min(s.length - 1, Math.floor(q * s.length))] ?? 0;
@@ -150,7 +165,9 @@ async function main(): Promise<number> {
   for (const [t, m] of Object.entries(byType)) {
     const v = m as Record<string, unknown>;
     console.log(`\n  ${t}  (${v['queries']} queries)`);
-    console.log(`    success@1  ${v['successAt1']}%   success@5 ${v['successAt5']}%   recall@20 ${v['recallAt20']}%`);
+    console.log(
+      `    success@1  ${v['successAt1']}%   success@5 ${v['successAt5']}%   recall@20 ${v['recallAt20']}%`,
+    );
     console.log(`    MRR ${v['mrr']}   latency ${JSON.stringify(v['latencyMs'])}`);
   }
   console.log(`\nwrote ${OUT}`);

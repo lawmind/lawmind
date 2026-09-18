@@ -192,7 +192,7 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
       'rendering an empty page. It is LIMITED and not ENABLED for a second, unclosed reason: the ' +
       'corpus holds text for documents whose original source artifact is not retained, so no surface ' +
       'may claim "verified from the retained official PDF", and high-confidence reporter/editorial ' +
-      'text may not be presented as the court\'s own reasoning while the content-use question is open.',
+      "text may not be presented as the court's own reasoning while the content-use question is open.",
     asOf: AS_OF,
     unblockedBy:
       'The content-use decision on reporter/editorial material, and retained-artifact state per document.',
@@ -267,7 +267,7 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
       'Bounded semantics only: "no adverse signal found in resolved sources as of [date]". Citation ' +
       'resolution is not legal treatment, a treatment edge is not current legal status, and ' +
       'reporter-derived treatment stays attributed as reporter-derived. 95.62% of the edges behind a ' +
-      'LAW MOVED mark are a reporter headnote rather than the later court\'s own words.',
+      "LAW MOVED mark are a reporter headnote rather than the later court's own words.",
     asOf: AS_OF,
   },
   'treatment.good_law_claim': {
@@ -275,8 +275,8 @@ export const RELEASE_CAPABILITIES: Readonly<Record<CapabilityName, Capability>> 
     reason:
       'No generic "good law" guarantee and no "live/fresh law" claim. Source freshness is incomplete ' +
       'by measurement: the ingest fleet stopped 2026-08-19 19:56 and 40 of 53 upstream 2026 ' +
-      'partitions have grown since, so max(judgment_date) is our walk\'s frontier and NOT the ' +
-      "frontier of published law. \"Our ingest has not run for a week\" and \"the law is not " +
+      "partitions have grown since, so max(judgment_date) is our walk's frontier and NOT the " +
+      'frontier of published law. "Our ingest has not run for a week" and "the law is not ' +
       'published yet" are different sentences and only one of them is true.',
     asOf: AS_OF,
     unblockedBy:
@@ -499,10 +499,16 @@ export const PLATFORMS: readonly Platform[] = ['ios', 'android', 'web', 'unknown
 /** Parse the `X-Lawmind-Platform` header. Anything unrecognised is `unknown`. */
 export function parsePlatform(raw: string | null | undefined): Platform {
   const v = (raw ?? '').trim().toLowerCase();
-  return (PLATFORMS as readonly string[]).includes(v) && v !== 'unknown' ? (v as Platform) : 'unknown';
+  return (PLATFORMS as readonly string[]).includes(v) && v !== 'unknown'
+    ? (v as Platform)
+    : 'unknown';
 }
 
-type PlatformOverride = { readonly state: CapabilityState; readonly reason: string; readonly asOf: string };
+type PlatformOverride = {
+  readonly state: CapabilityState;
+  readonly reason: string;
+  readonly asOf: string;
+};
 
 /**
  * Capability states that are NARROWER on a specific platform than the
@@ -558,7 +564,10 @@ const NARROWNESS: Record<CapabilityState, number> = {
  * release-wide registry refuses becoming reachable from a client that sends the
  * right header, which is the "stale feature flag" this whole file exists to stop.
  */
-export function capabilityStateForPlatform(name: CapabilityName, platform: Platform): CapabilityState {
+export function capabilityStateForPlatform(
+  name: CapabilityName,
+  platform: Platform,
+): CapabilityState {
   const base = RELEASE_CAPABILITIES[name].state;
   const override = PLATFORM_CAPABILITY_OVERRIDES[platform]?.[name];
   if (override === undefined) return base;
@@ -595,7 +604,9 @@ export function capabilityRegistry(platform?: Platform) {
       const o = overrides[name];
       return [
         name,
-        state === base.state ? base : { ...base, state, reason: o?.reason ?? base.reason, asOf: o?.asOf ?? base.asOf },
+        state === base.state
+          ? base
+          : { ...base, state, reason: o?.reason ?? base.reason, asOf: o?.asOf ?? base.asOf },
       ];
     }),
   ) as Readonly<Record<CapabilityName, Capability>>;

@@ -138,13 +138,14 @@ export async function hearingPackPreview(
    * surface R20 gives that fact, and inventing a second answer here would be a
    * second opinion about the same row.
    */
-  const adverse = savedIds.length === 0
-    ? { n: '0' }
-    : (
-        await corpusSql<{ n: string }[]>`
+  const adverse =
+    savedIds.length === 0
+      ? { n: '0' }
+      : (
+          await corpusSql<{ n: string }[]>`
           SELECT count(*)::text AS n FROM judgments j
            WHERE j.id = ANY(${savedIds}::uuid[]) AND j.overruled_status <> 'none'`
-      )[0];
+        )[0];
 
   const [matter] = await sql<{ next_hearing_date: string | null }[]>`
     SELECT next_hearing_date::text AS next_hearing_date

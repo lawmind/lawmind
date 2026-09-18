@@ -194,7 +194,9 @@ try {
       keyToIds.set(k, set);
     }
   }
-  console.log(`  ${holders.length} judgments carry reporter_citations · ${keyToIds.size} distinct keys`);
+  console.log(
+    `  ${holders.length} judgments carry reporter_citations · ${keyToIds.size} distinct keys`,
+  );
 
   const scrKeys = [...new Set(trusted.map((c) => c.scrKey))];
   const resolved = scrKeys
@@ -257,15 +259,21 @@ try {
   });
   const writable = final.filter((f) => !conflicted.includes(f));
 
-  console.log(`  ${prior.size} already recorded · ${writable.length - (prior.size - conflicted.length)} new`);
+  console.log(
+    `  ${prior.size} already recorded · ${writable.length - (prior.size - conflicted.length)} new`,
+  );
   console.log(`  ${prior.size - conflicted.length} AGREE with the deployed adjacency pass`);
   console.log(`  ${conflicted.length} DROPPED — the two sources name different judgments`);
   for (const c of conflicted) {
-    console.log(`     ${c.alias}  headnote=${c.judgmentId.slice(0, 8)}  adjacency=${prior.get(c.aliasKey)?.slice(0, 8)}`);
+    console.log(
+      `     ${c.alias}  headnote=${c.judgmentId.slice(0, 8)}  adjacency=${prior.get(c.aliasKey)?.slice(0, 8)}`,
+    );
   }
 
   for (const f of final.slice(0, 10)) {
-    console.log(`    ${f.alias.padEnd(22)} → ${f.judgmentId.slice(0, 8)}  ${f.evidence.slice(0, 58)}`);
+    console.log(
+      `    ${f.alias.padEnd(22)} → ${f.judgmentId.slice(0, 8)}  ${f.evidence.slice(0, 58)}`,
+    );
   }
 
   // Does this actually move the thing it was built for?
@@ -275,7 +283,9 @@ try {
      WHERE relationship IN ('overruled','overruled_in_part','doubted')
        AND cited_judgment_id IS NULL
        AND upper(regexp_replace(normalised_citation, '[^A-Za-z0-9]', '', 'g')) = ANY(${final.map((f) => f.aliasKey)})`;
-  console.log(`\n  of the 34 unresolved adverse edges, ${unresolved[0]?.n ?? 0} are named by an alias this pass produces`);
+  console.log(
+    `\n  of the 34 unresolved adverse edges, ${unresolved[0]?.n ?? 0} are named by an alias this pass produces`,
+  );
 
   if (!apply) {
     console.log('\nDRY RUN — nothing written. Re-run with --apply.');
@@ -299,7 +309,9 @@ try {
       written += batch.length;
       process.stdout.write(`\r  written ${written}/${final.length}`);
     }
-    console.log(`\n\nWROTE ${written} aliases. cited_judgment_id, overruled_status and verification_state are untouched.`);
+    console.log(
+      `\n\nWROTE ${written} aliases. cited_judgment_id, overruled_status and verification_state are untouched.`,
+    );
   }
 } finally {
   await sql.end();

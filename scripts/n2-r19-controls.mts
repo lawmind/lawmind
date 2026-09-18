@@ -54,7 +54,7 @@ function databaseUrl(): string {
 
 // ---- the same feature extraction as n2-r19-evidence.mts, same patterns ------
 const CNR_G = /\b([A-Z]{4}[0-9]{12})\b/g;
-const CITE_G = /\b(\d{4}):([A-Z][A-Z-]{1,13}):(\d{1,6})\b(?:-(?:DB|FB))?/g;
+const _CITE_G = /\b(\d{4}):([A-Z][A-Z-]{1,13}):(\d{1,6})\b(?:-(?:DB|FB))?/g;
 const PAIR_G = /\b(\d{1,6})\s*(?:of|OF|of\.|\/|-)\s*((?:19|20)\d{2})\b/g;
 const LEAD_G =
   /\b(?:reported in|reported as|reported at|cited as|relied upon|reliance (?:up)?on|referred to in|in the case of|judgment in|judgement in|decision in|order (?:passed )?in|following the decision|as held in|see also)\b/gi;
@@ -180,7 +180,7 @@ function nullRuleFires(
 
 /** Deterministic sampling: the hash of the id decides, so the sample is a
  *  property of the population and reproduces exactly on a re-run. */
-const pick = (id: string, n: number, of: number): boolean =>
+const _pick = (id: string, n: number, of: number): boolean =>
   parseInt(createHash('sha256').update(SEED + id).digest('hex').slice(0, 8), 16) % of < n;
 
 const sql = postgres(databaseUrl(), { max: 2, idle_timeout: 20, connect_timeout: 60, onnotice: () => {} });

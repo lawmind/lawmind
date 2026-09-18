@@ -10,10 +10,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { graphCoverage } from './graph-coverage.ts';
-import {
-  disabledMonitoringFields,
-  USER_MONITORING_PRODUCT,
-} from '../court/monitoring-fields.ts';
+import { disabledMonitoringFields, USER_MONITORING_PRODUCT } from '../court/monitoring-fields.ts';
 
 describe('citation graph partiality — G-3', () => {
   it('declares partial, and cannot be flipped by moving a threshold', () => {
@@ -40,7 +37,10 @@ describe('citation graph partiality — G-3', () => {
      * approaches 1 without a deliberate change to the artifact, the denominator
      * has been swapped for a flattering one.
      */
-    assert.ok(c.outgoingCoverageShare > 0, 'coverage cannot be zero — 105,024 judgments have edges');
+    assert.ok(
+      c.outgoingCoverageShare > 0,
+      'coverage cannot be zero — 105,024 judgments have edges',
+    );
     assert.ok(
       c.outgoingCoverageShare < 0.5,
       `declared coverage ${c.outgoingCoverageShare} — a majority share means the denominator changed`,
@@ -97,7 +97,11 @@ describe('monitoring fields — frozen shape, disabled capability', () => {
      */
     assert.equal(m.nextPlannedObservationAt, null);
     assert.equal(m.lastObservedAt, null);
-    assert.equal(m.monitoringPolicy, null, 'a policy nobody priced may not be shown to an advocate');
+    assert.equal(
+      m.monitoringPolicy,
+      null,
+      'a policy nobody priced may not be shown to an advocate',
+    );
     assert.equal(m.observationSource, null);
   });
 

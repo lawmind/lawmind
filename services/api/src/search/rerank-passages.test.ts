@@ -31,7 +31,7 @@ function candidate(
     precedentialEffect: 'none',
     canAddToMatter: true,
     unappliedTreatment: null,
-  treatmentAttribution: 'UNKNOWN' as const,
+    treatmentAttribution: 'UNKNOWN' as const,
     overruledByJudgmentId: null,
     overruledParas: null,
     overruledNote: null,
@@ -84,7 +84,12 @@ function spySql(rows: { judgment_id: string; chunk_text: string }[]): {
   const sql = Object.assign(fn, {
     unsafe: (text: string) => text,
   }) as unknown as Sql;
-  return { sql, get calls() { return state.calls; } };
+  return {
+    sql,
+    get calls() {
+      return state.calls;
+    },
+  };
 }
 
 const REAL =

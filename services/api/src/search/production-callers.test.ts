@@ -148,7 +148,9 @@ function callerViolations(
   const byPath = new Map(all.map((f) => [f.path, f]));
   if (!serving.has(SERVER_ENTRY)) v.push(`server entry ${SERVER_ENTRY} not found`);
 
-  const callers = all.filter((f) => !TEST_BENCH_CLI.test(f.path) && f.path !== RANKER && callsHybrid(f));
+  const callers = all.filter(
+    (f) => !TEST_BENCH_CLI.test(f.path) && f.path !== RANKER && callsHybrid(f),
+  );
   for (const c of callers) {
     if (!userCallers.includes(c.path) && !releaseOps.includes(c.path)) {
       v.push(
@@ -164,9 +166,15 @@ function callerViolations(
       v.push(`${path} is a USER_REQUEST caller but not on disk`);
       continue;
     }
-    if (!callsHybrid(f)) v.push(`${path} is a USER_REQUEST caller but no longer calls hybridSearch`);
-    if (!serving.has(path)) v.push(`${path} is a USER_REQUEST caller but ${SERVER_ENTRY} cannot reach it`);
-    if (!/admission\s*(\?\.|\.)\s*acquire\s*\(|admission\s*\?\s*await\s*admission\.acquire/.test(f.text)) {
+    if (!callsHybrid(f))
+      v.push(`${path} is a USER_REQUEST caller but no longer calls hybridSearch`);
+    if (!serving.has(path))
+      v.push(`${path} is a USER_REQUEST caller but ${SERVER_ENTRY} cannot reach it`);
+    if (
+      !/admission\s*(\?\.|\.)\s*acquire\s*\(|admission\s*\?\s*await\s*admission\.acquire/.test(
+        f.text,
+      )
+    ) {
       v.push(
         `${path} calls hybridSearch without acquiring an admission slot. The sparse ` +
           `bound inside hybridSearch does NOT cover this — it bounds one query’s ` +
@@ -230,7 +238,11 @@ describe('production retrieval callers', () => {
         .filter((o) => importsOf(o).includes(f.path))
         .map((o) => o.path)
         .sort();
-      assert.deepEqual(importers, ['ops/release-restore-cli.ts', 'release/activation.test.ts', 'search/production-callers.test.ts']);
+      assert.deepEqual(importers, [
+        'ops/release-restore-cli.ts',
+        'release/activation.test.ts',
+        'search/production-callers.test.ts',
+      ]);
       assert.equal(reachableFrom(files, SERVER_ENTRY).has(f.path), false);
     });
 
@@ -239,13 +251,21 @@ describe('production retrieval callers', () => {
       assert.equal(calls.length, 1, 'a second ranker call in the smoke needs its own review');
       const args = calls[0]![1]!.split(',').map((a) => a.trim());
       assert.equal(args[2], 'null', 'queryVector must be null — the smoke never embeds');
-      assert.ok(Number(args[4]) > 0 && Number(args[4]) <= 10, `limit ${args[4]} is not small and fixed`);
+      assert.ok(
+        Number(args[4]) > 0 && Number(args[4]) <= 10,
+        `limit ${args[4]} is not small and fixed`,
+      );
       assert.equal(args[5], "'sparse'", 'the smoke must not run the semantic arm');
     });
 
     it('records no user search event and cannot touch capability state', () => {
       const imports = importsOf(f);
-      for (const forbidden of ['search/event.ts', 'product/activation.ts', 'release/capabilities.ts', 'release/enforce.ts']) {
+      for (const forbidden of [
+        'search/event.ts',
+        'product/activation.ts',
+        'release/capabilities.ts',
+        'release/enforce.ts',
+      ]) {
         assert.ok(!imports.includes(forbidden), `activation smoke imports ${forbidden}`);
       }
       assert.doesNotMatch(f.text, /recordSearchEvent|search_events|platform_config/);
@@ -254,8 +274,24 @@ describe('production retrieval callers', () => {
 
     it('a ranker probe that throws REFUSES activation', () => {
       const smoke = smokeVerdict([
-        { name: 'exact citation', query: 'q', ms: 1, results: 1, degraded: [], outcome: 'matched', error: null },
-        { name: 'normal research query', query: 'q', ms: 1, results: 0, degraded: [], outcome: 'threw', error: 'boom' },
+        {
+          name: 'exact citation',
+          query: 'q',
+          ms: 1,
+          results: 1,
+          degraded: [],
+          outcome: 'matched',
+          error: null,
+        },
+        {
+          name: 'normal research query',
+          query: 'q',
+          ms: 1,
+          results: 0,
+          degraded: [],
+          outcome: 'threw',
+          error: 'boom',
+        },
       ]);
       const statistics = { ready: true, absent: [], unanalyzed: [], empty: [] };
       const decision = activationDecision({ restoreVerified: true, statistics, smoke });
@@ -283,52 +319,82 @@ describe('production retrieval callers', () => {
     it('A: a new serving caller without admission', () => {
       const tree = [
         { path: 'app.ts', text: "import './search/route.ts'; import './notes/new.ts';" },
-        entry, ranker, gated,
+        entry,
+        ranker,
+        gated,
         { path: 'notes/new.ts', text: 'export const h = () => hybridSearch(sql, q);' },
       ];
       const v = callerViolations(tree, ['search/route.ts'], []);
-      assert.ok(v.some((x) => x.startsWith('notes/new.ts calls hybridSearch and is unclassified')), v.join('\n'));
+      assert.ok(
+        v.some((x) => x.startsWith('notes/new.ts calls hybridSearch and is unclassified')),
+        v.join('\n'),
+      );
       // Registering it without a slot still fails.
       const v2 = callerViolations(tree, ['search/route.ts', 'notes/new.ts'], []);
-      assert.ok(v2.some((x) => x.includes('notes/new.ts calls hybridSearch without acquiring')), v2.join('\n'));
+      assert.ok(
+        v2.some((x) => x.includes('notes/new.ts calls hybridSearch without acquiring')),
+        v2.join('\n'),
+      );
     });
 
     it('B: a release-looking file that is not registered', () => {
       const tree = [
         { path: 'app.ts', text: "import './search/route.ts';" },
-        entry, ranker, gated,
-        { path: 'release/other-smoke.ts', text: 'await hybridSearch(sql, q, null, {}, 5, "sparse");' },
+        entry,
+        ranker,
+        gated,
+        {
+          path: 'release/other-smoke.ts',
+          text: 'await hybridSearch(sql, q, null, {}, 5, "sparse");',
+        },
       ];
       const v = callerViolations(tree, ['search/route.ts'], []);
-      assert.ok(v.some((x) => x.startsWith('release/other-smoke.ts calls hybridSearch and is unclassified')), v.join('\n'));
+      assert.ok(
+        v.some((x) =>
+          x.startsWith('release/other-smoke.ts calls hybridSearch and is unclassified'),
+        ),
+        v.join('\n'),
+      );
     });
 
     it('B2: a registered release caller that the server can import', () => {
       const tree = [
-        { path: 'app.ts', text: "import './search/route.ts'; import { run } from './release/smoke.ts';" },
-        entry, ranker, gated,
+        {
+          path: 'app.ts',
+          text: "import './search/route.ts'; import { run } from './release/smoke.ts';",
+        },
+        entry,
+        ranker,
+        gated,
         { path: 'release/smoke.ts', text: 'await hybridSearch(sql, q, null, {}, 5, "sparse");' },
       ];
       const v = callerViolations(tree, ['search/route.ts'], ['release/smoke.ts']);
-      assert.ok(v.some((x) => x.includes('can import it')), v.join('\n'));
-      assert.ok(v.some((x) => x.includes('imported by non-tooling app.ts')), v.join('\n'));
+      assert.ok(
+        v.some((x) => x.includes('can import it')),
+        v.join('\n'),
+      );
+      assert.ok(
+        v.some((x) => x.includes('imported by non-tooling app.ts')),
+        v.join('\n'),
+      );
     });
 
     it('C: a serving caller that acquires but never releases in finally', () => {
       const tree = [
         { path: 'app.ts', text: "import './search/route.ts';" },
-        entry, ranker,
-        { path: 'search/route.ts', text: 'const s = await admission.acquire(); await hybridSearch(sql); s.release();' },
+        entry,
+        ranker,
+        {
+          path: 'search/route.ts',
+          text: 'const s = await admission.acquire(); await hybridSearch(sql); s.release();',
+        },
       ];
       const v = callerViolations(tree, ['search/route.ts'], []);
       assert.deepEqual(v, ['search/route.ts must release its admission slot in a finally block']);
     });
 
     it('the real tree passes the same function the falsifiers fail', () => {
-      const tree = [
-        { path: 'app.ts', text: "import './search/route.ts';" },
-        entry, ranker, gated,
-      ];
+      const tree = [{ path: 'app.ts', text: "import './search/route.ts';" }, entry, ranker, gated];
       assert.deepEqual(callerViolations(tree, ['search/route.ts'], []), []);
     });
   });
@@ -365,7 +431,9 @@ describe('production retrieval callers', () => {
   it('every production file that runs its own full-text query is a known one', () => {
     const executors = shipped
       .filter((f) => /await sql/.test(f.text))
-      .filter((f) => /\b(plainto_tsquery|websearch_to_tsquery|phraseto_tsquery|to_tsquery)\s*\(/.test(f.text))
+      .filter((f) =>
+        /\b(plainto_tsquery|websearch_to_tsquery|phraseto_tsquery|to_tsquery)\s*\(/.test(f.text),
+      )
       .map((f) => f.path)
       .sort();
 

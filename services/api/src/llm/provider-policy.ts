@@ -136,7 +136,8 @@ export const PROVIDER_POLICY: Readonly<Record<Provider, ProviderPolicy>> = {
     trainingUse: 'UNVERIFIED — nobody has read inferx.net terms',
     contractStatus: 'UNVERIFIED',
     requiresRedaction: true,
-    logging: 'llm_calls: provider, model, feature, data_class, tokens, cost, latency. Never the prompt.',
+    logging:
+      'llm_calls: provider, model, feature, data_class, tokens, cost, latency. Never the prompt.',
     fallback: 'OpenRouter for the same model, or the call refuses and says why.',
   },
   openrouter: {

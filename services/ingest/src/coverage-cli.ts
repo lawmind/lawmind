@@ -53,7 +53,9 @@ for (const [courtName, years] of Object.entries(survey.perCourtPerYear)) {
 }
 
 console.log(`survey generated ${survey.generatedAt}`);
-console.log(`${rows.length} court-year rows across ${new Set(rows.map((r) => r.courtCode)).size} courts`);
+console.log(
+  `${rows.length} court-year rows across ${new Set(rows.map((r) => r.courtCode)).size} courts`,
+);
 console.log(`total documents ${rows.reduce((s, r) => s + r.documents, 0).toLocaleString()}`);
 
 if (!APPLY) {
@@ -98,7 +100,9 @@ try {
     FROM judgment_coverage WHERE source = ${SOURCE}
   `;
   console.log('');
-  console.log(`WRITTEN: ${check?.years} rows · ${check?.courts} courts · ${Number(check?.docs).toLocaleString()} documents`);
+  console.log(
+    `WRITTEN: ${check?.years} rows · ${check?.courts} courts · ${Number(check?.docs).toLocaleString()} documents`,
+  );
 } finally {
   await sql.end();
 }

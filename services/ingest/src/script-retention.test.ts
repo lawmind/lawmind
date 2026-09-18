@@ -92,7 +92,11 @@ describe('checkScriptRetention', () => {
     const original = 'IN THE HIGH COURT OF JUDICATURE AT BOMBAY, appeal dismissed';
     const verdict = checkScriptRetention(original, `${original} with more text`);
     assert.equal(verdict.accept, true);
-    assert.equal(verdict.scriptRetention, null, 'no ratio is claimed where there is no denominator');
+    assert.equal(
+      verdict.scriptRetention,
+      null,
+      'no ratio is claimed where there is no denominator',
+    );
   });
 
   it('still refuses total loss below the ratio floor — a floor is not an excuse', () => {

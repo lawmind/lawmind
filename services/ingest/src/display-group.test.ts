@@ -71,15 +71,30 @@ describe('classify', () => {
     // 2026:JHHC:16965 is carried by two different Jharkhand bail matters a month
     // apart. Showing them as one judgment shows an advocate the wrong authority.
     const g = [
-      m({ id: 'a', court: 'Jharkhand', judgment_date: '2026-07-14', case_number: 'A.B.A./3820/2026', content_hash: 'h1' }),
-      m({ id: 'b', court: 'Jharkhand', judgment_date: '2026-06-12', case_number: 'A.B.A./3051/2026', content_hash: 'h2' }),
+      m({
+        id: 'a',
+        court: 'Jharkhand',
+        judgment_date: '2026-07-14',
+        case_number: 'A.B.A./3820/2026',
+        content_hash: 'h1',
+      }),
+      m({
+        id: 'b',
+        court: 'Jharkhand',
+        judgment_date: '2026-06-12',
+        case_number: 'A.B.A./3051/2026',
+        content_hash: 'h2',
+      }),
     ];
     assert.equal(classify(g), 'DISTINCT_JUDGMENTS_SHARED_CITATION');
     assert.equal(isAutoCollapsible(classify(g)), false);
   });
 
   it('only the two document-evidence classes are auto-collapsible', () => {
-    assert.deepEqual([...AUTO_COLLAPSIBLE], ['BYTE_IDENTICAL_DUPLICATE', 'SAME_SOURCE_DOCUMENT_DUPLICATE']);
+    assert.deepEqual(
+      [...AUTO_COLLAPSIBLE],
+      ['BYTE_IDENTICAL_DUPLICATE', 'SAME_SOURCE_DOCUMENT_DUPLICATE'],
+    );
     assert.equal(isAutoCollapsible('CONNECTED_MATTER_COMMON_ORDER'), false);
     assert.equal(isAutoCollapsible('MULTIPLE_ORDERS_SAME_CASE'), false);
     assert.equal(isAutoCollapsible('DISTINCT_JUDGMENTS_SHARED_CITATION'), false);
@@ -118,7 +133,10 @@ describe('groupId', () => {
   });
 
   it('changes when the membership changes', () => {
-    assert.notEqual(groupId([m({ id: 'x' }), m({ id: 'y' })]), groupId([m({ id: 'x' }), m({ id: 'z' })]));
+    assert.notEqual(
+      groupId([m({ id: 'x' }), m({ id: 'y' })]),
+      groupId([m({ id: 'x' }), m({ id: 'z' })]),
+    );
   });
 });
 
@@ -141,7 +159,10 @@ describe('buildGroup', () => {
   });
 
   it('reports member ids sorted, so a caller cannot depend on row order', () => {
-    const g = buildGroup([m({ id: 'ccc', content_hash: 'h' }), m({ id: 'aaa', content_hash: 'h' })]);
+    const g = buildGroup([
+      m({ id: 'ccc', content_hash: 'h' }),
+      m({ id: 'aaa', content_hash: 'h' }),
+    ]);
     assert.deepEqual(g.member_ids, ['aaa', 'ccc']);
   });
 });

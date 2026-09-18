@@ -32,7 +32,8 @@ import { CAPABILITIES, isCapability, isSafetyCritical, type Capability } from '.
 import { creditBalance } from './credits.ts';
 
 export type EntitlementState = 'active' | 'expired' | 'revoked';
-export type GrantSource = 'purchase' | 'subscription' | 'credit_redemption' | 'founder_grant' | 'trial' | 'test';
+export type GrantSource =
+  'purchase' | 'subscription' | 'credit_redemption' | 'founder_grant' | 'trial' | 'test';
 
 export type HeldCapability = {
   readonly capability: Capability;
@@ -103,7 +104,11 @@ export async function entitlementsFor(sql: Sql, userId: string): Promise<HeldCap
 }
 
 export type CapabilityDecision =
-  | { readonly ok: true; readonly via: 'recurring' | 'credit' | 'never_gated'; readonly creditsRemaining: number | null }
+  | {
+      readonly ok: true;
+      readonly via: 'recurring' | 'credit' | 'never_gated';
+      readonly creditsRemaining: number | null;
+    }
   | { readonly ok: false; readonly reason: string; readonly capability: Capability };
 
 /**

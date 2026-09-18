@@ -1302,8 +1302,8 @@ async function classH(sql: Sql): Promise<Check[]> {
         analysed
           ? `random_page_cost=${rpc?.v ?? '?'} · planner ${chooses ? 'CHOOSES' : 'refuses'} judgments_full_text_idx`
           : `random_page_cost=${rpc?.v ?? '?'} · planner ${chooses ? 'CHOOSES' : 'refuses'} judgments_full_text_idx — ` +
-            `BUT judgments HAS NO STATISTICS (reltuples=${stats?.reltuples ?? '?'}, relpages=${stats?.relpages ?? '?'}). ` +
-            `ANALYZE has not run since the rebuild, so this plan is NOT evidence about random_page_cost either way. Re-take it after ANALYZE.`,
+              `BUT judgments HAS NO STATISTICS (reltuples=${stats?.reltuples ?? '?'}, relpages=${stats?.relpages ?? '?'}). ` +
+              `ANALYZE has not run since the rebuild, so this plan is NOT evidence about random_page_cost either way. Re-take it after ANALYZE.`,
       ),
     );
   } catch (error) {
@@ -1515,7 +1515,9 @@ async function main(): Promise<number> {
       console.error("  public.judgments__stage EXISTS and LCC's rebuild has not finished.");
       console.error('');
       console.error(`  judgments holds ${actual.toLocaleString('en-IN')} rows against a frozen`);
-      console.error(`  source of ${target === null ? '(unknown)' : target.toLocaleString('en-IN')}.`);
+      console.error(
+        `  source of ${target === null ? '(unknown)' : target.toLocaleString('en-IN')}.`,
+      );
       console.error('  Grading now would report the shortfall as lost data for a migration that');
       console.error('  has lost nothing — the rows are in the stage table (NEW2, bus 0580/0586).');
       console.error('');

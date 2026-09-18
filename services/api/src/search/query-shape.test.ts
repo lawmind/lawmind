@@ -220,7 +220,10 @@ test('the dominance rule is about the REMAINDER, not the ratio', () => {
   assert.equal(citationIsTheQuery('(2019) 4 SCC 221', '(2019) 4 SCC 221'), true);
   assert.equal(citationIsTheQuery('in (2019) 4 SCC 221', '(2019) 4 SCC 221'), true);
   assert.equal(
-    citationIsTheQuery(`${'the court considered the matter at length. '.repeat(4)}(2019) 4 SCC 221`, '(2019) 4 SCC 221'),
+    citationIsTheQuery(
+      `${'the court considered the matter at length. '.repeat(4)}(2019) 4 SCC 221`,
+      '(2019) 4 SCC 221',
+    ),
     false,
   );
 });
@@ -298,7 +301,11 @@ test('a concept query never reaches the party-name path', () => {
  */
 test('the party-name gate is structural, not frequency-based', () => {
   assert.equal(looksLikePartyName('Ram Kumar'), true, 'a frequent name is still a name');
-  assert.equal(looksLikePartyName('interim injunction'), false, 'a rare concept is still a concept');
+  assert.equal(
+    looksLikePartyName('interim injunction'),
+    false,
+    'a rare concept is still a concept',
+  );
 });
 
 test('an identifier still wins over a party-shaped reading', () => {

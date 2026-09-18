@@ -62,11 +62,7 @@ import type { Sql, TransactionSql } from 'postgres';
 /** How many times a retryable failure is retried before it dead-letters. */
 export const MAX_ATTEMPTS = 5;
 
-export type ErasureObjectState =
-  | 'PENDING'
-  | 'DELETED'
-  | 'RETRYABLE_FAILURE'
-  | 'PERMANENT_FAILURE';
+export type ErasureObjectState = 'PENDING' | 'DELETED' | 'RETRYABLE_FAILURE' | 'PERMANENT_FAILURE';
 
 export type ErasureObjectRow = {
   id: string;
@@ -188,9 +184,7 @@ export async function sweepErasureObjects(
       // The receipt. See the header: the DELETE's own answer proves nothing.
       const still = await store.head(row.storage_key);
       if (still !== null) {
-        throw new Error(
-          `deleted, but the object is still there: HEAD reports ${still.size} bytes`,
-        );
+        throw new Error(`deleted, but the object is still there: HEAD reports ${still.size} bytes`);
       }
 
       await sql`

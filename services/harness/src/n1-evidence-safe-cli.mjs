@@ -337,7 +337,7 @@ function aggregate(rows) {
  * rule it cannot be served with evidence, and pretending otherwise is exactly the
  * substitution §8.3 forbids.
  */
-async function reanchor(docIds, vec, eligible) {
+async function _reanchor(docIds, vec, eligible) {
   if (docIds.length === 0) return new Map();
   const rows = await sql.unsafe(
     `SELECT DISTINCT ON (p.judgment_id)

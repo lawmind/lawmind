@@ -104,8 +104,10 @@ async function main(): Promise<void> {
       console.log(`baseline written.`);
     } else {
       const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8')) as Baseline;
-      console.log(`\ncomparing against baseline captured ${baseline.capturedAt} ` +
-        `(corpus was ${baseline.corpusJudgments} judgments, now ${size?.n})`);
+      console.log(
+        `\ncomparing against baseline captured ${baseline.capturedAt} ` +
+          `(corpus was ${baseline.corpusJudgments} judgments, now ${size?.n})`,
+      );
 
       const byQuery = new Map(baseline.results.map((r) => [r.query, r]));
       let topChanged = 0;
@@ -117,18 +119,28 @@ async function main(): Promise<void> {
       for (const r of results) {
         const prev = byQuery.get(r.query);
         if (!prev) {
-          console.log(`  NEW QUERY [${r.shape}] "${r.query}" -- not in baseline, no delta to report`);
+          console.log(
+            `  NEW QUERY [${r.shape}] "${r.query}" -- not in baseline, no delta to report`,
+          );
           continue;
         }
         if (prev.resultCount > 0 && r.resultCount === 0) {
           wentEmpty++;
-          console.log(`  WENT EMPTY [${r.shape}] "${r.query}" -- had ${prev.resultCount} results, now 0`);
+          console.log(
+            `  WENT EMPTY [${r.shape}] "${r.query}" -- had ${prev.resultCount} results, now 0`,
+          );
         }
         if (prev.resultCount === 0 && r.resultCount > 0) {
           recoveredFromEmpty++;
-          console.log(`  RECOVERED [${r.shape}] "${r.query}" -- was empty, now ${r.resultCount} results`);
+          console.log(
+            `  RECOVERED [${r.shape}] "${r.query}" -- was empty, now ${r.resultCount} results`,
+          );
         }
-        if (prev.topJudgmentId !== r.topJudgmentId && prev.topJudgmentId !== null && r.topJudgmentId !== null) {
+        if (
+          prev.topJudgmentId !== r.topJudgmentId &&
+          prev.topJudgmentId !== null &&
+          r.topJudgmentId !== null
+        ) {
           topChanged++;
           console.log(
             `  TOP RESULT CHANGED [${r.shape}] "${r.query}"\n` +

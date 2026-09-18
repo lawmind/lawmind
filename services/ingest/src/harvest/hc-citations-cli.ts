@@ -81,11 +81,16 @@ const sql = postgres(dbUrl, {
   idle_timeout: 120,
 });
 
-const alnum = (s: string) => normaliseCitation(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
+const alnum = (s: string) =>
+  normaliseCitation(s)
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
 
 console.log('HIGH COURT CITATION PASS');
 console.log('='.repeat(74));
-console.log(`from ${FROM_YEAR} · concurrency ${CONCURRENCY} · batch ${BATCH}${LIMIT ? ` · limit ${LIMIT}` : ''}`);
+console.log(
+  `from ${FROM_YEAR} · concurrency ${CONCURRENCY} · batch ${BATCH}${LIMIT ? ` · limit ${LIMIT}` : ''}`,
+);
 if (!APPLY) console.log('DRY RUN — nothing will be written. Re-run with --apply.');
 
 /* ------------------------------------------- the corpus index, once, in RAM -- */

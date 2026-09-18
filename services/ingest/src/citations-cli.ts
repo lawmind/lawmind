@@ -51,7 +51,6 @@ import {
 import { installCrashGuard } from './crash-guard.ts';
 import { openDb } from './db-host.ts';
 
-
 // Silent deaths cost three runs today; log the cause instead of vanishing.
 installCrashGuard('citations');
 function arg(flag: string, fallback: number): number {

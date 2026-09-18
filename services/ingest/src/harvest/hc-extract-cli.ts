@@ -122,8 +122,12 @@ console.log('');
 console.log(`${samples.length} PDFs in ${(wallMs / 1000).toFixed(1)} s wall clock`);
 console.log('');
 console.log(`  extracted   ${String(extracted.length).padStart(5)}  ${share(extracted.length)}`);
-console.log(`  needs OCR   ${String(needsOcr.length).padStart(5)}  ${share(needsOcr.length)}   (no usable text layer)`);
-console.log(`  missing     ${String(missing.length).padStart(5)}  ${share(missing.length)}   (metadata references a PDF the bucket does not serve)`);
+console.log(
+  `  needs OCR   ${String(needsOcr.length).padStart(5)}  ${share(needsOcr.length)}   (no usable text layer)`,
+);
+console.log(
+  `  missing     ${String(missing.length).padStart(5)}  ${share(missing.length)}   (metadata references a PDF the bucket does not serve)`,
+);
 console.log(`  failed      ${String(failed.length).padStart(5)}  ${share(failed.length)}`);
 
 const usable = [...extracted, ...needsOcr];
@@ -134,13 +138,19 @@ const mean = (a: number[]) => (a.length ? a.reduce((s, x) => s + x, 0) / a.lengt
 
 console.log('');
 console.log('PER PDF (fetched successfully):');
-console.log(`  download   mean ${mean(dl).toFixed(0).padStart(6)} ms   p95 ${percentile(dl, 95).toFixed(0).padStart(6)} ms`);
-console.log(`  extract    mean ${mean(ex).toFixed(0).padStart(6)} ms   p95 ${percentile(ex, 95).toFixed(0).padStart(6)} ms`);
+console.log(
+  `  download   mean ${mean(dl).toFixed(0).padStart(6)} ms   p95 ${percentile(dl, 95).toFixed(0).padStart(6)} ms`,
+);
+console.log(
+  `  extract    mean ${mean(ex).toFixed(0).padStart(6)} ms   p95 ${percentile(ex, 95).toFixed(0).padStart(6)} ms`,
+);
 console.log(`  bytes      mean ${mean(usable.map((s) => s.bytes)).toFixed(0)}`);
 console.log(`  pages      mean ${mean(usable.map((s) => s.pages)).toFixed(1)}`);
 console.log('');
 console.log('EXTRACTED TEXT LENGTH (characters):');
-console.log(`  mean ${mean(chars).toFixed(0)} · median ${percentile(chars, 50)} · p95 ${percentile(chars, 95)}`);
+console.log(
+  `  mean ${mean(chars).toFixed(0)} · median ${percentile(chars, 50)} · p95 ${percentile(chars, 95)}`,
+);
 console.log(`  under 1,000 chars: ${chars.filter((c) => c < 1000).length} of ${chars.length}`);
 
 /* The projection. Inputs printed beside the answer, per hc-extract.ts. */
@@ -148,10 +158,14 @@ const DOCUMENTS = 15_771_566; // docs/HC_CORPUS_SURVEY.md, last 10 years
 const msPerDoc = mean(dl) + mean(ex);
 console.log('');
 console.log('PROJECTED COMPLETION — 15,771,566 documents (last 10 years):');
-console.log(`  measured cost per PDF: ${msPerDoc.toFixed(0)} ms (${mean(dl).toFixed(0)} download + ${mean(ex).toFixed(0)} extract)`);
+console.log(
+  `  measured cost per PDF: ${msPerDoc.toFixed(0)} ms (${mean(dl).toFixed(0)} download + ${mean(ex).toFixed(0)} extract)`,
+);
 for (const workers of [1, 8, 32, 128]) {
   const p = projectCompletion({ documents: DOCUMENTS, msPerDocument: msPerDoc, workers });
-  console.log(`  ${String(workers).padStart(4)} workers → ${p.days.toFixed(1).padStart(8)} days (${p.hours.toFixed(0)} h)`);
+  console.log(
+    `  ${String(workers).padStart(4)} workers → ${p.days.toFixed(1).padStart(8)} days (${p.hours.toFixed(0)} h)`,
+  );
 }
 
 const ocrShare = needsOcr.length / Math.max(1, extracted.length + needsOcr.length);

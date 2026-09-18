@@ -69,8 +69,20 @@ import { openDb } from '@lawmind/ingest/db-host';
 
 import { hybridSearch } from '@lawmind/api/search/retrieve';
 
-type Row = { queryId: string; goldJudgmentIds: string[]; mechanism: string; chunkRank: number | null; judgmentRank: number | null };
-type HarnessQuery = { id: string; group: string; query: string; goldJudgmentIds: string[]; provenance?: { citingJudgmentId?: string } };
+type Row = {
+  queryId: string;
+  goldJudgmentIds: string[];
+  mechanism: string;
+  chunkRank: number | null;
+  judgmentRank: number | null;
+};
+type HarnessQuery = {
+  id: string;
+  group: string;
+  query: string;
+  goldJudgmentIds: string[];
+  provenance?: { citingJudgmentId?: string };
+};
 
 const DECOMPOSE = new URL('../../../held-not-retrieved-checkpoint.jsonl', import.meta.url);
 
@@ -114,11 +126,18 @@ async function main(): Promise<void> {
 
       const [emb] = await embedder.embed([q.query]);
       const v = emb ? toVectorLiteral(emb.vector) : null;
-      const excluded = new Set(q.provenance?.citingJudgmentId ? [q.provenance.citingJudgmentId] : []);
+      const excluded = new Set(
+        q.provenance?.citingJudgmentId ? [q.provenance.citingJudgmentId] : [],
+      );
 
-      const rank = async (mode: 'hybrid' | 'dense'): Promise<{ rank: number | null; ids: string[] }> => {
+      const rank = async (
+        mode: 'hybrid' | 'dense',
+      ): Promise<{ rank: number | null; ids: string[] }> => {
         const raw = await hybridSearch(sql, q.query, v, {}, 50 + excluded.size, mode);
-        const ids = raw.filter((x) => !excluded.has(x.judgmentId)).slice(0, 50).map((x) => x.judgmentId);
+        const ids = raw
+          .filter((x) => !excluded.has(x.judgmentId))
+          .slice(0, 50)
+          .map((x) => x.judgmentId);
         const i = ids.findIndex((id) => r.goldJudgmentIds.includes(id));
         return { rank: i === -1 ? null : i + 1, ids };
       };
@@ -168,10 +187,16 @@ async function main(): Promise<void> {
 
     console.log('\n' + '='.repeat(78));
     console.log('ATTRIBUTION');
-    console.log(`  duplicate collapse (BENCHMARK ARTIFACT, not a retrieval defect) ${tally.duplicate}`);
+    console.log(
+      `  duplicate collapse (BENCHMARK ARTIFACT, not a retrieval defect) ${tally.duplicate}`,
+    );
     console.log(`  ANN approximation loss                                          ${tally.ann}`);
-    console.log(`  RRF fusion displacement                                         ${tally.fusion}`);
-    console.log(`  did not reproduce (corpus moved since the classification)       ${tally.notReproduced}`);
+    console.log(
+      `  RRF fusion displacement                                         ${tally.fusion}`,
+    );
+    console.log(
+      `  did not reproduce (corpus moved since the classification)       ${tally.notReproduced}`,
+    );
   } finally {
     await sql.end();
   }

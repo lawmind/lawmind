@@ -36,7 +36,7 @@
  */
 import postgres from 'postgres';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { CAUSE_TITLE_CHARS, declaredCohort } from '../services/api/src/citations/cohort.ts';
+import { CAUSE_TITLE_CHARS } from '../services/api/src/citations/cohort.ts';
 
 const T0 = '2026-08-18';
 const sql = postgres(process.env.DATABASE_URL!, { max: 1, idle_timeout: 60, connect_timeout: 20 });

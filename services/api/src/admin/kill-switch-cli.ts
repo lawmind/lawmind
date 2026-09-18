@@ -133,7 +133,9 @@ try {
 
   console.log(`switch   ${key}`);
   console.log(`actor    ${who.id}  ${who.full_name ?? '(no name)'}  ${who.email ?? '(no email)'}`);
-  console.log(`before   enabled=${before?.enabled ?? false}${before ? '' : '  (no row — reads as OFF)'}`);
+  console.log(
+    `before   enabled=${before?.enabled ?? false}${before ? '' : '  (no row — reads as OFF)'}`,
+  );
   console.log(`after    enabled=${on}`);
   console.log(`reason   ${reason}`);
 

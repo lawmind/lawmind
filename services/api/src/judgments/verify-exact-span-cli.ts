@@ -112,7 +112,9 @@ async function main(): Promise<void> {
   const perStratum = perArg === -1 ? 1000 : Number(argv[perArg + 1] ?? 1000);
   const persistArg = argv.indexOf('--persist');
   const persistPath =
-    persistArg === -1 ? 'verify-exact-span-regressions.json' : (argv[persistArg + 1] ?? 'verify-exact-span-regressions.json');
+    persistArg === -1
+      ? 'verify-exact-span-regressions.json'
+      : (argv[persistArg + 1] ?? 'verify-exact-span-regressions.json');
 
   const sql = postgres(url, { max: 4, ssl: sslFor(url) });
   let exitCode = 0;
@@ -123,7 +125,15 @@ async function main(): Promise<void> {
   const record = (
     cls: FailureClass,
     stratum: string,
-    row: { judgment_id: string; id: string; chunk_index: number; char_offset: number | null; char_length: number | null; full_text: string; chunk_text: string },
+    row: {
+      judgment_id: string;
+      id: string;
+      chunk_index: number;
+      char_offset: number | null;
+      char_length: number | null;
+      full_text: string;
+      chunk_text: string;
+    },
     returnedText: string | null,
   ): void => {
     byClass.set(cls, (byClass.get(cls) ?? 0) + 1);
@@ -182,7 +192,9 @@ async function main(): Promise<void> {
       SELECT count(*)::text AS n FROM judgment_chunks
       WHERE char_offset = 0 AND chunk_index > 0
     `;
-    console.log(`chunks matching bug #1's signature (char_offset=0, chunk_index>0): ${signature?.n}`);
+    console.log(
+      `chunks matching bug #1's signature (char_offset=0, chunk_index>0): ${signature?.n}`,
+    );
     if (Number(signature?.n ?? 0) > 0) exitCode = 1;
 
     const [overshoot] = await sql<{ n: string }[]>`
@@ -190,7 +202,9 @@ async function main(): Promise<void> {
       FROM judgment_chunks c JOIN judgments j ON j.id = c.judgment_id
       WHERE c.char_offset IS NOT NULL AND c.char_offset + c.char_length > length(j.full_text)
     `;
-    console.log(`chunks matching bug #2's signature (offset+length overshoots full_text): ${overshoot?.n}`);
+    console.log(
+      `chunks matching bug #2's signature (offset+length overshoots full_text): ${overshoot?.n}`,
+    );
     if (Number(overshoot?.n ?? 0) > 0) exitCode = 1;
 
     if (!stratified) {
@@ -203,12 +217,30 @@ async function main(): Promise<void> {
         // Rare but real shapes a flat random draw under-samples.
         { name: 'offset=0 (first chunk)', where: sql`c.char_offset = 0` },
         { name: 'null offset (not yet backfilled)', where: sql`c.char_offset IS NULL` },
-        { name: 'short judgment (<5,000 chars)', where: sql`c.char_offset IS NOT NULL AND length(j.full_text) < 5000` },
-        { name: 'long judgment (>200,000 chars)', where: sql`c.char_offset IS NOT NULL AND length(j.full_text) > 200000` },
-        { name: 'early era (pre-1990)', where: sql`c.char_offset IS NOT NULL AND j.judgment_date < '1990-01-01'` },
-        { name: 'recent (2023+)', where: sql`c.char_offset IS NOT NULL AND j.judgment_date >= '2023-01-01'` },
-        { name: 'Supreme Court', where: sql`c.char_offset IS NOT NULL AND j.court = 'Supreme Court of India'` },
-        { name: 'High Court', where: sql`c.char_offset IS NOT NULL AND j.court != 'Supreme Court of India'` },
+        {
+          name: 'short judgment (<5,000 chars)',
+          where: sql`c.char_offset IS NOT NULL AND length(j.full_text) < 5000`,
+        },
+        {
+          name: 'long judgment (>200,000 chars)',
+          where: sql`c.char_offset IS NOT NULL AND length(j.full_text) > 200000`,
+        },
+        {
+          name: 'early era (pre-1990)',
+          where: sql`c.char_offset IS NOT NULL AND j.judgment_date < '1990-01-01'`,
+        },
+        {
+          name: 'recent (2023+)',
+          where: sql`c.char_offset IS NOT NULL AND j.judgment_date >= '2023-01-01'`,
+        },
+        {
+          name: 'Supreme Court',
+          where: sql`c.char_offset IS NOT NULL AND j.court = 'Supreme Court of India'`,
+        },
+        {
+          name: 'High Court',
+          where: sql`c.char_offset IS NOT NULL AND j.court != 'Supreme Court of India'`,
+        },
         {
           name: 'low text_quality (OCR-damage proxy, <0.7)',
           where: sql`c.char_offset IS NOT NULL AND c.text_quality IS NOT NULL AND c.text_quality < 0.7`,
@@ -259,13 +291,22 @@ async function main(): Promise<void> {
       totalOk += ok;
       totalAll += total;
       const pct = total === 0 ? '—' : ((ok / total) * 100).toFixed(1);
-      console.log(`  ${stratum.padEnd(55)} ${String(ok).padStart(6)}/${String(total).padEnd(6)} (${pct}%)`);
+      console.log(
+        `  ${stratum.padEnd(55)} ${String(ok).padStart(6)}/${String(total).padEnd(6)} (${pct}%)`,
+      );
     }
-    console.log(`  ${'TOTAL'.padEnd(55)} ${String(totalOk).padStart(6)}/${String(totalAll).padEnd(6)}`);
+    console.log(
+      `  ${'TOTAL'.padEnd(55)} ${String(totalOk).padStart(6)}/${String(totalAll).padEnd(6)}`,
+    );
 
     console.log('\nFAILURES BY CLASS');
     console.log('='.repeat(78));
-    for (const cls of ['OFFSET_INVALID', 'TEXT_MISMATCH', 'MISSING_OFFSET', 'OTHER'] as FailureClass[]) {
+    for (const cls of [
+      'OFFSET_INVALID',
+      'TEXT_MISMATCH',
+      'MISSING_OFFSET',
+      'OTHER',
+    ] as FailureClass[]) {
       console.log(`  ${cls.padEnd(20)} ${byClass.get(cls) ?? 0}`);
     }
 

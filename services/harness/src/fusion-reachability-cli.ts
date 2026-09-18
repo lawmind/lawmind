@@ -79,7 +79,10 @@ type EvalFixture = {
 async function load(): Promise<Query[]> {
   const fixture = require('./fixtures/queries.eval.json') as EvalFixture;
   const gold = new Map(fixture.queries.map((q) => [q.id, q]));
-  const byQuery = new Map<string, { group: string; ranked: Partial<Record<Arm, readonly string[]>> }>();
+  const byQuery = new Map<
+    string,
+    { group: string; ranked: Partial<Record<Arm, readonly string[]>> }
+  >();
   const rl = createInterface({ input: createReadStream(CHECKPOINT), crlfDelay: Infinity });
   for await (const raw of rl) {
     if (!raw.trim()) continue;
@@ -105,17 +108,15 @@ async function load(): Promise<Query[]> {
 }
 
 /** Weighted RRF where the sparse weight may differ PER DOCUMENT. */
-function fuse(
-  q: Query,
-  wSparseFor: (docId: string) => number,
-  k: number,
-): string[] {
+function fuse(q: Query, wSparseFor: (docId: string) => number, k: number): string[] {
   const scores = new Map<string, number>();
   (q.ranked.sparse ?? []).forEach((id, i) => {
     const w = wSparseFor(id);
     if (w !== 0) scores.set(id, (scores.get(id) ?? 0) + w / (k + (i + 1)));
   });
-  (q.ranked.dense ?? []).forEach((id, i) => scores.set(id, (scores.get(id) ?? 0) + 1 / (k + (i + 1))));
+  (q.ranked.dense ?? []).forEach((id, i) =>
+    scores.set(id, (scores.get(id) ?? 0) + 1 / (k + (i + 1))),
+  );
   return [...scores.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, DEPTH)
@@ -156,7 +157,9 @@ async function main(): Promise<void> {
   const queries = await load();
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) {
-    console.error('CORPUS_DATABASE_URL / DATABASE_URL is not set — cannot ask which candidates are embedded.');
+    console.error(
+      'CORPUS_DATABASE_URL / DATABASE_URL is not set — cannot ask which candidates are embedded.',
+    );
     process.exit(1);
   }
 
@@ -169,7 +172,9 @@ async function main(): Promise<void> {
   const ids = [...candidates];
   console.log('FUSION REACHABILITY — is the coverage gate exempting the displacers?');
   console.log('='.repeat(78));
-  console.log(`pass ${PASS}   queries ${queries.length}   distinct candidates ${ids.length}   θ ${THETA}`);
+  console.log(
+    `pass ${PASS}   queries ${queries.length}   distinct candidates ${ids.length}   θ ${THETA}`,
+  );
 
   const sql = postgres(url, { ssl: sslFor(url), max: 2, connection: { statement_timeout: 0 } });
   let embedded: Set<string>;
@@ -203,14 +208,29 @@ async function main(): Promise<void> {
     console.log(`  ${arm.padEnd(8)} ${emb}/${tot}  ${pct(tot === 0 ? 0 : emb / tot)}`);
   }
   const goldEmbedded = queries.filter((q) => q.gold.some((g) => embedded.has(g))).length;
-  console.log(`  gold     ${goldEmbedded}/${queries.length}  ${pct(goldEmbedded / queries.length)}`);
+  console.log(
+    `  gold     ${goldEmbedded}/${queries.length}  ${pct(goldEmbedded / queries.length)}`,
+  );
   console.log('');
 
   // ── the policies ──
-  const denseRanks = queries.map((q) => goldRank(fuse(q, () => 0, RRF_K), q.gold));
-  const equalRanks = queries.map((q) => goldRank(fuse(q, () => 1, RRF_K), q.gold));
+  const denseRanks = queries.map((q) =>
+    goldRank(
+      fuse(q, () => 0, RRF_K),
+      q.gold,
+    ),
+  );
+  const equalRanks = queries.map((q) =>
+    goldRank(
+      fuse(q, () => 1, RRF_K),
+      q.gold,
+    ),
+  );
   const ungated = queries.map((q) =>
-    goldRank(fuse(q, () => (q.group === 'criminal' ? THETA : 1), RRF_K), q.gold),
+    goldRank(
+      fuse(q, () => (q.group === 'criminal' ? THETA : 1), RRF_K),
+      q.gold,
+    ),
   );
   const gated = queries.map((q) =>
     goldRank(
@@ -219,10 +239,16 @@ async function main(): Promise<void> {
     ),
   );
   const routedDenseUngated = queries.map((q) =>
-    goldRank(fuse(q, () => (q.group === 'criminal' ? 0 : 1), RRF_K), q.gold),
+    goldRank(
+      fuse(q, () => (q.group === 'criminal' ? 0 : 1), RRF_K),
+      q.gold,
+    ),
   );
   const routedDenseGated = queries.map((q) =>
-    goldRank(fuse(q, (d) => (q.group === 'criminal' && embedded.has(d) ? 0 : 1), RRF_K), q.gold),
+    goldRank(
+      fuse(q, (d) => (q.group === 'criminal' && embedded.has(d) ? 0 : 1), RRF_K),
+      q.gold,
+    ),
   );
 
   const named: [string, (number | null)[]][] = [

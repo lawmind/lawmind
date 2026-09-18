@@ -29,8 +29,12 @@ import postgres from 'postgres';
 
 import { readKeyFreshness } from './key-freshness.ts';
 import { resolveBatch } from './resolver.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 3, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 after(async () => {
   await sql.end({ timeout: 5 });
@@ -62,7 +66,8 @@ async function heldFor(key: string): Promise<number> {
 }
 
 describe('resolver — the connected-matter cohort gate', () => {
-  it('the three freshness gates are open, so nothing below passes by staleness', async () => {
+  it('the three freshness gates are open, so nothing below passes by staleness', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const f = await readKeyFreshness(sql);
     assert.equal(f.state, 'CURRENT', `freshness ${f.state} — these tests would be vacuous`);
   });
@@ -80,21 +85,24 @@ describe('resolver — the connected-matter cohort gate', () => {
     assert.equal(res.heldCandidates, 1);
   });
 
-  it('an ordinary single-matter judgment still resolves UNIQUE', async () => {
+  it('an ordinary single-matter judgment still resolves UNIQUE', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [CLEAN_CITATION]);
     assert.ok(res);
     assert.equal(res.state, 'UNIQUE', `regressed the ordinary case to ${res.state}`);
     assert.equal(res.cohort?.verdict, 'UNIQUE_NOT_REFUTED');
   });
 
-  it('two bearers of one citation stay AMBIGUOUS — the gate picks no winner', async () => {
+  it('two bearers of one citation stay AMBIGUOUS — the gate picks no winner', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [TWO_BEARER_CITATION]);
     assert.ok(res);
     assert.equal(res.state, 'AMBIGUOUS');
     assert.equal(res.heldCandidates, 2);
   });
 
-  it('a cause title we cannot read is never evidence of uniqueness', async () => {
+  it('a cause title we cannot read is never evidence of uniqueness', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [CLEAN_CITATION], undefined, async () => new Map());
     assert.ok(res);
     assert.equal(res.state, 'UNIQUE_UNCONFIRMED_COHORT');
@@ -103,7 +111,8 @@ describe('resolver — the connected-matter cohort gate', () => {
 });
 
 describe('resolver — a judgment cannot cite itself', () => {
-  it("a judgment's own neutral citation is a SELF_REFERENCE, not an edge", async () => {
+  it("a judgment's own neutral citation is a SELF_REFERENCE, not an edge", async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [
       { raw: SELF_CITATION, citingJudgmentId: SELF_JUDGMENT_ID },
     ]);
@@ -114,7 +123,8 @@ describe('resolver — a judgment cannot cite itself', () => {
     assert.equal(res.selfExcluded, true);
   });
 
-  it('the same citation from ANOTHER judgment is an ordinary resolution', async () => {
+  it('the same citation from ANOTHER judgment is an ordinary resolution', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [
       { raw: SELF_CITATION, citingJudgmentId: '00000000-0000-0000-0000-000000000000' },
     ]);
@@ -138,7 +148,8 @@ describe('resolver — a judgment cannot cite itself', () => {
    * Where the citer claims the key, the reference is the citer's own citation —
    * regardless of how many other judgments claim it too.
    */
-  it('a bearer of a shared citation cites its connected sibling — no, and this once said UNIQUE', async () => {
+  it('a bearer of a shared citation cites its connected sibling — no, and this once said UNIQUE', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [
       { raw: TWO_BEARER_CITATION, citingJudgmentId: '66f8a648-d0a8-40b1-bc9b-6221da840401' },
     ]);
@@ -147,7 +158,8 @@ describe('resolver — a judgment cannot cite itself', () => {
     assert.equal(res.candidates.length, 0, 'offered the connected sibling as a pin target');
   });
 
-  it('a bare string carries no citing context, and the resolver says so rather than guessing', async () => {
+  it('a bare string carries no citing context, and the resolver says so rather than guessing', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const [res] = await resolveBatch(sql, [SELF_CITATION]);
     assert.ok(res);
     assert.equal(res.selfExcluded, false);

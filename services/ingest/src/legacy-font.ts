@@ -196,10 +196,46 @@ export function pdfFontEvidence(bytes: Uint8Array): PdfFontEvidence {
  * Re-run the pilot to extend this; do not append to it by hand.
  */
 export const MINED_MARKERS = [
-  'fopkj', 'ky', 'fof', 'izdj', 'iqj', 'kjk', 'fu', 'la', 'esa', 'ikfjr',
-  'kz', 'ftlds', 'rgr', 'dh', 'vksj', 'izlrqr', 'ij', 'vfhk', 'qdr', 'kkjk',
-  'vf', 'kfu', 'gq', 'kkj', 'oa', 'fd', 'gs', 'vihy', 'fnukad', 'kd',
-  'lohdkj', 'gsa', 'kksa', 'vijk', 'rfkk', 'vkns', 'tk', 'ifj', 'kker', 'dksbz',
+  'fopkj',
+  'ky',
+  'fof',
+  'izdj',
+  'iqj',
+  'kjk',
+  'fu',
+  'la',
+  'esa',
+  'ikfjr',
+  'kz',
+  'ftlds',
+  'rgr',
+  'dh',
+  'vksj',
+  'izlrqr',
+  'ij',
+  'vfhk',
+  'qdr',
+  'kkjk',
+  'vf',
+  'kfu',
+  'gq',
+  'kkj',
+  'oa',
+  'fd',
+  'gs',
+  'vihy',
+  'fnukad',
+  'kd',
+  'lohdkj',
+  'gsa',
+  'kksa',
+  'vijk',
+  'rfkk',
+  'vkns',
+  'tk',
+  'ifj',
+  'kker',
+  'dksbz',
 ] as const;
 
 export type TextSignature = {
@@ -235,7 +271,10 @@ export function textSignature(text: string, markers: readonly string[]): TextSig
   for (const m of markers) {
     /* Word-ish boundaries: these markers are whole words in the source language,
      * and an unbounded substring test would count `ds` inside `funds`. */
-    const re = new RegExp(`(^|[^A-Za-z])${m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^A-Za-z]|$)`, 'g');
+    const re = new RegExp(
+      `(^|[^A-Za-z])${m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^A-Za-z]|$)`,
+      'g',
+    );
     const count = (text.match(re) ?? []).length;
     if (count > 0) {
       markerHits.push({ marker: m, count });
@@ -343,7 +382,13 @@ export function classifyLegacyFont(input: {
 export function mineMarkers(
   positives: readonly string[],
   negatives: readonly string[],
-  opts: { minLength?: number; maxLength?: number; minPositiveShare?: number; maxNegativeShare?: number; top?: number } = {},
+  opts: {
+    minLength?: number;
+    maxLength?: number;
+    minPositiveShare?: number;
+    maxNegativeShare?: number;
+    top?: number;
+  } = {},
 ): { marker: string; positiveShare: number; negativeShare: number; lift: number }[] {
   const minLength = opts.minLength ?? 2;
   const maxLength = opts.maxLength ?? 6;
@@ -355,7 +400,9 @@ export function mineMarkers(
     const seen = new Map<string, number>();
     for (const d of docs) {
       const tokens = new Set(
-        (d.toLowerCase().match(/[a-z]+/g) ?? []).filter((t) => t.length >= minLength && t.length <= maxLength),
+        (d.toLowerCase().match(/[a-z]+/g) ?? []).filter(
+          (t) => t.length >= minLength && t.length <= maxLength,
+        ),
       );
       for (const t of tokens) seen.set(t, (seen.get(t) ?? 0) + 1);
     }
@@ -372,7 +419,12 @@ export function mineMarkers(
     if (positiveShare < minPositiveShare || negativeShare > maxNegativeShare) continue;
     /* +epsilon so a token absent from every negative does not divide by zero and
      * so ranking stays finite and comparable. */
-    out.push({ marker: token, positiveShare, negativeShare, lift: positiveShare / (negativeShare + 0.001) });
+    out.push({
+      marker: token,
+      positiveShare,
+      negativeShare,
+      lift: positiveShare / (negativeShare + 0.001),
+    });
   }
   return out.sort((a, b) => b.lift - a.lift).slice(0, top);
 }

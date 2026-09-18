@@ -166,7 +166,13 @@ type Task = {
 
 type Doc = { id: string; chunks: string[] };
 
-const ARMS = ['A_HEAD_4800_PRODUCTION', 'B_POOLED_ALL', 'C_POOLED_SALIENT', 'D_MULTI_3', 'F_ALL_CHUNKS'] as const;
+const ARMS = [
+  'A_HEAD_4800_PRODUCTION',
+  'B_POOLED_ALL',
+  'C_POOLED_SALIENT',
+  'D_MULTI_3',
+  'F_ALL_CHUNKS',
+] as const;
 type Arm = (typeof ARMS)[number];
 
 // ── GPU sidecar ───────────────────────────────────────────────────────────────
@@ -209,7 +215,8 @@ async function embedAll(texts: readonly string[], label: string): Promise<Float3
         }
         for (const v of vectors) out.push(Float32Array.from(v));
         done += batch.length;
-        if (texts.length > 200) process.stdout.write(`\r  ${label}: ${done}/${texts.length} embedded   `);
+        if (texts.length > 200)
+          process.stdout.write(`\r  ${label}: ${done}/${texts.length} embedded   `);
         batch = [];
         chars = 0;
         return;
@@ -409,14 +416,19 @@ function summarise(
     const t = tasks[i];
     const r = ranks[i] ?? null;
     if (!t) continue;
-    if (t.targets.every((id) => goldIssue.has(id))) failures['GOLD_IDENTITY_ISSUE'] = (failures['GOLD_IDENTITY_ISSUE'] ?? 0) + 1;
-    else if (r !== null && r <= 5) failures['SUCCEEDED_AT_5'] = (failures['SUCCEEDED_AT_5'] ?? 0) + 1;
-    else if (t.targets.every((id) => notInIndex.has(id))) failures['NOT_IN_INDEX'] = (failures['NOT_IN_INDEX'] ?? 0) + 1;
-    else if (r === null || r > TOP_K) failures['INDEXED_NOT_IN_CANDIDATES'] = (failures['INDEXED_NOT_IN_CANDIDATES'] ?? 0) + 1;
+    if (t.targets.every((id) => goldIssue.has(id)))
+      failures['GOLD_IDENTITY_ISSUE'] = (failures['GOLD_IDENTITY_ISSUE'] ?? 0) + 1;
+    else if (r !== null && r <= 5)
+      failures['SUCCEEDED_AT_5'] = (failures['SUCCEEDED_AT_5'] ?? 0) + 1;
+    else if (t.targets.every((id) => notInIndex.has(id)))
+      failures['NOT_IN_INDEX'] = (failures['NOT_IN_INDEX'] ?? 0) + 1;
+    else if (r === null || r > TOP_K)
+      failures['INDEXED_NOT_IN_CANDIDATES'] = (failures['INDEXED_NOT_IN_CANDIDATES'] ?? 0) + 1;
     else failures['CANDIDATE_BADLY_RANKED'] = (failures['CANDIDATE_BADLY_RANKED'] ?? 0) + 1;
   }
 
-  const mean = (xs: readonly number[]): number => (xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length);
+  const mean = (xs: readonly number[]): number =>
+    xs.length === 0 ? 0 : xs.reduce((a, b) => a + b, 0) / xs.length;
   return {
     arm,
     provenance,
@@ -439,10 +451,18 @@ function summarise(
 
 function loadPosed(): Task[] {
   const gold = JSON.parse(readFileSync(POSED_GOLD, 'utf8')) as {
-    tasks: { task_id: string; query_class: string; query: string; targets: string[]; expected?: string }[];
+    tasks: {
+      task_id: string;
+      query_class: string;
+      query: string;
+      targets: string[];
+      expected?: string;
+    }[];
   };
   return gold.tasks
-    .filter((t) => CONCEPT_CLASSES.has(t.query_class) && t.targets.length > 0 && t.expected !== 'REFUSE')
+    .filter(
+      (t) => CONCEPT_CLASSES.has(t.query_class) && t.targets.length > 0 && t.expected !== 'REFUSE',
+    )
     .map((t) => ({
       taskId: t.task_id,
       provenance: 'POSED' as const,
@@ -510,8 +530,12 @@ async function main(): Promise<number> {
   const lifted = loadLifted();
   const tasks = [...posed, ...lifted];
   console.log('REPRESENTATION_LAB_V3');
-  console.log(`  ${posed.length} POSED tasks (ADVOCATE-100 concept classes, leakage guard <= 6 shared words)`);
-  console.log(`  ${lifted.length} LIFTED tasks (own_text_span queries — an UPPER BOUND, loaded to size the gap)`);
+  console.log(
+    `  ${posed.length} POSED tasks (ADVOCATE-100 concept classes, leakage guard <= 6 shared words)`,
+  );
+  console.log(
+    `  ${lifted.length} LIFTED tasks (own_text_span queries — an UPPER BOUND, loaded to size the gap)`,
+  );
   console.log(`  pools: ${POOL_SIZES.join(' -> ')} (nested; each is a prefix of the next)`);
 
   const sql = postgres(url, {
@@ -559,7 +583,9 @@ async function main(): Promise<number> {
   const negatives = new Set<string>();
   let negativeDraws = 0;
   let negativeDrawFailures = 0;
-  console.log("  drawing hard negatives — arm A's own nearest neighbours, from new1_probe_half_250k …");
+  console.log(
+    "  drawing hard negatives — arm A's own nearest neighbours, from new1_probe_half_250k …",
+  );
   for (let ti = 0; ti < tasks.length; ti += 1) {
     const t = tasks[ti];
     const qv = queryVectors[ti];
@@ -598,9 +624,13 @@ async function main(): Promise<number> {
       negativeDraws += 1;
     } catch (error) {
       negativeDrawFailures += 1;
-      console.log(`\n  negatives for ${t.taskId} skipped: ${error instanceof Error ? error.message : String(error)}`);
+      console.log(
+        `\n  negatives for ${t.taskId} skipped: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
-    process.stdout.write(`\r  negatives so far: ${negatives.size} (task ${ti + 1}/${tasks.length})   `);
+    process.stdout.write(
+      `\r  negatives so far: ${negatives.size} (task ${ti + 1}/${tasks.length})   `,
+    );
   }
   process.stdout.write('\n');
 
@@ -613,7 +643,9 @@ async function main(): Promise<number> {
    * rather than about a sampling frame.
    */
   const hardNegativeCount = negatives.size;
-  console.log(`  hard negatives drawn: ${hardNegativeCount} distinct, from ${negativeDraws} successful draws (${negativeDrawFailures} failed)`);
+  console.log(
+    `  hard negatives drawn: ${hardNegativeCount} distinct, from ${negativeDraws} successful draws (${negativeDrawFailures} failed)`,
+  );
 
   const fill = Math.max(0, MAX_POOL - goldIds.size - negatives.size);
   if (fill > 0) {
@@ -624,20 +656,26 @@ async function main(): Promise<number> {
       `;
       for (const r of rows) if (!goldIds.has(r.judgment_id)) negatives.add(r.judgment_id);
     } catch (error) {
-      console.log(`  random fill skipped: ${error instanceof Error ? error.message : String(error)}`);
+      console.log(
+        `  random fill skipped: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
   // Gold first, then negatives: every pool size is a prefix, so the nesting holds.
   const pool = [...goldIds, ...[...negatives].slice(0, Math.max(0, MAX_POOL - goldIds.size))];
-  console.log(`  pool: ${pool.length} documents (${goldIds.size} gold + ${pool.length - goldIds.size} distractors)`);
+  console.log(
+    `  pool: ${pool.length} documents (${goldIds.size} gold + ${pool.length - goldIds.size} distractors)`,
+  );
   const effectivePoolSizes = POOL_SIZES.filter((n) => n <= pool.length);
-  if (effectivePoolSizes[effectivePoolSizes.length - 1] !== pool.length) effectivePoolSizes.push(pool.length);
+  if (effectivePoolSizes[effectivePoolSizes.length - 1] !== pool.length)
+    effectivePoolSizes.push(pool.length);
 
   // ── the streamed scoring state ─────────────────────────────────────────────
   const heaps = new Map<string, TopK>();
   const key = (arm: Arm, ti: number): string => `${arm}#${ti}`;
-  for (const arm of ARMS) for (let ti = 0; ti < tasks.length; ti += 1) heaps.set(key(arm, ti), new TopK(TOP_K));
+  for (const arm of ARMS)
+    for (let ti = 0; ti < tasks.length; ti += 1) heaps.set(key(arm, ti), new TopK(TOP_K));
 
   /** rank snapshots: `${arm}#${poolSize}` -> ranks parallel to `tasks`. */
   const snapshots = new Map<string, (number | null)[]>();
@@ -684,16 +722,25 @@ async function main(): Promise<number> {
             poolSize,
             documentsProcessed: processed,
             generatedAt: new Date().toISOString(),
-            warning: 'PARTIAL — one pool size only. The finished artefact is at the un-suffixed path.',
-            ranksByArm: Object.fromEntries(ARMS.map((arm) => [arm, snapshots.get(`${arm}#${poolSize}`) ?? null])),
-            tasks: tasks.map((t) => ({ taskId: t.taskId, provenance: t.provenance, queryClass: t.queryClass })),
+            warning:
+              'PARTIAL — one pool size only. The finished artefact is at the un-suffixed path.',
+            ranksByArm: Object.fromEntries(
+              ARMS.map((arm) => [arm, snapshots.get(`${arm}#${poolSize}`) ?? null]),
+            ),
+            tasks: tasks.map((t) => ({
+              taskId: t.taskId,
+              provenance: t.provenance,
+              queryClass: t.queryClass,
+            })),
           },
           null,
           1,
         ),
       );
     } catch (e) {
-      console.log(`  partial snapshot write failed (continuing): ${e instanceof Error ? e.message : String(e)}`);
+      console.log(
+        `  partial snapshot write failed (continuing): ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
   };
 
@@ -788,7 +835,9 @@ async function main(): Promise<number> {
       const dHead = chunks[0];
       const dTail = chunks[chunks.length - 1];
       const dMid = poolMean(salient.slice(1, -1));
-      const dVecs = [dHead, dMid, dTail].filter((v): v is Float32Array => v !== undefined && v !== null);
+      const dVecs = [dHead, dMid, dTail].filter(
+        (v): v is Float32Array => v !== undefined && v !== null,
+      );
       if (dVecs.length > 0) armVectors['D_MULTI_3'] = dVecs;
       if (chunks.length > 0) armVectors['F_ALL_CHUNKS'] = chunks;
       void tailText;
@@ -809,7 +858,10 @@ async function main(): Promise<number> {
       }
       processed += 1;
 
-      while (nextBoundary < effectivePoolSizes.length && processed >= (effectivePoolSizes[nextBoundary] ?? Infinity)) {
+      while (
+        nextBoundary < effectivePoolSizes.length &&
+        processed >= (effectivePoolSizes[nextBoundary] ?? Infinity)
+      ) {
         takeSnapshot(effectivePoolSizes[nextBoundary] ?? processed);
         nextBoundary += 1;
       }
@@ -854,7 +906,8 @@ async function main(): Promise<number> {
   }
 
   /** Paired difference B - A on s@5, the number the adoption decision turns on. */
-  const pairedDiffs: Record<string, { delta: number; ci: { lo: number; hi: number }; n: number }> = {};
+  const pairedDiffs: Record<string, { delta: number; ci: { lo: number; hi: number }; n: number }> =
+    {};
   for (const poolSize of effectivePoolSizes) {
     const a = snapshots.get(`A_HEAD_4800_PRODUCTION#${poolSize}`);
     const b = snapshots.get(`B_POOLED_ALL#${poolSize}`);
@@ -917,7 +970,9 @@ async function main(): Promise<number> {
       targets: t.targets,
       targetInProduction: t.targets.some((id) => stagedGold.has(id)),
       ranks: Object.fromEntries(
-        effectivePoolSizes.flatMap((p) => ARMS.map((arm) => [`${arm}#${p}`, snapshots.get(`${arm}#${p}`)?.[i] ?? null])),
+        effectivePoolSizes.flatMap((p) =>
+          ARMS.map((arm) => [`${arm}#${p}`, snapshots.get(`${arm}#${p}`)?.[i] ?? null]),
+        ),
       ),
     })),
   };
@@ -929,12 +984,20 @@ async function main(): Promise<number> {
   for (const provenance of ['POSED', 'LIFTED'] as const) {
     const rows = results.filter((r) => r.provenance === provenance);
     if (rows.length === 0) continue;
-    console.log(`\n  ${provenance}  (n=${rows[0]?.n}, distinct targets ${rows[0]?.effectiveDistinctTargets})`);
-    console.log(`  ${'arm'.padEnd(26)}${effectivePoolSizes.map((p) => String(p).padStart(16)).join('')}`);
+    console.log(
+      `\n  ${provenance}  (n=${rows[0]?.n}, distinct targets ${rows[0]?.effectiveDistinctTargets})`,
+    );
+    console.log(
+      `  ${'arm'.padEnd(26)}${effectivePoolSizes.map((p) => String(p).padStart(16)).join('')}`,
+    );
     for (const arm of ARMS) {
       const cells = effectivePoolSizes.map((p) => {
         const r = rows.find((x) => x.arm === arm && x.poolSize === p);
-        return r ? `${pct(r.successAt5)} [${pct(r.successAt5Ci.lo)},${pct(r.successAt5Ci.hi)}]`.padStart(16) : ''.padStart(16);
+        return r
+          ? `${pct(r.successAt5)} [${pct(r.successAt5Ci.lo)},${pct(r.successAt5Ci.hi)}]`.padStart(
+              16,
+            )
+          : ''.padStart(16);
       });
       console.log(`  ${arm.padEnd(26)}${cells.join('')}`);
     }

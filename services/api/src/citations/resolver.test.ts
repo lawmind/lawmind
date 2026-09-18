@@ -21,7 +21,17 @@ after(async () => {
 
 describe('resolver — the refusal gate is pure and runs before any query', () => {
   it('placeholders are refused with a reason, never looked up', () => {
-    for (const junk of ['N/A', 'n.a.', 'NIL', 'none', 'NULL', 'not available', '---', '???', '000']) {
+    for (const junk of [
+      'N/A',
+      'n.a.',
+      'NIL',
+      'none',
+      'NULL',
+      'not available',
+      '---',
+      '???',
+      '000',
+    ]) {
       const g = canonicalKeyFor(junk);
       assert.equal(g.refused, true, `${junk} was accepted as a citation`);
     }
@@ -107,11 +117,7 @@ describe('resolver — against the live key table', () => {
   });
 
   it('EVERY result carries relationship UNKNOWN and is ineligible as treatment', async () => {
-    const results = await resolveBatch(sql, [
-      '(2019) 4 SCC 221',
-      'N/A',
-      '(1911) 99 ZZZ 12345',
-    ]);
+    const results = await resolveBatch(sql, ['(2019) 4 SCC 221', 'N/A', '(1911) 99 ZZZ 12345']);
     assert.equal(results.length, 3);
     for (const r of results) {
       assert.equal(r.relationship, 'UNKNOWN', 'the resolver inferred a relationship');

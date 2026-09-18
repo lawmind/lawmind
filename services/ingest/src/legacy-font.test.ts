@@ -19,13 +19,20 @@ const pdfWith = (fonts: string[], toUnicode = 0): Uint8Array =>
 
 describe('pdfFontEvidence', () => {
   it('finds a legacy family through its subset tag and separator spelling', () => {
-    for (const name of ['ABCDEF+Kruti_Dev_010', 'KrutiDev010', 'XYZQWE+DevLys-010', 'Walkman-Chanakya']) {
+    for (const name of [
+      'ABCDEF+Kruti_Dev_010',
+      'KrutiDev010',
+      'XYZQWE+DevLys-010',
+      'Walkman-Chanakya',
+    ]) {
       assert.equal(pdfFontEvidence(pdfWith([name])).legacyFonts.length, 1, name);
     }
   });
 
   it('leaves an ordinary embedded font alone', () => {
-    const e = pdfFontEvidence(pdfWith(['ABCDEF+TimesNewRomanPSMT', 'NotoSansDevanagari-Regular'], 2));
+    const e = pdfFontEvidence(
+      pdfWith(['ABCDEF+TimesNewRomanPSMT', 'NotoSansDevanagari-Regular'], 2),
+    );
     assert.equal(e.legacyFonts.length, 0);
     assert.equal(e.fontCount, 2);
     assert.equal(e.noToUnicode, false);
@@ -37,7 +44,9 @@ describe('pdfFontEvidence', () => {
    * not "no legacy font".
    */
   it('reports an unreadable file as no evidence rather than as clean', () => {
-    const e = pdfFontEvidence(Buffer.from('%PDF-1.7\n<</Type/ObjStm/Filter/FlateDecode>>\n', 'latin1'));
+    const e = pdfFontEvidence(
+      Buffer.from('%PDF-1.7\n<</Type/ObjStm/Filter/FlateDecode>>\n', 'latin1'),
+    );
     assert.equal(e.fontCount, 0);
     assert.equal(e.noToUnicode, false);
     assert.equal(classifyLegacyFont({ pdf: e }).verdict, 'unknown');
@@ -95,7 +104,9 @@ describe('mineMarkers', () => {
      * Document frequency must prefer `gs` — the sparse-arm lesson, one layer up. */
     const positives = [`${'zzz '.repeat(500)} gs`, 'gs alpha', 'gs beta', 'gs gamma'];
     const negatives = ['the appeal is allowed', 'the petition is dismissed'];
-    const names = mineMarkers(positives, negatives, { minPositiveShare: 0.5, top: 5 }).map((m) => m.marker);
+    const names = mineMarkers(positives, negatives, { minPositiveShare: 0.5, top: 5 }).map(
+      (m) => m.marker,
+    );
     assert.ok(names.includes('gs'), names.join(','));
     assert.ok(!names.includes('zzz'), names.join(','));
   });
@@ -112,7 +123,9 @@ describe('MINED_MARKERS, against the documents they were mined from', () => {
   it('clears an English judgment', () => {
     const english =
       'HIGH COURT OF JUDICATURE FOR RAJASTHAN BENCH AT JAIPUR. ' +
-      'S.B. Criminal Revision Petition No. 1208/2022. The revision petition is dismissed. '.repeat(30);
+      'S.B. Criminal Revision Petition No. 1208/2022. The revision petition is dismissed. '.repeat(
+        30,
+      );
     const v = classifyLegacyFont({ text: textSignature(english, MINED_MARKERS) });
     assert.equal(v.verdict, 'clean', JSON.stringify(v.evidence.text?.markerHits));
   });

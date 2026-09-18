@@ -26,15 +26,20 @@ import {
   sealReleaseCandidate,
 } from './candidate.ts';
 import { RELEASE_CAPABILITIES_VERSION } from './capabilities.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 after(async () => {
   await sql.end();
 });
 
 describe('release candidate — sealing', () => {
-  it('binds HEAD, the capability registry version and a corpus digest', async () => {
+  it('binds HEAD, the capability registry version and a corpus digest', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const c = await sealReleaseCandidate(sql, 'abc1234def5678');
     assert.match(c.releaseCandidateId, /^LMRC-\d{8}-abc1234-[0-9a-f]{16}$/);
     assert.equal(c.capabilityRegistryVersion, RELEASE_CAPABILITIES_VERSION);
@@ -113,12 +118,16 @@ describe('release candidate — drift detection', () => {
     );
   });
 
-  it('the exact drift signal is index-backed and present', async () => {
+  it('the exact drift signal is index-backed and present', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const c = await sealReleaseCandidate(sql, 'abc1234def5678');
     // `newestJudgmentCreatedAt` is what actually catches an insert. If it is
     // null the detector has nothing exact to compare and the FROZEN above is
     // resting on the small tables alone.
-    assert.ok(c.corpus.newestJudgmentCreatedAt, 'no exact insert signal — drift detection is weaker');
+    assert.ok(
+      c.corpus.newestJudgmentCreatedAt,
+      'no exact insert signal — drift detection is weaker',
+    );
   });
 });
 
@@ -201,9 +210,12 @@ describe('release candidate — who is writing', () => {
     // as a writer because its SQL text contained the word "statute".
     for (const w of writers) {
       assert.ok(
-        ['RowExclusiveLock', 'ShareRowExclusiveLock', 'ExclusiveLock', 'AccessExclusiveLock'].includes(
-          w.lockMode,
-        ),
+        [
+          'RowExclusiveLock',
+          'ShareRowExclusiveLock',
+          'ExclusiveLock',
+          'AccessExclusiveLock',
+        ].includes(w.lockMode),
         `${w.lockMode} is not a write lock and must not be reported as one`,
       );
     }

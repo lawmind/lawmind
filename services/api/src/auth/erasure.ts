@@ -320,8 +320,11 @@ export async function eraseUser(
      */
     await count('documents', tx`DELETE FROM documents WHERE user_id = ${userId}::uuid`);
     await count('ocr_jobs', tx`DELETE FROM ocr_jobs WHERE user_id = ${userId}::uuid`);
-    await count('judgment_annotations', tx`
-      DELETE FROM judgment_annotations WHERE user_id = ${userId}::uuid`);
+    await count(
+      'judgment_annotations',
+      tx`
+      DELETE FROM judgment_annotations WHERE user_id = ${userId}::uuid`,
+    );
     await count('saved_searches', tx`DELETE FROM saved_searches WHERE user_id = ${userId}::uuid`);
     await count('alerts', tx`DELETE FROM alerts WHERE user_id = ${userId}::uuid`);
     // Named explicitly in `PRIVACY_PII.md`: *"Copied-citation records: deleted
@@ -329,8 +332,11 @@ export async function eraseUser(
     // cannot reach a closed account anyway.
     await count('citation_copies', tx`DELETE FROM citation_copies WHERE user_id = ${userId}::uuid`);
     await count('searches', tx`DELETE FROM searches WHERE user_id = ${userId}::uuid`);
-    await count('training_consent_events', tx`
-      DELETE FROM training_consent_events WHERE user_id = ${userId}::uuid`);
+    await count(
+      'training_consent_events',
+      tx`
+      DELETE FROM training_consent_events WHERE user_id = ${userId}::uuid`,
+    );
     /**
      * R16's idempotency ledger. It stores no request content — only a SHA-256
      * fingerprint — but it does store the SUCCESS RESPONSE, and for an
@@ -349,9 +355,12 @@ export async function eraseUser(
      * original success body and can therefore contain the advocate's own words.
      * `auth_id` is captured above, before any redaction rewrites it.
      */
-    await count('api_idempotency_records', tx`
+    await count(
+      'api_idempotency_records',
+      tx`
       DELETE FROM api_idempotency_records
-       WHERE user_id = ${userId}::uuid OR auth_id = ${authId}`);
+       WHERE user_id = ${userId}::uuid OR auth_id = ${authId}`,
+    );
     /**
      * ── ANALYTICS AND PREMIUM STATE, NAMED BECAUSE THEY WERE MISSED ──────────
      *
@@ -372,12 +381,21 @@ export async function eraseUser(
      * `entitlements` is LIVE state: an entitlement that survives its owner is a
      * capability granted to a deleted account.
      */
-    await count('activation_events', tx`
-      DELETE FROM activation_events WHERE user_id = ${userId}::uuid`);
-    await count('experiment_assignments', tx`
-      DELETE FROM experiment_assignments WHERE user_id = ${userId}::uuid`);
-    await count('experiment_exposures', tx`
-      DELETE FROM experiment_exposures WHERE user_id = ${userId}::uuid`);
+    await count(
+      'activation_events',
+      tx`
+      DELETE FROM activation_events WHERE user_id = ${userId}::uuid`,
+    );
+    await count(
+      'experiment_assignments',
+      tx`
+      DELETE FROM experiment_assignments WHERE user_id = ${userId}::uuid`,
+    );
+    await count(
+      'experiment_exposures',
+      tx`
+      DELETE FROM experiment_exposures WHERE user_id = ${userId}::uuid`,
+    );
     await count('premium_jobs', tx`DELETE FROM premium_jobs WHERE user_id = ${userId}::uuid`);
     await count('entitlements', tx`DELETE FROM entitlements WHERE user_id = ${userId}::uuid`);
     // A share GRANTED to somebody else is that person's access to this
@@ -385,10 +403,13 @@ export async function eraseUser(
     // before the matters, though the matter delete would cascade them anyway —
     // an invitation this user RECEIVED sits on another advocate's matter and
     // would otherwise survive.
-    await count('matter_shares', tx`
+    await count(
+      'matter_shares',
+      tx`
       DELETE FROM matter_shares
        WHERE granted_by_user_id = ${userId}::uuid
-          OR invited_user_id = ${userId}::uuid`);
+          OR invited_user_id = ${userId}::uuid`,
+    );
     // Matters carry client names, notes and hearing detail — the most sensitive
     // rows this product holds. Last, for the reason above.
     await count('matters', tx`DELETE FROM matters WHERE user_id = ${userId}::uuid`);
@@ -443,10 +464,16 @@ export async function eraseUser(
      * link between an advocate and what they asked for, and cost accounting
      * does not need it.
      */
-    await count('entitlement_events', tx`
-      UPDATE entitlement_events SET user_id = NULL WHERE user_id = ${userId}::uuid`);
-    await count('llm_calls', tx`
-      UPDATE llm_calls SET user_id = NULL WHERE user_id = ${userId}::uuid`);
+    await count(
+      'entitlement_events',
+      tx`
+      UPDATE entitlement_events SET user_id = NULL WHERE user_id = ${userId}::uuid`,
+    );
+    await count(
+      'llm_calls',
+      tx`
+      UPDATE llm_calls SET user_id = NULL WHERE user_id = ${userId}::uuid`,
+    );
 
     /**
      * ── THE IDENTITY ITSELF ──────────────────────────────────────────────────
@@ -470,8 +497,11 @@ export async function eraseUser(
     await count('refresh_tokens', tx`DELETE FROM refresh_tokens WHERE user_id = ${authId}`);
     await count('auth_session', tx`DELETE FROM auth_session WHERE user_id = ${authId}`);
     await count('auth_account', tx`DELETE FROM auth_account WHERE user_id = ${authId}`);
-    await count('auth_verification', tx`
-      DELETE FROM auth_verification WHERE identifier = ${email}`);
+    await count(
+      'auth_verification',
+      tx`
+      DELETE FROM auth_verification WHERE identifier = ${email}`,
+    );
     await count('auth_user', tx`DELETE FROM auth_user WHERE id = ${authId}`);
 
     const redact = redacted(userId);

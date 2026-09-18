@@ -261,15 +261,37 @@ if (existsSync(rel(CANONICAL.currentState))) {
         check('current registry: advocate web is not in v1 scope', webState && webState !== 'IN_SCOPE_V1_NOT_BUILT', webState);
         const bad = (r.capabilities ?? []).filter((c) => c.platforms?.web === 'DISABLED_NOT_READY' || /^ENABLED/.test(c.platforms?.web ?? ''));
         check('current registry: no web row reads DISABLED_NOT_READY or ENABLED', bad.length === 0, bad.map((c) => c.id).join(', '));
-        if (r.supersedesFile && existsSync(rel(r.supersedesFile)) && r.webRowsChangedR17 !== undefined) {
+        if (r.supersedesFile && existsSync(rel(r.supersedesFile))) {
+          /**
+           * INHERITANCE, AND THE ONE THING A ROW MAY DO INSTEAD OF INHERITING.
+           *
+           * Until R18 this compared index for index and was guarded by
+           * `webRowsChangedR17 !== undefined`, so the first registry that ADDED
+           * a row would have skipped the check entirely rather than failed it —
+           * a guard that switches itself off on the change it should scrutinise.
+           *
+           * Now: every row the superseded snapshot HAD must be inherited
+           * unchanged on its id, both mobile platform cells, its state and its
+           * evidence pair. Every row that is NEW must be genuinely new, i.e. its
+           * id must not appear in the previous snapshot under a different shape.
+           * A new row therefore cannot be used to smuggle a state change past
+           * the drift test by appending a second copy of an existing id.
+           */
           const prev = JSON.parse(read(r.supersedesFile));
-          const drift = (r.capabilities ?? []).filter((c, i) => {
-            const q = prev.capabilities?.[i];
-            return !q || q.id !== c.id || q.platforms.ios !== c.platforms.ios || q.platforms.android !== c.platforms.android
+          const prevById = new Map((prev.capabilities ?? []).map((c) => [c.id, c]));
+          const drift = (r.capabilities ?? []).filter((c) => {
+            const q = prevById.get(c.id);
+            if (!q) return false;
+            return q.platforms.ios !== c.platforms.ios || q.platforms.android !== c.platforms.android
               || q.state !== c.state || q.evidenceArtifact !== c.evidenceArtifact || q.evidenceState !== c.evidenceState;
           });
           check('current registry: iOS/Android rows inherited unchanged from the superseded snapshot', drift.length === 0,
             drift.map((c) => c.id).join(', '));
+          const ids = (r.capabilities ?? []).map((c) => c.id);
+          check('current registry: no duplicate capability id', new Set(ids).size === ids.length);
+          const removed = [...prevById.keys()].filter((id) => !ids.includes(id));
+          check('current registry: no row silently dropped from the superseded snapshot', removed.length === 0,
+            removed.join(', '));
         }
       }
     }
@@ -288,6 +310,38 @@ if (existsSync(busDir) && existsSync(rel('.git'))) {
     check(`historical bus messages all present (${tracked.length} tracked)`, missing.length === 0, missing.slice(0, 5).join(', '));
   } catch (e) {
     check('historical bus messages all present', false, `git ls-files failed: ${e.message}`);
+  }
+}
+
+/* 10b - the registry's contract metadata must agree with the contract ledger --
+ *
+ * R17 shipped carrying contractRevision "R16" and currentContractVersion "R16" on
+ * all 30 rows while the ledger said R17, and nothing noticed for the whole life of
+ * that snapshot. The ledger owns contract identity; the registry quotes it. A quote
+ * that drifts from its source is exactly the class of defect this lint exists for.
+ */
+const LEDGER = 'docs/product/CONTRACT_CHANGE_LEDGER.json';
+if (existsSync(rel(LEDGER)) && existsSync(rel(CANONICAL.currentState))) {
+  const csText = read(CANONICAL.currentState);
+  const regPath = /CAPABILITY_REGISTRY_FILE\s*=\s*(\S+)/.exec(csText)?.[1];
+  let ledger = null;
+  try {
+    ledger = JSON.parse(read(LEDGER));
+  } catch (e) {
+    check('contract ledger parses as JSON', false, String(e));
+  }
+  if (ledger && regPath && existsSync(rel(regPath))) {
+    const reg = JSON.parse(read(regPath));
+    check('registry contractRevision matches the ledger currentVersion',
+      reg.contractRevision === ledger.currentVersion, `registry ${reg.contractRevision} vs ledger ${ledger.currentVersion}`);
+    check('registry contractArtifact matches the ledger currentVersionArtifact',
+      reg.contractArtifact === ledger.currentVersionArtifact,
+      `registry ${reg.contractArtifact} vs ledger ${ledger.currentVersionArtifact}`);
+    const stale = (reg.capabilities ?? []).filter((c) => c.currentContractVersion !== ledger.currentVersion);
+    check('every capability row names the CURRENT contract revision', stale.length === 0,
+      `${stale.length} row(s) not at ${ledger.currentVersion}: ${stale.slice(0, 4).map((c) => c.id).join(', ')}`);
+    check('ledger capabilityRegistryArtifact is the registry CURRENT_STATE names',
+      ledger.capabilityRegistryArtifact === regPath, `${ledger.capabilityRegistryArtifact} vs ${regPath}`);
   }
 }
 

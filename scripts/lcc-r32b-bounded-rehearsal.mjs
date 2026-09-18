@@ -123,7 +123,7 @@ try {
   } catch (err) {
     restoreOut = `${err.stdout ?? ''}\n${err.stderr ?? ''}`;
     step('restore_failed', { tail: restoreOut.trim().split('\n').slice(-30) });
-    throw new Error('restore failed');
+    throw new Error('restore failed', { cause: err });
   }
   const trace = readFileSync(join(pack, 'RESTORE_TRACE.jsonl'), 'utf8')
     .trim()

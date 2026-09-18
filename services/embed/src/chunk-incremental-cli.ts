@@ -116,7 +116,10 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
     const v = await mod.check(jobClass);
     return { allow: v.allow, reasons: v.reasons };
   } catch (error) {
-    return { allow: false, reasons: ['resource gate unavailable: ' + String((error as Error).message)] };
+    return {
+      allow: false,
+      reasons: ['resource gate unavailable: ' + String((error as Error).message)],
+    };
   }
 }
 
@@ -194,8 +197,18 @@ async function main(): Promise<number> {
       // half one selector and half another, and nothing downstream could tell.
       console.error(
         'REFUSED: checkpoint was written under ' +
-          checkpoint.tier + '/' + checkpoint.contractVersion + '/' + checkpoint.definitionHash +
-          ' and this run is ' + tier + '/' + CONTRACT_VERSION + '/' + view.definitionHash + '. ' +
+          checkpoint.tier +
+          '/' +
+          checkpoint.contractVersion +
+          '/' +
+          checkpoint.definitionHash +
+          ' and this run is ' +
+          tier +
+          '/' +
+          CONTRACT_VERSION +
+          '/' +
+          view.definitionHash +
+          '. ' +
           'Pass --reset to start this tier over; do not resume across a definition change.',
       );
       return 5;
@@ -223,8 +236,14 @@ async function main(): Promise<number> {
 
     console.log(
       (dryRun ? 'DRY RUN — measuring only, nothing written' : 'WRITING') +
-        ' · tier ' + tier + ' · contract ' + CONTRACT_VERSION + '/' + view.definitionHash +
-        ' · resuming from ' + (checkpoint.cursor ?? 'the start'),
+        ' · tier ' +
+        tier +
+        ' · contract ' +
+        CONTRACT_VERSION +
+        '/' +
+        view.definitionHash +
+        ' · resuming from ' +
+        (checkpoint.cursor ?? 'the start'),
     );
 
     let documents = 0;
@@ -321,8 +340,14 @@ async function main(): Promise<number> {
       if (!dryRun) writeCheckpoint(checkpoint);
 
       console.log(
-        '  ' + documents.toLocaleString() + ' docs · ' + chunks.toLocaleString() + ' chunks · ' +
-          (documents > 0 ? (chunks / documents).toFixed(2) : '0') + ' per doc · cursor ' + checkpoint.cursor,
+        '  ' +
+          documents.toLocaleString() +
+          ' docs · ' +
+          chunks.toLocaleString() +
+          ' chunks · ' +
+          (documents > 0 ? (chunks / documents).toFixed(2) : '0') +
+          ' per doc · cursor ' +
+          checkpoint.cursor,
       );
     }
 

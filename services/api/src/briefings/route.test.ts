@@ -158,7 +158,11 @@ describe('briefing read path', () => {
     // older than neutral citations rendered on the wedge screen as "No citation
     // on file — cannot be referenced in a filing". It has one; we withheld it.
     const b = await readBriefing();
-    assert.equal(b.authorities[0]?.neutralCitation ?? null, null, 'the fixture has none, by design');
+    assert.equal(
+      b.authorities[0]?.neutralCitation ?? null,
+      null,
+      'the fixture has none, by design',
+    );
     assert.deepEqual(b.authorities[0]?.reporterCitations, ['(2001) 3 SCC 111']);
   });
 
@@ -299,9 +303,7 @@ describe('briefing read path', () => {
     await sql`UPDATE judgments SET overruled_status = 'set_aside' WHERE id = ${judgmentId}`;
     try {
       const after_ = await readBriefing();
-      const item = after_.blocks?.checklist?.find(
-        (c) => c.id === `authority-moved-${judgmentId}`,
-      );
+      const item = after_.blocks?.checklist?.find((c) => c.id === `authority-moved-${judgmentId}`);
       assert.ok(
         item,
         'a judgment set aside after the sweep must still reach the checklist — the blob cannot know',

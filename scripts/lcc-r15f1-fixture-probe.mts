@@ -43,7 +43,7 @@ const CONNECTORS = [
 ];
 const CONNECTOR_SPLIT =
   /\bC\s*\/\s*W\b|\bA\s*\/\s*W\b|\bconnected\s+with\b|\balong\s*with\b|\bwith\b/gi;
-const LEAD = /^[\s(\[*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]*)?[\s(\[*\-–—.:;,#•]*/;
+const LEAD = /^[\s([*\-–—.:;,#•]*(?:\d{1,4}\s*[.)\]]?[ \t]*)?[\s([*\-–—.:;,#•]*/;
 const LABEL = /^(?:case|matter|item)[ \t]*:[-–—\s]*/i;
 const PARENT_MATTER = /\b(?:IN|ARISING\s+(?:OUT\s+)?(?:OF|FROM)|FROM)[ \t\r\n]*$/i;
 const PARENT_LEADING = /^(?:IN|ARISING|FROM)\b/i;

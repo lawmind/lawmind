@@ -78,7 +78,14 @@ const courts = await sql<{ court: string; n: number }[]>`
   WHERE full_text IS NOT NULL AND source_url IS NOT NULL
   GROUP BY 1 HAVING count(*) >= 20 ORDER BY 2 DESC`;
 
-type Row = { court: string; sampled: number; better: number; worse: number; same: number; gainPct: number };
+type Row = {
+  court: string;
+  sampled: number;
+  better: number;
+  worse: number;
+  same: number;
+  gainPct: number;
+};
 const out: Row[] = [];
 
 for (const c of courts) {
@@ -133,7 +140,9 @@ if (lossy.length === 0) {
 } else {
   console.log('Courts where poppler recovers materially more text than we stored:');
   for (const r of lossy.sort((a, b) => b.gainPct - a.gainPct)) {
-    console.log(`  +${r.gainPct.toFixed(1)}%  ${r.court} (${r.better}/${r.sampled} documents bigger)`);
+    console.log(
+      `  +${r.gainPct.toFixed(1)}%  ${r.court} (${r.better}/${r.sampled} documents bigger)`,
+    );
   }
   console.log('');
   console.log('A positive figure is text we HAVE but never extracted — not new acquisition.');

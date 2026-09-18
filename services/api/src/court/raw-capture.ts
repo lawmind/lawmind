@@ -96,10 +96,7 @@ export const MAX_INLINE_BYTES = 8 * 1024 * 1024;
  * `official_source_artifact` refuses UPDATE and DELETE, so a correction is a new
  * row and history cannot be rewritten to look tidier than it was.
  */
-export async function captureRawArtifact(
-  sql: Db,
-  capture: RawCapture,
-): Promise<CapturedArtifact> {
+export async function captureRawArtifact(sql: Db, capture: RawCapture): Promise<CapturedArtifact> {
   const payloadSha256 = createHash('sha256').update(capture.body).digest('hex');
   const payloadBytes = capture.body.byteLength;
   const inline = payloadBytes > 0 && payloadBytes <= MAX_INLINE_BYTES;

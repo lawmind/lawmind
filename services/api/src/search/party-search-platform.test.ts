@@ -190,9 +190,8 @@ describe('the party-name capability', () => {
       'the narrowing is NAMED in the registry, so a store listing is checkable against it',
     );
     assert.equal(
-      (ios as { capabilities: Record<string, { state: string }> }).capabilities[
-        'search.party_name'
-      ]?.state,
+      (ios as { capabilities: Record<string, { state: string }> }).capabilities['search.party_name']
+        ?.state,
       'DISABLED',
     );
 

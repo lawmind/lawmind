@@ -16,6 +16,7 @@
  */
 import { expandByCitations } from '@lawmind/api/search/graph-expand';
 import {
+  attributionOf,
   precedentialEffect,
   precedentialPolicy,
   type OverruledStatus,
@@ -211,9 +212,7 @@ export async function scoreQuery(
                (SELECT c.chunk_text FROM judgment_chunks c
                  WHERE c.judgment_id = j.id AND c.embedding IS NOT NULL
                  ORDER BY ${
-                   vector
-                     ? sql`c.embedding <=> ${vector}::vector`
-                     : sql`c.chunk_index`
+                   vector ? sql`c.embedding <=> ${vector}::vector` : sql`c.chunk_index`
                  } LIMIT 1) AS operative
           FROM judgments j
          WHERE j.id = ANY(${fresh.map((f) => f.judgmentId)})
@@ -255,12 +254,27 @@ export async function scoreQuery(
           canAddToMatter: effectPolicy.addToMatter === 'allow',
           unappliedTreatment: null,
           /**
+           * From the module, not a literal, and from the SAME empty edge list
+           * this stub passes to `precedentialEffect` above. `attributionOf([])`
+           * is `'UNKNOWN'` by its own rule — "absence of evidence is the thing
+           * this file exists to stop reading as evidence" — so a synthetic
+           * candidate assembled from a `judgments` read that never loaded
+           * citation edges cannot claim a COURT attribution it did not consult.
+           * Calling the function rather than writing `'UNKNOWN'` means the stub
+           * follows the module if that rule ever changes.
+           */
+          treatmentAttribution: attributionOf([]),
+          /**
            * LCC's P0 field. This stub reads `judgments` without consulting
            * `script_quality`, so the honest value is the unconvicted one and
            * `evidenceWithheld: false` — a synthetic candidate carries no body
            * passage to withhold in the first place.
            */
-          bodyText: { state: 'TEXT_UNKNOWN' as const, grade: 'NONE' as const, evidenceWithheld: false },
+          bodyText: {
+            state: 'TEXT_UNKNOWN' as const,
+            grade: 'NONE' as const,
+            evidenceWithheld: false,
+          },
           overruledByJudgmentId: null,
           overruledParas: null,
           overruledNote: null,

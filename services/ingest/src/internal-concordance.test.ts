@@ -22,7 +22,11 @@ test('rankCandidatesReportingLag: accepts the citation year and the year before,
     { id: 'same-year', caseTitle: 'Kharak Singh v. State of U.P.', judgmentDate: '2020-03-01' },
     { id: 'year-before', caseTitle: 'Kharak Singh v. State of U.P.', judgmentDate: '2019-03-01' },
     { id: 'year-after', caseTitle: 'Kharak Singh v. State of U.P.', judgmentDate: '2021-03-01' },
-    { id: 'two-years-before', caseTitle: 'Kharak Singh v. State of U.P.', judgmentDate: '2018-03-01' },
+    {
+      id: 'two-years-before',
+      caseTitle: 'Kharak Singh v. State of U.P.',
+      judgmentDate: '2018-03-01',
+    },
   ];
   const out = rankCandidatesReportingLag('Kharak Singh v. State of U.P.', 2020, pool);
   const ids = out.map((c) => c.judgmentId).sort();
@@ -30,13 +34,19 @@ test('rankCandidatesReportingLag: accepts the citation year and the year before,
 });
 
 test('rankCandidatesReportingLag: empty name yields no candidates', () => {
-  const pool: PoolJudgment[] = [{ id: 'a', caseTitle: 'State of Bihar v. Anr', judgmentDate: '2020-01-01' }];
+  const pool: PoolJudgment[] = [
+    { id: 'a', caseTitle: 'State of Bihar v. Anr', judgmentDate: '2020-01-01' },
+  ];
   assert.deepEqual(rankCandidatesReportingLag('', 2020, pool), []);
 });
 
 test('rankCandidatesReportingLag: filters below MATCH_MIN_JACCARD', () => {
   const pool: PoolJudgment[] = [
-    { id: 'unrelated', caseTitle: 'Completely Different Parties Entirely', judgmentDate: '2020-01-01' },
+    {
+      id: 'unrelated',
+      caseTitle: 'Completely Different Parties Entirely',
+      judgmentDate: '2020-01-01',
+    },
   ];
   const out = rankCandidatesReportingLag('Kharak Singh v. State of U.P.', 2020, pool);
   assert.equal(out.length, 0);
@@ -44,7 +54,11 @@ test('rankCandidatesReportingLag: filters below MATCH_MIN_JACCARD', () => {
 
 test('rankCandidatesReportingLag: sorted highest jaccard first', () => {
   const pool: PoolJudgment[] = [
-    { id: 'partial', caseTitle: 'Kharak Singh v. Someone Else Entirely', judgmentDate: '2020-01-01' },
+    {
+      id: 'partial',
+      caseTitle: 'Kharak Singh v. Someone Else Entirely',
+      judgmentDate: '2020-01-01',
+    },
     { id: 'exact', caseTitle: 'Kharak Singh v. State of U.P.', judgmentDate: '2020-01-01' },
   ];
   const out = rankCandidatesReportingLag('Kharak Singh v. State of U.P.', 2020, pool);
@@ -54,9 +68,17 @@ test('rankCandidatesReportingLag: sorted highest jaccard first', () => {
 
 test('rankCandidatesReportingLag: distinguishingTokens counts real intersection, not just the ratio', () => {
   const pool: PoolJudgment[] = [
-    { id: 'a', caseTitle: 'Ramesh Kumar Gupta v. State of Madhya Pradesh', judgmentDate: '2020-01-01' },
+    {
+      id: 'a',
+      caseTitle: 'Ramesh Kumar Gupta v. State of Madhya Pradesh',
+      judgmentDate: '2020-01-01',
+    },
   ];
-  const out = rankCandidatesReportingLag('Ramesh Kumar Gupta v. State of Madhya Pradesh', 2020, pool);
+  const out = rankCandidatesReportingLag(
+    'Ramesh Kumar Gupta v. State of Madhya Pradesh',
+    2020,
+    pool,
+  );
   assert.equal(out.length, 1);
   // RAMESH, KUMAR, GUPTA, MADHYA, PRADESH all survive stopword removal (STATE/OF are stopped).
   assert.ok(out[0]!.distinguishingTokens >= 4, `expected >=4 got ${out[0]!.distinguishingTokens}`);
@@ -103,7 +125,9 @@ test('classifyMatch: jaccard below PROMOTION_MIN_JACCARD but above MATCH_MIN_JAC
 });
 
 test('classifyMatch: distinguishingTokens at or below the floor -> thin, even with a high jaccard', () => {
-  const v = classifyMatch([cand({ jaccard: 0.9, distinguishingTokens: PROMOTION_MIN_DISTINGUISHING_TOKENS })]);
+  const v = classifyMatch([
+    cand({ jaccard: 0.9, distinguishingTokens: PROMOTION_MIN_DISTINGUISHING_TOKENS }),
+  ]);
   assert.equal(v.kind, 'thin');
 });
 

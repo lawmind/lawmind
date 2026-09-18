@@ -407,11 +407,7 @@ test('a report passes only when nothing FAILED, and INFO is neutral', () => {
  */
 test('a check graded twice is counted ONCE, and the collapse is named', () => {
   const first = gradeExactSpan('span-retrieval-hybrid-bff546dd', null, FULL);
-  const r = summarise('now', 'localhost', [
-    first,
-    gradeDuplicateCollapse('e1', ['h1']),
-    first,
-  ]);
+  const r = summarise('now', 'localhost', [first, gradeDuplicateCollapse('e1', ['h1']), first]);
   assert.equal(r.checks.length, 2);
   assert.deepEqual(r.counts, { pass: 1, fail: 0, info: 1 });
   assert.deepEqual(r.collapsed, ['D/span-retrieval-hybrid-bff546dd']);

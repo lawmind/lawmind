@@ -48,7 +48,6 @@ import { installCrashGuard } from './crash-guard.ts';
 import { isTransientDbOrNetworkError } from './db-transient.ts';
 import { sslFor } from './db-ssl';
 
-
 // Silent deaths cost three runs today; log the cause instead of vanishing.
 installCrashGuard('paragraphs');
 const APPLY = process.argv.includes('--apply');
@@ -118,7 +117,10 @@ async function withRetry<T>(what: string, run: () => Promise<T>): Promise<T> {
     try {
       return await run();
     } catch (err) {
-      const m = err instanceof Error ? `${err.message} ${(err as { code?: string }).code ?? ''}` : String(err);
+      const m =
+        err instanceof Error
+          ? `${err.message} ${(err as { code?: string }).code ?? ''}`
+          : String(err);
       /** See `./db-transient.ts` — a restarting Postgres matches no word in this regex. */
       if (attempt >= 8 || (!isTransientDbOrNetworkError(err) && !TRANSIENT.test(m))) throw err;
       const wait = Math.min(30_000, 1000 * 2 ** attempt);
@@ -204,7 +206,13 @@ console.log(
 const CHECKPOINT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '.checkpoints');
 const CHECKPOINT_FILE = join(CHECKPOINT_DIR, `paragraphs-${shardIndex}_${shardCount}.json`);
 
-type Checkpoint = { cursorAt: string; cursorId: string; scanned: number; written: number; updatedAt: string };
+type Checkpoint = {
+  cursorAt: string;
+  cursorId: string;
+  scanned: number;
+  written: number;
+  updatedAt: string;
+};
 
 function loadCheckpoint(): Checkpoint | null {
   if (!existsSync(CHECKPOINT_FILE)) return null;
@@ -234,7 +242,13 @@ function saveCheckpoint(at: string, id: string, scannedSoFar: number, writtenSoF
     writeFileSync(
       CHECKPOINT_FILE,
       JSON.stringify(
-        { cursorAt: at, cursorId: id, scanned: scannedSoFar, written: writtenSoFar, updatedAt: new Date().toISOString() },
+        {
+          cursorAt: at,
+          cursorId: id,
+          scanned: scannedSoFar,
+          written: writtenSoFar,
+          updatedAt: new Date().toISOString(),
+        },
         null,
         2,
       ),
@@ -242,7 +256,9 @@ function saveCheckpoint(at: string, id: string, scannedSoFar: number, writtenSoF
   } catch (err) {
     /* A checkpoint that cannot be written is a slow restart, not a wrong
      * result. Say so once and keep going rather than kill a working pass. */
-    console.log(`\n    checkpoint write failed (${err instanceof Error ? err.message : String(err)}) — continuing`);
+    console.log(
+      `\n    checkpoint write failed (${err instanceof Error ? err.message : String(err)}) — continuing`,
+    );
   }
 }
 
@@ -258,7 +274,9 @@ if (resumedFrom) {
 } else if (RESTART_CURSOR) {
   console.log('--restart-cursor: walking from the epoch, ignoring any stored cursor');
 } else {
-  console.log(`no checkpoint at ${CHECKPOINT_FILE} — first run for this shard, walking from the epoch`);
+  console.log(
+    `no checkpoint at ${CHECKPOINT_FILE} — first run for this shard, walking from the epoch`,
+  );
 }
 
 let scanned = 0;
@@ -271,8 +289,10 @@ const started = Date.now();
 for (;;) {
   if (LIMIT > 0 && scanned >= LIMIT) break;
 
-  const page = await withRetry('select', () =>
-    sql<{ id: string; fullText: string; createdAt: Date }[]>`
+  const page = await withRetry(
+    'select',
+    () =>
+      sql<{ id: string; fullText: string; createdAt: Date }[]>`
       SELECT id, full_text AS "fullText", created_at AS "createdAt" FROM judgments
       WHERE (created_at, id) > (${cursorAt}::timestamptz, ${cursorId}::uuid)
         AND full_text IS NOT NULL AND length(full_text) > 100
@@ -335,14 +355,21 @@ for (;;) {
     // Chunked, because a few thousand rows exceeds the bind-parameter limit.
     for (let i = 0; i < rows.length; i += 1000) {
       const slice = rows.slice(i, i + 1000);
-      await withRetry('insert', () =>
-        sql`INSERT INTO judgment_paragraphs ${sql(slice)}
+      await withRetry(
+        'insert',
+        () =>
+          sql`INSERT INTO judgment_paragraphs ${sql(slice)}
             ON CONFLICT (judgment_id, paragraph_index) DO NOTHING`,
       );
     }
   }
 
-  saveCheckpoint(cursorAt, cursorId, scanned + (resumedFrom?.scanned ?? 0), written + (resumedFrom?.written ?? 0));
+  saveCheckpoint(
+    cursorAt,
+    cursorId,
+    scanned + (resumedFrom?.scanned ?? 0),
+    written + (resumedFrom?.written ?? 0),
+  );
 
   const rate = scanned / Math.max(1, (Date.now() - started) / 1000);
   process.stdout.write(
@@ -357,14 +384,18 @@ console.log('');
 console.log('RESULTS');
 console.log('='.repeat(74));
 console.log(`judgments scanned        ${scanned.toLocaleString()}`);
-console.log(`judgments with evidence  ${written.toLocaleString()}${APPLY ? ' (written)' : ' (dry run)'}`);
+console.log(
+  `judgments with evidence  ${written.toLocaleString()}${APPLY ? ' (written)' : ' (dry run)'}`,
+);
 console.log(`paragraphs               ${paragraphs.toLocaleString()}`);
 console.log(
   `  carrying a court number ${numbered.toLocaleString()}` +
     `${paragraphs > 0 ? ` = ${((100 * numbered) / paragraphs).toFixed(1)}%` : ''}` +
     ` — the rest are cause titles, coram lines and unnumbered preambles`,
 );
-console.log(`REFUSED (spans lost text) ${lostText}  <-- stored nothing rather than a span nobody can trust`);
+console.log(
+  `REFUSED (spans lost text) ${lostText}  <-- stored nothing rather than a span nobody can trust`,
+);
 console.log(`mean paragraphs/judgment ${written > 0 ? (paragraphs / written).toFixed(1) : '0'}`);
 console.log(`wall clock               ${((Date.now() - started) / 1000).toFixed(0)}s`);
 

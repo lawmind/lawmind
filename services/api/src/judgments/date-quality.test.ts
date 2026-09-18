@@ -12,9 +12,18 @@ import { after, describe, it } from 'node:test';
 
 import postgres from 'postgres';
 
-import { chronologyClaim, dateQualityFor, dateQualityOf, isDateContradicted } from './date-quality.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
+import {
+  chronologyClaim,
+  dateQualityFor,
+  dateQualityOf,
+  isDateContradicted,
+} from './date-quality.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 after(async () => {
   await sql.end({ timeout: 5 });
@@ -43,14 +52,18 @@ describe('date quality — the predicate', () => {
 });
 
 describe('date quality — the reader, against the live table', () => {
-  it('returns the stored state for judgments that have one', async () => {
+  it('returns the stored state for judgments that have one', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const rows = await sql<{ judgment_id: string; state: string }[]>`
       SELECT judgment_id, state FROM judgment_date_quality LIMIT 5`;
     if (rows.length === 0) {
       // The pass has not run on this database. Say so rather than pass vacuously.
       assert.fail('judgment_date_quality is empty — NEW2 date pass has not run here');
     }
-    const got = await dateQualityFor(sql, rows.map((r) => r.judgment_id));
+    const got = await dateQualityFor(
+      sql,
+      rows.map((r) => r.judgment_id),
+    );
     for (const r of rows) assert.equal(got.get(r.judgment_id), r.state);
     assert.equal(await dateQualityOf(sql, rows[0]!.judgment_id), rows[0]!.state);
   });

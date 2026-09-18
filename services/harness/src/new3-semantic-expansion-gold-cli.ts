@@ -53,7 +53,12 @@
 import { writeFileSync } from 'node:fs';
 import postgres, { type Sql } from 'postgres';
 import { sslFor } from './db-url.ts';
-import { redact, passageLooksLikeReasoning, snapToSentences, looksOcrDamaged } from './build-queries.ts';
+import {
+  redact,
+  passageLooksLikeReasoning,
+  snapToSentences,
+  looksOcrDamaged,
+} from './build-queries.ts';
 
 /**
  * Courts NEW2 has measurably moved this session (bus 0734/0739/0743/0781/
@@ -172,7 +177,8 @@ function buildProposition(c: Candidate): GoldRow | null {
   if (!passageLooksLikeReasoning(c.passage, text)) return null;
   if (looksOcrDamaged(text)) return null;
   const trimmed = snapToSentences(text);
-  if (trimmed === null || trimmed.length < MIN_QUERY_CHARS || trimmed.length > MAX_QUERY_CHARS) return null;
+  if (trimmed === null || trimmed.length < MIN_QUERY_CHARS || trimmed.length > MAX_QUERY_CHARS)
+    return null;
 
   return {
     id: `prop-${c.cited_judgment_id.slice(0, 8)}`,
@@ -255,7 +261,9 @@ async function main() {
 
   try {
     const candidates = await fetchCandidates(sql, Math.max(target * 8, 4000));
-    console.log(`fetched ${candidates.length} candidates from ${TARGET_COURTS.length} target courts`);
+    console.log(
+      `fetched ${candidates.length} candidates from ${TARGET_COURTS.length} target courts`,
+    );
 
     const seenGold = new Set<string>();
     const rows: GoldRow[] = [];
@@ -284,7 +292,8 @@ async function main() {
       version: 1,
       builtAt: new Date().toISOString(),
       builtBy: 'NEW3',
-      method: 'citation-edge (build-queries.ts redaction/rejection, reused not reimplemented), plus mechanical exact_citation/case_title variants — zero LLM paraphrase',
+      method:
+        'citation-edge (build-queries.ts redaction/rejection, reused not reimplemented), plus mechanical exact_citation/case_title variants — zero LLM paraphrase',
       targetCourts: TARGET_COURTS,
       selection: { MIN_INBOUND, MAX_INBOUND, WINDOW, MIN_QUERY_CHARS, MAX_QUERY_CHARS },
       distinctGoldAuthorities: seenGold.size,

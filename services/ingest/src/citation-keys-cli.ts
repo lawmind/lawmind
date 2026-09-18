@@ -162,7 +162,10 @@ type Checkpoint = { cursorAt: string; cursorId: string; scanned: number; updated
 const RUN_ID = `citation-keys-${process.pid}-${new Date().toISOString()}`;
 const CHECKPOINT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '.checkpoints');
 const CHECKPOINT_FILE = join(CHECKPOINT_DIR, 'citation-keys.json');
-const EPOCH = { cursorAt: '1970-01-01T00:00:00.000Z', cursorId: '00000000-0000-0000-0000-000000000000' };
+const EPOCH = {
+  cursorAt: '1970-01-01T00:00:00.000Z',
+  cursorId: '00000000-0000-0000-0000-000000000000',
+};
 
 function readCheckpoint(): Checkpoint | null {
   if (REBUILD || ONE_JUDGMENT) return null;
@@ -187,10 +190,15 @@ function readCheckpoint(): Checkpoint | null {
 function writeCheckpoint(c: Omit<Checkpoint, 'updatedAt'>): void {
   try {
     mkdirSync(CHECKPOINT_DIR, { recursive: true });
-    writeFileSync(CHECKPOINT_FILE, JSON.stringify({ ...c, updatedAt: new Date().toISOString() }, null, 2));
+    writeFileSync(
+      CHECKPOINT_FILE,
+      JSON.stringify({ ...c, updatedAt: new Date().toISOString() }, null, 2),
+    );
   } catch (err) {
     /* A checkpoint that cannot be written is a slow restart, not a wrong one. */
-    console.log(`    checkpoint write failed (${err instanceof Error ? err.message : String(err)}) — continuing`);
+    console.log(
+      `    checkpoint write failed (${err instanceof Error ? err.message : String(err)}) — continuing`,
+    );
   }
 }
 
@@ -307,7 +315,9 @@ async function safeFrontier(): Promise<Frontier> {
            END AS bound,
            NOT (v.peers > 0 AND v.readable = 0) AS exact
     FROM others o, visible v`;
-  return row ?? { bound: new Date(Date.now() - FALLBACK_LAG_SECONDS * 1000).toISOString(), exact: false };
+  return (
+    row ?? { bound: new Date(Date.now() - FALLBACK_LAG_SECONDS * 1000).toISOString(), exact: false }
+  );
 }
 
 /**

@@ -28,6 +28,9 @@ const INPUTS = [
   'docs/product/CONTRACT_CHANGE_CONTROL.md', 'docs/product/WEBSITE_PRODUCT_SPEC_V1.md',
   'docs/product/WEBSITE_CLAIM_EVIDENCE_MATRIX.md', 'docs/product/STORE_RELEASE_CHECKLIST_V1.md',
   'docs/product/V1_CAPABILITY_REGISTRY_R16.json', 'docs/product/V1_CAPABILITY_REGISTRY_R17.json',
+  // Added 18 Sep 2026 with the contract-metadata checks: the current registry and
+  // the ledger that owns contract identity.
+  'docs/product/V1_CAPABILITY_REGISTRY_R18.json', 'docs/product/CONTRACT_CHANGE_LEDGER.json',
   'docs/roadmaps',
   // Added 18 Sep 2026 with the deployment-truth checks: the probes and the two
   // pipelines that call them.
@@ -226,4 +229,85 @@ test('does NOT fail on Railway deployment history', (t) => {
   appendFileSync(join(dir, 'docs/CURRENT_STATE.md'), '\nRAILWAY_PRODUCTION = HISTORICAL / RETIRED\n');
   const r = run(dir);
   assert.equal(r.status, 0, r.stdout);
+});
+
+/* ---------------------------------------------------------------------------
+ * Contract metadata and registry inheritance (SHIP S4-T0.3, 18 Sep 2026)
+ *
+ * R17 shipped saying contractRevision "R16" on all 30 rows while the ledger said
+ * R17, and the drift check that should have caught the FIRST registry to add a
+ * row was guarded by `webRowsChangedR17 !== undefined` — so it would have
+ * switched itself off on exactly the change it exists to scrutinise. Both are
+ * covered below.
+ * ------------------------------------------------------------------------- */
+
+const REG = 'docs/product/V1_CAPABILITY_REGISTRY_R18.json';
+const readReg = (dir) => JSON.parse(readFileSync(join(dir, REG), 'utf8'));
+const writeReg = (dir, r) => writeFileSync(join(dir, REG), JSON.stringify(r, null, 2));
+
+test('fails when the registry contract revision drifts from the ledger', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const r = readReg(dir);
+  r.contractRevision = 'R16';
+  writeReg(dir, r);
+  const out = run(dir);
+  assert.equal(out.status, 1);
+  assert.match(out.stdout, /contractRevision matches the ledger currentVersion/);
+});
+
+test('fails when a capability row still names a stale contract revision', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const r = readReg(dir);
+  r.capabilities[0].currentContractVersion = 'R16';
+  writeReg(dir, r);
+  const out = run(dir);
+  assert.equal(out.status, 1);
+  assert.match(out.stdout, /names the CURRENT contract revision/);
+});
+
+test('fails when a row is silently dropped from the superseded snapshot', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const r = readReg(dir);
+  r.capabilities = r.capabilities.filter((c) => c.id !== 'search.cnr');
+  writeReg(dir, r);
+  const out = run(dir);
+  assert.equal(out.status, 1);
+  assert.match(out.stdout, /no row silently dropped/);
+});
+
+test('fails when an inherited row changes state, even with rows added after it', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const r = readReg(dir);
+  const row = r.capabilities.find((c) => c.id === 'monitoring.user_product');
+  row.state = 'ENABLED_V1';
+  row.platforms.ios = 'ENABLED_V1';
+  writeReg(dir, r);
+  const out = run(dir);
+  assert.equal(out.status, 1);
+  assert.match(out.stdout, /inherited unchanged from the superseded snapshot/);
+});
+
+test('does NOT fail merely because the registry ADDED rows', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const r = readReg(dir);
+  r.capabilities.push({
+    id: 'alerts.own_matter_judgment',
+    state: 'DISABLED_NOT_READY',
+    platforms: {
+      ios: 'DISABLED_NOT_READY',
+      android: 'DISABLED_NOT_READY',
+      web: 'OUT_OF_SCOPE_CURRENT_FOUNDER',
+    },
+    evidenceArtifact: 'no producer; PD-5 trigger 3 awaits documents.upload_and_ocr',
+    evidenceState: 'CODE_PATH_ONLY_NO_DELIVERY_OBSERVED',
+    currentContractVersion: 'R17',
+  });
+  writeReg(dir, r);
+  const out = run(dir);
+  assert.equal(out.status, 0, out.stdout);
 });

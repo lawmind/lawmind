@@ -30,8 +30,12 @@ import {
   readKeyFreshness,
 } from './key-freshness.ts';
 import { resolveBatch } from './resolver.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 
 after(async () => {
   await sql.end({ timeout: 5 });
@@ -231,7 +235,8 @@ describe('risk evidence gates UNIQUE, separately from index lag', () => {
     return seen;
   };
 
-  it('an EMPTY risk table is not CURRENT, at any lag', async () => {
+  it('an EMPTY risk table is not CURRENT, at any lag', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const f = await probe((tx) => tx`DELETE FROM resolver_risk_replay`);
     assert.equal(f.state, 'STALE');
     assert.equal(mayAssertUnique(f.state), false);
@@ -241,7 +246,8 @@ describe('risk evidence gates UNIQUE, separately from index lag', () => {
     );
   });
 
-  it('a replay that graded ZERO records vouches for nothing', async () => {
+  it('a replay that graded ZERO records vouches for nothing', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     /** The non-vacuity guard: 0 defects out of 0 records is not a passing check. */
     const f = await probe((tx) => tx`UPDATE resolver_risk_replay SET records = 0`);
     assert.equal(mayAssertUnique(f.state), false);
@@ -251,7 +257,8 @@ describe('risk evidence gates UNIQUE, separately from index lag', () => {
     );
   });
 
-  it('a replay that FOUND false uniques closes the gate on direct evidence', async () => {
+  it('a replay that FOUND false uniques closes the gate on direct evidence', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const f = await probe((tx) => tx`UPDATE resolver_risk_replay SET false_unique = 3`);
     assert.equal(mayAssertUnique(f.state), false);
     assert.ok(
@@ -260,7 +267,8 @@ describe('risk evidence gates UNIQUE, separately from index lag', () => {
     );
   });
 
-  it('a replay run against a DIFFERENT cursor does not vouch for this index', async () => {
+  it('a replay run against a DIFFERENT cursor does not vouch for this index', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const f = await probe(
       (tx) => tx`UPDATE resolver_risk_replay SET frontier_at = frontier_at - interval '3 days'`,
     );
@@ -271,7 +279,8 @@ describe('risk evidence gates UNIQUE, separately from index lag', () => {
     );
   });
 
-  it('is NOT vacuous — the live row does not trip any of them', async () => {
+  it('is NOT vacuous — the live row does not trip any of them', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     /**
      * The assertion that makes the four above mean something. If the gate fired
      * unconditionally every test here would pass and the resolver would never

@@ -13,8 +13,12 @@ import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
 import { ISO_8601 } from '../iso-time.ts';
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
+
+/** Measured ONCE, before any suite is defined - see testing/corpus-required.ts. */
+const corpus = await hasCorpus(sql);
 const app = createApp({ ping: async () => {}, search: { sql, embedQuery: async () => null } });
 
 type Coverage = {
@@ -43,7 +47,8 @@ after(async () => {
 });
 
 describe('corpus coverage', () => {
-  it('reports every High Court the survey enumerated', async () => {
+  it('reports every High Court the survey enumerated', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const cov = await fetchCoverage();
     // 25 High Courts counted in docs/HC_CORPUS_SURVEY.md.
     assert.equal(cov.highCourts.length, 25);
@@ -85,7 +90,8 @@ describe('corpus coverage', () => {
    * The three-week-old failure this replaces was NOT a defect and was not stale
    * prose either: it was a data fact outrunning its test, and the pin worked.
    */
-  it('THE GAP IS VISIBLE — the largest court reports a live, checkable share', async () => {
+  it('THE GAP IS VISIBLE — the largest court reports a live, checkable share', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const cov = await fetchCoverage();
     const allahabad = cov.highCourts.find((x) => x.courtName === 'Allahabad High Court');
     assert.ok(allahabad, 'Allahabad missing from coverage');
@@ -121,10 +127,14 @@ describe('corpus coverage', () => {
   it('sorts worst-gap-first, so the biggest hole is what a client shows', async () => {
     const cov = await fetchCoverage();
     const totals = cov.highCourts.map((x) => x.sourceDocuments);
-    assert.deepEqual(totals, [...totals].sort((a, b) => b - a));
+    assert.deepEqual(
+      totals,
+      [...totals].sort((a, b) => b - a),
+    );
   });
 
-  it('the Supreme Court is reported SEPARATELY, and its source total is NULL not 0', async () => {
+  it('the Supreme Court is reported SEPARATELY, and its source total is NULL not 0', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const cov = await fetchCoverage();
     assert.equal(cov.supremeCourt.courtName, 'Supreme Court of India');
     // A floor, not a snapshot — same reasoning as the Allahabad assertion above.
@@ -158,7 +168,8 @@ describe('corpus coverage', () => {
     assert.ok(/sourceDocuments/.test(body), 'the documents field is missing');
   });
 
-  it('carries the date the SOURCE was counted — a coverage claim with no date is not checkable', async () => {
+  it('carries the date the SOURCE was counted — a coverage claim with no date is not checkable', async (t) => {
+    if (!corpus) return t.skip(CORPUS_SKIP);
     const cov = await fetchCoverage();
     assert.ok(cov.enumeratedAt !== null);
     // ISO_8601, not `Date.parse` — this test asserted only that Node could parse

@@ -69,7 +69,7 @@ export async function getCitationsMonitor(
    * did. It is not silently counted as `none`, which would report a judgment
    * this release cannot see as good law.
    */
-/**
+  /**
    * **The unit of this count is a CHECK ROW, not a judgment**, and keeping that
    * right is the whole difficulty of moving the aggregate across the boundary.
    * The join it replaces counted one row per `citation_checks` row; grouping the

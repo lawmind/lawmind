@@ -89,7 +89,8 @@ const OUT = isAbsolute(OUT_REL) ? OUT_REL : join(ROOT, OUT_REL);
  * that a teardown is a realistic outcome, and this lane has already lost 160 of
  * 283 queries once by writing only at the end.
  */
-const CKPT_REL = process.env['CKPT'] ?? 'docs/ai/new1-tier-a/document-vector-reachability.checkpoint.jsonl';
+const CKPT_REL =
+  process.env['CKPT'] ?? 'docs/ai/new1-tier-a/document-vector-reachability.checkpoint.jsonl';
 const CKPT = isAbsolute(CKPT_REL) ? CKPT_REL : join(ROOT, CKPT_REL);
 
 /** Production's own value (`retrieve.ts`), so the ANN behaves as it ships. */
@@ -97,34 +98,49 @@ const EF_SEARCH = Number(process.env['HNSW_EF_SEARCH'] ?? 200);
 const TOP_K = Number(process.env['TOP_K'] ?? 20);
 const PROBE = process.env['PROBE_TABLE'] ?? 'new1_probe_half_250k';
 
-type Row = { queryId: string; launchClass: LaunchClass; rank: number | null; ms: number; inIndex: boolean };
+type Row = {
+  queryId: string;
+  launchClass: LaunchClass;
+  rank: number | null;
+  ms: number;
+  inIndex: boolean;
+};
 
 const quantile = (xs: number[], q: number): number => {
   if (xs.length === 0) return 0;
   const s = [...xs].sort((a, b) => a - b);
   return s[Math.min(s.length - 1, Math.floor(q * s.length))] ?? 0;
 };
-const pct = (a: number, b: number): number | null => (b === 0 ? null : Number(((100 * a) / b).toFixed(2)));
+const pct = (a: number, b: number): number | null =>
+  b === 0 ? null : Number(((100 * a) / b).toFixed(2));
 
 async function main(): Promise<number> {
   const url = process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
 
   const gold = buildLaunchGold();
-  const rows0 = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
+  const rows0 = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
   console.log(`document-vector reachability  frozenHash=${gold.frozenHash}  probe=${PROBE}`);
   console.log(`  ${rows0.length} semantic-class queries · ef_search=${EF_SEARCH} · topK=${TOP_K}`);
 
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 60_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 60_000 },
+  });
 
   // Which gold authorities are even IN the probe. A miss on an absent authority
   // is not a retrieval failure and must not be counted as one.
   const ids = [...new Set(rows0.map((r) => r.goldAuthorityId))];
   const present = new Set<string>();
   for (let i = 0; i < ids.length; i += 500) {
-    const r = await sql.unsafe(`SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`, [
-      ids.slice(i, i + 500),
-    ]);
+    const r = await sql.unsafe(
+      `SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
+      [ids.slice(i, i + 500)],
+    );
     for (const x of r) present.add(x['judgment_id'] as string);
   }
   console.log(`  gold authorities present in the probe: ${present.size}/${ids.length}`);
@@ -158,12 +174,21 @@ async function main(): Promise<number> {
       if (vec) {
         const hits = await sql.begin(async (tx) => {
           await tx.unsafe(`SET LOCAL hnsw.ef_search = ${EF_SEARCH}`);
-          return tx.unsafe(`SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`, [vec]);
+          return tx.unsafe(
+            `SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`,
+            [vec],
+          );
         });
         const at = hits.findIndex((h) => h['judgment_id'] === g.goldAuthorityId);
         rank = at === -1 ? null : at + 1;
       }
-      const row: Row = { queryId: g.queryId, launchClass: g.launchClass, rank, ms: Date.now() - t, inIndex };
+      const row: Row = {
+        queryId: g.queryId,
+        launchClass: g.launchClass,
+        rank,
+        ms: Date.now() - t,
+        inIndex,
+      };
       results.push(row);
       appendFileSync(CKPT, JSON.stringify({ ...row, frozenHash: gold.frozenHash }) + '\n');
       if ((i + 1) % 50 === 0) console.log(`  ${i + 1}/${rows0.length}`);
@@ -187,7 +212,11 @@ async function main(): Promise<number> {
       successAt1: pct(sub.filter((r) => r.rank === 1).length, sub.length),
       successAt5: pct(sub.filter((r) => r.rank !== null && r.rank <= 5).length, sub.length),
       successAt20: pct(sub.filter((r) => r.rank !== null && r.rank <= TOP_K).length, sub.length),
-      mrr: Number((sub.reduce((a, r) => a + (r.rank ? 1 / r.rank : 0), 0) / Math.max(1, sub.length)).toFixed(4)),
+      mrr: Number(
+        (sub.reduce((a, r) => a + (r.rank ? 1 / r.rank : 0), 0) / Math.max(1, sub.length)).toFixed(
+          4,
+        ),
+      ),
       latencyMs: { p50: quantile(lat, 0.5), p95: quantile(lat, 0.95), max: Math.max(0, ...lat) },
     };
   }
@@ -221,8 +250,12 @@ async function main(): Promise<number> {
   console.log('\nDOCUMENT-VECTOR REACHABILITY (dense arm alone, UPPER BOUND)');
   for (const [cls, m] of Object.entries(byClass)) {
     const v = m as Record<string, unknown>;
-    console.log(`\n  ${cls}  (${v['queries']} queries, ${v['scoredOn']} scored, ${v['goldAbsentFromIndex']} absent)`);
-    console.log(`    s@1 ${v['successAt1']}%  s@5 ${v['successAt5']}%  s@${TOP_K} ${v['successAt20']}%  MRR ${v['mrr']}`);
+    console.log(
+      `\n  ${cls}  (${v['queries']} queries, ${v['scoredOn']} scored, ${v['goldAbsentFromIndex']} absent)`,
+    );
+    console.log(
+      `    s@1 ${v['successAt1']}%  s@5 ${v['successAt5']}%  s@${TOP_K} ${v['successAt20']}%  MRR ${v['mrr']}`,
+    );
     console.log(`    latency ${JSON.stringify(v['latencyMs'])}`);
   }
   console.log(`\nwrote ${OUT}`);

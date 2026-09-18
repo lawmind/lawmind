@@ -88,7 +88,7 @@ for (const c of m.clusters) {
 }
 
 const assignment = new Map();
-for (const [stratum, ids] of [...buckets.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+for (const [_stratum, ids] of [...buckets.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
   // Deterministic order within the stratum, then an exact prefix to development.
   const ordered = [...ids].sort(
     (a, b) => unit(`${seed}#split#${a}`) - unit(`${seed}#split#${b}`) || a - b,

@@ -74,7 +74,7 @@ const PATTERNS: { name: string; re: RegExp }[] = [
   },
   {
     name: 'CORAM_LABEL_BLOCK',
-    re: /\bCORAM\s*[:\-]?\s*\n+((?:.{0,90}\n){1,4})/gi,
+    re: /\bCORAM\s*[:-]?\s*\n+((?:.{0,90}\n){1,4})/gi,
   },
 ];
 

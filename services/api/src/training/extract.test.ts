@@ -13,11 +13,7 @@ import {
   PAIR_SCHEMA_VERSION,
   SIGNAL_WEIGHT,
 } from './extract.ts';
-import {
-  TRAINING_CONSENT_VERSION,
-  consentIsCurrent,
-  hasConsent,
-} from './consent.ts';
+import { TRAINING_CONSENT_VERSION, consentIsCurrent, hasConsent } from './consent.ts';
 
 /* --------------------------------------------------------- consent itself -- */
 
@@ -96,7 +92,11 @@ test('the consent predicate checks BOTH columns', () => {
 
 test('every branch joins users — a branch that does not cannot be gated', () => {
   for (const branch of EXTRACTION_SQL.split(/UNION ALL/i)) {
-    assert.match(branch, /JOIN users u ON u\.id =/, 'a branch has no user to check consent against');
+    assert.match(
+      branch,
+      /JOIN users u ON u\.id =/,
+      'a branch has no user to check consent against',
+    );
   }
 });
 

@@ -292,7 +292,10 @@ async function schemaDigest(sql: Sql): Promise<string> {
       UNION ALL
       SELECT 'v:' || table_name FROM information_schema.views WHERE table_schema = 'public'
     ) s`;
-  return createHash('sha256').update(rows[0]?.sig ?? '').digest('hex').slice(0, 16);
+  return createHash('sha256')
+    .update(rows[0]?.sig ?? '')
+    .digest('hex')
+    .slice(0, 16);
 }
 
 /**
@@ -303,7 +306,13 @@ async function schemaDigest(sql: Sql): Promise<string> {
  * Paths whose uncommitted state means the named HEAD does not reproduce the
  * candidate. Everything outside this is operational churn on a shared worktree.
  */
-const RELEASE_RELEVANT = [/^services\//, /^packages\//, /^apps\//, /^scripts\//, /^docs\/API_CONTRACTS\.md$/];
+const RELEASE_RELEVANT = [
+  /^services\//,
+  /^packages\//,
+  /^apps\//,
+  /^scripts\//,
+  /^docs\/API_CONTRACTS\.md$/,
+];
 
 /**
  * Excluded from the above even though they live under a release-relevant root.
@@ -460,10 +469,20 @@ export async function checkCandidateDrift(
   headNow?: string,
 ): Promise<CandidateDrift> {
   const current = await readCorpusIdentity(sql);
-  const currentCode = await readCodeIdentity(sql, headNow ?? candidate.code?.head ?? candidate.head);
+  const currentCode = await readCodeIdentity(
+    sql,
+    headNow ?? candidate.code?.head ?? candidate.head,
+  );
   const movedCode: CandidateDrift['movedCode'] = [];
   if (candidate.code) {
-    for (const key of ['head', 'migrationFiles', 'migrationDigest', 'registryVersion', 'registryDigest', 'schemaDigest'] as const) {
+    for (const key of [
+      'head',
+      'migrationFiles',
+      'migrationDigest',
+      'registryVersion',
+      'registryDigest',
+      'schemaDigest',
+    ] as const) {
       // `treeClean`/`dirtyPaths` are deliberately NOT compared: they describe the
       // moment of sealing, not the candidate's identity, and a later edit to an
       // unrelated file is not corpus or code drift in this candidate.

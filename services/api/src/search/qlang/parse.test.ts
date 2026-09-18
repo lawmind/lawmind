@@ -176,7 +176,10 @@ test('6.9b a range on a field that cannot have one is refused', () => {
 
 test('6.10 length and term caps are enforced', () => {
   assert.match(refuses(`text:${'x'.repeat(2100)}`).message, /limit is 2000/);
-  assert.match(refuses(Array.from({ length: 250 }, (_, i) => `w${i}`).join(' ')).message, /more than 200 terms/);
+  assert.match(
+    refuses(Array.from({ length: 250 }, (_, i) => `w${i}`).join(' ')).message,
+    /more than 200 terms/,
+  );
 });
 
 test('6.11 nesting deeper than the cap is refused, not a stack overflow', () => {
@@ -190,12 +193,24 @@ test('6.12 FUZZ — never a crash, always an AST or a positioned QueryError', ()
    * stranger can send input to; the one outcome that must never happen is an
    * unhandled throw reaching the route as a 500.
    */
-  const alphabet = [...'abc "():*?[]/ ', 'AND', 'OR', 'NOT', 'NEAR/5', 'judge:', 'date:', 'TO', 'न्या'];
+  const alphabet = [
+    ...'abc "():*?[]/ ',
+    'AND',
+    'OR',
+    'NOT',
+    'NEAR/5',
+    'judge:',
+    'date:',
+    'TO',
+    'न्या',
+  ];
   let rng = 42;
   const rand = () => (rng = (rng * 1103515245 + 12345) % 2147483648) / 2147483648;
   for (let i = 0; i < 3000; i++) {
     const n = 1 + Math.floor(rand() * 12);
-    const q = Array.from({ length: n }, () => alphabet[Math.floor(rand() * alphabet.length)]).join('');
+    const q = Array.from({ length: n }, () => alphabet[Math.floor(rand() * alphabet.length)]).join(
+      '',
+    );
     try {
       parse(q);
     } catch (e) {
@@ -247,7 +262,13 @@ test('lowercase "or" inside prose is NOT an operator', () => {
 });
 
 test('anything naming a field or using an operator IS structured', () => {
-  for (const q of ['judge:"Kania"', 'a AND b', 'a NOT b', '"x y" NEAR/3 "z"', 'date:[2019 TO 2024]']) {
+  for (const q of [
+    'judge:"Kania"',
+    'a AND b',
+    'a NOT b',
+    '"x y" NEAR/3 "z"',
+    'date:[2019 TO 2024]',
+  ]) {
     assert.equal(looksStructured(q), true, `structured query not detected: ${q}`);
   }
 });

@@ -36,7 +36,7 @@
  * candidate pool (<=1000 ids). Not a scan.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import postgres, { type Sql } from 'postgres';
+import postgres from 'postgres';
 import { sslFor } from './db-url.ts';
 
 const TARGET_PER_TYPE = 200;
@@ -44,14 +44,29 @@ const MIN_CHARS = 100;
 const MAX_CHARS = 600;
 const PER_COURT_CAP = 15;
 
-const CONTROL_CHAR_CODES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-const CONTROL_CHAR_RE = new RegExp(`[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`, 'g');
+const CONTROL_CHAR_CODES = [
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+  30, 31,
+];
+const CONTROL_CHAR_RE = new RegExp(
+  `[${CONTROL_CHAR_CODES.map((c) => String.fromCharCode(c)).join('')}]`,
+  'g',
+);
 function mojibakeCount(text: string): number {
   return (text.match(CONTROL_CHAR_RE) ?? []).length;
 }
 
-const ALLOWED = ['lexical_similarity', 'dense_semantic_similarity', 'court_match', 'date_proximity'];
-const PROHIBITED = ['inbound_citation_count', 'citation_graph_authority_score', 'pagerank_style_score'];
+const ALLOWED = [
+  'lexical_similarity',
+  'dense_semantic_similarity',
+  'court_match',
+  'date_proximity',
+];
+const PROHIBITED = [
+  'inbound_citation_count',
+  'citation_graph_authority_score',
+  'pagerank_style_score',
+];
 
 type ClaimRow = {
   objectId: string;
@@ -71,7 +86,10 @@ type ClaimRow = {
 
 function loadClaims(relPath: string): ClaimRow[] {
   const path = new URL(`../../../${relPath}`, import.meta.url);
-  return readFileSync(path, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  return readFileSync(path, 'utf8')
+    .trim()
+    .split('\n')
+    .map((l) => JSON.parse(l));
 }
 
 function sampleOnePerJudgment(claims: ClaimRow[]): ClaimRow[] {
@@ -83,7 +101,9 @@ function sampleOnePerJudgment(claims: ClaimRow[]): ClaimRow[] {
   }
   const picks: ClaimRow[] = [];
   for (const [, rows] of byJudgment) {
-    const pick = rows.filter((r) => r.evidence.length >= MIN_CHARS && r.evidence.length <= MAX_CHARS).sort((a, b) => b.evidence.length - a.evidence.length)[0];
+    const pick = rows
+      .filter((r) => r.evidence.length >= MIN_CHARS && r.evidence.length <= MAX_CHARS)
+      .sort((a, b) => b.evidence.length - a.evidence.length)[0];
     if (pick) picks.push(pick);
   }
   picks.sort((a, b) => a.judgmentId.localeCompare(b.judgmentId));
@@ -110,14 +130,31 @@ async function main() {
     process.exit(2);
   }
 
-  const issues = capPerCourt(sampleOnePerJudgment(loadClaims('docs/ai/embedding-manifests/legal-objects/issues.jsonl')), TARGET_PER_TYPE);
-  const propositions = capPerCourt(sampleOnePerJudgment(loadClaims('docs/ai/embedding-manifests/legal-objects/propositions.jsonl')), TARGET_PER_TYPE);
-  console.log(`issues candidates: ${issues.length}, propositions candidates: ${propositions.length}`);
+  const issues = capPerCourt(
+    sampleOnePerJudgment(loadClaims('docs/ai/embedding-manifests/legal-objects/issues.jsonl')),
+    TARGET_PER_TYPE,
+  );
+  const propositions = capPerCourt(
+    sampleOnePerJudgment(
+      loadClaims('docs/ai/embedding-manifests/legal-objects/propositions.jsonl'),
+    ),
+    TARGET_PER_TYPE,
+  );
+  console.log(
+    `issues candidates: ${issues.length}, propositions candidates: ${propositions.length}`,
+  );
 
   const sql = postgres(url, { ssl: sslFor(url), max: 3 });
   try {
     const allIds = [...new Set([...issues, ...propositions].map((c) => c.judgmentId))];
-    const idRows = await sql<{ id: string; case_title: string; neutral_citation: string | null; reporter_citations: string[] }[]>`
+    const idRows = await sql<
+      {
+        id: string;
+        case_title: string;
+        neutral_citation: string | null;
+        reporter_citations: string[];
+      }[]
+    >`
       SELECT id::text, case_title, neutral_citation, coalesce(reporter_citations, '{}') AS reporter_citations
       FROM judgments
       WHERE id = ANY(${allIds}::uuid[])
@@ -133,7 +170,10 @@ async function main() {
     `;
     const inboundMap = new Map(inbound.map((r) => [r.cited_judgment_id, r.n]));
 
-    function containsOwnCitation(evidence: string, live: { case_title: string; neutral_citation: string | null; reporter_citations: string[] }): boolean {
+    function containsOwnCitation(
+      evidence: string,
+      live: { case_title: string; neutral_citation: string | null; reporter_citations: string[] },
+    ): boolean {
       const hay = evidence.toLowerCase();
       const candidates = [live.neutral_citation, ...live.reporter_citations].filter(
         (s): s is string => s !== null && s.length >= 6,
@@ -147,12 +187,18 @@ async function main() {
       let seq = 1;
       for (const c of claims) {
         if (c.text !== c.evidence) {
-          rejected.push({ judgmentId: c.judgmentId, reason: 'TEXT_NOT_VERBATIM: text !== evidence, expected assertion violated' });
+          rejected.push({
+            judgmentId: c.judgmentId,
+            reason: 'TEXT_NOT_VERBATIM: text !== evidence, expected assertion violated',
+          });
           continue;
         }
         const live = byId.get(c.judgmentId);
         if (!live) {
-          rejected.push({ judgmentId: c.judgmentId, reason: 'AUTHORITY_IDENTITY_FAIL: id does not resolve in judgments' });
+          rejected.push({
+            judgmentId: c.judgmentId,
+            reason: 'AUTHORITY_IDENTITY_FAIL: id does not resolve in judgments',
+          });
           continue;
         }
         if (mojibakeCount(c.evidence) > 5) {
@@ -160,7 +206,10 @@ async function main() {
           continue;
         }
         if (containsOwnCitation(c.evidence, live)) {
-          rejected.push({ judgmentId: c.judgmentId, reason: 'CIRCULARITY_FAIL: evidence text contains its own target citation string' });
+          rejected.push({
+            judgmentId: c.judgmentId,
+            reason: 'CIRCULARITY_FAIL: evidence text contains its own target citation string',
+          });
           continue;
         }
         rows.push({
@@ -201,19 +250,24 @@ async function main() {
       version: 1,
       generatedAt: new Date().toISOString(),
       generatedBy: 'NEW3',
-      purpose: 'P2 of the mission brief: non-citation-grounded gold. First gold built from LCC ISSUE and PROPOSITION legal-object claims rather than citation edges or holding text -- complementary to the citation-derived (P0/P1) and uncited-only (P3) sets, sampled across ALL citation statuses.',
+      purpose:
+        'P2 of the mission brief: non-citation-grounded gold. First gold built from LCC ISSUE and PROPOSITION legal-object claims rather than citation edges or holding text -- complementary to the citation-derived (P0/P1) and uncited-only (P3) sets, sampled across ALL citation statuses.',
       population: {
-        source: 'docs/ai/embedding-manifests/legal-objects/{issues,propositions}.jsonl (LCC LEGAL_OBJECT_VECTOR_MANIFEST_READY v2, bus 0892; 1,330 + 3,798 rows of the 7,414-claim total)',
+        source:
+          'docs/ai/embedding-manifests/legal-objects/{issues,propositions}.jsonl (LCC LEGAL_OBJECT_VECTOR_MANIFEST_READY v2, bus 0892; 1,330 + 3,798 rows of the 7,414-claim total)',
         issueCandidatesConsidered: issues.length,
         issueRowsPromoted: issueResult.rows.length,
         issueRowsRejected: issueResult.rejected.length,
         propositionCandidatesConsidered: propositions.length,
         propositionRowsPromoted: propResult.rows.length,
         propositionRowsRejected: propResult.rejected.length,
-        samplingMethod: 'one claim per judgment (longest evidence 100-600 chars), deterministic sort by judgmentId, capped at 15 per court for diversity',
-        circularityGuard: 'evidence text checked live against its own judgment.neutral_citation and reporter_citations (case-insensitive substring); any match REJECTED not redacted',
+        samplingMethod:
+          'one claim per judgment (longest evidence 100-600 chars), deterministic sort by judgmentId, capped at 15 per court for diversity',
+        circularityGuard:
+          'evidence text checked live against its own judgment.neutral_citation and reporter_citations (case-insensitive substring); any match REJECTED not redacted',
       },
-      caveat: 'Same construction as P3 uncited-authority gold: query is a verbatim own_text_span of the target, an upper bound on retrievability rather than a paraphrase-robustness measurement. Unlike P3, this set is NOT restricted to zero-inbound authorities -- inboundCitations is recorded per row so a consumer can filter or stratify by citation status.',
+      caveat:
+        'Same construction as P3 uncited-authority gold: query is a verbatim own_text_span of the target, an upper bound on retrievability rather than a paraphrase-robustness measurement. Unlike P3, this set is NOT restricted to zero-inbound authorities -- inboundCitations is recorded per row so a consumer can filter or stratify by citation status.',
       byCourt,
       quarantine: { issues: issueResult.rejected, propositions: propResult.rejected },
       cases: [...issueResult.rows, ...propResult.rows],
@@ -222,8 +276,12 @@ async function main() {
     const outPath = new URL('../../../docs/ai/new3-noncitation-gold.json', import.meta.url);
     writeFileSync(outPath, `${JSON.stringify(doc, null, 2)}\n`);
 
-    console.log(`\nissue rows: ${issueResult.rows.length} promoted, ${issueResult.rejected.length} rejected`);
-    console.log(`proposition rows: ${propResult.rows.length} promoted, ${propResult.rejected.length} rejected`);
+    console.log(
+      `\nissue rows: ${issueResult.rows.length} promoted, ${issueResult.rejected.length} rejected`,
+    );
+    console.log(
+      `proposition rows: ${propResult.rows.length} promoted, ${propResult.rejected.length} rejected`,
+    );
     console.log('by court:', byCourt);
     console.log(`wrote docs/ai/new3-noncitation-gold.json`);
   } finally {

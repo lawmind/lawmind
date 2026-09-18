@@ -72,9 +72,18 @@ describe('offendingTable', () => {
   });
 
   it('catches writes as well as reads', () => {
-    assert.equal(offendingTable('INSERT INTO citation_checks (id) VALUES ($1)', 'corpus'), 'citation_checks');
-    assert.equal(offendingTable('UPDATE saved_searches SET last_seen_at = now()', 'corpus'), 'saved_searches');
-    assert.equal(offendingTable('DELETE FROM judgment_annotations WHERE id = $1', 'corpus'), 'judgment_annotations');
+    assert.equal(
+      offendingTable('INSERT INTO citation_checks (id) VALUES ($1)', 'corpus'),
+      'citation_checks',
+    );
+    assert.equal(
+      offendingTable('UPDATE saved_searches SET last_seen_at = now()', 'corpus'),
+      'saved_searches',
+    );
+    assert.equal(
+      offendingTable('DELETE FROM judgment_annotations WHERE id = $1', 'corpus'),
+      'judgment_annotations',
+    );
   });
 
   it('does not mistake a CTE for the table it shares a name with', () => {
@@ -97,7 +106,8 @@ describe('roleGuarded', () => {
     const raw = fakeSql();
     const guarded = roleGuarded(raw as never, 'corpus');
     assert.throws(
-      () => (guarded as never as (s: TemplateStringsArray) => unknown)(tag('SELECT * FROM matters')),
+      () =>
+        (guarded as never as (s: TemplateStringsArray) => unknown)(tag('SELECT * FROM matters')),
       WrongRoleQueryError,
     );
     assert.equal(raw.sent.length, 0, 'the statement reached the connection anyway');
@@ -117,8 +127,12 @@ describe('roleGuarded', () => {
     const guarded = roleGuarded(raw as never, 'corpus');
     await assert.rejects(
       () =>
-        (guarded as never as { begin: (fn: (tx: never) => Promise<unknown>) => Promise<unknown> }).begin(
-          async (tx: never) => (tx as unknown as (s: TemplateStringsArray) => unknown)(tag('INSERT INTO matters (id) VALUES ($1)')),
+        (
+          guarded as never as { begin: (fn: (tx: never) => Promise<unknown>) => Promise<unknown> }
+        ).begin(async (tx: never) =>
+          (tx as unknown as (s: TemplateStringsArray) => unknown)(
+            tag('INSERT INTO matters (id) VALUES ($1)'),
+          ),
         ),
       WrongRoleQueryError,
     );
@@ -129,7 +143,8 @@ describe('roleGuarded', () => {
     const raw = fakeSql();
     const guarded = roleGuarded(raw as never, 'user');
     assert.throws(
-      () => (guarded as never as { unsafe: (s: string) => unknown }).unsafe('SELECT * FROM judgments'),
+      () =>
+        (guarded as never as { unsafe: (s: string) => unknown }).unsafe('SELECT * FROM judgments'),
       WrongRoleQueryError,
     );
     assert.equal(raw.sent.length, 0);

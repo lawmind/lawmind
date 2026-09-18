@@ -256,15 +256,11 @@ export async function createMatter(
    * created because a metric could not be written. NEW3 bus 1077 — this and six
    * others were never wired, so `activation_events` was empty everywhere.
    */
-  recordStepInBackground(
-    pool,
-    userId!,
-    'created_matter',
-    (err) =>
-        logger.error(
-          { request_id: c.get('requestId'), err, step: 'created_matter' },
-          'activation step not recorded',
-        ),
+  recordStepInBackground(pool, userId!, 'created_matter', (err) =>
+    logger.error(
+      { request_id: c.get('requestId'), err, step: 'created_matter' },
+      'activation step not recorded',
+    ),
   );
 
   return ok(c, { matter: shapeMatter(row!) }, 201);

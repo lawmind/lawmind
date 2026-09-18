@@ -96,9 +96,15 @@ const ambiguous = bucketTotal('ambiguous');
 const pct = (n: number) => `${((n / grand) * 100).toFixed(2)}%`;
 
 console.log('');
-console.log(`  unambiguously a judgment   ${confident.toLocaleString().padStart(11)}  ${pct(confident)}`);
-console.log(`  "Judgement/Order" — either ${ambiguous.toLocaleString().padStart(11)}  ${pct(ambiguous)}`);
-console.log(`  everything else            ${(grand - confident - ambiguous).toLocaleString().padStart(11)}  ${pct(grand - confident - ambiguous)}`);
+console.log(
+  `  unambiguously a judgment   ${confident.toLocaleString().padStart(11)}  ${pct(confident)}`,
+);
+console.log(
+  `  "Judgement/Order" — either ${ambiguous.toLocaleString().padStart(11)}  ${pct(ambiguous)}`,
+);
+console.log(
+  `  everything else            ${(grand - confident - ambiguous).toLocaleString().padStart(11)}  ${pct(grand - confident - ambiguous)}`,
+);
 console.log('');
 console.log(`JUDGMENT SHARE IS A RANGE: ${pct(confident)} .. ${pct(confident + ambiguous)}`);
 console.log('The spread is one label — `View Judgement/Order` — which the bucket does');

@@ -127,8 +127,13 @@ function evaluate(rowsIn, th) {
   for (const r of rowsIn) {
     const d = decide(signals(r), th);
     const ok = succeeded(r);
-    if (d === 'answered') ok ? (answeredRight += 1) : (answeredWrong += 1);
-    else if (d === 'abstained') ok ? (abstainedWrong += 1) : (abstainedRight += 1);
+    if (d === 'answered') {
+      if (ok) answeredRight += 1;
+      else answeredWrong += 1;
+    } else if (d === 'abstained') {
+      if (ok) abstainedWrong += 1;
+      else abstainedRight += 1;
+    }
     else if (d === 'review_required') review += 1;
     else coverageUnknown += 1;
   }

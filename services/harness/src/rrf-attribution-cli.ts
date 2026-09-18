@@ -257,7 +257,9 @@ function main(qs: PerQuery[]): number {
     console.log('────────────────────────────────────────────────────────────────────────');
     console.log(`  BOTH arms (two RRF terms)      ${twoArm}  (${pct(twoArm, dTot)})`);
     console.log(`  ONE arm  (one RRF term)        ${oneArm}  (${pct(oneArm, dTot)})`);
-    console.log(`  neither arm's top 20           ${unseen}  (${pct(unseen, dTot)})  — arrived from deeper than 20`);
+    console.log(
+      `  neither arm's top 20           ${unseen}  (${pct(unseen, dTot)})  — arrived from deeper than 20`,
+    );
     if (sparseRanksOfDisplacers.length > 0) {
       const srt = [...sparseRanksOfDisplacers].sort((a, b) => a - b);
       console.log(
@@ -268,8 +270,12 @@ function main(qs: PerQuery[]): number {
     console.log('');
     console.log('AND THE GOLD THEY DISPLACED — how many arms found IT');
     console.log('────────────────────────────────────────────────────────────────────────');
-    console.log(`  gold found by BOTH arms        ${goldTwoArm}  (${pct(goldTwoArm, goldTwoArm + goldOneArm)})`);
-    console.log(`  gold found by DENSE ONLY       ${goldOneArm}  (${pct(goldOneArm, goldTwoArm + goldOneArm)})`);
+    console.log(
+      `  gold found by BOTH arms        ${goldTwoArm}  (${pct(goldTwoArm, goldTwoArm + goldOneArm)})`,
+    );
+    console.log(
+      `  gold found by DENSE ONLY       ${goldOneArm}  (${pct(goldOneArm, goldTwoArm + goldOneArm)})`,
+    );
     console.log('');
     console.log('  If gold is overwhelmingly one-term while displacers are two-term, the');
     console.log('  mechanism is RRF rewarding ARM COUNT, and arm count is noise while one');
@@ -281,7 +287,9 @@ function main(qs: PerQuery[]): number {
     console.log('visible, which cannot see the mechanism. Re-run to populate them.');
   }
 
-  const repeats = [...repeatOffender.entries()].filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]);
+  const repeats = [...repeatOffender.entries()]
+    .filter(([, n]) => n > 1)
+    .sort((a, b) => b[1] - a[1]);
   console.log('');
   if (repeats.length === 0) {
     console.log('no document displaced gold on more than one query — displacement is not');

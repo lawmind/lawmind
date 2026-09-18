@@ -154,7 +154,8 @@ export type FootnoteParse = {
  * digit after one of them is an argument and never an entry marker. Read off
  * the corpus: `s. 12`, `sec. 3 (ii)`, `Sch. 2`, `cl. (a)`, `No. 15`, `Part II`.
  */
-const NUMBER_TAKING_ABBREVIATION = /\b(?:s|ss|sec|secs|Sch|sch|cl|art|Art|No|no|r|para|Part|part|sub-s)\.$/;
+const NUMBER_TAKING_ABBREVIATION =
+  /\b(?:s|ss|sec|secs|Sch|sch|cl|art|Art|No|no|r|para|Part|part|sub-s)\.$/;
 
 export function splitFootnoteEntries(footnote: string): { ordinal: number; text: string }[] {
   const text = footnote.replace(/\s+/g, ' ').trim();

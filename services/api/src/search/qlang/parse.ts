@@ -273,11 +273,7 @@ class Parser {
   private parseFieldValue(fieldTok: Token): Node {
     const field = fieldTok.value as Field;
     if (!(FIELDS as readonly string[]).includes(field)) {
-      throw new QueryError(
-        `Unknown field "${fieldTok.value}".`,
-        fieldTok.start,
-        FIELDS,
-      );
+      throw new QueryError(`Unknown field "${fieldTok.value}".`, fieldTok.start, FIELDS);
     }
 
     const t = this.peek();

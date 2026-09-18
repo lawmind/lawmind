@@ -70,8 +70,7 @@ export type Article = {
  * to amend the Constitution].—` — which is stripped rather than treated as part
  * of the name.
  */
-const ARTICLE_OPENER =
-  /(?:^|[[\]]|\s)(\d{1,3}[A-Z]?(?:-[A-Z]{1,3})?)\.\s+(.{3,150}?)\.\s*—/;
+const ARTICLE_OPENER = /(?:^|[[\]]|\s)(\d{1,3}[A-Z]?(?:-[A-Z]{1,3})?)\.\s+(.{3,150}?)\.\s*—/;
 
 /**
  * THE OPENER IS OFTEN NOT AT THE START OF ITS LINE, and anchoring to `^` lost

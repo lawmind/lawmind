@@ -25,7 +25,8 @@ if (!email) throw new Error('usage: magic-link-acceptance-cli.ts <email>');
 const origin = process.env['AUTH_BASE_URL'];
 const secret = process.env['AUTH_SECRET'];
 const databaseUrl = process.env['USER_DATABASE_URL'] ?? process.env['DATABASE_URL'];
-if (!origin || !secret || !databaseUrl) throw new Error('AUTH_BASE_URL, AUTH_SECRET and a user database URL are required');
+if (!origin || !secret || !databaseUrl)
+  throw new Error('AUTH_BASE_URL, AUTH_SECRET and a user database URL are required');
 
 const out: Record<string, unknown> = { origin, email };
 const redact = (text: string, token: string) => text.split(token).join(`REDACTED(${token.length})`);
@@ -108,7 +109,8 @@ out['accessTokenIssued'] = accessToken.length > 0;
 // 3 — the session that link produced can call an authenticated route.
 const me = await fetch(`${origin}/me`, { headers: { authorization: `Bearer ${accessToken}` } });
 out['meStatus'] = me.status;
-out['meEmail'] = ((await me.json()) as { data?: { user?: { email?: string } } }).data?.user?.email ?? null;
+out['meEmail'] =
+  ((await me.json()) as { data?: { user?: { email?: string } } }).data?.user?.email ?? null;
 
 // 4 — one use, and only one.
 const replay = await post({ token: deepToken });

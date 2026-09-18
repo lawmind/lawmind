@@ -116,7 +116,8 @@ describe('GET /judgments/:id', () => {
       SELECT id FROM judgments
        WHERE neutral_citation IS NULL AND array_length(reporter_citations, 1) IS NULL
        LIMIT 1`;
-    if (!uncitable) return t.skip('no uncitable judgment in this corpus — expected once the HC ingest resumes');
+    if (!uncitable)
+      return t.skip('no uncitable judgment in this corpus — expected once the HC ingest resumes');
 
     const { status, body } = await get(`/judgments/${uncitable.id}`);
     assert.equal(status, 200);

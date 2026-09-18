@@ -35,11 +35,20 @@
  * and not spun into a new version number for a same-session bug.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
-import postgres, { type Sql } from 'postgres';
+import postgres from 'postgres';
 import { sslFor } from './db-url.ts';
 
-const ALLOWED = ['lexical_similarity', 'dense_semantic_similarity', 'court_match', 'date_proximity'];
-const PROHIBITED = ['inbound_citation_count', 'citation_graph_authority_score', 'pagerank_style_score'];
+const ALLOWED = [
+  'lexical_similarity',
+  'dense_semantic_similarity',
+  'court_match',
+  'date_proximity',
+];
+const PROHIBITED = [
+  'inbound_citation_count',
+  'citation_graph_authority_score',
+  'pagerank_style_score',
+];
 
 async function main() {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
@@ -49,8 +58,14 @@ async function main() {
   }
   const sql = postgres(url, { ssl: sslFor(url), max: 3 });
   try {
-    const uncitedPath = new URL('../../../docs/ai/new3-uncited-authority-gold-v2.json', import.meta.url);
-    const semPath = new URL('../../../docs/ai/new3-semantic-expansion-gold-v2.json', import.meta.url);
+    const uncitedPath = new URL(
+      '../../../docs/ai/new3-uncited-authority-gold-v2.json',
+      import.meta.url,
+    );
+    const semPath = new URL(
+      '../../../docs/ai/new3-semantic-expansion-gold-v2.json',
+      import.meta.url,
+    );
     const uncited = JSON.parse(readFileSync(uncitedPath, 'utf8'));
     const sem = JSON.parse(readFileSync(semPath, 'utf8'));
 
@@ -75,8 +90,12 @@ async function main() {
 
     const uncitedStaged = uncitedIds.filter((id) => stagedSet.has(id)).length;
     const semStaged = semIds.filter((id) => stagedSet.has(id)).length;
-    console.log(`uncited-authority gold: ${uncitedStaged}/${uncitedIds.length} staged in new1_doc_vector_stage`);
-    console.log(`semantic-expansion gold: ${semStaged}/${semIds.length} staged in new1_doc_vector_stage`);
+    console.log(
+      `uncited-authority gold: ${uncitedStaged}/${uncitedIds.length} staged in new1_doc_vector_stage`,
+    );
+    console.log(
+      `semantic-expansion gold: ${semStaged}/${semIds.length} staged in new1_doc_vector_stage`,
+    );
 
     // --- Correction 1: reachability, uncited-authority gold v2 ---
     const notStaged = uncitedIds.filter((id) => !stagedSet.has(id));
@@ -90,27 +109,36 @@ async function main() {
     };
 
     // --- Correction 2: P10 feature-family gate on semantic-expansion gold v2 ---
-    for (const r of sem.rows as Array<{ queryType: string; goldJudgmentId: string; provenance: Record<string, unknown> }>) {
+    for (const r of sem.rows as Array<{
+      queryType: string;
+      goldJudgmentId: string;
+      provenance: Record<string, unknown>;
+    }>) {
       r.provenance['queryClass'] = r.queryType;
       r.provenance['caseFamily'] = r.goldJudgmentId;
       r.provenance['allowedFeatureFamilies'] = ALLOWED;
       r.provenance['prohibitedFeatureFamilies'] = PROHIBITED;
       if (r.queryType !== 'proposition' && !('redacted' in r.provenance)) {
         r.provenance['redacted'] = [];
-        r.provenance['redactedReason'] = 'not applicable: the query IS the target judgment\'s own citation string or case title by construction, so there is no citing-judgment passage to redact from';
+        r.provenance['redactedReason'] =
+          "not applicable: the query IS the target judgment's own citation string or case title by construction, so there is no citing-judgment passage to redact from";
       }
     }
     sem.correction = {
       correctedAt: new Date().toISOString(),
       correctedBy: 'NEW3',
-      reason: 'bus 0942 (NEW1) point 4a/4b + mission brief P10: gold rows must carry allowed/prohibited feature families, case_family, and query class in the FILE, not only in a consuming adapter, to be independently auditable',
-      whatChanged: 'added queryClass, caseFamily, allowedFeatureFamilies, prohibitedFeatureFamilies to provenance on all 684 rows; added explicit redacted:[] + reason to the 456 exact_citation/case_title rows that previously omitted the key',
+      reason:
+        'bus 0942 (NEW1) point 4a/4b + mission brief P10: gold rows must carry allowed/prohibited feature families, case_family, and query class in the FILE, not only in a consuming adapter, to be independently auditable',
+      whatChanged:
+        'added queryClass, caseFamily, allowedFeatureFamilies, prohibitedFeatureFamilies to provenance on all 684 rows; added explicit redacted:[] + reason to the 456 exact_citation/case_title rows that previously omitted the key',
     };
 
     writeFileSync(uncitedPath, `${JSON.stringify(uncited, null, 2)}\n`);
     writeFileSync(semPath, `${JSON.stringify(sem, null, 2)}\n`);
     console.log('\ncorrected: docs/ai/new3-uncited-authority-gold-v2.json (reachabilityWarning)');
-    console.log('corrected: docs/ai/new3-semantic-expansion-gold-v2.json (P10 feature-family gate, all 684 rows)');
+    console.log(
+      'corrected: docs/ai/new3-semantic-expansion-gold-v2.json (P10 feature-family gate, all 684 rows)',
+    );
   } finally {
     await sql.end();
   }

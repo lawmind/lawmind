@@ -60,10 +60,7 @@ export const CANONICAL_DEFINITION_PATH = join(
   REPO_ROOT,
   'docs/ai/new2-r10/hc-parity-definition-v2.json',
 );
-export const CANONICAL_MEASUREMENT_PATH = join(
-  REPO_ROOT,
-  'docs/ai/new2-r10/source-freshness.json',
-);
+export const CANONICAL_MEASUREMENT_PATH = join(REPO_ROOT, 'docs/ai/new2-r10/source-freshness.json');
 export const CANONICAL_PARITY_PATH = join(REPO_ROOT, 'docs/ai/new2-r10/parity-matrix.json');
 
 export const PUBLISHED_OBSERVATION_ARTIFACT = 'LCC_FRESHNESS_OBSERVATION_V1';
@@ -251,8 +248,7 @@ function assertInternalAccounting(measurement: Record<string, unknown>): void {
   // somewhere else. A source-level total that disagrees with its own detail is
   // the mixed-pair defect wearing different clothes.
   const headline = finiteNumber(source['upstreamLocalCompleteness'], 'upstreamLocalCompleteness');
-  const expectedHeadline =
-    totals.upstreamRecords === 0 ? 1 : totals.held / totals.upstreamRecords;
+  const expectedHeadline = totals.upstreamRecords === 0 ? 1 : totals.held / totals.upstreamRecords;
   if (Math.abs(headline - expectedHeadline) > RATIO_TOLERANCE) {
     fail(
       `source upstreamLocalCompleteness ${headline} does not equal the window's ` +
@@ -332,7 +328,9 @@ export async function publishFreshnessObservation(
   const contract = measurement['contract'];
   const measurementVersion =
     measurement['definitionVersion'] ??
-    (contract === undefined ? undefined : asRecord(contract, 'measurement.contract')['definitionVersion']);
+    (contract === undefined
+      ? undefined
+      : asRecord(contract, 'measurement.contract')['definitionVersion']);
   if (measurementVersion !== definitionVersion) {
     fail(
       `definition mismatch: measurement=${String(measurementVersion)} ` +
@@ -487,10 +485,7 @@ export async function readPublishedObservation(
     );
   }
 
-  const definitionVersion = nonEmptyString(
-    observation['definitionVersion'],
-    'definitionVersion',
-  );
+  const definitionVersion = nonEmptyString(observation['definitionVersion'], 'definitionVersion');
   const definition = asRecord(body['definition'], 'body.definition');
   if (definition['definitionVersion'] !== definitionVersion) {
     fail(

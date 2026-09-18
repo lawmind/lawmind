@@ -11,7 +11,7 @@ const env = Object.fromEntries(
   fs
     .readFileSync('.env', 'utf8')
     .split(/\r?\n/)
-    .map((l) => l.replace(/^﻿/, '').trim())
+    .map((l) => l.replace(/^\ufeff/, '').trim())
     .filter((l) => /^[A-Za-z_]+=/.test(l))
     .map((l) => {
       const i = l.indexOf('=');

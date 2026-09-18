@@ -119,7 +119,10 @@ describe('matters', () => {
     const created = await app.request('/matters', {
       method: 'POST',
       headers: auth(alice.token),
-      body: JSON.stringify({ ...body, parties: { description: 'Ramesh Kumar v. State of NCT of Delhi' } }),
+      body: JSON.stringify({
+        ...body,
+        parties: { description: 'Ramesh Kumar v. State of NCT of Delhi' },
+      }),
     });
     assert.equal(created.status, 201);
     const posted = ((await created.json()) as { data: { matter: Record<string, unknown> } }).data
@@ -129,7 +132,11 @@ describe('matters', () => {
     // The column. This is the assertion the defect could not have survived.
     const [stored] = await sql<{ t: string }[]>`
       SELECT jsonb_typeof(parties) AS t FROM matters WHERE id = ${id}::uuid`;
-    assert.equal(stored?.t, 'object', 'matters.parties must be a jsonb object, never a string scalar');
+    assert.equal(
+      stored?.t,
+      'object',
+      'matters.parties must be a jsonb object, never a string scalar',
+    );
 
     // RCC's frozen contract is `{ description: string }` (apps/mobile/src/api/
     // contract.ts). It reads it directly, with no defensive JSON.parse, on all
@@ -138,12 +145,14 @@ describe('matters', () => {
     assert.deepEqual(posted['parties'], { description: expected }, 'POST /matters');
 
     const detail = await app.request(`/matters/${id}`, { headers: auth(alice.token) });
-    const got = ((await detail.json()) as { data: { matter: Record<string, unknown> } }).data.matter;
+    const got = ((await detail.json()) as { data: { matter: Record<string, unknown> } }).data
+      .matter;
     assert.deepEqual(got['parties'], { description: expected }, 'GET /matters/:id');
 
     const list = await app.request('/matters', { headers: auth(alice.token) });
-    const row = ((await list.json()) as { data: { matters: Record<string, unknown>[] } }).data
-      .matters.find((x) => x['matterId'] === id);
+    const row = (
+      (await list.json()) as { data: { matters: Record<string, unknown>[] } }
+    ).data.matters.find((x) => x['matterId'] === id);
     assert.deepEqual(row?.['parties'], { description: expected }, 'GET /matters');
   });
 

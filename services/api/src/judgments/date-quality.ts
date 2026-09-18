@@ -112,7 +112,9 @@ export function isDateContradicted(state: DateQuality | undefined): boolean {
  * `usable` — make the claim. `date_unreliable` — state that instead; never a
  * hedge in prose the client may not render, and never the claim with a footnote.
  */
-export function chronologyClaim(...states: (DateQuality | undefined)[]): 'usable' | 'date_unreliable' {
+export function chronologyClaim(
+  ...states: (DateQuality | undefined)[]
+): 'usable' | 'date_unreliable' {
   return states.some(isDateContradicted) ? 'date_unreliable' : 'usable';
 }
 
@@ -123,7 +125,10 @@ export function chronologyClaim(...states: (DateQuality | undefined)[]): 'usable
  * missing id gets `undefined`, which it must put on the wire as `null` —
  * `??  null`, never `?? 'DATE_UNKNOWN'`.
  */
-export async function dateQualityFor(sql: Sql, ids: readonly string[]): Promise<Map<string, DateState>> {
+export async function dateQualityFor(
+  sql: Sql,
+  ids: readonly string[],
+): Promise<Map<string, DateState>> {
   const unique = [...new Set(ids.filter((id) => id))];
   if (unique.length === 0) return new Map();
   const rows = await sql<{ judgment_id: string; state: DateState }[]>`

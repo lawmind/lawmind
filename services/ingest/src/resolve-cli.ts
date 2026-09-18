@@ -184,7 +184,10 @@ async function assertIndexFresh(): Promise<void> {
   let cursorAt: string | undefined;
   let cursorId: string | undefined;
   try {
-    const c = JSON.parse(readFileSync(checkpoint, 'utf8')) as { cursorAt?: string; cursorId?: string };
+    const c = JSON.parse(readFileSync(checkpoint, 'utf8')) as {
+      cursorAt?: string;
+      cursorId?: string;
+    };
     cursorAt = c.cursorAt;
     cursorId = c.cursorId;
   } catch {
@@ -212,7 +215,9 @@ async function assertIndexFresh(): Promise<void> {
     console.error('Pass --allow-stale to proceed anyway and treat the numbers as a FLOOR.');
     process.exit(2);
   }
-  console.log(`  index freshness: STALE, proceeding under --allow-stale\n  ${msg.replace(/\n/g, '\n  ')}`);
+  console.log(
+    `  index freshness: STALE, proceeding under --allow-stale\n  ${msg.replace(/\n/g, '\n  ')}`,
+  );
 }
 
 try {
@@ -252,9 +257,7 @@ try {
   // `edges` is declared FIRST now, because `keyed` reads from it — that ordering
   // IS the fix. The old version built the key index and then looked at the edges;
   // this one lets the edges decide which keys are worth reading at all.
-  const stats = await sql<
-    { verdict: string; edges: number }[]
-  >`
+  const stats = await sql<{ verdict: string; edges: number }[]>`
     WITH edges AS (
       SELECT jc.id,
              jc.citing_judgment_id                                            AS citing,

@@ -486,9 +486,7 @@ type WorkerObservation = {
 };
 
 async function sampleWorkers(observer: postgres.Sql): Promise<WorkerObservation> {
-  const [row] = await observer<
-    { total: string; max_per_leader: string; active: string }[]
-  >`
+  const [row] = await observer<{ total: string; max_per_leader: string; active: string }[]>`
     WITH w AS (
       SELECT leader_pid, count(*)::int AS n
         FROM pg_stat_activity
@@ -542,9 +540,7 @@ async function envelopeSample(
     /* status stays 0 — "no HTTP answer at all", a different fact from a 5xx. */
   }
   const wallMs = Math.round(performance.now() - wall);
-  const line = requestId
-    ? phaseLines.find((l) => l['request_id'] === requestId)
-    : undefined;
+  const line = requestId ? phaseLines.find((l) => l['request_id'] === requestId) : undefined;
   return {
     askedClass,
     order,

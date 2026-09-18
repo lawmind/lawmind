@@ -70,7 +70,8 @@ type Role =
   | 'FACTS'
   | 'OTHER_UNKNOWN';
 
-const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f�]/;
+// eslint-disable-next-line no-control-regex -- detecting control characters is the job
+const CONTROL_CHARS = /[\x00-\x08\x0b\x0c\x0e-\x1f\ufffd]/;
 const COLLAPSED_GLYPH = /([A-Za-z]\s){12,}/;
 
 /**

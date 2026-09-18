@@ -144,9 +144,7 @@ export type OverruledStatus = 'none' | 'set_aside' | 'partly_set_aside' | 'doubt
  * direction of not making a claim: see `attributionOf` below.
  */
 export type TreatmentProvenance =
-  | 'COURT_REASONING_EXPLICIT'
-  | 'REPORTER_EDITORIAL_ANNOTATION'
-  | 'MODALITY_DEFECT';
+  'COURT_REASONING_EXPLICIT' | 'REPORTER_EDITORIAL_ANNOTATION' | 'MODALITY_DEFECT';
 
 export type TreatmentAttribution =
   /** The later court's own reasoning. The only class that may be stated as a holding. */
@@ -321,9 +319,7 @@ const EDGE_RANK: Readonly<Record<string, number>> = {
  * way rather than reimplementing the order — `propagate-treatment.ts` has its
  * own copy of this ordering in SQL and the two must not drift.
  */
-export function strongestTreatment(
-  relationships: readonly string[],
-): TreatmentRelationship | null {
+export function strongestTreatment(relationships: readonly string[]): TreatmentRelationship | null {
   let best: string | null = null;
   for (const r of relationships) {
     if (EDGE_RANK[r] === undefined) continue;
@@ -475,7 +471,11 @@ export function precedentialEffect(input: {
    * it returns `review_required` instead and the policy below refuses.
    */
   const storedRank =
-    input.overruledStatus === 'set_aside' ? 1 : input.overruledStatus === 'partly_set_aside' ? 2 : 3;
+    input.overruledStatus === 'set_aside'
+      ? 1
+      : input.overruledStatus === 'partly_set_aside'
+        ? 2
+        : 3;
   if (EDGE_RANK[edge]! > storedRank) return 'review_required';
 
   return fromEdge;

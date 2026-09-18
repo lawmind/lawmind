@@ -60,11 +60,7 @@ import {
 } from './ingest-ledger.ts';
 import type { JudgmentRecord } from '../sci.ts';
 import { fetchPdfText, isNativeText, warmPdfEngine } from '../text.ts';
-import {
-  type SkipReason,
-  isTestFixture,
-  toJudgmentRecord,
-} from './hc-load.ts';
+import { type SkipReason, isTestFixture, toJudgmentRecord } from './hc-load.ts';
 import {
   listMetadataKeys,
   mapConcurrent,
@@ -398,7 +394,9 @@ async function loadCheckpoint(): Promise<Checkpoint> {
     raw = await readFile(CHECKPOINT_PATH, 'utf8');
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return {};
-    console.error(`CHECKPOINT UNREADABLE ${CHECKPOINT_PATH}: ${(err as Error).message} — resuming from 0`);
+    console.error(
+      `CHECKPOINT UNREADABLE ${CHECKPOINT_PATH}: ${(err as Error).message} — resuming from 0`,
+    );
     return {};
   }
   try {
@@ -564,7 +562,12 @@ function stopIfRequested(): void {
  * from 0 — never a hard failure, since `source_url`'s unique index still
  * makes a full re-scan correct, only slower.
  */
-function verifiedResumeOffset(checkpoint: Checkpoint, key: string, currentSize: number, total: number): number {
+function verifiedResumeOffset(
+  checkpoint: Checkpoint,
+  key: string,
+  currentSize: number,
+  total: number,
+): number {
   const entry = checkpoint[key];
   if (!entry) return 0;
   if (entry.size !== currentSize) return 0;
@@ -754,238 +757,245 @@ async function main(): Promise<void> {
       }
 
       for (let offset = Math.max(group.start, resumeFrom); offset < group.end; offset += BATCH) {
-      if (LIMIT > 0 && seen >= LIMIT) break;
-      stopIfRequested();
-      const want = Math.min(BATCH, group.end - offset);
-      /**
-       * An in-memory window into the group already read above — no network call.
-       *
-       * The bounded-read machinery that used to live here (a `withTimeout` per
-       * 200-row batch, added 14 Aug after a worker sat 16 minutes at 0.4% CPU)
-       * has moved UP to the group read, which is now the only place bytes cross
-       * the wire. The hazard it guarded against is unchanged and still guarded;
-       * what changed is that it is paid once per group instead of once per 200
-       * rows.
-       */
-      const rows = groupRows.slice(offset - group.start, offset - group.start + want);
+        if (LIMIT > 0 && seen >= LIMIT) break;
+        stopIfRequested();
+        const want = Math.min(BATCH, group.end - offset);
+        /**
+         * An in-memory window into the group already read above — no network call.
+         *
+         * The bounded-read machinery that used to live here (a `withTimeout` per
+         * 200-row batch, added 14 Aug after a worker sat 16 minutes at 0.4% CPU)
+         * has moved UP to the group read, which is now the only place bytes cross
+         * the wire. The hazard it guarded against is unchanged and still guarded;
+         * what changed is that it is paid once per group instead of once per 200
+         * rows.
+         */
+        const rows = groupRows.slice(offset - group.start, offset - group.start + want);
 
-      // Resumability lives in the database: source_url is uniquely indexed, so a
-      // killed run is restarted with the same command and skips what it has.
-      const rawCandidates = rows
-        .map((r) => {
-          const link = (r['pdf_link'] as string | undefined) ?? null;
-          return link ? { row: r, url: pdfUrlFor(file.p, link) } : null;
-        })
-        .filter((x): x is NonNullable<typeof x> => x !== null);
+        // Resumability lives in the database: source_url is uniquely indexed, so a
+        // killed run is restarted with the same command and skips what it has.
+        const rawCandidates = rows
+          .map((r) => {
+            const link = (r['pdf_link'] as string | undefined) ?? null;
+            return link ? { row: r, url: pdfUrlFor(file.p, link) } : null;
+          })
+          .filter((x): x is NonNullable<typeof x> => x !== null);
 
-      // Found live: `upsertBatch` batches up to 100 rows into ONE `INSERT …
-      // ON CONFLICT (source_url) DO UPDATE`, and Postgres refuses outright if
-      // the same conflict key appears twice in one statement — "ON CONFLICT
-      // DO UPDATE command cannot affect row a second time", not a retryable
-      // error, crashed the whole process. The metadata source itself carries
-      // duplicate rows within a single parquet file (same `pdf_link`), which
-      // `existingSourceUrls` cannot catch — it only knows what a PREVIOUS
-      // batch already wrote. First occurrence wins, matching this codebase's
-      // "one sighting per document" rule for citations.
-      const seenUrls = new Set<string>();
-      const candidates = rawCandidates.filter((c) => {
-        if (seenUrls.has(c.url)) return false;
-        seenUrls.add(c.url);
-        return true;
-      });
-      bump('duplicate_in_batch', rawCandidates.length - candidates.length);
-      if (candidates.length === 0) {
-        checkpoint[file.key] = { offset: offset + want, size: file.size };
-        await saveCheckpoint(checkpoint);
-        continue;
-      }
-
-      const already = await existingSourceUrls(
-        sql,
-        candidates.map((c) => c.url),
-      );
-      const held = candidates.filter((c) => !already.has(c.url));
-      bump('already_held', candidates.length - held.length);
-
-      /**
-       * THE FAILURE LEDGER, the other half of `existingSourceUrls`.
-       *
-       * `judgments.source_url` records what SUCCEEDED. Until now nothing
-       * recorded what FAILED, so every restart re-downloaded every failure
-       * forever and could not tell "not yet tried" from "tried three times".
-       *
-       * Measured on this fleet: `hc-boot-23_23-y2024` was scheduled against
-       * 15,890 remaining documents and recorded 15,869 `pdf_missing` — the
-       * metadata is in the parquet, the PDFs are not in the bucket. Roughly 21
-       * were genuinely recoverable. Without this filter that scope pays 15,869
-       * 404s on every future start.
-       *
-       * Only `permanent` rows are excluded, so a transient S3 hiccup still gets
-       * its three attempts. `ingest-ledger.ts` explains which outcomes go
-       * permanent on first sight and why.
-       */
-      const condemned = await permanentlyFailedUrls(
-        sql,
-        held.map((c) => c.url),
-      );
-      const todo = held.filter((c) => !condemned.has(c.url));
-      bump('ledger_permanent_skip', held.length - todo.length);
-      if (todo.length === 0) {
-        checkpoint[file.key] = { offset: offset + want, size: file.size };
-        await saveCheckpoint(checkpoint);
-        continue;
-      }
-
-      /**
-       * EXPLICIT, because the inferred union let `url` widen to
-       * `string | undefined` once the ledger started reading it. Naming the
-       * shape makes the compiler check every `return` in this callback
-       * against it instead of unioning whatever each branch happens to
-       * produce — and a skip whose URL went missing is a ledger row that
-       * silently never gets written.
-       */
-      /**
-       * The fetch-level outcomes, named once so the union, the `bump` cast and
-       * the ledger cannot drift apart. `pdf_missing` is absent deliberately: it
-       * is a legacy ledger value that is never written again — see the
-       * `pdf_absent` section of `ingest-ledger.ts`.
-       */
-      type FetchOutcome = 'pdf_absent' | 'pdf_unavailable' | 'pdf_failed' | 'pdf_timeout';
-      type MapResult =
-        | { skip: SkipReason | FetchOutcome; url: string }
-        | { record: JudgmentRecord };
-      const records = await mapConcurrent<(typeof todo)[number], MapResult>(
-        todo,
-        CONCURRENCY,
-        async (c) => {
-        // No initialisers: every `catch` path below returns, so these are read
-        // only after the `try` has assigned all three. A placeholder `''`/`1`
-        // here is unreachable, and an unreachable default on the extracted text
-        // is the kind that quietly becomes a real empty document if the control
-        // flow ever changes.
-        let text: string;
-        let pages: number;
-        let method: string | null;
-        // Aborts the fetch at the same deadline `withTimeout` gives up at, so a
-        // stalled socket is actually closed rather than merely abandoned — this
-        // run touches 15.77M documents over days, and a leaked connection per
-        // timeout would eventually starve the pool. Parsing itself cannot be
-        // aborted (unpdf/pdfjs takes no signal), so `withTimeout` still races it.
-        const controller = new AbortController();
-        const abortTimer = setTimeout(() => controller.abort(), EXTRACT_TIMEOUT_MS);
-        try {
-          // The WHOLE per-document operation is bounded, not just parsing.
-          // A stalled fetch (no bytes, no error, no CPU — a dead socket the
-          // OS never reports as closed) hangs identically to the font-repair
-          // loop that motivated `withTimeout` in the first place: zero CPU,
-          // one worker permanently short, `Promise.all` in `mapConcurrent`
-          // never resolves. Observed directly restarting this run — CPU time
-          // flat across a 5s sample while "stuck" mid-batch.
-          //
-          // `fetchPdfText` (`../text.ts`) replaces the inline `unpdf` calls
-          // this line used to make — it is the SAME extraction plus the
-          // measured `pdftotext` fallback for the font-corruption pattern
-          // found on 37.0% of Bombay High Court documents (`CURRENT_PLAN.md`
-          // Q1.20/Q1.27), and already carries `stripUnstorable` internally
-          // via `normaliseWhitespace`, so that call is no longer needed here.
-          const extracted = await withTimeout(
-            () => fetchPdfText(c.url, controller.signal),
-            EXTRACT_TIMEOUT_MS,
-            c.url,
-          );
-          text = extracted.text;
-          pages = extracted.pages;
-          method = extracted.method;
-        } catch (error) {
-          if (error instanceof Error && error.message.startsWith('timeout after')) {
-            return { skip: 'pdf_timeout' as const, url: c.url };
-          }
-          /**
-           * `fetchPdfText` throws `GET <url> → <status>` on a non-OK response.
-           * This used to match `/→ \d{3}$/` and call EVERY status `pdf_missing`,
-           * which put a 404 and a 503 on the same retry schedule — and the retry
-           * rule was justified on the ground that one request cannot tell them
-           * apart. It can; the status was being discarded.
-           *
-           * 120 recorded `pdf_missing` URLs HEADed at random on 18 Aug 2026:
-           * 120 of 120 returned 404. So the status is CAPTURED and split.
-           *
-           *   404/403/410  the object is not there — `pdf_absent`, permanent on
-           *                sight, because the next GET reads the same absence.
-           *   anything else the server declined to answer — `pdf_unavailable`,
-           *                retryable, which is what the original rule was for.
-           *
-           * A 403 counts as absent on this bucket: it is public and unkeyed, so
-           * a refusal is about the object, not about us.
-           */
-          const status = error instanceof Error ? /→ (\d{3})$/.exec(error.message)?.[1] : undefined;
-          if (status === undefined) return { skip: 'pdf_failed' as const, url: c.url };
-          return status === '404' || status === '403' || status === '410'
-            ? { skip: 'pdf_absent' as const, url: c.url }
-            : { skip: 'pdf_unavailable' as const, url: c.url };
-        } finally {
-          clearTimeout(abortTimer);
-        }
-        const out = toJudgmentRecord(c.row, file.p, text, c.url, isNativeText(text.length, pages), method);
-        if (!out.ok) return { skip: out.reason, url: c.url };
-        return { record: out.record };
-        },
-      );
-
-      const batch: JudgmentRecord[] = [];
-      /** Every skip carries its URL now, so the ledger can be written per document. */
-      const failures: LedgerOutcome[] = [];
-      for (const r of records) {
-        seen++;
-        if ('skip' in r) {
-          bump(r.skip as SkipReason | FetchOutcome);
-          failures.push({
-            sourceUrl: r.url,
-            outcome: r.skip,
-            courtCode: file.p.courtCode,
-            year: file.p.year,
-          });
+        // Found live: `upsertBatch` batches up to 100 rows into ONE `INSERT …
+        // ON CONFLICT (source_url) DO UPDATE`, and Postgres refuses outright if
+        // the same conflict key appears twice in one statement — "ON CONFLICT
+        // DO UPDATE command cannot affect row a second time", not a retryable
+        // error, crashed the whole process. The metadata source itself carries
+        // duplicate rows within a single parquet file (same `pdf_link`), which
+        // `existingSourceUrls` cannot catch — it only knows what a PREVIOUS
+        // batch already wrote. First occurrence wins, matching this codebase's
+        // "one sighting per document" rule for citations.
+        const seenUrls = new Set<string>();
+        const candidates = rawCandidates.filter((c) => {
+          if (seenUrls.has(c.url)) return false;
+          seenUrls.add(c.url);
+          return true;
+        });
+        bump('duplicate_in_batch', rawCandidates.length - candidates.length);
+        if (candidates.length === 0) {
+          checkpoint[file.key] = { offset: offset + want, size: file.size };
+          await saveCheckpoint(checkpoint);
           continue;
         }
-        mapped++;
-        if (isJanFirst(r.record.judgmentDate)) bump('date_is_1_january');
-        if (samples.length < 5) samples.push(r.record);
-        batch.push(r.record);
-      }
 
-      if (APPLY && batch.length > 0) {
-        const res = await upsertJudgments(sql, batch);
-        written += res.inserted + res.updated;
-        /**
-         * A document that finally loaded is no longer a failure. Cleared AFTER
-         * the upsert, so a ledger row is only removed once `judgments` genuinely
-         * holds the record and the two ledgers cannot disagree.
-         */
-        await clearSucceeded(
+        const already = await existingSourceUrls(
           sql,
-          batch.map((b) => b.sourceUrl),
+          candidates.map((c) => c.url),
         );
-      }
-      /**
-       * Dry runs record nothing. `--apply` is the flag that means "this run's
-       * conclusions are durable", and a DRY run that condemned documents to
-       * `permanent` would make a rehearsal change what a real run does.
-       */
-      if (APPLY) ledgerWrites += await recordFailures(sql, failures);
+        const held = candidates.filter((c) => !already.has(c.url));
+        bump('already_held', candidates.length - held.length);
 
-      // Dry runs never advance the checkpoint: nothing was actually written,
-      // so a later `--apply` run must still see and process this offset.
-      if (APPLY) {
-        checkpoint[file.key] = { offset: offset + want, size: file.size };
-        await saveCheckpoint(checkpoint);
-      }
+        /**
+         * THE FAILURE LEDGER, the other half of `existingSourceUrls`.
+         *
+         * `judgments.source_url` records what SUCCEEDED. Until now nothing
+         * recorded what FAILED, so every restart re-downloaded every failure
+         * forever and could not tell "not yet tried" from "tried three times".
+         *
+         * Measured on this fleet: `hc-boot-23_23-y2024` was scheduled against
+         * 15,890 remaining documents and recorded 15,869 `pdf_missing` — the
+         * metadata is in the parquet, the PDFs are not in the bucket. Roughly 21
+         * were genuinely recoverable. Without this filter that scope pays 15,869
+         * 404s on every future start.
+         *
+         * Only `permanent` rows are excluded, so a transient S3 hiccup still gets
+         * its three attempts. `ingest-ledger.ts` explains which outcomes go
+         * permanent on first sight and why.
+         */
+        const condemned = await permanentlyFailedUrls(
+          sql,
+          held.map((c) => c.url),
+        );
+        const todo = held.filter((c) => !condemned.has(c.url));
+        bump('ledger_permanent_skip', held.length - todo.length);
+        if (todo.length === 0) {
+          checkpoint[file.key] = { offset: offset + want, size: file.size };
+          await saveCheckpoint(checkpoint);
+          continue;
+        }
 
-      const secs = (Date.now() - started) / 1000;
-      console.log(
-        `[${seen.toLocaleString()}] mapped=${mapped.toLocaleString()} ` +
-          `written=${written.toLocaleString()} ` +
-          `${(seen / Math.max(secs, 1)).toFixed(1)} docs/s · ${file.p.courtCode}/${file.p.year}`,
-      );
+        /**
+         * EXPLICIT, because the inferred union let `url` widen to
+         * `string | undefined` once the ledger started reading it. Naming the
+         * shape makes the compiler check every `return` in this callback
+         * against it instead of unioning whatever each branch happens to
+         * produce — and a skip whose URL went missing is a ledger row that
+         * silently never gets written.
+         */
+        /**
+         * The fetch-level outcomes, named once so the union, the `bump` cast and
+         * the ledger cannot drift apart. `pdf_missing` is absent deliberately: it
+         * is a legacy ledger value that is never written again — see the
+         * `pdf_absent` section of `ingest-ledger.ts`.
+         */
+        type FetchOutcome = 'pdf_absent' | 'pdf_unavailable' | 'pdf_failed' | 'pdf_timeout';
+        type MapResult =
+          { skip: SkipReason | FetchOutcome; url: string } | { record: JudgmentRecord };
+        const records = await mapConcurrent<(typeof todo)[number], MapResult>(
+          todo,
+          CONCURRENCY,
+          async (c) => {
+            // No initialisers: every `catch` path below returns, so these are read
+            // only after the `try` has assigned all three. A placeholder `''`/`1`
+            // here is unreachable, and an unreachable default on the extracted text
+            // is the kind that quietly becomes a real empty document if the control
+            // flow ever changes.
+            let text: string;
+            let pages: number;
+            let method: string | null;
+            // Aborts the fetch at the same deadline `withTimeout` gives up at, so a
+            // stalled socket is actually closed rather than merely abandoned — this
+            // run touches 15.77M documents over days, and a leaked connection per
+            // timeout would eventually starve the pool. Parsing itself cannot be
+            // aborted (unpdf/pdfjs takes no signal), so `withTimeout` still races it.
+            const controller = new AbortController();
+            const abortTimer = setTimeout(() => controller.abort(), EXTRACT_TIMEOUT_MS);
+            try {
+              // The WHOLE per-document operation is bounded, not just parsing.
+              // A stalled fetch (no bytes, no error, no CPU — a dead socket the
+              // OS never reports as closed) hangs identically to the font-repair
+              // loop that motivated `withTimeout` in the first place: zero CPU,
+              // one worker permanently short, `Promise.all` in `mapConcurrent`
+              // never resolves. Observed directly restarting this run — CPU time
+              // flat across a 5s sample while "stuck" mid-batch.
+              //
+              // `fetchPdfText` (`../text.ts`) replaces the inline `unpdf` calls
+              // this line used to make — it is the SAME extraction plus the
+              // measured `pdftotext` fallback for the font-corruption pattern
+              // found on 37.0% of Bombay High Court documents (`CURRENT_PLAN.md`
+              // Q1.20/Q1.27), and already carries `stripUnstorable` internally
+              // via `normaliseWhitespace`, so that call is no longer needed here.
+              const extracted = await withTimeout(
+                () => fetchPdfText(c.url, controller.signal),
+                EXTRACT_TIMEOUT_MS,
+                c.url,
+              );
+              text = extracted.text;
+              pages = extracted.pages;
+              method = extracted.method;
+            } catch (error) {
+              if (error instanceof Error && error.message.startsWith('timeout after')) {
+                return { skip: 'pdf_timeout' as const, url: c.url };
+              }
+              /**
+               * `fetchPdfText` throws `GET <url> → <status>` on a non-OK response.
+               * This used to match `/→ \d{3}$/` and call EVERY status `pdf_missing`,
+               * which put a 404 and a 503 on the same retry schedule — and the retry
+               * rule was justified on the ground that one request cannot tell them
+               * apart. It can; the status was being discarded.
+               *
+               * 120 recorded `pdf_missing` URLs HEADed at random on 18 Aug 2026:
+               * 120 of 120 returned 404. So the status is CAPTURED and split.
+               *
+               *   404/403/410  the object is not there — `pdf_absent`, permanent on
+               *                sight, because the next GET reads the same absence.
+               *   anything else the server declined to answer — `pdf_unavailable`,
+               *                retryable, which is what the original rule was for.
+               *
+               * A 403 counts as absent on this bucket: it is public and unkeyed, so
+               * a refusal is about the object, not about us.
+               */
+              const status =
+                error instanceof Error ? /→ (\d{3})$/.exec(error.message)?.[1] : undefined;
+              if (status === undefined) return { skip: 'pdf_failed' as const, url: c.url };
+              return status === '404' || status === '403' || status === '410'
+                ? { skip: 'pdf_absent' as const, url: c.url }
+                : { skip: 'pdf_unavailable' as const, url: c.url };
+            } finally {
+              clearTimeout(abortTimer);
+            }
+            const out = toJudgmentRecord(
+              c.row,
+              file.p,
+              text,
+              c.url,
+              isNativeText(text.length, pages),
+              method,
+            );
+            if (!out.ok) return { skip: out.reason, url: c.url };
+            return { record: out.record };
+          },
+        );
+
+        const batch: JudgmentRecord[] = [];
+        /** Every skip carries its URL now, so the ledger can be written per document. */
+        const failures: LedgerOutcome[] = [];
+        for (const r of records) {
+          seen++;
+          if ('skip' in r) {
+            bump(r.skip as SkipReason | FetchOutcome);
+            failures.push({
+              sourceUrl: r.url,
+              outcome: r.skip,
+              courtCode: file.p.courtCode,
+              year: file.p.year,
+            });
+            continue;
+          }
+          mapped++;
+          if (isJanFirst(r.record.judgmentDate)) bump('date_is_1_january');
+          if (samples.length < 5) samples.push(r.record);
+          batch.push(r.record);
+        }
+
+        if (APPLY && batch.length > 0) {
+          const res = await upsertJudgments(sql, batch);
+          written += res.inserted + res.updated;
+          /**
+           * A document that finally loaded is no longer a failure. Cleared AFTER
+           * the upsert, so a ledger row is only removed once `judgments` genuinely
+           * holds the record and the two ledgers cannot disagree.
+           */
+          await clearSucceeded(
+            sql,
+            batch.map((b) => b.sourceUrl),
+          );
+        }
+        /**
+         * Dry runs record nothing. `--apply` is the flag that means "this run's
+         * conclusions are durable", and a DRY run that condemned documents to
+         * `permanent` would make a rehearsal change what a real run does.
+         */
+        if (APPLY) ledgerWrites += await recordFailures(sql, failures);
+
+        // Dry runs never advance the checkpoint: nothing was actually written,
+        // so a later `--apply` run must still see and process this offset.
+        if (APPLY) {
+          checkpoint[file.key] = { offset: offset + want, size: file.size };
+          await saveCheckpoint(checkpoint);
+        }
+
+        const secs = (Date.now() - started) / 1000;
+        console.log(
+          `[${seen.toLocaleString()}] mapped=${mapped.toLocaleString()} ` +
+            `written=${written.toLocaleString()} ` +
+            `${(seen / Math.max(secs, 1)).toFixed(1)} docs/s · ${file.p.courtCode}/${file.p.year}`,
+        );
       }
     }
     if (LIMIT > 0 && seen >= LIMIT) break;
@@ -1060,7 +1070,6 @@ async function main(): Promise<void> {
  * not lost work.
  */
 // The errno list moved to `../db-transient.ts` with the classifier that reads it.
-
 
 /**
  * The classifier and the budget now live in `../db-transient.ts`, shared.

@@ -93,7 +93,9 @@ test('the signals separate the two populations by an order of magnitude', () => 
 
 test('one weak signal alone never condemns a document', () => {
   // Low word-like ratio but healthy token length: an all-caps cause title.
-  const caps = Array.from({ length: 60 }, () => 'STATE OF BIHAR VERSUS RAMESH KUMAR SINGH').join(' ');
+  const caps = Array.from({ length: 60 }, () => 'STATE OF BIHAR VERSUS RAMESH KUMAR SINGH').join(
+    ' ',
+  );
   const v = classifyCorruption(caps)!;
   assert.ok(v.signals.wordLikeRatio < 0.2, 'expected a low word-like ratio for all caps');
   assert.equal(v.corrupt, false, 'all-caps text was condemned on one signal');
@@ -110,10 +112,14 @@ test('one weak signal alone never condemns a document', () => {
  */
 const LEADING_DROP =
   'PLICATION NO. 19966 of 2021 filed by the etitioner against the nion of ndia and the ' +
-  'tate of ujarat. The ourt has heard learned counsel for the etitioner and the espondent. '.repeat(6);
+  'tate of ujarat. The ourt has heard learned counsel for the etitioner and the espondent. '.repeat(
+    6,
+  );
 const LEADING_DROP_CLEAN =
   'APPLICATION NO. 19966 of 2021 filed by the Petitioner against the Union of India and the ' +
-  'State of Gujarat. The Court has heard learned counsel for the Petitioner and the Respondent. '.repeat(6);
+  'State of Gujarat. The Court has heard learned counsel for the Petitioner and the Respondent. '.repeat(
+    6,
+  );
 
 test('LEADING-CHARACTER DROP IS CAUGHT, though every shape signal says clean', () => {
   const v = classifyCorruption(LEADING_DROP)!;

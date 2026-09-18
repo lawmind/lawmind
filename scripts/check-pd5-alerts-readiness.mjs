@@ -1,5 +1,40 @@
 #!/usr/bin/env node
 /**
+ * FUTURE PD-5 / PD-6 READINESS GATE — not a current-v1 CI requirement.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHAT CHANGED, 18 Sep 2026 (SHIP S4-T0.3)
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * This file is unchanged below except for this banner and its name. It was
+ * `scripts/check-alert-coverage.mjs`, it ran in `.github/workflows/ci.yml` and
+ * in `pnpm ci:local`, and it was RED every time — which made repository CI red
+ * every time, for six weeks after the last workflow run, over a fact everybody
+ * already knew.
+ *
+ * It is not wrong. It measures the RIGHT thing for the WRONG gate. It asks
+ * whether all four PD-5 triggers can fire, and two of them cannot because
+ * `monitoring.user_product` and `documents.upload_and_ocr` are explicitly
+ * DISABLED in the current capability registry. A gate that fails because a
+ * deliberately-disabled capability is disabled is a gate that teaches everyone
+ * to ignore it — and building the two missing producers to turn this green
+ * would ship monitoring and uploads that the founder has not scoped.
+ *
+ * So it moves to the front of a DIFFERENT queue:
+ *
+ *   REQUIRED BEFORE  any capability claims full PD-5 / PD-6 behaviour — before
+ *                    `monitoring.user_product` or `briefing.daily_loop` may read
+ *                    anything other than DISABLED, and before any surface says
+ *                    "four things" again.
+ *   NOT REQUIRED BY  Gate D, current-v1 CI, or `pnpm ci:local`.
+ *   RUN IT WITH      node scripts/check-pd5-alerts-readiness.mjs
+ *
+ * What replaced it in CI is `scripts/check-alert-surface-truth.mjs`, which asks
+ * the question current v1 actually has to answer: does the product PROMISE any
+ * alert it cannot deliver? That one is green, and it is green because the
+ * promise was removed rather than because the rule was loosened.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
  * Every PD-5 trigger must have an alert kind AND something that writes it.
  *
  * ─────────────────────────────────────────────────────────────────────────────
@@ -31,7 +66,7 @@
  * red step teaches everyone to ignore the pipeline, which costs more than the
  * gate is worth. Wire it in the commit that adds the fourth trigger.
  *
- *   node scripts/check-alert-coverage.mjs
+ *   node scripts/check-pd5-alerts-readiness.mjs
  */
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';

@@ -41,7 +41,9 @@ async function main(): Promise<void> {
     console.log(`exact-duplicate groups (content_hash, count > 1): ${groups.length}`);
     console.log(`rows involved: ${totalRows}`);
     if (groups.length > 0) {
-      console.log(`largest group: ${groups[0]!.n} rows, content_hash=${groups[0]!.content_hash.slice(0, 16)}...`);
+      console.log(
+        `largest group: ${groups[0]!.n} rows, content_hash=${groups[0]!.content_hash.slice(0, 16)}...`,
+      );
     }
 
     if (groups.length === 0) {
@@ -76,7 +78,8 @@ async function main(): Promise<void> {
           ON CONFLICT DO NOTHING`;
       }
       written += 1;
-      if (written % 100 === 0) console.log(`  materialised ${written} of ${groups.length} groups...`);
+      if (written % 100 === 0)
+        console.log(`  materialised ${written} of ${groups.length} groups...`);
     }
 
     console.log(`\nmaterialised ${written} groups, ${totalRows} member rows`);
@@ -85,7 +88,9 @@ async function main(): Promise<void> {
       SELECT
         (SELECT count(*) FROM document_duplicate_groups WHERE method = 'content_hash')::text AS groups,
         (SELECT count(*) FROM document_duplicate_members)::text AS members`;
-    console.log(`verified: document_duplicate_groups=${check?.groups}, document_duplicate_members=${check?.members}`);
+    console.log(
+      `verified: document_duplicate_groups=${check?.groups}, document_duplicate_members=${check?.members}`,
+    );
   } finally {
     await sql.end();
   }

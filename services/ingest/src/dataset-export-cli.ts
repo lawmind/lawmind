@@ -116,7 +116,14 @@ async function exportCaseIntelligence(): Promise<void> {
       model: string;
       promptVersion: string;
       verificationState: string;
-      parsedOutput: { claims?: { value: string; kind: string; verified: boolean; extra?: Record<string, unknown> }[] } | null;
+      parsedOutput: {
+        claims?: {
+          value: string;
+          kind: string;
+          verified: boolean;
+          extra?: Record<string, unknown>;
+        }[];
+      } | null;
     }[]
   >`
     SELECT e.judgment_id AS "judgmentId", j.case_title AS "caseTitle", j.court,
@@ -226,7 +233,14 @@ async function exportTreatment(): Promise<void> {
 async function exportCitation(): Promise<void> {
   reset('citation');
   const rows = await sql<
-    { judgmentId: string; citationText: string; normalised: string; citedJudgmentId: string; citedTitle: string | null; citedNeutral: string | null }[]
+    {
+      judgmentId: string;
+      citationText: string;
+      normalised: string;
+      citedJudgmentId: string;
+      citedTitle: string | null;
+      citedNeutral: string | null;
+    }[]
   >`
     SELECT jc.citing_judgment_id AS "judgmentId", jc.citation_text AS "citationText",
            jc.normalised_citation AS "normalised", jc.cited_judgment_id AS "citedJudgmentId",
@@ -273,7 +287,14 @@ async function exportRetrieval(): Promise<void> {
       court: string | null;
       model: string;
       promptVersion: string;
-      parsedOutput: { claims?: { value: string; kind: string; verified: boolean; extra?: Record<string, unknown> }[] } | null;
+      parsedOutput: {
+        claims?: {
+          value: string;
+          kind: string;
+          verified: boolean;
+          extra?: Record<string, unknown>;
+        }[];
+      } | null;
     }[]
   >`
     SELECT e.judgment_id AS "judgmentId", j.case_title AS "caseTitle", j.court,
@@ -413,7 +434,8 @@ for (const name of chosen) {
   );
   // A set that produced nothing is REPORTED, never quietly absent. An empty
   // dataset file and a missing one look identical to whoever trains next.
-  if (total === 0) console.log(`${''.padEnd(20)} ^ EMPTY — no rows met this set's verification bar`);
+  if (total === 0)
+    console.log(`${''.padEnd(20)} ^ EMPTY — no rows met this set's verification bar`);
 }
 
 console.log('');

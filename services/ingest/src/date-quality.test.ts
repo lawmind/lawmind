@@ -43,7 +43,11 @@ describe('dateQuality — VERIFIED needs the primary document', () => {
    * evidence, so a filename match alone must never reach VERIFIED.
    */
   it('will not verify on the filename alone when the document is silent', () => {
-    const r = dateQuality({ judgmentDate: '2024-02-13', sourceUrl: URL_2024, text: 'no dates here at all' });
+    const r = dateQuality({
+      judgmentDate: '2024-02-13',
+      sourceUrl: URL_2024,
+      text: 'no dates here at all',
+    });
     assert.equal(r.state, 'DATE_UNKNOWN');
   });
 });
@@ -63,7 +67,11 @@ describe('dateQuality — SUSPECT needs a witness that actively disagrees', () =
 
   it('flags a date wrong by more than a year', () => {
     const url = URL_2024.replace('2024-02-13', '2025-09-12');
-    const r = dateQuality({ judgmentDate: '2023-03-17', sourceUrl: url, text: 'decided on 12.09.2025' });
+    const r = dateQuality({
+      judgmentDate: '2023-03-17',
+      sourceUrl: url,
+      text: 'decided on 12.09.2025',
+    });
     assert.equal(r.state, 'DATE_SUSPECT');
     assert.notEqual(r.filenameDeltaDays, null);
     assert.ok(r.filenameDeltaDays! < -366);
@@ -94,7 +102,11 @@ describe('dateQuality — UNKNOWN is a value', () => {
 
   it('never rewrites or returns a corrected date', () => {
     const url = URL_2024.replace('2024-02-13', '2025-03-07');
-    const r = dateQuality({ judgmentDate: '2025-03-06', sourceUrl: url, text: 'Order dated 07.03.2025' });
+    const r = dateQuality({
+      judgmentDate: '2025-03-06',
+      sourceUrl: url,
+      text: 'Order dated 07.03.2025',
+    });
     assert.ok(!Object.keys(r).includes('correctedDate'));
     assert.equal(r.witnesses.find((w) => w.kind === 'source_filename')?.date, '2025-03-07');
   });
@@ -109,11 +121,17 @@ describe('dateQuality — UNKNOWN is a value', () => {
 describe('printedDates — month-name dates, the shape the Supreme Court prints', () => {
   it('reads MARCH 8, 2007 from a Supreme Court cause title', () => {
     /* Verbatim shape from 07fcaaf3: "... v. JAi PRAKASH SINGH AND ANR. MARCH 8, 2007 [DR. ARIJIT PASAYAT ...]" */
-    assert.ok(printedDates('v. JAI PRAKASH SINGH AND ANR. MARCH 8, 2007 [DR. ARIJIT PASAYAT').has('2007-03-08'));
+    assert.ok(
+      printedDates('v. JAI PRAKASH SINGH AND ANR. MARCH 8, 2007 [DR. ARIJIT PASAYAT').has(
+        '2007-03-08',
+      ),
+    );
   });
 
   it('reads APRIL 12, 2013 and 8th March, 2007 and 8th day of March, 2007', () => {
-    assert.ok(printedDates('(Civil Appeal Nos. 3838-3839 of 2013) APRIL 12, 2013').has('2013-04-12'));
+    assert.ok(
+      printedDates('(Civil Appeal Nos. 3838-3839 of 2013) APRIL 12, 2013').has('2013-04-12'),
+    );
     assert.ok(printedDates('pronounced on 8th March, 2007 by the Bench').has('2007-03-08'));
     assert.ok(printedDates('this the 8th day of March, 2007').has('2007-03-08'));
   });

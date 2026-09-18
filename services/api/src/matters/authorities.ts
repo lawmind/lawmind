@@ -246,8 +246,6 @@ export type UnavailableAuthority = {
   availability: 'corpus_unavailable';
 };
 
-
-
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  * THE ROW SURVIVES THE CORPUS. R20's LOAD-BEARING GATE-C PROPERTY.
@@ -593,7 +591,7 @@ export async function addAuthority(
       'AUTHORITY_SET_ASIDE',
       effect === 'set_aside' && judgment.overruled_by_case_title
         ? `${judgment.case_title} was set aside and cannot be added to a matter. ` +
-          `${judgment.overruled_by_case_title}${judgment.overruled_by_neutral_citation ? ` (${judgment.overruled_by_neutral_citation})` : ''} replaced it.`
+            `${judgment.overruled_by_case_title}${judgment.overruled_by_neutral_citation ? ` (${judgment.overruled_by_neutral_citation})` : ''} replaced it.`
         : `${judgment.case_title} ${what}`,
       409,
     );
@@ -605,7 +603,9 @@ export async function addAuthority(
     if (!check) return fail(c, 'INVALID_REQUEST', 'citationCheckId does not exist', 400);
   }
 
-  const [row] = await sql<{ id: string; added_by_user_id: string; added_at: string; removed_at: string | null }[]>`
+  const [row] = await sql<
+    { id: string; added_by_user_id: string; added_at: string; removed_at: string | null }[]
+  >`
     INSERT INTO matter_authorities (matter_id, judgment_id, added_by_user_id, citation_check_id)
     VALUES (${matterId}, ${body.judgmentId}, ${userId}, ${body.citationCheckId ?? null})
     -- The partial unique index covers LIVE rows only, so re-adding one
@@ -632,26 +632,18 @@ export async function addAuthority(
      * one that crossed the line. `recordStep` is idempotent per user and step,
      * so a third and fourth save cost one no-op insert each.
      */
-    recordStepInBackground(
-      sql,
-      userId,
-      'saved_authority',
-      (err) =>
-        logger.error(
-          { request_id: c.get('requestId'), err, step: 'saved_authority' },
-          'activation step not recorded',
-        ),
+    recordStepInBackground(sql, userId, 'saved_authority', (err) =>
+      logger.error(
+        { request_id: c.get('requestId'), err, step: 'saved_authority' },
+        'activation step not recorded',
+      ),
     );
 
     const [saved] = await sql<{ n: string }[]>`
       SELECT count(*)::text AS n FROM matter_authorities
        WHERE matter_id = ${matterId} AND removed_at IS NULL`;
     if (Number(saved?.n ?? 0) >= 2) {
-      recordStepInBackground(
-        sql,
-        userId,
-        'experienced_matter_value',
-        (err) =>
+      recordStepInBackground(sql, userId, 'experienced_matter_value', (err) =>
         logger.error(
           { request_id: c.get('requestId'), err, step: 'experienced_matter_value' },
           'activation step not recorded',

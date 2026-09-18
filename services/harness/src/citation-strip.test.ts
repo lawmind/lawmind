@@ -4,13 +4,17 @@ import { test } from 'node:test';
 import { stripResidualCitations } from './citation-strip.ts';
 
 test('strips a genuine SCC citation', () => {
-  const out = stripResidualCitations('this Court in State of Punjab v. Baldev Singh, (1999) 6 SCC 172 held that');
+  const out = stripResidualCitations(
+    'this Court in State of Punjab v. Baldev Singh, (1999) 6 SCC 172 held that',
+  );
   assert.equal(out.includes('SCC'), false);
   assert.equal(out.includes('State of Punjab v. Baldev Singh'), true);
 });
 
 test('strips a genuine AIR citation', () => {
-  const out = stripResidualCitations('as held in Kesavananda Bharati, AIR 1973 SC 1461, the basic structure');
+  const out = stripResidualCitations(
+    'as held in Kesavananda Bharati, AIR 1973 SC 1461, the basic structure',
+  );
   assert.equal(out.includes('AIR'), false);
   assert.equal(out.includes('the basic structure'), true);
 });
@@ -21,7 +25,9 @@ test('strips a genuine SCR citation, year-first house style', () => {
 });
 
 test('strips a genuine neutral INSC citation', () => {
-  const out = stripResidualCitations('the nine-judge bench in MADA v. SAIL, 2024 INSC 554, overruled');
+  const out = stripResidualCitations(
+    'the nine-judge bench in MADA v. SAIL, 2024 INSC 554, overruled',
+  );
   assert.equal(out.includes('INSC'), false);
 });
 
@@ -31,7 +37,9 @@ test('strips a genuine High Court neutral citation', () => {
 });
 
 test('strips two distinct citations in one passage', () => {
-  const out = stripResidualCitations('following (1999) 6 SCC 172 and distinguishing AIR 1973 SC 1461 on facts');
+  const out = stripResidualCitations(
+    'following (1999) 6 SCC 172 and distinguishing AIR 1973 SC 1461 on facts',
+  );
   assert.equal(out.includes('SCC'), false);
   assert.equal(out.includes('AIR'), false);
 });
@@ -97,7 +105,9 @@ test('no-op on a query with no citation span -- exact identity, not approximate'
 });
 
 test('collapses whitespace left behind by a removed citation', () => {
-  const out = stripResidualCitations('the ruling in (1999) 6 SCC 172 settled the point conclusively');
+  const out = stripResidualCitations(
+    'the ruling in (1999) 6 SCC 172 settled the point conclusively',
+  );
   assert.equal(/\s{2,}/.test(out), false);
   assert.equal(out.startsWith(' '), false);
   assert.equal(out.endsWith(' '), false);

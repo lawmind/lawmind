@@ -36,22 +36,19 @@ describe('option parsing against the retained fillDistrict response', () => {
   it('reads all eleven Delhi districts from unquoted value attributes', () => {
     const districts = parseDistrictOptions(RETAINED.dist_list);
     assert.equal(districts.length, 11, 'the retained response carries eleven districts');
-    assert.deepEqual(
-      districts.map((d) => d.label).sort(),
-      [
-        'Central',
-        'East',
-        'New Delhi',
-        'North',
-        'North East',
-        'North West',
-        'Shahdara',
-        'South',
-        'South East',
-        'South West',
-        'West',
-      ],
-    );
+    assert.deepEqual(districts.map((d) => d.label).sort(), [
+      'Central',
+      'East',
+      'New Delhi',
+      'North',
+      'North East',
+      'North West',
+      'Shahdara',
+      'South',
+      'South East',
+      'South West',
+      'West',
+    ]);
   });
 
   it('drops the placeholder and only the placeholder', () => {
@@ -61,11 +58,16 @@ describe('option parsing against the retained fillDistrict response', () => {
       false,
       'the "Select district" placeholder is not a district',
     );
-    assert.equal(districts.some((d) => d.value === ''), false);
+    assert.equal(
+      districts.some((d) => d.value === ''),
+      false,
+    );
   });
 
   it('the values are the codes the next request has to send', () => {
-    const byLabel = new Map(parseDistrictOptions(RETAINED.dist_list).map((d) => [d.label, d.value]));
+    const byLabel = new Map(
+      parseDistrictOptions(RETAINED.dist_list).map((d) => [d.label, d.value]),
+    );
     assert.equal(byLabel.get('Central'), '8');
     assert.equal(byLabel.get('New Delhi'), '7');
     assert.equal(byLabel.get('West'), '9');

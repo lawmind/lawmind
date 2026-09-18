@@ -37,16 +37,61 @@ import { crossRoleStatements } from '../../../scripts/lcc-cross-role-sql.mjs';
  */
 const NOT_TABLES = new Set([
   // system catalogues and views
-  'pg_attribute', 'pg_class', 'pg_database', 'pg_enum', 'pg_extension', 'pg_indexes',
-  'pg_locks', 'pg_namespace', 'pg_stat_activity', 'pg_stat_database', 'pg_stat_user_tables',
-  'pg_statistic', 'pg_stats',
-  'pg_trigger', 'pg_type', 'information_schema', 'current_date', 'unnest', 'lateral',
-  'drizzle', 'autovacuum',
+  'pg_attribute',
+  'pg_class',
+  'pg_database',
+  'pg_enum',
+  'pg_extension',
+  'pg_indexes',
+  'pg_locks',
+  'pg_namespace',
+  'pg_stat_activity',
+  'pg_stat_database',
+  'pg_stat_user_tables',
+  'pg_statistic',
+  'pg_stats',
+  'pg_trigger',
+  'pg_type',
+  'information_schema',
+  'current_date',
+  'unnest',
+  'lateral',
+  'drizzle',
+  'autovacuum',
   // CTEs and aliases the syntactic pass cannot tell from a table
-  'a', 'an', 'as', 'candidates', 'chunk_candidates', 'discriminating', 'e', 'edges',
-  'eligible', 'empty', 'hits', 'held', 'lex', 'linked', 'one', 'ordinary', 'page', 'q',
-  'ranked', 'scored', 'set', 'skip', 'stays', 'support', 't', 'the', 'their',
-  'to', 'tranche_candidates', 'w', 'was', 'application', 'ops_job_current',
+  'a',
+  'an',
+  'as',
+  'candidates',
+  'chunk_candidates',
+  'discriminating',
+  'e',
+  'edges',
+  'eligible',
+  'empty',
+  'hits',
+  'held',
+  'lex',
+  'linked',
+  'one',
+  'ordinary',
+  'page',
+  'q',
+  'ranked',
+  'scored',
+  'set',
+  'skip',
+  'stays',
+  'support',
+  't',
+  'the',
+  'their',
+  'to',
+  'tranche_candidates',
+  'w',
+  'was',
+  'application',
+  'ops_job_current',
 ]);
 
 /**
@@ -127,6 +172,10 @@ describe('database role wiring, read from the source', () => {
         added.join(', '),
     );
     const gone = [...CROSS_ROLE_MODULES].filter((m) => !both.includes(m));
-    assert.deepEqual(gone, [], `these are listed as cross-role but no longer are: ${gone.join(', ')}`);
+    assert.deepEqual(
+      gone,
+      [],
+      `these are listed as cross-role but no longer are: ${gone.join(', ')}`,
+    );
   });
 });

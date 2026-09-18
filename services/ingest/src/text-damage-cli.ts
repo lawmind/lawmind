@@ -50,7 +50,12 @@
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import postgres from 'postgres';
-import { DAMAGE_SPAN, TEXT_DAMAGE_VERSION, damageVerdict, isVerifiedReason } from './text-damage.ts';
+import {
+  DAMAGE_SPAN,
+  TEXT_DAMAGE_VERSION,
+  damageVerdict,
+  isVerifiedReason,
+} from './text-damage.ts';
 import { ENGLISH_RATE_FLOOR, englishRate } from './quality-state.ts';
 import { MINED_MARKERS, SUSPECT_MARKER_RATE, textSignature } from './legacy-font.ts';
 import {
@@ -114,9 +119,11 @@ function judge(r: Row) {
     storedScriptQuality: r.script_quality,
     /* The three screens are computed HERE and passed in, so the pure module
      * never has to know what a Devanagari block or a marker list is. */
-    englishDensityLow: marker.zeroDevanagari && head.length >= 1000 && englishRate(head) < ENGLISH_RATE_FLOOR,
+    englishDensityLow:
+      marker.zeroDevanagari && head.length >= 1000 && englishRate(head) < ENGLISH_RATE_FLOOR,
     tokenShapeAnomaly:
-      judgeable && (sig!.singleCharRatio > MAX_SINGLE_CHAR_RATIO || sig!.wordLikeRatio < MIN_WORD_LIKE_RATIO),
+      judgeable &&
+      (sig!.singleCharRatio > MAX_SINGLE_CHAR_RATIO || sig!.wordLikeRatio < MIN_WORD_LIKE_RATIO),
     legacyFontMarkers: marker.zeroDevanagari && marker.markerRate >= SUSPECT_MARKER_RATE,
   });
 }
@@ -184,7 +191,9 @@ async function runSample(n: number) {
     ),
     caveats: [
       'Draws are uniform over judgments.id, which is uuid v4. A future non-uniform id scheme silently breaks this sampler and nothing here would notice.',
-      'Every rate is over the first ' + DAMAGE_SPAN + ' characters. A document damaged only after that span reads as UNKNOWN.',
+      'Every rate is over the first ' +
+        DAMAGE_SPAN +
+        ' characters. A document damaged only after that span reads as UNKNOWN.',
       'UNKNOWN is not clean. No detector here looks for evidence that an extraction was faithful.',
     ],
   };
@@ -217,7 +226,9 @@ async function runExport() {
     const lines: string[] = [];
     for (const r of page) {
       const v = judge(r);
-      const emit = v.verdict === 'TEXT_UNSAFE_VERIFIED' || (INCLUDE_SUSPECT && v.verdict === 'TEXT_DAMAGE_SUSPECT');
+      const emit =
+        v.verdict === 'TEXT_UNSAFE_VERIFIED' ||
+        (INCLUDE_SUSPECT && v.verdict === 'TEXT_DAMAGE_SUSPECT');
       if (!emit) continue;
       for (const reason of v.reasons) byReason.set(reason, (byReason.get(reason) ?? 0) + 1);
       lines.push(
@@ -253,7 +264,9 @@ async function runExport() {
     /* Cursor AFTER the append, never before: a crash between the two must
      * re-do a page, never skip one. */
     writeFileSync(cursorFile, cursor);
-    process.stdout.write(`\r  walked ${walked.toLocaleString()}  emitted ${written.toLocaleString()}`);
+    process.stdout.write(
+      `\r  walked ${walked.toLocaleString()}  emitted ${written.toLocaleString()}`,
+    );
     if (page.length < PAGE) break;
   }
 
@@ -282,7 +295,10 @@ async function runExport() {
 try {
   if (SAMPLE > 0) await runSample(SAMPLE);
   else if (EXPORT) await runExport();
-  else console.error('usage: --sample <n> | --export [--from 0xNN] [--to 0xNN] [--resume] [--suspect] [--limit n]');
+  else
+    console.error(
+      'usage: --sample <n> | --export [--from 0xNN] [--to 0xNN] [--resume] [--suspect] [--limit n]',
+    );
 } finally {
   await sql.end();
 }

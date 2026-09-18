@@ -63,7 +63,7 @@ describe('hard negatives against the real corpus', { skip: !DATABASE_URL }, () =
     await sql.end();
   });
 
-  it('a near-miss citation NEVER resolves to the judgment it came from', async () => {
+  it('a near-miss citation NEVER resolves to the judgment it came from', async (t) => {
     const rows = await sql<{ id: string; neutral_citation: string }[]>`
       SELECT id, neutral_citation
       FROM judgments
@@ -71,6 +71,27 @@ describe('hard negatives against the real corpus', { skip: !DATABASE_URL }, () =
       ORDER BY id
       LIMIT ${SAMPLE}
     `;
+    /**
+     * "The test proves nothing" was right, and it was the wrong verdict. On an
+     * EMPTY database it proves nothing because there is nothing; on a populated
+     * one, zero rows with a neutral citation would be a real finding. Those are
+     * different facts and a hard assertion made them the same one, which is what
+     * took `pnpm ci:local` and the CI test step red — this file is named `.live`
+     * and CI builds a fresh database.
+     *
+     * So: skip when there is no law at all, and keep the assertion for the case
+     * it was written for — a corpus that holds judgments but none with a neutral
+     * citation.
+     */
+    if (rows.length === 0) {
+      const [any] = await sql<{ n: boolean }[]>`SELECT EXISTS (SELECT 1 FROM judgments) AS n`;
+      if (!any?.n) {
+        return t.skip(
+          'needs a populated corpus. CI and `pnpm ci:local` build an EMPTY database; this file ' +
+            'is a LIVE test and grades real citations. Run it with DATABASE_URL pointed at a corpus.',
+        );
+      }
+    }
     assert.ok(rows.length > 0, 'no judgments with a neutral citation — the test proves nothing');
 
     const negatives = rows.flatMap((r) => nearMissesFor(r.neutral_citation, r.id));

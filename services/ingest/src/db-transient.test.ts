@@ -73,12 +73,17 @@ describe('isTransientDbOrNetworkError — the one that killed the fleet', () => 
     // job that hit it died outright with 1,200 groups still to measure.
     assert.equal(
       isTransientDbOrNetworkError(
-        pgError('XX000', 'could not read blocks 1441792..1441807 in file "base/81920/16384000": Invalid argument'),
+        pgError(
+          'XX000',
+          'could not read blocks 1441792..1441807 in file "base/81920/16384000": Invalid argument',
+        ),
       ),
       true,
     );
     assert.equal(
-      isTransientDbOrNetworkError(pgError('XX000', 'could not write block 900 of base/81920/16384000: Invalid argument')),
+      isTransientDbOrNetworkError(
+        pgError('XX000', 'could not write block 900 of base/81920/16384000: Invalid argument'),
+      ),
       true,
     );
   });
@@ -87,8 +92,14 @@ describe('isTransientDbOrNetworkError — the one that killed the fleet', () => 
     // XX000 is internal_error, the widest state Postgres has. Retrying it
     // wholesale would turn a real server bug into ten silent retries and a
     // three-minute delay before anyone hears about it.
-    assert.equal(isTransientDbOrNetworkError(pgError('XX000', 'unexpected chunk number 2 for toast value')), false);
-    assert.equal(isTransientDbOrNetworkError(pgError('XX001', 'invalid page in block 5 of relation base/1/2')), false);
+    assert.equal(
+      isTransientDbOrNetworkError(pgError('XX000', 'unexpected chunk number 2 for toast value')),
+      false,
+    );
+    assert.equal(
+      isTransientDbOrNetworkError(pgError('XX001', 'invalid page in block 5 of relation base/1/2')),
+      false,
+    );
     assert.equal(isTransientDbOrNetworkError(pgError('XX002', 'index is corrupted')), false);
   });
 
@@ -123,7 +134,8 @@ describe('withTransientRetry', () => {
       'test',
       async () => {
         calls++;
-        if (calls < 3) throw pgError('57P03', 'the database system is not yet accepting connections');
+        if (calls < 3)
+          throw pgError('57P03', 'the database system is not yet accepting connections');
         return 'ok';
       },
       () => {},

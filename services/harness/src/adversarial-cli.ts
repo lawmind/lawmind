@@ -69,12 +69,16 @@ const OUT = process.env['ADVERSARIAL_JSON'] ?? null;
  * today, which is the honest outcome: the fix is not installed rather than
  * silently faked.
  */
-function transitionResolver(): { fn: (q: string) => Promise<string | null>; close: () => Promise<void> } | null {
+function transitionResolver(): {
+  fn: (q: string) => Promise<string | null>;
+  close: () => Promise<void>;
+} | null {
   const url = process.env['DATABASE_URL'];
   if (!url) return null;
   const sql = postgres(url, { ssl: sslFor(url), max: 1, onnotice: () => {} });
   return {
-    fn: async (question: string) => transitionContext(await assessTransition(sql, { text: question })),
+    fn: async (question: string) =>
+      transitionContext(await assessTransition(sql, { text: question })),
     close: async () => {
       await sql.end();
     },
@@ -84,7 +88,9 @@ function transitionResolver(): { fn: (q: string) => Promise<string | null>; clos
 async function main(): Promise<number> {
   if (!process.env['OPENROUTER_API_KEY'] && !process.env['INFERX_API_KEY']) {
     console.error('No model key in the environment.');
-    console.error('Run with --env-file=.env — the key exists, the process has to be told to read it.');
+    console.error(
+      'Run with --env-file=.env — the key exists, the process has to be told to read it.',
+    );
     return 2;
   }
 
@@ -133,7 +139,14 @@ async function main(): Promise<number> {
   }
 
   if (OUT) {
-    await writeFile(OUT, JSON.stringify({ kind: 'new1_adversarial', createdAt: new Date().toISOString(), ...result }, null, 2));
+    await writeFile(
+      OUT,
+      JSON.stringify(
+        { kind: 'new1_adversarial', createdAt: new Date().toISOString(), ...result },
+        null,
+        2,
+      ),
+    );
     console.log(`\nwrote ${OUT}`);
   }
   return result.passRate === 1 && result.callFailures === 0 ? 0 : 1;

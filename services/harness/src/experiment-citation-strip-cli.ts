@@ -27,7 +27,10 @@ import { stripResidualCitations } from './citation-strip.ts';
 import { type HarnessQuery, scoreQuery } from './retrieval.ts';
 import { meanNdcgAtK } from './metrics.ts';
 
-const CHECKPOINT_PATH = new URL('../../../experiment-citation-strip-checkpoint.jsonl', import.meta.url);
+const CHECKPOINT_PATH = new URL(
+  '../../../experiment-citation-strip-checkpoint.jsonl',
+  import.meta.url,
+);
 
 type Row = {
   id: string;
@@ -62,7 +65,9 @@ async function main(): Promise<void> {
     }
   }
   const pending = queries.filter((q) => !already.has(q.id));
-  console.log(`${queries.length} total, ${already.size} already checkpointed, ${pending.length} pending`);
+  console.log(
+    `${queries.length} total, ${already.size} already checkpointed, ${pending.length} pending`,
+  );
 
   const sql = await openDb(url, 8);
   try {
@@ -81,9 +86,29 @@ async function main(): Promise<void> {
       const stripped = stripResidualCitations(q.query);
       const changed = stripped !== q.query;
 
-      const base = await scoreQuery(sql, q, embedQuery, 20, undefined, false, undefined, 'sparse', {});
+      const base = await scoreQuery(
+        sql,
+        q,
+        embedQuery,
+        20,
+        undefined,
+        false,
+        undefined,
+        'sparse',
+        {},
+      );
       const cand = changed
-        ? await scoreQuery(sql, { ...q, query: stripped }, embedQuery, 20, undefined, false, undefined, 'sparse', {})
+        ? await scoreQuery(
+            sql,
+            { ...q, query: stripped },
+            embedQuery,
+            20,
+            undefined,
+            false,
+            undefined,
+            'sparse',
+            {},
+          )
         : base; // proven no-op -- do not spend a second query on identical text
 
       const row: Row = {
@@ -97,7 +122,9 @@ async function main(): Promise<void> {
       appendFileSync(CHECKPOINT_PATH, JSON.stringify(row) + '\n');
       done++;
       if (done % 20 === 0 || done === pending.length) {
-        console.log(`  ${done}/${pending.length} (${((Date.now() - startedAt) / 1000).toFixed(0)}s)`);
+        console.log(
+          `  ${done}/${pending.length} (${((Date.now() - startedAt) / 1000).toFixed(0)}s)`,
+        );
       }
     }
 
@@ -108,7 +135,9 @@ async function main(): Promise<void> {
         await scoreOne(pending[i]!);
       }
     }
-    await Promise.all(Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()));
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, pending.length) }, () => worker()),
+    );
 
     // ── Report ── re-read the checkpoint fresh so the report reflects
     // everything on disk, not just what `already` held before this run started.
@@ -127,11 +156,21 @@ async function main(): Promise<void> {
       const candSuccess = rs.filter((r) => r.candTop5).length;
       const baseRecall = rs.filter((r) => r.baseFoundAtAnyRank !== null).length;
       const candRecall = rs.filter((r) => r.candFoundAtAnyRank !== null).length;
-      const baseNdcg = meanNdcgAtK(rs.map((r) => r.baseFoundAtAnyRank), 5);
-      const candNdcg = meanNdcgAtK(rs.map((r) => r.candFoundAtAnyRank), 5);
+      const baseNdcg = meanNdcgAtK(
+        rs.map((r) => r.baseFoundAtAnyRank),
+        5,
+      );
+      const candNdcg = meanNdcgAtK(
+        rs.map((r) => r.candFoundAtAnyRank),
+        5,
+      );
       console.log(`\n${label} (n=${rs.length})`);
-      console.log(`  success@5   base ${pct(baseSuccess, rs.length)}  candidate ${pct(candSuccess, rs.length)}`);
-      console.log(`  recall@20   base ${pct(baseRecall, rs.length)}  candidate ${pct(candRecall, rs.length)}`);
+      console.log(
+        `  success@5   base ${pct(baseSuccess, rs.length)}  candidate ${pct(candSuccess, rs.length)}`,
+      );
+      console.log(
+        `  recall@20   base ${pct(baseRecall, rs.length)}  candidate ${pct(candRecall, rs.length)}`,
+      );
       console.log(`  nDCG@5      base ${baseNdcg.toFixed(3)}  candidate ${candNdcg.toFixed(3)}`);
       let gained = 0;
       let lost = 0;
@@ -152,7 +191,9 @@ async function main(): Promise<void> {
     const controlDiscordant = unchangedRows.some((r) => r.baseTop5 !== r.candTop5);
     console.log(
       `\nNEGATIVE CONTROL INTEGRITY: ${
-        controlDiscordant ? 'FAILED -- an unchanged query moved, something is wrong with this experiment' : 'held -- 0 unchanged queries moved, exactly as required'
+        controlDiscordant
+          ? 'FAILED -- an unchanged query moved, something is wrong with this experiment'
+          : 'held -- 0 unchanged queries moved, exactly as required'
       }`,
     );
   } finally {

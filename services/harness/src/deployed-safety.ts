@@ -70,7 +70,8 @@ export const PROBE_CASES: readonly ProbeCase[] = [
   },
   {
     id: 'bommai-exact',
-    description: 'S.R. Bommai must resolve to itself, or an explicit not-found — never a different case',
+    description:
+      'S.R. Bommai must resolve to itself, or an explicit not-found — never a different case',
     query: 'cite:"(1994) 3 SCC 1"',
     expectation: 'resolves',
     titleIncludes: 'BOMMAI',
@@ -133,7 +134,11 @@ async function callSearch(
  * case, not an unhandled rejection that takes the whole probe down and reports
  * nothing.
  */
-async function runCase(fetchImpl: typeof fetch, baseUrl: string, c: ProbeCase): Promise<ProbeCaseResult> {
+async function runCase(
+  fetchImpl: typeof fetch,
+  baseUrl: string,
+  c: ProbeCase,
+): Promise<ProbeCaseResult> {
   let status: number;
   let body: SearchEnvelope | null;
   try {
@@ -177,7 +182,9 @@ async function runCase(fetchImpl: typeof fetch, baseUrl: string, c: ProbeCase): 
 
   const parsed = body.data['parsed'];
   const parsedPresent = typeof parsed === 'string';
-  const results = Array.isArray(body.data['results']) ? (body.data['results'] as SearchResultRow[]) : null;
+  const results = Array.isArray(body.data['results'])
+    ? (body.data['results'] as SearchResultRow[])
+    : null;
 
   if (!parsedPresent) {
     return {
@@ -281,7 +288,10 @@ async function runCase(fetchImpl: typeof fetch, baseUrl: string, c: ProbeCase): 
     };
   }
   const wrong = results.filter(
-    (r) => !String(r.caseTitle ?? '').toUpperCase().includes((c.titleIncludes ?? '').toUpperCase()),
+    (r) =>
+      !String(r.caseTitle ?? '')
+        .toUpperCase()
+        .includes((c.titleIncludes ?? '').toUpperCase()),
   );
   if (wrong.length > 0) {
     const titles = wrong.map((r) => String(r.caseTitle ?? '(no title)')).join(' · ');

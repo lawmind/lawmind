@@ -124,7 +124,8 @@ if (!email) usage('--email is required');
 // Not a validator, a typo guard. An address with no @ cannot receive the magic
 // link this account is meant to be signed into with, and the failure would
 // surface days later as "the link never arrived".
-if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) usage(`--email does not look like an address: ${email}`);
+if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+  usage(`--email does not look like an address: ${email}`);
 if (!name) usage('--name is required — users.full_name is NOT NULL');
 if (!phone) usage('--phone is required — users.phone is NOT NULL');
 if (!reason) usage('--reason is required — an unexplained account creation is not auditable');
@@ -147,7 +148,9 @@ try {
     SELECT u.id::text, u.role, u.auth_id FROM users u WHERE lower(u.email) = ${email}`;
 
   console.log(`email            ${email}`);
-  console.log(`auth_user        ${existingAuth ? `EXISTS ${existingAuth.id}` : 'would be CREATED'}`);
+  console.log(
+    `auth_user        ${existingAuth ? `EXISTS ${existingAuth.id}` : 'would be CREATED'}`,
+  );
   console.log(
     `users profile    ${existingUser ? `EXISTS ${existingUser.id} (role ${existingUser.role})` : 'would be CREATED'}`,
   );

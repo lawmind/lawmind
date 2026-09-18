@@ -101,7 +101,9 @@ describe('extractCitations — the bracket and year-first forms', () => {
   });
 
   it('finds the year-first form used throughout the reports', () => {
-    assert.deepEqual(raw('U.P. SRTC v. Trilok Chandra 1996 (4) SCC 362; and'), ['1996 (4) SCC 362']);
+    assert.deepEqual(raw('U.P. SRTC v. Trilok Chandra 1996 (4) SCC 362; and'), [
+      '1996 (4) SCC 362',
+    ]);
     assert.deepEqual(raw('Kesavananda, 1976 (1) SCR 906, was considered'), ['1976 (1) SCR 906']);
   });
 
@@ -147,7 +149,10 @@ describe('extractCitations — the bracket and year-first forms', () => {
     // why the token list is a closed set measured from the corpus, not a class.
     assert.equal(normaliseCitation('2023:DHC:2720'), '2023:DHC:2720');
     assert.equal(normaliseCitation('2019 INSC 441'), '2019 INSC 441');
-    assert.equal(normaliseCitation('2016 SCC OnLine Del 1234'), normaliseCitation('2016 SCC ONLINE DEL 1234'));
+    assert.equal(
+      normaliseCitation('2016 SCC OnLine Del 1234'),
+      normaliseCitation('2016 SCC ONLINE DEL 1234'),
+    );
   });
 
   it('still NEVER conflates different numbers across the forms', () => {
@@ -188,7 +193,10 @@ describe('extractCitations — the bracket and year-first forms', () => {
     // "S.C.R. SUPREME COURT REPORTS 807" is the printed header on every page of
     // the bound volumes and appears in 12,725 judgments. It carries a reporter
     // abbreviation and a number, and it is not a citation.
-    assert.deepEqual(raw('decided by the court. .• S.C.R. SUPREME COURT REPORTS 807 Per SINHA J.'), []);
+    assert.deepEqual(
+      raw('decided by the court. .• S.C.R. SUPREME COURT REPORTS 807 Per SINHA J.'),
+      [],
+    );
   });
 });
 
@@ -251,11 +259,23 @@ describe('detectTreatment', () => {
     // misleads — it turns a rejection into an endorsement.
     // Real rows, abridged: Bombay HC, an SCR headnote, Sikkim HC, Punjab & Haryana HC.
     const cases: readonly (readonly [string, string])[] = [
-      ['Krishi Utpadan Mandi Samiti v. Mohammed Ibrahim, (2004) 2 SCC 286 has dis-approved the decision of the reference Court.', '(2004) 2 SCC 286'],
+      [
+        'Krishi Utpadan Mandi Samiti v. Mohammed Ibrahim, (2004) 2 SCC 286 has dis-approved the decision of the reference Court.',
+        '(2004) 2 SCC 286',
+      ],
       // The reporter hyphenates across a line break, so the space form is real too.
-      ['Ram Sarup, [1958] S.C.R. 828, dis- approved. Rupnarain Singh, State of Orissa.', '[1958] S.C.R. 828'],
-      ['Orissa Judicial Services Association vs. State of Orissa AIR 1991 SC 382 had dis-approved the conduct of judicial officers.', 'AIR 1991 SC 382'],
-      ["Union of India v. Pradeep Kumari, 1995 (2) SCC 736 three Judges Bench of the Hon'ble Supreme Court dis-approved the view taken in Babua Ram's case.", '1995 (2) SCC 736'],
+      [
+        'Ram Sarup, [1958] S.C.R. 828, dis- approved. Rupnarain Singh, State of Orissa.',
+        '[1958] S.C.R. 828',
+      ],
+      [
+        'Orissa Judicial Services Association vs. State of Orissa AIR 1991 SC 382 had dis-approved the conduct of judicial officers.',
+        'AIR 1991 SC 382',
+      ],
+      [
+        "Union of India v. Pradeep Kumari, 1995 (2) SCC 736 three Judges Bench of the Hon'ble Supreme Court dis-approved the view taken in Babua Ram's case.",
+        '1995 (2) SCC 736',
+      ],
     ];
     for (const [text, citation] of cases) {
       const t = after(text, citation);
@@ -267,8 +287,14 @@ describe('detectTreatment', () => {
   it('still reads a real annotation dash that follows a word', () => {
     // The guard must not cost the legitimate form, which is what 57 of the 61
     // rows are: a dash closing a Case Law Cited entry.
-    assert.equal(after('Sharma v. State, (2019) 4 SCC 221- approved.', '(2019) 4 SCC 221').relationship, 'approved');
-    assert.equal(after('Sharma v. State, (2019) 4 SCC 221 —approved.', '(2019) 4 SCC 221').relationship, 'approved');
+    assert.equal(
+      after('Sharma v. State, (2019) 4 SCC 221- approved.', '(2019) 4 SCC 221').relationship,
+      'approved',
+    );
+    assert.equal(
+      after('Sharma v. State, (2019) 4 SCC 221 —approved.', '(2019) 4 SCC 221').relationship,
+      'approved',
+    );
   });
 
   it('does NOT take a marker belonging to a later entry in the list', () => {

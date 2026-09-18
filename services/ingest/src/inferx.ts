@@ -22,7 +22,12 @@
 import { assertPublicOnlyEgress, type EgressPayloadClass } from './llm-egress.ts';
 
 export type InferxResult =
-  | { readonly ok: true; readonly text: string; readonly inputTokens: number; readonly outputTokens: number }
+  | {
+      readonly ok: true;
+      readonly text: string;
+      readonly inputTokens: number;
+      readonly outputTokens: number;
+    }
   | { readonly ok: false; readonly reason: string };
 
 /**
@@ -42,7 +47,12 @@ export type InferxResult =
  */
 export function inferxKeysFromEnv(env: NodeJS.ProcessEnv = process.env): string[] {
   const keys: string[] = [];
-  for (const name of ['INFERX_API_KEY', 'INFERX_API_KEY_2', 'INFERX_API_KEY_3', 'INFERX_API_KEY_4']) {
+  for (const name of [
+    'INFERX_API_KEY',
+    'INFERX_API_KEY_2',
+    'INFERX_API_KEY_3',
+    'INFERX_API_KEY_4',
+  ]) {
     const v = env[name];
     if (typeof v === 'string' && v.trim() !== '' && !keys.includes(v.trim())) keys.push(v.trim());
   }
@@ -193,7 +203,8 @@ export async function callInferx(prompt: string, deps: InferxDeps): Promise<Infe
     if (text === '') {
       return {
         ok: false,
-        reason: 'empty content — max_tokens likely exhausted by reasoning tokens (MODEL_STRATEGY.md §5)',
+        reason:
+          'empty content — max_tokens likely exhausted by reasoning tokens (MODEL_STRATEGY.md §5)',
       };
     }
     return {

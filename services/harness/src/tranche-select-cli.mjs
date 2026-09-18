@@ -102,7 +102,7 @@
  */
 import postgres from 'postgres';
 import { createHash } from 'node:crypto';
-import { createReadStream, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { createReadStream, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { StringDecoder } from 'node:string_decoder';
 
 const ROOT = new URL('../../../', import.meta.url);
@@ -286,7 +286,7 @@ for (const court of COURTS) {
   }
 }
 const heaps = new Map(cells.map((c) => [c.key, new BoundedMinKeep(c.reserve)]));
-const cellByKey = new Map(cells.map((c) => [c.key, c]));
+const _cellByKey = new Map(cells.map((c) => [c.key, c]));
 log(
   `strata cells: ${cells.length}  ·  target ${TARGET.toLocaleString()}  ·  reserve ${cells
     .reduce((a, c) => a + c.reserve, 0)

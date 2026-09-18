@@ -57,7 +57,9 @@ if (!dbUrl) {
 }
 const apiKey = process.env['INFERX_API_KEY'];
 if (!apiKey) {
-  console.error('INFERX_API_KEY is not set. Refusing rather than running a pass that cannot adjudicate anything.');
+  console.error(
+    'INFERX_API_KEY is not set. Refusing rather than running a pass that cannot adjudicate anything.',
+  );
   process.exit(2);
 }
 
@@ -111,7 +113,9 @@ let written = 0;
 
 for (const t of targets) {
   attempted++;
-  process.stdout.write(`[${attempted}/${targets.length}] ${t.citation_text.replace(/\s+/g, ' ')} (${t.n} sightings) ... `);
+  process.stdout.write(
+    `[${attempted}/${targets.length}] ${t.citation_text.replace(/\s+/g, ' ')} (${t.n} sightings) ... `,
+  );
 
   let context: string | null = null;
   let name: string | null = null;
@@ -183,7 +187,12 @@ for (const t of targets) {
   }
   candidatesGenerated++;
 
-  const input = { citationText: t.citation_text, citationKey: t.citation_key, contextEvidence: context, candidates };
+  const input = {
+    citationText: t.citation_text,
+    citationKey: t.citation_key,
+    contextEvidence: context,
+    candidates,
+  };
   const inputHash = adjudicationInputHash(input);
   const prompt = buildAdjudicationPrompt(input);
 
@@ -195,9 +204,7 @@ for (const t of targets) {
   }
 
   const parsed = parseAdjudicationResponse(result.text, candidates);
-  const decision = parsed
-    ? parsed.decision
-    : ('impossible_to_determine' as const);
+  const decision = parsed ? parsed.decision : ('impossible_to_determine' as const);
   const tier = parsed ? resolveConfidenceTier(parsed, candidates) : 'unresolved';
   const outputHash = adjudicationOutputHash(result.text);
 

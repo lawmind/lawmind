@@ -4,8 +4,9 @@
 decision, capability-registry release, and production/persistent-beta deployment.
 It points to the truth; it does not replace receipts.
 
-**Last updated:** 18 September 2026 — SHIP S4-T0.2 (runtime / CI / deployed-target repair),
-after S4-T0.1 (authority + orchestration repair).
+**Last updated:** 18 September 2026 — SHIP S4-T0.3 (CI baseline, alert-surface truth,
+capability registry R18), after S4-T0.2 (runtime / CI / deployed-target repair — **PASS
+corrected to HOLD**, see §1) and S4-T0.1 (authority + orchestration repair).
 **Seeded from:** [`roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md`](roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md)
 (dated snapshot provenance, immutable). Where the two differ, this file is current
 and the ledger shows what was true when v7.4 was prepared.
@@ -25,7 +26,18 @@ and the ledger shows what was true when v7.4 was prepared.
 HEAD: see `git log -1`. The S4-T0.1 commits are listed in
 [`ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`](ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md);
 the S4-T0.2 runtime/CI/deployed-target repair in
-[`ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md`](ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md).
+[`ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md`](ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md);
+the S4-T0.3 closure in
+[`ai/ship-s4-t0-3/CI_ALERT_REGISTRY_CLOSURE.md`](ai/ship-s4-t0-3/CI_ALERT_REGISTRY_CLOSURE.md).
+
+**S4-T0.2's overall PASS is CORRECTED to HOLD.** Its hosting and deployed-probe
+subobjectives closed and stand; its acceptance contract also required
+`REPOSITORY_CI_BASELINE = PASS`, and the pushed GitHub Actions run was red while
+the round itself recorded repo-wide format, lint and typecheck failures. The
+superseding adjudication is
+`SHIP_S4_T0_2_RUNTIME_CI_RECONCILIATION = HOLD — REPOSITORY_CI_BASELINE_NOT_GREEN`,
+appended to that round's own record. **S4-T0.3 closes the baseline** — it did not
+redefine it.
 
 ## 2 · Agents and bus
 
@@ -55,18 +67,26 @@ hosting cost package (no provisioning) → founder spend decision → S4-R1.
 ## 4 · Current capability registry
 
 ```text
-CAPABILITY_REGISTRY_REVISION = R17
-CAPABILITY_REGISTRY_FILE     = docs/product/V1_CAPABILITY_REGISTRY_R17.json
-CURRENT_CAPABILITY_REGISTRY  = docs/product/V1_CAPABILITY_REGISTRY_R17.json   (same file; the older key name, kept because tooling reads it)
-CURRENT_CLAIMS_REGISTER      = docs/product/V1_CLAIMS_REGISTER_R17.md
+CAPABILITY_REGISTRY_REVISION = R18
+CAPABILITY_REGISTRY_FILE     = docs/product/V1_CAPABILITY_REGISTRY_R18.json
+CURRENT_CAPABILITY_REGISTRY  = docs/product/V1_CAPABILITY_REGISTRY_R18.json   (same file; the older key name, kept because tooling reads it)
+CURRENT_CLAIMS_REGISTER      = docs/product/V1_CLAIMS_REGISTER_R18.md
 
 API_CONTRACT_REVISION        = R17
 API_WIRE_PROTOCOL_VERSION    = 1
 API_CONTRACT_FILE            = docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md
 API_CONTRACT_LEDGER          = docs/product/CONTRACT_CHANGE_LEDGER.json (currentVersion = R17)
 
-PREVIOUS (historical)        = V1_CAPABILITY_REGISTRY_R16.json — immutable, R16 = RELEASED/PROVEN
+PREVIOUS (historical)        = V1_CAPABILITY_REGISTRY_R17.json, R16.json — immutable snapshots
 ```
+
+R18 (CCR-SHIP-S4T03-01) does two things and no more. It corrects contract
+metadata R17 had inherited from R16 without re-stating — `contractRevision`,
+`contractArtifact` and `currentContractVersion` on all 30 rows now read R17,
+which is what the contract ledger has said since R17 was released. And it ADDS
+three `alerts.*` rows for a surface that was user-reachable with no row at all.
+**No capability state moves on any platform, 30 inherited rows show zero drift,
+ENABLED stays 17, and R16/R17 are byte-identical to their committed forms.**
 
 **These are independent revision domains; the matching number is coincidental.**
 The capability registry counts its own releases (R12 → R17) and the API contract
@@ -91,8 +111,35 @@ question about their defined semantics, and changing them is a contract action
 under roadmap v7.4 §3.7, not a documentation repair. Left for SHIP to decide
 through a CCR.
 
-R17 moves only the web platform: `OUT_OF_SCOPE_CURRENT_FOUNDER` (CCR-SHIP-S4T0-01).
-iOS/Android states are inherited from R16 unchanged.
+R17 moved only the web platform: `OUT_OF_SCOPE_CURRENT_FOUNDER` (CCR-SHIP-S4T0-01).
+iOS/Android states were inherited from R16 unchanged, and R18 inherits all of them
+again.
+
+### Alerts, monitoring, briefing and push — four capabilities, not one
+
+```text
+CITATOR_ALERT_STATE = DISABLED_NOT_READY
+                      alerts.saved_authority_moved · alerts.filed_citation_moved
+                      Producer EXISTS (services/api/src/citations/fanout.ts), routes
+                      EXIST (GET /alerts, POST /alerts/:id/read), client surface EXISTS
+                      (TodayScreen "Since yesterday" / "An authority you have used has
+                      moved"), tests pass. NO END-TO-END DELIVERY OBSERVED — the only
+                      producers are `pnpm --filter @lawmind/cron recheck` and an upheld
+                      admin dispute, and neither runs anywhere.
+ECOURTS_MONITORING  = DISABLED_NOT_READY   (monitoring.user_product, unchanged)
+BRIEFING            = DISABLED_NOT_READY   (briefing.daily_loop, unchanged)
+PUSH_DELIVERY       = DISABLED_NOT_READY   (alerts.push_delivery; EAS_PROJECT_ID absent
+                      from app.config.ts, so no build can deliver one; no push observed)
+ALERT_KINDS         = 2 of PD-5's 4 triggers have an alert_kind value and a producer
+```
+
+**None of these is PASS and none is claimable.** `docs/product/V1_CLAIMS_REGISTER_R18.md`
+prohibits every alert, push, briefing and monitoring claim. The current-v1 CI guard
+is `scripts/check-alert-surface-truth.mjs` — it fails if the product PROMISES an
+alert it cannot deliver. The old all-four-trigger test is
+`scripts/check-pd5-alerts-readiness.mjs`, a FUTURE readiness gate required before
+any capability claims full PD-5/PD-6 behaviour, and deliberately **not** a Gate-D
+or current-v1 CI requirement while monitoring and uploads are disabled.
 
 ## 5 · Product scope
 
@@ -188,7 +235,15 @@ RAILWAY_PRODUCTION       = HISTORICAL / RETIRED   (api-production-1c0b4.up.railw
 GATE_C_DIGITALOCEAN      = HISTORICAL / DESTROYED_VERIFIED
 FULL_HNSW                = DOES_NOT_EXIST · PUBLIC_SEMANTIC = DISABLED
 REPOSITORY_VISIBILITY    = PUBLIC (github.com/lawmind/lawmind)
+
+REPOSITORY_CI            = PASS   (S4-T0.3; pnpm format, pnpm lint, services+packages
+                                   typecheck, authority check, design rules, bus tests,
+                                   scratch-DB checks)
+DEPLOYED_SAFETY          = NOT_RUN_NO_DEPLOYED_TARGET
 ```
+
+`DEPLOYED_SAFETY` is the third state and it is neither of the other two. It is not
+a pass: nothing is deployed, so nothing was graded.
 
 **No deployed probe may invent a target.** `PROBE_BASE_URL` is required by both
 deployed safety probes (`services/harness/src/probe-target.ts`); absent, they

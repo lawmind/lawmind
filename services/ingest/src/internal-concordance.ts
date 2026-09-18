@@ -121,7 +121,11 @@ export function rankCandidatesReportingLag(
 
 export type MatchVerdict =
   | { readonly kind: 'no_candidate' }
-  | { readonly kind: 'ambiguous'; readonly top: ScoredCandidate; readonly runnerUp: ScoredCandidate }
+  | {
+      readonly kind: 'ambiguous';
+      readonly top: ScoredCandidate;
+      readonly runnerUp: ScoredCandidate;
+    }
   | { readonly kind: 'thin'; readonly top: ScoredCandidate }
   | { readonly kind: 'safe'; readonly top: ScoredCandidate };
 
@@ -141,7 +145,10 @@ export function classifyMatch(candidates: readonly ScoredCandidate[]): MatchVerd
     return { kind: 'ambiguous', top, runnerUp };
   }
 
-  if (top.jaccard < PROMOTION_MIN_JACCARD || top.distinguishingTokens <= PROMOTION_MIN_DISTINGUISHING_TOKENS) {
+  if (
+    top.jaccard < PROMOTION_MIN_JACCARD ||
+    top.distinguishingTokens <= PROMOTION_MIN_DISTINGUISHING_TOKENS
+  ) {
     return { kind: 'thin', top };
   }
 
@@ -175,9 +182,10 @@ export type PromotionCandidate = {
  * at**. `AUTHORITY_COVERAGE.md` §3a's own rule: a wrong alias is worse than a
  * missing one.
  */
-export function detectCrossTargetCollisions(
-  candidates: readonly PromotionCandidate[],
-): { safe: PromotionCandidate[]; collided: PromotionCandidate[] } {
+export function detectCrossTargetCollisions(candidates: readonly PromotionCandidate[]): {
+  safe: PromotionCandidate[];
+  collided: PromotionCandidate[];
+} {
   const byTarget = new Map<string, PromotionCandidate[]>();
   for (const c of candidates) {
     const arr = byTarget.get(c.targetJudgmentId) ?? [];

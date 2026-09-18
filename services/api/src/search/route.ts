@@ -510,11 +510,15 @@ export async function handleSearch(
      * not wait on a metric, and must never fail because of one.
      */
     if (c.res.status < 400 && outcome.resultCount > 0) {
-      recordStepForAuthIdInBackground(deps.userSql ?? deps.sql, c.get('authId'), 'first_successful_search', (err) =>
-        logger.error(
-          { request_id: c.get('requestId'), err, step: 'first_successful_search' },
-          'activation step not recorded',
-        ),
+      recordStepForAuthIdInBackground(
+        deps.userSql ?? deps.sql,
+        c.get('authId'),
+        'first_successful_search',
+        (err) =>
+          logger.error(
+            { request_id: c.get('requestId'), err, step: 'first_successful_search' },
+            'activation step not recorded',
+          ),
       );
     }
   }

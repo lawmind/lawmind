@@ -173,14 +173,47 @@ for (const path of files) {
     //    because it survives every .env change anyone makes.
     const literal = trimmed.match(/postgres(?:ql)?:\/\/[^\s"'`)]+/);
     if (literal && !/\$\{|\*\*\*|<pw>|process\.env/.test(literal[0])) {
+      /**
+       * A RESERVED HOST IS NOT A LIVE PATH.
+       *
+       * The question this rule asks is "does a connection string in executable
+       * code survive an .env cutover and reach a real database". RFC 2606 and
+       * RFC 6761 reserve `example.com/.net/.org` and the `.example`, `.invalid`,
+       * `.test` and `.localhost` TLDs precisely so that they resolve to nothing,
+       * anywhere, ever. A string naming one of them cannot reach a database and
+       * therefore cannot be the second path this audit exists to find.
+       *
+       * Added 18 Sep 2026 (SHIP S4-T0.3) after the two HIGH findings that were
+       * failing repository CI turned out to be
+       * `postgres://u:p@corpus.internal.example.net:5432/lawmind_corpus` and its
+       * user-pool sibling, in `scripts/lcc-deploy-dry-run.mjs` — a dry-run
+       * PACKAGE BUILDER whose whole purpose is to write a config it never
+       * connects with. Downgraded to INFO rather than exempted: the line is
+       * still reported, so a reserved host that later becomes a real one is
+       * still visible in the output.
+       *
+       * It does NOT loosen the rule that matters. A literal `rlwy.net`,
+       * `railway.app` or any other resolvable host in executable code is still
+       * HIGH, and `railway-db-host-literal` below is untouched.
+       */
+      const reserved =
+        /@[^/\s]*\.(?:example\.(?:com|net|org)|example|invalid|test|localhost)(?::\d+)?\b/i.test(
+          literal[0],
+        );
       add(
-        !constructsClient ? 'INFO' : isTest(r) || isMigrationTool(r) ? 'MEDIUM' : 'HIGH',
+        !constructsClient || reserved
+          ? 'INFO'
+          : isTest(r) || isMigrationTool(r)
+            ? 'MEDIUM'
+            : 'HIGH',
         'hardcoded-connection-string',
         r,
         line,
-        constructsClient
-          ? 'literal postgres:// URL in executable code — survives any .env cutover'
-          : 'string fixture — the file builds no database client, so nothing can connect with it',
+        reserved
+          ? 'literal postgres:// URL naming an RFC 2606 / RFC 6761 RESERVED host — it resolves nowhere, so it is not a path to anything'
+          : constructsClient
+            ? 'literal postgres:// URL in executable code — survives any .env cutover'
+            : 'string fixture — the file builds no database client, so nothing can connect with it',
       );
     }
 

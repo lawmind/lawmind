@@ -114,7 +114,9 @@ export async function createAnnotation(
   const denied = requireUser(c, userId);
   if (denied) return denied;
 
-  const [judgment] = await corpusSql<{ id: string; overruled_status: string; case_title: string }[]>`
+  const [judgment] = await corpusSql<
+    { id: string; overruled_status: string; case_title: string }[]
+  >`
     -- Read LIVE, never cached. Verification is permanent; good-law status is not,
     -- and a judgment that was fine to add last week may not be today.
     SELECT id, overruled_status, case_title FROM judgments WHERE id = ${judgmentId}`;
@@ -170,7 +172,9 @@ export async function createAnnotation(
   if (body.matterId) {
     const state = await loadOnePrecedentialState(corpusSql, judgmentId);
     if (state && state.policy.addToMatter === 'refuse') {
-      const [overruler] = await corpusSql<{ case_title: string; neutral_citation: string | null }[]>`
+      const [overruler] = await corpusSql<
+        { case_title: string; neutral_citation: string | null }[]
+      >`
         SELECT o.case_title, o.neutral_citation
         FROM judgments j LEFT JOIN judgments o ON o.id = j.overruled_by_judgment_id
         WHERE j.id = ${judgmentId} AND o.id IS NOT NULL`;

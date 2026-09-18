@@ -117,7 +117,9 @@ export type DisplayGroup = {
 };
 
 const norm = (s: string | null | undefined): string =>
-  String(s ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  String(s ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '');
 
 /** Case numbers vary in punctuation and padding between sources. */
 export function normaliseNumber(raw: string | null): string | null {
@@ -138,12 +140,15 @@ export function classify(members: readonly Member[]): GroupType {
   if (members.length < 2) return 'BYTE_IDENTICAL_DUPLICATE';
 
   const hashes = distinct(members.map((m) => m.content_hash).filter((h): h is string => !!h));
-  if (hashes.length === 1 && members.every((m) => m.content_hash)) return 'BYTE_IDENTICAL_DUPLICATE';
+  if (hashes.length === 1 && members.every((m) => m.content_hash))
+    return 'BYTE_IDENTICAL_DUPLICATE';
 
   const urls = distinct(members.map((m) => m.source_url).filter((u): u is string => !!u));
   const keys = distinct(members.map((m) => m.storage_key).filter((k): k is string => !!k));
-  if ((urls.length === 1 && members.every((m) => m.source_url))
-    || (keys.length === 1 && members.every((m) => m.storage_key))) {
+  if (
+    (urls.length === 1 && members.every((m) => m.source_url)) ||
+    (keys.length === 1 && members.every((m) => m.storage_key))
+  ) {
     return 'SAME_SOURCE_DOCUMENT_DUPLICATE';
   }
 
@@ -180,7 +185,12 @@ export function representative(members: readonly Member[]): { id: string; reason
     // 4. a fetchable source beats one we cannot show the paper for
     m.source_url ? 1 : 0,
   ];
-  const reasons = ['readable text', 'native text layer', 'longest full text', 'has a source document'];
+  const reasons = [
+    'readable text',
+    'native text layer',
+    'longest full text',
+    'has a source document',
+  ];
 
   let best = members[0] as Member;
   let bestScore = score(best);
@@ -192,15 +202,25 @@ export function representative(members: readonly Member[]): { id: string; reason
       const a = s[i] as number;
       const b = bestScore[i] as number;
       if (a === b) continue;
-      if (a > b) { best = m; bestScore = s; why = reasons[i] as string; }
+      if (a > b) {
+        best = m;
+        bestScore = s;
+        why = reasons[i] as string;
+      }
       decided = true;
       break;
     }
     // Every document property tied. Fall through to a TOTAL order so the answer
     // is the same on every run rather than whatever the heap returned first.
     if (!decided) {
-      const cmp = (m.content_hash ?? '').localeCompare(best.content_hash ?? '') || m.id.localeCompare(best.id);
-      if (cmp < 0) { best = m; bestScore = s; why = 'tied on every document property; lowest content_hash then lowest id'; }
+      const cmp =
+        (m.content_hash ?? '').localeCompare(best.content_hash ?? '') ||
+        m.id.localeCompare(best.id);
+      if (cmp < 0) {
+        best = m;
+        bestScore = s;
+        why = 'tied on every document property; lowest content_hash then lowest id';
+      }
     }
   }
   return { id: best.id, reason: why };
@@ -244,8 +264,11 @@ export function buildGroup(members: readonly Member[]): DisplayGroup {
       distinct_case_numbers: numbers.length,
       distinct_courts: distinct(members.map((m) => m.court).filter(Boolean)).length,
     },
-    confidence: group_type === 'BYTE_IDENTICAL_DUPLICATE' || group_type === 'SAME_SOURCE_DOCUMENT_DUPLICATE'
-      ? 'DOCUMENT_EVIDENCE'
-      : group_type === 'DISTINCT_JUDGMENTS_SHARED_CITATION' ? 'WEAK' : 'REGISTRY_EVIDENCE',
+    confidence:
+      group_type === 'BYTE_IDENTICAL_DUPLICATE' || group_type === 'SAME_SOURCE_DOCUMENT_DUPLICATE'
+        ? 'DOCUMENT_EVIDENCE'
+        : group_type === 'DISTINCT_JUDGMENTS_SHARED_CITATION'
+          ? 'WEAK'
+          : 'REGISTRY_EVIDENCE',
   };
 }

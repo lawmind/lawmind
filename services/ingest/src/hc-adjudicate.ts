@@ -67,7 +67,9 @@ import type { HcDocumentClass } from './hc-classify.ts';
  */
 export function selectsForModel(hcClassMethod: string | null | undefined): boolean {
   if (typeof hcClassMethod !== 'string' || hcClassMethod === '') return false;
-  return hcClassMethod.startsWith('unclassified_disposal:') || hcClassMethod === 'no_disposal_nature';
+  return (
+    hcClassMethod.startsWith('unclassified_disposal:') || hcClassMethod === 'no_disposal_nature'
+  );
 }
 
 /** What the model is allowed to answer. Exactly the existing classes, plus a refusal. */
@@ -266,7 +268,13 @@ export type AdjudicationOutcome = {
  */
 export function adjudicate(input: AdjudicationInput, raw: string | null): AdjudicationOutcome {
   const inputHash = adjudicationInputHash(input);
-  const base = { judgmentId: input.judgmentId, evidence: '', reasoning: '', statedConfidence: null, inputHash } as const;
+  const base = {
+    judgmentId: input.judgmentId,
+    evidence: '',
+    reasoning: '',
+    statedConfidence: null,
+    inputHash,
+  } as const;
 
   if (raw === null) return { ...base, documentClass: null, verdict: 'call_failed' };
 

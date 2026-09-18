@@ -57,7 +57,12 @@ describe('the egress gate runs before any request is built', () => {
   it('callInferx makes ZERO outbound requests for a private payload', async () => {
     const f = countingFetch();
     await assert.rejects(
-      () => callInferx('a client fact', { apiKey: 'k', fetchImpl: f.impl, payloadClass: 'PRIVATE_CLIENT_FACTS' }),
+      () =>
+        callInferx('a client fact', {
+          apiKey: 'k',
+          fetchImpl: f.impl,
+          payloadClass: 'PRIVATE_CLIENT_FACTS',
+        }),
       /EGRESS REFUSED/,
     );
     assert.equal(f.calls(), 0);
@@ -92,7 +97,10 @@ describe('the egress gate runs before any request is built', () => {
 
 describe('assertPublicOnlyEgress', () => {
   it('throws with a reason a reader can act on', () => {
-    assert.throws(() => assertPublicOnlyEgress('PRIVATE_MATTER_METADATA', 'inferx'), /EGRESS REFUSED/);
+    assert.throws(
+      () => assertPublicOnlyEgress('PRIVATE_MATTER_METADATA', 'inferx'),
+      /EGRESS REFUSED/,
+    );
   });
 
   it('does not throw for the permitted class', () => {

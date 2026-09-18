@@ -65,10 +65,14 @@ function assertConstantsStillMatch(): void {
   const depth = /const CANDIDATE_DEPTH = (\d+);/.exec(src);
   const ann = /const annDepth = CANDIDATE_DEPTH \* \(filtered \? \d+ : (\d+)\);/.exec(src);
   if (!depth || Number(depth[1]) !== CANDIDATE_DEPTH) {
-    throw new Error(`retrieve.ts CANDIDATE_DEPTH is ${depth?.[1] ?? 'unreadable'}, this tool assumes ${CANDIDATE_DEPTH}.`);
+    throw new Error(
+      `retrieve.ts CANDIDATE_DEPTH is ${depth?.[1] ?? 'unreadable'}, this tool assumes ${CANDIDATE_DEPTH}.`,
+    );
   }
   if (!ann || CANDIDATE_DEPTH * Number(ann[1]) !== ANN_DEPTH) {
-    throw new Error(`retrieve.ts unfiltered annDepth multiplier is ${ann?.[1] ?? 'unreadable'}, this tool assumes ${ANN_DEPTH / CANDIDATE_DEPTH}.`);
+    throw new Error(
+      `retrieve.ts unfiltered annDepth multiplier is ${ann?.[1] ?? 'unreadable'}, this tool assumes ${ANN_DEPTH / CANDIDATE_DEPTH}.`,
+    );
   }
 }
 
@@ -117,9 +121,13 @@ async function main(): Promise<void> {
   const url = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!url) throw new Error('DATABASE_URL is not set');
 
-  const decomposed = readJsonl<DecomposeRow>(DECOMPOSE_PATH).filter((r) => r.mechanism === 'DENSE_OK_BUT_MISSED');
+  const decomposed = readJsonl<DecomposeRow>(DECOMPOSE_PATH).filter(
+    (r) => r.mechanism === 'DENSE_OK_BUT_MISSED',
+  );
   if (decomposed.length === 0) {
-    throw new Error('No DENSE_OK_BUT_MISSED rows in held-not-retrieved-checkpoint.jsonl — run `held:decompose` first.');
+    throw new Error(
+      'No DENSE_OK_BUT_MISSED rows in held-not-retrieved-checkpoint.jsonl — run `held:decompose` first.',
+    );
   }
 
   const queries = new Map(
@@ -135,8 +143,12 @@ async function main(): Promise<void> {
 
   console.log('ANN-ONLY PROBE — the 16 that should have been impossible');
   console.log('='.repeat(78));
-  console.log(`${decomposed.length} DENSE_OK_BUT_MISSED · ${done.size} already checkpointed · ${pending.length} pending`);
-  console.log(`ann settings: ef_search=${HNSW_EF_SEARCH}, annDepth=${ANN_DEPTH} chunks, candidateDepth=${CANDIDATE_DEPTH} judgments\n`);
+  console.log(
+    `${decomposed.length} DENSE_OK_BUT_MISSED · ${done.size} already checkpointed · ${pending.length} pending`,
+  );
+  console.log(
+    `ann settings: ef_search=${HNSW_EF_SEARCH}, annDepth=${ANN_DEPTH} chunks, candidateDepth=${CANDIDATE_DEPTH} judgments\n`,
+  );
 
   if (pending.length === 0) {
     report(readJsonl<ProbeRow>(CHECKPOINT_PATH));
@@ -154,7 +166,9 @@ async function main(): Promise<void> {
     for (const [i, r] of pending.entries()) {
       const q = queries.get(r.queryId);
       if (!q) {
-        console.log(`  [${i + 1}/${pending.length}] ${r.queryId} — not in fixtures, skipped (not checkpointed)`);
+        console.log(
+          `  [${i + 1}/${pending.length}] ${r.queryId} — not in fixtures, skipped (not checkpointed)`,
+        );
         continue;
       }
 
@@ -214,7 +228,9 @@ async function main(): Promise<void> {
         );
       } catch (err) {
         // Not checkpointed — a failure is not a measurement.
-        console.log(`  [!] ${r.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`);
+        console.log(
+          `  [!] ${r.queryId.padEnd(20)} FAILED: ${(err as Error).message} — will retry next run`,
+        );
       }
     }
 
@@ -230,12 +246,17 @@ function report(rows: ProbeRow[]): void {
   console.log('='.repeat(78));
   const by = new Map<Verdict, ProbeRow[]>();
   for (const r of rows) by.set(r.verdict, [...(by.get(r.verdict) ?? []), r]);
-  const order: Verdict[] = ['ANN_MISS_HNSW_LOSS', 'ANN_HIT_JUDGMENT_COLLAPSED_OUT', 'ANN_HIT_JUDGMENT_IN_POOL'];
+  const order: Verdict[] = [
+    'ANN_MISS_HNSW_LOSS',
+    'ANN_HIT_JUDGMENT_COLLAPSED_OUT',
+    'ANN_HIT_JUDGMENT_IN_POOL',
+  ];
   const label: Record<Verdict, string> = {
     ANN_MISS_HNSW_LOSS: 'HNSW approximation loss — index itself does not return gold',
     ANN_HIT_JUDGMENT_COLLAPSED_OUT:
       'ANN finds gold, but judgment-collapse on ANN order alone already pushes it past 50 (candidate generation, not fusion)',
-    ANN_HIT_JUDGMENT_IN_POOL: 'ANN finds gold inside both cut points — loss is downstream of the index (fusion/hybridSearch)',
+    ANN_HIT_JUDGMENT_IN_POOL:
+      'ANN finds gold inside both cut points — loss is downstream of the index (fusion/hybridSearch)',
   };
   for (const v of order) {
     const n = by.get(v)?.length ?? 0;
@@ -243,7 +264,8 @@ function report(rows: ProbeRow[]): void {
     console.log(`       ${label[v]}`);
   }
   const total = 16;
-  if (rows.length < total) console.log(`\n  (${total - rows.length} still unmeasured — re-run to complete)`);
+  if (rows.length < total)
+    console.log(`\n  (${total - rows.length} still unmeasured — re-run to complete)`);
 }
 
 await main();

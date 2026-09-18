@@ -74,11 +74,22 @@ const results = await mapConcurrent(targets, 4, async (t): Promise<Result> => {
     const suffix = t.variant === 'mobile' ? 'metadata-mobile.parquet' : 'metadata.parquet';
     const match = keys.find((k) => k.key.endsWith(suffix));
     if (!match) {
-      return { court: t.court, year: t.year, variant: t.variant, key: null, rows: 0, distinctCnr: 0, nullCnr: 0, error: 'no file for this variant' };
+      return {
+        court: t.court,
+        year: t.year,
+        variant: t.variant,
+        key: null,
+        rows: 0,
+        distinctCnr: 0,
+        nullCnr: 0,
+        error: 'no file for this variant',
+      };
     }
     const rows = await withRetry(async () => {
       const file = await asyncBufferFromUrl({ url: `${HC_BUCKET}/${match.key}` });
-      return (await parquetReadObjects({ file, columns: ['cnr'] })) as Array<{ cnr?: string | null }>;
+      return (await parquetReadObjects({ file, columns: ['cnr'] })) as Array<{
+        cnr?: string | null;
+      }>;
     });
     const cnrs = rows.map((r) => r.cnr).filter((c): c is string => !!c);
     return {
@@ -110,7 +121,7 @@ for (const r of results) {
     console.log(`  ${r.court} ${r.year} ${r.variant.padEnd(6)} ERROR: ${r.error}`);
     continue;
   }
-  const ratio = r.rows > 0 ? (r.distinctCnr / r.rows) : 0;
+  const ratio = r.rows > 0 ? r.distinctCnr / r.rows : 0;
   console.log(
     `  ${r.court} ${r.year} ${r.variant.padEnd(6)} rows=${r.rows.toString().padStart(7)}  distinct_cnr=${r.distinctCnr.toString().padStart(7)}  null_cnr=${r.nullCnr.toString().padStart(6)}  distinct/rows=${(ratio * 100).toFixed(1)}%`,
   );
@@ -122,11 +133,17 @@ function summarize(variant: 'plain' | 'mobile') {
   const distinct = rs.reduce((s, r) => s + r.distinctCnr, 0);
   const nullCnr = rs.reduce((s, r) => s + r.nullCnr, 0);
   console.log('');
-  console.log(`${variant.toUpperCase()} SAMPLE SUMMARY (within-file distinct/rows, summed across ${rs.length} files):`);
+  console.log(
+    `${variant.toUpperCase()} SAMPLE SUMMARY (within-file distinct/rows, summed across ${rs.length} files):`,
+  );
   console.log(`  total sampled rows:      ${rows.toLocaleString()}`);
   console.log(`  sum of per-file distinct_cnr: ${distinct.toLocaleString()}`);
-  console.log(`  null cnr:                ${nullCnr.toLocaleString()} (${rows > 0 ? ((nullCnr / rows) * 100).toFixed(1) : '0.0'}%)`);
-  console.log(`  average within-file distinct/rows ratio: ${rows > 0 ? ((distinct / rows) * 100).toFixed(1) : '0.0'}%`);
+  console.log(
+    `  null cnr:                ${nullCnr.toLocaleString()} (${rows > 0 ? ((nullCnr / rows) * 100).toFixed(1) : '0.0'}%)`,
+  );
+  console.log(
+    `  average within-file distinct/rows ratio: ${rows > 0 ? ((distinct / rows) * 100).toFixed(1) : '0.0'}%`,
+  );
 }
 summarize('plain');
 summarize('mobile');

@@ -169,10 +169,14 @@ function solveCaptcha(bytes: Buffer): {
    */
   let stdout: string;
   try {
-    stdout = execFileSync(python, [join(ROOT, 'scripts', 'lcc-captcha-solve.py'), '--image', file], {
-      encoding: 'utf8',
-      maxBuffer: 8 * 1024 * 1024,
-    });
+    stdout = execFileSync(
+      python,
+      [join(ROOT, 'scripts', 'lcc-captcha-solve.py'), '--image', file],
+      {
+        encoding: 'utf8',
+        maxBuffer: 8 * 1024 * 1024,
+      },
+    );
   } catch (error) {
     stdout = String((error as { stdout?: string }).stdout ?? '');
   }
@@ -339,7 +343,9 @@ try {
   const court = wantCourt ? courts.find((c) => c.value === wantCourt) : courts[0];
   if (!court) throw new Error(`no court offered for this establishment`);
   console.log(`court           ${court.value}  ${court.label}`);
-  console.log(`est (fill)      ${JSON.stringify(fillEstCode)}   est (submit) ${JSON.stringify(submitEstCode)}`);
+  console.log(
+    `est (fill)      ${JSON.stringify(fillEstCode)}   est (submit) ${JSON.stringify(submitEstCode)}`,
+  );
   step('courts', {
     offered: courts.length,
     chosen: court.value,
@@ -537,10 +543,17 @@ try {
   const idempotent = replayIds.length === 0 || replayIds.every((id) => observationIds.includes(id));
   console.log(`replay          ${replayIds.length} ids, idempotent=${idempotent}`);
 
-  receipt['parse'] = { status: parsed.status, items: parsed.items.length,
-    sourceWarnings: parsed.sourceWarnings };
-  receipt['observations'] = { written: observationIds.length, ids: observationIds,
-    replayIds, idempotent };
+  receipt['parse'] = {
+    status: parsed.status,
+    items: parsed.items.length,
+    sourceWarnings: parsed.sourceWarnings,
+  };
+  receipt['observations'] = {
+    written: observationIds.length,
+    ids: observationIds,
+    replayIds,
+    idempotent,
+  };
   receipt['verdict'] = idempotent ? 'CANARY_PASS' : 'NOT_PASS';
   if (!idempotent) receipt['notPassReason'] = 'reprocessing the same artifact created new rows';
   saveReceipt();

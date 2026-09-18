@@ -24,7 +24,9 @@ const IDS = [
 ] as const;
 
 /** The contract, as a function, so the test can prove it rejects a broken list. */
-function paragraphContractViolations(tables: readonly { table: string; orderBy: string }[]): string[] {
+function paragraphContractViolations(
+  tables: readonly { table: string; orderBy: string }[],
+): string[] {
   const out: string[] = [];
   const entry = tables.find((t) => t.table === 'judgment_paragraphs');
   if (!entry) out.push('judgment_paragraphs is not in SERVING_TABLES');

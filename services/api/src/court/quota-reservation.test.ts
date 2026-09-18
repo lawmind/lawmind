@@ -67,7 +67,12 @@ let priorAttribution: string | undefined;
 
 async function ledgerRows() {
   return sql<
-    { id: string; outcome: string; refusal_reason: string | null; observation_strategy: string | null }[]
+    {
+      id: string;
+      outcome: string;
+      refusal_reason: string | null;
+      observation_strategy: string | null;
+    }[]
   >`
     SELECT id, outcome, refusal_reason, observation_strategy
       FROM ecourts_fetch_ledger
@@ -139,7 +144,7 @@ describe('eCourts quota reservation is globally atomic', () => {
     assert.equal(
       resolved?.schema,
       isolation.schema,
-      'the reservations below spend quota, and they must not spend the registrar\'s',
+      "the reservations below spend quota, and they must not spend the registrar's",
     );
   });
 
@@ -226,7 +231,11 @@ describe('eCourts quota reservation is globally atomic', () => {
         { court: TEST_COURT, endpoint: TEST_ENDPOINT, strategy: 'CAUSE_LIST_BATCH' },
         new Date(base + (AUTHORISATION?.minIntervalMs ?? 2000) + 50),
       );
-      assert.equal(later.allowed, true, 'a burst of refusals must not lock out a permitted request');
+      assert.equal(
+        later.allowed,
+        true,
+        'a burst of refusals must not lock out a permitted request',
+      );
     });
   });
 
@@ -306,7 +315,11 @@ describe('eCourts quota reservation is globally atomic', () => {
       await sql`DELETE FROM ecourts_fetch_ledger WHERE court = ${TEST_COURT}`;
       const at = new Date();
       const [a, b] = await Promise.all([
-        reserve(sql, { court: TEST_COURT, endpoint: TEST_ENDPOINT, strategy: 'CAUSE_LIST_BATCH' }, at),
+        reserve(
+          sql,
+          { court: TEST_COURT, endpoint: TEST_ENDPOINT, strategy: 'CAUSE_LIST_BATCH' },
+          at,
+        ),
         reserve(
           sql,
           { court: `${TEST_COURT}`, endpoint: TEST_ENDPOINT, strategy: 'CASE_STATUS' },

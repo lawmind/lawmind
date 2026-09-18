@@ -86,7 +86,7 @@ const CNR_G = /\b([A-Z]{2}HC[0-9]{12,14})\b/g;
  * `<digits><separator><year>` string in a judgment; a rule that cannot tell one
  * from a case number is measuring punctuation.
  */
-const CASE_PAIR_G = /(?<!\d[/.\-])(?<!\d)(\d{1,6})\s*(?:of|\/|-)\s*((?:19|20)\d{2})\b/g;
+const CASE_PAIR_G = /(?<!\d[/.-])(?<!\d)(\d{1,6})\s*(?:of|\/|-)\s*((?:19|20)\d{2})\b/g;
 /** Language that introduces somebody else's judgment. */
 const CITING_LEAD =
   /(in the case of|reported in|as held in|relied (?:up)?on|reliance (?:up)?on|covered (?:by|under)|passed by this Court|decided by this Court|Cases?\s+Referred|following [a-z ]{0,12}judge?ments?|judge?ments? of this Court|judge?ment dated|order dated|\bv\.\s|\bvs\.?\s|\bversus\b|\bSCC\b|\bSupreme Court\b)/i;
@@ -106,18 +106,18 @@ function ownPair(cn: string | null): [string, string] | null {
 const samePair = (a: [string, string], b: [string, string]): boolean =>
   String(Number(a[0])) === String(Number(b[0])) && a[1] === b[1];
 
-function pairsIn(s: string): [string, string][] {
+function _pairsIn(s: string): [string, string][] {
   CASE_PAIR_G.lastIndex = 0;
   const out: [string, string][] = [];
   for (let m = CASE_PAIR_G.exec(s); m; m = CASE_PAIR_G.exec(s)) out.push([m[1]!, m[2]!]);
   return out;
 }
-function cnrsIn(s: string): string[] {
+function _cnrsIn(s: string): string[] {
   CNR_G.lastIndex = 0;
   return [...new Set(s.match(CNR_G) ?? [])];
 }
 /** The document prints `<serial> … <year>` in one of the Indian cause-title forms. */
-function printsPair(s: string, p: [string, string] | null): boolean {
+function _printsPair(s: string, p: [string, string] | null): boolean {
   if (!p) return false;
   return new RegExp('\\b' + p[0] + '\\b[^0-9]{0,40}\\b' + p[1] + '\\b').test(s);
 }
@@ -578,15 +578,13 @@ try {
       const s: Score = { trueOwn: 0, falseOwn: 0, missedOwn: 0, correctNull: 0, untestableAnswered: 0, suffixTruncated: 0 };
       for (const j of judged.filter((x) => x.stratum === st && x.expected !== 'UNDECIDED')) {
         const p = j.predictions[a];
-        if (j.expected === 'OWN')
-          p === null
-            ? s.missedOwn++
-            : p === j.expectedCitation
-              ? s.trueOwn++
-              : suffixOnly(p, j.expectedCitation)
-                ? s.suffixTruncated++
-                : s.falseOwn++;
-        else p === null ? s.correctNull++ : s.falseOwn++;
+        if (j.expected === 'OWN') {
+          if (p === null) s.missedOwn++;
+          else if (p === j.expectedCitation) s.trueOwn++;
+          else if (suffixOnly(p, j.expectedCitation)) s.suffixTruncated++;
+          else s.falseOwn++;
+        } else if (p === null) s.correctNull++;
+        else s.falseOwn++;
       }
       byStratum[st]![a] = s;
     }

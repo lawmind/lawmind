@@ -31,7 +31,14 @@ import {
   sweepExpired,
 } from './entitlements.ts';
 import { recordEvent, verifySignature } from './webhook.ts';
-import { cancelJob, failJob, paramsHash, startJob, claimJob, requeueStalled } from '../premium/jobs.ts';
+import {
+  cancelJob,
+  failJob,
+  paramsHash,
+  startJob,
+  claimJob,
+  requeueStalled,
+} from '../premium/jobs.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 6, onnotice: () => {} });
 const TAG = 'test-ent-';
@@ -72,7 +79,11 @@ describe('capabilities — the vocabulary', () => {
   it('every premium capability declares how it can be held; the safety one declares none', () => {
     for (const c of Object.values(CAPABILITIES)) {
       if (isSafetyCritical(c.name as never)) {
-        assert.equal(c.grantModels.length, 0, `${c.name} is safety-critical and must not be sellable`);
+        assert.equal(
+          c.grantModels.length,
+          0,
+          `${c.name} is safety-critical and must not be sellable`,
+        );
       } else {
         assert.ok(c.grantModels.length > 0, `${c.name} has no grant model`);
       }
@@ -235,8 +246,16 @@ describe('credits — the money invariant', () => {
       providerRef: `cr-${crypto.randomUUID()}`,
     });
     const jobId = crypto.randomUUID();
-    const first = await redeemCredit(sql, { userId, capability: 'hearing_pack', premiumJobId: jobId });
-    const retry = await redeemCredit(sql, { userId, capability: 'hearing_pack', premiumJobId: jobId });
+    const first = await redeemCredit(sql, {
+      userId,
+      capability: 'hearing_pack',
+      premiumJobId: jobId,
+    });
+    const retry = await redeemCredit(sql, {
+      userId,
+      capability: 'hearing_pack',
+      premiumJobId: jobId,
+    });
     assert.equal(first.ok, true);
     assert.equal(retry.ok, true);
     if (first.ok && retry.ok) {

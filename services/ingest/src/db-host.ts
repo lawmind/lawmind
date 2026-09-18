@@ -167,7 +167,11 @@ export async function openDb(rawUrl: string, max = 2, statementTimeoutMs?: numbe
   return postgres(url, {
     // SNI carries the ORIGINAL hostname, so TLS still identifies the right
     // server even though the socket dialled an address.
-    ssl: local ? false : servername ? { rejectUnauthorized: false, servername } : ('require' as const),
+    ssl: local
+      ? false
+      : servername
+        ? { rejectUnauthorized: false, servername }
+        : ('require' as const),
     max,
     connect_timeout: 120,
     idle_timeout: 0,

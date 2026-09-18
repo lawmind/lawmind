@@ -41,12 +41,14 @@ describe('firm-ready workspace ownership', () => {
   it('every existing account has exactly one personal workspace, and is a member of it', async (t) => {
     if (!(await skipUnlessMigrated(t))) return;
 
-    const [row] = await sql<{
-      users: number;
-      without_workspace: number;
-      without_membership: number;
-      duplicate_personal: number;
-    }[]>`
+    const [row] = await sql<
+      {
+        users: number;
+        without_workspace: number;
+        without_membership: number;
+        duplicate_personal: number;
+      }[]
+    >`
       SELECT
         (SELECT count(*)::int FROM users) AS users,
         (SELECT count(*)::int FROM users u
@@ -60,8 +62,16 @@ describe('firm-ready workspace ownership', () => {
             SELECT owner_user_id FROM workspaces WHERE kind = 'personal'
             GROUP BY owner_user_id HAVING count(*) > 1) d) AS duplicate_personal`;
 
-    assert.equal(row!.without_workspace, 0, 'an account with no personal workspace cannot create a matter');
-    assert.equal(row!.without_membership, 0, 'a workspace whose owner is not a member owns nothing reachable');
+    assert.equal(
+      row!.without_workspace,
+      0,
+      'an account with no personal workspace cannot create a matter',
+    );
+    assert.equal(
+      row!.without_membership,
+      0,
+      'a workspace whose owner is not a member owns nothing reachable',
+    );
     /**
      * A user with two personal workspaces has their matters split across two
      * containers with nothing reporting it. The partial unique index makes it
@@ -142,7 +152,11 @@ describe('firm-ready workspace ownership', () => {
       });
 
     // 23503 is foreign_key_violation.
-    assert.equal(refused, '23503', 'a matter in another tenant workspace must be refused by the database');
+    assert.equal(
+      refused,
+      '23503',
+      'a matter in another tenant workspace must be refused by the database',
+    );
 
     const [leaked] = await sql<{ n: number }[]>`
       SELECT count(*)::int AS n FROM users WHERE full_name LIKE ${`${TAG}%`}`;
@@ -172,7 +186,11 @@ describe('firm-ready workspace ownership', () => {
           WHERE NOT EXISTS (SELECT 1 FROM workspace_members wm
                             WHERE wm.workspace_id = m.workspace_id AND wm.user_id = m.user_id)) AS orphaned`;
 
-    assert.equal(row!.mismatched, 0, 'workspace owner and matter user disagree — reverting 0097 would move ownership');
+    assert.equal(
+      row!.mismatched,
+      0,
+      'workspace owner and matter user disagree — reverting 0097 would move ownership',
+    );
     assert.equal(row!.orphaned, 0, 'a matter whose user is not a member of its workspace');
   });
 
@@ -194,6 +212,10 @@ describe('firm-ready workspace ownership', () => {
     const owning = cols
       .map((c) => c.column_name)
       .filter((n) => n === 'user_id' || n === 'workspace_id' || n === 'matter_id');
-    assert.deepEqual(owning, [], `ecourts_observation must not be user-owned; found ${owning.join(', ')}`);
+    assert.deepEqual(
+      owning,
+      [],
+      `ecourts_observation must not be user-owned; found ${owning.join(', ')}`,
+    );
   });
 });

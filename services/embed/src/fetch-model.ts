@@ -152,16 +152,24 @@ async function fetchOne(path: string): Promise<void> {
     const existing = await stat(target);
     const have = await sha256(target);
     if (have === UPSTREAM_SHA256[path]) {
-      console.log(`  ${path.padEnd(22)} cached ${(existing.size / 1024 / 1024).toFixed(1)} MB  sha256 ok (pinned revision)`);
+      console.log(
+        `  ${path.padEnd(22)} cached ${(existing.size / 1024 / 1024).toFixed(1)} MB  sha256 ok (pinned revision)`,
+      );
       return;
     }
     if (have === CORPUS_SHA256[path]) {
-      console.log(`  ${path.padEnd(22)} cached ${(existing.size / 1024 / 1024).toFixed(1)} MB  sha256 = CORPUS bytes, NOT the pinned revision`);
-      console.log(`  ${''.padEnd(22)} KEEPING these bytes: they are what the stored vectors were built from.`);
+      console.log(
+        `  ${path.padEnd(22)} cached ${(existing.size / 1024 / 1024).toFixed(1)} MB  sha256 = CORPUS bytes, NOT the pinned revision`,
+      );
+      console.log(
+        `  ${''.padEnd(22)} KEEPING these bytes: they are what the stored vectors were built from.`,
+      );
       console.log(`  ${''.padEnd(22)} See docs/ai/embedding-manifests/EMBEDDING_IDENTITY_V2.json`);
       return;
     }
-    console.log(`  ${path.padEnd(22)} re-fetching (sha256 ${have.slice(0, 16)} matches neither the pinned revision nor the corpus)`);
+    console.log(
+      `  ${path.padEnd(22)} re-fetching (sha256 ${have.slice(0, 16)} matches neither the pinned revision nor the corpus)`,
+    );
   } catch {
     // Not present yet.
   }
@@ -203,8 +211,12 @@ async function fetchOne(path: string): Promise<void> {
     `  ${path.padEnd(22)} ${(written.size / 1024 / 1024).toFixed(1)} MB in ${secs.toFixed(1)}s  sha256 ok`,
   );
   if (got !== CORPUS_SHA256[path]) {
-    console.log(`  ${''.padEnd(22)} NOTE: upstream bytes, not corpus bytes. Queries embedded here sit`);
-    console.log(`  ${''.padEnd(22)} ~0.99978 cosine from the stored corpus. Fine to rebuild with, NOT`);
+    console.log(
+      `  ${''.padEnd(22)} NOTE: upstream bytes, not corpus bytes. Queries embedded here sit`,
+    );
+    console.log(
+      `  ${''.padEnd(22)} ~0.99978 cosine from the stored corpus. Fine to rebuild with, NOT`,
+    );
     console.log(`  ${''.padEnd(22)} fine to serve queries against generation v2 with.`);
   }
 }

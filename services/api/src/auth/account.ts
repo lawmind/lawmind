@@ -189,15 +189,11 @@ export async function acceptTerms(
    * every advocate takes exactly once, and `users.terms_accepted_at` is already
    * the row that records it (PD-8 as superseded).
    */
-  recordStepForAuthIdInBackground(
-    sql,
-    authId,
-    'onboarded',
-    (err) =>
-      logger.error(
-        { request_id: c.get('requestId'), err, step: 'onboarded' },
-        'activation step not recorded',
-      ),
+  recordStepForAuthIdInBackground(sql, authId, 'onboarded', (err) =>
+    logger.error(
+      { request_id: c.get('requestId'), err, step: 'onboarded' },
+      'activation step not recorded',
+    ),
   );
 
   return ok(c, { termsAcceptedAt: row.terms_accepted_at, termsVersion: row.terms_version });

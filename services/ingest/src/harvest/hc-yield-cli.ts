@@ -70,7 +70,8 @@ const corpusRows = await sql<{ k: string; id: string }[]>`
 `;
 const index = new Map<string, string>();
 for (const r of corpusRows) {
-  if (index.has(r.k) && index.get(r.k) !== r.id) index.set(r.k, ''); // ambiguous
+  if (index.has(r.k) && index.get(r.k) !== r.id)
+    index.set(r.k, ''); // ambiguous
   else index.set(r.k, r.id);
 }
 console.log(`corpus index: ${index.size.toLocaleString()} citation forms`);
@@ -142,7 +143,9 @@ const results = await mapConcurrent(picks, CONCURRENCY, async (pick): Promise<Ro
   const distinct: string[] = [];
   let resolved = 0;
   for (const c of cites) {
-    const key = normaliseCitation(c.raw).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const key = normaliseCitation(c.raw)
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '');
     distinct.push(key);
     const hit = index.get(key);
     if (hit) resolved++;
@@ -158,12 +161,18 @@ const allKeys = new Set(usable.flatMap((r) => r.distinct));
 
 console.log('');
 console.log(`PDFs read successfully           ${usable.length} of ${picks.length}`);
-console.log(`PDFs containing >= 1 citation    ${withAny} (${((withAny / Math.max(1, usable.length)) * 100).toFixed(1)}%)`);
+console.log(
+  `PDFs containing >= 1 citation    ${withAny} (${((withAny / Math.max(1, usable.length)) * 100).toFixed(1)}%)`,
+);
 console.log(`total citations extracted        ${totalCites.toLocaleString()}`);
-console.log(`  mean per PDF                   ${(totalCites / Math.max(1, usable.length)).toFixed(2)}`);
+console.log(
+  `  mean per PDF                   ${(totalCites / Math.max(1, usable.length)).toFixed(2)}`,
+);
 console.log(`  mean per PDF THAT HAS ANY      ${(totalCites / Math.max(1, withAny)).toFixed(2)}`);
 console.log(`distinct citation keys seen      ${allKeys.size.toLocaleString()}`);
-console.log(`RESOLVING to a judgment we hold  ${totalResolved.toLocaleString()} (${((totalResolved / Math.max(1, totalCites)) * 100).toFixed(1)}%)`);
+console.log(
+  `RESOLVING to a judgment we hold  ${totalResolved.toLocaleString()} (${((totalResolved / Math.max(1, totalCites)) * 100).toFixed(1)}%)`,
+);
 
 console.log('');
 console.log('WHAT THIS DOES AND DOES NOT LICENCE:');

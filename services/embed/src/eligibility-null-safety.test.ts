@@ -153,8 +153,11 @@ describe('judgment_embedding_eligibility never returns a NULL boolean', () => {
       assert.notEqual(
         row![col],
         null,
-        col + ' is NULL for a fully-unassessed judgment. A consumer writing ' +
-          '`AND NOT ' + col + '` would silently drop the row, and 93.7% of the ' +
+        col +
+          ' is NULL for a fully-unassessed judgment. A consumer writing ' +
+          '`AND NOT ' +
+          col +
+          '` would silently drop the row, and 93.7% of the ' +
           'corpus is exactly this shape.',
       );
     }

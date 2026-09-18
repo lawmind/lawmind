@@ -61,7 +61,9 @@ async function main(): Promise<void> {
     }
 
     console.log(`${rows.length} events  ${JSON.stringify(byType)}`);
-    console.log(`${dated} carry an effective date, ${rows.length - dated} do not (null, never guessed)`);
+    console.log(
+      `${dated} carry an effective date, ${rows.length - dated} do not (null, never guessed)`,
+    );
     console.log(`${unparsedRows.length} entries could not be read — recorded, not discarded`);
 
     if (!confirm) {
@@ -98,7 +100,9 @@ async function main(): Promise<void> {
       SELECT (SELECT count(*)::int FROM statute_amendments) AS events,
              (SELECT count(*)::int FROM statute_amendments WHERE effective_date IS NOT NULL) AS dated,
              (SELECT count(*)::int FROM statute_amendment_unparsed) AS unread`;
-    console.log(`\nin database: ${check?.events} events, ${check?.dated} dated, ${check?.unread} unread`);
+    console.log(
+      `\nin database: ${check?.events} events, ${check?.dated} dated, ${check?.unread} unread`,
+    );
   } finally {
     await sql.end();
   }

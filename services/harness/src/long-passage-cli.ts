@@ -76,7 +76,12 @@ async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 60_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 60_000 },
+  });
   const embedder = (await getHarnessEmbedder()).embedder;
 
   // ── 1. Does the embedder read a long input at all? ────────────────────────
@@ -84,25 +89,35 @@ async function main(): Promise<void> {
     SELECT left(full_text, 20000) AS t FROM judgments
      WHERE length(full_text) > 20000 ORDER BY id LIMIT 1`;
   const base = longDoc!.t;
-  const truncationProbe: { chars: number; cosineToPrefix1000: number; cosineToFullText: number }[] = [];
+  const truncationProbe: { chars: number; cosineToPrefix1000: number; cosineToFullText: number }[] =
+    [];
   const [p1000] = await embedder.embed([base.slice(0, 1000)]);
   const [pFull] = await embedder.embed([base.slice(0, 20000)]);
   for (const n of [500, 1000, 2500, 5000, 10000, 20000]) {
     const [e] = await embedder.embed([base.slice(0, n)]);
     truncationProbe.push({
       chars: n,
-      cosineToPrefix1000: Number(cos(e!.vector as unknown as number[], p1000!.vector as unknown as number[]).toFixed(4)),
-      cosineToFullText: Number(cos(e!.vector as unknown as number[], pFull!.vector as unknown as number[]).toFixed(4)),
+      cosineToPrefix1000: Number(
+        cos(e!.vector as unknown as number[], p1000!.vector as unknown as number[]).toFixed(4),
+      ),
+      cosineToFullText: Number(
+        cos(e!.vector as unknown as number[], pFull!.vector as unknown as number[]).toFixed(4),
+      ),
     });
   }
   process.stdout.write(`truncation probe: ${JSON.stringify(truncationProbe)}\n`);
 
   // ── the sample: gold whose target is in the probe, and short enough to grow ─
-  const semantic = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
+  const semantic = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
   const ids = [...new Set(semantic.map((r) => r.goldAuthorityId))];
   const present = new Set<string>();
   for (let i = 0; i < ids.length; i += 500) {
-    const r = await sql.unsafe(`SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`, [ids.slice(i, i + 500)]);
+    const r = await sql.unsafe(
+      `SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
+      [ids.slice(i, i + 500)],
+    );
     for (const x of r) present.add(x['judgment_id'] as string);
   }
   const sample = semantic.filter((r) => present.has(r.goldAuthorityId)).slice(0, SAMPLE);
@@ -114,14 +129,20 @@ async function main(): Promise<void> {
      WHERE length(full_text) > 20000 ORDER BY id DESC LIMIT 1`;
   const noise = noiseRow!.t;
 
-  async function annRank(text: string, goldId: string): Promise<{ rank: number | null; ms: number }> {
+  async function annRank(
+    text: string,
+    goldId: string,
+  ): Promise<{ rank: number | null; ms: number }> {
     const t = Date.now();
     const [e] = await embedder.embed([text]);
     if (e === undefined) return { rank: null, ms: Date.now() - t };
     const vec = toVectorLiteral(e.vector);
     const hits = await sql.begin(async (tx) => {
       await tx.unsafe(`SET LOCAL hnsw.ef_search = ${EF_SEARCH}`);
-      return tx.unsafe(`SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`, [vec]);
+      return tx.unsafe(
+        `SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`,
+        [vec],
+      );
     });
     const at = hits.findIndex((h) => h['judgment_id'] === goldId);
     return { rank: at === -1 ? null : at + 1, ms: Date.now() - t };
@@ -184,10 +205,20 @@ async function main(): Promise<void> {
     return {
       size,
       n: rs.length,
-      DIRECT: { at5: pct((r) => r.directRank !== null && r.directRank <= 5), at20: pct((r) => r.directRank !== null) },
-      CONDENSED: { at5: pct((r) => r.condensedRank !== null && r.condensedRank <= 5), at20: pct((r) => r.condensedRank !== null) },
-      CONTROL_500: { at5: pct((r) => r.controlRank !== null && r.controlRank <= 5), at20: pct((r) => r.controlRank !== null) },
-      embedMsP50: [...rs.map((r) => r.directMs)].sort((a, b) => a - b)[Math.floor(rs.length / 2)] ?? null,
+      DIRECT: {
+        at5: pct((r) => r.directRank !== null && r.directRank <= 5),
+        at20: pct((r) => r.directRank !== null),
+      },
+      CONDENSED: {
+        at5: pct((r) => r.condensedRank !== null && r.condensedRank <= 5),
+        at20: pct((r) => r.condensedRank !== null),
+      },
+      CONTROL_500: {
+        at5: pct((r) => r.controlRank !== null && r.controlRank <= 5),
+        at20: pct((r) => r.controlRank !== null),
+      },
+      embedMsP50:
+        [...rs.map((r) => r.directMs)].sort((a, b) => a - b)[Math.floor(rs.length / 2)] ?? null,
     };
   });
 

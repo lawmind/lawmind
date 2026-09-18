@@ -143,7 +143,11 @@ test('judge: and party: returning many rows is ORDINARY, never ambiguous', async
   assert.equal(judgeOut.kind, 'matched', 'many judgments by one judge is normal, not ambiguous');
 
   const partyOut = await answerStructured(fakeSql(83, manyRows).sql, 'party:"State"', 5);
-  assert.equal(partyOut.kind, 'matched', 'many cases naming a common party is normal, not ambiguous');
+  assert.equal(
+    partyOut.kind,
+    'matched',
+    'many cases naming a common party is normal, not ambiguous',
+  );
 });
 
 test('a COMPOUND citation query (cite: AND something) is never flagged ambiguous', async () => {

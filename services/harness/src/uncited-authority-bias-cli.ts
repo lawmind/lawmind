@@ -360,7 +360,13 @@ async function main(): Promise<number> {
     try {
       const sampleIds = await sql<{ id: string }[]>`
         SELECT id FROM judgments TABLESAMPLE SYSTEM (0.25) LIMIT ${SAMPLE_TARGET}`;
-      type Band = { id: string; text_length: number | null; hc_document_class: string | null; axis_a_identity: boolean; axis_b_text: boolean };
+      type Band = {
+        id: string;
+        text_length: number | null;
+        hc_document_class: string | null;
+        axis_a_identity: boolean;
+        axis_b_text: boolean;
+      };
       const bands: Band[] = [];
       for (let i = 0; i < sampleIds.length; i += 500) {
         const ids = sampleIds.slice(i, i + 500).map((r) => r.id);
@@ -383,15 +389,26 @@ async function main(): Promise<number> {
       let cumulative = 0;
       for (const t of THRESHOLDS) {
         if (t === 2000) {
-          thresholdTable.push({ threshold: 2000, additions: 0, cumulative: 0, note: 'the deployed gate — the baseline, not an addition' });
-          console.log('     2000          0           0                    -              -             -          -                 -   (deployed)');
+          thresholdTable.push({
+            threshold: 2000,
+            additions: 0,
+            cumulative: 0,
+            note: 'the deployed gate — the baseline, not an addition',
+          });
+          console.log(
+            '     2000          0           0                    -              -             -          -                 -   (deployed)',
+          );
           previous = 2000;
           continue;
         }
-        const added = admissible.filter((b) => (b.text_length ?? 0) >= t && (b.text_length ?? 0) < previous);
+        const added = admissible.filter(
+          (b) => (b.text_length ?? 0) >= t && (b.text_length ?? 0) < previous,
+        );
         const proc = added.filter((b) => b.hc_document_class === 'procedural_disposal').length;
         const refusedClass = added.filter((b) =>
-          ['procedural_disposal', 'reference_stub', 'decided_brief'].includes(b.hc_document_class ?? ''),
+          ['procedural_disposal', 'reference_stub', 'decided_brief'].includes(
+            b.hc_document_class ?? '',
+          ),
         ).length;
         const unclassified = added.filter((b) => b.hc_document_class === null).length;
         cumulative += added.length;
@@ -412,7 +429,8 @@ async function main(): Promise<number> {
          * itself") with a YES that the classified evidence contradicts.
          */
         const classified = added.length - unclassified;
-        const shareAll = added.length === 0 ? 'n/a' : `${((proc / added.length) * 100).toFixed(1)}%`;
+        const shareAll =
+          added.length === 0 ? 'n/a' : `${((proc / added.length) * 100).toFixed(1)}%`;
         const share = classified === 0 ? 'n/a' : `${((proc / classified) * 100).toFixed(1)}%`;
         thresholdTable.push({
           threshold: t,
@@ -444,10 +462,14 @@ async function main(): Promise<number> {
       console.log('  a shorter gate cannot rescue a document that fails an earlier axis.');
       console.log('  UNCLASSIFIED is its own column: never-looked-at is not the same as clean.');
       console.log('  READ THE LAST COLUMN, NOT THE ONE BEFORE IT. ~77% of each band has no class');
-      console.log('  verdict, so chaff/all is a FLOOR. chaff/CLASSIFIED is the rate among documents');
+      console.log(
+        '  verdict, so chaff/all is a FLOOR. chaff/CLASSIFIED is the rate among documents',
+      );
       console.log('  anyone has actually examined, and it points the opposite way.');
     } catch (error) {
-      console.log(`  threshold counterfactual skipped: ${error instanceof Error ? error.message : String(error)}`);
+      console.log(
+        `  threshold counterfactual skipped: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -481,7 +503,8 @@ async function main(): Promise<number> {
             'TABLESAMPLE SYSTEM on judgments, then a lookup through the DEPLOYED judgment_embedding_eligibility view. A full aggregate over 18.7M rows through the cited_authority LEFT JOIN would starve the walk for a number a sample answers.',
         },
         thresholdCounterfactual: {
-          origin: 'LCC bus 1054 — the exact table that would let the 2,000-char gate be argued from evidence',
+          origin:
+            'LCC bus 1054 — the exact table that would let the 2,000-char gate be argued from evidence',
           thresholds: THRESHOLDS,
           note: 'Additions are documents already passing identity AND text safety; a shorter gate cannot rescue a document that fails an earlier axis. UNCLASSIFIED is reported separately because never-looked-at is not the same as clean.',
           rows: thresholdTable,

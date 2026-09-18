@@ -228,7 +228,9 @@ async function main(): Promise<void> {
   }
   process.stdout.write('\n');
   await sql.end();
-  console.log(`  ${docs.length} judgments with text, ${empty} empty, ${pool.length - read} not found\n`);
+  console.log(
+    `  ${docs.length} judgments with text, ${empty} empty, ${pool.length - read} not found\n`,
+  );
 
   // Queries are embedded ONCE and shared by all three representations — the
   // comparison is of the document side only, and re-embedding the query per
@@ -251,7 +253,9 @@ async function main(): Promise<void> {
         owner.push(d.id);
       }
     }
-    console.log(`${name}: ${texts.length} vectors over ${docs.length} documents (${(texts.length / docs.length).toFixed(2)}/doc)`);
+    console.log(
+      `${name}: ${texts.length} vectors over ${docs.length} documents (${(texts.length / docs.length).toFixed(2)}/doc)`,
+    );
     const vectors = await embedAll(texts, name);
 
     const ranks: (number | null)[] = [];

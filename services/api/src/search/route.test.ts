@@ -342,7 +342,11 @@ describe('POST /search', () => {
       assert.equal(data.ambiguous, true, 'the wire must carry an explicit ambiguity flag');
       assert.equal(data.total, 2);
       const ids = data.results.map((r) => r.judgmentId).sort();
-      assert.deepEqual(ids, [idA, idB].sort(), 'both real judgments, nothing invented, nothing dropped');
+      assert.deepEqual(
+        ids,
+        [idA, idB].sort(),
+        'both real judgments, nothing invented, nothing dropped',
+      );
       assert.match(data.parsed, new RegExp(fakeCitation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     });
 

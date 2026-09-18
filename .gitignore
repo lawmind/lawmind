@@ -192,3 +192,12 @@ docs/ai/new2-r18/candidate-rows.jsonl
 # which is what makes the walk reproducible; the list itself is regenerable with
 # scripts/n2-r20-affected-universe.mts --phase=freeze.
 docs/ai/new2-r20/.affected-universe.txt
+
+# Not source, and ESLint had to be told about them separately because ESLint does
+# not read this file (see `eslint.config.js`). Added 18 Sep 2026, SHIP S4-T0.3.
+#
+# A Python virtualenv for the OCR service. It was never meant to be committed and
+# `pnpm lint` was walking the JavaScript vendored inside its pip packages.
+.venv-ocr/
+# Agent temp files: one-shot probes written next to a running job.
+.agents/tmp/

@@ -192,7 +192,10 @@ describe('neutralCitationFrom', () => {
       'judgement dated 09.10.2023 passed by this Court in Writ A No. 7699 of 2023: ' +
       'Neutral Citation No.- 2023:AHC-LKO:65518-DB. The writ petition is disposed of.';
     assert.equal(
-      neutralCitationFrom(follower, 2024, { caseNumber: 'WRIT-A/5678/2024', cnr: 'UPHC010000012024' }),
+      neutralCitationFrom(follower, 2024, {
+        caseNumber: 'WRIT-A/5678/2024',
+        cnr: 'UPHC010000012024',
+      }),
       null,
     );
   });
@@ -235,7 +238,10 @@ describe('neutralCitationFrom', () => {
       'Company vs. Additional Commissioner; Neutral Citation No. - 2024:AHC:132878 and ' +
       'M/s PP Polyplast, Neutral Citation No. - 2024:AHC:121612.';
     assert.equal(
-      neutralCitationFrom(twoAuthorities, 2025, { caseNumber: 'WTAX/5066/2025', cnr: 'UPHC010000022025' }),
+      neutralCitationFrom(twoAuthorities, 2025, {
+        caseNumber: 'WTAX/5066/2025',
+        cnr: 'UPHC010000022025',
+      }),
       null,
     );
   });
@@ -277,7 +283,10 @@ describe('neutralCitationFrom', () => {
       'with Signatures COURT’S OR JUDGES’S ORDERS D1- 23 UKHC010088392026 2026:UHC:4224-DB ' +
       'HABC No.16 of 2023 Jimdaar .....Petitioner';
     assert.equal(
-      neutralCitationFrom(orderSheet, 2026, { caseNumber: 'HABC/16/2023', cnr: 'UKHC010012342023' }),
+      neutralCitationFrom(orderSheet, 2026, {
+        caseNumber: 'HABC/16/2023',
+        cnr: 'UKHC010012342023',
+      }),
       null,
     );
   });
@@ -286,7 +295,10 @@ describe('neutralCitationFrom', () => {
     // A row whose title carries no parseable case number and no CNR. A signal
     // that cannot be evaluated is not evidence, so the case-number and CNR tests
     // switch off and the citing phrase carries the refusal on its own.
-    assert.equal(neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023), '2023:DHC:2720');
+    assert.equal(
+      neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023),
+      '2023:DHC:2720',
+    );
     assert.equal(
       neutralCitationFrom('The court relied upon 2023:DHC:2720 in reaching this view.', 2023),
       null,
@@ -443,8 +455,14 @@ describe('neutralCitationFrom — the -DB token boundary', () => {
   });
 
   it('still reads a clean suffix, and still reads no suffix at all', () => {
-    assert.equal(neutralCitationFrom('2023:DHC:2073-DB before the bench', 2023), '2023:DHC:2073-DB');
-    assert.equal(neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023), '2023:DHC:2720');
+    assert.equal(
+      neutralCitationFrom('2023:DHC:2073-DB before the bench', 2023),
+      '2023:DHC:2073-DB',
+    );
+    assert.equal(
+      neutralCitationFrom('IN THE HIGH COURT\n2023:DHC:2720\nJUDGMENT', 2023),
+      '2023:DHC:2720',
+    );
     assert.equal(neutralCitationFrom('Neutral Citation 2023:KHC-D:1', 2023), '2023:KHC-D:1');
   });
 

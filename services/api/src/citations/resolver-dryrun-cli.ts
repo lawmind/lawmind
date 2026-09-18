@@ -156,7 +156,8 @@ async function main(): Promise<number> {
      */
     const ambiguous = results.filter((r) => r.state === 'AMBIGUOUS');
     const sizes = ambiguous.map((r) => r.heldCandidates).sort((a, b) => a - b);
-    const pct = (p: number) => (sizes.length === 0 ? 0 : sizes[Math.floor((sizes.length - 1) * p)]!);
+    const pct = (p: number) =>
+      sizes.length === 0 ? 0 : sizes[Math.floor((sizes.length - 1) * p)]!;
 
     console.log(`RESOLVER DRY RUN — ${RESOLVER_VERSION}`);
     console.log(
@@ -183,13 +184,17 @@ async function main(): Promise<number> {
       `cohort-held   ${m.uniqueUnconfirmedCohort}   <- one candidate, and the court's cause ` +
         'title declares a sibling we do not hold',
     );
-    console.log(`stale-held    ${m.uniqueUnconfirmedStaleIndex}   <- one candidate, index behind ingest`);
     console.log(
-      `ambiguity size  p50 ${pct(0.5)} · p90 ${pct(0.9)} · max ${sizes.at(-1) ?? 0}`,
+      `stale-held    ${m.uniqueUnconfirmedStaleIndex}   <- one candidate, index behind ingest`,
     );
-    console.log(`elapsed       ${elapsedMs} ms  ->  ${((elapsedMs / m.n) * 1000).toFixed(0)} ms per 1k references`);
+    console.log(`ambiguity size  p50 ${pct(0.5)} · p90 ${pct(0.9)} · max ${sizes.at(-1) ?? 0}`);
+    console.log(
+      `elapsed       ${elapsedMs} ms  ->  ${((elapsedMs / m.n) * 1000).toFixed(0)} ms per 1k references`,
+    );
     console.log(`cost          0 model calls, 0 tokens — this resolver makes no model call at all`);
-    console.log(`label         ${contended ? 'LOCAL_CONTENDED' : 'LOCAL_QUIET'} (${act!.n} active queries)`);
+    console.log(
+      `label         ${contended ? 'LOCAL_CONTENDED' : 'LOCAL_QUIET'} (${act!.n} active queries)`,
+    );
     console.log('\nrefusal reasons');
     for (const [why, n] of [...reasons.entries()].sort((a, b) => b[1] - a[1])) {
       console.log(`  ${String(n).padStart(6)}  ${why}`);

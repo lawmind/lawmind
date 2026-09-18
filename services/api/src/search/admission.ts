@@ -41,7 +41,10 @@ export type Admission = {
   stats: () => { inFlight: number; waiting: number; limit: number; refused: number };
 };
 
-export function createAdmission(limit = RESEARCH_CONCURRENCY, waitMs = ADMISSION_WAIT_MS): Admission {
+export function createAdmission(
+  limit = RESEARCH_CONCURRENCY,
+  waitMs = ADMISSION_WAIT_MS,
+): Admission {
   let inFlight = 0;
   let refused = 0;
   const waiters: ((granted: boolean) => void)[] = [];

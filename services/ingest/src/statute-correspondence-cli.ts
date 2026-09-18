@@ -13,7 +13,10 @@ import { join } from 'node:path';
 import { PARSER_VERSION, parseCorrespondence } from './statute-correspondence.ts';
 
 const dir = process.argv[2];
-if (!dir) { console.error('usage: <dir containing bns.txt bnss.txt bsa.txt>'); process.exit(2); }
+if (!dir) {
+  console.error('usage: <dir containing bns.txt bnss.txt bsa.txt>');
+  process.exit(2);
+}
 
 /** Sections each new Act actually contains — the denominator for "missed". */
 const EXPECTED: Record<string, number> = { 'BNS-IPC': 358, 'BNSS-CrPC': 531, 'BSA-IEA': 170 };
@@ -30,7 +33,9 @@ for (const f of ['bns', 'bnss', 'bsa']) {
 
   console.log(`${pair}   (${f}.pdf)`);
   console.log(`  rows parsed          ${rows.length}   distinct new-sections ${distinct}`);
-  console.log(`  source sections      ${expected}   coverage ${expected ? ((100 * distinct) / expected).toFixed(1) : '?'}%`);
+  console.log(
+    `  source sections      ${expected}   coverage ${expected ? ((100 * distinct) / expected).toFixed(1) : '?'}%`,
+  );
   console.log(`  MISSED (unmapped)    ${Math.max(0, expected - distinct)}`);
   console.log(`  multi-section rows   ${multi.length}   (never collapsed to a partial)`);
   console.log(`  paragraph-qualified  ${withPara.length}`);
@@ -40,10 +45,15 @@ for (const f of ['bns', 'bnss', 'bsa']) {
   if (multi.length) {
     console.log('  sample multi-section:');
     for (const m of multi.slice(0, 3)) {
-      console.log(`     ${pair.split('-')[0]} ${m.newSection} -> ${m.oldRefs.map((o) => o.section + (o.paragraph ? `,para ${o.paragraph}` : '')).join(' + ')}`);
+      console.log(
+        `     ${pair.split('-')[0]} ${m.newSection} -> ${m.oldRefs.map((o) => o.section + (o.paragraph ? `,para ${o.paragraph}` : '')).join(' + ')}`,
+      );
     }
   }
-  if (ambiguous.length) { console.log('  sample ambiguous:'); ambiguous.slice(0, 2).forEach((a) => console.log(`     L${a.line}: ${a.text.slice(0, 68)}`)); }
+  if (ambiguous.length) {
+    console.log('  sample ambiguous:');
+    ambiguous.slice(0, 2).forEach((a) => console.log(`     L${a.line}: ${a.text.slice(0, 68)}`));
+  }
   console.log('');
 }
 console.log('Nothing written. statute_mappings untouched.');

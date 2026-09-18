@@ -51,16 +51,30 @@ async function main(): Promise<void> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
-  const pick = (cls: string): typeof gold.rows => gold.rows.filter((r) => r.launchClass === cls).slice(0, PER_CLASS);
-  const queries = [...pick('case_title'), ...pick('citation'), ...pick('nl_doctrine'), ...pick('fact_passage')];
+  const pick = (cls: string): typeof gold.rows =>
+    gold.rows.filter((r) => r.launchClass === cls).slice(0, PER_CLASS);
+  const queries = [
+    ...pick('case_title'),
+    ...pick('citation'),
+    ...pick('nl_doctrine'),
+    ...pick('fact_passage'),
+  ];
 
-  const sql = postgres(url, { max: 4, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 25_000 } });
+  const sql = postgres(url, {
+    max: 4,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 25_000 },
+  });
   const embedder = await getEmbedder();
   const embedQuery = async (q: string): Promise<string | null> => {
     const [e] = await embedder.embed([q]);
     return e === undefined ? null : toVectorLiteral(e.vector);
   };
-  const app = createApp({ ping: async () => void (await sql`SELECT 1`), search: { sql, embedQuery } });
+  const app = createApp({
+    ping: async () => void (await sql`SELECT 1`),
+    search: { sql, embedQuery },
+  });
 
   const rows: {
     queryId: string;
@@ -93,8 +107,12 @@ async function main(): Promise<void> {
     }
     const first = execs[0]!;
     const sameOrder = execs.every((e) => e.ids.join(',') === first.ids.join(','));
-    const sameSet = execs.every((e) => [...e.ids].sort().join(',') === [...first.ids].sort().join(','));
-    const degradedVaried = !execs.every((e) => [...e.degraded].sort().join(',') === [...first.degraded].sort().join(','));
+    const sameSet = execs.every(
+      (e) => [...e.ids].sort().join(',') === [...first.ids].sort().join(','),
+    );
+    const degradedVaried = !execs.every(
+      (e) => [...e.degraded].sort().join(',') === [...first.degraded].sort().join(','),
+    );
     rows.push({
       queryId: g.queryId,
       launchClass: g.launchClass,
@@ -122,12 +140,18 @@ async function main(): Promise<void> {
     byClass: Object.fromEntries(
       [...new Set(rows.map((r) => r.launchClass))].map((c) => {
         const rs = rows.filter((r) => r.launchClass === c);
-        return [c, { n: rs.length, sameSet: rs.filter((r) => r.sameSet).length, sameOrder: rs.filter((r) => r.sameOrder).length }];
+        return [
+          c,
+          {
+            n: rs.length,
+            sameSet: rs.filter((r) => r.sameSet).length,
+            sameOrder: rs.filter((r) => r.sameOrder).length,
+          },
+        ];
       }),
     ),
-    verdict:
-      rows.every((r) => r.sameOrder) ?
-        'STABLE under these conditions — deterministic re-execution is viable, subject to the total-order rules'
+    verdict: rows.every((r) => r.sameOrder)
+      ? 'STABLE under these conditions — deterministic re-execution is viable, subject to the total-order rules'
       : 'UNSTABLE — re-execution alone cannot paginate; fix the cause (ties or degraded arms) before choosing a mechanism',
     rows,
   };

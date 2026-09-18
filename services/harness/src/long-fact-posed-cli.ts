@@ -97,15 +97,24 @@ const CONDENSE_CAP = 500;
  * this file exists to get away from.
  */
 const CLASSES = new Set(
-  (process.env['LONG_CLASSES'] ?? 'fact_pattern,long_narrative,doctrine,supporting_authority,adverse_authority,current_law')
+  (
+    process.env['LONG_CLASSES'] ??
+    'fact_pattern,long_narrative,doctrine,supporting_authority,adverse_authority,current_law'
+  )
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean),
 );
 
-type Task = { task_id: string; query_class: string; query: string; targets: string[]; expected?: string };
+type Task = {
+  task_id: string;
+  query_class: string;
+  query: string;
+  targets: string[];
+  expected?: string;
+};
 
-const cos = (a: number[], b: number[]): number => {
+const _cos = (a: number[], b: number[]): number => {
   let d = 0;
   for (let i = 0; i < a.length; i += 1) d += (a[i] as number) * (b[i] as number);
   return d;
@@ -125,7 +134,10 @@ async function main(): Promise<number> {
   const url = process.env['DATABASE_URL'];
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
 
-  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as { gold_set_version?: string; tasks: Task[] };
+  const gold = JSON.parse(readFileSync(GOLD, 'utf8')) as {
+    gold_set_version?: string;
+    tasks: Task[];
+  };
   const posed = gold.tasks.filter(
     (t) => CLASSES.has(t.query_class) && t.targets.length > 0 && t.expected !== 'REFUSE',
   );
@@ -145,9 +157,10 @@ async function main(): Promise<number> {
   const allTargets = [...new Set(posed.flatMap((t) => t.targets))];
   const inProbe = new Set<string>();
   for (let i = 0; i < allTargets.length; i += 500) {
-    const r = await sql.unsafe(`SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`, [
-      allTargets.slice(i, i + 500),
-    ]);
+    const r = await sql.unsafe(
+      `SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
+      [allTargets.slice(i, i + 500)],
+    );
     for (const x of r) inProbe.add(x['judgment_id'] as string);
   }
   const scorable = posed.filter((t) => t.targets.some((id) => inProbe.has(id)));
@@ -164,14 +177,20 @@ async function main(): Promise<number> {
      WHERE length(full_text) > 20000 ORDER BY id DESC LIMIT 1`;
   const noise = noiseRow?.t ?? '';
 
-  async function annRank(text: string, targets: ReadonlySet<string>): Promise<{ rank: number | null; ms: number }> {
+  async function annRank(
+    text: string,
+    targets: ReadonlySet<string>,
+  ): Promise<{ rank: number | null; ms: number }> {
     const t0 = Date.now();
     const [e] = await embedder.embed([text]);
     if (e === undefined) return { rank: null, ms: Date.now() - t0 };
     const vec = toVectorLiteral(e.vector);
     const hits = await sql.begin(async (tx) => {
       await tx.unsafe(`SET LOCAL hnsw.ef_search = ${EF_SEARCH}`);
-      return tx.unsafe(`SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`, [vec]);
+      return tx.unsafe(
+        `SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`,
+        [vec],
+      );
     });
     const at = hits.findIndex((h) => targets.has(h['judgment_id'] as string));
     return { rank: at === -1 ? null : at + 1, ms: Date.now() - t0 };
@@ -279,7 +298,12 @@ async function main(): Promise<number> {
   const bySize = SIZES.map((size) => {
     const rs = rows.filter((r) => r.size === size);
     const hits = (f: (r: Row) => number | null, k: number): string =>
-      `${rs.filter((r) => { const v = f(r); return v !== null && v <= k; }).length}/${rs.length}`;
+      `${
+        rs.filter((r) => {
+          const v = f(r);
+          return v !== null && v <= k;
+        }).length
+      }/${rs.length}`;
     const mean = (f: (r: Row) => number): number =>
       rs.length === 0 ? 0 : rs.reduce((a, r) => a + f(r), 0) / rs.length;
     return {
@@ -289,7 +313,8 @@ async function main(): Promise<number> {
       CONDENSED: { at5: hits((r) => r.condensedRank, 5), at20: hits((r) => r.condensedRank, 20) },
       CONTROL_500: { at5: hits((r) => r.controlRank, 5), at20: hits((r) => r.controlRank, 20) },
       LEXICAL_RAREST3: { at5: hits((r) => r.lexicalRank, 5), at20: hits((r) => r.lexicalRank, 20) },
-      embedMsP50: [...rs.map((r) => r.directMs)].sort((a, b) => a - b)[Math.floor(rs.length / 2)] ?? null,
+      embedMsP50:
+        [...rs.map((r) => r.directMs)].sort((a, b) => a - b)[Math.floor(rs.length / 2)] ?? null,
       advocateWordRetentionMean: Number(mean((r) => r.advocateWordRetention).toFixed(3)),
     };
   });
@@ -333,7 +358,9 @@ async function main(): Promise<number> {
   writeFileSync(OUT, JSON.stringify(artefact, null, 1));
 
   console.log('\n── targets in top 5, by input size (POSED queries) ──');
-  console.log(`  ${'size'.padStart(6)}  ${'DIRECT'.padStart(10)}  ${'CONDENSED'.padStart(10)}  ${'CONTROL'.padStart(10)}  ${'LEXICAL'.padStart(10)}  retention`);
+  console.log(
+    `  ${'size'.padStart(6)}  ${'DIRECT'.padStart(10)}  ${'CONDENSED'.padStart(10)}  ${'CONTROL'.padStart(10)}  ${'LEXICAL'.padStart(10)}  retention`,
+  );
   for (const b of bySize) {
     console.log(
       `  ${String(b.size).padStart(6)}  ${b.DIRECT.at5.padStart(10)}  ${b.CONDENSED.at5.padStart(10)}  ${b.CONTROL_500.at5.padStart(10)}  ${b.LEXICAL_RAREST3.at5.padStart(10)}  ${b.advocateWordRetentionMean}`,

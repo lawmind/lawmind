@@ -160,10 +160,7 @@ describe('the emailed sign-in link', () => {
     const res = await app.request(`${MAGIC_LINK_LANDING_PATH}?${hostile.toString()}`);
 
     assert.equal(res.status, 302);
-    assert.equal(
-      res.headers.get('location'),
-      `${MAGIC_LINK_APP_URL}?token=a-token-shaped-string`,
-    );
+    assert.equal(res.headers.get('location'), `${MAGIC_LINK_APP_URL}?token=a-token-shaped-string`);
   });
 
   it('refuses a link that carries no token, rather than launching the app', async () => {

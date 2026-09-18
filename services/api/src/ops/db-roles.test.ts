@@ -20,6 +20,7 @@ import { after, before, describe, it } from 'node:test';
 
 import postgres, { type Sql } from 'postgres';
 
+import { CORPUS_SKIP, hasCorpus } from '../testing/corpus-required.ts';
 import {
   CORPUS_TABLES,
   USER_TABLES,
@@ -108,7 +109,19 @@ describe('the ownership map against the live catalogue', { skip: !url }, () => {
     );
   });
 
-  it('names no table that does not exist, so the list cannot quietly rot', () => {
+  it('names no table that does not exist, so the list cannot quietly rot', async (t) => {
+    /**
+     * A PHANTOM ON AN EMPTY DATABASE IS NOT A PHANTOM.
+     *
+     * Several classified tables are created OUT OF BAND by the DATA lane and
+     * appear in no migration - `new1_tranche_passages` and
+     * `new1_doc_vector_stage` among them. On the migrations-only database CI and
+     * `pnpm ci:local` build they are genuinely absent, so this assertion
+     * convicts the classification list of naming tables that do exist, just not
+     * here. The rot it is written to catch is a name that exists NOWHERE, and
+     * only a populated database can tell the two apart.
+     */
+    if (!(await hasCorpus(sql))) return t.skip(CORPUS_SKIP);
     assert.deepEqual(phantomTables(live), []);
   });
 

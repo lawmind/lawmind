@@ -87,8 +87,14 @@ const SELF_HEAD_CHARS = Number(process.env['SELF_HEAD_CHARS'] ?? 4800);
 /** Self-retrieval costs a second full scan per row, so it is sampled rather than run on all 571. */
 const SELF_SAMPLE = Number(process.env['SELF_SAMPLE'] ?? 60);
 
-const OUT = new URL('../../../docs/ai/new1-tier-a/dense-failure-decomposition.json', import.meta.url);
-const CKPT = new URL('../../../docs/ai/new1-tier-a/dense-failure-decomposition.checkpoint.jsonl', import.meta.url);
+const OUT = new URL(
+  '../../../docs/ai/new1-tier-a/dense-failure-decomposition.json',
+  import.meta.url,
+);
+const CKPT = new URL(
+  '../../../docs/ai/new1-tier-a/dense-failure-decomposition.checkpoint.jsonl',
+  import.meta.url,
+);
 
 type Row = {
   queryId: string;
@@ -125,8 +131,12 @@ async function main(): Promise<void> {
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
 
   const gold = buildLaunchGold();
-  const rows0 = gold.rows.filter((r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage');
-  process.stdout.write(`dense failure decomposition  probe=${PROBE}  n=${rows0.length}  ef=${EF_SEARCH}\n`);
+  const rows0 = gold.rows.filter(
+    (r) => r.launchClass === 'nl_doctrine' || r.launchClass === 'fact_passage',
+  );
+  process.stdout.write(
+    `dense failure decomposition  probe=${PROBE}  n=${rows0.length}  ef=${EF_SEARCH}\n`,
+  );
 
   const sql = postgres(url, {
     max: 2,
@@ -155,15 +165,18 @@ async function main(): Promise<void> {
   const ids = [...new Set(rows0.map((r) => r.goldAuthorityId))];
   const present = new Set<string>();
   for (let i = 0; i < ids.length; i += 500) {
-    const r = await sql.unsafe(`SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`, [
-      ids.slice(i, i + 500),
-    ]);
+    const r = await sql.unsafe(
+      `SELECT judgment_id FROM ${PROBE} WHERE judgment_id = ANY($1::uuid[])`,
+      [ids.slice(i, i + 500)],
+    );
     for (const x of r) present.add(x['judgment_id'] as string);
   }
   const absent = ids.filter((id) => !present.has(id));
   const absenceReason = new Map<string, string>();
   if (absent.length > 0) {
-    const reasons = await sql<{ id: string; held: boolean; text_safety: string | null; tier: string | null }[]>`
+    const reasons = await sql<
+      { id: string; held: boolean; text_safety: string | null; tier: string | null }[]
+    >`
       SELECT j.id,
              TRUE AS held,
              e.text_safety,
@@ -202,7 +215,9 @@ async function main(): Promise<void> {
         goldId: g.goldAuthorityId,
         queryChars: g.query.length,
         inIndex,
-        absenceReason: inIndex ? null : (absenceReason.get(g.goldAuthorityId) ?? 'NOT_IN_PROBE_INDEX'),
+        absenceReason: inIndex
+          ? null
+          : (absenceReason.get(g.goldAuthorityId) ?? 'NOT_IN_PROBE_INDEX'),
         annRank: null,
         exactRank: null,
         goldDistance: null,
@@ -219,9 +234,10 @@ async function main(): Promise<void> {
           // ANN, at production's settings.
           const hits = await sql.begin(async (tx) => {
             await tx.unsafe(`SET LOCAL hnsw.ef_search = ${EF_SEARCH}`);
-            return tx.unsafe(`SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`, [
-              vec,
-            ]);
+            return tx.unsafe(
+              `SELECT judgment_id FROM ${PROBE} ORDER BY embedding <=> $1::halfvec LIMIT ${TOP_K}`,
+              [vec],
+            );
           });
           const at = hits.findIndex((h) => h['judgment_id'] === g.goldAuthorityId);
           r.annRank = at === -1 ? null : at + 1;

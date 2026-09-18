@@ -110,7 +110,10 @@ async function gate(jobClass: JobClass): Promise<{ allow: boolean; reasons: stri
     const v = await mod.check(jobClass);
     return { allow: v.allow, reasons: v.reasons };
   } catch (error) {
-    return { allow: false, reasons: ['resource gate unavailable: ' + String((error as Error).message)] };
+    return {
+      allow: false,
+      reasons: ['resource gate unavailable: ' + String((error as Error).message)],
+    };
   }
 }
 
@@ -267,7 +270,9 @@ async function main(): Promise<number> {
     // source that emits happily is the failure this check exists for: the
     // manifests would look complete, be internally consistent, and describe a
     // population nobody selected.
-    const prog = await sql<{ finished_at: string | null; rows_seen: string; definition_hash: string }[]>`
+    const prog = await sql<
+      { finished_at: string | null; rows_seen: string; definition_hash: string }[]
+    >`
       SELECT finished_at, rows_seen, definition_hash FROM embedding_census_progress WHERE job = 'tier-census'`;
     const p = prog[0];
     if (!p) {
@@ -277,9 +282,13 @@ async function main(): Promise<number> {
     }
     if (!p.finished_at && !has('--allow-partial')) {
       console.error(
-        'REFUSED: tier-census is INCOMPLETE (' + Number(p.rows_seen).toLocaleString() + ' rows so far).',
+        'REFUSED: tier-census is INCOMPLETE (' +
+          Number(p.rows_seen).toLocaleString() +
+          ' rows so far).',
       );
-      console.error('  The representative table is a prefix of the population, not the population.');
+      console.error(
+        '  The representative table is a prefix of the population, not the population.',
+      );
       console.error('  Wait for it, or pass --allow-partial to deliberately manifest a prefix.');
       return 5;
     }
@@ -311,8 +320,15 @@ async function main(): Promise<number> {
 
     mkdirSync(outDir, { recursive: true });
     console.log(
-      'tier ' + tier + ' · batch ' + batchSize + ' · resuming at batch ' + index +
-        ' (' + emitted.toLocaleString() + ' already emitted)',
+      'tier ' +
+        tier +
+        ' · batch ' +
+        batchSize +
+        ' · resuming at batch ' +
+        index +
+        ' (' +
+        emitted.toLocaleString() +
+        ' already emitted)',
     );
 
     const batchHashes: string[] = [];
@@ -408,7 +424,14 @@ async function main(): Promise<number> {
                pages_done = ${index}, updated_at = now()
          WHERE job = ${job}`;
 
-      console.log('  ' + stem + '.jsonl · ' + rows.length.toLocaleString() + ' rows · ' + idsHash.slice(0, 12));
+      console.log(
+        '  ' +
+          stem +
+          '.jsonl · ' +
+          rows.length.toLocaleString() +
+          ' rows · ' +
+          idsHash.slice(0, 12),
+      );
       // Short PAGE means the table is exhausted. A short batch does not.
       if (page.pageRows < batchSize) break;
     }
@@ -435,7 +458,10 @@ async function main(): Promise<number> {
       batchHashes,
       generatedAt: new Date().toISOString(),
     };
-    writeFileSync(join(outDir, 'manifest-tier-' + tier.toLowerCase() + '.json'), JSON.stringify(manifest, null, 2) + '\n');
+    writeFileSync(
+      join(outDir, 'manifest-tier-' + tier.toLowerCase() + '.json'),
+      JSON.stringify(manifest, null, 2) + '\n',
+    );
 
     console.log('');
     console.log(exhausted ? '── MANIFEST COMPLETE ──' : '── MANIFEST PAUSED (resumable) ──');

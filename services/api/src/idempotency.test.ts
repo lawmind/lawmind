@@ -101,7 +101,7 @@ async function ledgerCount(userId: string): Promise<number> {
  * and a row written before onboarding carries no profile at all — so a count by
  * `user_id` can no longer stand in for "records belonging to this caller".
  */
-async function principalLedgerCount(authId: string): Promise<number> {
+async function _principalLedgerCount(authId: string): Promise<number> {
   return countOf(
     await sql<{ n: number }[]>`
     SELECT count(*)::int AS n FROM api_idempotency_records WHERE auth_id = ${authId}`,

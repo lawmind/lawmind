@@ -32,7 +32,12 @@ function fakeSql(behaviour: { failTimes?: number; failForever?: boolean } = {}) 
     }
     return [];
   }) as unknown as Sql;
-  return { sql: tag, get calls() { return calls; } };
+  return {
+    sql: tag,
+    get calls() {
+      return calls;
+    },
+  };
 }
 
 describe('activation outbox', () => {
@@ -156,14 +161,17 @@ describe('activation outbox', () => {
     const box = new ActivationOutbox(db.sql);
     box.enqueue('user-uuid', 'first_successful_search');
     const keys = Object.keys(box.stats()).sort();
-    assert.deepEqual(keys, [
-      'draining',
-      'droppedAfterRetries',
-      'droppedForCapacity',
-      'delivered',
-      'lastError',
-      'lost',
-      'queued',
-    ].sort());
+    assert.deepEqual(
+      keys,
+      [
+        'draining',
+        'droppedAfterRetries',
+        'droppedForCapacity',
+        'delivered',
+        'lastError',
+        'lost',
+        'queued',
+      ].sort(),
+    );
   });
 });

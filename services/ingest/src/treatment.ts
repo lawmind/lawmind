@@ -92,9 +92,21 @@ const PHRASES: readonly {
 }[] = [
   // ── Partial, before total. ────────────────────────────────────────────────
   { re: /partly\s+overruled/i, relationship: 'overruled_in_part', overruled: 'partly_set_aside' },
-  { re: /overruled\s+to\s+an?\s+extent/i, relationship: 'overruled_in_part', overruled: 'partly_set_aside' },
-  { re: /partially\s+overruled/i, relationship: 'overruled_in_part', overruled: 'partly_set_aside' },
-  { re: /overruled\s+in\s+part/i, relationship: 'overruled_in_part', overruled: 'partly_set_aside' },
+  {
+    re: /overruled\s+to\s+an?\s+extent/i,
+    relationship: 'overruled_in_part',
+    overruled: 'partly_set_aside',
+  },
+  {
+    re: /partially\s+overruled/i,
+    relationship: 'overruled_in_part',
+    overruled: 'partly_set_aside',
+  },
+  {
+    re: /overruled\s+in\s+part/i,
+    relationship: 'overruled_in_part',
+    overruled: 'partly_set_aside',
+  },
 
   // ── Negated forms, before the positive ones they contain. ─────────────────
   // "held not per incuriam" is an EXPRESS UPHOLDING and must never read as the
@@ -103,10 +115,22 @@ const PHRASES: readonly {
   { re: /not\s+overruled/i, relationship: 'cites', overruled: null },
 
   // "not good law" / "not correct law" are overrulings stated in the negative.
-  { re: /(?:held\s+)?not\s+(?:to\s+be\s+)?good\s+law/i, relationship: 'overruled', overruled: 'set_aside' },
-  { re: /(?:held\s+)?not\s+(?:the\s+)?correct\s+law/i, relationship: 'overruled', overruled: 'set_aside' },
+  {
+    re: /(?:held\s+)?not\s+(?:to\s+be\s+)?good\s+law/i,
+    relationship: 'overruled',
+    overruled: 'set_aside',
+  },
+  {
+    re: /(?:held\s+)?not\s+(?:the\s+)?correct\s+law/i,
+    relationship: 'overruled',
+    overruled: 'set_aside',
+  },
   { re: /no\s+longer\s+good\s+law/i, relationship: 'overruled', overruled: 'set_aside' },
-  { re: /does\s+not\s+lay\s+down\s+the\s+correct\s+law/i, relationship: 'overruled', overruled: 'set_aside' },
+  {
+    re: /does\s+not\s+lay\s+down\s+the\s+correct\s+law/i,
+    relationship: 'overruled',
+    overruled: 'set_aside',
+  },
 
   // ── Total overruling. ─────────────────────────────────────────────────────
   { re: /overruled/i, relationship: 'overruled', overruled: 'set_aside' },

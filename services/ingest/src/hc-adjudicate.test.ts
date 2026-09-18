@@ -48,7 +48,10 @@ describe('the gate — a model only ever sees what a rule refused', () => {
 describe('span verification is the only correctness claim this module makes', () => {
   it('accepts a quote the document actually contains', () => {
     assert.equal(
-      verifyEvidenceSpan('the writ petition is rendered infructuous and is accordingly disposed of', DOC),
+      verifyEvidenceSpan(
+        'the writ petition is rendered infructuous and is accordingly disposed of',
+        DOC,
+      ),
       'verified',
     );
   });
@@ -56,7 +59,10 @@ describe('span verification is the only correctness claim this module makes', ()
   it('accepts a quote whose whitespace the model normalised', () => {
     // PDF extraction keeps the original page's line breaks; a model asked to
     // quote will not. Rejecting these would discard good answers.
-    assert.equal(verifyEvidenceSpan('the writ petition   is rendered\n\ninfructuous', DOC), 'verified');
+    assert.equal(
+      verifyEvidenceSpan('the writ petition   is rendered\n\ninfructuous', DOC),
+      'verified',
+    );
   });
 
   it('REJECTS a fluent quote the document does not contain', () => {
@@ -78,7 +84,10 @@ describe('span verification is the only correctness claim this module makes', ()
 
   it('still rejects the 7-in-8 that were genuinely fabricated, spaces or not', () => {
     assert.equal(
-      verifyEvidenceSpan('theHighCourtisoftheopinionthatthesaidwritpetitionhasbecomeinfructuous', DOC),
+      verifyEvidenceSpan(
+        'theHighCourtisoftheopinionthatthesaidwritpetitionhasbecomeinfructuous',
+        DOC,
+      ),
       'span_not_found',
     );
   });
@@ -117,14 +126,24 @@ describe('adjudicate refuses on every failure path, never falls back to a class'
   });
 
   it('treats cannot_determine as a real answer, not a failure', () => {
-    const raw = JSON.stringify({ evidence: 'x', class: 'cannot_determine', reasoning: 'silent', confidence: 'low' });
+    const raw = JSON.stringify({
+      evidence: 'x',
+      class: 'cannot_determine',
+      reasoning: 'silent',
+      confidence: 'low',
+    });
     const out = adjudicate(input, raw);
     assert.equal(out.verdict, 'cannot_determine');
     assert.equal(out.documentClass, null);
   });
 
   it('refuses a class that was never offered', () => {
-    const raw = JSON.stringify({ evidence: 'x'.repeat(40), class: 'interim_order', reasoning: '', confidence: 'high' });
+    const raw = JSON.stringify({
+      evidence: 'x'.repeat(40),
+      class: 'interim_order',
+      reasoning: '',
+      confidence: 'high',
+    });
     assert.equal(parseAdjudication(raw), null);
     assert.equal(adjudicate(input, raw).verdict, 'unparseable');
   });
@@ -136,7 +155,12 @@ describe('adjudicate refuses on every failure path, never falls back to a class'
   it('parses JSON the model wrapped in a fenced block', () => {
     const raw =
       '```json\n' +
-      JSON.stringify({ evidence: 'a'.repeat(30), class: 'decided', reasoning: 'r', confidence: 'low' }) +
+      JSON.stringify({
+        evidence: 'a'.repeat(30),
+        class: 'decided',
+        reasoning: 'r',
+        confidence: 'low',
+      }) +
       '\n```';
     assert.equal(parseAdjudication(raw)?.documentClass, 'decided');
   });

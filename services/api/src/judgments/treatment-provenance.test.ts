@@ -112,7 +112,12 @@ describe('attribution — who said the law moved', () => {
 
 describe('propagation — only a defective edge is refused', () => {
   it('excludes MODALITY_DEFECT and nothing else', () => {
-    const edges = [court('overruled'), reporter('doubted'), unknown('overruled_in_part'), defect('overruled')];
+    const edges = [
+      court('overruled'),
+      reporter('doubted'),
+      unknown('overruled_in_part'),
+      defect('overruled'),
+    ];
     const driving = edgesThatMayDrive(edges);
     assert.equal(driving.length, 3);
     assert.ok(!driving.some((e) => e.provenance === 'MODALITY_DEFECT'));
@@ -218,7 +223,11 @@ describe('propagation — only a defective edge is refused', () => {
 });
 
 describe('the warning is never weakened by provenance', () => {
-  const cases: { name: string; edges: TreatmentEdge[]; stored: 'set_aside' | 'doubted' | 'partly_set_aside' }[] = [
+  const cases: {
+    name: string;
+    edges: TreatmentEdge[];
+    stored: 'set_aside' | 'doubted' | 'partly_set_aside';
+  }[] = [
     { name: 'court', edges: [court('overruled')], stored: 'set_aside' },
     { name: 'reporter', edges: [reporter('overruled')], stored: 'set_aside' },
     { name: 'unclassified', edges: [unknown('overruled')], stored: 'set_aside' },

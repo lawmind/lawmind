@@ -84,11 +84,18 @@ jobs:
       # did not, and all three typechecked clean before failing on real
       # Postgres. Runs before install: needs neither deps nor a database.
       - run: node scripts/check-schema-truth.mjs
-      # PD-5 and PD-6 promise four alert kinds; `alert_kind` holds two. The app
-      # persists switches for notifications the system cannot produce. Added
-      # 11 Aug 2026 after this guard was found running NOWHERE — not here, not in
-      # ci-local, not in a test suite — and red the first time anyone ran it.
-      - run: node scripts/check-alert-coverage.mjs
+      # Does the product PROMISE an alert it cannot deliver? Replaces
+      # `check-alert-coverage.mjs`, which asked whether all four PD-5 triggers can
+      # fire — two cannot, because monitoring and uploads are DISABLED by decision,
+      # so it was red on every run from 11 Aug 2026 and the only ways to green it
+      # were to build capabilities the founder has not scoped or to delete it. It is
+      # now `scripts/check-pd5-alerts-readiness.mjs`, a FUTURE readiness gate, and
+      # deliberately not a current-v1 CI requirement. This guard asks the question
+      # current v1 has to answer, and it caught four shipped promises on its first
+      # run: "Four things", an "evening briefing" while the briefing is disabled, a
+      # mandatory always-ON switch for a trigger needing POST_V1 export, and a push
+      # permission prompt for a channel with no project id.
+      - run: node scripts/check-alert-surface-truth.mjs
       # Bootstrap files must point at the current roadmap (v7.4), the live
       # docs/CURRENT_STATE.md and the SHIP/DATA/RED lanes. They drifted three
       # versions stale silently before 18 Sep 2026. Reads active files only,

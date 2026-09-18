@@ -181,10 +181,24 @@ const STEPS = [
   // Amber: the reserved colour. It means THE LAW HAS MOVED and nothing else, and
   // its power comes entirely from being the only place it appears.
   ['amber reservation', 'node', ['scripts/check-amber-reservation.mjs']],
-  // Alerts: `alert_kind` has two values and PD-5/PD-6 promise four. The app
-  // persists switches for notifications the system cannot produce, and the
-  // advocate finds out by missing a hearing.
-  ['alert coverage', 'node', ['scripts/check-alert-coverage.mjs']],
+  // Alerts: does the product PROMISE one it cannot deliver? This replaced
+  // `check-alert-coverage.mjs` on 18 Sep 2026. That guard asked whether all four
+  // PD-5 triggers can fire; two cannot, because `monitoring.user_product` and
+  // `documents.upload_and_ocr` are DISABLED in the capability registry by
+  // decision. It was therefore red on every single run since 11 Aug — including
+  // the comment two entries above that wired it "knowing ci:local goes red" — and
+  // the only ways to make it pass were to build monitoring and uploads (outside
+  // current v1) or to delete a correct measurement. Neither. It is now
+  // `scripts/check-pd5-alerts-readiness.mjs`, required before any capability
+  // claims full PD-5/PD-6 behaviour and required by nothing today.
+  //
+  // What runs here instead is the question current v1 owns: the Alert Settings
+  // screen said "Four things", named the evening briefing as the delivery channel
+  // while `briefing.daily_loop` was DISABLED_NOT_READY, drew a mandatory always-ON
+  // switch for a trigger whose audience needs an exported draft, and asked for
+  // push permission on a channel with no project id. Four promises, none kept, and
+  // no capability registry row existed for any of it.
+  ['alert surface truth', 'node', ['scripts/check-alert-surface-truth.mjs']],
   // STOP coverage: every path that can start a database WRITER must cross the
   // pause sentinel. Added 16 Aug 2026 because the claim was made without the
   // enumeration — `enrich-worker.cmd` has its own loop, never went through

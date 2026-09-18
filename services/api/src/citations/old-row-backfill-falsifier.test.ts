@@ -224,7 +224,11 @@ describe('FIFTH bus 1313 — old-row backfill and mutation cannot leave a false 
       'UNIQUE_UNCONFIRMED_STALE_INDEX',
       'this is the line FIFTH found saying UNIQUE',
     );
-    assert.equal(outcome.afterCandidates, 1, 'the authority is still returned; only "only" is gone');
+    assert.equal(
+      outcome.afterCandidates,
+      1,
+      'the authority is still returned; only "only" is gone',
+    );
   });
 
   it('mutation of an already-walked row is caught too — the other half of 1313', async (t) => {
@@ -371,7 +375,8 @@ describe('FIFTH bus 1313 — old-row backfill and mutation cannot leave a false 
       };
     });
     if (!outcome) return t.skip('no unambiguously unique neutral citation in this corpus');
-    if (outcome.skipped) return t.skip('the judgment could not be deleted under current constraints');
+    if (outcome.skipped)
+      return t.skip('the judgment could not be deleted under current constraints');
 
     // A keyset walk over created_at can never revisit a row that is gone, so
     // without the DELETE trigger the index answers forever for an authority the

@@ -57,11 +57,7 @@ export type ActivationStep = (typeof ACTIVATION_STEPS)[number];
  * be silently discarded, so the error surfaces to the caller's logger rather
  * than being caught here where there is no context to log with.
  */
-export async function recordStep(
-  sql: Sql,
-  userId: string,
-  step: ActivationStep,
-): Promise<void> {
+export async function recordStep(sql: Sql, userId: string, step: ActivationStep): Promise<void> {
   await sql`
     INSERT INTO activation_events (user_id, step) VALUES (${userId}, ${step})
     ON CONFLICT (user_id, step) DO NOTHING`;

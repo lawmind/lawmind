@@ -56,7 +56,10 @@ export function caseIdentity(row: IdentityRow): CaseIdentity {
     return { key: `cnr:${(row.cnr as string).trim()}`, tier: 'cnr' };
   }
   if (!blank(row.caseNumber)) {
-    return { key: `case:${row.court.trim()}::${(row.caseNumber as string).trim()}`, tier: 'case_number' };
+    return {
+      key: `case:${row.court.trim()}::${(row.caseNumber as string).trim()}`,
+      tier: 'case_number',
+    };
   }
   const hash = documentKey(row) ?? 'nohash';
   return { key: `weak:${row.court.trim()}::${row.judgmentDate}::${hash}`, tier: 'weak' };
@@ -72,7 +75,10 @@ export function sourceArtifactKey(row: Pick<IdentityRow, 'sourceUrl'>): string {
 /** Same DOCUMENT: both rows have a computed hash and the hashes match. Two
  * rows that are both un-hashed are NOT the same document — `null === null`
  * is not identity, it is absence of information. */
-export function isSameDocument(a: Pick<IdentityRow, 'contentHash'>, b: Pick<IdentityRow, 'contentHash'>): boolean {
+export function isSameDocument(
+  a: Pick<IdentityRow, 'contentHash'>,
+  b: Pick<IdentityRow, 'contentHash'>,
+): boolean {
   const ka = documentKey(a);
   const kb = documentKey(b);
   return ka !== null && kb !== null && ka === kb;

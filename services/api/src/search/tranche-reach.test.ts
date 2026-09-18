@@ -99,19 +99,41 @@ describe('new1_tranche_passages — wired, and unreachable by a user', () => {
   let chunkDocs = 0;
   let hasTrancheHnsw = false;
 
+  /**
+   * `new1_tranche_passages` IS NOT IN ANY MIGRATION. It is a DATA-lane table,
+   * created out of band; `0093_reachable_autovacuum_thresholds.sql` only names
+   * it in a comment. So on the fresh database CI and `pnpm ci:local` build, the
+   * counting queries below raise 42P01 and — because they sat in `before()` —
+   * took the WHOLE suite down with them, including the four assertions that need
+   * no table at all and are the reason this file exists.
+   *
+   * The population assertions already skip on zero (see below), which was the
+   * right instinct applied one level too late. The existence probe moves that
+   * decision into `before()`: a missing table is the same evidential state as an
+   * empty one, and neither is a reason to stop asking whether a user request can
+   * reach the tranche.
+   *
+   * It does NOT weaken the suite on a populated database: every count is read
+   * exactly as before, and a table that exists with rows still drives the
+   * widening and hnsw-plan assertions.
+   */
   before(async () => {
-    const [t] = await sql<{ n: number; d: number }[]>`
-      SELECT count(*)::int AS n, count(DISTINCT judgment_id)::int AS d
-      FROM new1_tranche_passages`;
-    tranchePassages = t?.n ?? 0;
-    trancheDocs = t?.d ?? 0;
+    const [present] = await sql<{ ok: boolean }[]>`
+      SELECT to_regclass('public.new1_tranche_passages') IS NOT NULL AS ok`;
+    if (present?.ok) {
+      const [t] = await sql<{ n: number; d: number }[]>`
+        SELECT count(*)::int AS n, count(DISTINCT judgment_id)::int AS d
+        FROM new1_tranche_passages`;
+      tranchePassages = t?.n ?? 0;
+      trancheDocs = t?.d ?? 0;
+      const idx = await sql<{ indexname: string }[]>`
+        SELECT indexname FROM pg_indexes
+        WHERE tablename = 'new1_tranche_passages' AND indexdef ILIKE '%hnsw%'`;
+      hasTrancheHnsw = idx.length > 0;
+    }
     const [c] = await sql<{ d: number }[]>`
       SELECT count(DISTINCT judgment_id)::int AS d FROM judgment_chunks`;
     chunkDocs = c?.d ?? 0;
-    const idx = await sql<{ indexname: string }[]>`
-      SELECT indexname FROM pg_indexes
-      WHERE tablename = 'new1_tranche_passages' AND indexdef ILIKE '%hnsw%'`;
-    hasTrancheHnsw = idx.length > 0;
   });
 
   after(async () => {

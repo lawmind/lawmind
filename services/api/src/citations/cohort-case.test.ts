@@ -252,7 +252,11 @@ describe('cohort — a matter is recognised by its structure, not by its capital
   it('CONTROL, green before the fix: a lowercase conjunction already joined three writs', () => {
     const d = declaredCohort(AHC_LOWERCASE_WITH);
     assert.equal(d.connector, 'WITH');
-    assert.deepEqual(d.matters.map((m) => m.key).sort(), ['19783|2022', '27269|2018', '32045|2018']);
+    assert.deepEqual(d.matters.map((m) => m.key).sort(), [
+      '19783|2022',
+      '27269|2018',
+      '32045|2018',
+    ]);
     assert.equal(cohortBlocksUnique(d, 1), true);
     assert.equal(cohortBlocksUnique(d, 3), false, 'the whole cohort landed and it still refused');
   });

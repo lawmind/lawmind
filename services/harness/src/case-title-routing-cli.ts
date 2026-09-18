@@ -50,7 +50,12 @@ async function main(): Promise<void> {
   if (url === undefined || url.length === 0) throw new Error('DATABASE_URL is not set');
   const gold = buildLaunchGold();
   const rows0 = gold.rows.filter((r) => r.launchClass === 'case_title');
-  const sql = postgres(url, { max: 2, ssl: sslFor(url), onnotice: () => {}, connection: { statement_timeout: 30_000 } });
+  const sql = postgres(url, {
+    max: 2,
+    ssl: sslFor(url),
+    onnotice: () => {},
+    connection: { statement_timeout: 30_000 },
+  });
 
   const rows: {
     queryId: string;

@@ -60,7 +60,8 @@ export class WrongRoleQueryError extends Error {
 
 const TABLE_RE = /\b(?:from|join|into|update|delete\s+from)\s+(?:only\s+)?"?([a-z_][a-z0-9_]*)"?/gi;
 /** `WITH x AS (`, `, x AS (` — a name that is local to the statement. */
-const CTE_RE = /(?:\bwith\s+|,\s*)([a-z_][a-z0-9_]*)\s+as\s*(?:materialized\s+|not\s+materialized\s+)?\(/gi;
+const CTE_RE =
+  /(?:\bwith\s+|,\s*)([a-z_][a-z0-9_]*)\s+as\s*(?:materialized\s+|not\s+materialized\s+)?\(/gi;
 
 /**
  * The first table in `statement` that belongs to the other role, or null.

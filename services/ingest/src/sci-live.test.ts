@@ -35,7 +35,10 @@ describe('SCI official live feed boundary', () => {
   });
 
   it('extracts an intact neutral citation but abstains on a page-number concatenation', () => {
-    assert.equal(neutralCitation('2026 INSC 920Page 1 of 10\nIN THE SUPREME COURT'), '2026 INSC 920');
+    assert.equal(
+      neutralCitation('2026 INSC 920Page 1 of 10\nIN THE SUPREME COURT'),
+      '2026 INSC 920',
+    );
     assert.equal(neutralCitation('2026 INSC 9191\nREPORTABLE\nIN THE SUPREME COURT'), null);
   });
 });

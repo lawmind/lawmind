@@ -12,11 +12,23 @@ import { registerForPushNotifications } from '../../push/register';
  * hearing. The fix is additive and server-derived, so the client must key off
  * `settings.unavailable`, never a hard-coded pair of names.
  *
- * Also under test since 23 Aug 2026: turning ON `savedAuthorityMoved` — the
- * one alert trigger that is real today — is the moment push permission is
- * asked for. `../../push/register` and `../../state/session` are mocked
- * here rather than let the real `expo-notifications` / auth-bridge module
- * code run under Jest, which is unrelated to what this screen tests.
+ * REWRITTEN 18 Sep 2026 (SHIP S4-T0.3). Two assertions inverted, and the
+ * inversion is the point:
+ *
+ *   * Trigger 2 ("an authority I filed is set aside") used to render a DISABLED,
+ *     ON switch beside "Cannot be turned off" — and this file asserted that
+ *     switch existed. It read as "always working" for a trigger whose audience
+ *     is an EXPORTED draft (not current v1) or a copied citation, and which has
+ *     never been observed delivering anything. It now renders like every other
+ *     not-yet row, and the counts below are one lower for it.
+ *   * Turning ON `savedAuthorityMoved` used to ask for push permission, and this
+ *     file asserted that too. `alerts.push_delivery` is DISABLED_NOT_READY in
+ *     R18 — `EAS_PROJECT_ID` is absent, so the call can only fail — so the ask
+ *     is gone and the test now proves it does NOT happen. A permission prompt
+ *     spent on a channel that cannot deliver is a prompt we do not get back.
+ *
+ * `../../push/register` stays mocked so the assertion "never called" is real
+ * rather than incidental, and so `expo-notifications` does not run under Jest.
  */
 
 jest.mock('../../api/client', () => ({
@@ -25,12 +37,6 @@ jest.mock('../../api/client', () => ({
 
 jest.mock('../../push/register', () => ({
   registerForPushNotifications: jest.fn(),
-}));
-
-const mockRegisterPushToken = jest.fn();
-jest.mock('../../state/session', () => ({
-  useSession: (selector: (s: unknown) => unknown) =>
-    selector({ registerPushToken: mockRegisterPushToken }),
 }));
 
 const alertSettings = api.alertSettings as jest.MockedFunction<typeof api.alertSettings>;
@@ -56,18 +62,17 @@ describe('AlertSettingsScreen — settings.unavailable', () => {
     alertSettings.mockReset();
     updateAlertSettings.mockReset();
     mockRegisterForPush.mockReset();
-    mockRegisterPushToken.mockReset();
   });
 
-  it('renders an ordinary switch when the server reports everything works', async () => {
+  it('renders an ordinary switch for every toggleable row the server says works', async () => {
     alertSettings.mockResolvedValue({ ok: true, data: { settings: settings() } });
     await render(<AlertSettingsScreen onBack={() => {}} />);
 
-    // Trigger 2's fixed "cannot be disabled" row is always a switch, plus
-    // one for each of the three toggleable rows.
-    expect(await screen.findAllByRole('switch')).toHaveLength(4);
-    expect(screen.queryByText(/not built yet/i)).toBeNull();
-    expect(screen.queryByText('Soon')).toBeNull();
+    // Three toggleable rows. Trigger 2 is NOT one of them: it has no key on
+    // `AlertSettings` and no producer, so it is a statement, not a control.
+    expect(await screen.findAllByRole('switch')).toHaveLength(3);
+    expect(screen.getAllByText(/not built yet/i)).toHaveLength(1);
+    expect(screen.getAllByText('Soon')).toHaveLength(1);
   });
 
   it('never renders an ordinary switch for a key named in unavailable', async () => {
@@ -77,11 +82,11 @@ describe('AlertSettingsScreen — settings.unavailable', () => {
     });
     await render(<AlertSettingsScreen onBack={() => {}} />);
 
-    // savedAuthorityMoved and trigger 2's fixed row are not in `unavailable`,
-    // so exactly two ordinary switches remain.
-    expect(await screen.findAllByRole('switch')).toHaveLength(2);
-    expect(screen.getAllByText(/not built yet/i)).toHaveLength(2);
-    expect(screen.getAllByText('Soon')).toHaveLength(2);
+    // Only savedAuthorityMoved is left as a switch; trigger 2 plus the two
+    // named keys render as not-yet rows.
+    expect(await screen.findAllByRole('switch')).toHaveLength(1);
+    expect(screen.getAllByText(/not built yet/i)).toHaveLength(3);
+    expect(screen.getAllByText('Soon')).toHaveLength(3);
   });
 
   it('does not hard-code which keys are unavailable — a new key from the server renders the same way', async () => {
@@ -91,89 +96,63 @@ describe('AlertSettingsScreen — settings.unavailable', () => {
     });
     await render(<AlertSettingsScreen onBack={() => {}} />);
 
-    expect(await screen.findAllByRole('switch')).toHaveLength(3);
-    expect(screen.getAllByText(/not built yet/i)).toHaveLength(1);
+    expect(await screen.findAllByRole('switch')).toHaveLength(2);
+    expect(screen.getAllByText(/not built yet/i)).toHaveLength(2);
   });
 });
 
-describe('AlertSettingsScreen — push registration on the real trigger', () => {
+describe('AlertSettingsScreen — current-v1 truth', () => {
   beforeEach(() => {
     alertSettings.mockReset();
     updateAlertSettings.mockReset();
     mockRegisterForPush.mockReset();
-    mockRegisterPushToken.mockReset();
   });
 
-  it('asks for push only when savedAuthorityMoved turns ON, and registers the token on success', async () => {
-    alertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: false }) },
-    });
-    updateAlertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: true }) },
-    });
-    mockRegisterForPush.mockResolvedValue({ ok: true, token: 'ExponentPushToken[abc]' });
-    await render(<AlertSettingsScreen onBack={() => {}} />);
-
-    const switches = await screen.findAllByRole('switch');
-    await fireEvent.press(switches[0]!);
-
-    expect(mockRegisterForPush).toHaveBeenCalledTimes(1);
-    expect(mockRegisterPushToken).toHaveBeenCalledWith('ExponentPushToken[abc]');
-  });
-
-  it('does not ask for push when a different trigger is toggled', async () => {
+  it('says alerts are not switched on in this version', async () => {
     alertSettings.mockResolvedValue({ ok: true, data: { settings: settings() } });
-    updateAlertSettings.mockResolvedValue({ ok: true, data: { settings: settings() } });
+    await render(<AlertSettingsScreen onBack={() => {}} />);
+
+    expect(await screen.findByText(/not switched on in this version/i)).toBeTruthy();
+  });
+
+  it('never names the evening briefing while briefing.daily_loop is disabled', async () => {
+    alertSettings.mockResolvedValue({ ok: true, data: { settings: settings() } });
+    await render(<AlertSettingsScreen onBack={() => {}} />);
+
+    await screen.findAllByRole('switch');
+    // The delivery channel this screen used to promise. Naming a disabled
+    // channel in a settings screen is the defect T0.3 removed.
+    expect(screen.queryByText(/evening briefing/i)).toBeNull();
+    expect(screen.queryByText(/four things/i)).toBeNull();
+  });
+
+  it('never promises trigger 2 as a mandatory working alert', async () => {
+    alertSettings.mockResolvedValue({ ok: true, data: { settings: settings() } });
+    await render(<AlertSettingsScreen onBack={() => {}} />);
+
+    await screen.findAllByRole('switch');
+    expect(screen.getByText('An authority I filed is set aside')).toBeTruthy();
+    expect(screen.queryByText(/cannot be turned off/i)).toBeNull();
+  });
+
+  it('does NOT ask for push permission while push delivery is disabled', async () => {
+    alertSettings.mockResolvedValue({
+      ok: true,
+      data: { settings: settings({ savedAuthorityMoved: false }) },
+    });
+    updateAlertSettings.mockResolvedValue({
+      ok: true,
+      data: { settings: settings({ savedAuthorityMoved: true }) },
+    });
     await render(<AlertSettingsScreen onBack={() => {}} />);
 
     const switches = await screen.findAllByRole('switch');
-    // switches[0] is savedAuthorityMoved (already true — see `settings()`),
-    // so toggling any OTHER row must never touch push at all.
-    await fireEvent.press(switches[2]!);
+    await fireEvent.press(switches[0]!);
 
+    // The setting still saves — the preference gates the producer's audience
+    // query the moment the producer runs. Only the prompt is gone.
+    expect(updateAlertSettings).toHaveBeenCalledWith({ savedAuthorityMoved: true });
     expect(mockRegisterForPush).not.toHaveBeenCalled();
-  });
-
-  it('surfaces the real reason when push cannot be set up, without reverting the saved toggle', async () => {
-    alertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: false }) },
-    });
-    updateAlertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: true }) },
-    });
-    mockRegisterForPush.mockResolvedValue({ ok: false, reason: 'NO_PROJECT_CONFIGURED' });
-    await render(<AlertSettingsScreen onBack={() => {}} />);
-
-    const switches = await screen.findAllByRole('switch');
-    await fireEvent.press(switches[0]!);
-
-    expect(mockRegisterPushToken).not.toHaveBeenCalled();
-    expect(
-      await screen.findByText('Push delivery is not set up on this build yet — this will still save.'),
-    ).toBeTruthy();
-    expect(switches[0]!.props.accessibilityState?.checked).toBe(true);
-  });
-
-  it('never surfaces a note for a simulator — nothing the advocate can act on', async () => {
-    alertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: false }) },
-    });
-    updateAlertSettings.mockResolvedValue({
-      ok: true,
-      data: { settings: settings({ savedAuthorityMoved: true }) },
-    });
-    mockRegisterForPush.mockResolvedValue({ ok: false, reason: 'NOT_A_DEVICE' });
-    await render(<AlertSettingsScreen onBack={() => {}} />);
-
-    const switches = await screen.findAllByRole('switch');
-    await fireEvent.press(switches[0]!);
-
-    expect(mockRegisterPushToken).not.toHaveBeenCalled();
     expect(screen.queryByText(/push/i)).toBeNull();
   });
 });

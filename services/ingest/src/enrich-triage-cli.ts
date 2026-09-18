@@ -98,9 +98,7 @@ function claimsFor(task: EnrichTask, parsed: unknown): Claim[] {
 
 const sql = await openDb(process.env['DATABASE_URL']!, 2);
 
-const rows = await sql<
-  { id: string; judgmentId: string; rawOutput: string; inputHash: string }[]
->`
+const rows = await sql<{ id: string; judgmentId: string; rawOutput: string; inputHash: string }[]>`
   SELECT id, judgment_id AS "judgmentId", raw_output AS "rawOutput", input_hash AS "inputHash"
   FROM document_enrichments
   WHERE task = ${TASK} AND status = 'ok' AND raw_output IS NOT NULL
@@ -108,12 +106,17 @@ const rows = await sql<
 
 console.log('REJECTION TRIAGE');
 console.log('='.repeat(78));
-console.log(`task ${TASK} · prompt ${PROMPT_VERSION} · stored rows ${rows.length} · no model calls, no writes`);
+console.log(
+  `task ${TASK} · prompt ${PROMPT_VERSION} · stored rows ${rows.length} · no model calls, no writes`,
+);
 
 const bucketTally = new Map<Bucket, number>();
 const kindTally = new Map<string, { total: number; bad: number }>();
 const bucketByKind = new Map<string, Map<Bucket, number>>();
-const examples = new Map<Bucket, { judgmentId: string; kind: string; quote: string; ratio: number }[]>();
+const examples = new Map<
+  Bucket,
+  { judgmentId: string; kind: string; quote: string; ratio: number }[]
+>();
 let claimsTotal = 0;
 let claimsBad = 0;
 let excerptMismatch = 0;
@@ -169,12 +172,16 @@ for (const row of rows) {
     if (DRILL && d.bucket === DRILL && drilled < DRILL_LIMIT) {
       drilled++;
       const dv = divergence(v.claim.evidence ?? '', fullText);
-      console.log(`\n[${drilled}] ${row.judgmentId}  ${v.claim.kind}  matched ${dv.at}/${d.quoteLen} chars`);
+      console.log(
+        `\n[${drilled}] ${row.judgmentId}  ${v.claim.kind}  matched ${dv.at}/${d.quoteLen} chars`,
+      );
       console.log(`  QUOTE  …${dv.quoteNext}`);
       console.log(`  SOURCE …${dv.sourceNext}`);
       const rec = reconstructWithSkips(v.claim.evidence ?? '', fullText);
       for (const s of rec.skips) {
-        console.log(`  SKIPPED@${s.atQuoteChar} ${looksLikePageFurniture(s.text) ? '[furniture]' : '[TEXT]'} "${s.text}"`);
+        console.log(
+          `  SKIPPED@${s.atQuoteChar} ${looksLikePageFurniture(s.text) ? '[furniture]' : '[TEXT]'} "${s.text}"`,
+        );
       }
       const sub = substitutionAlign(v.claim.evidence ?? '', fullText);
       if (sub.diffs.length > 0) {
@@ -224,7 +231,9 @@ console.log('');
 console.log('BY OWNER');
 console.log('-'.repeat(78));
 for (const [owner, n] of [...owners.entries()].sort((a, b) => b[1] - a[1])) {
-  console.log(`${owner.padEnd(22)} ${String(n).padStart(5)}  ${((n / Math.max(1, claimsBad)) * 100).toFixed(1).padStart(5)}%`);
+  console.log(
+    `${owner.padEnd(22)} ${String(n).padStart(5)}  ${((n / Math.max(1, claimsBad)) * 100).toFixed(1).padStart(5)}%`,
+  );
 }
 
 console.log('');
@@ -264,7 +273,9 @@ if (OUT) {
         buckets: Object.fromEntries(bucketTally),
         owners: Object.fromEntries(owners),
         byKind: Object.fromEntries([...kindTally.entries()].map(([k, v]) => [k, v])),
-        bucketByKind: Object.fromEntries([...bucketByKind.entries()].map(([k, v]) => [k, Object.fromEntries(v)])),
+        bucketByKind: Object.fromEntries(
+          [...bucketByKind.entries()].map(([k, v]) => [k, Object.fromEntries(v)]),
+        ),
         examples: Object.fromEntries(examples),
       },
       null,

@@ -62,7 +62,10 @@ const SECRET = 'test-secret-not-used-anywhere-real-0123456789';
  * behaves the way S3 does in the respect the sweeper depends on: `delete` is
  * idempotent, and `head` is the only thing that can prove absence.
  */
-function fakeStore(seed: string[], failOn: Set<string> = new Set()): ObjectStore & {
+function fakeStore(
+  seed: string[],
+  failOn: Set<string> = new Set(),
+): ObjectStore & {
   readonly deleted: string[];
   readonly live: Set<string>;
 } {
@@ -242,18 +245,48 @@ async function build(): Promise<Fixture> {
 }
 
 /** Every table this advocate touched, and what is supposed to be left of it. */
-const EXPECTED: { table: string; column: string; outcome: 'GONE' | 'DETACHED' | 'RETAINED'; why: string }[] = [
+const EXPECTED: {
+  table: string;
+  column: string;
+  outcome: 'GONE' | 'DETACHED' | 'RETAINED';
+  why: string;
+}[] = [
   { table: 'documents', column: 'user_id', outcome: 'GONE', why: 'uploaded content' },
   { table: 'ocr_jobs', column: 'user_id', outcome: 'GONE', why: 'extracted text and fields' },
-  { table: 'judgment_annotations', column: 'user_id', outcome: 'GONE', why: "the advocate's own notes" },
+  {
+    table: 'judgment_annotations',
+    column: 'user_id',
+    outcome: 'GONE',
+    why: "the advocate's own notes",
+  },
   { table: 'saved_searches', column: 'user_id', outcome: 'GONE', why: 'research intent' },
   { table: 'searches', column: 'user_id', outcome: 'GONE', why: 'query history' },
   { table: 'alerts', column: 'user_id', outcome: 'GONE', why: 'monitoring on their matters' },
-  { table: 'citation_copies', column: 'user_id', outcome: 'GONE', why: 'what they cited and where' },
-  { table: 'training_consent_events', column: 'user_id', outcome: 'GONE', why: 'consent about a person who no longer exists' },
-  { table: 'api_idempotency_records', column: 'user_id', outcome: 'GONE', why: "R16 replay results, which carry the advocate's own words back" },
+  {
+    table: 'citation_copies',
+    column: 'user_id',
+    outcome: 'GONE',
+    why: 'what they cited and where',
+  },
+  {
+    table: 'training_consent_events',
+    column: 'user_id',
+    outcome: 'GONE',
+    why: 'consent about a person who no longer exists',
+  },
+  {
+    table: 'api_idempotency_records',
+    column: 'user_id',
+    outcome: 'GONE',
+    why: "R16 replay results, which carry the advocate's own words back",
+  },
   { table: 'activation_events', column: 'user_id', outcome: 'GONE', why: 'product funnel' },
-  { table: 'experiment_assignments', column: 'user_id', outcome: 'GONE', why: 'experiment membership' },
+  {
+    table: 'experiment_assignments',
+    column: 'user_id',
+    outcome: 'GONE',
+    why: 'experiment membership',
+  },
   { table: 'experiment_exposures', column: 'user_id', outcome: 'GONE', why: 'experiment exposure' },
   { table: 'premium_jobs', column: 'user_id', outcome: 'GONE', why: 'generated work product' },
   { table: 'entitlements', column: 'user_id', outcome: 'GONE', why: 'current access rights' },
