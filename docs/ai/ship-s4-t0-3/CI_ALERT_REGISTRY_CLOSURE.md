@@ -743,3 +743,89 @@ Verified rather than assumed: scanning the raw bytes for a real trailing space o
 tab returns **0 lines in all four files**. Converting them to LF to silence the
 report would produce four whole-file diffs, which is precisely the mistake T0.2
 recorded and reverted. Recorded, not "fixed".
+
+---
+
+## What CI caught that a local run could not — two pushes, two real defects
+
+The point of turning CI on was to be told things this workstation cannot tell
+anyone. It did so immediately, twice, and neither was a CI quirk.
+
+### 1 · `git reset` dropped a staged blob (run 35317144488)
+
+`pnpm lint` failed on one error: `'createHash' is defined but never used` in
+`services/harness/src/delta-queue.mjs`. That file is one of the two another
+session has uncommitted work in, so its content was staged as a
+`git update-index --cacheinfo` blob rather than from the worktree — and a
+`git reset -q` before the final `git add` cleared the index and with it both
+blobs. `citations-cli.ts` was rebuilt during an amend; this one was not, so the
+fix silently reverted. Restored in its own commit, staged the same way.
+
+**The lesson is about the technique, not the file.** A `--cacheinfo` blob is
+invisible to `git status` and survives nothing: any `reset`, `add -A` or
+`checkout` erases it, and the commit then looks complete because every other path
+is present. Stage the blob LAST, and diff the commit against the intended content
+before pushing.
+
+### 2 · `selprevdays` was computed in the SERVER's timezone (run 35317338454)
+
+`official-client-recorder.test.ts` — *"our eCourts request equals the licensed
+client's"* — failed one assertion: `selPrevDays('29-08-2026', NOW)` returned `'0'`
+where the test expects `'1'`.
+
+`selPrevDays` built the selected date with `new Date(y, m - 1, d)`, which is
+midnight in whatever zone the PROCESS runs in, and compared it to a fixed UTC
+instant. On this workstation at UTC+04:00 the two agreed by luck. On the UTC
+runner they do not, and yesterday's cause list came out `selprevdays=0` where the
+licensed client sends `1`.
+
+**Not a test-environment quirk — a production defect on every host we might
+deploy to.** Every hosting provider under consideration runs UTC, so a deployed
+server would have sent a combination the licensed client never sends. Under a
+bounded written permission that is the kind of difference that costs the
+permission, and any conclusion drawn from the reply ("nothing is retained that far
+back") would have been about our bug rather than about the court. The test's own
+comments already said "today, IST"; nothing had ever run it outside IST±.
+
+Fixed by pinning both sides to the same clock — the selected date is read as IST
+midnight expressed as a UTC instant — so the answer no longer depends on where the
+process runs. Verified under `TZ=UTC` and under the workstation's own zone: 14/14
+both ways.
+
+**This is not eCourts work.** No capability, no harvesting, no scope: it is a
+bounded correctness fix that makes our request MORE identical to the licensed
+client's, and it was required to make current source pass CI.
+
+---
+
+## Acceptance
+
+```text
+T0_2_FALSE_GREEN_CORRECTED               = YES
+
+CURRENT_CAPABILITY_REGISTRY              = R18
+REGISTRY_CURRENT_CONTRACT                = R17
+ALL_R18_CURRENT_CONTRACT_VERSION         = R17   (0 rows not at R17, of 33)
+
+CURRENT_V1_ALERT_SURFACE_TRUTHFUL        = PASS
+DISABLED_ALERTS_NOT_PROMISED_AS_WORKING  = PASS
+MONITORING_REMAINS_DISABLED              = YES
+BRIEFING_REMAINS_DISABLED                = YES
+
+PNPM_FORMAT                              = PASS
+PNPM_LINT                                = PASS
+HARNESS_TYPECHECK                        = PASS
+SERVICES_PACKAGES_TYPECHECK              = PASS
+REPOSITORY_CI_LOCAL                      = PASS
+
+AUTHORITY_CHECK                          = PASS (79/79 in-repo, 78/78 at HEAD)
+
+CLOUD_CHANGED                            = NO
+PAID_RESOURCE_CREATED                    = NO
+```
+
+```text
+GITHUB_SERVER_CHECKS  = (recorded below once observed)
+GITHUB_DESIGN_RULES   = (same)
+GITHUB_DEPLOYED_SAFETY= (same)
+```

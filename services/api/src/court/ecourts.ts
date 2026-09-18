@@ -1207,10 +1207,34 @@ export function establishmentSelectValue(
  * it — the comment was right and the code was not, which would have made every
  * retention probe a request the licensed client would never send.
  */
+/**
+ * IST, EXPLICITLY — not the server's local timezone.
+ *
+ * `new Date(y, m - 1, d)` builds midnight in whatever zone the PROCESS runs in,
+ * and this value has to match what the licensed client computes in a browser in
+ * India. On a workstation at UTC+04:00 the two agreed by luck; on a UTC host
+ * they do not, and `selprevdays` for yesterday came out `0` where the client
+ * sends `1`. Found 18 Sep 2026 by the first CI run on a UTC runner, against a
+ * test whose own comments already said "today, IST".
+ *
+ * That is not a test-environment quirk. `official-client-recorder.test.ts`
+ * asserts *our eCourts request equals the licensed client's*, and every hosting
+ * provider under consideration runs UTC — so the deployed server would have sent
+ * a combination the licensed client never sends. Under a bounded written
+ * permission, looking like a different client is the kind of difference that
+ * costs the permission, and any conclusion drawn from the reply would have been
+ * about our bug rather than about the court.
+ *
+ * Both sides are now pinned to the same clock: the selected date is read as IST
+ * midnight expressed as a UTC instant, and `now` is already absolute. The
+ * result no longer depends on where the process happens to be running.
+ */
+const IST_OFFSET_MS = 5.5 * 3_600_000;
+
 export function selPrevDays(causelistDate: string, now: Date = new Date()): '0' | '1' {
   const [d = '', m = '', y = ''] = causelistDate.split('-');
-  const seldate = new Date(Number(y), Number(m) - 1, Number(d));
-  const daysdiff = Math.ceil((now.getTime() - seldate.getTime()) / 86_400_000 - 1);
+  const seldate = Date.UTC(Number(y), Number(m) - 1, Number(d)) - IST_OFFSET_MS;
+  const daysdiff = Math.ceil((now.getTime() - seldate) / 86_400_000 - 1);
   return daysdiff >= 1 ? '1' : '0';
 }
 
