@@ -1,0 +1,35 @@
+=== 2026-09-17T23:06:55Z — RCC R32 network proof (Wi-Fi run; cellular bearer unavailable) ===
+--- adb devices -l ---
+List of devices attached
+RZCX90X1BNF            device product:e1sxins model:SM_S921B device:e1s transport_id:9
+
+--- adb reverse --list ---
+
+(empty = none)
+--- adb forward --list ---
+
+(empty = none)
+--- wifi_on / mobile_data ---
+1
+0
+--- always_on_vpn_app / private_dns_mode ---
+null
+null
+--- ip -o addr show ---
+1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
+1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft forever
+2: dummy0    inet6 fe80::82c:a3ff:fea2:aeec/64 scope link \       valid_lft forever preferred_lft forever
+16: rmnet1    inet6 2402:8100:708a:a5d1:7968:c09e:754a:908d/64 scope global \       valid_lft forever preferred_lft forever
+55: wlan0    inet 192.168.1.21/24 brd 192.168.1.255 scope global dynamic wlan0\       valid_lft 86374sec preferred_lft 86374sec
+55: wlan0    inet6 2401:4900:1ca2:1fd4:5f2c:3b2a:6f9a:91ba/64 scope global temporary dynamic \       valid_lft 86374sec preferred_lft 86341sec
+55: wlan0    inet6 2401:4900:1ca2:1fd4:946d:d7ff:fe3f:bda2/64 scope global dynamic mngtmpaddr \       valid_lft 86374sec preferred_lft 86374sec
+55: wlan0    inet6 fe80::946d:d7ff:fe3f:bda2/64 scope link \       valid_lft forever preferred_lft forever
+--- active default ---
+Active default network: 111
+--- CELLULAR capabilities (no VALIDATED) ---
+Transports: CELLULAR Capabilities: IMS&NOT_METERED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED
+Transports: CELLULAR Capabilities: TRUSTED&NOT_VPN&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED
+Transports: CELLULAR Capabilities: IMS&TRUSTED&NOT_VPN&NOT_BANDWIDTH_CONSTRAINED
+--- WIFI capabilities ---
+Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED
+Transports: WIFI Capabilities: NOT_RESTRICTED&TRUSTED&NOT_VPN&FOREGROUND&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED

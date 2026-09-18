@@ -1,0 +1,56 @@
+{
+  "kind": "rcc-r32-gate-c-acceptance",
+  "verdict": "HOLD",
+  "verdictReason": "CELLULAR_BEARER_UNAVAILABLE - every product row passed; the mobile-data bearer does not exist on this SIM",
+  "headStart": "fae456c84a336ab026c60aacd10a4ca85bbc14c3",
+  "clientSha": "fae456c84a336ab026c60aacd10a4ca85bbc14c3",
+  "clientShaNote": "git diff --name-only 9fc20c0d..fae456c8 -- apps/ is empty, so the binary installed at R31 is byte-identical to HEAD's client code. Nothing was rebuilt.",
+  "remoteApiSha": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a",
+  "remoteApiShaExpectedByHandoff": "a09d7ee5 (bus 1801) - MATCH, so the run was not started against a different build",
+  "device": "SM-S921B, Android 16, serial RZCX90X1BNF, USB",
+  "cellularNetworkValidated": false,
+  "cellularEvidence": "CELLULAR agent declares INTERNET but not VALIDATED; the only VALIDATED cellular agent is IMS, which the brief excludes. Second observation on a second day.",
+  "wifiOff": false,
+  "wifiOffNote": "Wi-Fi was the bearer, at the founder's direction after cellular was confirmed unavailable. Stated plainly rather than folded into a pass.",
+  "adbReverseEmpty": true,
+  "adbForwardEmpty": true,
+  "noLocalhostApi": true,
+  "noVpn": true,
+  "rows": {
+    "AUTH_MAGIC_LINK": "PASS - fresh address, fresh link; emailed URL is /auth/magic-link/open; Custom Tab handed the 302 to the app; landed on onboarding; identity correct",
+    "SEARCH_EXACT": "PASS - 2022 INSC 690 -> 1 judgment, Satender Kumar Antil, no badge (verified is silent)",
+    "SEARCH_LEXICAL": "PASS - 5 judgments; 'No citation on file - cannot be referenced in a filing' rendered truthfully and the copy action degraded to Copy case name",
+    "READER": "PASS - real paragraph text, 1 of 76, on a freshly cleared install; provenance and unchecked-date caveats rendered",
+    "SAVE": "PASS - one intended write; the picker carried the authority through matter creation; a second save produced no duplicate",
+    "MATTER": "PASS - correct remote state, truthful empty states",
+    "RELAUNCH_PERSISTENCE": "PASS - session survived force-stop, no re-auth required, authority present after remote refetch, no cold-store false absence"
+  },
+  "latencyUpperBoundsMs": {
+    "_note": "UPPER BOUNDS ONLY. Each wraps a fixed sleep or a uiautomator poll whose own round trip is ~600ms. Real latencies are lower by an unknown amount. No new latency gate is proposed and none of these is a failure criterion.",
+    "authTapToApp": 10000,
+    "searchExact": 7482,
+    "searchLexicalToFirstResult": 3633,
+    "readingViewOpen": 4163,
+    "matterCreateWithAuthority": 5275,
+    "relaunchToHome": 4432,
+    "matterOpenLoaded": 2733
+  },
+  "httpErrors": "none observed in the product",
+  "crashes": 0,
+  "anr": 0,
+  "oom": 0,
+  "corrections": [
+    "reader_open_ms=100122 in my trace is an instrumentation artifact, not a latency: the poll loop waited on text below the fold and exhausted 40 iterations. Struck.",
+    "'Add matter' refusing twice was correct validation ('Who is the client?'), not a defect - I had left CLIENT NAME empty.",
+    "Case type / Our side chips report selected=false in the accessibility tree while visually selected. Recorded, not chased - the brief forbids opportunistic UI work."
+  ],
+  "notDone": [
+    "the mobile-data bearer row",
+    "no apps/** change was made or needed"
+  ],
+  "blockers": [
+    "CELLULAR_BEARER_UNAVAILABLE"
+  ],
+  "answersForLcc": "The Custom Tab DOES hand the 302 to the app. That was the one step only a phone could answer (bus 1801). The R33 fix is confirmed from the client side.",
+  "digitalOcean": "no resource created, changed or destroyed"
+}

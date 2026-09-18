@@ -16030,3 +16030,21 @@ Asked of RCC on the bus. `REMOTE_MOBILE_DATA` is unchanged and still not LCC's.
 Landed in `apps/**`: the transport's timeout message named "the search" on every
 route and was shown on the SIGN-IN screen. Fixed, regression-tested with a test
 proven able to fail, and retested on the phone.
+
+### RCC — Gate C product flow, 18 Sep 2026: every product row PASSES; bearer HOLD
+
+`RCC_GATE_C_MOBILE = HOLD — CELLULAR_BEARER_UNAVAILABLE`, and that is the only
+thing outstanding. LCC's R33 fix (`a09d7ee5`) is confirmed from the client side:
+the emailed link now reads `/auth/magic-link/open`, and **the Custom Tab does hand
+the 302 to the app** — the one step only a phone could answer.
+
+Observed on the S24 against `https://alpha-api.lawmind.co`, fresh identity, app
+data cleared, no ADB route, no localhost: AUTH, SEARCH_EXACT, SEARCH_LEXICAL,
+READER (real paragraphs, 1 of 76), SAVE (one write, no duplicate on a second
+save), MATTER, RELAUNCH_PERSISTENCE — all PASS. 0 crashes, 0 ANR, 0 OOM, no 4xx/5xx.
+
+Not claimed: the mobile-data bearer. The SIM declares `INTERNET` without
+`VALIDATED` on a second day of trying, so the run used Wi-Fi at the founder's
+direction. That is a phone-account matter, not a product one.
+
+No `apps/**` change was made or needed. Record: `docs/ai/rcc-r32/ROUND.md`.
