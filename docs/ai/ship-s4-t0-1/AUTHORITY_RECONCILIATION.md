@@ -6,10 +6,10 @@ tooling and hooks only. No product behaviour, database, cloud or spend.
 ```text
 HEAD_START          = 6b1355eb96ae46e6ad0c7d0441306dd6ea76618a
 ORIGIN_MAIN_START   = 6b1355eb96ae46e6ad0c7d0441306dd6ea76618a
-HEAD_FINAL          = __C2__   (the content commit; __C3__ only records these SHAs)
+HEAD_FINAL          = ec5388d5e286e4a0c04493232e43b77ced0c372b   (content head; the SHA-record commit after it changes only this file)
 COMMITS             = 5ae98ce72db36604cb92b24261b00c087999caac  install the founder's v7.4 pack verbatim at docs/roadmaps/
-                      __C2__  authority + orchestration repair (this round's content)
-                      __C3__  record commit SHAs in this file and CURRENT_STATE.md
+                      ec5388d5e286e4a0c04493232e43b77ced0c372b  authority + orchestration repair (this round's content)
+                      (next)  records these SHAs in this file only; a commit cannot name itself, see git log
 ```
 
 ## Re-anchor (start)
