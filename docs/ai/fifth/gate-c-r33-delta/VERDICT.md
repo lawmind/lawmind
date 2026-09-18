@@ -1,5 +1,12 @@
 # FIFTH — GATE C **DELTA** verdict (LCC R33 auth fix + RCC R32 mobile retry)
 
+> **SUPERSEDED IN ONE ROW, 18 Sep 2026** — the founder re-scoped the bearer
+> requirement: cellular is no longer mandatory, and the row became
+> `REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW`. That row was re-adjudicated and passes on
+> evidence. **The current verdict is `docs/ai/fifth/gate-c-final/VERDICT.md`
+> (`GATE_C = PASS`).** Everything else in this document stands unchanged, and
+> nothing here is rewritten: cellular was never observed and did not pass.
+
 Independent read-only falsification re-audit. This is a **delta** against FIFTH's
 prior Gate-C verdict (`docs/ai/fifth/gate-c-r32b/VERDICT.md`); settled backend rows
 were not re-litigated without cause. Prose from LCC and RCC was **not** treated as
