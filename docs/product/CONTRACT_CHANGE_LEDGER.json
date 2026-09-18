@@ -606,8 +606,14 @@
             "search/route.ts:614",
             "briefings/route.ts:255"
           ],
-          "derivedUpstream": ["search/saved.ts:292", "arguments/counter.ts:212"],
-          "stored": ["matters/authorities.ts:187", "citations/check.ts:123"]
+          "derivedUpstream": [
+            "search/saved.ts:292",
+            "arguments/counter.ts:212"
+          ],
+          "stored": [
+            "matters/authorities.ts:187",
+            "citations/check.ts:123"
+          ]
         }
       },
       "USER_TRUTH_CLASSIFICATION": "INTERNAL_ONLY_DIFFERENCE",
@@ -823,8 +829,13 @@
       "cause": "matters/route.ts writes ${JSON.stringify(body.parties)}::jsonb; postgres.js JSON-encodes a JS string parameter, so the stored jsonb is a string scalar. Isolated: JSON.stringify(obj)::jsonb gives jsonb_typeof=string, sql.json(obj) gives object.",
       "userTruthImpact": "MatterScreen.tsx:369 renders {matter.parties.description}, undefined against a string. No crash and no error state - the parties line silently loses the advocate’s own case identity on the matter workspace.",
       "severity": "P1",
-      "blocks": ["FINAL_LOCAL_V1_ACCEPTANCE", "REMOTE_ALPHA"],
-      "doesNotBlock": ["RCC_R16_CLIENT_IMPLEMENTATION"],
+      "blocks": [
+        "FINAL_LOCAL_V1_ACCEPTANCE",
+        "REMOTE_ALPHA"
+      ],
+      "doesNotBlock": [
+        "RCC_R16_CLIENT_IMPLEMENTATION"
+      ],
       "backendOwner": "LCC",
       "clientOwner": "RCC - notify only; no client change, and no defensive JSON.parse",
       "fix": [
@@ -896,7 +907,9 @@
       "id": "CCR-LCC-R25-01",
       "new3LedgerId": "CCR-2026-09-02-20",
       "filedVia": "LCC bus 1726 while implementing R17: \"Your handoff says retrievalOutcome.state=coverage_unknown with reason sparse_timeout. RetrievalOutcomeReason has no such member.\" LCC followed the existing derivation rather than add a member to a contract it does not own, and asked.",
-      "endpoints": ["POST /search"],
+      "endpoints": [
+        "POST /search"
+      ],
       "decision": "REJECT_WITH_ALTERNATIVE",
       "classification": "CONTRACT_ARTIFACT_ERRATUM_NO_WIRE_CHANGE",
       "severity": "P1",
@@ -930,7 +943,10 @@
       "id": "CCR-NEW3-R21-01",
       "new3LedgerId": "CCR-2026-09-02-21",
       "filedVia": "NEW3 R21 acceptance pass, raised on its own initiative while reading the R17 implementation at f0d1490c rather than taking LCC bus 1726 at face value.",
-      "endpoints": ["POST /matters/:id/authorities", "POST /search"],
+      "endpoints": [
+        "POST /matters/:id/authorities",
+        "POST /search"
+      ],
       "decision": "ENGINEERING_DEFECT_ROUTED_TO_LCC",
       "classification": "CONTRACT_CONFORMANCE_GAP_NO_CONTRACT_CHANGE",
       "severity": "P1",
@@ -959,7 +975,9 @@
       "id": "CCR-RCC-R22-01",
       "new3LedgerId": "CCR-2026-09-02-22",
       "filedVia": "RCC bus 1722: an identity_only account (verified auth identity, tokens, no users row) receives 401 AUTH_REQUIRED from POST /me/data-requests, so the app's answer to \"delete my account\" is \"first give us your name and phone number\".",
-      "endpoints": ["POST /me/data-requests"],
+      "endpoints": [
+        "POST /me/data-requests"
+      ],
       "decision": "REJECT_WITH_ALTERNATIVE",
       "classification": "BACKEND_BEHAVIOUR_NOT_WIRE_SHAPE",
       "severity": "P2",
@@ -1027,7 +1045,13 @@
       "frozenSemantics": {
         "READ": "A well-formed judgment UUID absent from the ACTIVE corpus generation returns HTTP 404, code CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable.",
         "WRITE": "A write that must validate against a corpus target the active generation cannot hydrate returns HTTP 409, code CORPUS_TARGET_UNAVAILABLE, details.availability = corpus_unavailable.",
-        "neverClaims": ["never existed", "deleted", "invalid law", "unverified", "overruled"],
+        "neverClaims": [
+          "never existed",
+          "deleted",
+          "invalid law",
+          "unverified",
+          "overruled"
+        ],
         "copyRule": "The message states only that the judgment is not available in the selected corpus release (services/api/src/corpus/target-unavailable.ts corpusTargetUnavailableMessage)."
       },
       "conformanceEvidence": {
@@ -1049,7 +1073,9 @@
       "new3LedgerId": "CCR-2026-09-16-25",
       "filedBy": "NEW3",
       "filedVia": "RCC R27B bus 1779: POST /judgments/:id/annotations returns 400 for a 5,458-character paragraph, and the reader cannot select an excerpt.",
-      "endpoints": ["POST /judgments/:id/annotations"],
+      "endpoints": [
+        "POST /judgments/:id/annotations"
+      ],
       "decision": "REJECTED_WITH_ALTERNATIVE",
       "classification": "ANNOTATION_QUOTE_SEMANTICS",
       "severity": "P1",
@@ -1072,19 +1098,70 @@
       "releasedToRCC": true,
       "decidedBy": "NEW3 R24",
       "decidedAt": "2026-09-16"
+    },
+    {
+      "id": "CCR-NEW3-R25-01",
+      "new3LedgerId": "CCR-2026-09-18-26",
+      "filedBy": "NEW3",
+      "filedVia": "Current explicit founder instruction to NEW3, 18 September 2026, at the Gate-C convergence round.",
+      "classification": "ACCEPTANCE_POLICY",
+      "endpoints": [],
+      "severity": "P0_ACCEPTANCE_POLICY",
+      "decision": "AMENDED_ACCEPTANCE_CRITERION",
+      "subject": "Gate-C physical remote-flow bearer requirement",
+      "supersedes": "The previous Gate-C requirement specifically demanding cellular/mobile-data transport.",
+      "CELLULAR_BEARER_REQUIREMENT": "SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION",
+      "explicitlyNotRecordedAs": "REMOTE_MOBILE_DATA = PASS",
+      "requiredInvariant": "REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW",
+      "acceptedBearers": [
+        "ordinary Internet-connected Wi-Fi",
+        "cellular/mobile Internet"
+      ],
+      "evidenceMustProve": [
+        "remote public HTTPS API",
+        "no localhost/founder workstation serving path",
+        "no ADB reverse/forward API networking",
+        "no VPN/development tunnel",
+        "standalone deployable client",
+        "real remote authentication",
+        "Search -> Reader -> Save -> Matter",
+        "durable state after relaunch/refetch"
+      ],
+      "historicalTruthPreserved": "Historical cellular attempts remain historically truthful and are NOT rewritten as PASS. REMOTE_MOBILE_DATA_PROVEN = NO. Records left unedited: docs/ai/rcc-r31/, docs/ai/rcc-r32/. Gate C may not be cited as evidence that LawMind works on carrier data.",
+      "evidenceReferences": [
+        "docs/ai/fifth/gate-c-final/VERDICT.md (FIFTH final verdict, bus 1808)",
+        "docs/ai/rcc-r32/ROUND.md + acceptance.json + device/ (bus 1804, client fae456c8)",
+        "docs/ai/lcc-r33/ROUND.md + remote-acceptance.json (bus 1802, ba644d78, a09d7ee5)",
+        "docs/ai/lcc-r32b-do/ (DigitalOcean round, Gate-S1, restores, blue/green, R16/R17)",
+        "docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md",
+        "docs/product/NEW3_R25_GATE_C_ACCEPTANCE.json"
+      ],
+      "CONTRACT_CHANGE_REQUIRED": "NONE ON THE WIRE. This amends an acceptance criterion, not the API contract. No endpoint, field, status or semantic changes. RCC_PATCH_REQUIRED = NO. LCC_PATCH_REQUIRED = NO.",
+      "priorVersion": "R17",
+      "newVersion": "R17",
+      "releasedToRCC": true,
+      "consequentialState": {
+        "GATE_C_ACCEPTED": "YES",
+        "acceptedRemoteRuntimeSha": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a",
+        "DEFERRED_CAPABILITIES_UNCHANGED": "YES",
+        "NEXT_GATE": "GATE_D - SPRINT 4: PRODUCT QUALITY + COMMERCIAL READINESS",
+        "TEARDOWN_AUTHORIZED": "YES",
+        "ROTATE_EXPOSED_REMOTE_CREDENTIALS": "REQUIRED"
+      },
+      "decidedBy": "NEW3 R25",
+      "decidedAt": "2026-09-18"
     }
   ],
   "counts": {
-    "received": 25,
-    "amended": 12,
+    "received": 26,
+    "amended": 13,
     "deferred": 4,
     "rejectedWithAlternative": 4,
     "engineeringDefectRoutedToLCC": 4,
     "openUndecided": 0,
     "rccSprint2CCRsUnledgered": 0,
-    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged. NEW3 R24B, 16 September 2026, at 256904c4: CCR-NEW3-R24-02 is closed by implementation (RCC 5df329a2 + 34a70a3d) and physical S24 observation (docs/ai/rcc-r28/DEVICE.md); no new CCR; counts unchanged."
+    "note": "NEW3 R23, 2 September 2026, at INTEGRATION_BASE 6124b5f0. R17's LCC implementation at 5d84e870, RCC consumption at 677e6972, and independent combined NEW3 acceptance all passed; R17 is RELEASED with wire protocol 1 unchanged. CCR-NEW3-R21-01 is closed by implementation and observation. LCC R28 subsequently passed physical split activation at 6947f72d. New P2 CCR-LCC-R28-01 is ledgered and deferred without creating R18 or reopening released R17. NEW3 R24, 16 September 2026, at 95986b04: CCR-NEW3-R24-01 ratifies the R17 read side as implemented by LCC R29 and closes CCR-LCC-R28-01 (deferred count 5 -> 4); CCR-NEW3-R24-02 freezes annotation quotes as EXACT_USER_SELECTED_EXCERPT, rejecting a raised limit and any truncation. Wire protocol 1 unchanged. NEW3 R24B, 16 September 2026, at 256904c4: CCR-NEW3-R24-02 is closed by implementation (RCC 5df329a2 + 34a70a3d) and physical S24 observation (docs/ai/rcc-r28/DEVICE.md); no new CCR; counts unchanged. NEW3 R25, 18 September 2026, at HEAD 523626bc: CCR-NEW3-R25-01 records the founder's current instruction superseding the Gate-C cellular/mobile-data bearer requirement with REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW (Wi-Fi or cellular both accepted, eight invariants unchanged). It is an ACCEPTANCE_POLICY amendment with NO wire change: CONTRACT_REVISION stays R17, WIRE_PROTOCOL_VERSION stays 1, no endpoint or field moves. CELLULAR_BEARER_REQUIREMENT = SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION, explicitly NOT REMOTE_MOBILE_DATA = PASS; historical cellular HOLD readings stand unedited. On FIFTH's GATE_C = PASS, GATE_C_ACCEPTED = YES was frozen and all deferred capability states were preserved unchanged."
   },
-
   "wireProtocolVersion": 1,
   "contractRevisionVsWireVersion": "R17 is the SEVENTH product-contract revision and the current released revision; the wire integer remains 1. CONTRACT_REVISION=R17, WIRE_PROTOCOL_VERSION=1, WIRE_BREAKING_CHANGE=NO, MIN_SUPPORTED_CONTRACT=1. The list-envelope field and refusal/error metadata are additive; the R16 MatterAuthority object remains unchanged.",
   "revisionIdentities": {
@@ -1255,6 +1332,12 @@
     ],
     "openedInR20": [
       "CCR-LCC-R24-01 - R17 FROZEN, IMPLEMENTATION P0 OPEN. Soft corpus references, an additive corpus_unavailable saved-authority shell, immutable generation switching, the shared qlang sparse fence and truthful unbounded/timeout outcomes are decided. Physical split activation remains blocked until implementation and acceptance pass."
+    ]
+  },
+  "acceptancePolicyLedger": {
+    "note": "Acceptance-criterion decisions are ledgered here alongside wire CCRs because they bind releases the same way. They never change CONTRACT_REVISION or WIRE_PROTOCOL_VERSION.",
+    "entries": [
+      "CCR-NEW3-R25-01"
     ]
   }
 }

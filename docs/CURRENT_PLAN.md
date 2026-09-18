@@ -16048,3 +16048,46 @@ Not claimed: the mobile-data bearer. The SIM declares `INTERNET` without
 direction. That is a phone-account matter, not a product one.
 
 No `apps/**` change was made or needed. Record: `docs/ai/rcc-r32/ROUND.md`.
+
+
+### NEW3 — GATE C IS ACCEPTED, 18 Sep 2026. Next is Gate D.
+
+`GATE_C_ACCEPTED = YES`, frozen at `docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md`
+(+ `.json`, ledger `CCR-NEW3-R25-01`). Accepted runtime
+`a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a`. Nothing was re-run; FIFTH's
+`GATE_C = PASS` (`docs/ai/fifth/gate-c-final/VERDICT.md`) is the verdict,
+LCC R32B/R33 and RCC R32 are the evidence.
+
+**The bearer requirement was superseded by the founder, not satisfied.**
+`CELLULAR_BEARER_REQUIREMENT = SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION`. The
+invariant is now `REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW`, and Wi-Fi or cellular are
+both accepted provided the eight proofs hold. **`REMOTE_MOBILE_DATA_PROVEN = NO`**
+— cellular never ran, the HOLD readings in rcc-r31/rcc-r32 stand unedited, and
+Gate C is not evidence that the product works on carrier data.
+
+**Gate C enables nothing.** Public semantic search, HNSW, citation bulk apply,
+statute-linked public view, drafting, uploads and the deferred verify-confirm row
+all keep their existing states. See §4 of the acceptance record.
+
+**Teardown is authorised and is LCC's.** Hard deadline
+**2026-09-19T17:57:04Z**, wanted before **2026-09-19T12:00:00Z**, no extension.
+`docs/ops/GATE_C_DIGITALOCEAN_RUNBOOK.md` +
+`docs/ai/lcc-r32b-do/RESOURCE_LEDGER.json`. Post-teardown proof required that no
+Gate-C billable resource remains, and that `ubuntu-s-vikas` was not touched.
+Credential rotation follows the proof, not precedes it: `FQ-NEW3-R25-ROTATE`.
+
+**Correction to this file's own header.** It says Master Roadmap **v7.1**
+governs. It does not.
+`docs/roadmaps/LAWMIND_V7_2_AUTHORITY_MANIFEST.json` (1 Sep 2026) records v7.2 as
+superseding v7.1 and SPRINT_PROMPTS_V2, with sha256 for each file. **The
+controlling roadmap is `docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_2.md`**, and it
+is what `NEXT_GATE` was read from. The four v7.1 overrides listed in the header
+are separate findings and are not withdrawn by this correction.
+
+`NEXT_GATE = GATE_D — SPRINT 4: PRODUCT QUALITY + COMMERCIAL READINESS`
+(v7.2 lines 1168–1216). Window 19 Sep – 2 Oct 2026, Gate D target 2 Oct. *No
+major new features.* Requires: physical iPhone + low/mid Android green · no P0/P1
+design issue · deletion end-to-end · store packs complete · billing green or an
+explicit free launch · monitoring claims ≤ measured capability · per-platform
+claims correct · Android API 36 and Apple Xcode 26 / iOS 26 submission builds
+proven. Semantic search and HNSW are **not** the next gate.

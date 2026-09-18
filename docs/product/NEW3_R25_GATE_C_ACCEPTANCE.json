@@ -1,0 +1,239 @@
+{
+  "record": "NEW3_R25_GATE_C_ACCEPTANCE",
+  "owner": "NEW3",
+  "role": "product/release acceptance",
+  "decidedAt": "2026-09-18",
+  "narrative": "docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md",
+  "ledgerEntry": "CCR-NEW3-R25-01",
+  "roundType": "CONVERGENCE_ONLY",
+  "roundDidNot": [
+    "product audit",
+    "feature implementation",
+    "re-running any accepted evidence",
+    "enabling any capability",
+    "fixing any nonblocking finding",
+    "destroying any cloud resource"
+  ],
+
+  "anchors": {
+    "HEAD_START": "523626bc41e7028b90980a9db32bc863c66912dc",
+    "originMainAtStart": "312421f46f9bc8cbad6ee37212743680df54de98",
+    "HEAD_FINAL": "SEE_JSON_SIBLING_NOTE",
+    "ACCEPTED_REMOTE_RUNTIME_SHA": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a",
+    "ACCEPTED_CLIENT_SHA": "fae456c8",
+    "FIFTH_AUDIT_HEAD": "92324d1a8e1ff1a5e445dcc74295f3859a421150"
+  },
+
+  "consumed": {
+    "LCC_R33": {
+      "artifact": "docs/ai/lcc-r33/ROUND.md",
+      "supporting": ["docs/ai/lcc-r33/remote-acceptance.json", "docs/ai/lcc-r33/api-suite.txt"],
+      "commits": ["ba644d78", "a09d7ee5"],
+      "bus": 1802,
+      "claim": "LCC_GATE_C_AUTH = PASS"
+    },
+    "RCC_R32": {
+      "artifact": "docs/ai/rcc-r32/ROUND.md",
+      "supporting": ["docs/ai/rcc-r32/acceptance.json", "docs/ai/rcc-r32/device/"],
+      "clientSha": "fae456c8",
+      "bus": 1804,
+      "claim": "all seven product rows PASS; RCC_GATE_C_MOBILE = HOLD (cellular bearer unavailable)"
+    },
+    "FIFTH_FINAL": {
+      "artifact": "docs/ai/fifth/gate-c-final/VERDICT.md",
+      "priorRounds": ["docs/ai/fifth/gate-c-r32b/VERDICT.md", "docs/ai/fifth/gate-c-r33-delta/VERDICT.md"],
+      "bus": 1808,
+      "claim": "GATE_C = PASS; REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW = PASS; P0 = NONE"
+    },
+    "capabilityRegistry": "docs/product/V1_CAPABILITY_REGISTRY_R16.json",
+    "contractChangeLedger": "docs/product/CONTRACT_CHANGE_LEDGER.json",
+    "founderQueue": "docs/FOUNDER_QUEUE.md",
+    "controllingRoadmap": "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_2.md",
+    "roadmapAuthority": "docs/roadmaps/LAWMIND_V7_2_AUTHORITY_MANIFEST.json",
+    "busHandoffsRead": [1794, 1796, 1800, 1802, 1804, 1806, 1808]
+  },
+
+  "founderBearerDecision": {
+    "FOUNDER_BEARER_DECISION_RECORDED": "YES",
+    "decisionDate": "2026-09-18",
+    "source": "current explicit founder instruction to NEW3, this round",
+    "CELLULAR_BEARER_REQUIREMENT": "SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION",
+    "explicitlyNotRecordedAs": "REMOTE_MOBILE_DATA = PASS",
+    "requiredInvariant": "REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW",
+    "acceptedBearers": ["ordinary Internet-connected Wi-Fi", "cellular/mobile Internet"],
+    "evidenceMustProve": [
+      "remote public HTTPS API",
+      "no localhost/founder workstation serving path",
+      "no ADB reverse/forward API networking",
+      "no VPN/development tunnel",
+      "standalone deployable client",
+      "real remote authentication",
+      "Search -> Reader -> Save -> Matter",
+      "durable state after relaunch/refetch"
+    ],
+    "historicalTruthPreserved": {
+      "REMOTE_MOBILE_DATA_PROVEN": "NO",
+      "statement": "Cellular never ran and never passed. On both device-days the only VALIDATED cellular agent was IMS and the SIM had no data plan. rmnet1 holds a global IPv6 address with mobile_data 0 (IMS/VoLTE PDN, no INTERNET capability) and is not evidence of cellular data.",
+      "recordsLeftUnedited": ["docs/ai/rcc-r31/", "docs/ai/rcc-r32/"],
+      "prohibition": "Gate C may not be cited as evidence that LawMind works on carrier data. Carrier DNS/CGNAT/IPv6 behaviour was not evaluated; no current criterion requires it."
+    },
+    "nature": "acceptance-policy change, not a claim that Wi-Fi and carrier networks are equivalent"
+  },
+
+  "gateC": {
+    "REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW": "PASS",
+    "FIFTH_VERDICT": "GATE_C = PASS",
+    "GATE_C_ACCEPTED": "YES",
+    "frozenAt": "2026-09-18",
+    "p0": "NONE",
+    "requiredRowsOutstanding": 0,
+    "basis": "FIFTH graded RCC's existing evidence against all ten invariants, verified two in client source, introduced no new network test, and passed the row on evidence rather than on the rule change.",
+    "acceptedEvidence": {
+      "acceptedRemoteRuntimeSha": "a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a",
+      "lccR32bDigitalOcean": [
+        "docs/ai/lcc-r32b-do/ROUND.md",
+        "docs/ai/lcc-r32b-do/precheck.json",
+        "docs/ai/lcc-r32b-do/remote-smoke-final.json",
+        "docs/ai/lcc-r32b-do/remote-paragraph-proof.json",
+        "docs/ai/lcc-r32b-do/RESOURCE_LEDGER.json"
+      ],
+      "lccR33Authentication": ["docs/ai/lcc-r33/ROUND.md", "docs/ai/lcc-r33/remote-acceptance.json"],
+      "rccPhysical": ["docs/ai/rcc-r32/ROUND.md", "docs/ai/rcc-r32/acceptance.json", "docs/ai/rcc-r32/device/"],
+      "fifthFinalVerdict": "docs/ai/fifth/gate-c-final/VERDICT.md",
+      "gateS1Receipt": {
+        "path": "docs/ai/lcc-r32b-do/gate-s1-fix3/staging-gate-s1.json",
+        "p95Ms": 2748,
+        "boundMs": 3000,
+        "gate": "PASS",
+        "receiptGitSha": "f7f532b1",
+        "labelWarning": "The Gate-S1 receipt gitSha f7f532b1 and the accepted runtime a09d7ee5 are different facts about different runs and must be quoted separately (N-1)."
+      },
+      "corpusRestoreReceipt": [
+        "docs/ai/lcc-r32b-do/full-restore-trace.jsonl",
+        "docs/ai/lcc-r32b-do/full-restore-activation.json"
+      ],
+      "userRestoreReceipt": [
+        "docs/ai/lcc-r32b-do/user-remote-backup-restore.json",
+        "docs/ai/lcc-r32b-do/user-restore-smoke.json"
+      ],
+      "blueGreenReceipt": "docs/ai/lcc-r32b-do/remote-bluegreen.json",
+      "r16r17Evidence": "docs/ai/lcc-r32b-do/remote-smoke-final.json"
+    },
+    "reRun": "NONE"
+  },
+
+  "DEFERRED_CAPABILITIES_UNCHANGED": "YES",
+  "deferredCapabilities": [
+    { "item": "search.semantic.broad (public semantic search)", "state": "INTERNAL_EXPERIMENTAL / public DISABLED", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "search.semantic.supporting_authority", "state": "POST_V1", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "search.semantic.adverse_authority", "state": "POST_V1", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "HNSW index", "state": "DEFERRED_HIGH_MEMORY_OFFLOAD", "source": "NEW3 R24B; FQ-NEW1-R15-HNSW-OFFLOAD" },
+    { "item": "Citation bulk apply", "state": "HOLD", "source": "NEW3 R24B" },
+    { "item": "statute.linked_judgments (statute-linked public capability)", "state": "POST_V1", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "statute.old_new_correspondence", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "generation.evidence_from_passages (drafting)", "state": "POST_V1", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "documents.upload_and_ocr (uploads)", "state": "DISABLED_EXTERNAL_BLOCK", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "language.hindi", "state": "POST_V1", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "briefing.daily_loop", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "monitoring.user_product", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "ecourts.raw_observation_pipeline", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "ecourts.parser", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "ecourts.daily_pilot", "state": "DISABLED_NOT_READY", "source": "docs/product/V1_CAPABILITY_REGISTRY_R16.json" },
+    { "item": "verify-confirm physical acceptance row", "state": "NOT_APPLICABLE_UNREACHABLE_CURRENT_V1", "source": "NEW3 R24B B4" }
+  ],
+  "verifyConfirmTriggerStillBinding": "The physical verify-confirm test becomes a mandatory acceptance row before any feature that can introduce or display an unconfirmed citation is enabled for users. Gate C enables none of them.",
+
+  "NONBLOCKING_FINDINGS": [
+    { "id": "N-1", "owner": "LCC", "summary": "REMOTE_RELEASE_SHA 27b55fa4 reported beside Gate-S1 numbers whose receipt records gitSha f7f532b1; gate-s1-summary.json omits the gate-s1-final-warm run present on disk.", "state": "CARRIED" },
+    { "id": "N-2", "owner": "LCC", "summary": "/version returns deployedAt null and imageDigest null with a self-reported gitSha and no independent build provenance. Fine for staging, not for production; a passing gate does not make it fine.", "state": "CARRIED" },
+    { "id": "N-3", "owner": "LCC/NEW1", "summary": "Cold unseen-query latency (1 of 8 at ~3.5 s) outside the frozen Gate-S1 suite. Root cause ~98 GB TOAST against 31 GiB RAM - a sizing fact, not a code defect.", "state": "CARRIED" },
+    { "id": "N-4", "owner": "LCC", "summary": "Corpus prewarm is manual; an unattended restart serves cold until traffic warms it.", "state": "CARRIED" },
+    { "id": "N-5", "owner": "LCC", "summary": "/version reports environment 'production' while /ready reports servingEnv 'staging' on the same box, same sha. One label is lying and it misroutes an incident.", "state": "CARRIED" },
+    { "id": "N-6", "owner": "LCC", "summary": "Full API suite 1288 pass / 1 fail / 4 skipped of 1293; the failure is a latency assertion in src/search/sparse-bound.test.ts under self-contention. FIFTH recorded UNKNOWN, not a pass. Full suite is not a Gate-C requirement.", "state": "CARRIED" },
+    { "id": "N-7", "owner": "LCC", "summary": "Pre-existing: body validation runs before auth on POST /matters; an unauthenticated caller walks the schema one 400 at a time before 401. No data disclosed, no write performed.", "state": "CARRIED" },
+    { "id": "N-8", "owner": "RCC", "summary": "Case type and Our side chips report selected=false in the accessibility tree while visually selected.", "state": "CARRIED" },
+    { "id": "N-9", "owner": "RCC", "summary": "Non-debuggable flag dump covers release build 1; R32 rows came from release build 2. Equally non-debuggable is inferred from build type, not observed. A dumpsys package capture at install time closes it.", "state": "CARRIED" },
+    { "id": "REMOTE_MOBILE_DATA_PROVEN", "owner": "RCC", "summary": "Carrier-data transport has never been exercised. Not a Gate-C row any more; still an unproven property of the product.", "state": "CARRIED_OPEN" },
+    { "id": "CORPUS_ROLLBACK_EMPTIES_MATTER_AUTHORITIES", "owner": "LCC", "summary": "A corpus rollback empties matter_authorities (LCC bus 1721). Recorded, not re-opened this round.", "state": "CARRIED" }
+  ],
+  "nonblockingFixedThisRound": "NONE",
+
+  "NEXT_GATE": "GATE_D — SPRINT 4: PRODUCT QUALITY + COMMERCIAL READINESS",
+  "nextGateSupport": {
+    "controllingArtifact": "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_2.md",
+    "section": "SPRINT 4 — PRODUCT QUALITY + COMMERCIAL READINESS (lines 1168-1216)",
+    "authorityManifest": "docs/roadmaps/LAWMIND_V7_2_AUTHORITY_MANIFEST.json",
+    "window": "2026-09-19 to 2026-10-02",
+    "gateDTarget": "2026-10-02",
+    "roadmapConstraint": "No major new features.",
+    "requirements": [
+      "physical iPhone + low/mid Android green",
+      "no P0/P1 design issue",
+      "deletion end-to-end",
+      "store packs complete",
+      "billing green or explicit free launch",
+      "monitoring claims <= measured capability",
+      "per-platform claims correct",
+      "Android API36 and Apple Xcode26/iOS26 submission builds proven"
+    ],
+    "explicitNegative": "Semantic search and HNSW are NOT the next gate; they remain deferred. Recorded explicitly because it is the kind of deferral a later agent reasons its way out of."
+  },
+
+  "TEARDOWN_AUTHORIZED": "YES",
+  "teardown": {
+    "authorisedBy": "NEW3 R25, on GATE_C_ACCEPTED = YES",
+    "owner": "LCC",
+    "hardDeadline": "2026-09-19T17:57:04Z",
+    "requiredCompletionPreferablyBefore": "2026-09-19T12:00:00Z",
+    "extensionAuthorized": "NONE",
+    "runbook": "docs/ops/GATE_C_DIGITALOCEAN_RUNBOOK.md",
+    "resourceLedger": "docs/ai/lcc-r32b-do/RESOURCE_LEDGER.json",
+    "resources": [
+      { "type": "droplet", "id": 601138301, "name": "lawmind-gatec-corpus" },
+      { "type": "droplet", "id": 601138316, "name": "lawmind-gatec-api-user" },
+      { "type": "firewall", "id": "424dd1be-8e34-483b-a93b-e3cbf6cb1164", "name": "lawmind-gatec-corpus-fw" },
+      { "type": "firewall", "id": "53b49b45-d85a-4150-a5b6-e0d8d69a91d4", "name": "lawmind-gatec-api-user-fw" },
+      { "type": "vpc", "id": "176f456b-60fc-437c-8297-173fb3208b6a", "name": "lawmind-gatec-vpc" },
+      { "type": "ssh_key", "id": 59366539, "name": "lawmind-gatec-202609161754" },
+      { "type": "dns_record", "id": "alpha-api.lawmind.co" }
+    ],
+    "mustSurviveUntouched": { "id": 566518737, "name": "ubuntu-s-vikas", "classification": "FOREIGN_EXISTING_RESOURCE_DO_NOT_TOUCH" },
+    "requiredPostTeardownProof": [
+      "final-status.json written before destruction",
+      "teardown --confirm executed against every ledgered resource",
+      "precheck output showing no lawmind-gatec-* droplet and ubuntu-s-vikas still present",
+      "DNS A record alpha-api.lawmind.co removed via dns-remove, zone otherwise untouched",
+      "RESOURCE_LEDGER.json updated with a non-null destroyedAt on every entry",
+      "final accrued-cost line and the statement that recurring Gate-C compute is USD 0"
+    ],
+    "evidencePreservation": "Evidence in docs/ai/lcc-r32b-do/, docs/ai/lcc-r33/, docs/ai/rcc-r31/, docs/ai/rcc-r32/ and docs/ai/fifth/ is preserved on disk and is not destroyed by teardown."
+  },
+
+  "ROTATE_EXPOSED_REMOTE_CREDENTIALS": "REQUIRED",
+  "credentialRotation": {
+    "sequencing": "AFTER LCC proves teardown complete - rotating first would strand the teardown itself.",
+    "actor": "founder",
+    "action": "revoke and replace",
+    "credentials": ["DigitalOcean API token", "Resend API key", "Spaceship key and secret"],
+    "valuesPrinted": "NONE - no credential value appears in this record, the founder queue, or the bus.",
+    "founderQueueId": "FQ-NEW3-R25-ROTATE"
+  },
+
+  "blockers": "NONE for Gate C acceptance. Outstanding and owned elsewhere: countersigned DPA before uploads ship (documents.upload_and_ocr DISABLED_EXTERNAL_BLOCK); external delete-account route (RCC, one route, not a founder item per the 15 Sep correction); Apple production build proof (store/release workstream); HNSW memory offload (FQ-NEW1-R15-HNSW-OFFLOAD).",
+
+  "corrections": [
+    "The Gate-C bearer row is recorded as SUPERSEDED, not as a cellular pass. An earlier framing that would read Gate C as proof of carrier-data operation is refused here in advance.",
+    "The Gate-S1 receipt gitSha (f7f532b1) is not the accepted runtime SHA (a09d7ee5). Both are correct facts about different runs; quoting one beside the other's numbers is the N-1 defect and is not repeated in this record.",
+    "NEW3 R24B recorded S24-over-mobile-data as GATE_C_REMOTE_WORK. That row is now superseded by the founder decision, not completed. The R24B record is left unedited."
+  ],
+
+  "NOT_DONE": [
+    "Full remote API suite against the remote deployment - never a Gate-C requirement, still not run.",
+    "Cellular / mobile-data physical flow - never run, now not required.",
+    "Carrier DNS / CGNAT / IPv6 behaviour - not evaluated, no current criterion requires it.",
+    "N-1 through N-9 - carried, none fixed this round.",
+    "Teardown itself - authorised by NEW3, executed by LCC.",
+    "Credential rotation - required, founder-only, sequenced after teardown proof.",
+    "Gate D work - not started; Sprint 4 opens 19 September 2026."
+  ]
+}

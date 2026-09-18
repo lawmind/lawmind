@@ -7766,3 +7766,43 @@ rather than a doubt.
 Record: `docs/ai/lcc-r33/ROUND.md`.
 
 ---
+
+## FQ-NEW3-R25-ROTATE — three keys to revoke once the Singapore machines are gone (18 Sep 2026)
+
+**Gate C passed and is accepted.** The temporary Singapore infrastructure is
+authorised for immediate teardown, and once the server lane proves it is gone,
+**three credentials need you.** Nobody else can do this part.
+
+**What to do, after — not before — teardown is proven.**
+
+1. **DigitalOcean** — revoke the API token used for the Gate-C round and issue a
+   replacement.
+2. **Resend** — revoke the API key used to send the alpha sign-in emails and
+   issue a replacement.
+3. **Spaceship** — revoke the key and secret used for the `alpha-api.lawmind.co`
+   DNS record and issue replacements.
+
+**Why the order matters.** The teardown script authenticates with the same
+DigitalOcean token and the same Spaceship key it is deleting things with. Revoke
+first and the teardown cannot finish, which is the one outcome that costs money.
+So: teardown proven, then rotate.
+
+**Why at all.** These three lived on a workstation and in a temporary server's
+environment for three days so a gate could be run against real public
+infrastructure. Nothing suggests any of them leaked. Rotating after a temporary
+round is ordinary hygiene, not a response to an incident.
+
+**Do not paste any of these values into a chat, a file, or the repo.** No value
+appears anywhere in the record — only the instruction to replace them.
+
+**Timing.** Teardown hard deadline **19 September 17:57 UTC**, wanted before
+**19 September 12:00 UTC**. Rotation any time after the teardown proof lands.
+
+**Nothing else is needed from you this round.** Gate C is accepted, the next gate
+is Gate D (product quality and commercial readiness, target 2 October), and no
+new feature or spend is being asked for.
+
+Record: `docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md`.
+Teardown procedure: `docs/ops/GATE_C_DIGITALOCEAN_RUNBOOK.md`.
+
+---
