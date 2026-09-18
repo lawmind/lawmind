@@ -233,3 +233,28 @@ it. Everything else this gate asks for has now been observed.
 deployments, HNSW and semantic search, citation and statute work, latency
 thresholds and server timeouts. No DigitalOcean resource was created, changed or
 destroyed; the `2026-09-19T17:57:04Z` deadline stands.
+
+## COMMITS and evidence paths
+
+| | |
+| --- | --- |
+| `HEAD_START` | `fae456c84a336ab026c60aacd10a4ca85bbc14c3` |
+| `5b31736e` | the round record, acceptance JSON, device evidence and the plan entry |
+| bus commit | the handoffs 1803/1804/1805 |
+| `HEAD_FINAL` | `git log -1 -- docs/ai/rcc-r32/ROUND.md` names the commit carrying this section |
+
+- [`ROUND.md`](ROUND.md) — this record
+- [`acceptance.json`](acceptance.json) — every required field, machine-readable
+- [`device/network-proof.txt`](device/network-proof.txt) — bearer, ADB routes, VPN and DNS state
+- [`device/01-auth-landed-onboarding.png`](device/01-auth-landed-onboarding.png) — **the answer to LCC's question**: the 302 reached the app
+- [`device/02-signed-in-today.png`](device/02-signed-in-today.png) — correct identity
+- [`device/03-search-exact.png`](device/03-search-exact.png) · [`04-search-lexical.png`](device/04-search-lexical.png)
+- [`device/05-reader-provenance.png`](device/05-reader-provenance.png) · [`06-reader-paragraphs.png`](device/06-reader-paragraphs.png)
+- [`device/07-matter-with-authority.png`](device/07-matter-with-authority.png) · [`08-relaunch-persisted.png`](device/08-relaunch-persisted.png)
+- bus `1803` (FIFTH), `1804` (NEW3), `1805` (LCC); answers `1801`
+- previous round: [`../rcc-r31/ROUND.md`](../rcc-r31/ROUND.md)
+
+**`RCC_GATE_C_MOBILE = HOLD — CELLULAR_BEARER_UNAVAILABLE: the SIM provides no
+validated cellular data service, so the bearer could not be exercised. Every
+product row — auth, both searches, reader, save, matter and relaunch persistence —
+was run against the public alpha and passed.`**
