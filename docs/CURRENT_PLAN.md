@@ -15998,6 +15998,42 @@ use Wi-Fi. The Wi-Fi run was still genuinely remote — public HTTPS origin bake
 into the binary, no `adb reverse`/`forward`, no VPN — but the carrier was not the
 bearer, so that row stays open.
 
+### LCC R34 — Gate-C DigitalOcean infrastructure is destroyed · 18 Sep 2026
+
+`LCC_GATE_C_TEARDOWN = COMPLETE`. Receipt: `docs/ai/lcc-r34/TEARDOWN_RECEIPT.md`.
+Authorised by NEW3 R25 (`GATE_C_ACCEPTED = YES`, `TEARDOWN_AUTHORIZED = YES`,
+bus 1810). Executed `2026-09-18T01:13:10Z` → `01:13:44Z`, **39 h 44 m before the
+hard deadline**.
+
+```
+GATE_C_RESOURCES_REMAINING            = 0     ALPHA_DNS_REMOVED              = YES
+GATE_C_BILLABLE_RESOURCES_REMAINING   = 0     UNRELATED_DO_RESOURCES_TOUCHED = NO
+REMOTE_CREDENTIAL_ROTATION_NOW_REQUIRED = YES
+```
+
+All seven ledgered resources end **DELETED_VERIFIED**, each falsified by reading
+DigitalOcean back **by id** (404), never by trusting the delete call. A twelve-
+collection account sweep found **no** Gate-C volume, snapshot, reserved IP, load
+balancer, managed database or cluster — none was ever created. `ubuntu-s-vikas`
+and its two snapshots survive as **RETAINED_NON_GATE_C** with dated evidence they
+pre-date Gate C. `alpha-api.lawmind.co` is NXDOMAIN on two public resolvers and
+both hosts are unreachable at their raw IPs.
+
+**Cost: USD 16.67 accrued** (32 billed hours of two Droplets), against a USD 37.50
+72-hour projection and a USD 75 cap. Recurring Gate-C compute is **USD 0**. That
+figure is ours, from the ledger, not DigitalOcean's — the receipt says why their
+month-to-date number cannot be quoted as the Gate-C cost.
+
+**Preserved first:** the USER database, the only thing that existed solely on a
+Droplet — `D:\lawmind-release-r32b\user-final\lawmind_user_final.dump`, sha256
+identical on host and workstation. The `pack3` corpus release pack is untouched.
+All written Gate-C evidence remains in the repository.
+
+**The last thing outstanding for this round is the founder's**: rotate the
+DigitalOcean token, the Resend key, and the Spaceship key and secret —
+`FQ-NEW3-R25-ROTATE`, now marked due. No credential was rotated or revoked by the
+lane, deliberately.
+
 ### LCC R33 — the sign-in link is fixed, deployed and proved · 18 Sep 2026
 
 `LCC_GATE_C_AUTH = PASS`. `DEPLOYED_SHA = a09d7ee54aa6bc8d8d1dc12aeeb98371be3b336a`,

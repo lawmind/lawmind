@@ -12,7 +12,9 @@
       "createdAt": "2026-09-16T17:57:06.623Z",
       "hardDestroyDeadline": "2026-09-19T17:57:06.623Z",
       "destroyRequired": true,
-      "destroyedAt": null
+      "destroyedAt": "2026-09-18T01:13:24.747Z",
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "vpc",
@@ -24,7 +26,9 @@
       "createdAt": "2026-09-16T17:57:08.949Z",
       "hardDestroyDeadline": "2026-09-19T17:57:08.949Z",
       "destroyRequired": true,
-      "destroyedAt": null
+      "destroyedAt": "2026-09-18T01:13:24.226Z",
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "droplet",
@@ -37,13 +41,15 @@
       "region": "sgp1",
       "hardDestroyDeadline": "2026-09-19T17:57:04.000Z",
       "destroyRequired": true,
-      "destroyedAt": null,
+      "destroyedAt": "2026-09-18T01:13:12.121Z",
       "publicIp": "157.245.156.133",
       "privateIp": "10.130.0.2",
       "status": "active",
       "vcpus": 4,
       "memoryMiB": 32768,
-      "diskGiB": 900
+      "diskGiB": 900,
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "droplet",
@@ -56,13 +62,15 @@
       "region": "sgp1",
       "hardDestroyDeadline": "2026-09-19T17:57:05.000Z",
       "destroyRequired": true,
-      "destroyedAt": null,
+      "destroyedAt": "2026-09-18T01:13:12.960Z",
       "publicIp": "178.128.209.91",
       "privateIp": "10.130.0.3",
       "status": "active",
       "vcpus": 2,
       "memoryMiB": 4096,
-      "diskGiB": 80
+      "diskGiB": 80,
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "firewall",
@@ -74,7 +82,9 @@
       "createdAt": "2026-09-16T17:57:51.327Z",
       "hardDestroyDeadline": "2026-09-19T17:57:51.327Z",
       "destroyRequired": true,
-      "destroyedAt": null
+      "destroyedAt": "2026-09-18T01:13:10.794Z",
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "firewall",
@@ -86,7 +96,9 @@
       "createdAt": "2026-09-16T17:57:52.132Z",
       "hardDestroyDeadline": "2026-09-19T17:57:52.132Z",
       "destroyRequired": true,
-      "destroyedAt": null
+      "destroyedAt": "2026-09-18T01:13:11.404Z",
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "GET DigitalOcean v2 by id → HTTP 404 \"not_found\" at 2026-09-18T01:14:08.979Z"
     },
     {
       "type": "dns_record",
@@ -98,7 +110,9 @@
       "createdAt": "2026-09-16T19:17:34.703Z",
       "hardDestroyDeadline": "2026-09-19T19:17:34.703Z",
       "destroyRequired": true,
-      "destroyedAt": null
+      "destroyedAt": "2026-09-18T01:13:44.097Z",
+      "terminalState": "DELETED_VERIFIED",
+      "terminalEvidence": "spaceship dns-remove returned {\"dns\":\"removed\"}; NXDOMAIN for alpha-api.lawmind.co on 8.8.8.8 and 1.1.1.1; https://alpha-api.lawmind.co/version times out (curl exit 28). The rest of the lawmind.co zone was not touched."
     }
   ],
   "precheck": {
@@ -147,11 +161,144 @@
     "projected72hComputeUsd": 37.5,
     "pass": true
   },
-  "updatedAt": "2026-09-17T14:33:09.925Z",
+  "updatedAt": "2026-09-18T01:13:44.098Z",
   "cost": {
-    "at": "2026-09-17T14:33:09.924Z",
-    "accruedComputeUsd": 10.94,
+    "at": "2026-09-18T01:13:25.844Z",
+    "accruedComputeUsd": 16.67,
     "projected72hComputeUsd": 37.5,
     "band": "NORMAL"
+  },
+  "teardown": {
+    "at": "2026-09-18T01:13:25.844Z",
+    "deleted": [
+      {
+        "type": "firewall",
+        "id": "424dd1be-8e34-483b-a93b-e3cbf6cb1164",
+        "name": "lawmind-gatec-corpus-fw"
+      },
+      {
+        "type": "firewall",
+        "id": "53b49b45-d85a-4150-a5b6-e0d8d69a91d4",
+        "name": "lawmind-gatec-api-user-fw"
+      },
+      {
+        "type": "droplet",
+        "id": 601138301,
+        "name": "lawmind-gatec-corpus"
+      },
+      {
+        "type": "droplet",
+        "id": 601138316,
+        "name": "lawmind-gatec-api-user"
+      },
+      {
+        "type": "vpc",
+        "id": "176f456b-60fc-437c-8297-173fb3208b6a",
+        "name": "lawmind-gatec-vpc"
+      },
+      {
+        "type": "ssh_key",
+        "id": 59366539,
+        "name": "lawmind-gatec-202609161754"
+      }
+    ],
+    "remainingGateCDroplets": [],
+    "foreignUntouched": [
+      {
+        "id": 566518737,
+        "name": "ubuntu-s-vikas",
+        "status": "active"
+      }
+    ]
+  },
+  "teardownVerification": {
+    "at": "2026-09-18T01:14:08.979Z",
+    "authorisedBy": "NEW3 R25 — GATE_C_ACCEPTED = YES, TEARDOWN_AUTHORIZED = YES (docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md:178, .json:327; bus 1810)",
+    "procedure": "docs/ops/GATE_C_DIGITALOCEAN_RUNBOOK.md §Teardown, executed in the documented order",
+    "evidence": "docs/ai/lcc-r32b-do/teardown-falsification.json",
+    "ledgeredResourcesDeletedVerified": 7,
+    "ledgeredResourcesUnknown": 0,
+    "accountSweep": {
+      "droplets": {
+        "count": 1,
+        "gateCMatches": 0
+      },
+      "volumes": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "snapshots": {
+        "count": 2,
+        "gateCMatches": 0
+      },
+      "reserved_ips": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "floating_ips": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "firewalls": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "vpcs": {
+        "count": 1,
+        "gateCMatches": 0
+      },
+      "ssh_keys": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "load_balancers": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "databases": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "kubernetes": {
+        "count": 0,
+        "gateCMatches": 0
+      },
+      "images_private": {
+        "count": 2,
+        "gateCMatches": 0
+      }
+    },
+    "retainedNonGateC": [
+      {
+        "kind": "droplet",
+        "id": 566518737,
+        "name": "ubuntu-s-vikas",
+        "terminalState": "RETAINED_NON_GATE_C",
+        "evidence": "FOREIGN_EXISTING_RESOURCE_DO_NOT_TOUCH in the 2026-09-16 precheck, before Gate C created anything. Read back after teardown: HTTP 200, status \"active\". Not modified, resized, restarted, attached to or deleted."
+      },
+      {
+        "kind": "snapshots",
+        "ids": [
+          "230239229",
+          "238462498"
+        ],
+        "names": [
+          "ubuntu-s-vikas-1779812391954",
+          "ubuntu-s-vikas 2026-07-26:00"
+        ],
+        "terminalState": "RETAINED_NON_GATE_C",
+        "evidence": "Both are snapshots OF the foreign droplet and neither is in this ledger. One is dated 2026-07-26, seven weeks before Gate C was provisioned on 2026-09-16. They are billable storage, and they are not Gate C’s to delete."
+      },
+      {
+        "kind": "vpc",
+        "id": "bef14d51-4915-49c4-bc41-2c2d6dfb5878",
+        "name": "default-sgp1",
+        "terminalState": "RETAINED_NON_GATE_C",
+        "evidence": "DigitalOcean’s automatic per-region default VPC (\"default\": true), not created by this round. Gate C created and deleted its own lawmind-gatec-vpc. Not billable."
+      }
+    ],
+    "gateCResourcesRemaining": 0,
+    "gateCBillableResourcesRemaining": 0,
+    "unrelatedResourcesTouched": false
   }
 }

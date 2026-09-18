@@ -1,0 +1,152 @@
+{
+  "at": "2026-09-18T01:14:08.979Z",
+  "byId": {
+    "droplet 601138301 lawmind-gatec-corpus": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "droplet 601138316 lawmind-gatec-api-user": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "firewall 424dd1be lawmind-gatec-corpus-fw": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "firewall 53b49b45 lawmind-gatec-api-user-fw": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "vpc 176f456b lawmind-gatec-vpc": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "ssh_key 59366539 lawmind-gatec-202609161754": {
+      "httpStatus": 404,
+      "present": false,
+      "detail": "not_found"
+    },
+    "foreign droplet 566518737 ubuntu-s-vikas (MUST SURVIVE)": {
+      "httpStatus": 200,
+      "present": true,
+      "detail": {
+        "name": "ubuntu-s-vikas",
+        "status": "active"
+      }
+    }
+  },
+  "collections": {
+    "droplets": {
+      "httpStatus": 200,
+      "count": 1,
+      "items": [
+        {
+          "id": 566518737,
+          "name": "ubuntu-s-vikas",
+          "region": "sgp1"
+        }
+      ],
+      "gateCMatches": []
+    },
+    "volumes": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "snapshots": {
+      "httpStatus": 200,
+      "count": 2,
+      "items": [
+        {
+          "id": "230239229",
+          "name": "ubuntu-s-vikas-1779812391954",
+          "region": null
+        },
+        {
+          "id": "238462498",
+          "name": "ubuntu-s-vikas 2026-07-26:00",
+          "region": null
+        }
+      ],
+      "gateCMatches": []
+    },
+    "reserved_ips": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "floating_ips": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "firewalls": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "vpcs": {
+      "httpStatus": 200,
+      "count": 1,
+      "items": [
+        {
+          "id": "bef14d51-4915-49c4-bc41-2c2d6dfb5878",
+          "name": "default-sgp1",
+          "region": "sgp1",
+          "default": true
+        }
+      ],
+      "gateCMatches": []
+    },
+    "ssh_keys": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "load_balancers": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "databases": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "kubernetes": {
+      "httpStatus": 200,
+      "count": 0,
+      "items": [],
+      "gateCMatches": []
+    },
+    "images_private": {
+      "httpStatus": 200,
+      "count": 2,
+      "items": [
+        {
+          "id": 230239229,
+          "name": "ubuntu-s-vikas-1779812391954",
+          "region": null
+        },
+        {
+          "id": 238462498,
+          "name": "ubuntu-s-vikas 2026-07-26:00",
+          "region": null
+        }
+      ],
+      "gateCMatches": []
+    }
+  }
+}

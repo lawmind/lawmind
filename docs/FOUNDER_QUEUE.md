@@ -7769,6 +7769,9 @@ Record: `docs/ai/lcc-r33/ROUND.md`.
 
 ## FQ-NEW3-R25-ROTATE — three keys to revoke once the Singapore machines are gone (18 Sep 2026)
 
+> **THE MACHINES ARE GONE — 18 Sep 2026, 01:13 UTC, server lane. This is now due
+> and it is the only thing outstanding.** Proof at the bottom of this entry.
+
 **Gate C passed and is accepted.** The temporary Singapore infrastructure is
 authorised for immediate teardown, and once the server lane proves it is gone,
 **three credentials need you.** Nobody else can do this part.
@@ -7804,5 +7807,33 @@ new feature or spend is being asked for.
 
 Record: `docs/product/NEW3_R25_GATE_C_ACCEPTANCE.md`.
 Teardown procedure: `docs/ops/GATE_C_DIGITALOCEAN_RUNBOOK.md`.
+
+### TEARDOWN IS PROVEN — 18 September 2026, 01:13 UTC. Please rotate now.
+
+**Both Singapore machines are deleted, and so is everything that came with them.**
+Not "deletion requested" — I asked DigitalOcean about each one afterwards **by its
+own id** and every one came back *not found*. The sign-in address
+`alpha-api.lawmind.co` no longer exists anywhere on the internet, and nothing
+answers at either machine's address.
+
+**Your other server was not touched.** `ubuntu-s-vikas` is still there and still
+running, along with its two backups. It was named as off-limits before any of this
+started, and the teardown tool refuses it by name as well as by list.
+
+**What it cost: USD 16.67.** It was budgeted at up to USD 75 and would have been
+USD 37.50 had it run the full three days — it was deleted after 32 billed hours
+instead. **From 01:13 UTC the recurring cost is zero**, because a machine that does
+not exist cannot bill.
+
+**Nothing was lost.** The advocate accounts and matters that lived only on that
+server were copied down first and the copy was checked byte-for-byte. The corpus
+release pack on the D: drive is untouched. Every piece of written evidence from the
+gate is still in the repository.
+
+**So the three rotations above are now due**, and they are the last thing anyone
+needs from you for this round. The order that mattered — teardown first, then
+rotate — has been satisfied.
+
+Teardown receipt: `docs/ai/lcc-r34/TEARDOWN_RECEIPT.md`.
 
 ---
