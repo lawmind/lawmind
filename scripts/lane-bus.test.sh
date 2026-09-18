@@ -34,7 +34,37 @@ mk() { # mk <seq> <from> <to> <size>
   } > "$f"
 }
 
+# ---------------------------------------------------------------------------
+# WHAT THE HOOK EMITS DEPENDS ON WHETHER `jq` IS INSTALLED
+# ---------------------------------------------------------------------------
+#
+# `lane-bus.sh` prints its payload as plain text when jq is absent, and as ONE
+# LINE of JSON - {hookSpecificOutput:{additionalContext: "..."}} - when jq is
+# present. Both are correct; Claude Code reads the JSON form.
+#
+# This file was written on a workstation with no jq, so every assertion below
+# read the plain form. The drain loop in case 2 counts with
+# `grep -c -- '--- message '` and extracts names with a GREEDY sed. Against one
+# line of JSON both collapse: grep counts 1 per delivery, and the greedy sed
+# keeps only the LAST name on the line. The first CI run on a runner that HAS jq
+# reported "delivered 16, distinct 16, expected 25" and named nine messages as
+# never delivered - one survivor per round. The bus was correct the whole time;
+# the test could not see it.
+#
+# So `run` normalises: when the hook emitted the JSON envelope, unwrap
+# `additionalContext` into the text it carries. `lane-wake.sh` emits
+# {decision, reason}, which has no such key and passes through untouched, so the
+# JSON-validity assertion in case 8 still grades the real bytes.
+unwrap() { # stdin -> the delivered text, from either payload form
+  node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const j=JSON.parse(s);const c=j&&j.hookSpecificOutput&&j.hookSpecificOutput.additionalContext;if(typeof c==="string"){process.stdout.write(c);return;}}catch(e){}process.stdout.write(s);});'
+}
+
 run() { # run <hook> <session_id> [extra json]
+  run_raw "$@" | unwrap
+}
+
+# The raw bytes, for the cases that have to grade the envelope itself.
+run_raw() { # run_raw <hook> <session_id> [extra json]
   printf '{"session_id":"%s"%s}' "$2" "${3:-}" \
     | env -u LAWMIND_LANE CLAUDE_PROJECT_DIR="$TMP" bash "$HOOKS/$1" 2>/dev/null
 }
@@ -243,6 +273,60 @@ if printf '%s\n' "$out" | grep -Eq '^ +0900 +LCC → NEW2 +\[delivered\] \(legac
 else
   no "historical inbox renders" "$(printf '%s\n' "$out" | grep 0900)"
 fi
+
+# -- 15 · the ENVELOPE, in whichever form this host produces ------------------
+# The branch nothing ever graded. `lane-bus.sh` wraps its payload in
+# {hookSpecificOutput:{additionalContext}} when jq is installed and prints it
+# plain when jq is not, and this file was written where jq is not. The first CI
+# run on a runner that HAS jq reported nine messages "never delivered" - a test
+# artefact, not a bus defect, and it cost a red pipeline to find.
+#
+# ONE delivery, graded twice: the raw bytes for the envelope, and the same bytes
+# through `unwrap` for the text. Calling the hook a second time would deliver
+# nothing, because the first call already advanced the cursor - which is the
+# whole behaviour this file exists to protect.
+sid=sess-envelope
+printf 'SHIP\n' > "$BUSDIR/.lane-$sid"
+rm -f "$BUSDIR/.cursor-ship"
+mk 950 DATA SHIP 120
+env_raw="$(run_raw lane-bus.sh "$sid")"
+env_text="$(printf '%s' "$env_raw" | unwrap)"
+rm -f "$BUSDIR/0950--DATA-to-SHIP--subject.md"
+
+if command -v jq >/dev/null 2>&1; then
+  if printf '%s' "$env_raw" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);const c=j.hookSpecificOutput.additionalContext;process.exit(typeof c==="string"&&c.includes("0950--DATA-to-SHIP--subject.md")?0:1)})' 2>/dev/null; then
+    ok "envelope: jq present, payload is JSON carrying the message in additionalContext"
+  else
+    no "envelope: jq present" "not valid JSON with the message inside: ${env_raw:0:200}"
+  fi
+else
+  case "$env_raw" in
+    *"--- message 0950--DATA-to-SHIP--subject.md ---"*)
+      ok "envelope: no jq, payload is the plain text the JSON would carry" ;;
+    *) no "envelope: no jq" "plain payload did not name the message: ${env_raw:0:200}" ;;
+  esac
+fi
+
+case "$env_text" in
+  *"--- message 0950--DATA-to-SHIP--subject.md ---"*)
+    ok "envelope: unwrap yields the same delivered text on both hosts" ;;
+  *) no "envelope: unwrap normalises" "got: ${env_text:0:200}" ;;
+esac
+
+# And unwrap must handle the jq form even where jq is absent, so the branch CI
+# exercises is graded on every host rather than only on the runner. The payload
+# carries a newline and a double quote on purpose: those are exactly what the
+# JSON envelope escapes, and exactly what a naive reader loses.
+synthetic="$(node -e 'process.stdout.write(JSON.stringify({hookSpecificOutput:{hookEventName:"UserPromptSubmit",additionalContext:"--- message 0950--DATA-to-SHIP--subject.md ---\nbody with \"quotes\" in it"}}))')"
+got="$(printf '%s' "$synthetic" | unwrap)"
+lines="$(printf '%s' "$got" | wc -l)"
+case "$got" in
+  *'--- message 0950--DATA-to-SHIP--subject.md ---'*'body with "quotes" in it'*)
+    [ "$lines" -ge 1 ] \
+      && ok "envelope: unwrap decodes the jq form, newlines and quotes intact" \
+      || no "envelope: unwrap decodes the jq form" "newline not restored: ${got:0:200}" ;;
+  *) no "envelope: unwrap decodes the jq form" "got: ${got:0:200}" ;;
+esac
 
 echo
 printf '%d passed, %d failed\n' "$PASS" "$FAIL"

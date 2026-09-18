@@ -796,6 +796,35 @@ both ways.
 bounded correctness fix that makes our request MORE identical to the licensed
 client's, and it was required to make current source pass CI.
 
+### 3 · the lane-bus test could not read its own hook when `jq` exists (run 35334797586)
+
+`bash scripts/lane-bus.test.sh` failed two cases on the runner — *"delivered 16,
+distinct 16, expected 25"* and nine messages named as never delivered — while
+passing 22/22 here. **The bus was correct the whole time; the test could not see
+it.**
+
+`lane-bus.sh` emits its payload two ways: plain text when `jq` is absent, and ONE
+LINE of `{hookSpecificOutput:{additionalContext: "..."}}` when `jq` is present.
+Claude Code reads the JSON form. This workstation has no `jq`; every GitHub
+runner does. The drain loop counts deliveries with
+`grep -c -- '--- message '` and extracts names with a GREEDY `sed`, and against
+one line of JSON both collapse: grep counts 1 per delivery, and the greedy `sed`
+keeps only the LAST name on the line. The nine "lost" messages are exactly the
+non-final message of each delivery round.
+
+So a correct branch of a production hook had never been graded by anything, on
+any host, and the test that exists to prove messages are not silently lost was
+itself silently losing them.
+
+Fixed in the TEST, not the hook. The normaliser is factored out as `unwrap`,
+`run_raw` exposes the raw bytes, and a new case 15 grades the envelope in
+whichever form the host produces — plus a synthetic JSON payload so the jq branch
+is graded even where jq is absent. **25 passed, 0 failed, proven BOTH ways**: once
+normally, and once with a `jq` stand-in on `PATH` that reproduces the runner. The
+whole pipeline was then re-run as `TZ=UTC PATH=<jq-shim>:$PATH pnpm ci:local`, the
+closest reproduction of the runner this workstation can make.
+
+
 ---
 
 ## Acceptance
