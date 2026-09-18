@@ -1186,9 +1186,12 @@ is chosen rather than after the first restore.
 ## 16. SUMMARY
 
 ```text
-HEAD_START = 868d54f894e4971e135e5e59517aad939ba36cdb
-HEAD_FINAL = 868d54f894e4971e135e5e59517aad939ba36cdb
-COMMITS    = 0 during measurement (this receipt committed after)
+HEAD_START = 868d54f894e4971e135e5e59517aad939ba36cdb   (== the instruction anchor, == origin/main)
+HEAD_FINAL = b7edb3b6a7df97fd499a98fecf3da68ca8bdae4f   (the commit carrying this receipt)
+COMMITS    = 1, and it is this receipt. Zero commits during measurement: every
+             number above was read at 868d54f8. A receipt cannot contain its own
+             commit hash, so this line was filled in by a follow-up commit and
+             that commit changed nothing else.
 
 MEASURED_AT = 2026-09-18T19:55Z .. 2026-09-18T20:20Z
 

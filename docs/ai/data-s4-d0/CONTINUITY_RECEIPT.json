@@ -10,10 +10,9 @@
   "busAuthority": "1818 SHIP->DATA 2026-09-18T03:01:39Z",
   "mutating": false,
   "readOnlyProof": "every session opened with 'set session characteristics as transaction read only'",
-
   "anchor": {
     "HEAD_START": "868d54f894e4971e135e5e59517aad939ba36cdb",
-    "HEAD_FINAL": "868d54f894e4971e135e5e59517aad939ba36cdb",
+    "HEAD_FINAL": "b7edb3b6a7df97fd499a98fecf3da68ca8bdae4f",
     "ORIGIN_MAIN_START": "868d54f894e4971e135e5e59517aad939ba36cdb",
     "ANCHOR_MATCH": true,
     "COMMITS_BETWEEN": 0,
@@ -27,9 +26,9 @@
       "takenByThisRound": "NONE"
     },
     "ACTIVE_WORKERS": 0,
-    "GPU_WRITER": "NONE"
+    "GPU_WRITER": "NONE",
+    "HEAD_FINAL_NOTE": "the commit carrying this receipt; zero commits during measurement, every number read at HEAD_START"
   },
-
   "corpus": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T19:56:27Z",
@@ -39,12 +38,21 @@
     "distinctCourtLabels": 27,
     "reltuplesEstimate": 18752608,
     "reltuplesNote": "planner estimate is 46914 low and is not used anywhere",
-    "NEWEST_HELD_DECISION_DATE": { "SC": "2026-09-18", "HC": "2026-09-17" },
-    "OLDEST_HELD_DECISION_DATE": { "SC": "1950-03-14", "HC": "1950-01-01" },
+    "NEWEST_HELD_DECISION_DATE": {
+      "SC": "2026-09-18",
+      "HC": "2026-09-17"
+    },
+    "OLDEST_HELD_DECISION_DATE": {
+      "SC": "1950-03-14",
+      "HC": "1950-01-01"
+    },
     "newestCreatedAt": "2026-09-18T14:18:29.587881Z",
-    "ingestedLast3Days": { "2026-09-18": 4065, "2026-09-17": 2115, "2026-09-16": 1877 },
+    "ingestedLast3Days": {
+      "2026-09-18": 4065,
+      "2026-09-17": 2115,
+      "2026-09-16": 1877
+    },
     "CORPUS_CONTINUITY": "HEALTHY_INGESTING_TODAY",
-
     "currency": {
       "source": "docs/ai/new2-r9/source-ledger.json",
       "state": "SNAPSHOT",
@@ -57,7 +65,10 @@
         "honestLagDays": 79,
         "newestUpstreamWrite": "2026-09-18T10:06:53Z",
         "baselineDocumentsPerMonth": 113558,
-        "recentMonthsPartial": { "2026-09": 0.2503, "2026-08": 0.5095 }
+        "recentMonthsPartial": {
+          "2026-09": 0.2503,
+          "2026-08": 0.5095
+        }
       },
       "aws_open_data_sc": {
         "held": 38358,
@@ -67,10 +78,12 @@
         "honestLagDays": 140,
         "newestUpstreamWrite": "2026-08-30T19:23:42Z"
       },
-      "ecourts": { "held": 0, "note": "adapter has never run" },
+      "ecourts": {
+        "held": 0,
+        "note": "adapter has never run"
+      },
       "USE_HONEST_LAG_NOT_NAIVE": true
     },
-
     "completeness": {
       "ACTUALLY_HELD": 18799522,
       "SOURCE_UNAVAILABLE_COUNT": 219858,
@@ -81,14 +94,55 @@
       "SINGLE_COMPLETENESS_PERCENT": null,
       "whyNull": "the upstream denominator 20239701 is CARRIED_FORWARD_NOT_REMEASURED (20 Aug 2026) and counts parquet ROWS not documents; a percentage over it is a lower bound on an unknown quantity, not coverage",
       "failureClasses": [
-        { "outcome": "pdf_absent", "permanent": true, "n": 219858, "latest": "2026-09-18T14:15:01Z", "class": "SOURCE_UNAVAILABLE" },
-        { "outcome": "no_text", "permanent": false, "n": 10403, "latest": "2026-09-18T14:01:47Z", "class": "OBSERVATION_FAILED_RETRYABLE" },
-        { "outcome": "pdf_failed", "permanent": true, "n": 225, "latest": "2026-09-09T11:53:47Z", "class": "OBSERVATION_FAILED_TERMINAL" },
-        { "outcome": "no_text", "permanent": true, "n": 180, "latest": "2026-09-04T15:32:51Z", "class": "OBSERVATION_FAILED_TERMINAL" },
-        { "outcome": "pdf_failed", "permanent": false, "n": 70, "latest": "2026-09-15T17:47:03Z", "class": "OBSERVATION_FAILED_RETRYABLE" },
-        { "outcome": "no_title", "permanent": true, "n": 3, "latest": "2026-08-19T00:11:16Z", "class": "OBSERVATION_FAILED_TERMINAL" }
+        {
+          "outcome": "pdf_absent",
+          "permanent": true,
+          "n": 219858,
+          "latest": "2026-09-18T14:15:01Z",
+          "class": "SOURCE_UNAVAILABLE"
+        },
+        {
+          "outcome": "no_text",
+          "permanent": false,
+          "n": 10403,
+          "latest": "2026-09-18T14:01:47Z",
+          "class": "OBSERVATION_FAILED_RETRYABLE"
+        },
+        {
+          "outcome": "pdf_failed",
+          "permanent": true,
+          "n": 225,
+          "latest": "2026-09-09T11:53:47Z",
+          "class": "OBSERVATION_FAILED_TERMINAL"
+        },
+        {
+          "outcome": "no_text",
+          "permanent": true,
+          "n": 180,
+          "latest": "2026-09-04T15:32:51Z",
+          "class": "OBSERVATION_FAILED_TERMINAL"
+        },
+        {
+          "outcome": "pdf_failed",
+          "permanent": false,
+          "n": 70,
+          "latest": "2026-09-15T17:47:03Z",
+          "class": "OBSERVATION_FAILED_RETRYABLE"
+        },
+        {
+          "outcome": "no_title",
+          "permanent": true,
+          "n": 3,
+          "latest": "2026-08-19T00:11:16Z",
+          "class": "OBSERVATION_FAILED_TERMINAL"
+        }
       ],
-      "permanentFailureConcentration": { "27_1": 148099, "23_23": 42695, "9_13": 22407, "shareOfPermanent": 0.975 },
+      "permanentFailureConcentration": {
+        "27_1": 148099,
+        "23_23": 42695,
+        "9_13": 22407,
+        "shareOfPermanent": 0.975
+      },
       "NO_LEGAL_CLAIM_FROM_FETCH_FAILURE": "pdf_absent means our fetch found no document at a source URL; it does NOT mean the court delivered no judgment",
       "frontier": {
         "INGEST_CHECKPOINT_FILES": 111,
@@ -96,32 +150,56 @@
         "OLDEST_CHECKPOINT_WRITE": "2026-08-14T11:18:28.681Z"
       }
     },
-
     "provenance": {
       "measuredAt": "2026-09-18T20:00Z",
       "rows": [
-        { "source_id": null, "authorization_basis": null, "n": 18752630, "share": 0.99751 },
-        { "source_id": "aws_hc", "authorization_basis": "aws_open_data", "n": 46809 },
-        { "source_id": "sci_pdf", "authorization_basis": "public_official", "n": 77 },
-        { "source_id": "aws_sc", "authorization_basis": "aws_open_data", "n": 6 }
+        {
+          "source_id": null,
+          "authorization_basis": null,
+          "n": 18752630,
+          "share": 0.99751
+        },
+        {
+          "source_id": "aws_hc",
+          "authorization_basis": "aws_open_data",
+          "n": 46809
+        },
+        {
+          "source_id": "sci_pdf",
+          "authorization_basis": "public_official",
+          "n": 77
+        },
+        {
+          "source_id": "aws_sc",
+          "authorization_basis": "aws_open_data",
+          "n": 6
+        }
       ],
       "finding": "DATA_CONTINUITY_2"
     },
-
-    "overruled": { "none": 18799424, "set_aside": 73, "doubted": 17, "partly_set_aside": 8, "totalFlagged": 98 }
+    "overruled": {
+      "none": 18799424,
+      "set_aside": 73,
+      "doubted": 17,
+      "partly_set_aside": 8,
+      "totalFlagged": 98
+    }
   },
-
   "sci": {
     "SCI_RUNNING_BASIS": "PUBLIC_OFFICIAL_FEED",
     "runningBasisDetail": "sci.gov.in server-rendered Judgments feed, type=j Court links only, official PDF path, PDF and in-document Court heading verified; adapter services/ingest/src/sci-live.ts; no CAPTCHA handling on this path",
-    "runningBasisEvidence": { "rows": 77, "source_id": "sci_pdf", "newestDecision": "2026-09-18", "newestIngest": "2026-09-18T14:18:29Z" },
+    "runningBasisEvidence": {
+      "rows": 77,
+      "source_id": "sci_pdf",
+      "newestDecision": "2026-09-18",
+      "newestIngest": "2026-09-18T14:18:29Z"
+    },
     "SCI_DIRECT_EXPANDED_GRANT": "NOT_ACTIVATED",
     "expandedGrantDetail": "founder confirmed 27 Aug 2026 a separate written SC permission to 2029 permitting automated CAPTCHA handling; its confidential attribution reference and request limits are NOT on file, no SCI-specific guard is configured, route not activated",
     "SCI_AUTHORISATION_STATE": "UNCHANGED",
     "FULLY_RESOLVED_ASSERTED": false,
     "source": "docs/SCI_AUTHORISATION.md"
   },
-
   "citationCorrection": {
     "R24_CORRECTION_RECEIPT_PRESENT": true,
     "EXPECTED_CORRECTED_ROWS": 539,
@@ -133,14 +211,17 @@
     "matchingCorrectedValue": 539,
     "missing": 0,
     "contentHashDrift": 0,
-    "perDisposition": { "DETERMINISTIC_TO_NULL": 441, "DETERMINISTIC_TO_REPLACE": 86, "DETERMINISTIC_SUFFIX_REPLACE": 12 },
+    "perDisposition": {
+      "DETERMINISTIC_TO_NULL": 441,
+      "DETERMINISTIC_TO_REPLACE": 86,
+      "DETERMINISTIC_SUFFIX_REPLACE": 12
+    },
     "quarantineRowsPresent": 32,
     "quarantineNullCitations": 0,
     "citationKeyDirtyNow": 0,
     "reapplied": false,
     "historicalRowsRepaired": 0
   },
-
   "citationPopulation": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T19:58:52Z",
@@ -154,7 +235,15 @@
       "distinctCited": 35364,
       "distinctCiting": 105745,
       "newestAppliedEdge": "2026-09-18T14:17:25Z",
-      "relationships": { "cites": 217796, "followed": 9446, "distinguished": 1157, "overruled": 97, "doubted": 21, "overruled_in_part": 19, "approved": 18 }
+      "relationships": {
+        "cites": 217796,
+        "followed": 9446,
+        "distinguished": 1157,
+        "overruled": 97,
+        "doubted": 21,
+        "overruled_in_part": 19,
+        "approved": 18
+      }
     },
     "unresolvedRows": 22230810,
     "emptyStringSentinel": 16162242,
@@ -184,7 +273,6 @@
     "applyManifestPrepared": false,
     "redInvoked": false
   },
-
   "citedAuthorityDrift": {
     "finding": "DATA_CONTINUITY_3",
     "measuredAt": "2026-09-18T19:59Z",
@@ -199,7 +287,6 @@
     "refreshed": false,
     "whyNotRefreshed": "REFRESH MATERIALIZED VIEW is a write and would move the eligibility population"
   },
-
   "statutes": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T20:00Z",
@@ -210,7 +297,11 @@
     "RESOLVER_CONFIRMED": 0,
     "UNRESOLVED_NULL_NEVER_ADJUDICATED": 932923,
     "AMBIGUOUS": 0,
-    "adjudicatedRefusals": { "refused_pre_enactment": 49, "unresolved_pre_commencement": 42, "total": 91 },
+    "adjudicatedRefusals": {
+      "refused_pre_enactment": 49,
+      "unresolved_pre_commencement": 42,
+      "total": 91
+    },
     "nullSafetyNote": "resolution_state is NULL on 932923 of 933014 rows; refused-by-a-rule and never-looked-at are different populations and are not merged",
     "identityMapping": {
       "statuteIdNotNull": 703768,
@@ -218,7 +309,13 @@
       "IS_NOT_RESOLVER_CONFIRMED": true,
       "note": "statute_id is an identity mapping from act name to catalogue row; no chronology or applicability is inferred from it"
     },
-    "catalogue": { "statutes": 849, "statute_sections": 36663, "statute_mappings": 226, "statute_amendments": 18590, "amendments_unparsed": 596 },
+    "catalogue": {
+      "statutes": 849,
+      "statute_sections": 36663,
+      "statute_mappings": 226,
+      "statute_amendments": 18590,
+      "amendments_unparsed": 596
+    },
     "STATUTE_PUBLIC_LINK_STATE": "LINKABLE_BUT_NOT_LINKED",
     "sectionsWithSourceUrl": 36663,
     "newPublicLinksCreated": 0,
@@ -228,7 +325,6 @@
       "statute.old_new_correspondence": "DISABLED_NOT_READY"
     }
   },
-
   "embeddings": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T20:17:38.861Z",
@@ -266,7 +362,16 @@
       "liveSnapshotHash": "5b5d02384b46c96c",
       "censusSnapshotHash": "5b5d02384b46c96c",
       "IDENTITY_MATCH": true,
-      "generations": { "5b5d02384b46c96c": { "state": "ACTIVE", "rows": 7680372 }, "NULL_OLD_GENERATION": { "state": "SEALED", "rows": 486955 } }
+      "generations": {
+        "5b5d02384b46c96c": {
+          "state": "ACTIVE",
+          "rows": 7680372
+        },
+        "NULL_OLD_GENERATION": {
+          "state": "SEALED",
+          "rows": 486955
+        }
+      }
     },
     "queue": {
       "INCREMENTAL_WATERMARK": "2026-09-18T14:18:29.587Z",
@@ -276,16 +381,34 @@
       "lifetimeEmbedded": 9729,
       "lastPassAt": "2026-09-18T19:59:02.440Z",
       "lastPassKind": "queue_nothing_to_embed",
-      "residual": { "considered": 6, "named": 6, "unnamed": 0, "predicatesAgree": true }
+      "residual": {
+        "considered": 6,
+        "named": 6,
+        "unnamed": 0,
+        "predicatesAgree": true
+      }
     },
-    "refusalLedger": { "rows": 72099, "STILL_TIER_A_ELIGIBLE": 0, "NO_ELIGIBILITY_ROW": 0 },
-    "identityIntegrity": { "JUDGMENT_ID_DUPLICATES": 0, "enforcedBy": "new1_doc_vector_stage_pkey UNIQUE", "CONTENT_HASH_COLLISIONS": 15, "CONTENT_HASH_SURPLUS_ROWS": 15 },
+    "refusalLedger": {
+      "rows": 72099,
+      "STILL_TIER_A_ELIGIBLE": 0,
+      "NO_ELIGIBILITY_ROW": 0
+    },
+    "identityIntegrity": {
+      "JUDGMENT_ID_DUPLICATES": 0,
+      "enforcedBy": "new1_doc_vector_stage_pkey UNIQUE",
+      "CONTENT_HASH_COLLISIONS": 15,
+      "CONTENT_HASH_SURPLUS_ROWS": 15
+    },
     "VECTOR_INTEGRITY_RECEIPT": "INTACT",
-    "manifestVerify": { "command": "node services/harness/src/new1-evidence-manifest.mjs --verify", "result": "EVIDENCE_MANIFEST=INTACT files=6", "exitCode": 0, "at": "2026-09-18T20:04Z" },
+    "manifestVerify": {
+      "command": "node services/harness/src/new1-evidence-manifest.mjs --verify",
+      "result": "EVIDENCE_MANIFEST=INTACT files=6",
+      "exitCode": 0,
+      "at": "2026-09-18T20:04Z"
+    },
     "FULL_SCAN_RERUN": false,
     "carriedForwardIntegrity": "VECTOR_INTEGRITY=PASS, full scan of 8162558 rows, 163.5s, 2026-09-16T07:11:12Z, zero nulls/wrong dims/zero vectors/non-unit norms"
   },
-
   "gpuWriter": {
     "ONE_GPU_WRITER": "NOT_RUNNING_EXPECTED",
     "measuredAt": "2026-09-18T20:05Z",
@@ -299,7 +422,6 @@
     "SECOND_GPU_WRITER": false,
     "FULL_BACKFILL_WORKER_RUNNING": false
   },
-
   "deltaScheduler": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T20:04Z",
@@ -317,7 +439,12 @@
     "runLevel": "Limited",
     "userId": "Xerxus",
     "unchangedSinceLastAccepted": true,
-    "siblingTasksAlreadyS4U": ["Lawmind-alert-poll", "Lawmind-citation-keys", "Lawmind-citations", "Lawmind-paragraphs"],
+    "siblingTasksAlreadyS4U": [
+      "Lawmind-alert-poll",
+      "Lawmind-citation-keys",
+      "Lawmind-citations",
+      "Lawmind-paragraphs"
+    ],
     "onlyActiveInteractiveTask": true,
     "riskObservedToday": {
       "lastReceiptBeforeGap": "2026-09-18T16:29:01.901Z",
@@ -339,10 +466,12 @@
     "hostSchedulingChangedByData": false,
     "opsHandoffSent": "bus 1819"
   },
-
   "model": {
     "MODEL_MANIFEST_PRESENT": true,
-    "manifests": ["docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.json", "docs/ai/lcc-r13/model-artifact-manifest.json"],
+    "manifests": [
+      "docs/ai/new1-r15/NEW1_TERMINAL_RECEIPT.json",
+      "docs/ai/lcc-r13/model-artifact-manifest.json"
+    ],
     "EXACT_MODEL_HASHES_PRESENT": true,
     "fileCount": 5,
     "filesPresentOnDiskToday": 5,
@@ -362,20 +491,58 @@
     "modelFilesExposedOrShared": false,
     "identity": "BGE-M3 ONNX fp32, CLS-pooled, L2-normalised, recipe HEAD:4800, 1024 dims, cosine"
   },
-
   "hnsw": {
     "FULL_HNSW_EXISTS": false,
     "LOCAL_BUILD_ALLOWED_BY_CURRENT_RAM": false,
     "HNSW_STATE": "DEFERRED_HIGH_MEMORY_OFFLOAD",
     "PUBLIC_SEMANTIC": "DISABLED",
     "buildAttempted": false,
-    "productionStageIndexes": ["new1_doc_vector_stage_pkey (btree on judgment_id)"],
+    "productionStageIndexes": [
+      "new1_doc_vector_stage_pkey (btree on judgment_id)"
+    ],
     "existingHnswIndexes": [
-      { "index": "judgment_chunks_embedding_hnsw", "table": "judgment_chunks", "rows": 620928, "sizeMB": 4839, "what": "legacy chunk-level index; ~40161 documents, 0.21% of corpus", "accountedFor": true },
-      { "index": "new1_tranche_passages_hnsw", "table": "new1_tranche_passages", "rows": 418116, "sizeMB": 3244, "what": "NEW1 tranche passage research", "accountedFor": true },
-      { "index": "new1_probe_hnsw_1000000_hnsw", "table": "new1_probe_hnsw_1000000", "rows": 1000000, "sizeMB": 2603, "what": "NEW1 R10 build-cost probe", "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json", "accountedFor": true },
-      { "index": "new1_probe_hnsw_250000_hnsw", "table": "new1_probe_hnsw_250000", "rows": 250000, "sizeMB": 651, "what": "NEW1 R10 build-cost probe", "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json", "accountedFor": true },
-      { "index": "new1_head_baseline_hnsw", "table": "new1_head_baseline", "rows": 20947, "sizeMB": 164, "what": "NEW1 head-offset baseline", "accountedFor": true }
+      {
+        "index": "judgment_chunks_embedding_hnsw",
+        "table": "judgment_chunks",
+        "rows": 620928,
+        "sizeMB": 4839,
+        "what": "legacy chunk-level index; ~40161 documents, 0.21% of corpus",
+        "accountedFor": true
+      },
+      {
+        "index": "new1_tranche_passages_hnsw",
+        "table": "new1_tranche_passages",
+        "rows": 418116,
+        "sizeMB": 3244,
+        "what": "NEW1 tranche passage research",
+        "accountedFor": true
+      },
+      {
+        "index": "new1_probe_hnsw_1000000_hnsw",
+        "table": "new1_probe_hnsw_1000000",
+        "rows": 1000000,
+        "sizeMB": 2603,
+        "what": "NEW1 R10 build-cost probe",
+        "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json",
+        "accountedFor": true
+      },
+      {
+        "index": "new1_probe_hnsw_250000_hnsw",
+        "table": "new1_probe_hnsw_250000",
+        "rows": 250000,
+        "sizeMB": 651,
+        "what": "NEW1 R10 build-cost probe",
+        "receipt": "docs/ai/new1-r10/hnsw-build-measurements.json",
+        "accountedFor": true
+      },
+      {
+        "index": "new1_head_baseline_hnsw",
+        "table": "new1_head_baseline",
+        "rows": 20947,
+        "sizeMB": 164,
+        "what": "NEW1 head-offset baseline",
+        "accountedFor": true
+      }
     ],
     "unexplainedIndexFound": false,
     "capabilities": {
@@ -383,9 +550,19 @@
       "search.semantic.supporting_authority": "POST_V1",
       "search.semantic.adverse_authority": "POST_V1"
     },
-    "carriedForwardRam": { "MEASURED_HNSW_RAM_REQUIREMENT_GiB": 19.52, "CURRENT_SAFE_RAM_GiB": [12.38, 14.2], "machineTotalGiB": 31.75, "shortfallGiB": [5.3, 7.1] }
+    "carriedForwardRam": {
+      "MEASURED_HNSW_RAM_REQUIREMENT_GiB": 19.52,
+      "CURRENT_SAFE_RAM_GiB": [
+        12.38,
+        14.2
+      ],
+      "machineTotalGiB": 31.75,
+      "shortfallGiB": [
+        5.3,
+        7.1
+      ]
+    }
   },
-
   "ecourts": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T19:59Z",
@@ -399,14 +576,43 @@
     "DAILY_PILOT_STATE": "NOT_STARTED",
     "causeListSyncs": 0,
     "ecourtsTransition": 0,
-    "killSwitch": { "key": "ecourts_harvest", "enabled": true, "since": "2026-08-29T17:33:52Z" },
+    "killSwitch": {
+      "key": "ecourts_harvest",
+      "enabled": true,
+      "since": "2026-08-29T17:33:52Z"
+    },
     "killSwitchOnButNoObservations": true,
     "fetchOutcomes": [
-      { "outcome": "ok", "httpStatus": 200, "n": 110, "latest": "2026-09-16T12:28:16Z", "note": "newest 12 are endpoint test://attribution-probe, not eCourts" },
-      { "outcome": "refused", "reason": "kill_switch_off", "n": 80, "latest": "2026-08-29T16:19:26Z" },
-      { "outcome": "refused", "reason": "attribution_not_on_file", "n": 44, "latest": "2026-08-29T14:00:32Z" },
-      { "outcome": "error", "n": 3, "latest": "2026-08-30T08:34:56Z" },
-      { "outcome": "refused", "reason": "min_interval", "n": 1, "latest": "2026-08-29T22:58:42Z" }
+      {
+        "outcome": "ok",
+        "httpStatus": 200,
+        "n": 110,
+        "latest": "2026-09-16T12:28:16Z",
+        "note": "newest 12 are endpoint test://attribution-probe, not eCourts"
+      },
+      {
+        "outcome": "refused",
+        "reason": "kill_switch_off",
+        "n": 80,
+        "latest": "2026-08-29T16:19:26Z"
+      },
+      {
+        "outcome": "refused",
+        "reason": "attribution_not_on_file",
+        "n": 44,
+        "latest": "2026-08-29T14:00:32Z"
+      },
+      {
+        "outcome": "error",
+        "n": 3,
+        "latest": "2026-08-30T08:34:56Z"
+      },
+      {
+        "outcome": "refused",
+        "reason": "min_interval",
+        "n": 1,
+        "latest": "2026-08-29T22:58:42Z"
+      }
     ],
     "lastRealNetworkRequestToSource": "2026-08-30T08:46:40Z",
     "lastRealEndpoint": "cause_list/submitCauseList",
@@ -418,11 +624,18 @@
       "PARSE_EMPTY_NOT_NO_CASES": true
     },
     "refutedHypothesesReopened": false,
-    "refutedHypotheses": ["User-Agent / attribution transport (TESTED_REFUTED)", "fillDistrict (SOLVED)"],
-    "quota": { "ledgerRowsLifetime": 238, "encodedHourlyCeiling": 100, "encodedDailyCeiling": 1000, "addedByThisRound": 0 },
+    "refutedHypotheses": [
+      "User-Agent / attribution transport (TESTED_REFUTED)",
+      "fillDistrict (SOLVED)"
+    ],
+    "quota": {
+      "ledgerRowsLifetime": 238,
+      "encodedHourlyCeiling": 100,
+      "encodedDailyCeiling": 1000,
+      "addedByThisRound": 0
+    },
     "REAL_CAUSE_LIST_FIXTURE": "NOT_OBTAINED"
   },
-
   "monitoring": {
     "MONITORING_12_CONDITIONS_PASSED": 0,
     "MONITORING_12_CONDITIONS_TOTAL": 12,
@@ -445,7 +658,6 @@
     "anythingRecommendedForEnabling": false,
     "monitoringWorkCreatedForShip": false
   },
-
   "sizing": {
     "state": "LIVE",
     "measuredAt": "2026-09-18T20:03Z",
@@ -465,9 +677,22 @@
     "servingEightTablesBytes": 269057155072,
     "servingEightTablesPretty": "~250 GB",
     "doNotPrice343GB": "roughly 93 GB is research and probe artifact that need not ship",
-    "userSideRowCounts": { "users": 748, "matters": 10, "matter_authorities": 5, "saved_searches": 6, "alerts": 6, "llm_calls": 40166, "audit_log": 1080 },
-    "otherDatabases": [{ "name": "lawmind_restore_rehearsal", "pretty": "122 MB", "what": "rehearsal artifact, not a serving database" }],
-
+    "userSideRowCounts": {
+      "users": 748,
+      "matters": 10,
+      "matter_authorities": 5,
+      "saved_searches": 6,
+      "alerts": 6,
+      "llm_calls": 40166,
+      "audit_log": 1080
+    },
+    "otherDatabases": [
+      {
+        "name": "lawmind_restore_rehearsal",
+        "pretty": "122 MB",
+        "what": "rehearsal artifact, not a serving database"
+      }
+    ],
     "CURRENT_RELEASE_PACK_REFERENCE": "D:/lawmind-release-r32b/pack3",
     "releaseVersion": "2026-09-17.mu4rlyak",
     "packCreatedAt": "2026-09-17T02:48:50.862Z",
@@ -492,10 +717,27 @@
     "cheapComparisonToResolve": "stream-hash the 8 .copy.gz files (72.6 GiB, ~20-40 min of disk reads); no database, no network, no lease required",
     "byteLengthCaveat": "byte-length matching excludes the truncation class but not in-place corruption",
     "CURRENT_DELTA_SINCE_GATE_C_PACK": {
-      "judgments": { "pack": 18793342, "live": 18799522, "delta": 6180, "sharePercent": 0.033 },
-      "judgment_citations": { "pack": 22451373, "live": 22459364, "delta": 7991 },
-      "judgment_statute_refs": { "pack": 928805, "live": 933014, "delta": 4209 },
-      "judgment_paragraphs": { "pack": 92083253, "live": null, "note": "not re-counted" }
+      "judgments": {
+        "pack": 18793342,
+        "live": 18799522,
+        "delta": 6180,
+        "sharePercent": 0.033
+      },
+      "judgment_citations": {
+        "pack": 22451373,
+        "live": 22459364,
+        "delta": 7991
+      },
+      "judgment_statute_refs": {
+        "pack": 928805,
+        "live": 933014,
+        "delta": 4209
+      },
+      "judgment_paragraphs": {
+        "pack": 92083253,
+        "live": null,
+        "note": "not re-counted"
+      }
     },
     "GATE_C_PACK_REUSE_CANDIDATE": "YES",
     "hostingCorrectnessFact": {
@@ -503,22 +745,48 @@
       "sourceCtype": "English_United States.1252",
       "encoding": "UTF8",
       "serverVersion": "18.6",
-      "extensions": ["pg_trgm 1.6", "vector 0.8.5", "plpgsql 1.0"],
+      "extensions": [
+        "pg_trgm 1.6",
+        "vector 0.8.5",
+        "plpgsql 1.0"
+      ],
       "warning": "a Linux target CANNOT match this collation; text ordering and collation-dependent indexes differ on restore",
-      "exposedIndexes": ["judgments_case_title_normalised_idx", "btree citation indexes"],
+      "exposedIndexes": [
+        "judgments_case_title_normalised_idx",
+        "btree citation indexes"
+      ],
       "classification": "CORRECTNESS not cost; settle before choosing a provider"
     }
   },
-
   "outcomes": {
     "SHIP_OPS_HANDOFFS": [
-      { "id": 1, "bus": 1819, "subject": "delta-queue scheduler principal is Interactive", "answers": "bus 1818 item 3" },
-      { "id": 2, "bus": 1819, "subject": "platform_config.signups is DISABLED with reason 'test cleanup'", "impactToday": "none (PRODUCTION=NONE, PERSISTENT_BETA=NONE)", "impactAtS4R1": "a persistent beta from this database comes up with signups off" }
+      {
+        "id": 1,
+        "bus": 1819,
+        "subject": "delta-queue scheduler principal is Interactive",
+        "answers": "bus 1818 item 3"
+      },
+      {
+        "id": 2,
+        "bus": 1819,
+        "subject": "platform_config.signups is DISABLED with reason 'test cleanup'",
+        "impactToday": "none (PRODUCTION=NONE, PERSISTENT_BETA=NONE)",
+        "impactAtS4R1": "a persistent beta from this database comes up with signups off"
+      }
     ],
     "DATA_CONTINUITY": [
-      { "id": "DATA_CONTINUITY_1", "what": "source freshness ledger has no row for sci-live, understating SC currency by 37 days" },
-      { "id": "DATA_CONTINUITY_2", "what": "source_id/authorization_basis NULL on 99.75% of judgments; provenance legible only on the frontier" },
-      { "id": "DATA_CONTINUITY_3", "what": "cited_authority matview drifted 1126 rows; the eligibility snapshot hash cannot see it" }
+      {
+        "id": "DATA_CONTINUITY_1",
+        "what": "source freshness ledger has no row for sci-live, understating SC currency by 37 days"
+      },
+      {
+        "id": "DATA_CONTINUITY_2",
+        "what": "source_id/authorization_basis NULL on 99.75% of judgments; provenance legible only on the frontier"
+      },
+      {
+        "id": "DATA_CONTINUITY_3",
+        "what": "cited_authority matview drifted 1126 rows; the eligibility snapshot hash cannot see it"
+      }
     ],
     "DEFERRED_RESEARCH": [],
     "DATA_BLOCKERS": [],
@@ -536,14 +804,22 @@
       "the ok/200 latest timestamp in the eCourts fetch ledger (2026-09-16T12:28:16Z) is an internal attribution probe; the last real eCourts request was 2026-08-30T08:46:40Z"
     ],
     "NOT_DONE": [
-      "no canonical mutation", "no citation edge apply", "no HNSW build",
-      "no matview refresh", "no capability change", "no public link created",
-      "no candidate population regeneration", "no vector-integrity full scan",
-      "no host scheduling change", "no eCourts live request", "no new full export",
-      "no RED invocation", "no worker stopped or started", "no lease taken or broken"
+      "no canonical mutation",
+      "no citation edge apply",
+      "no HNSW build",
+      "no matview refresh",
+      "no capability change",
+      "no public link created",
+      "no candidate population regeneration",
+      "no vector-integrity full scan",
+      "no host scheduling change",
+      "no eCourts live request",
+      "no new full export",
+      "no RED invocation",
+      "no worker stopped or started",
+      "no lease taken or broken"
     ]
   },
-
   "acceptance": {
     "measurementsCurrentOrLabelled": "MET",
     "noStaleRoadmapNumberAsCurrent": "MET",
@@ -556,6 +832,5 @@
     "shipReceivesSchedulerAndSizingFacts": "MET",
     "stopTheLineConditionMet": false
   },
-
   "DATA_S4_D0_CONTINUITY": "PASS"
 }
