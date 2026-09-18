@@ -36,7 +36,44 @@ NEW1–3 and FIFTH are legacy lanes). Current pointer: `docs/CURRENT_STATE.md`.
 | **FQ-PUSH-PROJECT** | Launch Shape B makes no push/monitoring claim, so `PUSH_PRODUCT = DEFERRED / NONBLOCKING`. **Separate and still current:** `EAS_PROJECT_ID` is absent from `app.config.ts`, and an EAS project is needed for store builds regardless of push (roadmap §14.14). |
 | **FQ-DELETE-WEB** | Owner SHIP. The route belongs in lawmind/lawmind-site and needs `EXTERNAL_DELETE_AUTH_V1` (the R33 mobile magic link cannot be reused). Not a founder item. |
 | **In-app purchase: vendor pick** (8 Aug) | Old RevenueCat/OpenIAP recommendations are historical input. At Gate D you choose `FREE_BETA` or `PAID_V1`; only PAID_V1 re-opens billing, on a supported PBL8+ re-measured then. |
-| **Store accounts (new)** | Please confirm Apple Developer Program membership/type/Team ID and Google Play Console account type and verification state. **`PLAY_APP_REGISTERED` has a 30 Sep 2026 deadline** under Android developer verification. Rows: `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0. |
+| **Store accounts (new)** | Please confirm Apple Developer Program membership/type/Team ID and Google Play Console account type and verification state. **The 30 Sep 2026 Play item is a VERIFY, not a publish deadline** — see the note directly below. Rows: `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0. |
+
+**`PLAY_APP_REGISTERED` — what the 30 Sep 2026 date actually requires (corrected
+18 Sep 2026, SHIP S4-T0.2).** The earlier one-line wording read as "LawMind must
+already be published on Play by 30 Sep 2026". It does not say that, and reading
+it that way would invent a launch deadline nobody set.
+
+What Google's current documentation says, read 18 Sep 2026:
+
+- Play **package names** must be registered to meet Android developer
+  verification. "Apps not registered by Sep 30, 2026 will be removed from Play
+  pursuant to the Play Console Requirements policy."
+  ([Registering Play package names](https://support.google.com/googleplay/android-developer/answer/16984799))
+- Google **attempts to auto-register existing and new Play apps** under its
+  package-name eligibility rules; where auto-registration succeeds, "no further
+  registration action is required."
+- **Creating a new app in Play Console registers its package name**: apps
+  created in Play Console from 30 March 2026 onward auto-register on creation
+  ([Register on Google Play Console](https://developer.android.com/developer-verification/guides/google-play-console)).
+
+So the consequence — removal from Play — applies to a package that is currently
+**distributed on Play**. LawMind's Play state is UNKNOWN and has never been
+observed from the console (no console access from this workstation), so this
+repository cannot assert that the removal risk applies to `co.lawmind.app`, and
+will not.
+
+```text
+PLAY_PACKAGE_REGISTRATION_STATUS = UNKNOWN_PENDING_CONSOLE_CHECK
+```
+
+**The founder action is therefore to VERIFY, not necessarily to publish before
+30 Sep 2026**: open Play Console and record (a) whether a Play account exists
+and its type/verification state, (b) whether an app for `co.lawmind.app` exists,
+and (c) what the Play Console Home page says about package registration for it.
+If no app exists yet, creating one later registers the package at creation on
+current documented behaviour — which is a thing to re-check at the time, not a
+thing to assume now. If an app does exist, the date matters and the answer is on
+that page.
 | **Countersigned DPA** | Still `REQUIRED_BEFORE_UPLOADS_OR_SENSITIVE_MODEL_ROUTING`. Not a v1 blocker (uploads disabled). |
 
 ---
@@ -1076,6 +1113,27 @@ Railway has no India region regardless.
 exactly when it gets challenged, and the DPDP full-compliance date is 13 May 2027.
 
 ### [OPEN] Branch protection needs GitHub Pro · LCC · 11 Aug 2026 (V2 §5)
+
+> **STATUS 18 Sep 2026, SHIP S4-T0.2 — the account-tier gate is GONE.** This entry
+> names "making the repo public" as the alternative to GitHub Pro, and that has
+> since happened: `gh repo view --json visibility` returns `PUBLIC`. Re-probed
+> today, `gh api repos/lawmind/lawmind/branches/main/protection` no longer returns
+> `403 — Upgrade to GitHub Pro`; it returns `404 Branch not protected`, which is
+> the answer you get when the feature is available and simply unused.
+> `gh api repos/lawmind/lawmind/rulesets` returns `[]`.
+>
+> So this is no longer a **spend** item; it is a **settings** decision, and it is
+> still yours. What changes if you say yes: direct pushes to `main` stop, and CI
+> becomes a required status check. What changes if you say nothing: nothing —
+> every lane keeps pushing straight to `main`, exactly as it has all along.
+>
+> Related and also now free: GitHub Actions on standard hosted runners costs
+> nothing on a public repository, which is why CI now runs on push as well as on
+> pull requests (`docs/ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md`).
+>
+> **No setting was changed by this round.** `BRANCH_PROTECTION = NONE`,
+> `RULESETS = NONE`, `REQUIRED_STATUS_CHECKS = NONE`.
+
 
 **Needs:** GitHub Pro on this account (or making the repo public, a separate
 decision) to enable branch protection, required status checks and a merge

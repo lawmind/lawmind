@@ -1,5 +1,34 @@
 # LAWMIND — DEPLOYMENT
 
+> ## HISTORICAL RAILWAY DEPLOYMENT RUNBOOK
+> ## NOT CURRENT DEPLOYMENT AUTHORITY
+>
+> ```text
+> CURRENT_PRODUCTION       = NONE
+> CURRENT_PERSISTENT_BETA  = NONE
+> CURRENT_HOSTING_PROVIDER = NOT_YET_SELECTED
+> RAILWAY_PRODUCTION       = HISTORICAL / RETIRED
+> GATE_C_DIGITALOCEAN      = HISTORICAL / DESTROYED_VERIFIED (18 Sep 2026)
+> ```
+>
+> **Current deployment authority:**
+> [`docs/CURRENT_STATE.md`](docs/CURRENT_STATE.md) §11 → Master Roadmap v7.4
+> ([`docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md`](docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md))
+> → the SHIP S4-R0 / S4-R1 artifacts, once they exist.
+>
+> Everything below is kept because it is the record of how LawMind was actually
+> deployed, what broke, and what the fixes were — that history is worth more
+> than a tidy file. It is **not** an instruction. **No command in this document
+> is authorization to recreate Railway infrastructure or to spend money.** The
+> persistent-beta provider is undecided and the spend decision is the founder's
+> (`docs/FOUNDER_QUEUE.md`, `PERSISTENT_BETA_SPEND`). SHIP S4-R0 compares
+> providers without assuming this one.
+>
+> The file is not renamed in this round: too many documents point at
+> `DEPLOYMENT.md` by name, and a broken reference is a worse failure than a
+> stale title. This banner is the pointer.
+
+
 ## Repository layout — read before cloning or configuring CI
 
 This repository is **nested inside another git repository.** `~/Documents` is

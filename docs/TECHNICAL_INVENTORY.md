@@ -1,5 +1,39 @@
 # TECHNICAL INVENTORY — LawMind, as of 11 Aug 2026
 
+> ## THIS FILE CONTAINS DATED / HISTORICAL IMPLEMENTATION INVENTORY
+>
+> **Runtime and deployment statements below are SNAPSHOTS unless explicitly
+> marked CURRENT.** The body is dated 11 Aug 2026 and was accurate then. It
+> describes a Railway production service, Railway Postgres constraints, a live
+> HNSW index and a production search path that no longer exist. Those lines are
+> preserved deliberately: they are measurements, and a measurement that is
+> rewritten later stops being evidence. Read them as "this is what was observed
+> on that date", never as "this is what is running".
+>
+> ### Current delta — 18 September 2026 (SHIP S4-T0.2)
+>
+> ```text
+> CURRENT_PRODUCTION          = NONE
+> CURRENT_PERSISTENT_BETA     = NONE
+> CURRENT_HOSTING_PROVIDER    = UNDECIDED
+>
+> CURRENT_COARSE_EMBEDDING    = terminal at the latest accepted DATA/NEW1 receipt
+>                               (docs/CURRENT_STATE.md §6; not re-measured here)
+> CURRENT_FULL_HNSW           = NONE
+> HNSW                        = DEFERRED_HIGH_MEMORY_OFFLOAD
+> PUBLIC_SEMANTIC             = DISABLED
+>
+> GATE_C_REMOTE               = historical, and destroyed (verified 18 Sep 2026)
+> RAILWAY_PRODUCTION          = historical, and retired
+>
+> CURRENT_CAPABILITY_REGISTRY = docs/product/V1_CAPABILITY_REGISTRY_R17.json
+> ```
+>
+> The live pointer is [`docs/CURRENT_STATE.md`](CURRENT_STATE.md) — gate,
+> capability registry, active stops, founder actions, and the deployment state
+> in its §11. Where this file and that one differ, that one is current and this
+> one records what was true on its own date.
+
 Factual snapshot for an AI architect. No recommendations. Every claim tagged
 **IMPLEMENTED / WORKING / PARTIAL / EXPERIMENTAL / PLANNED / IDEA / UNKNOWN**,
 sourced to file paths verified this session (repo reads + 3 parallel code-level
@@ -448,6 +482,9 @@ alone, since an endpoint whose only behavior is an error isn't worth shipping.
 
 ## 9 · INFRASTRUCTURE
 
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
+
 - **Compute**: Railway (Singapore region — no India region exists; flagged as a
   known, still-open DPDP residency gap, OD-2, with a stated migration path
   before the 13 May 2027 compliance deadline). Services: `api`, `admin`,
@@ -534,6 +571,9 @@ suffix marks tests that hit a real DB/network, presumably excluded from
 default CI.
 
 ## 11 · CURRENT STATUS — the single most important finding this session
+
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
 
 **The database is ahead of the deployed code, and the deployed code is 43
 commits behind `main`.** Verified 11 Aug 2026 by both lanes independently:
@@ -672,6 +712,9 @@ for the stale-overruled metric.
 
 ### Current architecture
 
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
+
 ```
                          ┌─────────────────┐
                          │   apps/mobile    │  Expo (iOS/Android)
@@ -711,6 +754,9 @@ for the stale-overruled metric.
 
 ### Current data flow (a search request, as actually deployed today)
 
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
+
 ```
 advocate query
    │
@@ -741,6 +787,9 @@ POST /search  (services/api/src/search/route.ts)
 
 ### Current retrieval pipeline (as measured in the eval harness — ahead of production)
 
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
+
 ```
 query ──▶ classifyQuery (citation/section/case-name/concept shape)
    │
@@ -763,6 +812,9 @@ query ──▶ classifyQuery (citation/section/case-name/concept shape)
 ```
 
 ### Current citation/evidence pipeline
+
+**Dated 11 Aug 2026 — a snapshot, not the current runtime.** See the current
+delta at the top of this file and `docs/CURRENT_STATE.md` §11.
 
 ```
 model output (IDs only, no prose citations)

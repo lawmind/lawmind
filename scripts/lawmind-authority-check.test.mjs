@@ -29,6 +29,11 @@ const INPUTS = [
   'docs/product/WEBSITE_CLAIM_EVIDENCE_MATRIX.md', 'docs/product/STORE_RELEASE_CHECKLIST_V1.md',
   'docs/product/V1_CAPABILITY_REGISTRY_R16.json', 'docs/product/V1_CAPABILITY_REGISTRY_R17.json',
   'docs/roadmaps',
+  // Added 18 Sep 2026 with the deployment-truth checks: the probes and the two
+  // pipelines that call them.
+  'services/harness/src/deployed-safety-cli.ts',
+  'services/harness/src/deployed-judgment-safety-cli.ts',
+  'scripts/ci-local.mjs', '.github/workflows/ci.yml',
 ];
 
 function fixture() {
@@ -108,6 +113,117 @@ test('does NOT fail on stale words in history', (t) => {
   writeFileSync(join(dir, 'docs/ai/lcc-r99/ROUND.md'), 'Master Roadmap v7.1 governs. TWO lanes only: LCC=server, RCC=client.\n');
   // History below the CURRENT_PLAN banner may say anything it said at the time.
   appendFileSync(join(dir, 'docs/CURRENT_PLAN.md'), '\n> **Master Roadmap v7.2 governs** (as of 1 Sep).\n');
+  const r = run(dir);
+  assert.equal(r.status, 0, r.stdout);
+});
+
+/* ---------------------------------------------------------------------------
+ * Deployment-provider and deployed-target drift (SHIP S4-T0.2, 18 Sep 2026)
+ *
+ * The first version of this lint passed 61/61 while three bootstrap files said
+ * the API ran on a retired Railway production and both deployed probes defaulted
+ * to its origin. Every case below breaks exactly one of those, and the last two
+ * prove the rules still leave Railway HISTORY alone.
+ * ------------------------------------------------------------------------- */
+
+test('fails when a bootstrap file names Railway as the current API host', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  appendFileSync(join(dir, 'AGENTS.md'), '\nStack: Expo, Hono API on Railway, Drizzle.\n');
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /names Railway as the current API host/);
+});
+
+test('fails when a bootstrap file names Railway Postgres or Railway cron', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  appendFileSync(join(dir, 'CLAUDE.md'), '\nRailway Postgres + pgvector. Railway cron.\n');
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /current database host|current scheduler host/);
+});
+
+test('fails when CURRENT_STATE claims a live deployment on a retired provider', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'docs/CURRENT_STATE.md');
+  writeFileSync(p, readFileSync(p, 'utf8').replace('PRODUCTION               = NONE', 'PRODUCTION               = railway-api-production'));
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /no live deployment is claimed on a retired provider|retired or destroyed provider/);
+});
+
+test('fails when CURRENT_STATE stops naming the deployment state at all', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'docs/CURRENT_STATE.md');
+  writeFileSync(p, readFileSync(p, 'utf8').replace('CURRENT_HOSTING_PROVIDER = NOT_YET_SELECTED', ''));
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /states CURRENT_HOSTING_PROVIDER/);
+});
+
+test('fails when CURRENT_STATE stops separating the two R17 revision domains', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'docs/CURRENT_STATE.md');
+  writeFileSync(p, readFileSync(p, 'utf8').replaceAll('API_CONTRACT_REVISION', 'CONTRACT_REV'));
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /separates the two R17 revision domains/);
+});
+
+test('fails when a deployed probe reintroduces a default target', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'services/harness/src/deployed-safety-cli.ts');
+  writeFileSync(p, readFileSync(p, 'utf8') + "\nconst DEFAULT_BASE_URL = 'https://example.invalid';\n");
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /no default deployment target/);
+});
+
+test('fails when a deployed probe falls back from PROBE_BASE_URL', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'scripts/ci-local.mjs');
+  writeFileSync(p, readFileSync(p, 'utf8') + "\nconst b = process.env['PROBE_BASE_URL'] ?? 'https://example.invalid';\n");
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /no default deployment target/);
+});
+
+test('fails when the retired production origin returns to active probe code', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'services/harness/src/deployed-judgment-safety-cli.ts');
+  writeFileSync(p, readFileSync(p, 'utf8') + "\nconst target = 'https://api-production-1c0b4.up.railway.app';\n");
+  const r = run(dir);
+  assert.equal(r.status, 1);
+  assert.match(r.stdout, /no retired production origin in active code/);
+});
+
+test('does NOT fail when a probe names the retired origin in a comment', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const p = join(dir, 'services/harness/src/deployed-safety-cli.ts');
+  writeFileSync(p, readFileSync(p, 'utf8') + "\n// it used to default to api-production-1c0b4.up.railway.app, which is retired\n");
+  const r = run(dir);
+  assert.equal(r.status, 0, r.stdout);
+});
+
+test('does NOT fail on Railway deployment history', (t) => {
+  const dir = fixture();
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  mkdirSync(join(dir, 'docs/ai/lcc-r98'), { recursive: true });
+  writeFileSync(
+    join(dir, 'docs/ai/lcc-r98/ROUND.md'),
+    'Hono API on Railway. Railway Postgres + pgvector. Railway cron fires at 04:00 IST.\n',
+  );
+  writeFileSync(join(dir, 'DEPLOYMENT.md'), 'Railway Postgres. Railway cron. Hono API on Railway.\n');
+  // And a current file may say it in the past tense.
+  appendFileSync(join(dir, 'docs/CURRENT_STATE.md'), '\nRAILWAY_PRODUCTION = HISTORICAL / RETIRED\n');
   const r = run(dir);
   assert.equal(r.status, 0, r.stdout);
 });

@@ -38,9 +38,14 @@ A countersigned DPA is required before uploads or sensitive model routing
 (roadmap v7.4 §12.5). One document per call, always. `docs/PRIVACY_PII.md`.
 
 ## Stack
-Expo · Hono on Railway · Railway Postgres + pgvector · Drizzle · OCR service ·
-better-auth · Resend · R2 · OpenRouter · Sentry · PostHog.
+Technology (current): Expo · Hono · Postgres 16 + pgvector · Drizzle · OCR
+service · better-auth · Resend · R2 · OpenRouter · Sentry · PostHog.
 Not used: Neon, Vercel, Qdrant, Clerk, Supabase.
+
+Hosting provider is NOT part of the stack answer and is currently undecided:
+`CURRENT_PRODUCTION = NONE`, `CURRENT_PERSISTENT_BETA = NONE`, Railway retired,
+the Gate-C DigitalOcean host destroyed. SHIP S4-R0 compares providers; until it
+reports, do not name one as current. `docs/CURRENT_STATE.md` §11 is the answer.
 
 ## Agents — roadmap v7.4 §2
 - **SHIP** (ACTIVE): product, client (`apps/mobile/**`), server (`services/api/**`,

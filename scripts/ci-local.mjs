@@ -255,27 +255,6 @@ const STEPS = [
   // 2 that should follow the cursor. Ten call sites fixed; this step fails the
   // moment an eleventh is written, which is how the first ten arrived.
   ['timestamp precision', 'npx', ['tsx', '--test', 'services/api/src/admin/timestamp-precision.test.ts']],
-  // ───────────────────────────────────────────────────────────────────────────
-  // WIRED 11 Aug 2026 — `docs/ai/tasks/001-p0-citation-query-safety.md`
-  // ───────────────────────────────────────────────────────────────────────────
-  //
-  // Every step above runs against the scratch database THIS SCRIPT JUST CREATED
-  // — none of them, and no gate this project has ever run, calls the actually
-  // DEPLOYED service. That gap is what let a citation-shaped query fall through
-  // to semantic search in production for three days after the fix was already
-  // on `origin/main`. This step calls `https://api-production-1c0b4.up.railway.app`
-  // over plain HTTP — no database, no scratch schema, nothing this script
-  // provisions — and fails if a citation that cannot exist returns a result, if
-  // a real citation resolves to a different case, or if a `cite:` query answers
-  // with no `parsed` field at all.
-  //
-  // **It is added knowing `ci:local` goes red**, exactly as the two guards
-  // above were. The production defect is real and current; a gate that reports
-  // green while it is live would be lying about the one thing this project
-  // cannot lie about. It goes green the moment the Railway deploy carries the
-  // fix already on `origin/main` — see `docs/ai/tasks/001-p0-citation-query-safety.md`
-  // §BLOCKED. Point it at a different build with `PROBE_BASE_URL=...`.
-  ['citation safety probe (deployed)', 'pnpm', ['citation-safety-probe']],
 ];
 
 /**
@@ -308,19 +287,50 @@ if (process.env['CORPUS_DATABASE_URL']) {
 }
 
 /**
- * Judgment-detail safety probe — same shape as gate S2 above, and for the
- * same reason: `deployed-judgment-safety.ts` picks its target row (a
- * citationless judgment, an overruled one) from a real corpus, so grading it
- * against the empty scratch database this script creates would pass trivially
- * ("no target row" is itself a pass) and mean nothing. `docs/ai/
- * V2_RECONCILIATION.md`, 11 Aug 2026.
+ * ───────────────────────────────────────────────────────────────────────────
+ * DEPLOYED SAFETY IS NOT A REPOSITORY CI STEP
+ * ───────────────────────────────────────────────────────────────────────────
+ *
+ * It was one until 18 Sep 2026, and it was wrong to be. Every other step above
+ * runs against the scratch database this script just created; these two call a
+ * DEPLOYED service over HTTP. They used to default to
+ * `api-production-1c0b4.up.railway.app` — which stopped being production, so an
+ * unconfigured `ci:local` was grading a retired host and reporting the answer as
+ * a fact about LawMind.
+ *
+ * LawMind currently has `PRODUCTION = NONE` and `PERSISTENT_BETA = NONE`
+ * (docs/CURRENT_STATE.md §11). Between Gate C and the persistent beta there is
+ * deliberately nothing deployed, and repository CI must not go red for that. So:
+ *
+ *     PROBE_BASE_URL set    -> run the probes; their verdict is the verdict
+ *     PROBE_BASE_URL unset  -> DEPLOYED_SAFETY = NOT_RUN_NO_DEPLOYED_TARGET
+ *
+ * NOT_RUN is not green. The summary at the bottom prints REPOSITORY_CI and
+ * DEPLOYED_SAFETY on separate lines precisely so nobody can read one as the
+ * other, and neither probe's assertions are touched by any of this.
+ *
+ * The judgment-detail probe additionally needs `CORPUS_DATABASE_URL`: it picks
+ * its target row (a citationless judgment, an overruled one) from a real corpus,
+ * so against the empty scratch database "no target row" would itself pass and
+ * mean nothing. `docs/ai/V2_RECONCILIATION.md`, 11 Aug 2026.
  */
-if (process.env['CORPUS_DATABASE_URL']) {
-  STEPS.push(['judgment safety probe (deployed)', 'pnpm', ['judgment-safety-probe']]);
+const DEPLOYED_STEPS = [];
+const probeBaseUrl = process.env['PROBE_BASE_URL']?.trim();
+if (probeBaseUrl) {
+  DEPLOYED_STEPS.push(['citation safety probe', 'pnpm', ['citation-safety-probe']]);
+  if (process.env['CORPUS_DATABASE_URL']) {
+    DEPLOYED_STEPS.push(['judgment safety probe', 'pnpm', ['judgment-safety-probe']]);
+  } else {
+    console.log(
+      'judgment safety probe SKIPPED — CORPUS_DATABASE_URL is not set.\n' +
+        '                     Run it directly: CORPUS_DATABASE_URL=... pnpm judgment-safety-probe\n',
+    );
+  }
 } else {
   console.log(
-    'judgment safety probe SKIPPED — CORPUS_DATABASE_URL is not set.\n' +
-      '                     Run it directly: CORPUS_DATABASE_URL=... pnpm judgment-safety-probe\n',
+    'deployed safety      NOT_RUN_NO_DEPLOYED_TARGET — PROBE_BASE_URL is not set.\n' +
+      '                     PRODUCTION = NONE and PERSISTENT_BETA = NONE, so there is\n' +
+      '                     nothing deployed to grade. This is not a pass.\n',
   );
 }
 
@@ -333,7 +343,51 @@ const admin = postgres(adminUrl, {
   onnotice: () => {},
 });
 const results = [];
+/** Deployed-probe outcomes are kept apart from repository CI on purpose: a
+ *  missing deployment must never be able to turn REPOSITORY_CI red, and a
+ *  passing repository must never be able to make DEPLOYED_SAFETY look green. */
+const deployedResults = [];
 let failed = false;
+let deployedFailed = false;
+
+/** Runs one step, prints its line, records it, and returns whether it passed. */
+function run(name, cmd, args, into) {
+  process.stdout.write(`${name.padEnd(22)} `);
+  const started = Date.now();
+  // One command string with shell:true, not (cmd, args[]). Passing an args
+  // array alongside shell:true is deprecated (DEP0190) because the arguments
+  // are concatenated rather than escaped — the shell is needed at all only
+  // because `pnpm` is a .cmd shim on Windows. Args here are literals from
+  // STEPS, never user input.
+  const out = spawnSync([cmd, ...args.map((a) => `"${a}"`)].join(' '), {
+    stdio: 'pipe',
+    shell: true,
+    env: {
+      ...process.env,
+      DATABASE_URL: withSsl,
+      // See the harness step above: without this the corpus variable would be
+      // shadowed by the scratch database for the one step that needs it.
+      ...(process.env['CORPUS_DATABASE_URL']
+        ? { CORPUS_DATABASE_URL: process.env['CORPUS_DATABASE_URL'] }
+        : {}),
+    },
+    encoding: 'utf8',
+  });
+  const ok = out.status === 0;
+  console.log(`${ok ? 'ok' : 'FAILED'}  ${((Date.now() - started) / 1000).toFixed(1)}s`);
+  into.push({ name, ok });
+  if (!ok) {
+    // Print the tail only. The whole log is noise; the end is where the reason is.
+    const log = `${out.stdout ?? ''}${out.stderr ?? ''}`.trimEnd().split('\n');
+    console.log(
+      log
+        .slice(-40)
+        .map((l) => `    ${l}`)
+        .join('\n'),
+    );
+  }
+  return ok;
+}
 
 try {
   await admin.unsafe(`DROP DATABASE IF EXISTS ${SCRATCH} WITH (FORCE)`);
@@ -341,41 +395,17 @@ try {
   console.log(`scratch database ${SCRATCH} created\n`);
 
   for (const [name, cmd, args] of STEPS) {
-    process.stdout.write(`${name.padEnd(22)} `);
-    const started = Date.now();
-    // One command string with shell:true, not (cmd, args[]). Passing an args
-    // array alongside shell:true is deprecated (DEP0190) because the arguments
-    // are concatenated rather than escaped — the shell is needed at all only
-    // because `pnpm` is a .cmd shim on Windows. Args here are literals from
-    // STEPS, never user input.
-    const out = spawnSync([cmd, ...args.map((a) => `"${a}"`)].join(' '), {
-      stdio: 'pipe',
-      shell: true,
-      env: {
-        ...process.env,
-        DATABASE_URL: withSsl,
-        // See the harness step above: without this the corpus variable would be
-        // shadowed by the scratch database for the one step that needs it.
-        ...(process.env['CORPUS_DATABASE_URL']
-          ? { CORPUS_DATABASE_URL: process.env['CORPUS_DATABASE_URL'] }
-          : {}),
-      },
-      encoding: 'utf8',
-    });
-    const ok = out.status === 0;
-    const secs = ((Date.now() - started) / 1000).toFixed(1);
-    console.log(`${ok ? 'ok' : 'FAILED'}  ${secs}s`);
-    results.push({ name, ok });
-    if (!ok) {
+    if (!run(name, cmd, args, results)) {
       failed = true;
-      // Print the tail only. The whole log is noise; the end is where the reason is.
-      const log = `${out.stdout ?? ''}${out.stderr ?? ''}`.trimEnd().split('\n');
-      console.log(
-        log
-          .slice(-40)
-          .map((l) => `    ${l}`)
-          .join('\n'),
-      );
+      break;
+    }
+  }
+
+  // Deployed probes run only when a target is configured, and NEVER against the
+  // scratch database above. They carry their own verdict.
+  for (const [name, cmd, args] of DEPLOYED_STEPS) {
+    if (!run(name, cmd, args, deployedResults)) {
+      deployedFailed = true;
       break;
     }
   }
@@ -390,12 +420,28 @@ try {
 }
 
 console.log(results.map((r) => `  ${r.ok ? 'ok  ' : 'FAIL'} ${r.name}`).join('\n'));
-if (failed) {
+for (const r of deployedResults) console.log(`  ${r.ok ? 'ok  ' : 'FAIL'} ${r.name}`);
+
+/**
+ * Two verdicts, two lines, never one. `NOT_RUN_NO_DEPLOYED_TARGET` is the third
+ * state and it is neither of the other two: LawMind deliberately has no
+ * deployment between Gate C and the persistent beta, so repository CI passing
+ * while nothing is deployed is the CORRECT reading — and calling a skipped probe
+ * green would be the lie this whole file exists to prevent.
+ */
+const deployedVerdict = !probeBaseUrl
+  ? 'NOT_RUN_NO_DEPLOYED_TARGET'
+  : deployedFailed
+    ? 'FAIL'
+    : 'PASS';
+console.log(`\nREPOSITORY_CI   = ${failed ? 'FAIL' : 'PASS'}`);
+console.log(`DEPLOYED_SAFETY = ${deployedVerdict}`);
+
+if (failed || deployedFailed) {
   process.exitCode = 1;
 } else {
   console.log(
-    '\nall CI steps pass locally.\n' +
-      'Corpus-dependent tests SKIP against a fresh database, here and in CI alike —\n' +
+    '\nCorpus-dependent tests SKIP against a fresh database, here and in CI alike —\n' +
       'run them against a populated one before claiming retrieval is verified.',
   );
 }

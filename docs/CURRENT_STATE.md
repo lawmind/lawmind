@@ -4,7 +4,8 @@
 decision, capability-registry release, and production/persistent-beta deployment.
 It points to the truth; it does not replace receipts.
 
-**Last updated:** 18 September 2026 — SHIP S4-T0.1 (authority + orchestration repair).
+**Last updated:** 18 September 2026 — SHIP S4-T0.2 (runtime / CI / deployed-target repair),
+after S4-T0.1 (authority + orchestration repair).
 **Seeded from:** [`roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md`](roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md)
 (dated snapshot provenance, immutable). Where the two differ, this file is current
 and the ledger shows what was true when v7.4 was prepared.
@@ -22,7 +23,9 @@ and the ledger shows what was true when v7.4 was prepared.
 | Historical only | v7.2 / v7.1 / v5 roadmaps, prompts v2/v3, `docs/CURRENT_PLAN.md` (journal), `BUILD_GUIDE.md` S0–S7 plan |
 
 HEAD: see `git log -1`. The S4-T0.1 commits are listed in
-[`ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`](ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md).
+[`ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`](ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md);
+the S4-T0.2 runtime/CI/deployed-target repair in
+[`ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md`](ai/ship-s4-t0-2/RUNTIME_CI_RECONCILIATION.md).
 
 ## 2 · Agents and bus
 
@@ -52,11 +55,41 @@ hosting cost package (no provisioning) → founder spend decision → S4-R1.
 ## 4 · Current capability registry
 
 ```text
-CURRENT_CAPABILITY_REGISTRY = docs/product/V1_CAPABILITY_REGISTRY_R17.json
-CURRENT_CLAIMS_REGISTER     = docs/product/V1_CLAIMS_REGISTER_R17.md
-CURRENT_API_CONTRACT        = R17 (wire protocol 1) — docs/product/CONTRACT_CHANGE_LEDGER.json
-PREVIOUS (historical)       = V1_CAPABILITY_REGISTRY_R16.json — immutable, R16 = RELEASED/PROVEN
+CAPABILITY_REGISTRY_REVISION = R17
+CAPABILITY_REGISTRY_FILE     = docs/product/V1_CAPABILITY_REGISTRY_R17.json
+CURRENT_CAPABILITY_REGISTRY  = docs/product/V1_CAPABILITY_REGISTRY_R17.json   (same file; the older key name, kept because tooling reads it)
+CURRENT_CLAIMS_REGISTER      = docs/product/V1_CLAIMS_REGISTER_R17.md
+
+API_CONTRACT_REVISION        = R17
+API_WIRE_PROTOCOL_VERSION    = 1
+API_CONTRACT_FILE            = docs/product/RCC_V1_API_CONTRACT_R17_AMENDMENT.md
+API_CONTRACT_LEDGER          = docs/product/CONTRACT_CHANGE_LEDGER.json (currentVersion = R17)
+
+PREVIOUS (historical)        = V1_CAPABILITY_REGISTRY_R16.json — immutable, R16 = RELEASED/PROVEN
 ```
+
+**These are independent revision domains; the matching number is coincidental.**
+The capability registry counts its own releases (R12 → R17) and the API contract
+counts its own (R12 → R17, seven product-contract revisions); they have moved in
+step for a while and there is no rule that they must. Reading "R17" without
+naming the domain is how a future round will match a registry row against the
+wrong contract. Always write `CAPABILITY_REGISTRY_REVISION` or
+`API_CONTRACT_REVISION`, never a bare R17.
+
+The wire integer is a third thing again and is **1** — the only value that has
+ever existed. Contract revisions R12–R17 are all additive on wire protocol 1
+(`contractRevisionVsWireVersion` in the ledger).
+
+Observed and NOT changed by S4-T0.2: inside the R17 registry JSON the metadata
+fields `contractRevision` and `contractArtifact` still read `R16` /
+`RCC_V1_API_CONTRACT_R16_AMENDMENT.md`, and every capability row reads
+`currentContractVersion: "R16"`. The contract ledger — which owns contract
+identity — says `currentVersion = R17`. R17 moved only the web platform row, so
+those fields were inherited rather than re-stated. Whether they are stale or
+deliberately pinned to the revision each row was last MEASURED against is a
+question about their defined semantics, and changing them is a contract action
+under roadmap v7.4 §3.7, not a documentation repair. Left for SHIP to decide
+through a CCR.
 
 R17 moves only the web platform: `OUT_OF_SCOPE_CURRENT_FOUNDER` (CCR-SHIP-S4T0-01).
 iOS/Android states are inherited from R16 unchanged.
@@ -120,7 +153,12 @@ while `monitoring.user_product` is DISABLED_NOT_READY? Answer at Gate D: yes, by
 Account readiness (Apple / Play / EAS): [`product/STORE_RELEASE_CHECKLIST_V1.md`](product/STORE_RELEASE_CHECKLIST_V1.md) §0.
 At S4-T0.1: `EAS_PROJECT_ID` absent from `apps/mobile/app.config.ts`; `eas` CLI not installed
 on this workstation; Apple/Play account rows UNKNOWN (not observable without console access).
-`PLAY_APP_REGISTERED` must be checked before 30 Sep 2026.
+`PLAY_PACKAGE_REGISTRATION_STATUS = UNKNOWN_PENDING_CONSOLE_CHECK`. The 30 Sep 2026
+Android developer-verification date is a **verify** action, not a publish deadline:
+it removes unregistered packages that are distributed on Play, Google auto-registers
+existing and new Play apps, and creating an app in Play Console registers its package
+at creation. LawMind's console state has never been observed, so no removal risk is
+asserted here. Detail and sources: [`FOUNDER_QUEUE.md`](FOUNDER_QUEUE.md).
 
 External deletion: `https://lawmind.co/delete-account` = 404 at last observation (15 Sep).
 Auth contract `EXTERNAL_DELETE_AUTH_V1`: [`EXTERNAL_ACCOUNT_DELETION_WEB.md`](EXTERNAL_ACCOUNT_DELETION_WEB.md) §3.3 (specified, not built).
@@ -142,6 +180,24 @@ Detail and history: [`FOUNDER_QUEUE.md`](FOUNDER_QUEUE.md), top block "CURRENT S
 ## 11 · Latest accepted release / beta environment
 
 ```text
-PERSISTENT_BETA = NONE (Gate-C DigitalOcean alpha destroyed 18 Sep 2026 01:13Z; runtime a09d7ee5 historical)
-PRODUCTION      = NONE
+PERSISTENT_BETA          = NONE (Gate-C DigitalOcean alpha destroyed 18 Sep 2026 01:13Z; runtime a09d7ee5 historical)
+PRODUCTION               = NONE
+CURRENT_HOSTING_PROVIDER = NOT_YET_SELECTED
+PERSISTENT_BETA_PROVIDER = UNDECIDED · PRODUCTION_PROVIDER = UNDECIDED
+RAILWAY_PRODUCTION       = HISTORICAL / RETIRED   (api-production-1c0b4.up.railway.app)
+GATE_C_DIGITALOCEAN      = HISTORICAL / DESTROYED_VERIFIED
+FULL_HNSW                = DOES_NOT_EXIST · PUBLIC_SEMANTIC = DISABLED
+REPOSITORY_VISIBILITY    = PUBLIC (github.com/lawmind/lawmind)
 ```
+
+**No deployed probe may invent a target.** `PROBE_BASE_URL` is required by both
+deployed safety probes (`services/harness/src/probe-target.ts`); absent, they
+refuse with `NO_DEPLOYED_TARGET` and CI reports
+`DEPLOYED_SAFETY = NOT_RUN_NO_DEPLOYED_TARGET`, which is neither a pass nor a
+failure. SHIP S4-R1 sets the variable when the persistent beta exists.
+
+Technology is not a provider: Expo, Hono, Postgres 16 + pgvector, Drizzle,
+better-auth, Resend, R2 remain current and verified. Where it runs is open until
+SHIP S4-R0 prices the options and the founder approves the spend. The Railway
+runbook is kept as history in [`DEPLOYMENT.md`](../DEPLOYMENT.md) under a banner
+saying so; nothing in it authorises recreating that infrastructure.

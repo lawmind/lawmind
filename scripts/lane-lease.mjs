@@ -56,7 +56,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { hostname } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STALE_AFTER_MS, findSessionPid, health } from './lib/process-identity.mjs';
+import { findSessionPid, health } from './lib/process-identity.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEASE_DIR = join(ROOT, '.agents', 'bus', 'leases');

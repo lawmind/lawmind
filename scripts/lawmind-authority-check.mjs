@@ -93,7 +93,46 @@ const STALE = [
   [/Five lanes exist/i, 'asserts the five-lane ring is current'],
   [/IN_SCOPE_V1_NOT_BUILT/, 'places advocate web in v1'],
   [/Desktop = research workstation/, 'places a desktop surface in scope'],
+  // -- hosting-provider drift, added 18 Sep 2026 (SHIP S4-T0.2) -------------
+  //
+  // The first version of this lint caught a stale ROADMAP and a stale LANE
+  // TOPOLOGY and missed a stale DEPLOYMENT: CLAUDE.md, AGENTS.md and
+  // PRODUCT_BRIEF.md all still said the API and Postgres ran on Railway months
+  // after that production service was retired, and SHIP S4-R0 is supposed to
+  // compare hosting providers without the bootstrap having already answered.
+  //
+  // These fire only in ACTIVE regions, like every other rule here. Railway
+  // history -- DEPLOYMENT.md, the migration records, docs/ai/** rounds, the
+  // bus -- is untouched and must stay that way. A current file may still SAY
+  // Railway, as long as it says it in the past tense: `RAILWAY_PRODUCTION =
+  // HISTORICAL / RETIRED` is the sentence these rules are written to allow.
+  [/\bHono(\s+API)?\s+on\s+Railway\b/i, 'names Railway as the current API host'],
+  [/\bRailway\s+Postgres\b/i, 'names Railway as the current database host'],
+  [/\bRailway\s+cron\b/i, 'names Railway as the current scheduler host'],
+  [/current production[^\n]{0,30}\bRailway\b/i, 'claims a current Railway production'],
+  [/\bRailway\b[^\n]{0,30}current production/i, 'claims a current Railway production'],
+  [/\b(PRODUCTION|PERSISTENT_BETA)\s*=\s*(?!NONE)\S*(railway|digitalocean)/i,
+    'names a live deployment on a retired or destroyed provider'],
 ];
+
+/**
+ * Deployed probes, and the pipelines that call them. A probe that DEFAULTS to a
+ * target measures whichever host its constant names, not the deployment -- and
+ * until 18 Sep 2026 both probe CLIs defaulted to a retired Railway production
+ * origin, so an unconfigured run produced a confident verdict about a dead host.
+ * With `PRODUCTION = NONE` there is no correct default at all.
+ *
+ * The rule is about ACTIVE DEFAULTS, not mentions: `probe-target.ts` names the
+ * retired origin on purpose, in a denylist, and every file here may describe the
+ * defect in a comment. So comments are stripped before the search and only
+ * executable code is scanned.
+ */
+const PROBE_ENTRY_POINTS = [
+  'services/harness/src/deployed-safety-cli.ts',
+  'services/harness/src/deployed-judgment-safety-cli.ts',
+  'scripts/ci-local.mjs',
+];
+const RETIRED_ORIGINS = ['api-production-1c0b4.up.railway.app'];
 
 const results = [];
 const check = (name, ok, detail = '') => results.push({ name, ok: Boolean(ok), detail });
@@ -250,6 +289,69 @@ if (existsSync(busDir) && existsSync(rel('.git'))) {
   } catch (e) {
     check('historical bus messages all present', false, `git ls-files failed: ${e.message}`);
   }
+}
+
+/* 11 - deployment truth: no probe invents a target, CURRENT_STATE says so --- */
+/** Strips block comments and whole-line/trailing `//` and `#` comments. */
+const codeOnly = (text) =>
+  text
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split('\n')
+    .filter((l) => !/^\s*(\/\/|#|\*)/.test(l))
+    .map((l) => l.replace(/\s+\/\/.*$/, '').replace(/\s+#.*$/, ''))
+    .join('\n');
+
+for (const p of PROBE_ENTRY_POINTS) {
+  if (!existsSync(rel(p))) {
+    check(`exists: ${p}`, false);
+    continue;
+  }
+  const code = codeOnly(read(p));
+  check(
+    `no default deployment target: ${p}`,
+    !/DEFAULT_BASE_URL/.test(code) && !/PROBE_BASE_URL'\]\s*\?\?/.test(code),
+    'a deployed probe may not default or fall back to a target',
+  );
+  const live = RETIRED_ORIGINS.filter((h) => code.includes(h));
+  check(`no retired production origin in active code: ${p}`, live.length === 0, live.join(', '));
+}
+if (existsSync(rel('.github/workflows/ci.yml'))) {
+  const wf = read('.github/workflows/ci.yml');
+  check(
+    'CI does not hard-code a deployment target',
+    RETIRED_ORIGINS.every((h) => !codeOnly(wf).includes(h)) && /PROBE_BASE_URL/.test(wf),
+    'the deployed probe must be gated on a configured PROBE_BASE_URL',
+  );
+}
+if (existsSync(rel(CANONICAL.currentState))) {
+  const cs = read(CANONICAL.currentState);
+  /** The first `KEY = value` line for a key, by line scan rather than a
+   *  constructed RegExp: an escape inside a template literal is an identity
+   *  escape, so a pattern built that way silently loses its character classes
+   *  and every lookup returns null while reading as though it works. */
+  const value = (k) =>
+    cs
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l.startsWith(k) && l.slice(k.length).trimStart().startsWith('='))
+      .map((l) => l.slice(l.indexOf('=') + 1).trim().split(' ')[0])[0];
+  for (const k of ['PRODUCTION', 'PERSISTENT_BETA', 'CURRENT_HOSTING_PROVIDER']) {
+    check(`CURRENT_STATE.md states ${k}`, Boolean(value(k)), 'the live pointer must name the deployment state');
+  }
+  const prod = value('PRODUCTION');
+  const beta = value('PERSISTENT_BETA');
+  check(
+    'CURRENT_STATE.md: no live deployment is claimed on a retired provider',
+    ![prod, beta].some((v) => v && /railway|digitalocean/i.test(v)),
+    `${prod} / ${beta}`,
+  );
+  check(
+    'CURRENT_STATE.md separates the two R17 revision domains',
+    /CAPABILITY_REGISTRY_REVISION/.test(cs) &&
+      /API_CONTRACT_REVISION/.test(cs) &&
+      /independent revision domains/i.test(cs),
+    'a bare "R17" cannot say which domain it means',
+  );
 }
 
 /* report ------------------------------------------------------------------- */

@@ -243,10 +243,16 @@ citation.
 
 ## Where it runs
 
-Expo iOS + Android. Hono API on Railway. Railway Postgres with pgvector. Drizzle.
-better-auth. Resend. Cloudflare R2. OpenRouter. Sentry. PostHog. Expo push.
-**Admin is a separate Railway service, and web is admin only.** This is a phone
-app; there is no planned desktop surface and no web sign-in for advocates.
+Expo iOS + Android. Hono API. Postgres 16 with pgvector. Drizzle. better-auth.
+Resend. Cloudflare R2. OpenRouter. Sentry. PostHog. Expo push.
+**Admin is a separate service, and web is admin only.** This is a phone app;
+there is no planned desktop surface and no web sign-in for advocates.
+
+Those are technologies, not a host. This paragraph said "on Railway" until
+18 Sep 2026; Railway production is retired, the Gate-C DigitalOcean host is
+destroyed, and `CURRENT_PRODUCTION = CURRENT_PERSISTENT_BETA = NONE`. The
+provider is undecided until SHIP S4-R0 prices the options and the founder
+chooses. `docs/CURRENT_STATE.md` §11 carries the live answer.
 
 PD-15 (11 Aug 2026) briefly moved this boundary — a desktop research workspace
 on the Expo web target — and was **reversed 12 Aug 2026 on founder direction**.

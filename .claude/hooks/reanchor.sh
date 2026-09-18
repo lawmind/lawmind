@@ -72,7 +72,10 @@ LAWMIND NON-NEGOTIABLE:
 - BNS/BNSS/BSA replaced IPC/CrPC/Evidence July 2024. DOMAIN_TRUTH.md or the
   fact does not exist.
 - Hindi = Noto Sans Devanagari everywhere incl. PDF export.
-- Stack fixed: Expo · Hono · Railway PG + pgvector · Drizzle · better-auth.
+- Stack fixed (TECHNOLOGY): Expo · Hono · Postgres 16 + pgvector · Drizzle ·
+  better-auth. HOSTING PROVIDER IS UNDECIDED — Railway production retired,
+  Gate-C DigitalOcean destroyed, PRODUCTION = NONE, PERSISTENT_BETA = NONE.
+  SHIP S4-R0 compares providers; docs/CURRENT_STATE.md §11 is the live answer.
   NOT Neon/Vercel/Qdrant/Clerk/Supabase. Ask before adding any vendor.
 - CURRENT V1 = evidence-first mobile legal research for practising Indian
   advocates, native iOS + Android only. Loop: Search → Reader → Source/Evidence →

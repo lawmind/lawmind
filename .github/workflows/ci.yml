@@ -1,32 +1,43 @@
 name: CI
 
-# **Deliberately NOT on every push.**
+# **Runs on every push to `main` and on every pull request.**
 #
-# This is a private repo on the free tier: 2,000 Actions minutes a month, and the
-# founder's decision is that we do not buy more. At ~5 minutes a run across two
-# jobs, pushing 20 times in a working day would spend the month in a week.
+# It did not, and the reason it did not is now false. Until 18 September 2026
+# the block here said this was a private repository on 2,000 Actions minutes a
+# month and that pushing 20 times a day would spend the month in a week. The
+# repository is PUBLIC (`gh repo view --json visibility` → `PUBLIC`), and
+# GitHub's current billing documentation is explicit: "The use of standard
+# GitHub-hosted runners is free: In public repositories."
+# (docs.github.com/en/billing/concepts/product-billing/github-actions, read
+# 18 Sep 2026.) LARGER runners are still charged "even when used by public
+# repositories", which is why every job below pins `ubuntu-latest` and nothing
+# here selects a larger runner.
 #
-# What replaces it is `pnpm ci:local` — the same steps, the same order, against a
-# throwaway database, in about 60 seconds and for nothing. It has already caught
-# three real defects that would otherwise have gone to a queue: an unused
-# variable, a missing import, and a NUL byte in a source file. **Run it before
-# every push.** It is not a lesser check; it is the same check, earlier.
+# So the minute budget that justified withholding CI from `push` does not exist,
+# and the cost of NOT running it does: between 7 August and 18 September 2026 no
+# workflow ran at all, and `pnpm format` drifted red across hundreds of files
+# with nothing to say so.
 #
-# So CI runs where a human is about to read the result — on a pull request, and on
-# demand — rather than on every commit to a branch only one agent is working on.
+# `pnpm ci:local` is unchanged and still the fast pre-push check — the same steps
+# in the same order, against a throwaway database, in about 60 seconds. It is not
+# a lesser check; it is the same check, earlier. CI is now the one that also runs
+# when nobody remembers to.
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
 # One run per ref. Without this a superseded push queues behind the run it
-# replaced and both bill.
+# replaced, and on a branch with several commits a minute that is most of the
+# queue waiting on results nobody will read.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   server:
-    name: server lane
+    name: server checks
     runs-on: ubuntu-latest
     # Fail fast rather than sitting in a queue. This job takes ~5 minutes when a
     # runner picks it up; if it has not finished in 15 something is wrong with the
@@ -84,14 +95,15 @@ jobs:
       # never history. Needs neither deps nor a database.
       - run: node scripts/lawmind-authority-check.mjs
 
-      # apps/** is RCC's lane and still carries npm lockfiles; installing it here
-      # would make this job red for reasons outside this lane. Flagged, not converged.
+      # apps/** still carries npm lockfiles; installing it here would make this
+      # job red for reasons outside the server workspaces it checks. Flagged,
+      # not converged.
       - run: pnpm install --frozen-lockfile --filter "!./apps/*"
 
       - run: pnpm lint
       - run: pnpm format
-      # Filter by PATH, never by the `@lawmind/*` name glob: the scope is shared
-      # across both lanes, so the glob also selects @lawmind/admin and
+      # Filter by PATH, never by the `@lawmind/*` name glob: the npm scope covers
+      # the whole repository, so the glob also selects @lawmind/admin and
       # @lawmind/mobile — whose dependencies the install step above deliberately
       # skips. That mismatch is what made the first CI run red.
       - run: pnpm --filter "./services/*" --filter "./packages/*" typecheck
@@ -103,24 +115,18 @@ jobs:
 
       - run: pnpm --filter "./services/*" --filter "./packages/*" test
 
-      # docs/ai/tasks/001-p0-citation-query-safety.md — the gate every other
-      # step in this job cannot provide: it calls the DEPLOYED service over
-      # plain HTTP, never the scratch Postgres container above. Added 11 Aug
-      # 2026 after a citation-shaped query fell through to semantic search in
-      # production for three days while every other check here stayed green,
-      # because none of them had ever looked at the running service — a
-      # citation that cannot exist returned five real Supreme Court
-      # authorities and nothing said the query was not understood. Defaults to
-      # production (`PROBE_BASE_URL` to point elsewhere) and is deliberately
-      # red until the fix already on `origin/main` is deployed there.
-      - run: pnpm citation-safety-probe
+      # The lane bus carries every cross-agent message and had no test until it
+      # had already shipped two message-destroying bugs. Needs no database and
+      # runs in about a second; it ran only in `ci:local` until 18 Sep 2026,
+      # which is exactly the gap that let the rest of this file go stale unseen.
+      - run: bash scripts/lane-bus.test.sh
 
   design-rules:
     name: design rules
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # Deliberately its own job. It needs no database, no install and no lane, and
-    # a delivered render should be checkable the moment it lands rather than
+    # Deliberately its own job. It needs no database and no install, and a
+    # delivered render should be checkable the moment it lands rather than
     # after somebody builds against it.
     steps:
       - uses: actions/checkout@v4
@@ -142,3 +148,62 @@ jobs:
       # time it was run. The stale-overruled threshold is zero; this is the
       # colour that carries it.
       - run: node scripts/check-amber-reservation.mjs
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # DEPLOYED SAFETY — separate on purpose, and NOT_RUN is not a pass
+  # ───────────────────────────────────────────────────────────────────────────
+  #
+  # Every step in `server checks` runs against the scratch Postgres this
+  # workflow provisions. None of them calls the deployed service, and that gap
+  # is what let a citation-shaped query fall through to semantic search in
+  # production for three days after the fix was already on `origin/main`
+  # (docs/ai/tasks/001-p0-citation-query-safety.md).
+  #
+  # The probe used to live inside the server job with a hard-coded default of
+  # `https://api-production-1c0b4.up.railway.app`. That origin is RETIRED. As of
+  # 18 Sep 2026 `PRODUCTION = NONE` and `PERSISTENT_BETA = NONE`
+  # (docs/CURRENT_STATE.md §11), so there is no deployment to grade and no
+  # honest default to fall back to — a probe that invents a target reports on a
+  # host nobody deployed, in language that reads like a report about LawMind.
+  #
+  # So the target is CONFIGURATION. Set the repository/environment variable
+  # `PROBE_BASE_URL` (Settings → Secrets and variables → Actions → Variables)
+  # and this job runs; leave it unset and this job says, in one machine-readable
+  # line, that it DID NOT RUN. Neither state is a pass. SHIP S4-R1 sets the
+  # variable when the persistent beta exists, and the probe becomes a
+  # deployment-acceptance gate again with none of its assertions touched.
+  deployed-safety:
+    name: deployed safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: No deployed target
+        if: vars.PROBE_BASE_URL == ''
+        run: |
+          echo "DEPLOYED_SAFETY=NOT_RUN_NO_DEPLOYED_TARGET" >> "$GITHUB_OUTPUT"
+          echo "DEPLOYED_SAFETY=NOT_RUN_NO_DEPLOYED_TARGET" >> "$GITHUB_STEP_SUMMARY"
+          echo "NOT_RUN_NO_DEPLOYED_TARGET — repository variable PROBE_BASE_URL is unset."
+          echo "PRODUCTION = NONE and PERSISTENT_BETA = NONE; see docs/CURRENT_STATE.md."
+          echo "This is neither a pass nor a failure. Do not read it as either."
+
+      - uses: actions/checkout@v4
+        if: vars.PROBE_BASE_URL != ''
+      - uses: pnpm/action-setup@v4
+        if: vars.PROBE_BASE_URL != ''
+      - uses: actions/setup-node@v4
+        if: vars.PROBE_BASE_URL != ''
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter "!./apps/*"
+        if: vars.PROBE_BASE_URL != ''
+
+      # Assertions unchanged: exact match → exact case, zero match → zero or an
+      # explicit not-found, and the one thing that must never happen — a
+      # citation that fails to resolve falling through to semantic search and
+      # returning a plausible different case.
+      - name: Citation safety probe
+        if: vars.PROBE_BASE_URL != ''
+        env:
+          PROBE_BASE_URL: ${{ vars.PROBE_BASE_URL }}
+        run: pnpm citation-safety-probe

@@ -32,7 +32,7 @@ superseded by 0.2.
 | PLAY_LEGAL_NAME_ADDRESS | UNKNOWN | — |
 | PLAY_CONTACT_VERIFIED | UNKNOWN | — |
 | PLAY_PAYMENT_PROFILE_IF_APPLICABLE | UNKNOWN | only if paid |
-| PLAY_APP_REGISTERED | UNKNOWN | **deadline 30 Sep 2026**: unregistered Play packages are removed |
+| PLAY_APP_REGISTERED | UNKNOWN_PENDING_CONSOLE_CHECK | 30 Sep 2026 applies to packages **distributed on Play**: unregistered ones are removed. Google auto-registers existing and new Play apps, and creating an app in Play Console registers its package at creation. LawMind's Play state is unobserved, so this is a VERIFY, not a publish deadline — `docs/FOUNDER_QUEUE.md` |
 | PLAY_PACKAGE_ID | configured `co.lawmind.app` (VERIFIED in `app.config.ts`) | registration unobserved |
 | PLAY_DATA_SAFETY | NOT STARTED | needs working deletion URL (0.2) |
 | PLAY_SIGN_IN_DETAILS | NOT READY | `REVIEW_ACCESS_V1` (roadmap §14.7) |

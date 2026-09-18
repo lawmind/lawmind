@@ -1,26 +1,37 @@
-# Lane ownership — LCC (server) and RCC (client) — CLAUDE.md, V2 §5.
+# Ownership — SHIP owns the product surfaces; DATA owns corpus and retrieval.
+# Roadmap v7.4 §2; live pointer docs/CURRENT_STATE.md §2.
 #
-# This alone does not enforce anything: GitHub only applies CODEOWNERS review
-# requirements on a repo with branch protection enabled, and this repo's plan
-# does not currently permit that (`docs/FOUNDER_QUEUE.md` — "Branch protection
-# needs GitHub Pro"). Added now anyway because it is the part of V2 §5's ask
-# that costs nothing and needs no upgrade, and it documents the boundary both
-# lanes have already been keeping by convention all session — so the rule is
-# written down once branch protection can reference it, rather than invented
-# from scratch at that point.
+# This file said "LCC (server) and RCC (client)" until 18 Sep 2026. Those lanes
+# are LEGACY: their history is immutable provenance and no session binds to them.
+# The historical assignment is not deleted from the bus or the round records —
+# it is simply no longer a statement about who owns these paths today.
+#
+# This alone does not enforce anything: GitHub applies CODEOWNERS review
+# requirements only on a repository with branch protection enabled, and none is
+# configured here. The earlier note that branch protection "needs GitHub Pro" was
+# true of a PRIVATE repository; this repository is now PUBLIC, where protected
+# branches and rulesets are available on the free plan. Turning one on is a
+# settings action nobody has taken, and this round does not take it —
+# docs/FOUNDER_QUEUE.md carries it.
 #
 # Last matching pattern wins, so more specific paths are listed after the
 # general ones they narrow.
 
-# RCC — client
+# SHIP — client
 /apps/ @lawmind
 
-# LCC — server
-/services/ @lawmind
+# SHIP — server, tooling and CI
+/services/api/ @lawmind
+/services/cron/ @lawmind
 /packages/ @lawmind
 /scripts/ @lawmind
 /.github/ @lawmind
 
-# Shared, either lane may touch with the other's awareness — not a hard
-# boundary the way apps/** and services/** are.
+# DATA — corpus, ingest, embeddings, retrieval harness
+/services/ingest/ @lawmind
+/services/embed/ @lawmind
+/services/harness/ @lawmind
+
+# Shared; either lane may touch with the other's awareness — not a hard
+# boundary the way apps/** and services/ingest/** are.
 /docs/ @lawmind

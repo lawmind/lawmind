@@ -2,19 +2,33 @@
  * `pnpm --filter @lawmind/harness deployed-judgment-safety` — live probe for
  * `GET /judgments/:id`, alongside `deployed-safety-cli.ts` for `/search`.
  *
- *   PROBE_BASE_URL         optional — defaults to production.
+ *   PROBE_BASE_URL         REQUIRED. There is no default: PRODUCTION = NONE and
+ *                          PERSISTENT_BETA = NONE, so a probe that invents a
+ *                          target grades a host nobody deployed. See
+ *                          `probe-target.ts`.
  *   CORPUS_DATABASE_URL    required (falls back to DATABASE_URL) — used only
  *                          to pick a real target row; every assertion grades
  *                          the live HTTP response, not the database.
+ *
+ * Exit codes: 0 = passed. 1 = failed. 78 = NO_DEPLOYED_TARGET (DID NOT RUN) —
+ * see `deployed-safety-cli.ts` for why that is not 1.
  */
 import postgres from 'postgres';
 
 import { runDeployedJudgmentSafetyProbe } from './deployed-judgment-safety.ts';
+import { resolveProbeBaseUrl } from './probe-target.ts';
 
-const DEFAULT_BASE_URL = 'https://api-production-1c0b4.up.railway.app';
+/** `EX_CONFIG`. Reserved for NOT_RUN_NO_DEPLOYED_TARGET; never for an assertion. */
+export const EXIT_NO_DEPLOYED_TARGET = 78;
 
 async function main(): Promise<number> {
-  const baseUrl = process.env['PROBE_BASE_URL'] ?? DEFAULT_BASE_URL;
+  const target = resolveProbeBaseUrl(process.env);
+  if (!target.ok) {
+    console.error(target.message);
+    console.error('JUDGMENT-DETAIL SAFETY PROBE NOT RUN — NOT_RUN_NO_DEPLOYED_TARGET');
+    return EXIT_NO_DEPLOYED_TARGET;
+  }
+  const baseUrl = target.baseUrl;
   const dbUrl = process.env['CORPUS_DATABASE_URL'] ?? process.env['DATABASE_URL'];
   if (!dbUrl) {
     console.error(
@@ -44,9 +58,7 @@ async function main(): Promise<number> {
 
     console.log('='.repeat(78));
     console.log(
-      report.passed
-        ? 'JUDGMENT-DETAIL SAFETY PROBE PASSED'
-        : 'JUDGMENT-DETAIL SAFETY PROBE FAILED',
+      report.passed ? 'JUDGMENT-DETAIL SAFETY PROBE PASSED' : 'JUDGMENT-DETAIL SAFETY PROBE FAILED',
     );
 
     const jsonPath = process.env['PROBE_JSON'];

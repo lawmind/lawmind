@@ -2,19 +2,34 @@
  * `pnpm --filter @lawmind/harness deployed-safety` — the release-blocking probe
  * for `docs/ai/tasks/001-p0-citation-query-safety.md`.
  *
- *   PROBE_BASE_URL   optional — defaults to production. Point it at a local
- *                    server (e.g. http://localhost:3999) to prove the probe
- *                    can pass, not just fail.
+ *   PROBE_BASE_URL   REQUIRED. There is no default: PRODUCTION = NONE and
+ *                    PERSISTENT_BETA = NONE, so a probe that invents a target
+ *                    grades a host nobody deployed. See `probe-target.ts`.
+ *                    Point it at a local server (e.g. http://localhost:3999)
+ *                    to prove the probe can pass, not just fail.
  *
  * No database connection: this calls the deployed HTTP service, which is
  * exactly the layer every other gate in this project has never observed.
+ *
+ * Exit codes: 0 = probe passed. 1 = probe failed. 78 = NO_DEPLOYED_TARGET,
+ * i.e. the probe DID NOT RUN. 78 is `EX_CONFIG` from sysexits(3) and is
+ * deliberately not 1 — a missing deployment is not a safety failure, and a
+ * caller that cannot tell them apart will eventually report one as the other.
  */
 import { runDeployedSafetyProbe } from './deployed-safety.ts';
+import { resolveProbeBaseUrl } from './probe-target.ts';
 
-const DEFAULT_BASE_URL = 'https://api-production-1c0b4.up.railway.app';
+/** `EX_CONFIG`. Reserved for NOT_RUN_NO_DEPLOYED_TARGET; never for an assertion. */
+export const EXIT_NO_DEPLOYED_TARGET = 78;
 
 async function main(): Promise<number> {
-  const baseUrl = process.env['PROBE_BASE_URL'] ?? DEFAULT_BASE_URL;
+  const target = resolveProbeBaseUrl(process.env);
+  if (!target.ok) {
+    console.error(target.message);
+    console.error('CITATION-SAFETY PROBE NOT RUN — NOT_RUN_NO_DEPLOYED_TARGET');
+    return EXIT_NO_DEPLOYED_TARGET;
+  }
+  const baseUrl = target.baseUrl;
 
   console.log('CITATION-SAFETY PROBE — deployed service');
   console.log('='.repeat(78));

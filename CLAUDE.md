@@ -107,12 +107,33 @@ Retrieval order: `.ai/03-retrieval-pipeline.md`.
 
 ## 4. STACK — do not substitute without asking
 
-Expo (React Native, TypeScript) · Hono API on Railway · Railway Postgres +
-pgvector · Drizzle ORM · Railway cron · OCR service (Python/FastAPI) ·
-better-auth self-hosted · Resend · Cloudflare R2 · OpenRouter · Sentry ·
-PostHog · Expo push.
+**Technology, which is current and verified:** Expo (React Native, TypeScript) ·
+Hono API · Postgres 16 + pgvector · Drizzle ORM · scheduled jobs (`services/cron`) ·
+OCR service (Python/FastAPI) · better-auth self-hosted · Resend · Cloudflare R2 ·
+OpenRouter · Sentry · PostHog · Expo push.
 
 Explicitly NOT used: Neon, Vercel, Qdrant, Clerk, Supabase, Telegram bot.
+
+**Hosting provider, which is a different question and is currently OPEN.** The
+list above used to name one provider three times — as the host of the API, of
+Postgres and of cron. By 18 Sep 2026 that was a statement about a deployment
+that no longer exists:
+
+```text
+RAILWAY_PRODUCTION       = HISTORICAL / RETIRED
+GATE_C_DIGITALOCEAN      = HISTORICAL / DESTROYED (verified 18 Sep 2026)
+PERSISTENT_BETA_PROVIDER = UNDECIDED
+PRODUCTION_PROVIDER      = UNDECIDED
+CURRENT_PRODUCTION       = NONE
+CURRENT_PERSISTENT_BETA  = NONE
+```
+
+SHIP S4-R0 compares providers and prices them; the founder then decides. A
+bootstrap file that names one provider as "the stack" pre-answers that
+comparison for every agent who reads it, which is exactly the bias S4-R0 exists
+to avoid. So name the technology here and read the provider from
+`docs/CURRENT_STATE.md` §11. **None of this deletes Railway history** —
+`DEPLOYMENT.md` keeps the runbook, and the migration records stand.
 
 ## 5. LLM ROUTING — by data sensitivity, not task difficulty
 
