@@ -12,9 +12,13 @@ drafting implementation, no broad refactor.**
 
 ```text
 HEAD_START = 93c77a3ffe6b0380441cfccdce489bf913d2a95f
-HEAD_FINAL = (recorded by the commit after the content commit; a commit cannot
-              name itself - see git log)
-COMMITS    = (same)
+HEAD_FINAL = 23121b1b   (content head; the commit after it changes only this file,
+             because a commit cannot name itself)
+COMMITS    = cb17e433  fix(ship-s4-t0-3): CI is green, and the alert surface stops promising
+             fc96f922  fix(ship-s4-t0-3): restore the delta-queue unused-import fix a reset dropped
+             c9c2311d  fix(court): selprevdays was computed in the server's timezone, not IST
+             23121b1b  fix(bus): the lane-bus test could not read its own hook where jq exists
+             (next)    completes this block
 ```
 
 ## Re-anchor (start)
@@ -854,7 +858,48 @@ PAID_RESOURCE_CREATED                    = NO
 ```
 
 ```text
-GITHUB_SERVER_CHECKS  = (recorded below once observed)
-GITHUB_DESIGN_RULES   = (same)
-GITHUB_DEPLOYED_SAFETY= (same)
+GITHUB_SERVER_CHECKS   = SUCCESS
+GITHUB_DESIGN_RULES    = SUCCESS
+GITHUB_DEPLOYED_SAFETY = SUCCESS, job named "deployed safety (NOT_RUN_NO_DEPLOYED_TARGET)"
+GITHUB_RUN             = 35336363525, conclusion success, on push to main at 23121b1b
 ```
+
+The third line is an explicit NOT_RUN state carried in the job's DISPLAY NAME —
+it is not evidence of deployed safety, and it is written that way so a green tick
+in the run list cannot be read as one. Nothing was deployed and no temporary
+environment was created to make it green.
+
+**Four pushes, three real defects, one green pipeline.** Every red run named
+something true: a staged blob a `git reset` had dropped, a timezone bug that
+would have made a deployed server look like a different client to eCourts, and a
+test that could not read its own hook on any host that has `jq`. None of the
+three was findable here — the first is invisible to `git status`, and the other
+two only appear on a UTC host with `jq` installed. That is the argument for
+turning CI on, made by CI, within an hour of it being turned on.
+
+---
+
+## SHIP_S4_T0_3_CI_ALERT_REGISTRY_CLOSURE
+
+```text
+T0_2_FALSE_GREEN_CORRECTED               = YES
+CURRENT_CAPABILITY_REGISTRY              = R18
+REGISTRY_CURRENT_CONTRACT                = R17
+ALL_R18_CURRENT_CONTRACT_VERSION         = R17
+CURRENT_V1_ALERT_SURFACE_TRUTHFUL        = PASS
+DISABLED_ALERTS_NOT_PROMISED_AS_WORKING  = PASS
+MONITORING_REMAINS_DISABLED              = YES
+BRIEFING_REMAINS_DISABLED                = YES
+PNPM_FORMAT                              = PASS
+PNPM_LINT                                = PASS
+HARNESS_TYPECHECK                        = PASS
+REPOSITORY_CI_LOCAL                      = PASS
+GITHUB_SERVER_CHECKS                     = SUCCESS
+GITHUB_DESIGN_RULES                      = SUCCESS
+DEPLOYED_SAFETY                          = NOT_RUN_NO_DEPLOYED_TARGET
+AUTHORITY_CHECK                          = PASS
+CLOUD_CHANGED                            = NO
+PAID_RESOURCE_CREATED                    = NO
+```
+
+SHIP_S4_T0_3_CI_ALERT_REGISTRY_CLOSURE = PASS
