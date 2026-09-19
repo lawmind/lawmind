@@ -60,7 +60,7 @@ import {
 } from './training/consent.ts';
 import { counterRequest, handleCounter } from './arguments/counter.ts';
 import { acceptTerms, acceptTermsBody, getTerms, patchMe, patchMeBody } from './auth/account.ts';
-import { authMiddleware, profileIdFor } from './auth/middleware.ts';
+import { authMiddleware, profileIdFor, requireAuthenticated } from './auth/middleware.ts';
 import { handleMagicLinkLanding } from './auth/magic-link-landing.ts';
 import { requireAdmin } from './auth/admin.ts';
 import { knownAddress, callerIdentity, rateLimit, RATE_LIMITS } from './rate-limit.ts';
@@ -456,8 +456,11 @@ export function createApp(deps: AppDeps) {
     // The call that turns a verified email into an advocate: it creates the
     // `users` row, because it is the first point at which a name and a phone
     // number exist. PD-2 — the enrolment number is captured and gates nothing.
-    app.patch('/me', validate('json', patchMeBody), (c) =>
-      patchMe(c, auth.sql, c.get('authId'), c.get('authEmail'), c.req.valid('json')),
+    app.patch(
+      '/me',
+      requireAuthenticated('sign in to continue'),
+      validate('json', patchMeBody),
+      (c) => patchMe(c, auth.sql, c.get('authId'), c.get('authEmail'), c.req.valid('json')),
     );
     // PD-8. Consent is recorded, never inferred, and the version is stored
     // alongside the timestamp so that WHICH text was accepted stays answerable.
@@ -476,30 +479,44 @@ export function createApp(deps: AppDeps) {
      * is passed as a literal rather than read from the router so that the scope a
      * key lives in is answerable by reading this file.
      */
-    app.post('/me/data-requests', validate('json', dataRequestBody), async (c) => {
+    app.post(
+      '/me/data-requests',
       /**
-       * BOTH identifiers, and the ORDER of the two lines is the whole fix.
-       *
-       * `authId` is the principal: it exists the moment an email is verified.
-       * `userId` is the profile, and it is `undefined` for an `identity_only`
-       * advocate who never finished onboarding. This route used to resolve only
-       * the profile and answer 401 to a real, authenticated account — the
-       * defect RCC reported at bus 1722 — which meant the product demanded more
-       * personal data as the price of deleting personal data.
+       * N-7. Gated on the IDENTITY, which is exactly right here and is the
+       * reason `requireAuthenticated` checks `authId` rather than the profile:
+       * an `identity_only` advocate must be able to ask for erasure, and the
+       * handler below deliberately resolves both identifiers to let them.
        */
-      const authId = c.get('authId');
-      const userId = await profileIdFor(auth.sql, authId);
-      const body = c.req.valid('json');
-      return withIdempotency(
-        c,
-        auth.sql,
-        { authId, userId, route: '/me/data-requests', body },
-        (tx) => createDataRequest(c, tx, authId, userId, body),
-      );
-    });
+      requireAuthenticated('Sign in to make a data request about your account.'),
+      validate('json', dataRequestBody),
+      async (c) => {
+        /**
+         * BOTH identifiers, and the ORDER of the two lines is the whole fix.
+         *
+         * `authId` is the principal: it exists the moment an email is verified.
+         * `userId` is the profile, and it is `undefined` for an `identity_only`
+         * advocate who never finished onboarding. This route used to resolve only
+         * the profile and answer 401 to a real, authenticated account — the
+         * defect RCC reported at bus 1722 — which meant the product demanded more
+         * personal data as the price of deleting personal data.
+         */
+        const authId = c.get('authId');
+        const userId = await profileIdFor(auth.sql, authId);
+        const body = c.req.valid('json');
+        return withIdempotency(
+          c,
+          auth.sql,
+          { authId, userId, route: '/me/data-requests', body },
+          (tx) => createDataRequest(c, tx, authId, userId, body),
+        );
+      },
+    );
     app.get('/me/data-requests', (c) => listOwnDataRequests(c, auth.sql, c.get('authId')));
-    app.post('/me/accept-terms', validate('json', acceptTermsBody), (c) =>
-      acceptTerms(c, auth.sql, c.get('authId'), c.req.valid('json')),
+    app.post(
+      '/me/accept-terms',
+      requireAuthenticated('Sign in to accept the terms.'),
+      validate('json', acceptTermsBody),
+      (c) => acceptTerms(c, auth.sql, c.get('authId'), c.req.valid('json')),
     );
   }
 
@@ -625,27 +642,32 @@ export function createApp(deps: AppDeps) {
     );
     // R16. The judgment id is a PATH PARAMETER and so rides in the fingerprint:
     // one key reused against a second judgment is a mismatch, not a replay.
-    app.post('/judgments/:id/annotations', validate('json', annotationBody), async (c) => {
-      const userId = await userFor(c);
-      const judgmentId = c.req.param('id');
-      const body = c.req.valid('json');
-      /* `api_idempotency_records` is a USER table, and the transaction the
-       * handler runs inside is therefore a USER transaction. The corpus handle
-       * rides alongside it rather than inside it — there is no cross-database
-       * transaction and R28 does not invent one. */
-      return withIdempotency(
-        c,
-        userSql,
-        {
-          authId: c.get('authId'),
-          userId,
-          route: '/judgments/:id/annotations',
-          params: { id: judgmentId },
-          body,
-        },
-        (tx) => createAnnotation(c, tx, judgmentId, userId, body, sql),
-      );
-    });
+    app.post(
+      '/judgments/:id/annotations',
+      requireAuthenticated('annotations belong to an advocate — sign in to continue'),
+      validate('json', annotationBody),
+      async (c) => {
+        const userId = await userFor(c);
+        const judgmentId = c.req.param('id');
+        const body = c.req.valid('json');
+        /* `api_idempotency_records` is a USER table, and the transaction the
+         * handler runs inside is therefore a USER transaction. The corpus handle
+         * rides alongside it rather than inside it — there is no cross-database
+         * transaction and R28 does not invent one. */
+        return withIdempotency(
+          c,
+          userSql,
+          {
+            authId: c.get('authId'),
+            userId,
+            route: '/judgments/:id/annotations',
+            params: { id: judgmentId },
+            body,
+          },
+          (tx) => createAnnotation(c, tx, judgmentId, userId, body, sql),
+        );
+      },
+    );
     app.delete('/annotations/:annotationId', async (c) =>
       deleteAnnotation(c, userSql, c.req.param('annotationId'), await userFor(c)),
     );
@@ -685,8 +707,11 @@ export function createApp(deps: AppDeps) {
     // taken it out of the app, and without this row nothing can warn them when
     // the authority moves. Offered in EVERY state including set_aside — refusing
     // the copy would destroy the only record that could reach them.
-    app.post('/citations/copies', validate('json', copyRequest), async (c) =>
-      recordCopy(c, userSql, await userFor(c), c.req.valid('json'), sql),
+    app.post(
+      '/citations/copies',
+      requireAuthenticated('a copy record belongs to an advocate — sign in to continue'),
+      validate('json', copyRequest),
+      async (c) => recordCopy(c, userSql, await userFor(c), c.req.valid('json'), sql),
     );
     // Tier 3 — the eCourts door. We hand over a URL and the text to paste; the
     // advocate solves the CAPTCHA. Nothing here ever fetches from eCourts.
@@ -696,21 +721,29 @@ export function createApp(deps: AppDeps) {
     // R16. Tier 3 is still a human solving the CAPTCHA and vouching — nothing
     // about idempotency touches that. It stops a retried vouch from appending a
     // second permanent `citation_checks` row.
-    app.post('/verify/confirm', validate('json', confirmRequest), async (c) => {
-      const userId = await userFor(c);
-      const body = c.req.valid('json');
-      return withIdempotency(
-        c,
-        userSql,
-        { authId: c.get('authId'), userId, route: '/verify/confirm', body },
-        (tx) => handleConfirm(c, tx, userId, body, sql),
-      );
-    });
+    app.post(
+      '/verify/confirm',
+      requireAuthenticated('a Tier 3 confirmation must be attributable — sign in to continue'),
+      validate('json', confirmRequest),
+      async (c) => {
+        const userId = await userFor(c);
+        const body = c.req.valid('json');
+        return withIdempotency(
+          c,
+          userSql,
+          { authId: c.get('authId'), userId, route: '/verify/confirm', body },
+          (tx) => handleConfirm(c, tx, userId, body, sql),
+        );
+      },
+    );
     // Saved searches — an in-app feed, never a notification. PD-5/PD-6: nothing
     // here emits anything, and `unseenCount` is for ordering, never a badge.
     app.get('/saved-searches', async (c) => listSavedSearches(c, userSql, await userFor(c)));
-    app.post('/saved-searches', validate('json', savedSearchBody), async (c) =>
-      createSavedSearch(c, userSql, await userFor(c), c.req.valid('json')),
+    app.post(
+      '/saved-searches',
+      requireAuthenticated('a saved search belongs to an advocate — sign in to continue'),
+      validate('json', savedSearchBody),
+      async (c) => createSavedSearch(c, userSql, await userFor(c), c.req.valid('json')),
     );
     app.delete('/saved-searches/:id', async (c) =>
       deleteSavedSearch(c, userSql, c.req.param('id'), await userFor(c)),
@@ -848,47 +881,61 @@ export function createApp(deps: AppDeps) {
     app.get('/matters', async (c) => listMatters(c, userSql, await userFor(c)));
     // R16. `createMatter` takes the pool as a fifth argument so its funnel metric
     // is not written on the transaction that is about to commit.
-    app.post('/matters', validate('json', createMatterBody), async (c) => {
-      const userId = await userFor(c);
-      const body = c.req.valid('json');
-      return withIdempotency(
-        c,
-        userSql,
-        { authId: c.get('authId'), userId, route: '/matters', body },
-        /* The fifth argument is the POOL the fire-and-forget activation write
-         * goes to, and it is the USER pool: `activation_events` is user-owned.
-         * It was `sql` — the corpus handle — which on a split deployment made
-         * the funnel write throw against a database with no such table. */
-        (tx) => createMatter(c, tx, userId, body, userSql),
-      );
-    });
+    app.post(
+      '/matters',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', createMatterBody),
+      async (c) => {
+        const userId = await userFor(c);
+        const body = c.req.valid('json');
+        return withIdempotency(
+          c,
+          userSql,
+          { authId: c.get('authId'), userId, route: '/matters', body },
+          /* The fifth argument is the POOL the fire-and-forget activation write
+           * goes to, and it is the USER pool: `activation_events` is user-owned.
+           * It was `sql` — the corpus handle — which on a split deployment made
+           * the funnel write throw against a database with no such table. */
+          (tx) => createMatter(c, tx, userId, body, userSql),
+        );
+      },
+    );
     app.get('/matters/:id', async (c) =>
       getMatter(c, userSql, c.req.param('id'), await userFor(c)),
     );
-    app.patch('/matters/:id', validate('json', patchMatterBody), async (c) =>
-      patchMatter(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    app.patch(
+      '/matters/:id',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', patchMatterBody),
+      async (c) =>
+        patchMatter(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     // PD-4 — note_visibility defaults to private IN THE COLUMN. An omitted field
     // inserts the SQL keyword DEFAULT, never a value chosen in application code.
     // R16. Same key against two different matters is a mismatch: the matter id is
     // a path parameter and both requests match this one route template.
-    app.post('/matters/:id/events', validate('json', createEventBody), async (c) => {
-      const userId = await userFor(c);
-      const matterId = c.req.param('id');
-      const body = c.req.valid('json');
-      return withIdempotency(
-        c,
-        userSql,
-        {
-          authId: c.get('authId'),
-          userId,
-          route: '/matters/:id/events',
-          params: { id: matterId },
-          body,
-        },
-        (tx) => createMatterEvent(c, tx, matterId, userId, body),
-      );
-    });
+    app.post(
+      '/matters/:id/events',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', createEventBody),
+      async (c) => {
+        const userId = await userFor(c);
+        const matterId = c.req.param('id');
+        const body = c.req.valid('json');
+        return withIdempotency(
+          c,
+          userSql,
+          {
+            authId: c.get('authId'),
+            userId,
+            route: '/matters/:id/events',
+            params: { id: matterId },
+            body,
+          },
+          (tx) => createMatterEvent(c, tx, matterId, userId, body),
+        );
+      },
+    );
     // PD-3 — sharing is PER MATTER, BY INVITATION. There is no chamber-wide
     // endpoint and there must never be one: chamber-wide default sharing is a
     // conflicts hazard, since two advocates in one chamber can be on opposing
@@ -896,23 +943,31 @@ export function createApp(deps: AppDeps) {
     app.get('/matters/:id/shares', async (c) =>
       listShares(c, userSql, c.req.param('id'), await userFor(c)),
     );
-    app.post('/matters/:id/shares', validate('json', shareBody), async (c) =>
-      createShare(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    app.post(
+      '/matters/:id/shares',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', shareBody),
+      async (c) =>
+        createShare(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
     app.delete('/matters/:id/shares/:shareId', async (c) =>
       revokeShare(c, userSql, c.req.param('id'), c.req.param('shareId'), await userFor(c)),
     );
     // PD-4 — per note, reversibly. The court record always travels; what the
     // advocate thinks about it does not, until they say so.
-    app.patch('/matters/:id/events/:eventId', validate('json', eventVisibilityBody), async (c) =>
-      setEventVisibility(
-        c,
-        userSql,
-        c.req.param('id'),
-        c.req.param('eventId'),
-        await userFor(c),
-        c.req.valid('json'),
-      ),
+    app.patch(
+      '/matters/:id/events/:eventId',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', eventVisibilityBody),
+      async (c) =>
+        setEventVisibility(
+          c,
+          userSql,
+          c.req.param('id'),
+          c.req.param('eventId'),
+          await userFor(c),
+          c.req.valid('json'),
+        ),
     );
     // Authorities saved to a matter. `set_aside` refuses the write and names
     // the replacement — the one authority Lawmind refuses to let be used at
@@ -921,8 +976,12 @@ export function createApp(deps: AppDeps) {
     app.get('/matters/:id/authorities', async (c) =>
       listAuthorities(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
-    app.post('/matters/:id/authorities', validate('json', addAuthorityBody), async (c) =>
-      addAuthority(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json'), sql),
+    app.post(
+      '/matters/:id/authorities',
+      requireAuthenticated('a matter belongs to an advocate — sign in to continue'),
+      validate('json', addAuthorityBody),
+      async (c) =>
+        addAuthority(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json'), sql),
     );
     app.delete('/matters/:id/authorities/:authorityId', async (c) =>
       removeAuthority(c, userSql, c.req.param('id'), c.req.param('authorityId'), await userFor(c)),
@@ -940,8 +999,11 @@ export function createApp(deps: AppDeps) {
     // Trigger 2 (filed_citation_moved) has no settings key and cannot be
     // disabled — .strict() on the body schema rejects any attempt to send one.
     app.get('/me/alert-settings', async (c) => getAlertSettings(c, userSql, await userFor(c)));
-    app.patch('/me/alert-settings', validate('json', alertSettingsBody), async (c) =>
-      patchAlertSettings(c, userSql, await userFor(c), c.req.valid('json')),
+    app.patch(
+      '/me/alert-settings',
+      requireAuthenticated('alert settings belong to an advocate — sign in to continue'),
+      validate('json', alertSettingsBody),
+      async (c) => patchAlertSettings(c, userSql, await userFor(c), c.req.valid('json')),
     );
     /**
      * Training consent — SEPARATE from the PD-8 onboarding consent above, per
@@ -955,16 +1017,21 @@ export function createApp(deps: AppDeps) {
     // R16. A grant is a `users` update AND a `training_consent_events` append, so
     // the handler opens its own transaction; under a key that becomes a savepoint
     // inside this one. `atomically` is what makes both spellings work.
-    app.post('/me/training-consent', validate('json', grantBody), async (c) => {
-      const userId = await userFor(c);
-      const body = c.req.valid('json');
-      return withIdempotency(
-        c,
-        userSql,
-        { authId: c.get('authId'), userId, route: '/me/training-consent', body },
-        (tx) => grantTrainingConsent(c, tx, userId, body),
-      );
-    });
+    app.post(
+      '/me/training-consent',
+      requireAuthenticated('training consent belongs to an advocate — sign in to continue'),
+      validate('json', grantBody),
+      async (c) => {
+        const userId = await userFor(c);
+        const body = c.req.valid('json');
+        return withIdempotency(
+          c,
+          userSql,
+          { authId: c.get('authId'), userId, route: '/me/training-consent', body },
+          (tx) => grantTrainingConsent(c, tx, userId, body),
+        );
+      },
+    );
     app.delete('/me/training-consent', async (c) =>
       withdrawTrainingConsent(c, userSql, await userFor(c)),
     );
@@ -1015,6 +1082,7 @@ export function createApp(deps: AppDeps) {
     );
     app.post(
       '/premium/jobs',
+      requireAuthenticated('a generation job belongs to an advocate — sign in to continue'),
       validate('json', startJobBody),
       async (c) =>
         // R8.3 §5.4/§5.6. Premium generation is not required for LIMITED V1 and
@@ -1039,18 +1107,26 @@ export function createApp(deps: AppDeps) {
     app.get('/documents/:id', async (c) =>
       getDocument(c, userSql, c.req.param('id'), await userFor(c), sql),
     );
-    app.patch('/documents/:id', validate('json', patchDocumentBody), async (c) =>
-      patchDocument(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
+    app.patch(
+      '/documents/:id',
+      requireAuthenticated('a document belongs to an advocate — sign in to continue'),
+      validate('json', patchDocumentBody),
+      async (c) =>
+        patchDocument(c, userSql, c.req.param('id'), await userFor(c), c.req.valid('json')),
     );
-    app.post('/documents/:id/citations', validate('json', addCitationBody), async (c) =>
-      addDocumentCitation(
-        c,
-        userSql,
-        c.req.param('id'),
-        await userFor(c),
-        c.req.valid('json'),
-        sql,
-      ),
+    app.post(
+      '/documents/:id/citations',
+      requireAuthenticated('a document belongs to an advocate — sign in to continue'),
+      validate('json', addCitationBody),
+      async (c) =>
+        addDocumentCitation(
+          c,
+          userSql,
+          c.req.param('id'),
+          await userFor(c),
+          c.req.valid('json'),
+          sql,
+        ),
     );
     app.delete('/documents/:id/citations/:citationCheckId', async (c) =>
       removeDocumentCitation(
