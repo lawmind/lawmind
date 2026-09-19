@@ -77,7 +77,7 @@ import {
 } from './auth/routes.ts';
 import { getBriefing, listMatterBriefings, markBriefingOpened } from './briefings/route.ts';
 import { courtLookupRequest, handleCourtLookup } from './court/lookup.ts';
-import { buildSha, deployedAt } from './build-info.ts';
+import { artifactDigest, buildSha, deployedAt } from './build-info.ts';
 import { CONTRACT_VERSION, MIN_SUPPORTED_CONTRACT } from './contract-version.ts';
 import { getCitationCheck } from './citations/check.ts';
 import { copyRequest, recordCopy } from './citations/copies.ts';
@@ -108,6 +108,7 @@ import { listDocumentTypes } from './documents/types.ts';
 import { fail, ok } from './envelope.ts';
 import { capabilityRegistry, parsePlatform } from './release/capabilities.ts';
 import { refuseIfDisabled } from './release/enforce.ts';
+import { resolveServingEnv } from './ops/serving-contract.ts';
 import {
   annotationBody,
   createAnnotation,
@@ -309,12 +310,52 @@ export function createApp(deps: AppDeps) {
     }
   });
 
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * N-5 — ONE SOURCE FOR "WHICH DEPLOYMENT IS THIS", NOT TWO THAT AGREE BY LUCK
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * Gate C observed `/version` reporting `environment: "production"` while
+   * `/ready` reported `servingEnv: "staging"` on the same box at the same sha.
+   * "One label is lying, and it misroutes an incident."
+   *
+   * Neither was lying. They were answering from **different variables**:
+   * `/version` read `RAILWAY_ENVIRONMENT ?? NODE_ENV ?? 'development'`, and
+   * `/ready` read the serving contract, which reads `LAWMIND_SERVING_ENV`. Two
+   * sources for one question disagree the moment anything sets one and not the
+   * other — and on that box something had.
+   *
+   * Both now derive from `resolveServingEnv`, so the mismatch is not fixed, it is
+   * **unrepresentable**: there is one function and `/ready` already called it.
+   *
+   * `NODE_ENV` is deliberately NOT consulted, and `ops/serving-contract.ts` says
+   * why in its own words: it "is read by build tooling, set to `production` by
+   * every bundler and process manager for reasons that have nothing to do with
+   * who the audience is, and a staging box legitimately runs
+   * `NODE_ENV=production`". Reading it here is precisely how `/version` came to
+   * claim production on a staging deployment.
+   *
+   * `RAILWAY_ENVIRONMENT` is gone with it. Railway production is
+   * `HISTORICAL / RETIRED`, so that branch could only ever have been dead or
+   * wrong, and a dead branch that still outranks the real one is worse than no
+   * branch at all.
+   *
+   * A deployment that declares nothing reads `development` — from one place, and
+   * loudly, because `evaluateServingContract` refuses to start a deployment that
+   * says it is serving while its configuration says otherwise.
+   */
+  const environment = resolveServingEnv(process.env);
+
   app.get('/version', (c) =>
     ok(c, {
       gitSha: buildSha,
       deployedAt,
-      environment: process.env['RAILWAY_ENVIRONMENT'] ?? process.env['NODE_ENV'] ?? 'development',
-      imageDigest: null,
+      environment,
+      /**
+       * N-2. Populated by the deploy action, `null` when this process cannot
+       * prove which artifact it is. Never a placeholder — see `build-info.ts`.
+       */
+      imageDigest: artifactDigest,
       /**
        * P5.E. Which wire contract this deployment speaks, and the oldest it
        * still answers — so an installed app can say "update me" instead of
