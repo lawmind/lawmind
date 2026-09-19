@@ -86,3 +86,72 @@ export function cascadeVictims(
     .map(([table, parents]) => ({ table, via: [...parents].sort() }))
     .sort((a, b) => a.table.localeCompare(b.table));
 }
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * HOW MANY TABLES vs HOW MUCH DATA — the gap `--allow-cascade-into` left open
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * {@link cascadeVictims} answers "which tables would also be emptied". That is
+ * the right question and it is not the whole one, because the answer reads the
+ * same in two situations that could not be more different:
+ *
+ *   A corpus-only target whose schema was migrated in full carries EMPTY copies
+ *   of the user tables. They are victims, truncating them destroys nothing, and
+ *   the restore is safe.
+ *
+ *   A shared database carries the SAME tables holding an advocate's saved
+ *   authorities. They are victims, and truncating them is the thing Gate C
+ *   forbids.
+ *
+ * Gate C hit the first case: the guard refused with **12 victims** and the
+ * operator passed `--allow-cascade-into`, correctly. The problem is that the
+ * second case produces a byte-identical refusal and the same flag clears it. An
+ * operator who has cleared this warning once — and every restore onto a
+ * fully-migrated corpus target makes them clear it — has been trained to clear
+ * it again on the day it means "destroy thirteen saved authorities".
+ *
+ * A warning that is usually noise is not a guard. So the decision is made on
+ * **rows**, not on table names:
+ *
+ *   every victim empty  →  nothing is destroyed. Proceed, and say so.
+ *   any victim has rows →  refuse, and NAME THE COUNTS. `--allow-cascade-into`
+ *                          is not enough on its own, because the flag an
+ *                          operator types routinely must not also be the one
+ *                          that destroys user data.
+ *
+ * Pure, so it is tested without a database. The counting itself lives in
+ * `release-restore-cli.ts`, which is the only thing that should touch a target.
+ */
+export type VictimCensus = CascadeVictim & {
+  /**
+   * Rows found, counted with a bound. `atLeast` is true when the count stopped
+   * at the bound — so the message can say "10,000+" rather than a number it did
+   * not actually establish.
+   */
+  readonly rows: number;
+  readonly atLeast?: boolean | undefined;
+};
+
+export type CascadeDamage = {
+  /** Victims holding at least one row. Non-empty means the restore must refuse. */
+  readonly destroys: readonly VictimCensus[];
+  /** Victims that exist but hold nothing. Truncating these destroys no data. */
+  readonly empty: readonly VictimCensus[];
+  /** Total rows that would be destroyed, for the one-line summary. */
+  readonly rows: number;
+  /** True when at least one count hit its bound, so `rows` is a floor. */
+  readonly rowsAreAFloor: boolean;
+};
+
+export function cascadeDamage(census: readonly VictimCensus[]): CascadeDamage {
+  const destroys = census.filter((v) => v.rows > 0);
+  const empty = census.filter((v) => v.rows === 0);
+  return {
+    // Biggest first: an operator reading a refusal should meet the worst line first.
+    destroys: [...destroys].sort((a, b) => b.rows - a.rows || a.table.localeCompare(b.table)),
+    empty: [...empty].sort((a, b) => a.table.localeCompare(b.table)),
+    rows: destroys.reduce((n, v) => n + v.rows, 0),
+    rowsAreAFloor: destroys.some((v) => v.atLeast === true),
+  };
+}

@@ -33,7 +33,12 @@ import { createGunzip } from 'node:zlib';
 
 import postgres from 'postgres';
 
-import { cascadeVictims, type ForeignKeyEdge } from './cascade-guard.ts';
+import {
+  cascadeDamage,
+  cascadeVictims,
+  type ForeignKeyEdge,
+  type VictimCensus,
+} from './cascade-guard.ts';
 import { releaseChecksum } from './release-checksum.ts';
 import { SERVING_TABLES } from './release-export-cli.ts';
 import {
@@ -649,26 +654,117 @@ async function main(): Promise<void> {
     manifest.tables.map((t) => t.table),
   );
   if (victims.length > 0) {
-    trace('cascade_guard_refused', { victims });
-    if (!argv.includes('--allow-cascade-into')) {
-      await sql.end();
-      if (observer) await observer.end();
-      throw new Error(
-        'REFUSING TO RESTORE: `TRUNCATE ... CASCADE` over this release would also empty ' +
-          `${victims.length} table(s) that are NOT in it:\n` +
-          victims.map((v) => `  - ${v.table} (references ${v.via.join(', ')})`).join('\n') +
-          '\n\nOn a shared database that includes an advocate’s saved authorities, alerts ' +
-          'and annotations — a corpus rollback would take user data with it, which Gate C ' +
-          'forbids. Restore onto a target that holds only the corpus, or pass ' +
-          '--allow-cascade-into to proceed deliberately.',
+    /**
+     * ─────────────────────────────────────────────────────────────────────────
+     * HOW MUCH DATA, NOT HOW MANY TABLES
+     * ─────────────────────────────────────────────────────────────────────────
+     *
+     * Knowing WHICH tables cascade is necessary and it is not sufficient. A
+     * corpus-only target whose schema was migrated in full carries EMPTY copies
+     * of the user tables; they are victims and truncating them destroys nothing.
+     * A shared database carries the same tables holding an advocate's saved
+     * authorities. The two produced a byte-identical refusal, cleared by the
+     * same flag — and Gate C cleared it, correctly, on 12 empty tables.
+     *
+     * That is what makes the old shape dangerous: an operator who clears this
+     * warning on every routine restore has been trained to clear it on the day
+     * it means "destroy thirteen saved authorities". So the decision is made on
+     * ROWS. `ops/cascade-guard.ts` carries the reasoning.
+     *
+     * Counted with a bound rather than a bare `count(*)`: a victim could in
+     * principle be large, this runs in front of a multi-hour restore, and the
+     * only number that changes the decision is whether it is zero. Above the
+     * bound the message says `10000+` instead of inventing precision.
+     */
+    const CENSUS_BOUND = 10_000;
+    const census: VictimCensus[] = [];
+    for (const v of victims) {
+      /**
+       * The name comes from `pg_class.relname` — the target's own catalogue, not
+       * from anything a caller supplied — and it is still checked before being
+       * interpolated. A relname CAN legally contain characters that change the
+       * meaning of this statement, and "the catalogue gave it to me" is the kind
+       * of reasoning that is true right up until it is not. Refusing an
+       * unexpected name is safe here because a refusal stops a restore that has
+       * not yet truncated anything.
+       */
+      if (!/^[a-z_][a-z0-9_]*$/.test(v.table)) {
+        await sql.end();
+        if (observer) await observer.end();
+        throw new Error(
+          `REFUSING TO RESTORE: cannot safely count rows in a table named ${JSON.stringify(v.table)}. ` +
+            'The cascade guard must know how much data it would destroy before anything is truncated.',
+        );
+      }
+      const [row] = await sql.unsafe<{ n: string }[]>(
+        `SELECT count(*)::text AS n FROM (SELECT 1 FROM ${v.table} LIMIT ${CENSUS_BOUND + 1}) s`,
       );
+      const n = Number(row?.n ?? 0);
+      census.push({ ...v, rows: Math.min(n, CENSUS_BOUND), atLeast: n > CENSUS_BOUND });
     }
-    trace('cascade_guard_overridden', { why: '--allow-cascade-into', victims: victims.length });
-    console.log(
-      `\nWARNING: --allow-cascade-into — ${victims.length} table(s) outside this release ` +
-        `will be emptied:\n` +
-        victims.map((v) => `  - ${v.table}`).join('\n'),
-    );
+
+    const damage = cascadeDamage(census);
+    const countOf = (v: VictimCensus) => `${v.rows}${v.atLeast ? '+' : ''}`;
+
+    if (damage.destroys.length === 0) {
+      /**
+       * Every victim is empty, so the cascade destroys nothing. This is the
+       * Gate-C shape and it does NOT need an override — requiring one here is
+       * precisely what trained operators to type the flag by reflex.
+       */
+      trace('cascade_guard_no_damage', { victims: victims.length });
+      console.log(
+        `\ncascade guard: ${victims.length} table(s) outside this release reference it and ` +
+          'will be truncated — all of them are EMPTY, so no data is destroyed:\n' +
+          victims.map((v) => `  - ${v.table}`).join('\n'),
+      );
+    } else {
+      trace('cascade_guard_refused', {
+        victims,
+        destroys: damage.destroys.map((v) => ({
+          table: v.table,
+          rows: v.rows,
+          atLeast: v.atLeast,
+        })),
+        rows: damage.rows,
+      });
+      const detail =
+        `REFUSING TO RESTORE: \`TRUNCATE ... CASCADE\` over this release would DESTROY ` +
+        `${damage.rows}${damage.rowsAreAFloor ? '+' : ''} row(s) in ` +
+        `${damage.destroys.length} table(s) that are NOT in it:\n` +
+        damage.destroys
+          .map((v) => `  - ${v.table}: ${countOf(v)} row(s) (references ${v.via.join(', ')})`)
+          .join('\n') +
+        (damage.empty.length > 0
+          ? `\n\nAlso truncated, but empty: ${damage.empty.map((v) => v.table).join(', ')}`
+          : '') +
+        '\n\nThose rows are an advocate’s saved authorities, alerts and annotations. A corpus ' +
+        'rollback taking user data with it is what Gate C forbids, and roadmap §14.13.1 makes ' +
+        'MATTER_AUTHORITY ROLLBACK a private-beta blocker.\n' +
+        'Restore onto a target that holds only the corpus — that is what the split-role ' +
+        'architecture is for.';
+
+      if (!argv.includes('--allow-destroying-user-rows')) {
+        await sql.end();
+        if (observer) await observer.end();
+        /**
+         * `--allow-cascade-into` deliberately does NOT clear this. It is the
+         * flag an operator types routinely, and the flag that destroys an
+         * advocate's matters must not be the same one.
+         */
+        throw new Error(
+          detail +
+            '\n\nIf you genuinely intend to destroy those rows, pass ' +
+            '--allow-destroying-user-rows. --allow-cascade-into does not cover this.',
+        );
+      }
+      trace('cascade_guard_overridden', {
+        why: '--allow-destroying-user-rows',
+        victims: victims.length,
+        rows: damage.rows,
+      });
+      console.log(`\nWARNING: --allow-destroying-user-rows\n${detail}`);
+    }
   }
 
   /**

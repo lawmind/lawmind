@@ -7,7 +7,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { cascadeVictims } from './cascade-guard.ts';
+import { cascadeDamage, cascadeVictims } from './cascade-guard.ts';
 
 describe('TRUNCATE ... CASCADE victims outside a corpus release', () => {
   const RELEASE = ['judgments', 'judgment_citations', 'statutes'];
@@ -68,5 +68,89 @@ describe('TRUNCATE ... CASCADE victims outside a corpus release', () => {
       cascadeVictims([{ child: 'judgment_citations', parent: 'judgments' }], RELEASE),
       [],
     );
+  });
+});
+
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ * HOW MUCH DATA — the half `cascadeVictims` cannot answer
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * Gate C's restore refused with **12 victims** and the operator cleared it with
+ * `--allow-cascade-into`, correctly: on a corpus-only target the user tables are
+ * present-but-empty and truncating them destroys nothing.
+ *
+ * The danger is that a shared database produces a byte-identical refusal. An
+ * operator trained by routine restores to clear this warning will clear it on the
+ * day it means "destroy thirteen saved authorities" — so the decision moved onto
+ * ROWS, and these are the cases that decide it.
+ */
+describe('cascadeDamage — empty victims are not the same as populated ones', () => {
+  const via = ['judgments'];
+
+  it('the Gate-C shape: victims exist, all empty, nothing is destroyed', () => {
+    const d = cascadeDamage([
+      { table: 'matter_authorities', via, rows: 0 },
+      { table: 'judgment_annotations', via, rows: 0 },
+    ]);
+    assert.equal(d.destroys.length, 0, 'an empty victim destroys nothing and must not refuse');
+    assert.equal(d.empty.length, 2);
+    assert.equal(d.rows, 0);
+    assert.equal(d.rowsAreAFloor, false);
+  });
+
+  it('the shape Gate C forbids: one populated victim is enough to refuse', () => {
+    const d = cascadeDamage([
+      { table: 'matter_authorities', via, rows: 13 },
+      { table: 'judgment_annotations', via, rows: 0 },
+    ]);
+    assert.equal(d.destroys.length, 1);
+    assert.equal(d.destroys[0]?.table, 'matter_authorities');
+    assert.equal(d.rows, 13);
+    assert.equal(d.empty.length, 1, 'the empty ones are still reported, just not as damage');
+  });
+
+  it('orders the refusal worst-first, so the biggest loss is the line read first', () => {
+    const d = cascadeDamage([
+      { table: 'alerts', via, rows: 6 },
+      { table: 'citation_checks', via, rows: 20307 },
+      { table: 'matter_authorities', via, rows: 13 },
+    ]);
+    assert.deepEqual(
+      d.destroys.map((v) => v.table),
+      ['citation_checks', 'matter_authorities', 'alerts'],
+    );
+    assert.equal(d.rows, 20326);
+  });
+
+  it('says a bounded count is a FLOOR rather than inventing a total', () => {
+    /**
+     * The census stops counting at a bound, because the only number that changes
+     * the decision is whether it is zero and this runs in front of a multi-hour
+     * restore. A bounded count reported as an exact total would be a number
+     * nobody measured.
+     */
+    const d = cascadeDamage([{ table: 'citation_checks', via, rows: 10000, atLeast: true }]);
+    assert.equal(d.rowsAreAFloor, true);
+    assert.equal(d.rows, 10000);
+  });
+
+  it('no victims at all — the correct split-role target', () => {
+    const d = cascadeDamage([]);
+    assert.equal(d.destroys.length, 0);
+    assert.equal(d.empty.length, 0);
+    assert.equal(d.rows, 0);
+    assert.equal(d.rowsAreAFloor, false);
+  });
+
+  it('a zero-row victim never counts toward the destroyed total', () => {
+    // Guards the off-by-one that would make every corpus-only restore refuse.
+    const d = cascadeDamage([
+      { table: 'a', via, rows: 0 },
+      { table: 'b', via, rows: 0 },
+      { table: 'c', via, rows: 0 },
+    ]);
+    assert.equal(d.rows, 0);
+    assert.equal(d.destroys.length, 0);
   });
 });
