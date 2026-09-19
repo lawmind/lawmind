@@ -150,7 +150,7 @@ export function createPrewarm(sql: Sql): Prewarm {
       status = { ...status, detail: step.name };
       const stepStarted = Date.now();
       try {
-        await withTimeout(step.run(), PREWARM_STEP_TIMEOUT_MS, step.name);
+        await withTimeout(step.run(), PREWARM_STEP_TIMEOUT_MS);
       } catch (error) {
         const detail = `${step.name}: ${error instanceof Error ? error.message : String(error)}`;
         status = {
@@ -204,7 +204,7 @@ export function createPrewarm(sql: Sql): Prewarm {
  * nothing. A prewarm in that state would hold readiness false forever, so the
  * timeout is what keeps a latency mechanism from becoming an outage.
  */
-async function withTimeout<T>(work: Promise<T>, ms: number, name: string): Promise<T> {
+async function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
   let timer: NodeJS.Timeout | undefined;
   try {
     return await Promise.race([
@@ -214,10 +214,17 @@ async function withTimeout<T>(work: Promise<T>, ms: number, name: string): Promi
       }),
     ]);
   } finally {
+    /**
+     * The timer is always cleared, including on the happy path — otherwise every
+     * successful step would hold the event loop open for the remainder of its
+     * 120 s budget, and a process that will not exit is its own kind of outage.
+     *
+     * The LOSING query is abandoned rather than cancelled, and that is acceptable
+     * here and only here: every step is a read, so an abandoned one has nothing
+     * to roll back, and the pool reclaims its connection on its own lifetime. The
+     * step name is not needed — `pass()` prefixes it onto the error it records,
+     * so the failure still says which step timed out.
+     */
     if (timer) clearTimeout(timer);
-    // The losing query is abandoned, not cancelled. That is acceptable HERE and
-    // only here: every step is a read, so an abandoned one has nothing to roll
-    // back, and the pool reclaims the connection on its own lifetime.
-    void name;
   }
 }
