@@ -18,6 +18,131 @@ point here, so a fresh agent finds it without being told.
 
 ---
 
+## NEWEST — SHIP S4-R0X, 19 September 2026 · two items, one of them one click
+
+**This block is additive.** It adds two entries and changes nothing in the
+18 September block below, which remains the standing status for everything else.
+
+### FQ-SHIP-R0X-1 · One elevated consent click: the GPU delta queue's principal
+
+```text
+NEEDED            ONE UAC consent click (not a credential, not an account, no money)
+WHY IT IS YOURS   registering an S4U scheduled task requires elevation. Measured
+                  this session: Register-ScheduledTask with LogonType S4U returns
+                  "Access is denied" from an unelevated shell, and this session
+                  cannot elevate.
+WHAT STAYS BROKEN a reboot with nobody signed in leaves incremental embeddings
+                  dead until the first interactive logon. The 30 Aug 2026 Windows
+                  Update reboot cost 2 h 55 m and ~83,000 vectors this exact way.
+BLOCKS            nothing else. Ingest, CPU enrichment and Postgres all recover at
+                  boot already; this is the one remaining LOGON-only mechanism.
+```
+
+**The state, measured 19 Sep 2026 with `Get-ScheduledTask`:**
+
+```text
+Lawmind-new1-delta-queue   LogonType = Interactive   ← the only one
+new2-daily-delta           LogonType = S4U
+Lawmind-alert-poll         LogonType = S4U
+Lawmind-citations          LogonType = S4U
+Lawmind-citation-keys      LogonType = S4U
+Lawmind-paragraphs         LogonType = S4U
+```
+
+It was registered **2026-08-29 09:44**, one day before the 30 Aug sweep that moved
+every other task to S4U, and the sweep did not reach it.
+
+**Do NOT flip it blind, and this is the substantive part of this entry.**
+`docs/ops/JOB_TABLE.md` in the working tree states the Interactive principal is
+**deliberate** — "the GPU delta queue runs in the signed-in user's session so CUDA
+is available" — and that running it before sign-in "would require a different
+GPU-capable service account/host". That text is **uncommitted**, and HEAD's copy of
+that file predates the whole S4U fix, so its provenance could not be established
+this session. It may be right. If it is, moving this task to S4U produces a job
+that **fires, finds no CUDA, and embeds nothing** — a silent failure strictly worse
+than the current honest hole, because the task would look alive.
+
+So the CUDA question is settled first, by measurement, in an elevated shell.
+`services/embed/gpu/server.py` already refuses to run on CPU when
+`require_gpu` is set, which is the behaviour that makes this safe to test.
+
+**Step 1 — prove CUDA reaches session 0 (a throwaway task, touches nothing):**
+
+```powershell
+# In an ELEVATED PowerShell. A probe script is already written and waiting at
+# the path below; it records whoami, the session, onnxruntime's providers and
+# nvidia-smi. It runs no embedding and writes nothing to the database.
+$probe = "<scratchpad>\s4u\probe.cmd"   # see docs/ops/DELTA_QUEUE_S4U_PROOF.md
+$a  = New-ScheduledTaskAction -Execute $probe
+$t  = New-ScheduledTaskTrigger -Once -At (Get-Date).AddYears(1)
+$pr = New-ScheduledTaskPrincipal -UserId "XC\Xerxus" -LogonType S4U -RunLevel Limited
+Register-ScheduledTask -TaskName "ZZ-ship-s4u-cuda-probe" -Action $a -Trigger $t -Principal $pr -Force
+Start-ScheduledTask   -TaskName "ZZ-ship-s4u-cuda-probe"
+# read the result file, then:
+Unregister-ScheduledTask -TaskName "ZZ-ship-s4u-cuda-probe" -Confirm:$false
+```
+
+`CUDAExecutionProvider` present → go to step 2. Absent → **stop**, leave the task
+Interactive, and the fix becomes a GPU-capable service account or host rather than
+a principal change. Either answer is progress; guessing is not.
+
+**Step 2 — only if step 1 passed. Change the principal and NOTHING else:**
+
+```powershell
+$t = Get-ScheduledTask -TaskName 'Lawmind-new1-delta-queue'
+$pr = New-ScheduledTaskPrincipal -UserId "XC\Xerxus" -LogonType S4U -RunLevel Limited
+Set-ScheduledTask -TaskName 'Lawmind-new1-delta-queue' -Principal $pr
+# Match the working siblings, which run on a desktop with no battery:
+$s = $t.Settings; $s.DisallowStartIfOnBatteries = $false; $s.StopIfGoingOnBatteries = $false
+Set-ScheduledTask -TaskName 'Lawmind-new1-delta-queue' -Settings $s
+```
+
+```text
+DO NOT ADD  a second trigger · an AtStartup trigger · a logon launcher ·
+            a second writer of any kind
+WHY         ONE_GPU_WRITER. MultipleInstancesPolicy = IgnoreNew on the single
+            existing task is what Windows enforces and cannot be raced; the PT15M
+            repetition already fires without a session once the principal allows
+            it, so a boot trigger buys at most 15 minutes and risks the
+            repetition every writer depends on. JOB_TABLE.md's own 30 Aug note
+            reached the same conclusion and left triggers alone deliberately.
+```
+
+**Step 3 — the proof this is not finished without.** Sign out fully (not lock),
+wait for two PT15M fires, sign back in and confirm the pass ran while signed out
+and wrote a durable receipt; then reboot and confirm a fire before any logon.
+
+```text
+DELTA_SCHEDULER_S4U            = NOT_DONE (needs the click)
+CUDA_IN_SESSION_0              = UNKNOWN — untested, and it decides the fix
+REBOOT_WITHOUT_LOGIN_PROOF     = NOT_PERFORMED. Not attempted: rebooting the
+                                 workstation would have killed the fleet and the
+                                 session's own long-running work, and the proof
+                                 is meaningless before step 1 answers.
+ONE_GPU_WRITER                 = PRESERVED — nothing was changed by SHIP
+```
+
+### FQ-SHIP-R0X-2 · Persistent-beta spend, now priced
+
+```text
+PACKAGE            docs/ai/ship-s4-r0/BETA_HOSTING_DECISION_PACKAGE.md
+RECOMMENDED        DigitalOcean so-4vcpu-32gb (CORPUS) + s-2vcpu-4gb (API/USER)
+                   + Cloudflare R2 — USD 287.17 / month
+                   Cheaper than Gate C's USD 350/month for the same vCPU and RAM.
+ASK                MAX_INITIAL_SPEND_REQUEST = USD 450
+                   MAX_MONTHLY_SPEND_REQUEST = USD 550
+                   The gap above the expected USD 287 is not padding: it covers an
+                   evidence-driven in-place resize to the 64 GiB option without a
+                   second approval mid-beta.
+ALSO REQUIRED      the four credential rotations in FQ-NEW3-R25-ROTATE and
+                   FQ-BACKUP-KEY-ESCROW, before anything is provisioned
+PROVISIONING_AUTHORIZED = NO
+BLOCKS             nothing today. Stage A has weeks of work needing no cloud, and
+                   "not yet" is a free answer.
+```
+
+---
+
 ## CURRENT STATUS — S4-T0.1 normalization · SHIP, 18 September 2026
 
 **Read this block first.** It supersedes the headline state of the entries it
