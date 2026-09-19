@@ -151,6 +151,23 @@ here.
 | format gate scope | docs markdown and `docs/roadmaps/*.json` fall outside `pnpm format`'s glob (`{services,packages}/**/*.{ts,js,json}` plus root), so no formatter can rewrite a hashed artifact |
 | lane/bus files changed? | **NO** — no lane, bus or hook file touched, so bus tests were not required |
 
+### Observed repository CI
+
+```text
+RUN     35416189526   (GitHub Actions, workflow "CI")
+SHA     55bff0933bdc8558f566ecebc1b53c53dbee5834
+RESULT  success
+BASELINE f36d40103308762ec8e12f42a80314161b7e4294 = success (S4-T0.3 closure, unchanged)
+```
+
+Green on the pushed SHA, and green on the parent, so nothing in this round moved the
+baseline in either direction. `DEPLOYED_SAFETY` annotated itself
+`NOT_RUN_NO_DEPLOYED_TARGET` as it must with `PRODUCTION = NONE` — the third state,
+neither pass nor failure. The two warnings the run carries (the `ubuntu-latest`
+migration notice and the Node 20 action deprecation) are pre-existing runner notices,
+not defects caused here, and they are classified rather than swept into a cleanup
+sprint.
+
 Deliberately **not** run, because none is part of A2 integration: full corpus census ·
 vector integrity · Gate-S1 · Gate C · device matrix · eCourts probe · citation candidate
 generation · HNSW probe · full remote API probe.
