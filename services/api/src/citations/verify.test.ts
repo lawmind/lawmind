@@ -19,7 +19,7 @@ import { after, before, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
-import { ECOURTS_JUDGMENT_SEARCH, prefilledQuery } from './verify.ts';
+import { confirmRequest, ECOURTS_JUDGMENT_SEARCH, prefilledQuery } from './verify.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
 
@@ -91,18 +91,61 @@ describe('Tier 3 — eCourts', () => {
     assert.equal(body.error?.code, 'AUTH_REQUIRED');
   });
 
-  it('rejects a malformed body through the shared validator', async () => {
+  /**
+   * ───────────────────────────────────────────────────────────────────────────
+   * N-7 CHANGED WHERE THIS IS ASSERTED, AND DELIBERATELY NOT WHAT IT ASSERTS
+   * ───────────────────────────────────────────────────────────────────────────
+   *
+   * This used to post malformed bodies to `/verify/confirm` and expect 400. It
+   * got one only because body validation ran BEFORE the auth check — the defect
+   * Gate C recorded as N-7, where an unauthenticated caller could walk a
+   * protected route's schema one 400 at a time.
+   *
+   * Now the route refuses first, so an anonymous caller gets 401 for every body,
+   * valid or not. That is the fix working, and the test above is the security
+   * property it protects.
+   *
+   * **The validator coverage is not dropped, it is moved to the schema itself** —
+   * and this is strictly more coverage than before, because the schema can be
+   * exercised for every rejected shape without needing a session for each. The
+   * contract is `confirmRequest`; asserting it directly tests the thing that
+   * defines the contract rather than one route's plumbing.
+   */
+  it('the shared validator still rejects every malformed body — asserted on the schema', () => {
     for (const body of [
       {},
       { citationText: '' },
       { citationText: 'x', judgmentId: 'not-a-uuid' },
     ]) {
-      const res = await app.request('/verify/confirm', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      assert.equal(res.status, 400, `should have rejected ${JSON.stringify(body)}`);
+      assert.equal(
+        confirmRequest.safeParse(body).success,
+        false,
+        `confirmRequest should have rejected ${JSON.stringify(body)}`,
+      );
     }
+    // And it still accepts a well-formed one, so the check above is not vacuous.
+    assert.equal(
+      confirmRequest.safeParse({
+        citationText: '2022 INSC 690',
+        judgmentId: '00000000-0000-0000-0000-000000000000',
+      }).success,
+      true,
+    );
+  });
+
+  it('N-7: an anonymous caller gets 401 for a MALFORMED body too, never 400', async () => {
+    /**
+     * The ordering itself, asserted with a body that would definitely have
+     * failed validation. A test using a VALID body would pass even with the
+     * ordering reversed, which is what makes this the one worth keeping.
+     */
+    const res = await app.request('/verify/confirm', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ citationText: 'x', judgmentId: 'not-a-uuid' }),
+    });
+    assert.equal(res.status, 401, 'the schema is still walkable without a session');
+    const body = (await res.json()) as { error?: { code: string } };
+    assert.equal(body.error?.code, 'AUTH_REQUIRED');
   });
 });

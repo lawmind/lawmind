@@ -20,6 +20,7 @@ import { after, before, describe, it } from 'node:test';
 import postgres from 'postgres';
 
 import { createApp } from '../app.ts';
+import { savedSearchBody } from './saved.ts';
 
 const sql = postgres(process.env['DATABASE_URL'] ?? '', { max: 2, onnotice: () => {} });
 
@@ -71,13 +72,47 @@ describe('saved searches', () => {
     }
   });
 
-  it('rejects a language outside the contract', async () => {
+  /**
+   * N-7 moved WHERE this is asserted, not WHAT it asserts.
+   *
+   * This used to post `language: 'fr'` to `/saved-searches` and expect 400. It
+   * got one only because body validation ran BEFORE the auth check — the defect
+   * Gate C recorded as N-7. The route now refuses first, so an anonymous caller
+   * gets 401 whatever the body says.
+   *
+   * The contract is `savedSearchBody`, so it is asserted on the schema, which
+   * also lets it check the accept case — something the route test never could
+   * without a session.
+   */
+  it('rejects a language outside the contract', () => {
+    assert.equal(
+      savedSearchBody.safeParse({ query: 'anticipatory bail', language: 'fr' }).success,
+      false,
+      'fr is outside the contract and must not parse',
+    );
+    for (const language of ['en', 'hi']) {
+      assert.equal(
+        savedSearchBody.safeParse({ query: 'anticipatory bail', language }).success,
+        true,
+        `${language} is in the contract and must parse — otherwise the check above is vacuous`,
+      );
+    }
+  });
+
+  it('N-7: an out-of-contract body still gets 401 without a user, never 400', async () => {
+    /**
+     * The ordering, asserted with a body that would definitely have failed
+     * validation. With a VALID body this would pass even if the ordering were
+     * reversed, which is exactly why the malformed one is the case worth keeping.
+     */
     const res = await app.request('/saved-searches', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ query: 'anticipatory bail', language: 'fr' }),
     });
-    assert.equal(res.status, 400);
+    assert.equal(res.status, 401, 'the schema is still walkable without a session');
+    const body = (await res.json()) as { error?: { code: string } };
+    assert.equal(body.error?.code, 'AUTH_REQUIRED');
   });
 
   it('carries no delivery state — PD-5, and the column must never come back', async (t) => {
