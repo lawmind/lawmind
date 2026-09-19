@@ -439,3 +439,91 @@ Round record: `docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`.
 `UNKNOWN`: the Gazette PDF text itself (the PIB copy did not decode), so the Act's clause
 lettering and the exact publication day (13 vs 14 Nov 2025 in one secondary source) rest on
 secondary sources. Hence `DPDP_EFFECTIVE_DATE_RECHECK = REQUIRED_BEFORE_PUBLIC_LAUNCH`.
+
+---
+
+# AMENDMENT A2 — DURABLE AUTHORITY HISTORY
+
+Recorded by SHIP S4-A2, 19 September 2026. Round record:
+`docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md`.
+
+## Why A2 patched v7.4 instead of becoming v7.5
+
+A2 carries two founder decisions and one strategic thesis — enough content that
+minting v7.5 would have felt tidy. It would also have been the second-worst
+outcome available, because the worst is what nearly happened: a separate "A2
+roadmap" sitting beside v7.4, leaving every future agent to work out which of two
+documents governs.
+
+A1 already solved this. The version stays v7.4, the prompts stay v5, the governing
+files are patched in place, the pre-edit bytes and sha256 are recorded in the
+manifest, and the round record holds the reasoning. A2 reuses that mechanism
+exactly rather than inventing a parallel authority architecture.
+
+`pnpm authority:check` recomputes every manifest entry, so the mechanism is
+verified rather than asserted.
+
+## What A2 superseded, and what it deliberately did not delete
+
+**Superseded.** The two-programme beta model — a 3–5 advocate shadow beta followed
+by a separate 10–30 advocate closed beta — is replaced by one staged ~100-lawyer
+private beta. The original §16 text is preserved beneath the new structure as
+§16.5, unedited, because its measurement discipline is still correct and because
+`SHADOW_BETA_3_5 = NOT_EVIDENCED_IN_CURRENT_GATE_C_ACCEPTANCE` is a true historical
+statement. Historical truth is append-only (§1.1); a superseded plan is not a false
+one.
+
+**Deferred, not abandoned.** Play and App Store submission, the store packs, AAB
+submission proof, Apple review access and notes, final store screenshots, IAP and
+public store commerce all move out of the APK-beta blocker set and into public-store
+readiness (§14.13.1, §17.0). iOS remains in product and public-launch scope (§0.4.2).
+A future round that finds these rows outside the Gate-D list must read them as
+resequenced, not cancelled — which is why both sections say so in terms.
+
+**Unchanged.** Product scope, every disabled capability, `CITATION_BULK_APPLY = HOLD`,
+`PUBLIC_SEMANTIC = DISABLED`, the citation harness, the eCourts grant conditions, the
+three agents and their states, and every carried reliability item N-2 … N-9 including
+the `matter_authorities` rollback defect. A2 expanded no gate and enabled nothing.
+
+## The sequencing correction, stated honestly
+
+v7.4 §13 moved the persistent beta plane **before** the Gate-D device matrix, for a
+good reason: serious remote and device testing needs a stable origin. A2 does not
+say that reasoning was wrong. It says the founder's cost priority changes *when* the
+money starts, not *whether* the proof happens — hence a two-stage gate (§13.1.1)
+rather than a reordering of the evidence. Stage A closes everything achievable
+locally; Stage B buys the smallest environment that can carry final remote
+acceptance, the staged beta and Gate E. A cost recommendation is not spend
+authorization, and `PROVISIONING_AUTHORIZED = NO` survives S4-R0.
+
+## Two facts A2 recorded from primary sources rather than memory
+
+**Android developer verification.** Read from Google's own documentation on
+19 Sep 2026: limited distribution caps at **20 devices per APK**, and enforcement
+begins 30 Sep 2026 in **Brazil, Indonesia, Singapore and Thailand**, expanding
+globally in 2027+. India is not in that wave. So the limited-distribution path is
+unsuitable for a ~100-lawyer cohort, and nothing blocks a direct APK beta in India
+today. Recorded in roadmap §16.4 and on the frontier radar. This refines rather than
+contradicts `docs/CURRENT_STATE.md` §9 and the `PLAY_CONSOLE_2026_09_30` row above:
+the date is a verify action, not a publish deadline, and LawMind's Play console state
+has still never been observed.
+
+**Windows → Linux collation.** The source database is PostgreSQL 18.6, UTF8,
+`English_United States.1252`. A Linux target cannot reproduce that collation, so
+`WINDOWS_LINUX_COLLATION_EQUAL = NO` and a completed restore is not an identical
+one. This is a correctness item carried into S4-R0/S4-R1 (§13.1.3), not a hosting
+cost line.
+
+## What A2 is not
+
+A2 is strategy. §26's programs — Primary Source Fabric, Source Passport, five-clock
+freshness, the court event graph, authority intelligence, provenance reconstruction,
+source disagreement, the Indian legal research benchmark, model independence, the
+Delhi HC source lab — create **no** implementation task, **no** schema migration and
+**no** UI by themselves. `docs/SCHEMA_TRUTH.md` is untouched. Each program becomes
+work only through its own bounded prompt, prioritised against the private-beta
+critical path.
+
+The frontier radar is explicitly non-governing. A roadmap that absorbs a press
+release has adopted a vendor's claim as its own evidence, and competitive pressure
+is never permission to bypass a capability gate.

@@ -35,6 +35,33 @@
 > | 15.2 | billing wording: supported PBL8+ (PBL9 is current), re-measure before implementing |
 > | 20.4 | **NEW** official policy rechecks recorded 18 Sep 2026 |
 
+> **AMENDMENT A2 — DATA MOAT & LEGAL-INTELLIGENCE FRONTIER, 19 September 2026.**
+> SHIP S4-A2 integration round. Patched in place by the A1 mechanism: the version
+> stays **v7.4**, the prompts stay **v5**, there is no v7.5 and no parallel A2
+> roadmap. Pre-edit bytes and sha256 are recorded in
+> `LAWMIND_V7_4_AUTHORITY_MANIFEST.json` → `amendments[1].preEditFiles`; A1's own
+> history is preserved byte-for-byte beside it.
+> Round record: `docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md`.
+>
+> A2 carries **two** founder decisions and **one** strategic thesis. It enables no
+> capability, changes no product code, and expands no gate.
+>
+> | § | Change |
+> |---|---|
+> | 0.4 | **NEW** founder decisions: ~100-lawyer private beta on a direct signed Android APK; store publication is NOT a prerequisite; `BUILD AGGRESSIVELY / SPEND CONSERVATIVELY` |
+> | 13.1 | Spend gate becomes **two-stage**: Stage A local candidate closure at zero/low spend, Stage B remote-only proof after explicit founder authorization |
+> | 14.13 | Gate-D pass definition **reclassified** for the APK private beta; store-submission rows move to public-store readiness and are deferred, not abandoned |
+> | 15 | Billing / IAP / Play Billing **not required** for the private beta |
+> | 16 | The 3–5 shadow beta + 10–30 closed beta two-programme model is **SUPERSEDED** by one staged ~100-lawyer private beta (Wave 0 canary → Wave 1 → Wave 2) |
+> | 16.3 | **NEW** APK private-beta release contract |
+> | 17 | Sprint 5 resequenced as the post-private-beta public-release path |
+> | 24 | Execution order updated for the private-beta sequencing and the two-stage spend gate |
+> | 26 | **NEW** Amendment A2 strategic programs: Primary Source Fabric, Source Passport, five-clock freshness, court event graph, authority intelligence, historical provenance, source disagreement, the Indian legal research benchmark, model independence, Delhi HC source lab, frontier promotion governance |
+>
+> **A2 is strategy, not implementation.** Nothing in §26 is built, migrated,
+> schema'd or surfaced by this amendment. Competitive pressure is never permission
+> to bypass a capability gate.
+
 ---
 
 # 0. FOUNDER AMENDMENTS — BINDING
@@ -107,6 +134,61 @@ CELLULAR_BEARER_REQUIREMENT = N/A — SUPERSEDED_BY_CURRENT_FOUNDER_INSTRUCTION
 ```
 
 This is not a claim that Wi-Fi and carrier networks are technically identical.
+
+## 0.4 Private beta, distribution and spend — FOUNDER DECISIONS (A2, 19 September 2026)
+
+These are **current explicit founder instructions** and therefore sit at the top of
+the authority order. Where they conflict with earlier sequencing in this roadmap,
+they win, and the earlier sequencing is marked SUPERSEDED rather than deleted.
+
+### 0.4.1 The private beta is one programme of ~100 already-contacted lawyers
+
+```text
+PRIVATE_BETA_TARGET               = ~100 PRACTISING LAWYERS
+PRIVATE_BETA_CONTACT_STATUS       = ALREADY_CONTACTED
+PRIVATE_BETA_PRIMARY_DISTRIBUTION = DIRECT SIGNED ANDROID APK
+PLAY_STORE_BEFORE_PRIVATE_BETA    = NO
+APP_STORE_BEFORE_PRIVATE_BETA     = NO
+```
+
+This **supersedes** the two-programme model in §16 and §17 (a 3–5 advocate shadow
+beta, then a separate 10–30 advocate closed beta). There is now **one** beta
+programme, staged internally. §16 carries the replacement structure.
+
+### 0.4.2 iOS is not cancelled — only its store submission is resequenced
+
+```text
+ADVOCATE_PRODUCT_ANDROID = IN_SCOPE   (private-beta delivery platform)
+ADVOCATE_PRODUCT_IOS     = IN_SCOPE   (product and public-launch scope)
+IOS_APP_STORE_SUBMISSION = NOT A PREREQUISITE TO STARTING THE ANDROID APK BETA
+```
+
+Do not delete iOS work, and do not spend Gate-D calendar on App Store submission
+mechanics that deliver nothing to an Android APK cohort. §0.1 is unchanged:
+`ADVOCATE_DESKTOP_WEB = DO_NOT_BUILD`.
+
+### 0.4.3 Cost control
+
+```text
+BUILD AGGRESSIVELY
+SPEND CONSERVATIVELY
+```
+
+No paid infrastructure is created because a roadmap phase mentions it. Before any
+recurring spend, maximise local development, the existing workstation and
+database, existing CI, existing release artifacts, existing Gate-C evidence and
+free GitHub Actions. Larger runners, GPU hosts, persistent staging, managed
+monitoring vendors, paid model infrastructure, extra databases, HNSW hosts and
+store/billing infrastructure are **not purchased** unless a current critical-path
+requirement actually needs them. The mechanism is §13.1's two-stage spend gate.
+
+### 0.4.4 What A2 does not do
+
+A2 is a governance and sequencing amendment. It enables no capability, changes no
+product or API behaviour, writes nothing to the database or corpus, provisions
+nothing, and creates no paid resource. `PROVISIONING_AUTHORIZED = NO` remains the
+state after S4-R0 produces its package; a cost recommendation is not spend
+authorization.
 
 ---
 
@@ -1235,6 +1317,95 @@ Gate-C measured baseline:
 
 Re-use the preserved release pack if its lineage is still valid rather than exporting hundreds of GiB again for no reason.
 
+### 13.1.1 Two-stage spend gate (A2, 19 September 2026)
+
+v7.4 as written moved the persistent beta plane **before** the Gate-D device
+matrix, because serious remote and device testing needed a stable origin. The
+founder's A2 priority reverses the emphasis without deleting that reasoning:
+complete as much of the application as possible **before** recurring spend starts.
+
+The correction is a two-stage gate, not a reordering of the proof.
+
+**Stage A — local / zero-to-low-spend candidate closure.**
+
+Continue aggressive application development locally until:
+
+```text
+PRIVATE_BETA_CANDIDATE_LOCAL = READY_EXCEPT_REMOTE_ONLY_PROOF
+```
+
+Everything that does **not** require a persistent public backend closes first:
+client defects; accessibility; large-judgment rendering; local lifecycle
+behaviour; release APK generation and signing; security and static checks; auth
+contract correctness; deletion logic; capability gating; current-claim parity; the
+test suite; the API contract; rollback logic implementation; deployment tooling;
+telemetry instrumentation.
+
+**Do not provision a persistent beta merely to perform work that is available
+locally.**
+
+**Stage B — remote-only proof.**
+
+Only when the remaining blockers genuinely require remote infrastructure does SHIP
+present the measured hosting package (§13.1, S4-R0), the founder explicitly
+authorizes the spend, and SHIP provisions the **smallest** environment that can
+safely support final remote acceptance, the staged ~100-lawyer private beta and
+Gate-E evidence.
+
+```text
+NO STANDING CLOUD MONTHS BEFORE THE CANDIDATE NEEDS THEM
+PROVISIONING_AUTHORIZED = NO   until explicit founder approval
+```
+
+A cost recommendation is not spend authorization. After S4-R0 delivers its
+package, SHIP returns to Stage A closure rather than idling against a pending
+hosting decision.
+
+### 13.1.2 Sizing inputs corrected by S4-D0 (A2)
+
+S4-R0's sizing assumption changes from a 10–30 advocate closed beta to the
+**~100-lawyer staged private beta**. Do not assume all 100 are concurrent —
+estimate concurrency separately and state the assumption.
+
+Price the base topology from the **serving** dataset, not the research footprint:
+
+```text
+LOCAL DATABASE   ~343 GB   (includes research/probe tables that do not serve)
+SERVING DATASET  ~250 GB   (the number infrastructure is priced from)
+```
+
+Quoting 343 GB without naming the excluded research and probe tables overstates
+the requirement. Both numbers are DATA S4-D0 measurements.
+
+Release-pack state, accepted from S4-D0 and **not** re-derived here:
+
+```text
+RELEASE_PACK           = D:/lawmind-release-r32b/pack3
+RELEASE_PACK_LINEAGE   = PARTIAL — manifest hash verified, 8/8 files present,
+                         8/8 byte lengths match, schema lineage matches
+PAYLOAD_SHA256         = NOT REVALIDATED
+PACK3_REUSE_CANDIDATE  = YES
+PACK3_FULL_INTEGRITY   = NOT_YET_PROVEN
+```
+
+Hashing 72.6 GiB is cheap **when S4-R0/S4-R1 actually needs the pack** and is not
+performed in a governance round.
+
+### 13.1.3 Windows → Linux collation is a correctness question, not a cost one (A2)
+
+S4-D0 measured the source database as PostgreSQL 18.6, UTF8, with
+`English_United States.1252` collation and ctype. A Linux target cannot literally
+reproduce that Windows collation.
+
+```text
+WINDOWS_LINUX_COLLATION_EQUAL = NO
+```
+
+**Do not describe a Linux restore as identical.** Before persistent beta
+deployment, SHIP must either prove the required collation-dependent search and
+index behaviour on the target Linux environment, or rebuild the affected indexes
+appropriately. This is carried into S4-R0/S4-R1 and is not solved by A2.
+
 ## 13.2 Pre-beta reliability closure
 
 Before inviting advocates:
@@ -1529,6 +1700,58 @@ Gate D requires:
 22. (A1) real alert delivery proven on the persistent beta plane (§13.5);
 23. (A1) `EXTERNAL_DELETE_AUTH_V1` implemented to its contract, R33 mobile redirect unchanged.
 
+### 14.13.1 Reclassification for the APK private beta (A2, 19 September 2026)
+
+The list above is **not shortened**. Public-store requirements are **moved to the
+gate they actually belong to**, because handing ~100 Indian advocates a directly
+distributed signed APK does not require a store listing.
+
+**PRIVATE-BETA / GATE-D CRITICAL** — required before the ~100-lawyer APK beta:
+
+```text
+PERSISTENT_BETA_READY            (when the remote environment is finally activated)
+ANDROID RELEASE APK
+HIGH-END ANDROID REGRESSION
+REPRESENTATIVE LOW/MID ANDROID
+ACCESSIBILITY
+LARGE JUDGMENT
+POOR NETWORK
+BACKGROUND / RESUME
+AUTH
+DELETION IN APP
+PRIVACY / SUPPORT SURFACE
+PRODUCTION-LIKE PROVENANCE
+ENVIRONMENT LABEL
+MATTER_AUTHORITY ROLLBACK
+FULL API SUITE
+BACKUP / RESTORE
+CAPABILITY / CLAIM PARITY
+NO MONITORING CLAIMS
+PRIVATE-BETA TELEMETRY
+APK DISTRIBUTION CONTRACT        (§16.3)
+CANARY WAVE READY                (§16.1, Wave 0)
+```
+
+**PUBLIC STORE RELEASE — DEFERRED UNTIL AFTER THE PRIVATE BETA:**
+
+```text
+PLAY STORE SUBMISSION      ·  PLAY STORE PACK
+AAB SUBMISSION PROOF       ·  APP STORE SUBMISSION
+APP STORE PACK             ·  APPLE REVIEW ACCESS
+APPLE REVIEW NOTES         ·  FINAL STORE SCREENSHOTS
+IAP / BILLING              ·  PUBLIC STORE COMMERCE
+```
+
+**Deferred is not abandoned.** iOS physical and product work remains a
+public-launch requirement (§0.4.2); it is simply not required to hand Android
+lawyers an APK. §14.14's store/release account readiness rows and §14.9's Apple
+build proof stay in the roadmap and move with the store work. A future round that
+reads this section must not record the deferred rows as cancelled.
+
+Gate-D rows 1 and 10 above (physical iPhone, Apple Xcode26+/iOS26+ build) are the
+one place the two lists touch: the iPhone build proof is **retained** as product
+evidence and is **not** a private-beta distribution blocker.
+
 RED does not run Gate D.
 
 ## 14.14 Store / release account readiness (A1)
@@ -1666,9 +1889,140 @@ Monitoring cannot be sold merely because billing exists.
 
 All twelve monitoring conditions and measured cadence economics remain separate prerequisites.
 
+## 15.4 Commerce is not required for the private beta (A2, 19 September 2026)
+
+```text
+BILLING_IMPLEMENTATION = NOT REQUIRED
+IAP                    = NOT REQUIRED
+PLAY BILLING           = NOT REQUIRED
+```
+
+for the ~100-lawyer private beta, unless the founder separately changes the
+decision. Do not build paywalls, billing SDKs or fake premium cards before
+private-beta evidence establishes value. **Commercial decisions follow product
+evidence.**
+
+The `LAUNCH_COMMERCE = FREE_BETA | PAID_V1` founder decision above is not deleted;
+it moves to the public-release path (§17), where it actually binds. A Gate-D HOLD
+on commercial state is not raised against the private beta.
+
 ---
 
-# 16. SHADOW BETA BEFORE FULL CLOSED BETA
+# 16. PRIVATE BETA — ONE STAGED PROGRAMME (A2)
+
+> **SUPERSEDED, 19 September 2026 (A2).** The two-programme model below — a 3–5
+> advocate shadow beta, then a separate 10–30 advocate closed beta — is replaced by
+> **one** private-beta programme of ~100 already-contacted practising lawyers,
+> staged internally into waves. The original text is kept unedited beneath the new
+> structure because its measurement discipline is still exactly right, and because
+> `SHADOW_BETA_3_5 = NOT_EVIDENCED_IN_CURRENT_GATE_C_ACCEPTANCE` remains a true
+> historical statement that must not be rewritten.
+
+## 16.1 Wave structure
+
+One cohort, one environment, one candidate line, staged exposure.
+
+```text
+WAVE 0 — CANARY  ~5 lawyers, drawn from the SAME contacted cohort
+
+  purpose: installation · APK signing and download · auth · basic core loop ·
+           crash / ANR / OOM · telemetry · support path ·
+           catastrophic trust or safety defects
+
+  NO separate infrastructure · NO separate recruitment · NO separate beta program
+
+        ↓  freeze metric definitions and severe-defect definitions here
+
+WAVE 1  ~20–25 total
+
+  validate: capacity · support load · retrieval behaviour · poor network ·
+            device diversity · research workflow
+
+        ↓
+
+WAVE 2  expand toward ~100 lawyers
+```
+
+The wave **count** may be adjusted from evidence. The **principle** may not:
+
+```text
+small canary first · same beta environment · same cohort ·
+same candidate line · no separate shadow-beta project
+```
+
+**Thresholds freeze after Wave 0 and before Wave 1 — never after seeing the full
+~100-person cohort.** This is the one discipline the superseded §16.2 got right and
+A2 keeps verbatim in force: do not tune a success definition after observing the
+population it grades.
+
+## 16.2 Private-beta success metrics (A2 strengthens, does not replace, RTC)
+
+Measure: research task completion · time to usable authority · **time to verified
+useful authority** · another database required, and why · query reformulations ·
+source opens · evidence / passage inspection · currentness and treatment
+inspection · authority save · matter linkage · resume / reconstruction friction ·
+trust-state confusion · freshness confusion · **authority-currentness corrections
+found by users** · crash / ANR / OOM · auth failure · search latency · poor-network
+failure · support incidents.
+
+`docs/product/RESEARCH_TASK_SET_V1.json` remains the task set. **Do not coach
+lawyers into passing tasks.**
+
+## 16.3 APK private-beta release contract
+
+Before inviting the cohort there must be a real release candidate, recorded with:
+
+```text
+SIGNED RELEASE APK       ·  PACKAGE IDENTITY
+VERSION CODE             ·  VERSION NAME
+BUILD SHA / COMMIT SHA   ·  APK SHA256
+RELEASE ID               ·  ENVIRONMENT ID
+HTTPS DOWNLOAD SOURCE    ·  INSTALL INSTRUCTIONS
+UPGRADE INSTRUCTIONS     ·  ROLLBACK / PREVIOUS GOOD APK
+CHANGELOG                ·  CRASH / ERROR OBSERVABILITY
+SUPPORT / FEEDBACK PATH
+```
+
+**Never distribute a debug build as the private beta merely because it installs
+easily.** Play Store publication is not required, and an AAB is not required for
+this APK beta — AAB and store work move to public-store readiness (§14.13.1).
+
+## 16.4 Android developer verification — a distribution policy item, not a reason to publish
+
+Rechecked against Google's own documentation on **19 September 2026** (A2), because
+a remembered version of this rule is exactly how a false blocker enters a roadmap:
+
+```text
+LIMITED_DISTRIBUTION_DEVICE_LIMIT = 20 devices per APK
+PRIVATE_BETA_COHORT               = ~100 lawyers
+=> LIMITED_DISTRIBUTION_SUITABLE  = NO
+```
+
+Google's limited-distribution path (no government ID, no registration fee, aimed at
+students, teachers and hobbyists) caps installs at **20 devices per APK**, which is
+far below this cohort. Use the normal direct/private distribution path appropriate
+to a professional developer instead.
+
+Enforcement, as documented on the recheck date: user-facing enforcement begins
+**30 September 2026** in **Brazil, Indonesia, Singapore and Thailand** on
+participating app stores, expanding globally in **2027 and beyond**. **India is not
+in the September 2026 wave.** Therefore:
+
+```text
+ANDROID_DEVELOPER_VERIFICATION = FUTURE DISTRIBUTION REQUIREMENT
+BLOCKS_THE_INDIAN_APK_PRIVATE_BETA_TODAY = NO
+```
+
+Keep global developer-verification readiness as a distribution requirement to close
+before broad enforcement reaches India. Do **not** spend implementation time on Play
+submission merely to solve a problem that does not block a direct APK beta today.
+This refines, and does not contradict, `docs/CURRENT_STATE.md` §9: the 30 September
+date is a **verify** action, not a publish deadline, and LawMind's Play console
+state has still never been observed.
+
+---
+
+## 16.5 SUPERSEDED — the original shadow-beta text, preserved
 
 The original roadmap expected 3–5 practising advocates before freezing larger-beta thresholds.
 
@@ -1684,7 +2038,7 @@ Do not pretend it happened.
 
 Run it early in Sprint 4 once persistent beta is usable.
 
-## 16.1 Use the existing curated task set
+### 16.5.1 Use the existing curated task set
 
 The repository already contains `docs/product/RESEARCH_TASK_SET_V1.json`.
 
@@ -1705,7 +2059,7 @@ Record:
 - trust-state confusion;
 - resume/reconstruction friction.
 
-## 16.2 Freeze thresholds after observing, not before
+### 16.5.2 Freeze thresholds after observing, not before
 
 After 3–5 advocates:
 - establish RTC baseline;
@@ -1715,11 +2069,46 @@ After 3–5 advocates:
 
 ---
 
-# 17. CLOSED BETA — SPRINT 5
+# 17. SPRINT 5 — AFTER THE PRIVATE BETA
 
-**Target:** 3–16 October, only after Gate D.
+> **RESEQUENCED, 19 September 2026 (A2).** The separate 10–30 advocate closed beta
+> is superseded by §16's staged ~100-lawyer private beta. Sprint 5 is now the
+> **post-private-beta public-release path**, and the measurement list below applies
+> to the private-beta cohort instead of a second recruitment round. The target dates
+> are historical and, as always, never override evidence.
 
-10–30 practising advocates against frozen product definitions and persistent beta infrastructure.
+## 17.0 Post-beta public release path (A2)
+
+```text
+PRIVATE BETA EVIDENCE
+        ↓
+PRODUCT / DATA CORRECTIONS
+        ↓
+RED GATE E
+        ↓
+CANDIDATE FREEZE
+        ↓
+IOS FINAL PHYSICAL / RELEASE PROOF
+ANDROID AAB / PLAY RELEASE PROOF
+        ↓
+STORE PACKS
+        ↓
+PLAY / APP STORE SUBMISSION
+        ↓
+PUBLIC RELEASE
+```
+
+Store work accelerates **only once private-beta evidence says the product deserves
+to ship**. The `LAUNCH_COMMERCE = FREE_BETA | PAID_V1` decision (§15) binds here,
+not against the APK beta.
+
+---
+
+## 17.1 Measurement programme (applies to the private-beta cohort)
+
+**Target (historical):** 3–16 October, only after Gate D.
+
+Against frozen product definitions and persistent beta infrastructure.
 
 Measure:
 - RTC;
@@ -1739,7 +2128,7 @@ Measure:
 
 Do not coach users.
 
-## 17.1 Competitor benchmark
+### 17.1.1 Competitor benchmark
 
 Use ordinary licensed/user access only. No scraping or terms circumvention.
 
@@ -1747,7 +2136,7 @@ Use the same bounded task classes where reasonable.
 
 Record observed behavior, not competitor marketing claims.
 
-## 17.2 Product-decision outputs
+### 17.1.2 Product-decision outputs
 
 Only after beta evidence:
 
@@ -2119,6 +2508,27 @@ No promotional-website design decision is required now.
 
 # 24. IMMEDIATE EXECUTION ORDER
 
+> **UPDATED 19 September 2026 (A2).** Phases 0–4 below are the v7.4 original and
+> stay readable as written. A2 changes the sequencing in three specific ways, and
+> where the two disagree, this block wins.
+>
+> 1. **Phase 0 is complete.** Rotation (§23 P0) remains OPEN on the founder; the
+>    transition seal ran as S4-T0.1/T0.2/T0.3, the continuity census ran as
+>    DATA S4-D0, and SHIP S4-R0 (hosting/cost package, **no provisioning**) is next.
+> 2. **Phase 1 splits at the two-stage spend gate (§13.1.1).** Provisioning does not
+>    follow S4-R0 automatically. SHIP returns to Stage A local candidate closure and
+>    asks for spend only when remote proof is genuinely on the critical path.
+> 3. **Phase 2 items 14–15 are superseded** by §16's staged ~100-lawyer private beta:
+>    Wave 0 canary (~5) → freeze definitions → Wave 1 (~20–25) → Wave 2 (~100).
+>    Phase 2 item 13 (store pack) and Phase 4's store submission move behind the
+>    private beta per §14.13.1. **Phase 3's "10–30 advocates" is superseded** by the
+>    same one-programme model; Sprint 5 becomes the post-beta public path (§17.0).
+>
+> A2's own parallel strategic tracks (§26) — Delhi HC permission, Primary Source
+> Fabric design, benchmark design, frontier watch, the source opportunity register —
+> **may not consume the release critical path** unless one uncovers a genuine P0
+> truth or safety defect.
+
 ## Phase 0 — today
 
 1. Founder performs credential rotation + backup-key escrow.
@@ -2200,3 +2610,320 @@ Verified research becomes matter context that can be resumed instead of rediscov
 Builds, schedulers, search latency, backups, restores, capability states and public claims are measured, not inferred.
 
 > **better legal data × defensible legal truth × faster advocate workflow × retained matter context × repeat usage**
+
+---
+
+# 26. AMENDMENT A2 — DATA MOAT & LEGAL-INTELLIGENCE FRONTIER
+
+**Installed 19 September 2026, SHIP S4-A2.** Strategy, not implementation. No
+schema migration, no UI, no capability, no corpus mutation follows from this
+section by itself. Every program here becomes work only through its own bounded
+prompt, prioritised against the private-beta critical path.
+
+## 26.0 The thesis
+
+LawMind does **not** answer competitor pressure by expanding the current feature
+surface. The defensible moat is:
+
+```text
+VERIFIED INDIAN LEGAL DATA
++ PRIMARY-SOURCE PROVENANCE
++ RETRIEVAL
++ AUTHORITY INTELLIGENCE
++ TEMPORAL / CURRENTNESS STATE
++ EXACT EVIDENCE
++ EVALUATION
++ DETERMINISTIC CITATION RENDERING
++ LAWYER WORKFLOW
+```
+
+Reasoning models are replaceable. **The model proposes. Evidence proves.**
+
+## 26.1 Current product scope remains frozen
+
+A2 expands nothing. The Gate-D product is unchanged:
+
+```text
+Search → Results → Reader → Source / Evidence → Save → Matter → Return / Refetch
+```
+
+```text
+ADVOCATE_PRODUCT_ANDROID = IN_SCOPE     ADVOCATE_PRODUCT_IOS = IN_SCOPE
+ADVOCATE_DESKTOP_WEB     = DO_NOT_BUILD
+
+PUBLIC_SEMANTIC          = DISABLED     HNSW_PUBLIC          = DISABLED
+CITATION_BULK_APPLY      = HOLD
+MONITORING               = DISABLED_NOT_READY
+BRIEFING                 = DISABLED_NOT_READY
+DRAFTING                 = POST_V1      HINDI GENERATION     = POST_V1
+UPLOAD / OCR             = DISABLED / LATER
+ECOURTS_OBSERVATIONS     = 0
+```
+
+**Competitive pressure is never permission to bypass a capability gate.** A2 does
+not authorize `CITATION_BULK_APPLY`, does not enable public semantic search, does
+not build HNSW and does not start systematic Delhi HC ingestion.
+
+## 26.2 Primary Source Fabric
+
+An explicit strategic program. Every source eventually receives a **Source
+Contract** covering:
+
+source identity · owner · jurisdiction · court/body/publisher · source class ·
+canonical origin · officialness · authorization basis · authorization state ·
+allowed acquisition · allowed storage · allowed reproduction · allowed linking ·
+authentication · CAPTCHA / manual constraints · refresh expectation · identity
+keys · parser version · first observed · last observed · latest artifact ·
+coverage frontier · integrity / hash policy · observation reliability · retention ·
+downstream allowed capabilities · explicit prohibitions · review / expiry.
+
+Binding rules, and the reason each exists:
+
+```text
+OFFICIAL                  != AUTOMATIC PERMISSION
+TECHNICALLY ACCESSIBLE    != AUTHORIZED
+ADAPTER WORKS             != PUBLIC FEATURE
+ONE SOURCE'S AUTHORIZATION != ANOTHER SOURCE'S AUTHORIZATION
+```
+
+The last line is the one that has actually cost this project time: CLAUDE.md §6a
+authorizes BharatLaw, Supreme AI and eCourts by name, and nothing about those
+three grants extends to a fourth source. `Supreme AI` and `Supreme Today` remain
+different sources.
+
+## 26.3 Source Passport
+
+The long-term authority-provenance architecture. Eventually attached to
+authorities: canonical case identity · court · date · official source URL(s) ·
+observed source(s) · preferred source and the reason · first seen · last verified ·
+original artifact hash · text hash · extraction / OCR method · paragraphization
+version · metadata conflicts · content conflicts · corrigenda · treatment state ·
+treatment verification time · coverage frontier at verification · authorization
+class · uncertainty.
+
+**No schema migration now. No UI now.** `docs/SCHEMA_TRUTH.md` is untouched by A2.
+
+## 26.4 Five-clock freshness
+
+The canonical temporal model. Five clocks, not one:
+
+```text
+LATEST_HELD            the newest thing we hold
+SOURCE_FRONTIER        the newest thing the source has published
+COVERAGE_FRONTIER      the point up to which we believe we are COMPLETE
+INGEST_FRONTIER        the point our ingestion has actually processed to
+VERIFICATION_FRONTIER  the point up to which verification has run
+```
+
+Separate state dimensions, never folded into the clocks:
+
+```text
+OBSERVATION_CONFIDENCE
+SOURCE_COMPLETENESS_STATE
+SOURCE_AVAILABILITY_STATE
+```
+
+Older language maps explicitly onto these rather than spawning duplicate concepts.
+
+**Never allow `newest judgment date = yesterday` to silently become `coverage
+complete through yesterday`.** DATA S4-D0 already falsified that equivalence: the
+HC honest coverage frontier is **2026-07-01** while daily ingest continues, and
+`sci-live` is producing current Supreme Court judgments while being **absent from
+the existing freshness ledger**. A ledger that omits a running source cannot
+answer a currentness question, and the gap is invisible to any check that reads
+only the maximum date.
+
+## 26.5 Court event graph
+
+A strategic **research** track. Nothing is ingested for it by A2.
+
+```text
+CASE → SOURCE PUBLICATION → CAUSE-LIST VERSION → BENCH / COURTROOM CONTEXT
+     → OBSERVED EVENT → PRONOUNCEMENT → ORDER → JUDGMENT
+     → CORRIGENDUM / REVISION / TREATMENT
+```
+
+Mandatory non-inference invariants — each one is a wrong answer we would otherwise
+ship with confidence:
+
+```text
+LISTED_OBSERVED          != HEARING_OCCURRED
+DISPLAY_BOARD_OBSERVED   != FINAL_CASE_STATUS
+PRONOUNCEMENT_ENTRY      != JUDGMENT_TEXT_PUBLISHED
+MISSING_PDF              != NO_JUDGMENT_DELIVERED
+FAILED_FETCH             != NOTHING_CHANGED
+TIME_PASSING             != COURT_EVENT
+```
+
+Prefer append-only / versioned observations. An observation that is overwritten
+cannot later be distinguished from one that was never made.
+
+## 26.6 Authority intelligence
+
+The long-term moat, in dependency order:
+
+```text
+AUTHORITY → HIERARCHY / BENCH STRENGTH → LEGAL PROPOSITION
+→ EXACT SUPPORTING PASSAGE → TREATMENT → TEMPORAL VALIDITY
+→ SUBSEQUENT AUTHORITY → BINDING / PERSUASIVE CONTEXT
+→ SOURCE / PROVENANCE → CONFLICT / UNCERTAINTY
+```
+
+Binding:
+
+```text
+CITATION EXISTS != PROPOSITION SUPPORTED
+```
+
+`CITATION_BULK_APPLY` stays **HOLD**. A2 does not authorize it, and no amount of
+strategic enthusiasm for authority intelligence converts a held apply into a
+permitted one.
+
+## 26.7 Historical provenance reconstruction
+
+DATA S4-D0 measured that roughly **99.75%** of legacy rows carry NULL `source_id`
+and `authorization_basis` — provenance is populated only on the frontier.
+
+Record this as:
+
+```text
+DATA-QUALITY / PROVENANCE RECONSTRUCTION PROGRAM
+```
+
+and **not** as `CORPUS INVALID`. Future reconstruction must classify every value it
+writes:
+
+```text
+DIRECTLY_PROVEN · DETERMINISTICALLY_DERIVED · PROBABLE · CONFLICTING · UNKNOWN
+```
+
+**Never populate provenance merely because a dataset is likely to have come from a
+known bulk source.** A confident guess written into a provenance column is worse
+than a NULL, because the NULL is honest and the guess is not distinguishable from
+a measurement afterwards.
+
+Not Gate-D critical unless it falsifies a current public claim.
+
+## 26.8 Source disagreement
+
+When two legitimate copies of the same authority disagree, compare: artifact
+bytes / hash · text hash · case identity · CNR / case number · title · date · bench ·
+citation · paragraph structure · text · corrigenda · publication timestamps.
+
+**Classify the disagreement. Never silently collapse a substantive difference.**
+Picking a winner without recording that there was a contest is how a corpus loses
+the ability to answer "which version did the court actually issue".
+
+## 26.9 Indian legal research benchmark
+
+Evaluation is itself a moat. **Do not benchmark prose fluency.**
+
+Future benchmark classes: exact citation · case number · CNR · authority discovery ·
+fact-pattern precedent research · adverse authority · hierarchy / bindingness ·
+treatment / currentness · conflicting authority · procedural-law currentness ·
+source / provenance inspection · false-premise handling · citation accuracy ·
+exact passage support · temporal correctness · obsolete-authority detection ·
+source fidelity · ambiguity handling · abstention · matter save / reconstruction ·
+time-to-verified-authority · another-database requirement.
+
+Two rules, both learned the hard way in this repository:
+
+- **Freeze definitions and tasks before evaluating any system.** A benchmark whose
+  definitions move after the first result measures the definition, not the system.
+- **Agents may not modify hidden adversarial evaluation data.** A phrase list scores
+  100% on the documents it was written from; an evaluation an agent can edit is an
+  evaluation it will eventually pass for the wrong reason.
+
+## 26.10 Model independence
+
+```text
+MODEL = replaceable reasoning component
+
+LEGAL DATA · PROVENANCE · RETRIEVAL · AUTHORITY INTELLIGENCE · CURRENTNESS ·
+EVIDENCE · EVALUATION · CITATION RENDERING · WORKFLOW = the durable system
+```
+
+**No model output becomes authority by itself.** This is the same rule §2 of
+`CLAUDE.md` states for citations, generalised: the model references what retrieval
+handed it, and what renders comes from the database row.
+
+## 26.11 Delhi High Court — reference source laboratory
+
+Delhi HC becomes the **first deep source laboratory**. It is **not** an immediate
+scraping target.
+
+Research inventory (what exists, not what we take): judgments · orders · daily
+orders · cause list (advance, main, supplementary, revised, deletion, corrigendum,
+pronouncement) · case / filing status · CNR / case identity · display board ·
+roster · bench · courtroom · rules · practice directions · circulars ·
+notifications · e-DHCR / official reporting · corrections · withdrawals ·
+revisions.
+
+Current researched boundary:
+
+```text
+DHC_SYSTEMATIC_DATABASE_INGEST = BLOCKED_PENDING_WRITTEN_PERMISSION
+```
+
+Until written permission or a formal arrangement exists:
+
+```text
+NO systematic commercial mirror     NO production crawl
+NO CAPTCHA bypass                   NO authenticated-service automation
+NO bulk storage or reproduction based merely on accessibility
+```
+
+Allowed planning work: source schema · identity model · parser design **on lawful
+bounded fixtures** · direct linking where currently permitted · a permission or
+partnership request.
+
+**Delhi HC is not a Gate-D blocker.** The eCourts grant (CLAUDE.md §6a) authorizes
+eCourts and says nothing about Delhi HC's own systems — §26.2's fourth binding rule
+in its concrete form.
+
+## 26.12 Frontier radar and promotion governance
+
+The radar is `docs/intelligence/LEGAL_TECH_FRONTIER.md`, with
+`docs/intelligence/SOURCE_OPPORTUNITY_REGISTER.md` and
+`docs/research/DELHI_HIGH_COURT_PRIMARY_SOURCE_PILOT.md` beside it.
+
+```text
+FRONTIER_RADAR_GOVERNING = NO
+AUTO_PROMOTE_TO_ROADMAP  = NO
+DATED_INTELLIGENCE       = YES
+```
+
+Every entry separates: observation · date · source · verification class · vendor
+claim? · independently verified? · possible LawMind implication · falsifier / test ·
+promotion state.
+
+Promotion path — competitor behaviour creates **hypotheses**, not authority:
+
+```text
+EXTERNAL DEVELOPMENT → FRONTIER WATCH → PRIMARY-SOURCE VERIFICATION → FRONTIER RADAR
+        ↓
+DURABLE STRATEGIC IMPLICATION?
+   NO → WATCH
+   YES → FALSIFY / TEST → EVIDENCE STRONG?
+                             NO  → RADAR
+                             YES → ROADMAP AMENDMENT
+```
+
+**Do not paste competitor product announcements into v7.4.** A roadmap that absorbs
+a press release has adopted a vendor's claim as its own evidence.
+
+## 26.13 Agent posture after A2
+
+```text
+SHIP = ACTIVE      private-beta candidate closure is the critical path
+DATA = CONTINUOUS  no broad new mission from this round
+RED  = FROZEN      formal Gate E, specific high-risk falsification, or P0 only
+```
+
+A2 creates **later, bounded** DATA work — `sci-live` freshness accounting,
+five-clock freshness implementation, Source Contract / Passport implementation,
+`cited_authority` drift observability. Each receives its own narrow prompt after
+A2 is governing and after SHIP has prioritised it against the beta critical path.
+
+Explicitly not authorized by A2: systematic Delhi HC ingest · citation bulk apply ·
+HNSW. Do not waste an independent audit round validating governance text.

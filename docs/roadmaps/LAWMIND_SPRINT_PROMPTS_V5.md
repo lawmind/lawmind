@@ -14,6 +14,21 @@ Historical lane artifacts remain provenance and are never renamed.
 > the matching rows; (6) SHIP contract changes follow roadmap §3.7; stop-the-line follows
 > §3.6. S4-T0 ran as S4-T0.1: record `docs/ai/ship-s4-t0-1/AUTHORITY_RECONCILIATION.md`.
 
+> **AMENDMENT A2 — SHIP S4-A2, 19 September 2026.** Patched in place, version
+> unchanged (**prompts stay v5**, roadmap stays **v7.4**, no v7.5). Mirrors roadmap
+> v7.4 Amendment A2. Changes: (1) **§3 S4-R0** sizes for the ~100-lawyer staged
+> private beta instead of a 10–30 closed beta, prices from the ~250 GB **serving**
+> dataset rather than the ~343 GB local footprint, carries the Windows→Linux
+> collation correctness item, and stays `PROVISIONING_AUTHORIZED = NO`; (2) **§4
+> S4-R1** is gated behind the two-stage spend gate (roadmap §13.1.1) — Stage A local
+> closure first; (3) **§6 S4-R3** becomes the staged private beta (Wave 0 canary ~5 →
+> freeze → Wave 1 ~20–25 → Wave 2 ~100) on a direct signed Android APK, replacing the
+> 3–5 advocate shadow beta; (4) **§7 Gate-D convergence** reclassifies store-submission
+> rows to public-store readiness and adds the APK distribution contract and canary
+> rows; (5) **§10** becomes the post-private-beta public-release path; (6) **§12**
+> submission is unchanged but now sits after the private beta.
+> Record: `docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md`.
+
 ---
 
 # 0. COMMON OPERATING PREAMBLE
@@ -363,7 +378,29 @@ PAID RESOURCE CREATION = NO
 
 ## Objective
 
-Produce the smallest reliable persistent beta topology that can stay online through Gate D, 10–30 advocate beta, Gate E and store review.
+Produce the smallest reliable persistent beta topology that can stay online through Gate D, the staged **~100-lawyer private beta** (A2, roadmap §16), Gate E and store review.
+
+> **A2, 19 September 2026 — what changed in this prompt.**
+>
+> - **Cohort sizing.** `10–30 advocate closed beta` is superseded by
+>   `~100-lawyer staged private beta`. **Do not assume all 100 are concurrent** —
+>   estimate concurrency separately and state the assumption you priced.
+> - **Price from the serving dataset.** `SERVING DATASET ≈ 250 GB` is the base
+>   pricing number. `LOCAL DATABASE ≈ 343 GB` includes research and probe tables
+>   that do not serve; quoting it without naming those exclusions overstates the
+>   requirement. Both figures are DATA S4-D0 measurements — do not re-measure.
+> - **Release pack.** Accept S4-D0: `PACK3_REUSE_CANDIDATE = YES`,
+>   `PACK3_FULL_INTEGRITY = NOT_YET_PROVEN` (manifest hash, 8/8 files, 8/8 byte
+>   lengths and schema lineage match; payload sha256 not revalidated). Hash the
+>   72.6 GiB **only when this round or S4-R1 actually needs the pack**.
+> - **Collation is correctness, not cost.** Source DB is PostgreSQL 18.6, UTF8,
+>   `English_United States.1252`. `WINDOWS_LINUX_COLLATION_EQUAL = NO`. **Never
+>   describe a Linux restore as identical.** Price and plan either proving the
+>   collation-dependent search/index behaviour on the target Linux environment or
+>   rebuilding the affected indexes.
+> - **No spend follows this prompt.** Roadmap §13.1.1 Stage A applies: after
+>   delivering the package, return to local candidate closure rather than idling
+>   against a pending hosting decision. `PROVISIONING_AUTHORIZED = NO`.
 
 ## Inputs
 
@@ -441,6 +478,19 @@ End with one bounded founder decision request.
 
 # 4. SHIP S4-R1 — PERSISTENT BETA PLANE + PRE-BETA RELIABILITY
 ## Run only after explicit founder spend authorization.
+
+> **A2 two-stage spend gate, 19 September 2026 (roadmap §13.1.1).** S4-R0 delivering
+> a cost package does **not** start this prompt. Stage A comes first: close
+> everything that does not require a persistent public backend, until
+> `PRIVATE_BETA_CANDIDATE_LOCAL = READY_EXCEPT_REMOTE_ONLY_PROOF`. Only when the
+> remaining blockers genuinely require remote infrastructure does SHIP request the
+> spend, and then provision the **smallest** environment that can support final
+> remote acceptance, the staged ~100-lawyer private beta and Gate-E evidence.
+> No standing cloud months before the candidate needs them.
+>
+> Carry from S4-R0: `WINDOWS_LINUX_COLLATION_EQUAL = NO`. Prove the required
+> collation-dependent search/index behaviour on the target Linux environment, or
+> rebuild the affected indexes. A restore is not "identical" because it completed.
 
 ```text
 AGENT = SHIP
@@ -647,19 +697,61 @@ Final state per row: PASS/FAIL/HOLD/UNKNOWN.
 
 ---
 
-# 6. SHIP S4-R3 — 3–5 ADVOCATE SHADOW BETA + THRESHOLD FREEZE
+# 6. SHIP S4-R3 — STAGED ~100-LAWYER PRIVATE BETA (A2)
 
 ```text
 AGENT = SHIP
 MODE = PRODUCT / RELEASE
-DEPENDENCY = PERSISTENT_BETA_READY
+DEPENDENCY = PERSISTENT_BETA_READY + APK_DISTRIBUTION_CONTRACT (roadmap §16.3)
+DISTRIBUTION = DIRECT SIGNED ANDROID APK
+PLAY_STORE_PUBLICATION = NOT REQUIRED
+APP_STORE_PUBLICATION  = NOT REQUIRED
 ```
+
+> **A2, 19 September 2026.** The 3–5 advocate shadow beta as a separate programme is
+> **superseded**. There is one private beta of ~100 already-contacted practising
+> lawyers, staged internally. Wave 0 replaces the shadow beta's role — it is a canary
+> **inside the same programme**, not a second project. Do not stand up separate
+> infrastructure, separate recruitment or a separate candidate line for it.
 
 ## Objective
 
-Establish the product baseline the old Sprint-3 plan expected but current Gate-C acceptance does not clearly evidence.
+Establish the product baseline the old Sprint-3 plan expected but current Gate-C
+acceptance does not clearly evidence — and do it inside the real private beta.
 
-Use 3–5 practising advocates.
+## Wave structure
+
+```text
+WAVE 0 — CANARY  ~5 lawyers from the SAME contacted cohort
+  installation · APK signing and download · auth · basic core loop ·
+  crash / ANR / OOM · telemetry · support path ·
+  catastrophic trust or safety defects
+
+        ↓  FREEZE metric definitions and severe-defect definitions HERE
+
+WAVE 1  ~20–25 total
+  capacity · support load · retrieval behaviour · poor network ·
+  device diversity · research workflow
+
+        ↓
+
+WAVE 2  expand toward ~100 lawyers
+```
+
+The wave count may be adjusted from evidence; the principle may not — small canary
+first, same environment, same cohort, same candidate line.
+
+**Do not tune success definitions after seeing the full ~100-person cohort.**
+
+## Release candidate
+
+Before inviting anyone, the roadmap §16.3 APK release contract must be satisfied in
+full: signed **release** APK (never a debug build), package identity, version code,
+version name, build/commit SHA, APK sha256, release id, environment id, HTTPS
+download source, install and upgrade instructions, rollback to a previous good APK,
+changelog, crash/error observability, support and feedback path.
+
+## Cohort
 
 Use `docs/product/RESEARCH_TASK_SET_V1.json`.
 
@@ -680,12 +772,18 @@ For each task record:
 - trust confusion;
 - resume/reconstruction friction.
 
-Do not choose thresholds before observing this cohort.
+A2 additions to the per-task record: time to **verified** useful authority ·
+evidence / passage inspection · currentness and treatment inspection ·
+matter linkage · freshness confusion · **authority-currentness corrections found by
+users** · auth failure · search latency · poor-network failure · support incidents.
 
-After the cohort:
+Do not choose thresholds before observing Wave 0.
+
+After Wave 0, and BEFORE Wave 1 begins:
 - freeze RTC baseline/threshold definition;
 - freeze another-DB classification;
 - freeze severe-trust-confusion definition;
+- freeze the severe-defect definition;
 - freeze beta measurement protocol.
 
 Monitoring:
@@ -694,13 +792,20 @@ Monitoring:
 Do not make eCourts a reason to delay research beta.
 
 Output:
-`docs/product/SHIP_S4_SHADOW_BETA_BASELINE.md`
+`docs/product/SHIP_S4_PRIVATE_BETA_BASELINE.md`
 
 Final:
 ```text
-ADVOCATES =
+WAVE =                      (0 | 1 | 2)
+LAWYERS_INVITED =
+LAWYERS_INSTALLED =
+APK_SHA256 =
+RELEASE_ID =
 TASKS =
 RTC_BASELINE =
+TIME_TO_VERIFIED_AUTHORITY =
+CRASH_ANR_OOM =
+SUPPORT_INCIDENTS =
 ANOTHER_DB_RATE =
 TIME_TO_AUTHORITY =
 TRUST_CONFUSION =
@@ -744,18 +849,33 @@ STORE_PACK
 COMMERCE_DECISION
 MONITORING_CLAIMS
 PLATFORM_CAPABILITY_PARITY
-SHADOW_BETA_THRESHOLDS
+PRIVATE_BETA_THRESHOLDS          (A2: frozen after Wave 0, replaces SHADOW_BETA_THRESHOLDS)
 STORE_ACCOUNT_READINESS          (A1)
 SECURITY_RELEASE_BASELINE        (A1)
 ALERT_DELIVERY                   (A1)
 EXTERNAL_DELETE_AUTH_V1          (A1)
+ANDROID_RELEASE_APK              (A2)
+APK_DISTRIBUTION_CONTRACT        (A2, roadmap §16.3)
+CANARY_WAVE_READY                (A2, roadmap §16.1)
+PRIVATE_BETA_TELEMETRY           (A2)
+BACKUP_RESTORE                   (A2)
 ```
+
+> **A2 reclassification, 19 September 2026 (roadmap §14.13.1).** `STORE_PACK` above,
+> and the Play/App Store submission rows, are **moved to public-store readiness** and
+> are **not** blockers for the ~100-lawyer APK private beta. Deferred is not
+> abandoned: iOS physical and product work, `STORE_ACCOUNT_READINESS` and the Apple
+> build proof stay in the roadmap and move with the store work. Do not record them as
+> cancelled, and do not re-add them to the APK-beta blocker set.
 
 Commerce:
 founder must explicitly choose:
 `FREE_BETA` or `PAID_V1`.
 
-If no choice yet → Gate D HOLD on commercial state, not an invented default.
+**A2:** billing, IAP and Play Billing are **NOT REQUIRED** for the private beta
+(roadmap §15.4). The commerce choice binds on the public-release path (§17.0), so a
+pending choice is **not** a Gate-D HOLD against the APK beta. It remains a HOLD
+against public release, and is never an invented default.
 
 No RED required.
 
@@ -815,13 +935,25 @@ Public enablement is a separate SHIP/product decision.
 
 ---
 
-# 10. SHIP — SPRINT 5 CLOSED BETA
+# 10. SHIP — SPRINT 5, AFTER THE PRIVATE BETA (A2)
 
 Dependency: Gate D PASS.
 
-10–30 practising advocates.
+> **A2, 19 September 2026.** The separate 10–30 advocate closed beta is
+> **superseded** by §6's staged ~100-lawyer private beta. This prompt is now the
+> **post-private-beta public-release path**; its measurement list applies to the
+> private-beta cohort, not to a second recruitment round.
 
-Use frozen threshold definitions from shadow beta.
+```text
+PRIVATE BETA EVIDENCE → PRODUCT / DATA CORRECTIONS → RED GATE E → CANDIDATE FREEZE
+→ IOS FINAL PHYSICAL / RELEASE PROOF + ANDROID AAB / PLAY RELEASE PROOF
+→ STORE PACKS → PLAY / APP STORE SUBMISSION → PUBLIC RELEASE
+```
+
+Store work accelerates **only once private-beta evidence says the product deserves
+to ship**. The `LAUNCH_COMMERCE = FREE_BETA | PAID_V1` decision binds here.
+
+Use frozen threshold definitions from **Wave 0** of the private beta.
 
 Measure:
 - RTC;

@@ -4,9 +4,11 @@
 decision, capability-registry release, and production/persistent-beta deployment.
 It points to the truth; it does not replace receipts.
 
-**Last updated:** 18 September 2026 — SHIP S4-T0.3 (CI baseline, alert-surface truth,
-capability registry R18), after S4-T0.2 (runtime / CI / deployed-target repair — **PASS
-corrected to HOLD**, see §1) and S4-T0.1 (authority + orchestration repair).
+**Last updated:** 19 September 2026 — SHIP S4-A2 (Amendment A2: data moat &
+legal-intelligence frontier, private-beta resequencing, cost control), after DATA S4-D0
+(continuity census — **PASS**), S4-T0.3 (CI baseline, alert-surface truth, capability
+registry R18), S4-T0.2 (runtime / CI / deployed-target repair — **PASS corrected to
+HOLD**, see §1) and S4-T0.1 (authority + orchestration repair).
 **Seeded from:** [`roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md`](roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md)
 (dated snapshot provenance, immutable). Where the two differ, this file is current
 and the ledger shows what was true when v7.4 was prepared.
@@ -17,8 +19,9 @@ and the ledger shows what was true when v7.4 was prepared.
 
 | What | Where |
 |---|---|
-| Master roadmap (current) | [`roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md`](roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md), Amendment A1 |
-| Sprint prompts (current) | [`roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md`](roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md), Amendment A1 |
+| Master roadmap (current) | [`roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md`](roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md), Amendments **A1 + A2** |
+| Sprint prompts (current) | [`roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md`](roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md), Amendments **A1 + A2** |
+| Frontier intelligence (NON-GOVERNING) | [`intelligence/LEGAL_TECH_FRONTIER.md`](intelligence/LEGAL_TECH_FRONTIER.md), [`intelligence/SOURCE_OPPORTUNITY_REGISTER.md`](intelligence/SOURCE_OPPORTUNITY_REGISTER.md), [`research/DELHI_HIGH_COURT_PRIMARY_SOURCE_PILOT.md`](research/DELHI_HIGH_COURT_PRIMARY_SOURCE_PILOT.md) — dated intelligence, governs nothing, auto-promotes nothing |
 | Reconciliation memo | [`roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md`](roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md) |
 | Hashes | [`roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json`](roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json), checked by `pnpm authority:check` |
 | Historical only | v7.2 / v7.1 / v5 roadmaps, prompts v2/v3, `docs/CURRENT_PLAN.md` (journal), `BUILD_GUIDE.md` S0–S7 plan |
@@ -58,11 +61,41 @@ SHIP→DATA, DATA→SHIP, RED→SHIP. Protocol: [`LANE_PROTOCOL.md`](LANE_PROTOC
 GATE_A = PASS · GATE_B = PASS · LOCAL_V1_ACCEPTED = YES
 GATE_C = PASS · GATE_C_ACCEPTED = YES · GATE_C_INFRA = DESTROYED_VERIFIED
 REMOTE_PUBLIC_NETWORK_PHYSICAL_FLOW = PASS · REMOTE_MOBILE_DATA_PROVEN = NO
-CURRENT = Sprint 4 → GATE_D (target 2 Oct 2026) · then GATE_E (RED) · launch target 23 Oct 2026
+CURRENT = Sprint 4 — accelerated private-beta candidate build → GATE_D
+          (target 2 Oct 2026) · then GATE_E (RED) · launch target 23 Oct 2026
+DATA_S4_D0 = PASS   (continuity census, 19 Sep 2026)
 ```
 
-Next in sequence (roadmap §24): DATA S4-D0 continuity census → SHIP S4-R0 persistent-beta
-hosting cost package (no provisioning) → founder spend decision → S4-R1.
+Next in sequence (roadmap §24 as updated by A2): **SHIP S4-R0** — persistent-beta
+hosting / cost / restore decision package, **no provisioning** — then aggressive local
+candidate closure (roadmap §13.1.1 **Stage A**) before any recurring cloud spend. A cost
+recommendation is not spend authorization: `PROVISIONING_AUTHORIZED = NO` until the
+founder explicitly approves, and Stage B provisions only when remote proof is genuinely
+on the critical path.
+
+### Private beta plan (A2, founder decision 19 Sep 2026)
+
+```text
+PRIVATE_BETA_TARGET               = ~100 PRACTISING LAWYERS (already contacted)
+PRIVATE_BETA_PRIMARY_DISTRIBUTION = DIRECT SIGNED ANDROID APK
+PRIVATE_BETA_WAVES                = Wave 0 canary ~5 → FREEZE definitions
+                                    → Wave 1 ~20–25 → Wave 2 ~100
+PLAY_STORE_BEFORE_PRIVATE_BETA    = NO
+APP_STORE_BEFORE_PRIVATE_BETA     = NO
+STORE_WORK_DEFERRED_TO            = POST_PRIVATE_BETA public-release path (roadmap §17.0)
+IOS_SCOPE                         = IN_SCOPE (product + public launch; submission not a
+                                    prerequisite to the Android APK beta)
+BILLING / IAP / PLAY BILLING      = NOT REQUIRED for the private beta
+```
+
+The old 3–5 shadow beta + 10–30 closed beta sequence is **SUPERSEDED** (roadmap §16;
+original text preserved as §16.5). Deferred store work is **not** abandoned.
+
+Android developer verification, rechecked from Google's documentation 19 Sep 2026:
+limited distribution caps at **20 devices per APK** (unsuitable for ~100); enforcement
+begins 30 Sep 2026 in Brazil, Indonesia, Singapore and Thailand, expanding globally in
+2027+. **India is not in that wave**, so nothing blocks the direct APK beta today.
+Verified-developer status stays a future distribution requirement (roadmap §16.4).
 
 ## 4 · Current capability registry
 
@@ -150,8 +183,23 @@ ADMIN_WEB             = separate internal/admin surface
 PROMOTIONAL_WEBSITE   = temporary / noncore (lawmind.co, repo lawmind/lawmind-site)
 PROMO_SITE_REBUILD    = after application candidate is mature
 COMPLIANCE_WEB_URLS   = stable release contracts (privacy, support/contact, external deletion, terms if used)
-V1_LOOP               = Search → Reader → Source/Evidence → Save → Matter
+V1_LOOP               = Search → Results → Reader → Source/Evidence → Save → Matter → Return/Refetch
 LAUNCH_SHAPE          = B — research only (absent newer measured evidence)
+PRIVATE_BETA_PLATFORM = ANDROID (direct signed APK) — see §3
+```
+
+**A2 (19 Sep 2026) expands none of this.** The Gate-D product surface is frozen
+exactly as above. A2 installs strategic programs — Primary Source Fabric, Source
+Passport, five-clock freshness, court event graph, authority intelligence, historical
+provenance reconstruction, source disagreement, the Indian legal research benchmark,
+model independence, the Delhi HC source lab (roadmap §26) — which create **no**
+implementation task, no schema migration and no UI by themselves.
+`docs/SCHEMA_TRUTH.md` is untouched. Competitive pressure is never permission to
+bypass a capability gate.
+
+```text
+DHC_SYSTEMATIC_DATABASE_INGEST = BLOCKED_PENDING_WRITTEN_PERMISSION
+FRONTIER_RADAR_GOVERNING       = NO · AUTO_PROMOTE_TO_ROADMAP = NO
 ```
 
 Deferred/disabled: public semantic, HNSW public use, supporting/adverse semantic,
@@ -161,16 +209,46 @@ judgments, old/new code applicability, any unconfirmed-citation path
 (`VERIFY_CONFIRM_PHYSICAL_ACCEPTANCE = MANDATORY` before one exists). iOS party-name
 search: submission default OFF.
 
-## 6 · Data state (last receipts; not re-measured in S4-T0.1)
+## 6 · Data state — DATA S4-D0 continuity census, 19 Sep 2026 (PASS)
+
+Record: [`ai/data-s4-d0/CONTINUITY_RECEIPT.md`](ai/data-s4-d0/CONTINUITY_RECEIPT.md).
+Measured, not carried forward, unless the receipt says so.
 
 ```text
-EMBEDDING_COMPLETE            = YES at NEW1 R15 terminal census (7,675,588 / 7,675,588)
-HNSW                          = DEFERRED_HIGH_MEMORY_OFFLOAD · PUBLIC_SEMANTIC = DISABLED
-CANONICAL_CITATION_CORRECTION = PASS (R24, 539/539)
-CITATION_BULK_APPLY           = HOLD
-ECOURTS_OBSERVATION           = 0 at last bounded evidence · MONITORING = DISABLED_NOT_READY
-DELTA_SCHEDULER               = Interactive/Logon-only at last observation (roadmap §9.3; DATA→SHIP handoff pending S4-D0)
+DATA_S4_D0_CONTINUITY = PASS
+TOTAL_HELD_JUDGMENTS  ≈ 18.8M
+HC_HONEST_COVERAGE_FRONTIER = 2026-07-01   (newest-date ≠ coverage-complete)
+SCI_LIVE              = producing current SC judgments, but ABSENT from the freshness ledger
+ROW_LEVEL_PROVENANCE  = SPARSE (~99.75% source_id / authorization_basis NULL) —
+                        a DATA-QUALITY / PROVENANCE RECONSTRUCTION program, NOT corpus invalidity
+CANONICAL_CITATION_CORRECTION = PASS (R24, 539/539 confirmed)
+CITED_AUTHORITY_DRIFT = 1,126 rows materialized-content drift; bounded eligibility impact ≤ 300 docs
+LOCAL_DATABASE        ≈ 343 GB  ·  SERVING_DATASET ≈ 250 GB (price infrastructure from 250 GB)
+SOURCE_DB_COLLATION   = PostgreSQL 18.6 / UTF8 / English_United States.1252
+                        WINDOWS_LINUX_COLLATION_EQUAL = NO — a Linux restore is NOT identical
+RELEASE_PACK          = D:/lawmind-release-r32b/pack3 · LINEAGE = PARTIAL
+                        PACK3_REUSE_CANDIDATE = YES · PACK3_FULL_INTEGRITY = NOT_YET_PROVEN
+                        (manifest hash, 8/8 files, 8/8 byte lengths, schema lineage all match;
+                         payload sha256 NOT revalidated — hash it when S4-R0/R1 needs the pack)
+DELTA_SCHEDULER       = Interactive / logon-only · REBOOT_WITHOUT_LOGIN = NOT PROVEN
+platform_config.signups = DISABLED (reason: test cleanup) — SHIP implementation item, not changed by A2
 ```
+
+### Re-confirmed by S4-D0, and still gated
+
+```text
+EMBEDDING_COMPLETE  = YES (queue = 0; NEW1 R15 terminal census 7,675,588 / 7,675,588)
+FULL_HNSW           = NO · HNSW = DEFERRED_HIGH_MEMORY_OFFLOAD · PUBLIC_SEMANTIC = DISABLED
+CITATION_BULK_APPLY = HOLD   (A2 does NOT authorize it)
+ECOURTS_OBSERVATIONS = 0 · MONITORING_12 = 0/12 UNMEASURED (not failed)
+MONITORING          = DISABLED_NOT_READY · BRIEFING = DISABLED_NOT_READY
+                      PUSH = DISABLED_NOT_READY · CITATOR_ALERTS = DISABLED_NOT_READY
+LAUNCH_SHAPE        = B — RESEARCH ONLY
+```
+
+The DATA→SHIP scheduler handoff is now **delivered** (bus 1819): the delta embedding
+task runs under an Interactive principal and a reboot without logon leaves a silent
+hole. It is a SHIP ops item, and not changed by A2.
 
 ## 7 · Active stops (roadmap §3.6)
 
@@ -218,6 +296,7 @@ RESEND_KEY_ROTATED             = OPEN
 SPACESHIP_KEY_SECRET_ROTATED   = OPEN
 R2_BACKUP_KEY_ESCROWED         = OPEN
 PERSISTENT_BETA_SPEND          = PENDING_SHIP_COST_PACKAGE_AND_FOUNDER_SPEND_APPROVAL
+PROVISIONING_AUTHORIZED        = NO   (A2: a cost recommendation is not authorization)
 APPLE / PLAY ACCOUNT STATE     = founder to confirm (roadmap §14.14)
 LAUNCH_COMMERCE                = FREE_BETA | PAID_V1 at Gate D
 ```
@@ -244,6 +323,14 @@ DEPLOYED_SAFETY          = NOT_RUN_NO_DEPLOYED_TARGET
 
 `DEPLOYED_SAFETY` is the third state and it is neither of the other two. It is not
 a pass: nothing is deployed, so nothing was graded.
+
+**Spend posture (A2, roadmap §13.1.1).** `BUILD AGGRESSIVELY / SPEND CONSERVATIVELY`.
+No paid infrastructure is created because a roadmap phase mentions it. Stage A closes
+everything achievable on the existing workstation, database, CI and release artifacts;
+Stage B buys the smallest environment that can carry final remote acceptance, the
+staged ~100-lawyer private beta and Gate-E evidence — and only after explicit founder
+approval. `WINDOWS_LINUX_COLLATION_EQUAL = NO` is a correctness item for whichever
+Linux target is chosen, not a cost line.
 
 **No deployed probe may invent a target.** `PROBE_BASE_URL` is required by both
 deployed safety probes (`services/harness/src/probe-target.ts`); absent, they

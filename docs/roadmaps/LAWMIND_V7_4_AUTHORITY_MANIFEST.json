@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18",
+  "generated_at": "2026-09-19",
   "repository_anchor_when_prepared": "lawmind/lawmind@6b1355eb96ae46e6ad0c7d0441306dd6ea76618a",
   "supersedes_for_current_execution": {
     "roadmap": [
@@ -24,31 +24,35 @@
   },
   "canonicalRoot": "docs/roadmaps",
   "livePointer": "docs/CURRENT_STATE.md (mutable; deliberately NOT hashed here)",
-  "selfHash": "A manifest cannot contain its own hash. Its pre-edit hash is recorded under amendments[0].preEditFiles.",
+  "selfHash": "A manifest cannot contain its own hash. Its pre-edit hash is recorded under the amendment that edited it: amendments[0].preEditFiles for A1, amendments[1].preEditFiles for A2.",
   "files": {
     "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
-      "bytes": 68099,
-      "sha256": "da712ba267970399f96f623f2c57a912db3a9c8181e481d3d163e7dd4ab7e6f8",
+      "bytes": 98270,
+      "sha256": "8f22a0448331081d0a5be7cd3a1b8552e71eff87885cfa2bccc88aaaa9403b46",
       "role": "current master roadmap",
-      "amendedByA1": true
+      "amendedByA1": true,
+      "amendedByA2": true
     },
     "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
-      "bytes": 22960,
-      "sha256": "0cfdb542f372324942de67d75e2ee832c8c5b328bd292b9dfaa40351b33a75e1",
+      "bytes": 30488,
+      "sha256": "53edd6b45eaf2e8e3c071225b98179c9a50cc348e3752c1281498b4bc8a6f9a7",
       "role": "current sprint prompts",
-      "amendedByA1": true
+      "amendedByA1": true,
+      "amendedByA2": true
     },
     "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
-      "bytes": 14867,
-      "sha256": "937b214538dac5ee8f940cb23f7b39237af7b2165d5e48138855364892a9fb81",
+      "bytes": 19750,
+      "sha256": "93ba5ccbf90e1815d5438f0626d8d553952e7cfb4a51ad107ba4206f9142bd24",
       "role": "reconciliation memo (design rationale + A1 policy recheck)",
-      "amendedByA1": true
+      "amendedByA1": true,
+      "amendedByA2": true
     },
     "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
       "bytes": 4565,
       "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd",
       "role": "dated current-state snapshot (provenance; immutable). Live pointer is docs/CURRENT_STATE.md",
-      "amendedByA1": false
+      "amendedByA1": false,
+      "amendedByA2": false
     }
   },
   "amendments": [
@@ -88,7 +92,86 @@
         "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md"
       ],
       "versionUnchanged": "v7.4 / prompts v5 patched in place; no v7.5 for corrections"
+    },
+    {
+      "id": "A2",
+      "date": "2026-09-19",
+      "round": "SHIP S4-A2 — final v7.4 A2 integration: data moat & legal-intelligence frontier, frontier governance, private-beta resequencing",
+      "record": "docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md",
+      "headAtStart": "f36d40103308762ec8e12f42a80314161b7e4294",
+      "mechanism": "A1 pattern reused verbatim: governing files patched IN PLACE, version unchanged, pre-edit bytes+sha256 recorded here, round record holds the reasoning. No v7.5, no parallel A2 roadmap, no second authority architecture.",
+      "preEditCheck": "PASS: all five canonical files matched this manifest byte-for-byte and sha256 before any edit (roadmap 68099/da712ba2, prompts 22960/0cfdb542, memo 14867/937b2145, ledger 4565/ed76db2b unchanged)",
+      "preEditFiles": {
+        "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
+          "bytes": 68099,
+          "sha256": "da712ba267970399f96f623f2c57a912db3a9c8181e481d3d163e7dd4ab7e6f8"
+        },
+        "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
+          "bytes": 22960,
+          "sha256": "0cfdb542f372324942de67d75e2ee832c8c5b328bd292b9dfaa40351b33a75e1"
+        },
+        "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
+          "bytes": 14867,
+          "sha256": "937b214538dac5ee8f940cb23f7b39237af7b2165d5e48138855364892a9fb81"
+        },
+        "docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json": {
+          "bytes": 3934,
+          "sha256": "b32e3b8c41f405d113090077dfe87ab7f260841861f8518f745523e1434b9262"
+        },
+        "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": {
+          "bytes": 4565,
+          "sha256": "ed76db2b7cd2943e723e2e311075b508d35b5bfe212b37f9d9939c61a77aecfd"
+        },
+        "docs/CURRENT_STATE.md": {
+          "bytes": 14198,
+          "sha256": "ea5effa442ab4c1f0d4e2ab54299350a4d12ecf5c356b254e782538d35c2425d"
+        }
+      },
+      "editedFiles": [
+        "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md",
+        "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md",
+        "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md",
+        "docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json",
+        "docs/CURRENT_STATE.md"
+      ],
+      "createdFiles": [
+        "docs/intelligence/LEGAL_TECH_FRONTIER.md",
+        "docs/intelligence/SOURCE_OPPORTUNITY_REGISTER.md",
+        "docs/research/DELHI_HIGH_COURT_PRIMARY_SOURCE_PILOT.md",
+        "docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md"
+      ],
+      "notHashedHere": {
+        "docs/CURRENT_STATE.md": "LIVE pointer — deliberately mutable and NOT a hashed authority snapshot. Its pre-edit hash is recorded above for provenance only.",
+        "docs/intelligence/**, docs/research/**": "NON-GOVERNING dated intelligence. GOVERNING = NO, AUTO_PROMOTE_TO_ROADMAP = NO.",
+        "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md": "dated snapshot, immutable; NOT edited by A2."
+      },
+      "sections": {
+        "16": "SUPERSEDED the 3-5 shadow + 10-30 closed two-programme model; replaced by one staged ~100-lawyer private beta (Wave 0 canary -> Wave 1 -> Wave 2). Original text preserved unedited as 16.5",
+        "17": "RESEQUENCED as the post-private-beta public-release path",
+        "24": "UPDATED execution order for private-beta sequencing and the two-stage spend gate",
+        "26": "NEW A2 strategic programs: Primary Source Fabric, Source Passport, five-clock freshness, court event graph, authority intelligence, historical provenance, source disagreement, Indian legal research benchmark, model independence, Delhi HC source lab, frontier promotion governance",
+        "0.4": "NEW founder decisions: ~100-lawyer private beta on a direct signed Android APK; store publication not a prerequisite; BUILD AGGRESSIVELY / SPEND CONSERVATIVELY",
+        "13.1.1": "NEW two-stage spend gate (Stage A local closure, Stage B remote-only proof after explicit founder authorization)",
+        "13.1.2": "NEW S4-R0 sizing corrected: ~100-lawyer staged beta, priced from the ~250 GB serving dataset not the ~343 GB local footprint",
+        "13.1.3": "NEW WINDOWS_LINUX_COLLATION_EQUAL = NO — correctness, carried to S4-R0/S4-R1",
+        "14.13.1": "NEW Gate-D reclassification for the APK private beta; store-submission rows moved to public-store readiness, deferred not abandoned",
+        "15.4": "NEW billing / IAP / Play Billing not required for the private beta",
+        "16.3": "NEW APK private-beta release contract",
+        "16.4": "NEW Android developer verification recheck (20 devices per APK; 30 Sep 2026 = BR/ID/SG/TH only; India in the 2027+ global wave)"
+      },
+      "promptsSections": {
+        "3": "S4-R0 sized for ~100-lawyer staged beta; price from 250 GB serving; collation carry; PROVISIONING_AUTHORIZED = NO",
+        "4": "S4-R1 gated behind the two-stage spend gate",
+        "6": "S4-R3 becomes the staged private beta with Wave 0 canary and the APK release contract",
+        "7": "Gate-D convergence checklist reclassified; APK rows added, store rows deferred",
+        "10": "Sprint 5 becomes the post-private-beta public-release path"
+      },
+      "enabledCapabilities": "NONE. Product scope frozen. CITATION_BULK_APPLY = HOLD, PUBLIC_SEMANTIC = DISABLED, HNSW_PUBLIC = DISABLED, MONITORING/BRIEFING/PUSH/CITATOR_ALERTS = DISABLED_NOT_READY, DHC_SYSTEMATIC_DATABASE_INGEST = BLOCKED_PENDING_WRITTEN_PERMISSION.",
+      "mutations": "No product code, no API behaviour, no database write, no migration, no corpus mutation, no cloud provisioning, no paid resource, no DNS change, no secret rotation, no store submission.",
+      "versionUnchanged": "v7.4 / prompts v5 patched in place; no v7.5 for amendments",
+      "a1Preserved": "amendments[0] untouched; A1 history byte-for-byte as committed"
     }
   ],
-  "verify": "pnpm authority:check (scripts/lawmind-authority-check.mjs) recomputes every entry"
+  "verify": "pnpm authority:check (scripts/lawmind-authority-check.mjs) recomputes every entry",
+  "anchor_at_amendment_A2": "lawmind/lawmind@f36d40103308762ec8e12f42a80314161b7e4294"
 }
