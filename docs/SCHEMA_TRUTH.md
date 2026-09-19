@@ -1288,6 +1288,37 @@ conditions to be transcribed into
 `CLAUDE.md`: _if the authorisation's terms are not in the repo, the switch stays
 off._
 
+`signups` governs whether a **new identity** may be created, and is read by
+`services/api/src/auth/signup-gate.ts` from `POST /auth/magic-link`.
+
+**It read nothing at all until 19 September 2026** (SHIP S4-R0X). The row, the
+CHECK constraint, the admin endpoint and the `audit_log` trail all existed; no
+runtime code consulted the value, so an operator who closed signups got a 200, an
+audit row and no change in behaviour. A switch that controls nothing is worse than
+no switch, because it is believed.
+
+Its semantics, now that it is connected:
+
+```text
+CLOSED  = no NEW identity. An address already in `auth_user` is ALWAYS let
+          through, so closing signups cannot lock out a cohort that joined
+          while they were open.
+REFUSAL = SILENT. `POST /auth/magic-link` returns the same `{ sent: true }` it
+          returns on success and sends no mail. A refusal that announced itself
+          would let anyone enumerate the invited cohort one address at a time.
+MISSING ROW = CLOSED, in a serving deployment. Same rule as `ecourts_harvest`
+          and for the matching reason — here the danger is an unmonitored public
+          signup surface. **No migration seeds this row**, so a fresh USER
+          database has none and a new deployment starts closed by default.
+UNREADABLE `platform_config` = CLOSED. Not knowing is not permission.
+DEVELOPMENT = not consulted. A workstation has no public to protect. The serving
+          environment comes from `ops/serving-contract.ts`, the same single
+          source `/version` and `/ready` share.
+```
+
+Opening the private-beta invite window and closing it afterwards are therefore two
+deliberate, audited admin calls, each carrying a `reason`.
+
 **Built in migration 0013, ahead of S6.** The write endpoint
 (`POST /admin/platform/kill-switches/:key`) is **not** built and stays SPECCED, so
 until S6 this row moves only by a hand-written statement — which is therefore

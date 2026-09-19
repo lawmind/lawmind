@@ -29,6 +29,7 @@ import { z } from 'zod';
 import { fail, ok } from '../envelope.ts';
 import { isoColumn } from '../iso-time.ts';
 import { logger } from '../logger.ts';
+import { decideSignup } from './signup-gate.ts';
 
 export const magicLinkRequest = z.object({
   email: z.string().email().max(320),
@@ -112,6 +113,33 @@ export async function handleMagicLink(
   deps: AuthDeps,
   body: z.infer<typeof magicLinkRequest>,
 ): Promise<Response> {
+  /**
+   * THE `signups` KILL SWITCH, WHICH UNTIL NOW CONTROLLED NOTHING.
+   *
+   * `auth/signup-gate.ts` holds the reasoning. In short: closed means no NEW
+   * identity, never "nobody may sign in" — an address that already exists always
+   * gets its link, so closing signups after Wave 2 cannot lock out the cohort
+   * that joined during it.
+   *
+   * The refusal is SILENT and returns below through the same
+   * `ok(c, { sent: true })` a successful send does. That is not sloppiness: the
+   * uniform response is already this endpoint's contract for known versus unknown
+   * addresses, and a refusal that announced itself would let anyone enumerate a
+   * list of named practising advocates one address at a time.
+   *
+   * Placed before `signInMagicLink`, so a refused signup sends no mail and mints
+   * no verification row — rather than letting better-auth create the identity and
+   * then regretting it.
+   */
+  const decision = await decideSignup(deps.sql, body.email);
+  if (!decision.allow) {
+    logger.info(
+      { request_id: c.get('requestId'), event: 'signup_refused', reason: decision.reason },
+      'magic link withheld: signups are closed to new identities',
+    );
+    return ok(c, { sent: true });
+  }
+
   try {
     await deps.auth.api.signInMagicLink({
       body: { email: body.email },
