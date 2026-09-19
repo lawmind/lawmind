@@ -182,6 +182,16 @@ export type ReadinessReport = {
   rolesDistinct: boolean | null;
   /** From `serving-contract.ts`. A serving deployment that got here has zero. */
   servingEnv: string;
+  /**
+   * N-4. Whether the corpus has been warmed on the serving path since this
+   * process started — `ops/prewarm.ts`.
+   *
+   * `undefined` in a deployment that supplies no prewarm (tests, and any
+   * single-database local run), where it is deliberately NOT treated as a
+   * failure: absent and cold are different states and only one of them should
+   * hold traffic back.
+   */
+  corpusWarm?: 'cold' | 'warming' | 'warm' | 'failed' | undefined;
   detail?: string | undefined;
 };
 
@@ -287,12 +297,42 @@ export function createApp(deps: AppDeps) {
     }
     try {
       const report = await deps.readiness();
+      /**
+       * N-4 — READINESS WAITS FOR WARM, WHICH IS THE POINT OF FIXING IT AT ALL.
+       *
+       * Gate C: "Corpus prewarm is a manual step; an unattended restart serves
+       * cold until traffic warms it." An automated prewarm that did not gate
+       * readiness would still let a load balancer send the first advocate into a
+       * cold corpus — 6.5 s cold against 0.6 s warm, measured — and that advocate
+       * is exactly who the mechanism exists to protect.
+       *
+       * `'warming'` and `'cold'` hold readiness. `'warm'` releases it. `'failed'`
+       * ALSO releases it, and that asymmetry is deliberate: a prewarm that could
+       * not run is a performance problem, and refusing to serve at all because the
+       * corpus is slow would convert a latency defect into an outage. The failure
+       * is logged at error level and reported in this response, so it is loud
+       * rather than absorbed.
+       *
+       * `undefined` — no prewarm supplied — releases it too. Absent is not cold.
+       */
+      const warmEnough = report.corpusWarm !== 'cold' && report.corpusWarm !== 'warming';
       const ready =
         report.corpusReachable &&
         report.userReachable &&
-        (report.splitMode === 'single' || report.rolesDistinct === true);
+        (report.splitMode === 'single' || report.rolesDistinct === true) &&
+        warmEnough;
       if (!ready) {
-        logger.error({ request_id: c.get('requestId'), readiness: report }, 'readiness failed');
+        /**
+         * A warming corpus is not a failure, and logging it as one is how a real
+         * readiness error gets ignored. Every boot would emit `readiness failed`
+         * for the ~60 s the warm pass takes, and an operator who has seen that a
+         * hundred times stops reading it — which is the exact condition under
+         * which the genuine one arrives.
+         */
+        const startingUp = !warmEnough && report.corpusReachable && report.userReachable;
+        const line = { request_id: c.get('requestId'), readiness: report };
+        if (startingUp) logger.info(line, 'not ready yet: corpus is still warming');
+        else logger.error(line, 'readiness failed');
         return fail(
           c,
           'NOT_READY',

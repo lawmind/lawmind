@@ -13,6 +13,7 @@ import {
   verifyDistinctDatabases,
 } from './ops/db-identity.ts';
 import { evaluateServingContract, servingContractRefusal } from './ops/serving-contract.ts';
+import { createPrewarm } from './ops/prewarm.ts';
 import { ActivationOutbox, type OutboxStats } from './product/activation-outbox.ts';
 import { installActivationOutbox } from './product/activation.ts';
 import { createAdmission } from './search/admission.ts';
@@ -292,6 +293,15 @@ if (serializerDefects.length > 0) {
   process.exit(1);
 }
 
+/**
+ * N-4. Warms the corpus on the SERVING path at boot, so an unattended restart
+ * does not hand its first advocate the 6.5 s version of a query that takes 0.6 s
+ * warm. Created before the app because readiness reports its state, and started
+ * after `serve` because nothing may delay `/health` answering — the same reason
+ * the embedder warm below sits there. `ops/prewarm.ts`.
+ */
+const prewarm = createPrewarm(rawSql);
+
 const app = createApp({
   ping: async () => {
     // The corpus handle, not a client of its own on `DATABASE_URL`: in split
@@ -312,6 +322,7 @@ const app = createApp({
       splitMode: databases.mode,
       rolesDistinct: null as boolean | null,
       servingEnv: servingContract.servingEnv,
+      corpusWarm: prewarm.status().state,
     };
     try {
       await rawSql`SELECT 1`;
@@ -368,6 +379,25 @@ serve({ fetch: app.fetch, port: env.port }, (info) => {
     .catch((error: unknown) => {
       logger.error({ err: error }, 'embedder warm failed — search stays lexical-only');
     });
+
+  /**
+   * N-4 — WARM THE CORPUS, RATHER THAN ASKING SOMEBODY TO REMEMBER TO.
+   *
+   * Gate C: "Corpus prewarm is a manual step; an unattended restart serves cold
+   * until traffic warms it." The manual step works and a Windows Update reboot at
+   * 02:33 does not perform it, and the cost of serving cold is not marginal: the
+   * first remote Gate-S1 run failed on cold reads alone at p95 4,774 ms, with one
+   * query measured at 6.5 s cold against 0.6 s warm.
+   *
+   * `/ready` reports `corpusWarm` and answers 503 until this finishes, so nothing
+   * routes an advocate into the cold corpus. That is the half that makes this a
+   * fix rather than an optimisation — see the N-4 note on the `/ready` route.
+   *
+   * Not awaited, and after `serve`, for exactly the embedder's reason above:
+   * `/health` is liveness and must stay answerable throughout. `run()` records
+   * its own failure and resolves, so the `void` cannot drop an error on the floor.
+   */
+  void prewarm.run();
 });
 
 /**
