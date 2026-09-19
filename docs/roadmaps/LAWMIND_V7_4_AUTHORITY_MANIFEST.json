@@ -27,18 +27,20 @@
   "selfHash": "A manifest cannot contain its own hash. Its pre-edit hash is recorded under the amendment that edited it: amendments[0].preEditFiles for A1, amendments[1].preEditFiles for A2.",
   "files": {
     "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
-      "bytes": 98270,
-      "sha256": "8f22a0448331081d0a5be7cd3a1b8552e71eff87885cfa2bccc88aaaa9403b46",
+      "bytes": 102009,
+      "sha256": "ee0642324c3a571543a766b4c6a3fc412bc90ffa58d5fb09b01dc6ddbd57c55c",
       "role": "current master roadmap",
       "amendedByA1": true,
-      "amendedByA2": true
+      "amendedByA2": true,
+      "correctedByA2Exec1": true
     },
     "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
-      "bytes": 30488,
-      "sha256": "53edd6b45eaf2e8e3c071225b98179c9a50cc348e3752c1281498b4bc8a6f9a7",
+      "bytes": 40373,
+      "sha256": "a69da2c3dcfcfd3644bad9623d70b72ea8e7af1c47f519a913bededc59859c97",
       "role": "current sprint prompts",
       "amendedByA1": true,
-      "amendedByA2": true
+      "amendedByA2": true,
+      "correctedByA2Exec1": true
     },
     "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md": {
       "bytes": 19750,
@@ -169,7 +171,64 @@
       "enabledCapabilities": "NONE. Product scope frozen. CITATION_BULK_APPLY = HOLD, PUBLIC_SEMANTIC = DISABLED, HNSW_PUBLIC = DISABLED, MONITORING/BRIEFING/PUSH/CITATOR_ALERTS = DISABLED_NOT_READY, DHC_SYSTEMATIC_DATABASE_INGEST = BLOCKED_PENDING_WRITTEN_PERMISSION.",
       "mutations": "No product code, no API behaviour, no database write, no migration, no corpus mutation, no cloud provisioning, no paid resource, no DNS change, no secret rotation, no store submission.",
       "versionUnchanged": "v7.4 / prompts v5 patched in place; no v7.5 for amendments",
-      "a1Preserved": "amendments[0] untouched; A1 history byte-for-byte as committed"
+      "a1Preserved": "amendments[0] untouched; A1 history byte-for-byte as committed",
+      "executionCorrections": [
+        {
+          "id": "A2-EXEC-1",
+          "date": "2026-09-19",
+          "round": "SHIP S4-R0X — A2 execution-seam correction",
+          "record": "docs/ai/ship-s4-stage-a/LOCAL_CANDIDATE_CLOSURE.md",
+          "headAtStart": "69c4c8aaa98fe7dc33c28de8bfed790615d7da76",
+          "classification": "EXECUTION-SEAM CORRECTION TO A2. Not A3, not v7.5, not a new amendment. No A2 or A1 strategic decision is reopened or re-adjudicated; A1 and A2 history are preserved byte-for-byte. Governing files patched IN PLACE by the same A1/A2 mechanism.",
+          "why": "A2 reclassified the Gate-D blocker set correctly, but several pre-A2 instructions stayed textually active in Sprint Prompts v5. A next agent reading them would have performed store-review work that A2 explicitly deferred, and would have treated a store-review requirement as a gate on handing ~100 Indian advocates a direct signed APK.",
+          "preEditFiles": {
+            "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md": {
+              "bytes": 98270,
+              "sha256": "8f22a0448331081d0a5be7cd3a1b8552e71eff87885cfa2bccc88aaaa9403b46"
+            },
+            "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md": {
+              "bytes": 30488,
+              "sha256": "53edd6b45eaf2e8e3c071225b98179c9a50cc348e3752c1281498b4bc8a6f9a7"
+            },
+            "docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json": {
+              "bytes": 9982,
+              "sha256": "fcc28563252b70325c111b158e82210060ed5440e3cf4a38272fc1e8634abb79"
+            }
+          },
+          "preEditCheck": "PASS: roadmap, prompts, memo and dated ledger all matched this manifest byte-for-byte and sha256 before any edit. Memo and ledger were NOT edited by this correction.",
+          "editedFiles": [
+            "docs/roadmaps/LAWMIND_MASTER_ROADMAP_V7_4.md",
+            "docs/roadmaps/LAWMIND_SPRINT_PROMPTS_V5.md",
+            "docs/roadmaps/LAWMIND_V7_4_AUTHORITY_MANIFEST.json"
+          ],
+          "notEdited": [
+            "docs/roadmaps/LAWMIND_V7_4_RECONCILIATION_MEMO.md",
+            "docs/roadmaps/LAWMIND_CURRENT_STATE_LEDGER_2026-09-18.md"
+          ],
+          "roadmapSections": {
+            "14.13.1": "PRIVATE-BETA CRITICAL gains PREWARM / READINESS (N-4) and SECURITY BETA BASELINE (the 14.15 beta-applicable subset); APK DISTRIBUTION CONTRACT reordered beside ANDROID RELEASE APK. PUBLIC STORE set gains REVIEW_ACCESS_V1, STORE ACCOUNT READINESS, EXTERNAL_DELETE_AUTH_V1 and ALERT DELIVERY.",
+            "14.13.2": "NEW. Records the whole correction: what was added and why, each moved row with its reason, the explicit statement that A1 13.5 alert delivery is RESEQUENCED and never deleted, and the iOS status block."
+          },
+          "promptsSections": {
+            "4": "S4-R1 objective resized to the staged ~100-lawyer beta (infrastructure proof standard UNCHANGED). Section F REVIEW_ACCESS_V1 moved to section 10 as a store-review requirement, with ordinary beta auth still required to be real and secure. Section I A1 alert-delivery proof resequenced to production/public-release readiness and replaced for the beta by crash/error observability, server-health observability and support escalation. Acceptance block updated.",
+            "5": "S4-R2 EFFECTIVE_PURPOSE becomes PRIVATE-BETA MOBILE QUALITY / RELEASE PASS. Android release APK stays; AAB/Play track, Play submission, iOS build/archive, TestFlight/store review, App Store submission, store pack, store accounts and billing/IAP move to section 10. IN_APP_DELETION stays beta-critical; EXTERNAL_DELETE_AUTH_V1 moves to section 10 with its contract intact. iPhone physical retained as product evidence, not an APK-beta blocker.",
+            "7": "Gate-D checklist normalized to ONE unambiguous reading, split into PRIVATE-BETA / GATE-D CRITICAL and PUBLIC-STORE / PRODUCTION READINESS, matching roadmap 14.13.1 row for row.",
+            "10": "Receives every moved row with its origin named, and records the iOS status block explicitly."
+          },
+          "invariantsPreserved": [
+            "alerts.saved_authority_moved / alerts.filed_citation_moved / alerts.push_delivery / monitoring.user_product / briefing.daily_loop remain DISABLED_NOT_READY and were NOT enabled to close any gate",
+            "A1 13.5 alert-delivery proof preserved in full, resequenced to production/public-release readiness, never deleted",
+            "EXTERNAL_DELETE_AUTH_V1 contract not weakened; still mandatory before the relevant public-store release",
+            "IN_APP_DELETION remains private-beta critical",
+            "IOS_PRODUCT = IN_SCOPE, IOS_PUBLIC_RELEASE = IN_SCOPE, iOS work deferred in sequence only",
+            "S4-R1 infrastructure proof standard unchanged by the cohort rewording",
+            "ordinary private-beta authentication must remain real and secure; no reviewer-style bypass introduced",
+            "no capability registry revision: CAPABILITY_REGISTRY_REVISION = R18, API_CONTRACT_REVISION = R17, WIRE_PROTOCOL_VERSION = 1"
+          ],
+          "mutations": "Documentation authority only. No product code, no API behaviour, no database write, no migration, no corpus mutation, no cloud provisioning, no paid resource, no DNS change, no secret rotation, no store submission.",
+          "a1a2Preserved": "amendments[0] (A1) and amendments[1] fields other than this executionCorrections array are untouched."
+        }
+      ]
     }
   ],
   "verify": "pnpm authority:check (scripts/lawmind-authority-check.mjs) recomputes every entry",

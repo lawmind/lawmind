@@ -62,6 +62,20 @@
 > schema'd or surfaced by this amendment. Competitive pressure is never permission
 > to bypass a capability gate.
 
+> **A2 EXECUTION-SEAM CORRECTION — SHIP S4-R0X, 19 September 2026.** Not A3, not
+> v7.5, no new amendment, and **no A2 decision is re-adjudicated.** A2's
+> classification was right; the execution documents had not fully followed it, so a
+> next agent reading Sprint Prompts v5 could still have treated store-review work as
+> a gate on the direct-APK cohort. **New §14.13.2** records the whole correction:
+> `PREWARM / READINESS` and `SECURITY BETA BASELINE` join the private-beta critical
+> set in §14.13.1, while `REVIEW_ACCESS_V1`, `STORE ACCOUNT READINESS` (§14.14),
+> `EXTERNAL_DELETE_AUTH_V1` and A1's `ALERT DELIVERY` proof (§13.5) move to the
+> public-store / production set. Prompts v5 §4, §5, §7 and §10 are corrected to
+> match, and §5 becomes the private-beta mobile quality / release pass.
+> **Deferred is not cancelled**, no contract is weakened, and
+> `IOS_PRODUCT = IOS_PUBLIC_RELEASE = IN_SCOPE`.
+> Record: `docs/ai/ship-s4-stage-a/LOCAL_CANDIDATE_CLOSURE.md`.
+
 ---
 
 # 0. FOUNDER AMENDMENTS — BINDING
@@ -1711,6 +1725,7 @@ distributed signed APK does not require a store listing.
 ```text
 PERSISTENT_BETA_READY            (when the remote environment is finally activated)
 ANDROID RELEASE APK
+APK DISTRIBUTION CONTRACT        (§16.3)
 HIGH-END ANDROID REGRESSION
 REPRESENTATIVE LOW/MID ANDROID
 ACCESSIBILITY
@@ -1722,13 +1737,14 @@ DELETION IN APP
 PRIVACY / SUPPORT SURFACE
 PRODUCTION-LIKE PROVENANCE
 ENVIRONMENT LABEL
+PREWARM / READINESS              (A2 execution correction; N-4)
 MATTER_AUTHORITY ROLLBACK
 FULL API SUITE
 BACKUP / RESTORE
+SECURITY BETA BASELINE           (A2 execution correction; §14.15 beta-applicable subset)
 CAPABILITY / CLAIM PARITY
 NO MONITORING CLAIMS
 PRIVATE-BETA TELEMETRY
-APK DISTRIBUTION CONTRACT        (§16.3)
 CANARY WAVE READY                (§16.1, Wave 0)
 ```
 
@@ -1740,6 +1756,54 @@ AAB SUBMISSION PROOF       ·  APP STORE SUBMISSION
 APP STORE PACK             ·  APPLE REVIEW ACCESS
 APPLE REVIEW NOTES         ·  FINAL STORE SCREENSHOTS
 IAP / BILLING              ·  PUBLIC STORE COMMERCE
+REVIEW_ACCESS_V1           ·  STORE ACCOUNT READINESS      (A2 execution correction)
+EXTERNAL_DELETE_AUTH_V1    ·  ALERT DELIVERY (A1 proof)    (A2 execution correction)
+```
+
+### 14.13.2 A2 execution correction, 19 September 2026
+
+Seven rows were added or moved above because the **execution** documents still made
+store-review work a gate on the APK beta while A2's classification said otherwise.
+This is an execution-seam correction to A2 — **not A3, not v7.5** — and it changes no
+strategic decision.
+
+**Added to the private-beta critical set**, because both are beta operability items
+that had no row and would otherwise have been nobody's job: `PREWARM / READINESS`
+(N-4; an unattended restart must not enter "ready" while predictably cold) and
+`SECURITY BETA BASELINE` (the §14.15 rows whose evidence applies to the beta).
+
+**Moved to the public-store set:**
+
+- `REVIEW_ACCESS_V1` — a store-reviewer account and reviewer instructions are what
+  Apple and Google need. Invited advocates holding a signed APK are not reviewers.
+  Ordinary beta authentication must still be real and secure; no reviewer-style
+  bypass may be introduced to make the beta convenient.
+- `STORE ACCOUNT READINESS` (§14.14) — store accounts gate store submission.
+- `EXTERNAL_DELETE_AUTH_V1` — this is Google Play's **externally-initiated** deletion
+  requirement. `DELETION IN APP` stays private-beta critical, privacy and support
+  contact surfaces stay reachable, and the external contract
+  (`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` §3.3) is **not weakened** — it remains
+  mandatory before the relevant public-store release.
+- `ALERT DELIVERY` — A1's end-to-end proof (§13.5) binds on production /
+  public-release readiness. It cannot be a private-beta blocker, because
+  `alerts.saved_authority_moved`, `alerts.filed_citation_moved`,
+  `alerts.push_delivery`, `monitoring.user_product` and `briefing.daily_loop` are all
+  `DISABLED_NOT_READY` and must stay so for the beta. Closing the gate would mean
+  enabling a disabled capability to satisfy a readiness check. What the beta requires
+  instead is **operator** observability — crash/error, server health, support
+  escalation — which is `PRIVATE-BETA TELEMETRY` above. **The A1 requirement is
+  resequenced, never deleted.**
+
+**iOS, recorded explicitly so deferral is never read as cancellation:**
+
+```text
+IOS_PRODUCT        = IN_SCOPE
+IOS_PUBLIC_RELEASE = IN_SCOPE
+
+IOS_STORE_SUBMISSION_BEFORE_ANDROID_PRIVATE_BETA = NO
+
+IOS_PHYSICAL_ACCEPTANCE = PUBLIC_RELEASE_REQUIREMENT
+                          NOT_ANDROID_APK_BETA_BLOCKER
 ```
 
 **Deferred is not abandoned.** iOS physical and product work remains a

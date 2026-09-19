@@ -29,6 +29,27 @@ Historical lane artifacts remain provenance and are never renamed.
 > submission is unchanged but now sits after the private beta.
 > Record: `docs/ai/ship-s4-a2/INTEGRATION_RECEIPT.md`.
 
+> **A2 EXECUTION-SEAM CORRECTION — SHIP S4-R0X, 19 September 2026.** Not A3, not
+> v7.5, and **no strategic decision is reopened**. A2's classification was correct
+> but several pre-A2 instructions stayed textually active in this file and would have
+> made a store-review requirement gate the direct-APK cohort. Corrected: (1) **§4
+> S4-R1** objective sizes to the staged ~100-lawyer beta (infrastructure proof
+> standard unchanged); (2) **§4 F** `REVIEW_ACCESS_V1` moves to §10 as a store-review
+> requirement — ordinary beta auth must still be real and secure; (3) **§4 I** A1's
+> alert-delivery proof is **resequenced** to production/public-release readiness and
+> replaced for the beta by crash/error + server-health observability and support
+> escalation — the five `alerts.*` / `monitoring.*` / `briefing.*` rows stay
+> `DISABLED_NOT_READY`; (4) **§5 S4-R2** becomes the **private-beta mobile quality /
+> release pass**, with AAB/Play, App Store, TestFlight, Apple review, store pack,
+> store accounts and billing moved to §10 — **iOS stays fully in scope**; (5) **§5**
+> keeps `IN_APP_DELETION` beta-critical and moves `EXTERNAL_DELETE_AUTH_V1` to the
+> public-store path without weakening its contract; (6) **§7** the Gate-D checklist
+> is normalized to one unambiguous reading matching roadmap §14.13.1, gaining
+> `PREWARM_READINESS` and `SECURITY_BETA_BASELINE`; (7) **§10** receives every moved
+> row and records the iOS status explicitly. **Deferred is not cancelled.**
+> Roadmap mirror: §14.13.1 + new §14.13.2.
+> Record: `docs/ai/ship-s4-stage-a/LOCAL_CANDIDATE_CLOSURE.md`.
+
 ---
 
 # 0. COMMON OPERATING PREAMBLE
@@ -500,7 +521,14 @@ DEPENDENCY = explicit founder remote-spend authorization
 
 ## Objective
 
-Stand up the persistent beta/review environment and close the reliability defects that cannot be carried into a 10–30 advocate beta.
+Stand up the persistent beta/review environment and close the reliability defects that cannot be carried into a **staged ~100-lawyer private beta** — `Wave 0 ~5 → Wave 1 ~20–25 → Wave 2 toward ~100` (roadmap §16.1).
+
+> **A2 execution correction, 19 September 2026.** The superseded `10–30 advocate
+> beta` wording is replaced here because it sized this prompt's reliability bar
+> against a cohort that no longer exists. **The infrastructure proof standard is
+> unchanged** — nothing below is relaxed by the larger cohort, and nothing is
+> added by it either. Concurrency is estimated in S4-R0, not assumed from the
+> invite count.
 
 ## Required infrastructure
 
@@ -540,11 +568,20 @@ One quiet-window current full suite.
 Record exact pass/fail/skip and classify any failure.
 Do not loop a timing test until green.
 
-### F. Review access
-Implement `REVIEW_ACCESS_V1`.
-No real client data.
-No broad privilege.
-Document Apple/Play review steps.
+### F. Review access — **MOVED to the public-store path (A2 execution correction)**
+
+`REVIEW_ACCESS_V1` is a **store-review requirement**. Apple and Google need a
+reviewer account and reviewer instructions; ~100 invited Indian advocates holding a
+signed APK do not. It is therefore **not** a prerequisite to inviting the private
+APK cohort and **not** part of `PERSISTENT_BETA_READY`.
+
+It moves to §10, the post-private-beta public-store path, together with the Apple
+and Play submission work. **Deferred is not cancelled** — no public-store release
+happens without it.
+
+What the private beta still requires, unchanged: **ordinary beta authentication must
+be real and secure** (§G below), tenant isolation holds, and no reviewer-style
+bypass or broad-privilege path is introduced to make the beta convenient.
 
 ### G. Auth
 Re-prove magic-link handoff after deployment.
@@ -553,10 +590,41 @@ Re-prove magic-link handoff after deployment.
 Take/verify current USER backup + restore.
 Corpus restore receipt bound to release.
 
-### I. Real alert delivery (A1, roadmap §13.5)
-Inject one bounded synthetic alert condition and prove
-condition detected → rule fired → dedup/cooldown → human notification delivered.
-Record channel + timestamps, never secret values.
+### I. Real alert delivery (A1, roadmap §13.5) — **RESEQUENCED to production / public-release readiness (A2 execution correction)**
+
+A1's end-to-end proof — inject one bounded synthetic alert condition and prove
+`condition detected → rule fired → dedup/cooldown → human notification delivered`,
+recording channel and timestamps and never secret values — **stands in full** and is
+**not deleted**. It binds on **production / public-release** readiness.
+
+It is not a private-beta blocker, because the user-facing alert system it would prove
+is itself DISABLED for the beta and must stay that way:
+
+```text
+alerts.saved_authority_moved  = DISABLED_NOT_READY
+alerts.filed_citation_moved   = DISABLED_NOT_READY
+alerts.push_delivery          = DISABLED_NOT_READY
+monitoring.user_product       = DISABLED_NOT_READY
+briefing.daily_loop           = DISABLED_NOT_READY
+```
+
+Making the proof a beta blocker would require enabling a disabled capability to
+satisfy a readiness gate — exactly backwards. Do **not** enable any row above to
+close this item.
+
+**What the private beta does require instead — operator observability, not user
+alerts:**
+
+```text
+CRASH_ERROR_OBSERVABILITY   — crashes, unhandled errors, ANR/OOM where available
+SERVER_HEALTH_OBSERVABILITY — API errors, latency, readiness/uptime signal
+SUPPORT_ESCALATION          — a real path from a beta lawyer to a human, with
+                              release/version correlation
+```
+
+These are the `PRIVATE_BETA_TELEMETRY` rows (§9 of the Gate-D list, roadmap §14.13.1).
+They are about **us** noticing a broken beta, not about telling an advocate their
+authority moved.
 
 ## Search
 
@@ -573,13 +641,17 @@ ENVIRONMENT_LABEL =
 PREWARM_READINESS =
 MATTER_AUTHORITIES_ROLLBACK =
 FULL_API_SUITE =
-REVIEW_ACCESS =
 AUTH =
-ALERT_DELIVERY =
 USER_BACKUP_RESTORE =
 CORPUS_ROLLBACK =
 GATE_S1 =
+CRASH_ERROR_OBSERVABILITY =
+SERVER_HEALTH_OBSERVABILITY =
+SUPPORT_ESCALATION =
 PUBLIC_SEMANTIC = DISABLED
+
+REVIEW_ACCESS  = DEFERRED_TO_PUBLIC_STORE_PATH   (§10; A2 execution correction)
+ALERT_DELIVERY = DEFERRED_TO_PRODUCTION_READINESS (§10; A1 proof preserved in full)
 ```
 
 Do not invite beta users until:
@@ -589,20 +661,34 @@ Do not invite beta users until:
 
 ---
 
-# 5. SHIP S4-R2 — GATE-D MOBILE / ACCESSIBILITY / STORE PASS
+# 5. SHIP S4-R2 — PRIVATE-BETA MOBILE QUALITY / RELEASE PASS
 
 ```text
 AGENT = SHIP
 MODES = CLIENT + SERVER + RELEASE + PRODUCT
 NO MAJOR NEW FEATURES
+EFFECTIVE_PURPOSE = PRIVATE-BETA MOBILE QUALITY / RELEASE PASS
 ```
+
+> **A2 execution correction, 19 September 2026.** This round was written as a
+> **store-submission** pass and sat before the Android APK beta, which made store
+> review a gate on handing lawyers an APK. Its effective purpose is now the
+> private-beta mobile quality and release pass. The store work below is **moved to
+> §10**, not deleted, and **iOS remains fully in scope** — product and public
+> launch both (roadmap §0.4.2, §14.13.1). iOS store submission is simply not a
+> blocker to a signed Android APK.
 
 ## Physical devices
 
-Required:
-- current physical iPhone;
+Private-beta critical:
 - representative low/mid Android;
-- Galaxy S24 affected-row regression.
+- Galaxy S24 affected-row regression (high-end Android).
+
+Retained as product evidence, **not** an APK-beta distribution blocker:
+- current physical iPhone.
+
+`IOS_PHYSICAL_ACCEPTANCE = PUBLIC_RELEASE_REQUIREMENT`, and
+`NOT_ANDROID_APK_BETA_BLOCKER`. Do not record it as cancelled.
 
 Use persistent beta public HTTPS. No localhost/ADB transport for network proof. USB may be used for install/log capture.
 
@@ -636,18 +722,24 @@ Use persistent beta public HTTPS. No localhost/ADB transport for network proof. 
 
 Close N-8.
 
-## Store builds
+## Release builds
 
-Android:
+**Private-beta critical — Android release APK:**
 - actual release targetSdk 36+;
-- AAB/internal track;
-- non-debuggable/standalone observed.
+- signed **release APK** (not debug, never a debug fallback);
+- non-debuggable / standalone observed, no Metro dependency;
+- release identity: package id, version code, version name, commit SHA, release id, APK sha256;
+- signing certificate fingerprint recorded, private key never exposed or committed.
 
-iOS:
-- actual build/archive;
-- Xcode26+;
-- iOS26 SDK+;
-- signing/TestFlight path.
+**MOVED to §10, the public-store path (A2 execution correction):**
+- Android `AAB` / Play internal track;
+- Play submission;
+- iOS actual build/archive, Xcode26+, iOS26 SDK+;
+- signing / TestFlight / store-review path;
+- App Store submission.
+
+iOS build and archive work remains a **public-release requirement**. It is deferred
+in sequence, not cancelled.
 
 Tablet:
 - choose `supportsTablet=false` OR prove tablet support.
@@ -660,39 +752,66 @@ iOS party search:
 
 ## Deletion / compliance
 
-- in-app deletion on persistent beta;
-- identity-only account;
-- stable external delete resource;
-- privacy/support URLs;
+**Private-beta critical:**
+- `IN_APP_DELETION` — in-app deletion initiation works on the beta environment;
+- identity-only account support preserved;
+- privacy / support contact surfaces reachable;
 - these are compliance endpoints, not a promo-site redesign.
-- (A1) the external resource authenticates through `EXTERNAL_DELETE_AUTH_V1`
-  (`docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` §3.3), lives in `lawmind/lawmind-site`, and reuses
-  `POST /me/data-requests {kind:'erasure'}`. Do not make the R33 mobile landing configurable.
-  This is an auth/deletion CCR, so it is high risk: roadmap §3.7, RED_READ_ONLY where useful.
 
-## Accounts (A1, roadmap §14.14)
+**MOVED to §10, the public-store path (A2 execution correction):**
+- `EXTERNAL_DELETE_AUTH_V1` — the stable external delete **web** resource.
 
-Measure every Apple / Google Play / EAS row. Mark each VERIFIED, FOUNDER_CONFIRMED or UNKNOWN.
-Keep EAS project/build readiness separate from the push feature.
-Record the values in `docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0.
+`EXTERNAL_DELETE_AUTH_V1` stays **mandatory before the relevant public-store
+release** and its contract is **not weakened**: (A1) the external resource
+authenticates through `docs/EXTERNAL_ACCOUNT_DELETION_WEB.md` §3.3, lives in
+`lawmind/lawmind-site`, and reuses `POST /me/data-requests {kind:'erasure'}`. Do not
+make the R33 mobile landing configurable. This is an auth/deletion CCR, so it is
+high risk: roadmap §3.7, RED_READ_ONLY where useful.
+
+It is a **Google Play requirement for externally-initiated deletion**, so it is
+Play review mechanics — and Play review mechanics do not block a direct APK cohort
+who can delete from inside the app they already have installed.
+
+## Accounts (A1, roadmap §14.14) — **MOVED to §10**
+
+`STORE_ACCOUNT_READINESS` is store work. Measure every Apple / Google Play / EAS row
+on the public-store path, marking each VERIFIED, FOUNDER_CONFIRMED or UNKNOWN; keep
+EAS project/build readiness separate from the push feature; record the values in
+`docs/product/STORE_RELEASE_CHECKLIST_V1.md` §0. Not an APK-beta blocker, and not
+cancelled.
 
 ## Security (A1, roadmap §14.15)
 
-Evidence every `SECURITY_RELEASE_BASELINE` row from code/config/runtime. None FAIL, none UNKNOWN.
+Evidence every `SECURITY_RELEASE_BASELINE` row from code/config/runtime. None FAIL,
+none UNKNOWN.
 
-## Store pack
+`SECURITY_BETA_BASELINE` — the subset of those rows applicable to the private beta —
+is **private-beta critical** and is not relaxed by anything in this correction. A row
+whose only possible evidence is the future public HTTPS environment is
+`REMOTE_ONLY_PROOF`, never PASS from code existence.
 
-- real screenshots;
-- current capabilities only;
-- no draft/briefing/semantic/monitoring claims;
-- actual data-safety state;
-- reviewer access instructions.
+## Store pack — **MOVED to §10**
+
+Real screenshots, final store listing, data-safety declaration and reviewer access
+instructions are public-store work (roadmap §14.13.1, §17.0). The standing rule holds
+wherever claims are made: current capabilities only, and no draft / briefing /
+semantic / monitoring claims.
+
+`CAPABILITY_CLAIM_PARITY` and `NO_MONITORING_CLAIMS` remain **private-beta critical** —
+they apply to whatever the beta cohort can actually see, including in-app copy and the
+APK release notes.
+
+## Commerce
+
+`BILLING / IAP / PLAY BILLING / PUBLIC_STORE_COMMERCE` are **not required** for the
+private beta (roadmap §15.4). They bind on the public-release path.
 
 ## Output
 
 `docs/ai/ship-s4-r2/GATE_D_PRODUCT_MATRIX.md`
 
-Final state per row: PASS/FAIL/HOLD/UNKNOWN.
+Final state per row: PASS/FAIL/HOLD/UNKNOWN, with deferred store rows marked
+`DEFERRED_TO_PUBLIC_STORE_PATH` rather than PASS or FAIL.
 ```
 
 ---
@@ -822,51 +941,80 @@ LAUNCH_SHAPE =
 
 Run only after S4-R1/R2/R3 evidence exists.
 
-Gate D checklist:
+Gate D checklist.
+
+**A2 execution correction, 19 September 2026.** This list previously mixed
+private-beta blockers with public-store requirements, so it had more than one honest
+reading. It now has exactly one: **everything in the first block blocks the ~100-lawyer
+APK private beta; nothing in the second block does.** Roadmap §14.13.1 is the
+governing classification and this list matches it row for row.
+
+**PRIVATE-BETA / GATE-D CRITICAL — the complete blocker set:**
 
 ```text
 PERSISTENT_BETA_READY
-IPHONE_PHYSICAL
-LOW_MID_ANDROID_PHYSICAL
+
+ANDROID_RELEASE_APK              (A2)
+APK_DISTRIBUTION_CONTRACT        (A2, roadmap §16.3)
+
 HIGH_END_ANDROID_REGRESSION
+LOW_MID_ANDROID_PHYSICAL
+
 ACCESSIBILITY
 LARGE_JUDGMENT
 POOR_NETWORK
 BACKGROUND_RESUME
-DELETION_IN_APP
-EXTERNAL_DELETE_RESOURCE
-PRIVACY_SUPPORT_URLS
-REVIEW_ACCESS
-ANDROID_API36_ARTIFACT
-IOS_XCODE26_IOS26_BUILD
-TABLET_STATE
-IOS_PARTY_SEARCH_STATE
-PRODUCTION_PROVENANCE
-ENV_LABEL
+
+AUTH
+IN_APP_DELETION
+
+PRIVACY_SUPPORT_SURFACE
+
+PRODUCTION_LIKE_PROVENANCE
+ENVIRONMENT_LABEL
+
+PREWARM_READINESS
+
 MATTER_AUTHORITY_ROLLBACK
 FULL_API_SUITE
-STORE_PACK
-COMMERCE_DECISION
-MONITORING_CLAIMS
-PLATFORM_CAPABILITY_PARITY
-PRIVATE_BETA_THRESHOLDS          (A2: frozen after Wave 0, replaces SHADOW_BETA_THRESHOLDS)
-STORE_ACCOUNT_READINESS          (A1)
-SECURITY_RELEASE_BASELINE        (A1)
-ALERT_DELIVERY                   (A1)
-EXTERNAL_DELETE_AUTH_V1          (A1)
-ANDROID_RELEASE_APK              (A2)
-APK_DISTRIBUTION_CONTRACT        (A2, roadmap §16.3)
-CANARY_WAVE_READY                (A2, roadmap §16.1)
-PRIVATE_BETA_TELEMETRY           (A2)
+
 BACKUP_RESTORE                   (A2)
+
+SECURITY_BETA_BASELINE           (A1 SECURITY_RELEASE_BASELINE, beta-applicable subset)
+
+CAPABILITY_CLAIM_PARITY
+NO_MONITORING_CLAIMS
+
+PRIVATE_BETA_TELEMETRY           (A2)
+
+CANARY_WAVE_READY                (A2, roadmap §16.1)
 ```
 
-> **A2 reclassification, 19 September 2026 (roadmap §14.13.1).** `STORE_PACK` above,
-> and the Play/App Store submission rows, are **moved to public-store readiness** and
-> are **not** blockers for the ~100-lawyer APK private beta. Deferred is not
-> abandoned: iOS physical and product work, `STORE_ACCOUNT_READINESS` and the Apple
-> build proof stay in the roadmap and move with the store work. Do not record them as
-> cancelled, and do not re-add them to the APK-beta blocker set.
+Also settled inside the beta programme, not against it:
+`PRIVATE_BETA_THRESHOLDS` — frozen **after Wave 0** (A2; replaces
+`SHADOW_BETA_THRESHOLDS`), `TABLET_STATE` and `IOS_PARTY_SEARCH_STATE` — decided
+states, not store gates.
+
+**PUBLIC-STORE / PRODUCTION READINESS — NOT simultaneous Gate-D APK blockers:**
+
+```text
+IPHONE_PHYSICAL                  product + public-launch evidence
+IOS_XCODE26_IOS26_BUILD          public-release requirement
+ANDROID_AAB_PLAY_TRACK           public-store requirement
+STORE_PACK                       public-store requirement
+STORE_ACCOUNT_READINESS          (A1) public-store requirement
+REVIEW_ACCESS                    (REVIEW_ACCESS_V1) store-review requirement
+EXTERNAL_DELETE_AUTH_V1          (A1) Play external-deletion requirement
+ALERT_DELIVERY                   (A1) production / public-release readiness
+COMMERCE_DECISION                binds on public release (roadmap §15.4, §17.0)
+PLAY_SUBMISSION · APP_STORE_SUBMISSION · TESTFLIGHT · APPLE_REVIEW_NOTES
+IAP_BILLING
+```
+
+> **Deferred ≠ cancelled.** Every row in the second block stays in the roadmap and
+> moves with the store work to §10 / roadmap §17.0. A future round must not record
+> them as abandoned, must not silently delete their contracts, and must not re-add
+> them to the APK-beta blocker set.
 
 Commerce:
 founder must explicitly choose:
@@ -952,6 +1100,39 @@ PRIVATE BETA EVIDENCE → PRODUCT / DATA CORRECTIONS → RED GATE E → CANDIDAT
 
 Store work accelerates **only once private-beta evidence says the product deserves
 to ship**. The `LAUNCH_COMMERCE = FREE_BETA | PAID_V1` decision binds here.
+
+## Rows resequenced into this path (A2 execution correction, 19 September 2026)
+
+Moved here from §4 (S4-R1) and §5 (S4-R2). Each keeps its original contract in full;
+only its position in the sequence changed.
+
+```text
+REVIEW_ACCESS_V1          store-review reviewer account + instructions (from §4 F)
+ALERT_DELIVERY            A1 end-to-end proof, production/public-release (from §4 I)
+EXTERNAL_DELETE_AUTH_V1   Play external-deletion web resource (from §5)
+STORE_ACCOUNT_READINESS   Apple / Play / EAS rows (A1, roadmap §14.14) (from §5)
+STORE_PACK                screenshots, listing, data-safety, reviewer notes (from §5)
+ANDROID_AAB_PLAY_TRACK    AAB + Play internal track + Play submission (from §5)
+IOS_BUILD_ARCHIVE         Xcode26+ / iOS26 SDK+ build and archive (from §5)
+TESTFLIGHT_STORE_REVIEW   TestFlight + App Store submission path (from §5)
+IPHONE_PHYSICAL           iOS physical acceptance (product + public launch)
+IAP_BILLING               billing / IAP / public-store commerce (roadmap §15.4)
+```
+
+### iOS status — recorded explicitly, so no future round misreads deferral as cancellation
+
+```text
+IOS_PRODUCT        = IN_SCOPE
+IOS_PUBLIC_RELEASE = IN_SCOPE
+
+IOS_STORE_SUBMISSION_BEFORE_ANDROID_PRIVATE_BETA = NO
+
+IOS_PHYSICAL_ACCEPTANCE = PUBLIC_RELEASE_REQUIREMENT
+                          NOT_ANDROID_APK_BETA_BLOCKER
+```
+
+iOS work is not reduced, not descoped and not cancelled. It is not a prerequisite to
+handing Android lawyers a signed APK.
 
 Use frozen threshold definitions from **Wave 0** of the private beta.
 
