@@ -5,13 +5,14 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
+import { SegmentedRow } from '../../components/SegmentedRow';
 import { Text } from '../../components/Text';
 import { runAttempt } from '../../api/attempt';
 import { api } from '../../api/client';
 import { useAttempt } from '../../hooks/useAttempt';
 import { usePendingSave, type PendingSaveResult } from '../../state/pendingSave';
 import { usePractice } from '../../state/practice';
-import { color, radius, space } from '../../theme/tokens';
+import { color, space } from '../../theme/tokens';
 
 /**
  * ADD A MATTER — inventory rows 25/26, canvas `1v` (CNR lookup + manual, v1
@@ -350,48 +351,11 @@ export function NewMatterScreen({
   );
 }
 
-function SegmentedRow<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: readonly { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <View style={styles.segmentRow}>
-      {options.map((o) => (
-        <Pressable
-          key={o.value}
-          onPress={() => onChange(o.value)}
-          style={[styles.segment, value === o.value ? styles.segmentOn : null]}
-        >
-          <Text variant="ui" style={value === o.value ? styles.segmentOnLabel : undefined}>
-            {o.label}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
   back: { minHeight: 44, justifyContent: 'center' },
   link: { color: color.oxblood },
   fieldLabel: { color: color.inkMuted },
-  segmentRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
-  segment: {
-    minHeight: 44,
-    justifyContent: 'center',
-    paddingHorizontal: space.sm,
-    borderWidth: 1,
-    borderColor: color.rule,
-    borderRadius: radius.base,
-  },
-  segmentOn: { backgroundColor: color.ink, borderColor: color.ink },
-  segmentOnLabel: { color: color.card },
   error: { color: color.oxblood },
   pending: { color: color.inkMuted },
   /**

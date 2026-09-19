@@ -6,6 +6,7 @@ import { Input } from '../../components/Input';
 import { Pressable } from '../../components/Pressable';
 import { Screen } from '../../components/Screen';
 import { SectionRule } from '../../components/SectionRule';
+import { SegmentedRow } from '../../components/SegmentedRow';
 import { Sheet } from '../../components/Sheet';
 import { Text } from '../../components/Text';
 import type { Matter, MatterStatus } from '../../api/contract';
@@ -419,33 +420,6 @@ function BackLink({ onPress }: { onPress: () => void }) {
   );
 }
 
-function SegmentedRow<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: readonly { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <View style={styles.segmentRow}>
-      {options.map((o) => (
-        <Pressable
-          accessibilityRole="button"
-          key={o.value}
-          onPress={() => onChange(o.value)}
-          style={[styles.segment, value === o.value ? styles.segmentOn : null]}
-        >
-          <Text variant="ui" style={value === o.value ? styles.segmentOnLabel : undefined}>
-            {o.label}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   body: { padding: space.sm, gap: space.sm, paddingBottom: space.xxl },
   back: { minHeight: 44, justifyContent: 'center' },
@@ -454,17 +428,6 @@ const styles = StyleSheet.create({
   muted: { color: color.inkMuted },
   caveat: { color: color.inkFaint },
   error: { color: color.oxblood },
-  segmentRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space.xs },
-  segment: {
-    minHeight: 44,
-    justifyContent: 'center',
-    paddingHorizontal: space.sm,
-    borderWidth: 1,
-    borderColor: color.rule,
-    borderRadius: radius.base,
-  },
-  segmentOn: { backgroundColor: color.ink, borderColor: color.ink },
-  segmentOnLabel: { color: color.card },
   statusActions: { gap: space.xs },
   /**
    * A RULED ROW, NOT A RED BUTTON. Nothing on this path is destructive, so
