@@ -6,8 +6,8 @@ DATE   = 19 September 2026
 ROUND  = S4-R0X — A2 execution-seam correction → S4-R0 → Stage-A acceleration
 
 HEAD_START = 69c4c8aaa98fe7dc33c28de8bfed790615d7da76   (== origin/main, == expected)
-HEAD_FINAL = see §1
-COMMITS    = 10
+HEAD_FINAL = c29a90a3 (this receipt) — §1
+COMMITS    = 12
 
 PAID_RESOURCE_CREATED   = NO
 CLOUD_PROVISIONED       = NO
@@ -35,13 +35,15 @@ d741c48d  fix(api): close N-4 — warm the corpus, and make readiness wait for i
 8a2f0a84  fix(api): the signups kill switch controlled nothing, and now it does
 4301bcae  test(api): N-7's two casualties were tests asserting the old ordering
 455eddd8  refactor(api): drop a dead parameter from the prewarm timeout
+d1e5bfaf  fix(ops): the cascade guard counted tables, not the rows it would destroy
+c29a90a3  docs(ship-s4-stage-a): the closure receipt, and it says HOLD
 ```
 
-`HEAD_FINAL = 455eddd8` at the time this receipt was written, plus the commit
-carrying the receipt itself — a receipt cannot contain its own hash, and that
-follow-up changes nothing else.
+`HEAD_FINAL = c29a90a3`, the commit carrying this receipt. A receipt cannot
+contain its own hash, so this line was filled in by a follow-up that changes
+nothing else.
 
-25 files, **+3,964 / −304**. Exact-path staging throughout; no `git add .`, no
+30 files, **+4,962 / −338**. Exact-path staging throughout; no `git add .`, no
 `-A`, no `commit -a`, no reset, no checkout over foreign work. The authoritative
 list is `git log --grep="ship-s4-r0x"` plus the five `fix(api)`/`fix(mobile)`
 commits above.
