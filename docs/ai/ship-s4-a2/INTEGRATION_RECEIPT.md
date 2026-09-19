@@ -5,6 +5,9 @@ AGENT = SHIP · MODE = SHIP/RELEASE + SHIP/COORDINATION
 OBJECTIVE CLASS = GOVERNANCE / EXECUTION-SEQUENCING INTEGRATION
 DATE = 19 September 2026
 HEAD_START = f36d40103308762ec8e12f42a80314161b7e4294
+HEAD_FINAL = 368ba1b8202d56b70a0f6fe585afe822b83f9be0   (the A2 integration commit)
+COMMITS    = 2 — 368ba1b8 integration · this commit fills HEAD_FINAL, because a
+             receipt cannot contain its own commit hash
 ```
 
 Amendment A2 — **DATA MOAT & LEGAL-INTELLIGENCE FRONTIER** — is installed in the
@@ -140,7 +143,8 @@ here.
 | check | result |
 |---|---|
 | `git fetch origin` / anchor match | PASS — HEAD == origin/main == expected |
-| `node scripts/lawmind-authority-check.mjs` | **PASS — 79/79** |
+| `node scripts/lawmind-authority-check.mjs` (worktree) | **PASS — 79/79** |
+| same check against the **HEAD tree** (`git archive HEAD` → `--root`) | **PASS — 78/78**. This repo is a shared worktree with other lanes' uncommitted files in it, and two of the files that check reads in full are dirty right now — so a green worktree run alone would have been partly a statement about someone else's work in progress. The one missing check is the tracked-bus-message scan, which the script skips without a real `.git`, as its own comment says. |
 | manifest JSON parse | PASS |
 | A1 `amendments[0]` vs `git show HEAD:` | **identical** |
 | dated ledger sha256 unchanged | PASS |
