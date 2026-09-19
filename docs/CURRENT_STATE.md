@@ -4,7 +4,15 @@
 decision, capability-registry release, and production/persistent-beta deployment.
 It points to the truth; it does not replace receipts.
 
-**Last updated:** 19 September 2026 — SHIP S4-A2 (Amendment A2: data moat &
+**Last updated:** 19 September 2026 — **SHIP S4-R0X**: the A2 execution-seam
+correction (roadmap §14.13.2, prompts §4/§5/§7/§10), the **S4-R0 hosting decision
+package** (`ai/ship-s4-r0/BETA_HOSTING_DECISION_PACKAGE.md`, recommendation
+USD 287.17/month, `PROVISIONING_AUTHORIZED = NO`), and Stage-A local closure of
+N-7, N-8, N-5, N-2's mechanism, N-4 and the `matter_authorities` rollback guard —
+record [`ai/ship-s4-stage-a/LOCAL_CANDIDATE_CLOSURE.md`](ai/ship-s4-stage-a/LOCAL_CANDIDATE_CLOSURE.md),
+`PRIVATE_BETA_CANDIDATE_LOCAL = HOLD` with six locally actionable items named.
+
+Before that, 19 September 2026 — SHIP S4-A2 (Amendment A2: data moat &
 legal-intelligence frontier, private-beta resequencing, cost control), after DATA S4-D0
 (continuity census — **PASS**), S4-T0.3 (CI baseline, alert-surface truth, capability
 registry R18), S4-T0.2 (runtime / CI / deployed-target repair — **PASS corrected to
@@ -256,17 +264,45 @@ None.
 
 ## 8 · Carried reliability items (owner SHIP unless stated)
 
-| id | item | must close before |
-|---|---|---|
-| N-2 | `/version` deployment provenance (null deployedAt/digest) | production label |
-| N-3 | cold unseen-query capacity (~3.5 s on 32 GiB host) | production sizing |
-| N-4 | manual prewarm after activation/restart | persistent beta |
-| N-5 | `/version` env vs `/ready` servingEnv mismatch | production label |
-| N-6 | full API suite timing failure = UNKNOWN | persistent beta (quiet-window run) |
-| N-7 | `POST /matters` body validation before auth | Gate D (security baseline) |
-| N-8 | chips selected visually, `selected=false` in a11y tree | Gate D |
-| N-9 | non-debuggable flag observed on release build 1 only | next release build |
-| — | corpus rollback can empty `matter_authorities` | persistent beta |
+**Updated 19 Sep 2026 by SHIP S4-R0X.** Five rows closed locally; the remote half
+of two of them is S4-R1's, and saying so is the point of the third column.
+
+| id | item | state | must close before |
+|---|---|---|---|
+| N-2 | `/version` deployment provenance (null deployedAt/digest) | **MECHANISM CLOSED (local)** — `imageDigest` was a literal `null` in the route, so no deploy could populate it; it now comes from `ARTIFACT_DIGEST`/`IMAGE_DIGEST` and stays `null` when the process cannot prove its artifact. Values only exist at deploy time and are **not** faked. `ee7e03cc` | production label (values) |
+| N-3 | cold unseen-query capacity (~3.5 s on 32 GiB host) | OPEN — sizing input, priced in the S4-R0 package §6; the diagnostic that would refute the RAM hypothesis is written down | production sizing |
+| N-4 | manual prewarm after activation/restart | **CLOSED (local mechanism)** — `ops/prewarm.ts` warms the corpus on the serving path at boot and `/ready` answers 503 until it finishes. `d741c48d` | remote latency proof = S4-R1 |
+| N-5 | `/version` env vs `/ready` servingEnv mismatch | **CLOSED** — both now derive from `resolveServingEnv`, so the mismatch is unrepresentable rather than corrected. `RAILWAY_ENVIRONMENT` and `NODE_ENV` removed from the route. `ee7e03cc` | remote equality proof = S4-R1 |
+| N-6 | full API suite timing failure = UNKNOWN | **RUN 19 Sep 2026** — see §8.1 | persistent beta (quiet-window run) |
+| N-7 | `POST /matters` body validation before auth | **CLOSED** — `requireAuthenticated` gates 18 routes ahead of their validators; a *derived* wiring test enumerates every json-validating route and found two more that hand enumeration had missed. `2eaf6049` | Gate D (security baseline) |
+| N-8 | chips selected visually, `selected=false` in a11y tree | **CLOSED (unit)** — the component existed twice with two different bugs; one `components/SegmentedRow.tsx` now carries `accessibilityState`. `a8c97df3` | TalkBack proof on a physical device |
+| N-9 | non-debuggable flag observed on release build 1 only | OPEN — not attempted this round; signing material availability not assessed | next release build |
+| — | corpus rollback can empty `matter_authorities` | **CLOSED (local)** — the cascade guard named tables, never rows, so an empty corpus-only target and a shared database holding real matters produced an identical refusal cleared by the same flag. It now counts rows and refuses on actual loss; `--allow-cascade-into` no longer clears that case. The ORPHAN half already had 8 local tests against two real corpus generations and they passed in this round's full run. `d1e5bfaf` | remote restore/rollback re-proof = S4-R1 |
+
+### 8.1 · Full local API suite — 19 September 2026
+
+```text
+RUN          serial (--test-concurrency=1), services/api, local corpus
+RUN 1        TESTS 1331  PASS 1325  FAIL 2  SKIPPED 4  CANCELLED 0
+RUN 2        TESTS 1333  PASS 1329  FAIL 0  SKIPPED 4  CANCELLED 0  TODO 0
+             225 suites · 5 m 53 s — the confirming run after the corrections
+```
+
+Both failures were caused by the N-7 fix and were tests asserting the **old**
+ordering — an unauthenticated `POST` to `/verify/confirm` and `/saved-searches`
+expecting `400` from the validator, which it only ever received because validation
+ran before auth. **Neither test was weakened.** Each keeps its validator coverage,
+moved to the schema (`confirmRequest`, `savedSearchBody`) where the accept case can
+also be asserted, plus a new test that a *malformed* body now gets `401` — the case
+that would still pass if the ordering were reversed is the valid one, so the
+malformed one is the case worth keeping. Re-run green.
+
+**N-6's own failure did not reappear.** The `search/sparse-bound.test.ts` latency
+assertions that produced it passed in both runs, under contention. But `N-6` asked
+for a **quiet-window** run and this was not one — the ingest fleet and this session
+shared the box throughout. Recorded as a real measurement of a contended run, which
+is evidence against N-6 being live, and explicitly **not** as the quiet-window
+result N-6 wants. That one is still S4-R1's.
 
 Reissued from the legacy bus (see §10): bus 1809/1817 (N-2, N-5), 1811 (N-8, N-9, Gate-D
 device/store scope), 1812 (is Gate-D row "monitoring claims ≤ capability" satisfiable
@@ -295,13 +331,21 @@ DO_TOKEN_ROTATED               = OPEN
 RESEND_KEY_ROTATED             = OPEN
 SPACESHIP_KEY_SECRET_ROTATED   = OPEN
 R2_BACKUP_KEY_ESCROWED         = OPEN
-PERSISTENT_BETA_SPEND          = PENDING_SHIP_COST_PACKAGE_AND_FOUNDER_SPEND_APPROVAL
+PERSISTENT_BETA_SPEND          = COST PACKAGE DELIVERED 19 Sep 2026 — awaiting approval
+                                 ask USD 450 initial / USD 550 monthly, expected USD 287.17
 PROVISIONING_AUTHORIZED        = NO   (A2: a cost recommendation is not authorization)
+DELTA_QUEUE_S4U_ELEVATION      = OPEN — ONE UAC consent click. FQ-SHIP-R0X-1.
+                                 It also settles CUDA_IN_SESSION_0 = UNKNOWN, which
+                                 decides WHICH fix is correct. Do not flip the
+                                 principal blind: docs/ops/DELTA_QUEUE_S4U_PROOF.md
 APPLE / PLAY ACCOUNT STATE     = founder to confirm (roadmap §14.14)
 LAUNCH_COMMERCE                = FREE_BETA | PAID_V1 at Gate D
 ```
 
-Detail and history: [`FOUNDER_QUEUE.md`](FOUNDER_QUEUE.md), top block "CURRENT STATUS — S4-T0.1".
+Detail and history: [`FOUNDER_QUEUE.md`](FOUNDER_QUEUE.md) — the **19 September
+S4-R0X block** (FQ-SHIP-R0X-1 the elevation click, FQ-SHIP-R0X-2 the priced spend)
+sits above the "CURRENT STATUS — S4-T0.1" block, which is unchanged and remains the
+standing status for everything else.
 
 ## 11 · Latest accepted release / beta environment
 
@@ -310,6 +354,11 @@ PERSISTENT_BETA          = NONE (Gate-C DigitalOcean alpha destroyed 18 Sep 2026
 PRODUCTION               = NONE
 CURRENT_HOSTING_PROVIDER = NOT_YET_SELECTED
 PERSISTENT_BETA_PROVIDER = UNDECIDED · PRODUCTION_PROVIDER = UNDECIDED
+                           RECOMMENDED 19 Sep 2026, not selected and not bought:
+                           DigitalOcean so-4vcpu-32gb (CORPUS) + s-2vcpu-4gb
+                           (API/USER) + Cloudflare R2 — USD 287.17/month, which is
+                           USD 63 CHEAPER than Gate C for the same vCPU and RAM.
+                           Package: ai/ship-s4-r0/BETA_HOSTING_DECISION_PACKAGE.md
 RAILWAY_PRODUCTION       = HISTORICAL / RETIRED   (api-production-1c0b4.up.railway.app)
 GATE_C_DIGITALOCEAN      = HISTORICAL / DESTROYED_VERIFIED
 FULL_HNSW                = DOES_NOT_EXIST · PUBLIC_SEMANTIC = DISABLED
